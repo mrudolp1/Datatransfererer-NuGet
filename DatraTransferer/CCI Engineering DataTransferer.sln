@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CCI Engineering DataTransferer", "CCI Engineering DataTransferer.vbproj", "{E788EE56-3A70-474E-8BBF-E24471F080D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E788EE56-3A70-474E-8BBF-E24471F080D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E788EE56-3A70-474E-8BBF-E24471F080D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E788EE56-3A70-474E-8BBF-E24471F080D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E788EE56-3A70-474E-8BBF-E24471F080D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71B8443A-1315-4E1C-88AF-BC38638650F8}
+	EndGlobalSection
+EndGlobal

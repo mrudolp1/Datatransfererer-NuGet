@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CCI_Engineering_DataTransferer</RootNamespace>
+    <TargetFramework>net461</TargetFramework>
+    <Company>Crown Castle</Company>
+    <Authors>ECS</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>CCI_Engineering_DataTransferer</PackageId>
+    <Product>CCI Engineering DataTransferer</Product>
+    <Description>A class library of all Data Transferer Crown Castle Engineering Tools.</Description>
+    <PackageProjectUrl>\\netapp4\common\Installers (Engineering Development)\NuGet Packages</PackageProjectUrl>
+    <OutputType>Library</OutputType>
+    <StartupObject></StartupObject>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v20.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Data.v20.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.DataAccess.v20.2">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.DataAccess.v20.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Docs.v20.2">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Docs.v20.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Spreadsheet.v20.2.Core">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Spreadsheet.v20.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="My Project\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+</Project>

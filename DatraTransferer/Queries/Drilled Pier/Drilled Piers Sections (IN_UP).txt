@@ -1,0 +1,6 @@
+﻿BEGIN
+		INSERT INTO drilled_pier_section OUTPUT INSERTED.ID INTO @DrilledPierSection VALUES ([DRILLED PIER SECTION])
+		SELECT @SecID=SecID FROM @DrilledPierSection
+
+		INSERT INTO drilled_pier_rebar VALUES ([DRILLED PIER SECTION REBAR])
+END--INSERT Drilled Pier Sections & Rebar

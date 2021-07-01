@@ -1,0 +1,136 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CCI_Engineering_Templates</RootNamespace>
+    <TargetFramework>net461</TargetFramework>
+    <Company>Crown Castle</Company>
+    <Authors>ECS</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>CCI_Engineering_DataTransferer</PackageId>
+    <Product>CCI Engineering DataTransferer</Product>
+    <Description>A class library of all Data Transferers Crown Castle Engineering Tools.</Description>
+    <PackageProjectUrl>\\netapp4\common\Installers (Engineering Development)\NuGet Packages</PackageProjectUrl>
+    <OutputType>Library</OutputType>
+    <StartupObject></StartupObject>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Embedded Section%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Embedded%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
+    <None Remove="Queries\Existing Model %28IN_UP%29.sql" />
+    <None Remove="Queries\Existing Model %28SELECT%29.sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad %28IN_UP%29.sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
+    <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Shell32">
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Belled).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Embedded Section).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Embedded).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Rebar).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Section).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Soil Layers).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Existing Model (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Existing Model (SELECT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pier and Pad\Pier and Pad (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Unit Base (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.Charts.v20.2.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Charts.v20.2.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Data.v20.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Data.v20.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.DataAccess.v20.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.DataAccess.v20.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Docs.v20.2">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Docs.v20.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Office.v20.2.Core">
+      <HintPath>..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Office.v20.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Spreadsheet.v20.2.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Spreadsheet.v20.2.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="My Project\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CCI_Engineering_Templates" Version="1.0.6" />
+  </ItemGroup>
+
+</Project>
