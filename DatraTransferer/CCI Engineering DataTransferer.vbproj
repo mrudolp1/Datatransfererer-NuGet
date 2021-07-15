@@ -111,7 +111,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.Office.v20.2.Core">
-      <HintPath>..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Office.v20.2.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Office.v20.2.Core.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Spreadsheet.v20.2.Core">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Spreadsheet.v20.2.Core.dll</HintPath>
@@ -130,7 +130,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CCI_Engineering_Templates" Version="1.0.6" />
+    <PackageReference Include="CCI_Engineering_Templates" Version="1.0.12" />
   </ItemGroup>
 
 </Project>

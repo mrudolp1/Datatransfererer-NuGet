@@ -1,4 +1,4 @@
-﻿Option Strict On
+﻿Option Strict Off
 
 Imports DevExpress.Spreadsheet
 Imports CCI_Engineering_Templates
@@ -11,11 +11,10 @@ Public Class DataTransfererUnitBase
     Private prop_ExcelFilePath As String
 
 
-    Public Property UnitBase As New List(Of SST_Unit_Base)
+    Public Property UnitBases As New List(Of SST_Unit_Base)
     Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress Objects\Reference\SST Unit Base Foundation (4.0.4) - MRR.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    'These properties are new
     Public Property ubDS As DataSet
     Public Property ubDB As String
     Public Property ubID As WindowsIdentity
@@ -37,7 +36,6 @@ Public Class DataTransfererUnitBase
         'Leave method empty
     End Sub
 
-    'This constructor is new. Go over it with the team. 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
         ubDS = MyDataSet
         ubID = LogOnUser
@@ -48,7 +46,7 @@ Public Class DataTransfererUnitBase
 #End Region
 
 #Region "Load Data"
-    Public Sub CreateUnitBaseFromSQL()
+    Public Sub LoadFromSQL()
         Dim refid As Integer
         Dim UnitBaseLoader As String
 
@@ -62,19 +60,19 @@ Public Class DataTransfererUnitBase
         For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
             refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
 
-            UnitBase.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
+            UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
         Next
 
     End Sub 'Create Unit Base objects based on what is saved in EDS
 
-    Public Sub CreateUnitBaseFromExcel()
-        UnitBase.Add(New SST_Unit_Base(ExcelFilePath))
+    Public Sub LoadFromExcel()
+        UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
     End Sub 'Create Unit Base objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
     Public Sub SaveToEDS()
-        For Each ub As SST_Unit_Base In UnitBase
+        For Each ub As SST_Unit_Base In UnitBases
             Dim UnitBaseSaver As String = Common.QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
 
             UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
@@ -84,6 +82,7 @@ Public Class DataTransfererUnitBase
                 UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID]'", "NULL")
             Else
                 UnitBaseSaver = UnitBaseSaver.Replace("[UNIT BASE ID]", ub.unit_base_id.ToString)
+                UnitBaseSaver = UnitBaseSaver.Replace("(SELECT * FROM TEMPORARY)", UpdateUnitBaseDetail(ub))
             End If
             UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
 
@@ -94,51 +93,51 @@ Public Class DataTransfererUnitBase
     Public Sub SaveToExcel()
         Dim ubRow As Integer = 2
 
-        For Each ub As SST_Unit_Base In UnitBase
+        For Each ub As SST_Unit_Base In UnitBases
             LoadNewUnitBase()
             With NewUnitBaseWb
                 .Worksheets("Input").Range("ID").Value = ub.unit_base_id
-                .Worksheets("Input").Range("E").Value = ub.extension_above_grade
-                .Worksheets("Input").Range("D").Value = ub.foundation_depth
-                .Worksheets("Input").Range("F\c").Value = ub.concrete_compressive_strength
-                .Worksheets("Input").Range("ConcreteDensity").Value = ub.dry_concrete_density
-                .Worksheets("Input").Range("Fy").Value = ub.rebar_grade
-                .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = ub.top_and_bottom_rebar_different
-                .Worksheets("Input").Range("BlockFoundationBoolean").Value = ub.block_foundation
-                .Worksheets("Input").Range("RectangularPadBoolean").Value = ub.rectangular_foundation
-                .Worksheets("Input").Range("bpdist").Value = ub.base_plate_distance_above_foundation
-                .Worksheets("Input").Range("BC").Value = ub.bolt_circle_bearing_plate_width
-                .Worksheets("Input").Range("TowerCentroidOffsetBoolean").Value = ub.tower_centroid_offset
-                .Worksheets("Input").Range("shape").Value = ub.pier_shape
-                .Worksheets("Input").Range("dpier").Value = ub.pier_diameter
-                .Worksheets("Input").Range("mc").Value = ub.pier_rebar_quantity
-                .Worksheets("Input").Range("Sc").Value = ub.pier_rebar_size
-                .Worksheets("Input").Range("mt").Value = ub.pier_tie_quantity
-                .Worksheets("Input").Range("St").Value = ub.pier_tie_size
-                .Worksheets("Input").Range("PierReinfType").Value = ub.pier_reinforcement_type
-                .Worksheets("Input").Range("ccpier").Value = ub.pier_clear_cover
-                .Worksheets("Input").Range("W").Value = ub.pad_width_1
-                .Worksheets("Input").Range("W.dir2").Value = ub.pad_width_2
-                .Worksheets("Input").Range("T").Value = ub.pad_thickness
-                .Worksheets("Input").Range("sptop").Value = ub.pad_rebar_size_top_dir1
-                .Worksheets("Input").Range("Sp").Value = ub.pad_rebar_size_bottom_dir1
-                .Worksheets("Input").Range("sptop2").Value = ub.pad_rebar_size_top_dir2
-                .Worksheets("Input").Range("sp_2").Value = ub.pad_rebar_size_bottom_dir2
-                .Worksheets("Input").Range("mptop").Value = ub.pad_rebar_quantity_top_dir1
-                .Worksheets("Input").Range("mp").Value = ub.pad_rebar_quantity_bottom_dir1
-                .Worksheets("Input").Range("mptop2").Value = ub.pad_rebar_quantity_top_dir2
-                .Worksheets("Input").Range("mp_2").Value = ub.pad_rebar_quantity_bottom_dir2
-                .Worksheets("Input").Range("ccpad").Value = ub.pad_clear_cover
-                .Worksheets("Input").Range("γ").Value = ub.total_soil_unit_weight
-                .Worksheets("Input").Range("BearingType").Value = ub.bearing_type 'Add logic to set Ultimate Net Bearing, Qnet: or Ultimate Gross Bearing, Qult:	
-                .Worksheets("Input").Range("Qinput").Value = ub.nominal_bearing_capacity
-                .Worksheets("Input").Range("Cu").Value = ub.cohesion
-                .Worksheets("Input").Range("ϕ").Value = ub.friction_angle
-                .Worksheets("Input").Range("N_blows").Value = ub.spt_blow_count 'Add logic to set this to blank if it is set to nothing or 0
-                .Worksheets("Input").Range("μ").Value = ub.base_friction_factor
-                .Worksheets("Input").Range("N").Value = ub.neglect_depth
-                .Worksheets("Input").Range("Rock").Value = ub.bearing_distribution_type 'Add logic to set to Yes/No
-                .Worksheets("Input").Range("gw").Value = ub.groundwater_depth
+                If Not IsNothing(ub.extension_above_grade) Then .Worksheets("Input").Range("E").Value = ub.extension_above_grade
+                If Not IsNothing(ub.foundation_depth) Then .Worksheets("Input").Range("D").Value = ub.foundation_depth
+                If Not IsNothing(ub.concrete_compressive_strength) Then .Worksheets("Input").Range("F\c").Value = ub.concrete_compressive_strength
+                If Not IsNothing(ub.dry_concrete_density) Then .Worksheets("Input").Range("ConcreteDensity").Value = ub.dry_concrete_density
+                If Not IsNothing(ub.rebar_grade) Then .Worksheets("Input").Range("Fy").Value = ub.rebar_grade
+                If Not IsNothing(ub.top_and_bottom_rebar_different) Then .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = ub.top_and_bottom_rebar_different
+                If Not IsNothing(ub.block_foundation) Then .Worksheets("Input").Range("BlockFoundationBoolean").Value = ub.block_foundation
+                If Not IsNothing(ub.rectangular_foundation) Then .Worksheets("Input").Range("RectangularPadBoolean").Value = ub.rectangular_foundation
+                If Not IsNothing(ub.base_plate_distance_above_foundation) Then .Worksheets("Input").Range("bpdist").Value = ub.base_plate_distance_above_foundation
+                If Not IsNothing(ub.bolt_circle_bearing_plate_width) Then .Worksheets("Input").Range("BC").Value = ub.bolt_circle_bearing_plate_width
+                If Not IsNothing(ub.tower_centroid_offset) Then .Worksheets("Input").Range("TowerCentroidOffsetBoolean").Value = ub.tower_centroid_offset
+                If Not IsNothing(ub.pier_shape) Then .Worksheets("Input").Range("shape").Value = ub.pier_shape
+                If Not IsNothing(ub.pier_diameter) Then .Worksheets("Input").Range("dpier").Value = ub.pier_diameter
+                If Not IsNothing(ub.pier_rebar_quantity) Then .Worksheets("Input").Range("mc").Value = ub.pier_rebar_quantity
+                If Not IsNothing(ub.pier_rebar_size) Then .Worksheets("Input").Range("Sc").Value = ub.pier_rebar_size
+                If Not IsNothing(ub.pier_tie_quantity) Then .Worksheets("Input").Range("mt").Value = ub.pier_tie_quantity
+                If Not IsNothing(ub.pier_tie_size) Then .Worksheets("Input").Range("St").Value = ub.pier_tie_size
+                If Not IsNothing(ub.pier_reinforcement_type) Then .Worksheets("Input").Range("PierReinfType").Value = ub.pier_reinforcement_type
+                If Not IsNothing(ub.pier_clear_cover) Then .Worksheets("Input").Range("ccpier").Value = ub.pier_clear_cover
+                If Not IsNothing(ub.pad_width_1) Then .Worksheets("Input").Range("W").Value = ub.pad_width_1
+                If Not IsNothing(ub.pad_width_2) Then .Worksheets("Input").Range("W.dir2").Value = ub.pad_width_2
+                If Not IsNothing(ub.pad_thickness) Then .Worksheets("Input").Range("T").Value = ub.pad_thickness
+                If Not IsNothing(ub.pad_rebar_size_top_dir1) Then .Worksheets("Input").Range("sptop").Value = ub.pad_rebar_size_top_dir1
+                If Not IsNothing(ub.pad_rebar_size_bottom_dir1) Then .Worksheets("Input").Range("Sp").Value = ub.pad_rebar_size_bottom_dir1
+                If Not IsNothing(ub.pad_rebar_size_top_dir2) Then .Worksheets("Input").Range("sptop2").Value = ub.pad_rebar_size_top_dir2
+                If Not IsNothing(ub.pad_rebar_size_bottom_dir2) Then .Worksheets("Input").Range("sp_2").Value = ub.pad_rebar_size_bottom_dir2
+                If Not IsNothing(ub.pad_rebar_quantity_top_dir1) Then .Worksheets("Input").Range("mptop").Value = ub.pad_rebar_quantity_top_dir1
+                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir1) Then .Worksheets("Input").Range("mp").Value = ub.pad_rebar_quantity_bottom_dir1
+                If Not IsNothing(ub.pad_rebar_quantity_top_dir2) Then .Worksheets("Input").Range("mptop2").Value = ub.pad_rebar_quantity_top_dir2
+                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir2) Then .Worksheets("Input").Range("mp_2").Value = ub.pad_rebar_quantity_bottom_dir2
+                If Not IsNothing(ub.pad_clear_cover) Then .Worksheets("Input").Range("ccpad").Value = ub.pad_clear_cover
+                If Not IsNothing(ub.total_soil_unit_weight) Then .Worksheets("Input").Range("γ").Value = ub.total_soil_unit_weight
+                If Not IsNothing(ub.bearing_type) Then .Worksheets("Input").Range("BearingType").Value = ub.bearing_type
+                If Not IsNothing(ub.nominal_bearing_capacity) Then .Worksheets("Input").Range("Qinput").Value = ub.nominal_bearing_capacity
+                If Not IsNothing(ub.cohesion) Then .Worksheets("Input").Range("Cu").Value = ub.cohesion
+                If Not IsNothing(ub.friction_angle) Then .Worksheets("Input").Range("ϕ").Value = ub.friction_angle
+                If Not IsNothing(ub.spt_blow_count) Then .Worksheets("Input").Range("N_blows").Value = ub.spt_blow_count
+                If Not IsNothing(ub.base_friction_factor) Then .Worksheets("Input").Range("μ").Value = ub.base_friction_factor
+                If Not IsNothing(ub.neglect_depth) Then .Worksheets("Input").Range("N").Value = ub.neglect_depth
+                If ub.bearing_distribution_type = False Then .Worksheets("Input").Range("Rock").Value = "Yes" Else .Worksheets("Input").Range("Rock").Value = "No"
+                If ub.groundwater_depth = -1 Then .Worksheets("Input").Range("gw").Value = "N/A" Else .Worksheets("Input").Range("gw").Value = ub.groundwater_depth 'If -1 then set to N/A
                 'Seismic design category
                 'TIA
                 'BU
@@ -214,47 +213,47 @@ Public Class DataTransfererUnitBase
         Dim insertString As String = ""
 
         insertString += "@FndID"
-        insertString += "," & "'" & ub.pier_shape.ToString & "'"
-        insertString += "," & ub.pier_diameter.ToString
-        insertString += "," & ub.extension_above_grade.ToString
-        insertString += "," & ub.pier_rebar_size.ToString
-        insertString += "," & ub.pier_tie_size.ToString
-        insertString += "," & ub.pier_tie_quantity.ToString
-        insertString += "," & "'" & ub.pier_reinforcement_type.ToString & "'"
-        insertString += "," & ub.pier_clear_cover.ToString
-        insertString += "," & ub.foundation_depth.ToString
-        insertString += "," & ub.pad_width_1.ToString
-        insertString += "," & ub.pad_width_2.ToString
-        insertString += "," & ub.pad_thickness.ToString
-        insertString += "," & ub.pad_rebar_size_top_dir1.ToString
-        insertString += "," & ub.pad_rebar_size_bottom_dir1.ToString
-        insertString += "," & ub.pad_rebar_size_top_dir2.ToString
-        insertString += "," & ub.pad_rebar_size_bottom_dir2.ToString
-        insertString += "," & ub.pad_rebar_quantity_top_dir1.ToString
-        insertString += "," & ub.pad_rebar_quantity_bottom_dir1.ToString
-        insertString += "," & ub.pad_rebar_quantity_top_dir2.ToString
-        insertString += "," & ub.pad_rebar_quantity_bottom_dir2.ToString
-        insertString += "," & ub.pad_clear_cover.ToString
-        insertString += "," & ub.rebar_grade.ToString
-        insertString += "," & ub.concrete_compressive_strength.ToString
-        insertString += "," & ub.dry_concrete_density.ToString
-        insertString += "," & ub.total_soil_unit_weight.ToString
-        insertString += "," & "'" & ub.bearing_type.ToString & "'"
-        insertString += "," & ub.nominal_bearing_capacity.ToString
-        insertString += "," & ub.cohesion.ToString
-        insertString += "," & ub.friction_angle.ToString
-        insertString += "," & ub.spt_blow_count.ToString
-        insertString += "," & ub.base_friction_factor.ToString
-        insertString += "," & ub.neglect_depth.ToString
-        insertString += "," & "'" & ub.bearing_distribution_type.ToString & "'"
-        insertString += "," & ub.groundwater_depth.ToString
-        insertString += "," & "'" & ub.top_and_bottom_rebar_different.ToString & "'"
-        insertString += "," & "'" & ub.block_foundation.ToString & "'"
-        insertString += "," & "'" & ub.rectangular_foundation.ToString & "'"
-        insertString += "," & ub.base_plate_distance_above_foundation.ToString
-        insertString += "," & ub.bolt_circle_bearing_plate_width.ToString
-        insertString += "," & "'" & ub.tower_centroid_offset.ToString & "'"
-        insertString += "," & ub.pier_rebar_quantity.ToString
+        insertString += "," & IIf(IsNothing(ub.pier_shape), "Null", "'" & ub.pier_shape.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.pier_diameter), "Null", ub.pier_diameter.ToString)
+        insertString += "," & IIf(IsNothing(ub.extension_above_grade), "Null", ub.extension_above_grade.ToString)
+        insertString += "," & IIf(IsNothing(ub.pier_rebar_size), "Null", ub.pier_rebar_size.ToString)
+        insertString += "," & IIf(IsNothing(ub.pier_tie_size), "Null", ub.pier_tie_size.ToString)
+        insertString += "," & IIf(IsNothing(ub.pier_tie_quantity), "Null", ub.pier_tie_quantity.ToString)
+        insertString += "," & IIf(IsNothing(ub.pier_reinforcement_type), "Null", "'" & ub.pier_reinforcement_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.pier_clear_cover), "Null", ub.pier_clear_cover.ToString)
+        insertString += "," & IIf(IsNothing(ub.foundation_depth), "Null", ub.foundation_depth.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_width_1), "Null", ub.pad_width_1.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_width_2), "Null", ub.pad_width_2.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_thickness), "Null", ub.pad_thickness.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_size_top_dir1), "Null", ub.pad_rebar_size_top_dir1.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_size_bottom_dir1), "Null", ub.pad_rebar_size_bottom_dir1.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_size_top_dir2), "Null", ub.pad_rebar_size_top_dir2.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_size_bottom_dir2), "Null", ub.pad_rebar_size_bottom_dir2.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_quantity_top_dir1), "Null", ub.pad_rebar_quantity_top_dir1.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_quantity_bottom_dir1), "Null", ub.pad_rebar_quantity_bottom_dir1.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_quantity_top_dir2), "Null", ub.pad_rebar_quantity_top_dir2.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_rebar_quantity_bottom_dir2), "Null", ub.pad_rebar_quantity_bottom_dir2.ToString)
+        insertString += "," & IIf(IsNothing(ub.pad_clear_cover), "Null", ub.pad_clear_cover.ToString)
+        insertString += "," & IIf(IsNothing(ub.rebar_grade), "Null", ub.rebar_grade.ToString)
+        insertString += "," & IIf(IsNothing(ub.concrete_compressive_strength), "Null", ub.concrete_compressive_strength.ToString)
+        insertString += "," & IIf(IsNothing(ub.dry_concrete_density), "Null", ub.dry_concrete_density.ToString)
+        insertString += "," & IIf(IsNothing(ub.total_soil_unit_weight), "Null", ub.total_soil_unit_weight.ToString)
+        insertString += "," & IIf(IsNothing(ub.bearing_type), "Null", "'" & ub.bearing_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.nominal_bearing_capacity), "Null", ub.nominal_bearing_capacity.ToString)
+        insertString += "," & IIf(IsNothing(ub.cohesion), "Null", ub.cohesion.ToString)
+        insertString += "," & IIf(IsNothing(ub.friction_angle), "Null", ub.friction_angle.ToString)
+        insertString += "," & IIf(IsNothing(ub.spt_blow_count), "Null", ub.spt_blow_count.ToString)
+        insertString += "," & IIf(IsNothing(ub.base_friction_factor), "Null", ub.base_friction_factor.ToString)
+        insertString += "," & IIf(IsNothing(ub.neglect_depth), "Null", ub.neglect_depth.ToString)
+        insertString += "," & IIf(IsNothing(ub.bearing_distribution_type), "Null", "'" & ub.bearing_distribution_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.groundwater_depth), "Null", ub.groundwater_depth.ToString) '*******
+        insertString += "," & IIf(IsNothing(ub.top_and_bottom_rebar_different), "Null", "'" & ub.top_and_bottom_rebar_different.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.block_foundation), "Null", "'" & ub.block_foundation.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.rectangular_foundation), "Null", "'" & ub.rectangular_foundation.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.base_plate_distance_above_foundation), "Null", ub.base_plate_distance_above_foundation.ToString)
+        insertString += "," & IIf(IsNothing(ub.bolt_circle_bearing_plate_width), "Null", ub.bolt_circle_bearing_plate_width.ToString)
+        insertString += "," & IIf(IsNothing(ub.tower_centroid_offset), "Null", "'" & ub.tower_centroid_offset.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.pier_rebar_quantity), "Null", ub.pier_rebar_quantity.ToString)
 
         Return insertString
     End Function
@@ -265,47 +264,47 @@ Public Class DataTransfererUnitBase
         Dim updateString As String = ""
 
         updateString += "UPDATE unit_base_details SET "
-        updateString += "extension_above_grade=" & ub.extension_above_grade.ToString
-        updateString += ", foundation_depth=" & ub.foundation_depth.ToString
-        updateString += ", concrete_compressive_strength=" & ub.concrete_compressive_strength.ToString
-        updateString += ", dry_concrete_density=" & ub.dry_concrete_density.ToString
-        updateString += ", rebar_grade=" & ub.rebar_grade.ToString
-        updateString += ", top_and_bottom_rebar_different=" & "'" & ub.top_and_bottom_rebar_different.ToString & "'"
-        updateString += ", block_foundation=" & "'" & ub.block_foundation.ToString & "'"
-        updateString += ", rectangular_foundation=" & "'" & ub.rectangular_foundation.ToString & "'"
-        updateString += ", base_plate_distance_above_foundation=" & ub.base_plate_distance_above_foundation.ToString
-        updateString += ", bolt_circle_bearing_plate_width=" & ub.bolt_circle_bearing_plate_width.ToString
-        updateString += ", tower_centroid_offset=" & "'" & ub.tower_centroid_offset.ToString & "'"
-        updateString += ", pier_shape=" & "'" & ub.pier_shape.ToString & "'"
-        updateString += ", pier_diameter=" & ub.pier_diameter.ToString
-        updateString += ", pier_rebar_quantity=" & ub.pier_rebar_quantity.ToString
-        updateString += ", pier_rebar_size=" & ub.pier_rebar_size.ToString
-        updateString += ", pier_tie_quantity=" & ub.pier_tie_quantity.ToString
-        updateString += ", pier_tie_size=" & ub.pier_tie_size.ToString
-        updateString += ", pier_reinforcement_type=" & "'" & ub.pier_reinforcement_type.ToString & "'"
-        updateString += ", pier_clear_cover=" & ub.pier_clear_cover.ToString
-        updateString += ", pad_width_2=" & ub.pad_width_2.ToString
-        updateString += ", pad_thickness=" & ub.pad_thickness.ToString
-        updateString += ", pad_rebar_size_top_dir1=" & ub.pad_rebar_size_top_dir1.ToString
-        updateString += ", pad_rebar_size_bottom_dir1=" & ub.pad_rebar_size_bottom_dir1.ToString
-        updateString += ", pad_rebar_size_top_dir2=" & ub.pad_rebar_size_top_dir2.ToString
-        updateString += ", pad_rebar_size_bottom_dir2=" & ub.pad_rebar_size_bottom_dir2.ToString
-        updateString += ", pad_rebar_quantity_top_dir1=" & ub.pad_rebar_quantity_top_dir1.ToString
-        updateString += ", pad_rebar_quantity_bottom_dir1=" & ub.pad_rebar_quantity_bottom_dir1.ToString
-        updateString += ", pad_rebar_quantity_top_dir2=" & ub.pad_rebar_quantity_top_dir2.ToString
-        updateString += ", pad_rebar_quantity_bottom_dir2=" & ub.pad_rebar_quantity_bottom_dir2.ToString
-        updateString += ", pad_clear_cover=" & ub.pad_clear_cover.ToString
-        updateString += ", total_soil_unit_weight=" & ub.total_soil_unit_weight.ToString
-        updateString += ", pad_width_1=" & ub.pad_width_1.ToString
-        updateString += ", bearing_type=" & "'" & ub.bearing_type.ToString & "'"
-        updateString += ", nominal_bearing_capacity=" & ub.nominal_bearing_capacity.ToString
-        updateString += ", cohesion=" & ub.cohesion.ToString
-        updateString += ", friction_angle=" & ub.friction_angle.ToString
-        updateString += ", spt_blow_count=" & ub.spt_blow_count.ToString
-        updateString += ", base_friction_factor=" & ub.base_friction_factor.ToString
-        updateString += ", neglect_depth=" & ub.neglect_depth.ToString
-        updateString += ", bearing_distribution_type=" & "'" & ub.bearing_distribution_type.ToString & "'"
-        updateString += ", groundwater_depth=" & ub.groundwater_depth.ToString
+        updateString += "extension_above_grade=" & IIf(IsNothing(ub.extension_above_grade), "Null", ub.extension_above_grade.ToString)
+        updateString += ", foundation_depth=" & IIf(IsNothing(ub.foundation_depth), "Null", ub.foundation_depth.ToString)
+        updateString += ", concrete_compressive_strength=" & IIf(IsNothing(ub.concrete_compressive_strength), "Null", ub.concrete_compressive_strength.ToString)
+        updateString += ", dry_concrete_density=" & IIf(IsNothing(ub.dry_concrete_density), "Null", ub.dry_concrete_density.ToString)
+        updateString += ", rebar_grade=" & IIf(IsNothing(ub.rebar_grade), "Null", ub.rebar_grade.ToString)
+        updateString += ", top_and_bottom_rebar_different=" & IIf(IsNothing(ub.top_and_bottom_rebar_different), "Null", "'" & ub.top_and_bottom_rebar_different.ToString & "'")
+        updateString += ", block_foundation=" & IIf(IsNothing(ub.block_foundation), "Null", "'" & ub.block_foundation.ToString & "'")
+        updateString += ", rectangular_foundation=" & IIf(IsNothing(ub.rectangular_foundation), "Null", "'" & ub.rectangular_foundation.ToString & "'")
+        updateString += ", base_plate_distance_above_foundation=" & IIf(IsNothing(ub.base_plate_distance_above_foundation), "Null", ub.base_plate_distance_above_foundation.ToString)
+        updateString += ", bolt_circle_bearing_plate_width=" & IIf(IsNothing(ub.bolt_circle_bearing_plate_width), "Null", ub.bolt_circle_bearing_plate_width.ToString)
+        updateString += ", tower_centroid_offset=" & IIf(IsNothing(ub.tower_centroid_offset), "Null", "'" & ub.tower_centroid_offset.ToString & "'")
+        updateString += ", pier_shape=" & IIf(IsNothing(ub.pier_shape), "Null", "'" & ub.pier_shape.ToString & "'")
+        updateString += ", pier_diameter=" & IIf(IsNothing(ub.pier_diameter), "Null", ub.pier_diameter.ToString)
+        updateString += ", pier_rebar_quantity=" & IIf(IsNothing(ub.pier_rebar_quantity), "Null", ub.pier_rebar_quantity.ToString)
+        updateString += ", pier_rebar_size=" & IIf(IsNothing(ub.pier_rebar_size), "Null", ub.pier_rebar_size.ToString)
+        updateString += ", pier_tie_quantity=" & IIf(IsNothing(ub.pier_tie_quantity), "Null", ub.pier_tie_quantity.ToString)
+        updateString += ", pier_tie_size=" & IIf(IsNothing(ub.pier_tie_size), "Null", ub.pier_tie_size.ToString)
+        updateString += ", pier_reinforcement_type=" & IIf(IsNothing(ub.pier_reinforcement_type), "Null", "'" & ub.pier_reinforcement_type.ToString & "'")
+        updateString += ", pier_clear_cover=" & IIf(IsNothing(ub.pier_clear_cover), "Null", ub.pier_clear_cover.ToString)
+        updateString += ", pad_width_2=" & IIf(IsNothing(ub.pad_width_2), "Null", ub.pad_width_2.ToString)
+        updateString += ", pad_thickness=" & IIf(IsNothing(ub.pad_thickness), "Null", ub.pad_thickness.ToString)
+        updateString += ", pad_rebar_size_top_dir1=" & IIf(IsNothing(ub.pad_rebar_size_top_dir1), "Null", ub.pad_rebar_size_top_dir1.ToString)
+        updateString += ", pad_rebar_size_bottom_dir1=" & IIf(IsNothing(ub.pad_rebar_size_bottom_dir1), "Null", ub.pad_rebar_size_bottom_dir1.ToString)
+        updateString += ", pad_rebar_size_top_dir2=" & IIf(IsNothing(ub.pad_rebar_size_top_dir2), "Null", ub.pad_rebar_size_top_dir2.ToString)
+        updateString += ", pad_rebar_size_bottom_dir2=" & IIf(IsNothing(ub.pad_rebar_size_bottom_dir2), "Null", ub.pad_rebar_size_bottom_dir2.ToString)
+        updateString += ", pad_rebar_quantity_top_dir1=" & IIf(IsNothing(ub.pad_rebar_quantity_top_dir1), "Null", ub.pad_rebar_quantity_top_dir1.ToString)
+        updateString += ", pad_rebar_quantity_bottom_dir1=" & IIf(IsNothing(ub.pad_rebar_quantity_bottom_dir1), "Null", ub.pad_rebar_quantity_bottom_dir1.ToString)
+        updateString += ", pad_rebar_quantity_top_dir2=" & IIf(IsNothing(ub.pad_rebar_quantity_top_dir2), "Null", ub.pad_rebar_quantity_top_dir2.ToString)
+        updateString += ", pad_rebar_quantity_bottom_dir2=" & IIf(IsNothing(ub.pad_rebar_quantity_bottom_dir2), "Null", ub.pad_rebar_quantity_bottom_dir2.ToString)
+        updateString += ", pad_clear_cover=" & IIf(IsNothing(ub.pad_clear_cover), "Null", ub.pad_clear_cover.ToString)
+        updateString += ", total_soil_unit_weight=" & IIf(IsNothing(ub.total_soil_unit_weight), "Null", ub.total_soil_unit_weight.ToString)
+        updateString += ", pad_width_1=" & IIf(IsNothing(ub.pad_width_1), "Null", ub.pad_width_1.ToString)
+        updateString += ", bearing_type=" & IIf(IsNothing(ub.bearing_type), "Null", "'" & ub.bearing_type.ToString & "'")
+        updateString += ", nominal_bearing_capacity=" & IIf(IsNothing(ub.nominal_bearing_capacity), "Null", ub.nominal_bearing_capacity.ToString)
+        updateString += ", cohesion=" & IIf(IsNothing(ub.cohesion), "Null", ub.cohesion.ToString)
+        updateString += ", friction_angle=" & IIf(IsNothing(ub.friction_angle), "Null", ub.friction_angle.ToString)
+        updateString += ", spt_blow_count=" & IIf(IsNothing(ub.spt_blow_count), "Null", ub.spt_blow_count.ToString)
+        updateString += ", base_friction_factor=" & IIf(IsNothing(ub.base_friction_factor), "Null", ub.base_friction_factor.ToString)
+        updateString += ", neglect_depth=" & IIf(IsNothing(ub.neglect_depth), "Null", ub.neglect_depth.ToString)
+        updateString += ", bearing_distribution_type=" & IIf(IsNothing(ub.bearing_distribution_type), "Null", "'" & ub.bearing_distribution_type.ToString & "'")
+        updateString += ", groundwater_depth=" & IIf(IsNothing(ub.groundwater_depth), "Null", ub.groundwater_depth.ToString)
         updateString += " WHERE ID=" & ub.unit_base_id & vbNewLine
 
         Return updateString
@@ -315,7 +314,7 @@ Public Class DataTransfererUnitBase
 #Region "General"
     Public Sub Clear()
         ExcelFilePath = ""
-        UnitBase.Clear()
+        UnitBases.Clear()
     End Sub
 
     Private Function UnitBaseSQLDataTables() As List(Of SQLParameter)

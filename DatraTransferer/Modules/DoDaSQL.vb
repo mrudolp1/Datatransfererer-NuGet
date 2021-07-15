@@ -8,7 +8,7 @@ Module DoDaSQL
 
 #Region "Main SQL Functions"
     <DebuggerStepThrough()>
-    Function sqlLoader(ByVal SQLCommand As String, ByVal SQLSource As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+    Public Function sqlLoader(ByVal SQLCommand As String, ByVal SQLSource As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
         ClearDataTable(SQLSource, SaveToDataSet)
         Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
             sqlCon = New SqlConnection(ActiveDatabase)
@@ -31,7 +31,7 @@ Module DoDaSQL
     End Function
 
     <DebuggerStepThrough()>
-    Function sqlSender(ByVal SQLCommand As String, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+    Public Function sqlSender(ByVal SQLCommand As String, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
         Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
             sqlCon = New SqlConnection(ActiveDatabase)
             Dim sqlCmd = New SqlCommand(SQLCommand, sqlCon)
@@ -54,7 +54,7 @@ Module DoDaSQL
 #End Region
 
     <DebuggerStepThrough()>
-    Private Function token(s As String) As String
+    Public Function token(s As String) As String
         Dim m As String = ""
         For x As Integer = 0 To 1000
             Try
