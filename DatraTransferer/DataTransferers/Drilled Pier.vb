@@ -43,7 +43,7 @@ Partial Public Class DataTransfererDrilledPier
 #End Region
 
 #Region "Load Data"
-    Public Sub LoadFromSQL()
+    Public Sub LoadFromEDS()
         Dim refid As Integer
 
         Dim DrilledPierLoader As String
@@ -630,19 +630,6 @@ Partial Public Class DataTransfererDrilledPier
 
         Return MyParameters
     End Function
-
-    'Private Function DrilledPierExcelRngParameters() As List(Of EXCELRngParameter)
-    '    Dim MyParameters As New List(Of EXCELRngParameter)
-
-    '    '''''''myLst.Add(New EXCELRngParameter("B2", "Sheet1", "myval3"))
-    '    '''''''myLst.Add(New EXCELRngParameter("B20", "Sheet1", "myval2"))
-    '    '''''''myLst.Add(New EXCELRngParameter("B19", "Sheet2", "myval1"))
-    '    '''''''myLst.Add(New EXCELRngParameter("test_value", "soil_layer_Count"))
-
-    '    Return MyParameters
-    'End Function
 #End Region
 
-
 End Class
-

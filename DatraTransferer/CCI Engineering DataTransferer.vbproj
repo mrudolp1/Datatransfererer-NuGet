@@ -14,9 +14,9 @@
     <StartupObject></StartupObject>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <FileVersion>1.0.0.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -130,7 +130,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CCI_Engineering_Templates" Version="1.0.12" />
+    <PackageReference Include="CCI_Engineering_Templates" Version="1.0.24" />
   </ItemGroup>
 
 </Project>

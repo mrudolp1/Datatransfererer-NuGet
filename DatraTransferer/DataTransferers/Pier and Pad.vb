@@ -43,7 +43,7 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "Load Data"
-    Public Sub LoadFromSQL()
+    Public Sub LoadFromEDS()
         Dim refid As Integer
         Dim PierAndPadLoader As String
 
@@ -88,66 +88,246 @@ Partial Public Class DataTransfererPierandPad
             sqlSender(PierAndPadSaver, ppDB, ppID, "0")
         Next
     End Sub
+
     Public Sub SaveToExcel()
-        Dim ppRow As Integer = 3
+        For Each pp As Pier_and_Pad In PierAndPads
+            'MRP 7/20/21 - clear contents in Excel if object value is nothing (NULL from SQL). If multiple objects exist within the list and values are not cleared, values from another instance of the object may remain populated in the latest tool
+            LoadNewPierAndPad()
 
-        LoadNewPierAndPad()
+            With NewPierAndPadWb
+                .Worksheets("Input").Range("ID").Value = CType(pp.pp_id, Integer)
+                If Not IsNothing(pp.pier_shape) Then
+                    .Worksheets("Input").Range("shape").Value = pp.pier_shape
+                End If
 
-        With NewPierAndPadWb
-            For Each pp As Pier_and_Pad In PierAndPads
-                .Worksheets("Input").Range("ID").Value = pp.pp_id
-                If Not IsNothing(pp.pier_shape) Then .Worksheets("Input").Range("shape").Value = pp.pier_shape
-                If Not IsNothing(pp.pier_diameter) Then .Worksheets("Input").Range("dpier").Value = pp.pier_diameter
-                If Not IsNothing(pp.extension_above_grade) Then .Worksheets("Input").Range("E").Value = pp.extension_above_grade
-                If Not IsNothing(pp.pier_rebar_size) Then .Worksheets("Input").Range("Sc").Value = pp.pier_rebar_size
-                If Not IsNothing(pp.pier_rebar_quantity) Then .Worksheets("Input").Range("mc").Value = pp.pier_rebar_quantity
-                If Not IsNothing(pp.pier_tie_size) Then .Worksheets("Input").Range("St").Value = pp.pier_tie_size
-                If Not IsNothing(pp.pier_tie_quantity) Then .Worksheets("Input").Range("mt").Value = pp.pier_tie_quantity
-                If Not IsNothing(pp.pier_reinforcement_type) Then .Worksheets("Input").Range("PierReinfType").Value = pp.pier_reinforcement_type
-                If Not IsNothing(pp.pier_clear_cover) Then .Worksheets("Input").Range("ccpier").Value = pp.pier_clear_cover
-                If Not IsNothing(pp.foundation_depth) Then .Worksheets("Input").Range("D").Value = pp.foundation_depth
-                If Not IsNothing(pp.pad_width_1) Then .Worksheets("Input").Range("W").Value = pp.pad_width_1
-                If Not IsNothing(pp.pad_width_2) Then .Worksheets("Input").Range("W.dir2").Value = pp.pad_width_2
-                If Not IsNothing(pp.pad_thickness) Then .Worksheets("Input").Range("T").Value = pp.pad_thickness
-                If Not IsNothing(pp.pad_rebar_size_top_dir1) Then .Worksheets("Input").Range("sptop").Value = pp.pad_rebar_size_top_dir1
-                If Not IsNothing(pp.pad_rebar_size_bottom_dir1) Then .Worksheets("Input").Range("Sp").Value = pp.pad_rebar_size_bottom_dir1
-                If Not IsNothing(pp.pad_rebar_size_top_dir2) Then .Worksheets("Input").Range("sptop2").Value = pp.pad_rebar_size_top_dir2
-                If Not IsNothing(pp.pad_rebar_size_bottom_dir2) Then .Worksheets("Input").Range("sp_2").Value = pp.pad_rebar_size_bottom_dir2
-                If Not IsNothing(pp.pad_rebar_quantity_top_dir1) Then .Worksheets("Input").Range("mptop").Value = pp.pad_rebar_quantity_top_dir1
-                If Not IsNothing(pp.pad_rebar_quantity_bottom_dir1) Then .Worksheets("Input").Range("mp").Value = pp.pad_rebar_quantity_bottom_dir1
-                If Not IsNothing(pp.pad_rebar_quantity_top_dir2) Then .Worksheets("Input").Range("mptop2").Value = pp.pad_rebar_quantity_top_dir2
-                If Not IsNothing(pp.pad_rebar_quantity_bottom_dir2) Then .Worksheets("Input").Range("mp_2").Value = pp.pad_rebar_quantity_bottom_dir2
-                If Not IsNothing(pp.pad_clear_cover) Then .Worksheets("Input").Range("ccpad").Value = pp.pad_clear_cover
-                If Not IsNothing(pp.rebar_grade) Then .Worksheets("Input").Range("Fy").Value = pp.rebar_grade
-                If Not IsNothing(pp.concrete_compressive_strength) Then .Worksheets("Input").Range("F\c").Value = pp.concrete_compressive_strength
-                If Not IsNothing(pp.dry_concrete_density) Then .Worksheets("Input").Range("ConcreteDensity").Value = pp.dry_concrete_density
-                If Not IsNothing(pp.total_soil_unit_weight) Then .Worksheets("Input").Range("γ").Value = pp.total_soil_unit_weight
-                If Not IsNothing(pp.bearing_type) Then .Worksheets("Input").Range("BearingType").Value = pp.bearing_type
-                If Not IsNothing(pp.nominal_bearing_capacity) Then .Worksheets("Input").Range("Qinput").Value = pp.nominal_bearing_capacity
-                If Not IsNothing(pp.cohesion) Then .Worksheets("Input").Range("Cu").Value = pp.cohesion
-                If Not IsNothing(pp.friction_angle) Then .Worksheets("Input").Range("ϕ").Value = pp.friction_angle
-                If Not IsNothing(pp.spt_blow_count) Then .Worksheets("Input").Range("N_blows").Value = pp.spt_blow_count
-                If Not IsNothing(pp.base_friction_factor) Then .Worksheets("Input").Range("μ").Value = pp.base_friction_factor
-                If Not IsNothing(pp.neglect_depth) Then .Worksheets("Input").Range("N").Value = pp.neglect_depth
+                If Not IsNothing(pp.pier_diameter) Then
+                    .Worksheets("Input").Range("dpier").Value = CType(pp.pier_diameter, Double)
+                Else
+                    .Worksheets("Input").Range("dpier").ClearContents
+                End If
+
+                If Not IsNothing(pp.extension_above_grade) Then
+                    .Worksheets("Input").Range("E").Value = CType(pp.extension_above_grade, Double)
+                Else
+                    .Worksheets("Input").Range("E").ClearContents
+                End If
+
+                If Not IsNothing(pp.pier_rebar_size) Then
+                    .Worksheets("Input").Range("Sc").Value = CType(pp.pier_rebar_size, Integer)
+                Else
+                    .Worksheets("Input").Range("Sc").ClearContents
+                End If
+
+                If Not IsNothing(pp.pier_rebar_quantity) Then
+                    .Worksheets("Input").Range("mc").Value = CType(pp.pier_rebar_quantity, Integer)
+                Else
+                    .Worksheets("Input").Range("mc").ClearContents
+                End If
+
+                If Not IsNothing(pp.pier_tie_size) Then
+                    .Worksheets("Input").Range("St").Value = CType(pp.pier_tie_size, Integer)
+                Else
+                    .Worksheets("Input").Range("St").ClearContents
+                End If
+
+                If Not IsNothing(pp.pier_tie_quantity) Then
+                    .Worksheets("Input").Range("mt").Value = CType(pp.pier_tie_quantity, Integer)
+                Else
+                    .Worksheets("Input").Range("mt").ClearContents
+                End If
+
+                If Not IsNothing(pp.pier_reinforcement_type) Then
+                    .Worksheets("Input").Range("PierReinfType").Value = pp.pier_reinforcement_type
+                End If
+
+                If Not IsNothing(pp.pier_clear_cover) Then
+                    .Worksheets("Input").Range("ccpier").Value = CType(pp.pier_clear_cover, Double)
+                Else
+                    .Worksheets("Input").Range("ccpier").ClearContents
+                End If
+
+                If Not IsNothing(pp.foundation_depth) Then
+                    .Worksheets("Input").Range("D").Value = CType(pp.foundation_depth, Double)
+                Else
+                    .Worksheets("Input").Range("D").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_width_1) Then
+                    .Worksheets("Input").Range("W").Value = CType(pp.pad_width_1, Double)
+                Else
+                    .Worksheets("Input").Range("W").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_width_2) Then
+                    .Worksheets("Input").Range("W.dir2").Value = CType(pp.pad_width_2, Double)
+                Else
+                    .Worksheets("Input").Range("W.dir2").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_thickness) Then
+                    .Worksheets("Input").Range("T").Value = CType(pp.pad_thickness, Double)
+                Else
+                    .Worksheets("Input").Range("T").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_size_top_dir1) Then
+                    .Worksheets("Input").Range("sptop").Value = CType(pp.pad_rebar_size_top_dir1, Integer)
+                Else
+                    .Worksheets("Input").Range("sptop").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_size_bottom_dir1) Then
+                    .Worksheets("Input").Range("Sp").Value = CType(pp.pad_rebar_size_bottom_dir1, Integer)
+                Else
+                    .Worksheets("Input").Range("Sp").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_size_top_dir2) Then
+                    .Worksheets("Input").Range("sptop2").Value = CType(pp.pad_rebar_size_top_dir2, Integer)
+                Else
+                    .Worksheets("Input").Range("sptop2").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_size_bottom_dir2) Then
+                    .Worksheets("Input").Range("sp_2").Value = CType(pp.pad_rebar_size_bottom_dir2, Integer)
+                Else
+                    .Worksheets("Input").Range("sp_2").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_quantity_top_dir1) Then
+                    .Worksheets("Input").Range("mptop").Value = CType(pp.pad_rebar_quantity_top_dir1, Integer)
+                Else
+                    .Worksheets("Input").Range("mptop").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_quantity_bottom_dir1) Then
+                    .Worksheets("Input").Range("mp").Value = CType(pp.pad_rebar_quantity_bottom_dir1, Integer)
+                Else
+                    .Worksheets("Input").Range("mp").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_quantity_top_dir2) Then
+                    .Worksheets("Input").Range("mptop2").Value = CType(pp.pad_rebar_quantity_top_dir2, Integer)
+                Else
+                    .Worksheets("Input").Range("mptop2").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_rebar_quantity_bottom_dir2) Then
+                    .Worksheets("Input").Range("mp_2").Value = CType(pp.pad_rebar_quantity_bottom_dir2, Integer)
+                Else
+                    .Worksheets("Input").Range("mp_2").ClearContents
+                End If
+
+                If Not IsNothing(pp.pad_clear_cover) Then
+                    .Worksheets("Input").Range("ccpad").Value = CType(pp.pad_clear_cover, Double)
+                Else
+                    .Worksheets("Input").Range("ccpad").ClearContents
+                End If
+
+                If Not IsNothing(pp.rebar_grade) Then
+                    .Worksheets("Input").Range("Fy").Value = CType(pp.rebar_grade, Double)
+                Else
+                    .Worksheets("Input").Range("Fy").ClearContents
+                End If
+
+                If Not IsNothing(pp.concrete_compressive_strength) Then
+                    .Worksheets("Input").Range("F\c").Value = CType(pp.concrete_compressive_strength, Double)
+                Else
+                    .Worksheets("Input").Range("F\c").ClearContents
+                End If
+
+                If Not IsNothing(pp.dry_concrete_density) Then
+                    .Worksheets("Input").Range("ConcreteDensity").Value = CType(pp.dry_concrete_density, Double)
+                Else
+                    .Worksheets("Input").Range("ConcreteDensity").ClearContents
+                End If
+
+                If Not IsNothing(pp.total_soil_unit_weight) Then
+                    .Worksheets("Input").Range("γ").Value = CType(pp.total_soil_unit_weight, Double)
+                Else
+                    .Worksheets("Input").Range("γ").ClearContents
+                End If
+
+                If Not IsNothing(pp.bearing_type) Then
+                    .Worksheets("Input").Range("BearingType").Value = pp.bearing_type
+                Else
+                    .Worksheets("Input").Range("BearingType").ClearContents
+                End If
+
+                If Not IsNothing(pp.nominal_bearing_capacity) Then
+                    .Worksheets("Input").Range("Qinput").Value = CType(pp.nominal_bearing_capacity, Double)
+                Else
+                    .Worksheets("Input").Range("Qinput").ClearContents
+                End If
+
+                If Not IsNothing(pp.cohesion) Then
+                    .Worksheets("Input").Range("Cu").Value = CType(pp.cohesion, Double)
+                Else
+                    .Worksheets("Input").Range("Cu").ClearContents
+                End If
+
+                If Not IsNothing(pp.friction_angle) Then
+                    .Worksheets("Input").Range("ϕ").Value = CType(pp.friction_angle, Double)
+                Else
+                    .Worksheets("Input").Range("ϕ").ClearContents
+                End If
+
+                If Not IsNothing(pp.spt_blow_count) Then
+                    .Worksheets("Input").Range("N_blows").Value = CType(pp.spt_blow_count, Integer)
+                Else
+                    .Worksheets("Input").Range("N_blows").ClearContents
+                End If
+
+                If Not IsNothing(pp.base_friction_factor) Then
+                    .Worksheets("Input").Range("μ").Value = CType(pp.base_friction_factor, Double)
+                Else
+                    .Worksheets("Input").Range("μ").ClearContents
+                End If
+
+                If Not IsNothing(pp.neglect_depth) Then
+                    .Worksheets("Input").Range("N").Value = CType(pp.neglect_depth, Double)
+                End If
+
                 If pp.bearing_distribution_type = True Then
                     .Worksheets("Input").Range("Rock").Value = "No"
                 Else
                     .Worksheets("Input").Range("Rock").Value = "Yes"
                 End If
+
                 If pp.groundwater_depth = -1 Then
                     .Worksheets("Input").Range("gw").Value = "N/A"
                 Else
-                    .Worksheets("Input").Range("gw").Value = pp.groundwater_depth
+                    .Worksheets("Input").Range("gw").Value = CType(pp.groundwater_depth, Double)
                 End If
-                If Not IsNothing(pp.top_and_bottom_rebar_different) Then .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = pp.top_and_bottom_rebar_different
-                If Not IsNothing(pp.block_foundation) Then .Worksheets("Input").Range("BlockFoundationBoolean").Value = pp.block_foundation
-                If Not IsNothing(pp.rectangular_foundation) Then .Worksheets("Input").Range("RectangularPadBoolean").Value = pp.rectangular_foundation
-                If Not IsNothing(pp.base_plate_distance_above_foundation) Then .Worksheets("Input").Range("bpdist").Value = pp.base_plate_distance_above_foundation
-                If Not IsNothing(pp.bolt_circle_bearing_plate_width) Then .Worksheets("Input").Range("BC").Value = pp.bolt_circle_bearing_plate_width
-            Next
-        End With
 
-        SaveAndClosePierAndPad()
+                If Not IsNothing(pp.top_and_bottom_rebar_different) Then
+                    .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = pp.top_and_bottom_rebar_different
+                End If
+
+                If Not IsNothing(pp.block_foundation) Then
+                    .Worksheets("Input").Range("BlockFoundationBoolean").Value = pp.block_foundation
+                End If
+
+                If Not IsNothing(pp.rectangular_foundation) Then
+                    .Worksheets("Input").Range("RectangularPadBoolean").Value = pp.rectangular_foundation
+                End If
+
+                If Not IsNothing(pp.base_plate_distance_above_foundation) Then
+                    .Worksheets("Input").Range("bpdist").Value = CType(pp.base_plate_distance_above_foundation, Double)
+                Else
+                    .Worksheets("Input").Range("bpdist").ClearContents
+                End If
+
+                If Not IsNothing(pp.bolt_circle_bearing_plate_width) Then
+                    .Worksheets("Input").Range("BC").Value = CType(pp.bolt_circle_bearing_plate_width, Double)
+                Else
+                    .Worksheets("Input").Range("BC").ClearContents
+                End If
+            End With
+
+            SaveAndClosePierAndPad()
+        Next
+
     End Sub
 
     Private Sub LoadNewPierAndPad()
@@ -422,4 +602,5 @@ Partial Public Class DataTransfererPierandPad
 
     'End Function
 #End Region
+
 End Class
