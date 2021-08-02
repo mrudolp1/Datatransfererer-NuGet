@@ -6,7 +6,7 @@ SELECT
 	,sm.id model_id
 	,fd.ID foundation_id
 	,fd.foundation_type 	
-	,ppd.pier_pad_id
+	,ppd.id pier_pad_id
 	,ppd.extension_above_grade
 	,ppd.foundation_depth
 	,ppd.concrete_compressive_strength
@@ -53,6 +53,6 @@ FROM
 	,pier_pad_details ppd 
 	,structure_model sm
 WHERE 
-	ubd.foundation_id=fd.ID
+	ppd.foundation_id=fd.ID
 	AND fd.model_id=sm.id
 	AND sm.ID=@ModelID

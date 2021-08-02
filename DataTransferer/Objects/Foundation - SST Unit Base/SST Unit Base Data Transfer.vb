@@ -1,7 +1,6 @@
 ﻿Option Strict Off
 
 Imports DevExpress.Spreadsheet
-Imports CCI_Engineering_Templates
 Imports System.Security.Principal
 
 Partial Public Class DataTransfererUnitBase
@@ -10,12 +9,11 @@ Partial Public Class DataTransfererUnitBase
     Private NewUnitBaseWb As New Workbook
     Private prop_ExcelFilePath As String
 
-
     Public Property UnitBases As New List(Of SST_Unit_Base)
     Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress Objects\Reference\SST Unit Base Foundation (4.0.4) - MRR.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property ubDS As DataSet
+    Public Property ubDS As New DataSet
     Public Property ubDB As String
     Public Property ubID As WindowsIdentity
 
@@ -27,8 +25,6 @@ Partial Public Class DataTransfererUnitBase
             Me.prop_ExcelFilePath = Value
         End Set
     End Property
-
-
 #End Region
 
 #Region "Constructors"
@@ -46,7 +42,7 @@ Partial Public Class DataTransfererUnitBase
 #End Region
 
 #Region "Load Data"
-    Public Sub LoadFromEDS()
+    Public Function LoadFromEDS() As Boolean
         Dim refid As Integer
         Dim UnitBaseLoader As String
 
@@ -54,6 +50,7 @@ Partial Public Class DataTransfererUnitBase
         For Each item As SQLParameter In UnitBaseSQLDataTables()
             UnitBaseLoader = QueryBuilderFromFile(queryPath & "Unit Base\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
             DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
+            If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
@@ -63,7 +60,8 @@ Partial Public Class DataTransfererUnitBase
             UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
         Next
 
-    End Sub 'Create Unit Base objects based on what is saved in EDS
+        Return True
+    End Function 'Create Unit Base objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
         UnitBases.Add(New SST_Unit_Base(ExcelFilePath))

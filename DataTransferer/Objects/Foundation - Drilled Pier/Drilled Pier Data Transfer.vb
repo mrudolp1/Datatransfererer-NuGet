@@ -1,7 +1,6 @@
 ﻿Option Strict Off
 
 Imports DevExpress.Spreadsheet
-Imports CCI_Engineering_Templates
 Imports System.Security.Principal
 
 Partial Public Class DataTransfererDrilledPier
@@ -14,7 +13,7 @@ Partial Public Class DataTransfererDrilledPier
     Private Property DrilledPierTemplatePath As String = "C:\Users\imiller\source\repos\DevExpress Objects\Drilled Pier Foundation (4.2.3).xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property dpDS As DataSet
+    Public Property dpDS As New DataSet
     Public Property dpDB As String
     Public Property dpID As WindowsIdentity
 
@@ -43,7 +42,7 @@ Partial Public Class DataTransfererDrilledPier
 #End Region
 
 #Region "Load Data"
-    Public Sub LoadFromEDS()
+    Public Function LoadFromEDS() As Boolean
         Dim refid As Integer
 
         Dim DrilledPierLoader As String
@@ -52,6 +51,7 @@ Partial Public Class DataTransfererDrilledPier
         For Each item As SQLParameter In DrilledPierSQLDataTables()
             DrilledPierLoader = QueryBuilderFromFile(queryPath & "Drilled Pier\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
             DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, dpDS, dpDB, dpID, "0")
+            If dpDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
@@ -61,7 +61,8 @@ Partial Public Class DataTransfererDrilledPier
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refid))
         Next
 
-    End Sub 'Create Drilled Pier objects based on what is saved in EDS
+        Return True
+    End Function 'Create Drilled Pier objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
         Dim refID As Integer
@@ -256,7 +257,7 @@ Partial Public Class DataTransfererDrilledPier
                 .Worksheets("Details (SAPI)").Range("E" & dpRow).Value = dp.groundwater_depth
                 .Worksheets("Details (SAPI)").Range("F" & dpRow).Value = dp.assume_min_steel
                 .Worksheets("Details (SAPI)").Range("G" & dpRow).Value = dp.check_shear_along_depth
-                .Worksheets("Details (SAPI)").Range("H" & dpRow).Value = dp.utilize_skin_friction_methodology
+                '.Worksheets("Details (SAPI)").Range("H" & dpRow).Value = dp.utilize_skin_friction_methodology
                 .Worksheets("Details (SAPI)").Range("I" & dpRow).Value = dp.embedded_pole
                 .Worksheets("Details (SAPI)").Range("J" & dpRow).Value = dp.belled_pier
                 .Worksheets("Details (SAPI)").Range("K" & dpRow).Value = dp.soil_layer_quantity
@@ -269,11 +270,11 @@ Partial Public Class DataTransfererDrilledPier
                     .Worksheets("Sections (SAPI)").Range("G" & secRow).Value = dpSec.clear_cover_rebar_cage_option
                     .Worksheets("Sections (SAPI)").Range("H" & secRow).Value = dpSec.tie_size
                     .Worksheets("Sections (SAPI)").Range("I" & secRow).Value = dpSec.tie_spacing
-                    .Worksheets("Sections (SAPI)").Range("J" & secRow).Value = dpSec.top_elevation
+                    '.Worksheets("Sections (SAPI)").Range("J" & secRow).Value = dpSec.top_elevation
                     .Worksheets("Sections (SAPI)").Range("K" & secRow).Value = dpSec.bottom_elevation
-                    .Worksheets("Sections (SAPI)").Range("L" & secRow).Value = dpSec.tie_yield_strength
-                    .Worksheets("Sections (SAPI)").Range("M" & secRow).Value = dpSec.concrete_compressive_strength
-                    .Worksheets("Sections (SAPI)").Range("N" & secRow).Value = dpSec.assum_min_steel_rho_override
+                    '.Worksheets("Sections (SAPI)").Range("L" & secRow).Value = dpSec.tie_yield_strength
+                    '.Worksheets("Sections (SAPI)").Range("M" & secRow).Value = dpSec.concrete_compressive_strength
+                    '.Worksheets("Sections (SAPI)").Range("N" & secRow).Value = dpSec.assum_min_steel_rho_override
 
                     For Each dpReb As DrilledPierRebar In dpSec.rebar
                         .Worksheets("Rebar (SAPI)").Range("C" & rebRow).Value = dp.pier_id
@@ -299,7 +300,7 @@ Partial Public Class DataTransfererDrilledPier
                     .Worksheets("Soil Layers (SAPI)").Range("G" & soilRow).Value = dpSL.friction_angle
                     .Worksheets("Soil Layers (SAPI)").Range("H" & soilRow).Value = dpSL.skin_friction_override_comp
                     .Worksheets("Soil Layers (SAPI)").Range("I" & soilRow).Value = dpSL.skin_friction_override_uplift
-                    .Worksheets("Soil Layers (SAPI)").Range("J" & soilRow).Value = dpSL.bearing_type_toggle
+                    '.Worksheets("Soil Layers (SAPI)").Range("J" & soilRow).Value = dpSL.bearing_type_toggle
                     .Worksheets("Soil Layers (SAPI)").Range("K" & soilRow).Value = dpSL.nominal_bearing_capacity
                     .Worksheets("Soil Layers (SAPI)").Range("L" & soilRow).Value = dpSL.spt_blow_count
 
@@ -374,7 +375,7 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & dp.groundwater_depth.ToString
         insertString += "," & "'" & dp.assume_min_steel.ToString & "'"
         insertString += "," & "'" & dp.check_shear_along_depth.ToString & "'"
-        insertString += "," & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
+        'insertString += "," & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
         insertString += "," & "'" & dp.embedded_pole.ToString & "'"
         insertString += "," & "'" & dp.belled_pier.ToString & "'"
         insertString += "," & dp.soil_layer_quantity
@@ -430,7 +431,7 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & dpsl.friction_angle.ToString
         insertString += "," & dpsl.skin_friction_override_comp.ToString
         insertString += "," & dpsl.skin_friction_override_uplift.ToString
-        insertString += "," & "'" & dpsl.bearing_type_toggle.ToString & "'"
+        'insertString += "," & "'" & dpsl.bearing_type_toggle.ToString & "'"
         insertString += "," & dpsl.nominal_bearing_capacity.ToString
         insertString += "," & dpsl.spt_blow_count.ToString
 
@@ -446,11 +447,11 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'"
         insertString += "," & dpsec.tie_size.ToString
         insertString += "," & dpsec.tie_spacing.ToString
-        insertString += "," & dpsec.top_elevation.ToString
+        'insertString += "," & dpsec.top_elevation.ToString
         insertString += "," & dpsec.bottom_elevation.ToString
-        insertString += "," & dpsec.tie_yield_strength.ToString
-        insertString += "," & dpsec.concrete_compressive_strength.ToString
-        insertString += "," & dpsec.assum_min_steel_rho_override.ToString
+        'insertString += "," & dpsec.tie_yield_strength.ToString
+        'insertString += "," & dpsec.concrete_compressive_strength.ToString
+        'insertString += "," & dpsec.assum_min_steel_rho_override.ToString
 
         Return insertString
     End Function
@@ -487,7 +488,7 @@ Partial Public Class DataTransfererDrilledPier
         updateString += ",groundwater_depth=" & dp.groundwater_depth.ToString
         updateString += ",assume_min_steel=" & "'" & dp.assume_min_steel.ToString & "'"
         updateString += ",check_shear_along_depth=" & "'" & dp.check_shear_along_depth.ToString & "'"
-        updateString += ",utilize_skin_friction_methodology=" & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
+        'updateString += ",utilize_skin_friction_methodology=" & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
         updateString += ",embedded_pole=" & "'" & dp.embedded_pole.ToString & "'"
         updateString += ",belled_pier=" & "'" & dp.belled_pier.ToString & "'"
         updateString += ",soil_layer_quantity=" & dp.soil_layer_quantity.ToString
@@ -546,7 +547,7 @@ Partial Public Class DataTransfererDrilledPier
         updateString += ",friction_angle=" & dpsl.friction_angle.ToString
         updateString += ",skin_friction_override_comp=" & dpsl.skin_friction_override_comp.ToString
         updateString += ",skin_friction_override_uplift=" & dpsl.skin_friction_override_uplift.ToString
-        updateString += ",bearing_type_toggle=" & "'" & dpsl.bearing_type_toggle.ToString & "'"
+        'updateString += ",bearing_type_toggle=" & "'" & dpsl.bearing_type_toggle.ToString & "'"
         updateString += ",nominal_bearing_capacity=" & dpsl.nominal_bearing_capacity.ToString
         updateString += ",spt_blow_count=" & dpsl.spt_blow_count.ToString
         updateString += " WHERE ID=" & dpsl.soil_layer_id & vbNewLine
@@ -563,11 +564,11 @@ Partial Public Class DataTransfererDrilledPier
         updateString += ",clear_cover_rebar_cage_option=" & "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'"
         updateString += ",tie_size=" & dpsec.tie_size.ToString
         updateString += ",tie_spacing=" & dpsec.tie_spacing.ToString
-        updateString += ",top_elevation=" & dpsec.top_elevation.ToString
+        'updateString += ",top_elevation=" & dpsec.top_elevation.ToString
         updateString += ",bottom_elevation=" & dpsec.bottom_elevation.ToString
-        updateString += ",tie_yield_strength=" & dpsec.tie_yield_strength.ToString
-        updateString += ",concrete_compressive_strength=" & dpsec.concrete_compressive_strength.ToString
-        updateString += ",assum_min_steel_rho_override=" & dpsec.assum_min_steel_rho_override.ToString
+        'updateString += ",tie_yield_strength=" & dpsec.tie_yield_strength.ToString
+        'updateString += ",concrete_compressive_strength=" & dpsec.concrete_compressive_strength.ToString
+        'updateString += ",assum_min_steel_rho_override=" & dpsec.assum_min_steel_rho_override.ToString
         updateString += " WHERE ID=" & dpsec.section_id & vbNewLine
 
         Return updateString

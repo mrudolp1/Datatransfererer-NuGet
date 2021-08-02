@@ -1,0 +1,27 @@
+﻿Adjust properties, methods and functions to remove underscores other than properties specifically called out with "prop_"
+Adjust properties to be plural or singular
+
+Change CreateFrom_SQL to LoadFromSQL
+	In LoadFromSQL add variable --> Dim PierAndPadLoader as string
+	SQLLoader has changed. Pass in new variable, and new properties from below
+Change CreateFrom_Excel to LoadFromExcel
+
+Imports Required: 
+Imports DevExpress.Spreadsheet
+Imports System.Security.Principal
+
+New Properties:
+    'These properties are new
+    Public Property ppDS As DataSet
+    Public Property ppDB As String
+    Public Property pID As WindowsIdentity
+
+New Constructor:
+    'This constructor is new. Go over it with the team. 
+    Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
+        ubDS = MyDataSet
+        ubID = LogOnUser
+        ubDB = ActiveDatabase
+        BUNumber = BU
+        STR_ID = Strucutre_ID
+    End Sub

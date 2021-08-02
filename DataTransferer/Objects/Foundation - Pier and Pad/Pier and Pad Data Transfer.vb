@@ -1,7 +1,6 @@
 ﻿Option Strict Off
 
 Imports DevExpress.Spreadsheet
-Imports CCI_Engineering_Templates
 Imports System.Security.Principal
 
 Partial Public Class DataTransfererPierandPad
@@ -14,7 +13,7 @@ Partial Public Class DataTransfererPierandPad
     Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress Objects\Pier and Pad Foundation (4.1.0) - EDS.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property ppDS As DataSet
+    Public Property ppDS As New DataSet
     Public Property ppDB As String
     Public Property ppID As WindowsIdentity
 
@@ -29,7 +28,7 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "Constructors"
-    Sub New()
+    Public Sub New()
         'Leave method empty
     End Sub
 
@@ -43,7 +42,7 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "Load Data"
-    Public Sub LoadFromEDS()
+    Public Function LoadFromEDS() As Boolean
         Dim refid As Integer
         Dim PierAndPadLoader As String
 
@@ -51,6 +50,7 @@ Partial Public Class DataTransfererPierandPad
         For Each item As SQLParameter In PierAndPadSQLDataTables()
             PierAndPadLoader = QueryBuilderFromFile(queryPath & "Pier and Pad\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
             DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ppDS, ppDB, ppID, "0")
+            If ppDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
@@ -60,7 +60,8 @@ Partial Public Class DataTransfererPierandPad
             PierAndPads.Add(New Pier_and_Pad(Pier_And_PadDataRow, refid))
         Next
 
-    End Sub 'Create Pier and Pad objects based on what is saved in EDS
+        Return True
+    End Function 'Create Pier and Pad objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
         PierAndPads.Add(New Pier_and_Pad(ExcelFilePath))
