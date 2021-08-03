@@ -1051,7 +1051,7 @@ Partial Public Class Pile
 
     End Sub 'Generate from EDS
 
-    Public Sub New(ByVal filepath As String)
+    Public Sub New(ByVal path As String)
         Try
             Me.pile_id = CType(GetOneExcelRange(path, "ID"), Integer)
         Catch
