@@ -48,6 +48,7 @@ Partial Public Class Pile
     Private prop_pile_ultimate_compression As Double?
     Private prop_pile_ultimate_tension As Double?
     Private prop_top_and_bottom_rebar_different As Boolean
+    'Private prop_top_and_bottom_rebar_different As String
     Private prop_ultimate_gross_end_bearing As Double?
     Private prop_skin_friction_given As Boolean
     Private prop_pile_quantity_circular As Integer?
@@ -1113,7 +1114,11 @@ Partial Public Class Pile
             Me.pile_pipe_thickness = Nothing
         End Try 'Pile_Pipe_Thickness
         Try
-            Me.pile_soil_capacity_given = CType(GetOneExcelRange(path, "D29", "Input"), Boolean)
+            If CType(GetOneExcelRange(path, "D29", "Input"), String) = "Yes" Then
+                Me.pile_soil_capacity_given = True
+            Else
+                Me.pile_soil_capacity_given = False
+            End If
         Catch
             Me.pile_soil_capacity_given = False
         End Try 'Pile_Soil_Capacity_Given
@@ -1399,6 +1404,7 @@ Partial Public Class Pile
         End Try 'Pile_Ultimate_Tension
         Try
             Me.top_and_bottom_rebar_different = CType(GetOneExcelRange(path, "Z10", "Input"), Boolean)
+
         Catch
             Me.top_and_bottom_rebar_different = False
         End Try 'Top_And_Bottom_Rebar_Different
@@ -1412,7 +1418,11 @@ Partial Public Class Pile
             Me.ultimate_gross_end_bearing = Nothing
         End Try 'Ultimate_Gross_End_Bearing
         Try
-            Me.skin_friction_given = CType(GetOneExcelRange(path, "N54", "Input"), Boolean)
+            If CType(GetOneExcelRange(path, "N54", "Input"), String) = "Yes" Then
+                Me.skin_friction_given = True
+            Else
+                Me.skin_friction_given = False
+            End If
         Catch
             Me.skin_friction_given = False
         End Try 'Skin_Friction_Given
@@ -1475,7 +1485,11 @@ Partial Public Class Pile
             Me.pile_row_spacing = Nothing
         End Try 'Pile_Row_Spacing
         Try
-            Me.group_efficiency_factor_given = CType(GetOneExcelRange(path, "D41", "Input"), Boolean)
+            If CType(GetOneExcelRange(path, "D41", "Input"), String) = "Yes" Then
+                Me.group_efficiency_factor_given = True
+            Else
+                Me.group_efficiency_factor_given = False
+            End If
         Catch
             Me.group_efficiency_factor_given = False
         End Try 'Group_Efficiency_Factor_Given

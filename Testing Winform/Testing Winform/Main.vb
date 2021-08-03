@@ -10,14 +10,17 @@ Partial Public Class frmMain
     Public myUnitBases As New DataTransfererUnitBase
     Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
+    Public myPiles As New DataTransfererPile
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
 
     'Import to Excel
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\EDS - Pier and Pad Foundation (4.1.1).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\EDS - Pier and Pad Foundation (4.1.1).xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - Pile Foundation (2.2.1).xlsm"}
     'Import to EDS
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\Pile Foundation (2.1.3) - Copy.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -98,6 +101,10 @@ Partial Public Class frmMain
                 myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myDrilledPiers.ExcelFilePath = item
                 If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
+            ElseIf item.Contains("Pile Foundation") Then
+                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myPiles.ExcelFilePath = item
+                If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
             End If
         Next
 
@@ -122,6 +129,11 @@ Partial Public Class frmMain
                 myDrilledPiers.ExcelFilePath = item
                 myDrilledPiers.LoadFromExcel()
                 myDrilledPiers.SaveToEDS()
+            ElseIf item.Contains("Pile Foundation") Then
+                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myPiles.ExcelFilePath = item
+                myPiles.LoadFromExcel()
+                myPiles.SaveToEDS()
             End If
         Next
 

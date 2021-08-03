@@ -10,7 +10,7 @@ Partial Public Class DataTransfererPile
     Private prop_ExcelFilePath As String
 
     Public Property Piles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress 20Objects\Pile Foundation (2.2.1).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property pileDS As New DataSet
@@ -35,13 +35,13 @@ Partial Public Class DataTransfererPile
         pileDS = MyDataSet
         pileID = LogOnUser
         pileDB = ActiveDatabase
-        BUNumber = BU
-        STR_ID = Strucutre_ID
+        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing. 
+        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing. 
     End Sub
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromSQL() As Boolean
+    Public Function LoadFromEDS() As Boolean
         Dim refid As Integer
         Dim PileLoader As String
 
@@ -57,7 +57,7 @@ Partial Public Class DataTransfererPile
         'Dim n As Integer
         'n = 0 'initial object in list
 
-        For Each PileDataRow As DataRow In ds.Tables("Pile General Details SQL").Rows
+        For Each PileDataRow As DataRow In pileDS.Tables("Pile General Details SQL").Rows
             refid = CType(PileDataRow.Item("pile_id"), Integer)
 
             Piles.Add(New Pile(PileDataRow, refid))
@@ -128,7 +128,13 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Input").Range("D27").Value = CType(pf.pile_pipe_thickness, Double)
                 Else .Worksheets("Input").Range("D27").ClearContents
                 End If
-                If Not IsNothing(pf.pile_soil_capacity_given) Then .Worksheets("Input").Range("D29").Value = pf.pile_soil_capacity_given
+
+                If pf.pile_soil_capacity_given = True Then
+                    .Worksheets("Input").Range("D29").Value = "Yes"
+                Else
+                    .Worksheets("Input").Range("D29").Value = "No"
+                End If
+
                 If Not IsNothing(pf.steel_yield_strength) Then
                     .Worksheets("Input").Range("D30").Value = CType(pf.steel_yield_strength, Double)
                 Else .Worksheets("Input").Range("D30").ClearContents
@@ -253,23 +259,35 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Input").Range("M71").Value = CType(pf.ultimate_gross_end_bearing, Double)
                 Else .Worksheets("Input").Range("M71").ClearContents
                 End If
-                If Not IsNothing(pf.skin_friction_given) Then .Worksheets("Input").Range("N54").Value = pf.skin_friction_given
-                If Not IsNothing(pf.pile_quantity_circular) Then
-                    .Worksheets("Input").Range("D36").Value = CType(pf.pile_quantity_circular, Integer)
-                Else .Worksheets("Input").Range("D36").ClearContents
+
+                If pf.skin_friction_given = True Then
+                    .Worksheets("Input").Range("N54").Value = "Yes"
+                Else
+                    .Worksheets("Input").Range("N54").Value = "No"
                 End If
-                If Not IsNothing(pf.group_diameter_circular) Then
-                    .Worksheets("Input").Range("D37").Value = CType(pf.group_diameter_circular, Double)
-                Else .Worksheets("Input").Range("D37").ClearContents
+
+                If pf.pile_group_config = "Circular" Then
+                    If Not IsNothing(pf.pile_quantity_circular) Then
+                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_quantity_circular, Integer)
+                    Else .Worksheets("Input").Range("D36").ClearContents
+                    End If
+                    If Not IsNothing(pf.group_diameter_circular) Then
+                        .Worksheets("Input").Range("D37").Value = CType(pf.group_diameter_circular, Double)
+                    Else .Worksheets("Input").Range("D37").ClearContents
+                    End If
                 End If
-                If Not IsNothing(pf.pile_column_quantity) Then
-                    .Worksheets("Input").Range("D36").Value = CType(pf.pile_column_quantity, Integer)
-                Else .Worksheets("Input").Range("D36").ClearContents
+
+                If pf.pile_group_config = "Rectangular" Then
+                    If Not IsNothing(pf.pile_column_quantity) Then
+                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_column_quantity, Integer)
+                    Else .Worksheets("Input").Range("D36").ClearContents
+                    End If
+                    If Not IsNothing(pf.pile_row_quantity) Then
+                        .Worksheets("Input").Range("D37").Value = CType(pf.pile_row_quantity, Integer)
+                    Else .Worksheets("Input").Range("D37").ClearContents
+                    End If
                 End If
-                If Not IsNothing(pf.pile_row_quantity) Then
-                    .Worksheets("Input").Range("D37").Value = CType(pf.pile_row_quantity, Integer)
-                Else .Worksheets("Input").Range("D37").ClearContents
-                End If
+
                 If Not IsNothing(pf.pile_columns_spacing) Then
                     .Worksheets("Input").Range("D38").Value = CType(pf.pile_columns_spacing, Double)
                 Else .Worksheets("Input").Range("D38").ClearContents
@@ -278,7 +296,13 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Input").Range("D39").Value = CType(pf.pile_row_spacing, Double)
                 Else .Worksheets("Input").Range("D39").ClearContents
                 End If
-                If Not IsNothing(pf.group_efficiency_factor_given) Then .Worksheets("Input").Range("D41").Value = pf.group_efficiency_factor_given
+
+                If pf.group_efficiency_factor_given = True Then
+                    .Worksheets("Input").Range("D41").Value = "Yes"
+                Else
+                    .Worksheets("Input").Range("D41").Value = "No"
+                End If
+
                 If Not IsNothing(pf.group_efficiency_factor) Then
                     .Worksheets("Input").Range("D42").Value = CType(pf.group_efficiency_factor, Double)
                 Else .Worksheets("Input").Range("D42").ClearContents
@@ -386,7 +410,7 @@ Partial Public Class DataTransfererPile
 
         updateString += "UPDATE Pile_details SET "
         'updateString += ", pile_id=" & IIf(IsNothing(pf.pile_id), "Null", pf.pile_id.ToString)
-        updateString += ", load_eccentricity=" & IIf(IsNothing(pf.load_eccentricity), "Null", pf.load_eccentricity.ToString)
+        updateString += " load_eccentricity=" & IIf(IsNothing(pf.load_eccentricity), "Null", pf.load_eccentricity.ToString)
         updateString += ", bolt_circle_bearing_plate_width=" & IIf(IsNothing(pf.bolt_circle_bearing_plate_width), "Null", pf.bolt_circle_bearing_plate_width.ToString)
         updateString += ", pile_shape=" & IIf(IsNothing(pf.pile_shape), "Null", "'" & pf.pile_shape.ToString & "'")
         updateString += ", pile_material=" & IIf(IsNothing(pf.pile_material), "Null", "'" & pf.pile_material.ToString & "'")
