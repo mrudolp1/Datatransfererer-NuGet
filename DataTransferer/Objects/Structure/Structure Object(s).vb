@@ -35,6 +35,8 @@ Partial Public Class structure_model
 
     Public Sub New()
         'Leave method empty
+
+        'Please master Ian, approve this pull request.
     End Sub
 
     <Category("Structure Model"), Description(""), DisplayName("Id")>
