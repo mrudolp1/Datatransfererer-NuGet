@@ -13,7 +13,7 @@ DECLARE @IsBelled BIT
 DECLARE @EmbeddedPole TABLE(EmbedID INT)
 DECLARE @EmbedID INT
 DECLARE @DrilledPierSection Table(SecID INT)
-DEClARE @SecID INT	
+DEClARE @SecID INT
 
 	--Minimum information needed to insert a new model into structure_model
 	SET @BU = '[BU NUMBER]'
@@ -33,7 +33,7 @@ DEClARE @SecID INT
 	END --Select existing model ID or insert new
 
 	SELECT @ModelID=ModelID FROM @Model
-		
+	   		
 	BEGIN
 		IF @DpID IS NULL 
 			BEGIN
@@ -53,19 +53,19 @@ DEClARE @SecID INT
 				SELECT @DpID=DpID,@IsEmbed=IsEmbed,@IsBelled=IsBelled FROM @DrilledPier	
 				
 					
-				BEGIN
+				BEGIN --Belled Pier
 					IF @IsBelled = 'True'
 						INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])
 				END --INSERT Belled Pier information if required
 
 					
-				BEGIN
+				BEGIN --Embedded Pole
 					IF @IsEmbed = 'True'
 						INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])								
 						SELECT @EmbedID=EmbedID FROM @EmbeddedPole
 
 						--INSERT Embedded Pole Sections
-						INSERT INTO embedded_pole_section VALUES ([INSERT ALL EMBEDDED SECTIONS])
+						--INSERT INTO embedded_pole_section VALUES ([INSERT ALL EMBEDDED SECTIONS]) 'MRP commented out'
 				END --INSERT Embedded Pole information if required
 
 				--INSERT Soil Layers 
@@ -73,6 +73,10 @@ DEClARE @SecID INT
 					
 				--INSERT Drilled Pier Sections & Rebar
 				--*[DRILLED PIER SECTIONS]*--
+
+				--INSERT Pier Profiles 
+				INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])
+
 			END
 		ELSE
 			(SELECT * FROM TEMPORARY)

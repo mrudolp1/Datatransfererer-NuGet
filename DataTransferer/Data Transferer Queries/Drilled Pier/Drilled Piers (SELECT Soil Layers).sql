@@ -11,9 +11,10 @@ SELECT
 	,sl.friction_angle
 	,sl.skin_friction_override_comp
 	,sl.skin_friction_override_uplift
-	,sl.bearing_type_toggle
 	,sl.nominal_bearing_capacity
 	,sl.spt_blow_count
+	,sl.local_soil_layer_id
+	,sl.local_drilled_pier_id
 FROM 
 	drilled_pier_soil_layer sl
 	,foundation_details fd
