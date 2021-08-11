@@ -10,10 +10,10 @@ Partial Public Class DataTransfererPile
     Private prop_ExcelFilePath As String
 
     Public Property Piles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.3).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property pileDS As New DataSet
+    'Public Property pileDS As New DataSet
     Public Property pileDB As String
     Public Property pileID As WindowsIdentity
     Public Property ExcelFilePath() As String
@@ -32,11 +32,11 @@ Partial Public Class DataTransfererPile
     End Sub
 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-        pileDS = MyDataSet
+        ds = MyDataSet
         pileID = LogOnUser
         pileDB = ActiveDatabase
-        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing. 
-        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing. 
+        BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing. 
+        STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing. 
     End Sub
 #End Region
 
@@ -45,11 +45,11 @@ Partial Public Class DataTransfererPile
         Dim refid As Integer
         Dim PileLoader As String
 
-        'Load data to get Unit Base details for the existing structure model
+        'Load data to get Pile details for the existing structure model
         For Each item As SQLParameter In PileSQLDataTables()
             PileLoader = QueryBuilderFromFile(queryPath & "Pile\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(PileLoader, item.sqlDatatable, pileDS, pileDB, pileID, "0")
-            If pileDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
+            DoDaSQL.sqlLoader(PileLoader, item.sqlDatatable, ds, pileDB, pileID, "0")
+            'If pileDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
@@ -57,7 +57,7 @@ Partial Public Class DataTransfererPile
         'Dim n As Integer
         'n = 0 'initial object in list
 
-        For Each PileDataRow As DataRow In pileDS.Tables("Pile General Details SQL").Rows
+        For Each PileDataRow As DataRow In ds.Tables("Pile General Details SQL").Rows
             refid = CType(PileDataRow.Item("pile_id"), Integer)
 
             Piles.Add(New Pile(PileDataRow, refid))
@@ -67,13 +67,23 @@ Partial Public Class DataTransfererPile
     End Function 'Create Pile objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
+
+
+        For Each item As EXCELDTParameter In PileExcelDTParameters()
+            'Get tables from excel file 
+            ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+        Next
+
         Piles.Add(New Pile(ExcelFilePath))
+
     End Sub 'Create Pile objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
     Public Sub SaveToEDS()
         Dim firstOne As Boolean = True
+        Dim mySoils As String = ""
+        Dim myLocations As String = ""
 
 
         For Each pf As Pile In Piles
@@ -86,9 +96,100 @@ Partial Public Class DataTransfererPile
                 PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
             Else
                 PileSaver = PileSaver.Replace("[Pile ID]", pf.pile_id.ToString)
-                PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePileDetail(pf))
+                'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePileDetail(pf))
             End If
             PileSaver = PileSaver.Replace("[INSERT ALL PILE DETAILS]", InsertPileDetail(pf))
+            PileSaver = PileSaver.Replace("[CONFIGURATION]", pf.pile_group_config.ToString)
+
+            If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
+                For Each pfsl As PileSoilLayer In pf.soil_layers
+                    Dim tempSoilLayer As String = InsertPileSoilLayer(pfsl)
+
+                    If Not firstOne Then
+                        mySoils += ",(" & tempSoilLayer & ")"
+                    Else
+                        mySoils += "(" & tempSoilLayer & ")"
+                    End If
+
+                    firstOne = False
+                Next 'Add Soil Layer INSERT statments
+                PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+                firstOne = True
+
+                If pf.pile_group_config = "Asymmetric" Then
+                    'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
+
+                    For Each pfpl As PileLocation In pf.pile_locations
+                        Dim tempLocation As String = InsertPileLocation(pfpl)
+
+                        If Not firstOne Then
+                            myLocations += ",(" & tempLocation & ")"
+                        Else
+                            myLocations += "(" & tempLocation & ")"
+                        End If
+
+                        firstOne = False
+                    Next
+                    PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
+                End If 'Add Embedded Pole INSERT Statment
+
+                mySoils = ""
+                myLocations = ""
+
+            Else
+
+                'PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+                'PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS])", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS])")
+
+                Dim tempUpdater As String = ""
+                tempUpdater += UpdatePileDetail(pf)
+
+                For Each pfsl As PileSoilLayer In pf.soil_layers
+                    If pfsl.soil_layer_id = 0 Or IsDBNull(pfsl.soil_layer_id) Then
+                        tempUpdater += "INSERT INTO pile_soil_layer VALUES (" & InsertPileSoilLayer(pfsl) & ") " & vbNewLine
+                    Else
+                        tempUpdater += UpdatePileSoilLayer(pfsl)
+                    End If
+                Next
+
+                'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+                'End If
+
+                If pf.pile_group_config = "Asymmetric" Then
+
+                    For Each pfpl As PileLocation In pf.pile_locations
+                        If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
+                            tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                        Else
+                            tempUpdater += UpdatePileLocation(pfpl)
+                        End If
+                    Next
+
+
+
+
+                    '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
+                    '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
+                    '    For Each pfpl As PileLocation In pf.pile_locations
+                    '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                    '    Next
+                    '    tempUpdater += " END " & vbNewLine
+                    'Else
+                    '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
+                    '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
+                    '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
+                    '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
+                    '        Else
+                    '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
+                    '        End If
+                    '    Next
+                    '    'End If
+                End If
+
+                PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+            End If
 
             sqlSender(PileSaver, pileDB, pileID, "0")
         Next
@@ -97,7 +198,9 @@ Partial Public Class DataTransfererPile
     End Sub
 
     Public Sub SaveToExcel()
-        Dim pfRow As Integer = 3
+        'Dim pfRow As Integer = 3
+        Dim soilRow As Integer = 4 'identify first row to copy data into Excel Sheet
+        Dim locRow As Integer = 4
         LoadNewPile()
 
         With NewPileWb
@@ -320,6 +423,71 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Moment of Inertia").Range("D12").Value = CType(pf.quantity_piles_surrounding, Integer)
                 Else .Worksheets("Moment of Inertia").Range("D12").ClearContents
                 End If
+
+                For Each pfSL As PileSoilLayer In pf.soil_layers
+
+                    If Not IsNothing(pfSL.soil_layer_id) Then
+                        .Worksheets("SAPI").Range("J" & soilRow).Value = CType(pfSL.soil_layer_id, Integer)
+                    Else .Worksheets("SAPI").Range("J" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.bottom_depth) Then
+                        .Worksheets("SAPI").Range("K" & soilRow).Value = CType(pfSL.bottom_depth, Double)
+                    Else .Worksheets("SAPI").Range("K" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.effective_soil_density) Then
+                        .Worksheets("SAPI").Range("L" & soilRow).Value = CType(pfSL.effective_soil_density, Double)
+                    Else .Worksheets("SAPI").Range("L" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.cohesion) Then
+                        .Worksheets("SAPI").Range("M" & soilRow).Value = CType(pfSL.cohesion, Double)
+                    Else .Worksheets("SAPI").Range("M" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.friction_angle) Then
+                        .Worksheets("SAPI").Range("N" & soilRow).Value = CType(pfSL.friction_angle, Double)
+                    Else .Worksheets("SAPI").Range("N" & soilRow).ClearContents
+                    End If
+                    'If Not IsNothing(pfSL.skin_friction_override_uplift) Then
+                    '    .Worksheets("SAPI").Range("N54").Value = CType(pfSL.skin_friction_override_uplift, Double)
+                    'Else .Worksheets("SAPI").Range("N54").ClearContents
+                    'End If
+                    If Not IsNothing(pfSL.spt_blow_count) Then
+                        .Worksheets("SAPI").Range("O" & soilRow).Value = CType(pfSL.spt_blow_count, Integer)
+                    Else .Worksheets("SAPI").Range("O" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.ultimate_skin_friction_comp) Then
+                        .Worksheets("SAPI").Range("P" & soilRow).Value = CType(pfSL.ultimate_skin_friction_comp, Double)
+                    Else .Worksheets("SAPI").Range("P" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(pfSL.ultimate_skin_friction_uplift) Then
+                        .Worksheets("SAPI").Range("Q" & soilRow).Value = CType(pfSL.ultimate_skin_friction_uplift, Double)
+                    Else .Worksheets("SAPI").Range("Q" & soilRow).ClearContents
+                    End If
+
+
+                    soilRow += 1
+                Next
+
+                If pf.pile_group_config = "Asymmetric" Then
+
+                    For Each pfPL As PileLocation In pf.pile_locations
+                        If Not IsNothing(pfPL.location_id) Then
+                            .Worksheets("SAPI").Range("W" & locRow).Value = CType(pfPL.location_id, Integer)
+                        Else .Worksheets("SAPI").Range("W" & locRow).ClearContents
+                        End If
+                        If Not IsNothing(pfPL.pile_x_coordinate) Then
+                            .Worksheets("SAPI").Range("X" & locRow).Value = CType(pfPL.pile_x_coordinate, Double)
+                        Else .Worksheets("SAPI").Range("X" & locRow).ClearContents
+                        End If
+                        If Not IsNothing(pfPL.pile_y_coordinate) Then
+                            .Worksheets("SAPI").Range("Y" & locRow).Value = CType(pfPL.pile_y_coordinate, Double)
+                        Else .Worksheets("SAPI").Range("Y" & locRow).ClearContents
+                        End If
+
+                        locRow += 1
+                    Next
+                End If
+
+
             Next
 
         End With
@@ -402,13 +570,43 @@ Partial Public Class DataTransfererPile
 
         Return insertString
     End Function
+
+    Private Function InsertPileSoilLayer(ByVal pfsl As PileSoilLayer) As String
+        Dim insertString As String = ""
+
+        insertString += "@PID"
+        'insertString += "," & IIf(IsNothing(pfsl.soil_layer_id), "Null", pfsl.soil_layer_id.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.bottom_depth), "Null", pfsl.bottom_depth.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.effective_soil_density), "Null", pfsl.effective_soil_density.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.cohesion), "Null", pfsl.cohesion.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.friction_angle), "Null", pfsl.friction_angle.ToString)
+        'insertString += "," & IIf(IsNothing(pfsl.skin_friction_override_uplift), "Null", pfsl.skin_friction_override_uplift.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.spt_blow_count), "Null", pfsl.spt_blow_count.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.ultimate_skin_friction_comp), "Null", pfsl.ultimate_skin_friction_comp.ToString)
+        insertString += "," & IIf(IsNothing(pfsl.ultimate_skin_friction_uplift), "Null", pfsl.ultimate_skin_friction_uplift.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPileLocation(ByVal pfpl As PileLocation) As String
+        Dim insertString As String = ""
+
+        insertString += "@PID"
+        'insertString += "," & IIf(IsNothing(pfpl.location_id), "Null", pfpl.location_id.ToString)
+        insertString += "," & IIf(IsNothing(pfpl.pile_x_coordinate), "Null", pfpl.pile_x_coordinate.ToString)
+        insertString += "," & IIf(IsNothing(pfpl.pile_y_coordinate), "Null", pfpl.pile_y_coordinate.ToString)
+
+        Return insertString
+    End Function
+
+
 #End Region
 
 #Region "SQL Update Statements"
     Private Function UpdatePileDetail(ByVal pf As Pile) As String
         Dim updateString As String = ""
 
-        updateString += "UPDATE Pile_details SET "
+        updateString += "UPDATE pile_details SET "
         'updateString += ", pile_id=" & IIf(IsNothing(pf.pile_id), "Null", pf.pile_id.ToString)
         updateString += " load_eccentricity=" & IIf(IsNothing(pf.load_eccentricity), "Null", pf.load_eccentricity.ToString)
         updateString += ", bolt_circle_bearing_plate_width=" & IIf(IsNothing(pf.bolt_circle_bearing_plate_width), "Null", pf.bolt_circle_bearing_plate_width.ToString)
@@ -468,7 +666,39 @@ Partial Public Class DataTransfererPile
         updateString += " WHERE ID = " & pf.pile_id.ToString
 
         Return updateString
+
     End Function
+
+    Private Function UpdatePileSoilLayer(ByVal pfsl As PileSoilLayer) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pile_soil_layer SET "
+        'updateString += " soil_layer_id=" & IIf(IsNothing(pfsl.soil_layer_id), "Null", pfsl.soil_layer_id.ToString)
+        updateString += " bottom_depth=" & IIf(IsNothing(pfsl.bottom_depth), "Null", pfsl.bottom_depth.ToString)
+        updateString += ", effective_soil_density=" & IIf(IsNothing(pfsl.effective_soil_density), "Null", pfsl.effective_soil_density.ToString)
+        updateString += ", cohesion=" & IIf(IsNothing(pfsl.cohesion), "Null", pfsl.cohesion.ToString)
+        updateString += ", friction_angle=" & IIf(IsNothing(pfsl.friction_angle), "Null", pfsl.friction_angle.ToString)
+        'updateString += ", skin_friction_override_uplift=" & IIf(IsNothing(pfsl.skin_friction_override_uplift), "Null", pfsl.skin_friction_override_uplift.ToString)
+        updateString += ", spt_blow_count=" & IIf(IsNothing(pfsl.spt_blow_count), "Null", pfsl.spt_blow_count.ToString)
+        updateString += ", ultimate_skin_friction_comp=" & IIf(IsNothing(pfsl.ultimate_skin_friction_comp), "Null", pfsl.ultimate_skin_friction_comp.ToString)
+        updateString += ", ultimate_skin_friction_uplift=" & IIf(IsNothing(pfsl.ultimate_skin_friction_uplift), "Null", pfsl.ultimate_skin_friction_uplift.ToString)
+        updateString += " WHERE ID = " & pfsl.soil_layer_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePileLocation(ByVal pfpl As PileLocation) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pile_location SET "
+        'updateString += " location_id=" & IIf(IsNothing(pfpl.location_id), "Null", pfpl.location_id.ToString)
+        updateString += " pile_x_coordinate=" & IIf(IsNothing(pfpl.pile_x_coordinate), "Null", pfpl.pile_x_coordinate.ToString)
+        updateString += ", pile_y_coordinate=" & IIf(IsNothing(pfpl.pile_y_coordinate), "Null", pfpl.pile_y_coordinate.ToString)
+        updateString += " WHERE ID = " & pfpl.location_id.ToString
+
+        Return updateString
+    End Function
+
 #End Region
 
 #Region "General"
@@ -481,6 +711,25 @@ Partial Public Class DataTransfererPile
         Dim MyParameters As New List(Of SQLParameter)
 
         MyParameters.Add(New SQLParameter("Pile General Details SQL", "Pile (SELECT Details).sql"))
+        MyParameters.Add(New SQLParameter("Pile Soil SQL", "Pile (SELECT Soil Layers).sql"))
+        MyParameters.Add(New SQLParameter("Pile Location SQL", "Pile (SELECT Location).sql"))
+
+        Return MyParameters
+    End Function
+
+    Private Function PileExcelDTParameters() As List(Of EXCELDTParameter)
+        Dim MyParameters As New List(Of EXCELDTParameter)
+
+        MyParameters.Add(New EXCELDTParameter("Pile Soil EXCEL", "A3:H17", "SAPI"))
+        MyParameters.Add(New EXCELDTParameter("Pile Location EXCEL", "S3:U103", "SAPI"))
+
+        'MyParameters.Add(New EXCELDTParameter("Drilled Pier General Details EXCEL", "A2:K1000", "Details (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Section EXCEL", "A2:N1000", "Sections (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Rebar EXCEL", "A2:I1000", "Rebar (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Soil EXCEL", "A2:L1000", "Soil Layers (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Belled Details EXCEL", "A2:M1000", "Belled (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Embedded Details EXCEL", "A2:O1000", "Embedded (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Embedded Section EXCEL", "A2:D1000", "Embedded Section (SAPI)"))
 
         Return MyParameters
     End Function

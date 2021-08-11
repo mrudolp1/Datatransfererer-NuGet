@@ -34,6 +34,8 @@
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
+    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
+    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
   </ItemGroup>
@@ -90,7 +92,13 @@
     <Content Include="Data Transferer Queries\Pile\Pile (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Soil Layers%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Pile\Pile (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Location%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">
