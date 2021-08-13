@@ -27,4 +27,6 @@ WHERE
     AND sm.ID=@ModelID
 ORDER BY
 	sl.Pile_fnd_id
-	,sl.bottom_depth
+    ,sl.ID
+    --Filtering by bottom depth doesn't work if empty rows exist in SQL database
+	--,sl.bottom_depth

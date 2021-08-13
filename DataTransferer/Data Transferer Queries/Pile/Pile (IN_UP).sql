@@ -37,12 +37,12 @@ Declare @IsCONFIG VARCHAR(50)
 			BEGIN
 				INSERT INTO foundation_details (model_id,foundation_type) OUTPUT INSERTED.ID INTO @Foundation VALUES(@ModelID,@FndType)
 				SELECT @FndID=FndID FROM @Foundation
-				--INSERT INTO pile_details VALUES ([INSERT ALL PILE DETAILS])
+				--INSERT INTO pile_details VALUES ([INSERT ALL PILE DETAILS] DNU)
 			END
 		ELSE
 			BEGIN
 				SELECT @FndID=foundation_id FROM pile_details WHERE ID=@PID
-				--(SELECT * FROM TEMPORARY)
+				--(SELECT * FROM TEMPORARY DNU)
 			END
 	END --If foundation ID is NULL, insert a foundation based on the type provided and output the new foundation ID
 
@@ -56,11 +56,9 @@ Declare @IsCONFIG VARCHAR(50)
 				--INSERT Soil Layers 
 				INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 
-				--INSERT Pile Location Information if required
-				BEGIN
-					IF @IsCONFIG = 'Asymmetric'
-						INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS])
-				End
+				--INSERT Pile Location Information if required (lines 60 and 61 are formatted to be easily replaced when ID already exists)
+				BEGIN IF @IsCONFIG = 'Asymmetric'
+						INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End
 
 			End
 		Else
