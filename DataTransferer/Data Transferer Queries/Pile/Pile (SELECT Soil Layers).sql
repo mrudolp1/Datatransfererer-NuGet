@@ -28,4 +28,5 @@ WHERE
 ORDER BY
 	sl.Pile_fnd_id
     ,sl.ID
+    --Filtering by bottom depth doesn't work if empty rows exist in SQL database
 	--,sl.bottom_depth
