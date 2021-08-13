@@ -33,6 +33,7 @@ SELECT
 	,dpd.rho_override_3
 	,dpd.rho_override_4
 	,dpd.rho_override_5
+	,dpd.bearing_type_toggle
 FROM 
 	foundation_details fd
 	,drilled_pier_details dpd 

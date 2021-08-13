@@ -2,6 +2,8 @@
 
 Imports DevExpress.Spreadsheet
 Imports System.Security.Principal
+Imports Microsoft.Office.Interop.Excel
+Imports Microsoft.Office.Interop
 
 Partial Public Class DataTransfererDrilledPier
 
@@ -10,10 +12,11 @@ Partial Public Class DataTransfererDrilledPier
     Private prop_ExcelFilePath As String
 
     Public Property DrilledPiers As New List(Of DrilledPier)
-    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\Drilled Pier Foundation (5.1.0) - TEMPLATE.xlsm"
+    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-12-2021.xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property dpDS As New DataSet
+    'Public Property dpDS As New DataSet
+    'Public Property ds As New DataSet
     Public Property dpDB As String
     Public Property dpID As WindowsIdentity
 
@@ -25,6 +28,8 @@ Partial Public Class DataTransfererDrilledPier
             Me.prop_ExcelFilePath = Value
         End Set
     End Property
+
+    Public Property xlApp As Object
 #End Region
 
 #Region "Constructors"
@@ -33,11 +38,12 @@ Partial Public Class DataTransfererDrilledPier
     End Sub
 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-        dpDS = MyDataSet
+        'dpDS = MyDataSet
+        ds = MyDataSet
         dpID = LogOnUser
         dpDB = ActiveDatabase
-        BUNumber = BU
-        STR_ID = Strucutre_ID
+        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing.
+        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing.
     End Sub
 #End Region
 
@@ -50,12 +56,15 @@ Partial Public Class DataTransfererDrilledPier
         'Load data to get pier and pad details data for the existing structure model
         For Each item As SQLParameter In DrilledPierSQLDataTables()
             DrilledPierLoader = QueryBuilderFromFile(queryPath & "Drilled Pier\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, dpDS, dpDB, dpID, "0")
-            If dpDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
+            'DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, dpDS, dpDB, dpID, "0")
+            DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, ds, dpDB, dpID, "0")
+            'If dpDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
+            'If ds.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        For Each DrilledPierDataRow As DataRow In dpDS.Tables("Drilled Pier General Details SQL").Rows
+        'For Each DrilledPierDataRow As DataRow In dpDS.Tables("Drilled Pier General Details SQL").Rows
+        For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details SQL").Rows
             refid = CType(DrilledPierDataRow.Item("drilled_pier_id"), Integer)
 
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refid))
@@ -101,15 +110,15 @@ Partial Public Class DataTransfererDrilledPier
 
         For Each dp As DrilledPier In DrilledPiers
             Dim DrilledPierSaver As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers (IN_UP).sql")
-            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Sections (IN_UP).txt")
+            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Section (IN_UP).txt")
 
             DrilledPierSaver = DrilledPierSaver.Replace("[BU NUMBER]", BUNumber)
             DrilledPierSaver = DrilledPierSaver.Replace("[STRUCTURE ID]", STR_ID)
             DrilledPierSaver = DrilledPierSaver.Replace("[FOUNDATION TYPE]", "Drilled Pier")
             If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-                DrilledPierSaver = DrilledPierSaver.Replace("[DRILLED PIER ID]", "NULL")
+                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", "NULL")
             Else
-                DrilledPierSaver = DrilledPierSaver.Replace("[DRILLED PIER ID]", dp.pier_id.ToString)
+                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", dp.pier_id.ToString)
             End If
             DrilledPierSaver = DrilledPierSaver.Replace("[EMBED BOOLEAN]", dp.embedded_pole.ToString)
             DrilledPierSaver = DrilledPierSaver.Replace("[BELL BOOLEAN]", dp.belled_pier.ToString)
@@ -262,6 +271,8 @@ Partial Public Class DataTransfererDrilledPier
                 DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
             End If
 
+            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
+
             sqlSender(DrilledPierSaver, dpDB, dpID, "0")
         Next
 
@@ -335,11 +346,6 @@ Partial Public Class DataTransfererDrilledPier
                     .Worksheets("Details (RETURN)").Range("T" & dpRow).Value = CType(dp.shear_crit_depth_override_uplift, Double)
                 Else .Worksheets("Details (RETURN)").Range("T" & dpRow).ClearContents
                 End If
-                If dp.bearing_type_toggle = True Then
-                    .Worksheets("Details (RETURN)").Range("U" & dpRow).Value = "Ult. Net Bearing Capacity (ksf)"
-                Else
-                    .Worksheets("Details (RETURN)").Range("U" & dpRow).Value = "Ult. Gross Bearing Capacity (ksf)"
-                End If
                 .Worksheets("Details (RETURN)").Range("V" & dpRow).Value = dp.foundation_id
                 If Not IsNothing(dp.drilled_pier_profile_qty) Then
                     .Worksheets("Details (RETURN)").Range("W" & dpRow).Value = CType(dp.drilled_pier_profile_qty, Integer)
@@ -350,24 +356,32 @@ Partial Public Class DataTransfererDrilledPier
                 Else .Worksheets("Details (RETURN)").Range("X" & dpRow).ClearContents
                 End If
                 If Not IsNothing(dp.rho_override_1) Then
-                    .Worksheets("Details (RETURN)").Range("Y" & dpRow).Value = CType(dp.rho_override_1, Integer)
+                    .Worksheets("Details (RETURN)").Range("Y" & dpRow).Value = CType(dp.rho_override_1, Double)
                 Else .Worksheets("Details (RETURN)").Range("Y" & dpRow).ClearContents
                 End If
                 If Not IsNothing(dp.rho_override_2) Then
-                    .Worksheets("Details (RETURN)").Range("Z" & dpRow).Value = CType(dp.rho_override_2, Integer)
+                    .Worksheets("Details (RETURN)").Range("Z" & dpRow).Value = CType(dp.rho_override_2, Double)
                 Else .Worksheets("Details (RETURN)").Range("Z" & dpRow).ClearContents
                 End If
                 If Not IsNothing(dp.rho_override_3) Then
-                    .Worksheets("Details (RETURN)").Range("AA" & dpRow).Value = CType(dp.rho_override_3, Integer)
+                    .Worksheets("Details (RETURN)").Range("AA" & dpRow).Value = CType(dp.rho_override_3, Double)
                 Else .Worksheets("Details (RETURN)").Range("AA" & dpRow).ClearContents
                 End If
                 If Not IsNothing(dp.rho_override_4) Then
-                    .Worksheets("Details (RETURN)").Range("AB" & dpRow).Value = CType(dp.rho_override_4, Integer)
+                    .Worksheets("Details (RETURN)").Range("AB" & dpRow).Value = CType(dp.rho_override_4, Double)
                 Else .Worksheets("Details (RETURN)").Range("AB" & dpRow).ClearContents
                 End If
                 If Not IsNothing(dp.rho_override_5) Then
-                    .Worksheets("Details (RETURN)").Range("AC" & dpRow).Value = CType(dp.rho_override_5, Integer)
+                    .Worksheets("Details (RETURN)").Range("AC" & dpRow).Value = CType(dp.rho_override_5, Double)
                 Else .Worksheets("Details (RETURN)").Range("AC" & dpRow).ClearContents
+                End If
+                'If dp.bearing_type_toggle = True Then
+                '    .Worksheets("Details (RETURN)").Range("U" & dpRow).Value = "Ult. Net Bearing Capacity (ksf)"
+                'Else
+                '    .Worksheets("Details (RETURN)").Range("U" & dpRow).Value = "Ult. Gross Bearing Capacity (ksf)"
+                'End If
+                If Not IsNothing(dp.bearing_type_toggle) Then
+                    .Worksheets("Details (RETURN)").Range("U" & dpRow).Value = dp.bearing_type_toggle
                 End If
 
                 For Each dpSec As DrilledPierSection In dp.sections
@@ -614,14 +628,89 @@ Partial Public Class DataTransfererDrilledPier
                     End If
 
                     profileRow += 1
+
                 Next
 
                 dpRow += 1
+
             Next
+
+            'set booleans for workbook open event
+            .Worksheets("SUMMARY").Range("EDSReturn").Value = True
+            .Worksheets("SUMMARY").Range("EDSReactions").Value = True
+
+            'add code here rather than workbook open. Populates internal tool database
+            Dim ws1 As Worksheet = .Worksheets("Database")
+            Dim ws2 As Worksheet = .Worksheets("Database (RETURN)")
+            Dim ws3 As Worksheet = .Worksheets("SUMMARY")
+            Dim ws4 As Worksheet = .Worksheets("Profiles (RETURN)")
+
+            Dim ProfileStartRow1, ProfileStartRow2, ProfileStartCol1, ProfileStartCol2, CopyProfiles As Integer
+
+            ProfileStartRow1 = 53 'Database start row
+            ProfileStartRow2 = 4 'Import from EDS data start row
+            ProfileStartCol1 = 7 'Database start column
+            ProfileStartCol2 = 6 'Import from EDS data start column
+            CopyProfiles = 50 'number of profiles in database
+
+            'General through Pier Section 5 (Part 1 - Depth 1 input is formula, handled below)
+            ws1.Range("G" & ProfileStartRow1 + 7 & ":" & "BD" & ProfileStartRow1 + 11).Value = ws2.Range("F" & ProfileStartRow2 + 7 & ":" & "BC" & ProfileStartRow2 + 11).Value
+
+            'General through Pier Section 5 (Part 2 - Depth 1 input is formula, handled below)
+            ws1.Range("G" & ProfileStartRow1 + 13 & ":" & "BD" & ProfileStartRow1 + 94).Value = ws2.Range("F" & ProfileStartRow2 + 13 & ":" & "BC" & ProfileStartRow2 + 94).Value
+
+            'Checks, Embedded Pole, and Belled Pier (Part 1)
+            ws1.Range("G" & ProfileStartRow1 + 97 & ":" & "BD" & ProfileStartRow1 + 116).Value = ws2.Range("F" & ProfileStartRow2 + 97 & ":" & "BC" & ProfileStartRow2 + 116).Value
+
+            'Belled Pier (Part 2)
+            ws1.Range("G" & ProfileStartRow1 + 120 & ":" & "BD" & ProfileStartRow1 + 120).Value = ws2.Range("F" & ProfileStartRow2 + 120 & ":" & "BC" & ProfileStartRow2 + 120).Value
+
+            'Belled Pier (Part 3)
+            ws1.Range("G" & ProfileStartRow1 + 122 & ":" & "BD" & ProfileStartRow1 + 125).Value = ws2.Range("F" & ProfileStartRow2 + 122 & ":" & "BC" & ProfileStartRow2 + 125).Value
+
+            'Soil
+            ws1.Range("G" & ProfileStartRow1 + 127 & ":" & "BD" & ProfileStartRow1 + 373).Value = ws2.Range("F" & ProfileStartRow2 + 127 & ":" & "BC" & ProfileStartRow2 + 373).Value
+
+            'Additional Rebar Info
+            ws1.Range("G" & ProfileStartRow1 + 4389 & ":" & "BD" & ProfileStartRow1 + 4397).Value = ws2.Range("F" & ProfileStartRow2 + 378 & ":" & "BC" & ProfileStartRow2 + 386).Value
+
+            Dim i, j, MaxPierID, CountID As Integer
+
+            ''maximum pier ID returned from EDS
+            'MaxPierID = Math.Max(.Worksheets("Details (RETURN)").Range("A1:A1000"))
+            ''Count of Returned EDS
+            'CountID = Math.Count(.Worksheets("Details (RETURN)").Range("A1:A1000"))
+
+            MaxPierID = (From DrilledPier In DrilledPiers Order By DrilledPier.local_drilled_pier_id Descending).First.local_drilled_pier_id
+            MsgBox(MaxPierID)
+
+            'CountID = 0
+            'For Each DrilledPier In DrilledPiers
+            '    CountID = CountID + 1
+            'Next
+
+            'MsgBox(CountID)
+
+            For Each DrilledPier In DrilledPiers
+
+                j = DrilledPier.local_drilled_pier_id
+
+                ws1.Range("G" & 427).Formula = ws2.Range("F" & 378).Formula
+                ws1.Range("G" & 429).Formula = ws2.Range("F" & 380).Formula
+
+
+
+            Next
+
+
+
+
         End With
 
         SaveAndCloseDrilledPier()
     End Sub
+
+
 
     Private Sub LoadNewDrilledPier()
         NewDrilledPierWb.LoadDocument(DrilledPierTemplatePath, DrilledPierFileType)
@@ -665,6 +754,7 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & IIf(IsNothing(dp.rho_override_3), "Null", "'" & dp.rho_override_3.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.rho_override_4), "Null", "'" & dp.rho_override_4.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.rho_override_5), "Null", "'" & dp.rho_override_5.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
 
         Return insertString
     End Function
@@ -737,7 +827,7 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
         insertString += "," & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
         insertString += "," & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
-        insertString += "," & IIf(IsNothing(dpsec.assume_min_steel_rho_override), "Null", "'" & dpsec.assume_min_steel_rho_override.ToString & "'")
+        'insertString += "," & IIf(IsNothing(dpsec.assume_min_steel_rho_override), "Null", "'" & dpsec.assume_min_steel_rho_override.ToString & "'")
         insertString += "," & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
         insertString += "," & IIf(IsNothing(dpsec.local_drilled_pier_id), "Null", "'" & dpsec.local_drilled_pier_id.ToString & "'")
 
@@ -802,6 +892,7 @@ Partial Public Class DataTransfererDrilledPier
         updateString += ", rho_override_3=" & IIf(IsNothing(dp.rho_override_3), "Null", "'" & dp.rho_override_3.ToString & "'")
         updateString += ", rho_override_4=" & IIf(IsNothing(dp.rho_override_4), "Null", "'" & dp.rho_override_4.ToString & "'")
         updateString += ", rho_override_5=" & IIf(IsNothing(dp.rho_override_5), "Null", "'" & dp.rho_override_5.ToString & "'")
+        updateString += ", bearing_type_toggle=" & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
         updateString += " WHERE ID=" & dp.pier_id & vbNewLine
 
         Return updateString
@@ -878,7 +969,7 @@ Partial Public Class DataTransfererDrilledPier
         updateString += ", tie_size=" & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
         updateString += ", tie_spacing=" & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
         updateString += ", bottom_elevation=" & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
-        updateString += ", assume_min_steel_rho_override=" & IIf(IsNothing(dpsec.assume_min_steel_rho_override), "Null", "'" & dpsec.assume_min_steel_rho_override.ToString & "'")
+        'updateString += ", assume_min_steel_rho_override=" & IIf(IsNothing(dpsec.assume_min_steel_rho_override), "Null", "'" & dpsec.assume_min_steel_rho_override.ToString & "'")
         updateString += ", local_section_id=" & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
         updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dpsec.local_drilled_pier_id), "Null", "'" & dpsec.local_drilled_pier_id.ToString & "'")
         updateString += " WHERE ID=" & dpsec.section_id & vbNewLine

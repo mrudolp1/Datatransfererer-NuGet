@@ -1,5 +1,7 @@
 ﻿'Option Strict On
 Imports System.ComponentModel
+Imports System.Data
+Imports DevExpress.Spreadsheet
 
 Partial Public Class DrilledPier
 
@@ -9,7 +11,7 @@ Partial Public Class DrilledPier
     Private prop_foundation_depth As Double?
     Private prop_extension_above_grade As Double?
     Private prop_groundwater_depth As Double?
-    Private prop_assume_min_steel As Boolean
+    Private prop_assume_min_steel As String
     Private prop_check_shear_along_depth As Boolean
     Private prop_utilize_shear_friction_methodology As Boolean
     Private prop_embedded_pole As Boolean
@@ -24,7 +26,7 @@ Partial Public Class DrilledPier
     Private prop_shear_override_crit_depth As Boolean
     Private prop_shear_crit_depth_override_comp As Double?
     Private prop_shear_crit_depth_override_uplift As Double?
-    Private prop_bearing_type_toggle As Boolean
+    Private prop_bearing_type_toggle As String
     Private prop_drilled_pier_profile_qty As Integer?
     Private prop_soil_profiles As Integer?
     Private prop_foundation_id As Integer
@@ -87,7 +89,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier Details"), Description(""), DisplayName("Assume Minimum Steel")>
-    Public Property assume_min_steel() As Boolean
+    Public Property assume_min_steel() As String
         Get
             Return Me.prop_assume_min_steel
         End Get
@@ -222,7 +224,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier Details"), Description(""), DisplayName("Use Ultimate Bearing")>
-    Public Property bearing_type_toggle() As Boolean
+    Public Property bearing_type_toggle() As String
         Get
             Return Me.prop_bearing_type_toggle
         End Get
@@ -356,9 +358,9 @@ Partial Public Class DrilledPier
             Me.groundwater_depth = "N/A"
         End Try 'Groundwater Depth
         Try
-            Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), Boolean)
+            Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), String)
         Catch
-            Me.assume_min_steel = False
+            Me.assume_min_steel = "No"
         End Try 'Assume Minimum Steel
         Try
             Me.check_shear_along_depth = CType(DrilledPierDataRow.Item("check_shear_along_depth"), Boolean)
@@ -446,10 +448,10 @@ Partial Public Class DrilledPier
             Me.rebar_cage_3_fy_override = Nothing
         End Try 'rebar_cage_3_fy_override
         Try
-            Me.bearing_type_toggle = CType(DrilledPierDataRow.Item("bearing_type_toggle"), Boolean)
+            Me.bearing_type_toggle = CType(DrilledPierDataRow.Item("bearing_type_toggle"), String)
         Catch
-            Me.bearing_type_toggle = False
-        End Try 'Use Ultimate Bearing
+            Me.bearing_type_toggle = "Ult. Gross Bearing Capacity (ksf)"
+        End Try 'Use Ultimate Gross/Net Bearing
         Try
             If Not IsDBNull(Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)) Then
                 Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)
@@ -616,9 +618,9 @@ Partial Public Class DrilledPier
             Me.groundwater_depth = Nothing
         End Try 'Groundwater Depth
         Try
-            Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), Boolean)
+            Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), String)
         Catch
-            Me.assume_min_steel = False
+            Me.assume_min_steel = "No"
         End Try 'Assume Minimum Steel
         Try
             Me.check_shear_along_depth = CType(DrilledPierDataRow.Item("check_shear_along_depth"), Boolean)
@@ -691,9 +693,9 @@ Partial Public Class DrilledPier
             Me.shear_crit_depth_override_uplift = Nothing
         End Try 'shear_crit_depth_override_uplift
         Try
-            Me.bearing_type_toggle = CType(DrilledPierDataRow.Item("bearing_type_toggle"), Boolean)
+            Me.bearing_type_toggle = CType(DrilledPierDataRow.Item("bearing_type_toggle"), String)
         Catch
-            Me.bearing_type_toggle = False
+            Me.bearing_type_toggle = "Ult. Gross Bearing Capacity (ksf)"
         End Try 'bearing_type_toggle. Default to ultimate gross rather than ultimate net
         Try
             Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)
@@ -885,11 +887,11 @@ Partial Public Class DrilledPierSection
     Private prop_local_section_id As Integer?
     Private prop_pier_diameter As Double?
     Private prop_clear_cover As Double?
-    Private prop_clear_cover_rebar_cage_option As Boolean
+    Private prop_clear_cover_rebar_cage_option As String
     Private prop_tie_size As Integer?
     Private prop_tie_spacing As Double?
     Private prop_bottom_elevation As Double?
-    Private prop_assume_min_steel_rho_override As Double?
+    'Private prop_assume_min_steel_rho_override As Double?
     Private prop_local_drilled_pier_id As Integer?
     Public Property rebar As New List(Of DrilledPierRebar)
 
@@ -930,7 +932,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier Sections"), Description(""), DisplayName("")>
-    Public Property clear_cover_rebar_cage_option() As Boolean
+    Public Property clear_cover_rebar_cage_option() As String
         Get
             Return Me.prop_clear_cover_rebar_cage_option
         End Get
@@ -965,15 +967,15 @@ Partial Public Class DrilledPierSection
             Me.prop_bottom_elevation = Value
         End Set
     End Property
-    <Category("Drilled Pier Sections"), Description(""), DisplayName("Minimum Steel Rho Override")>
-    Public Property assume_min_steel_rho_override() As Double?
-        Get
-            Return Me.prop_assume_min_steel_rho_override
-        End Get
-        Set
-            Me.prop_assume_min_steel_rho_override = Value
-        End Set
-    End Property
+    '<Category("Drilled Pier Sections"), Description(""), DisplayName("Minimum Steel Rho Override")>
+    'Public Property assume_min_steel_rho_override() As Double?
+    '    Get
+    '        Return Me.prop_assume_min_steel_rho_override
+    '    End Get
+    '    Set
+    '        Me.prop_assume_min_steel_rho_override = Value
+    '    End Set
+    'End Property
     <Category("Drilled Pier Sections"), Description(""), DisplayName("Local Drilled Pier ID")>
     Public Property local_drilled_pier_id() As Integer?
         Get
@@ -1010,10 +1012,10 @@ Partial Public Class DrilledPierSection
             Me.clear_cover = Nothing
         End Try 'Clear Cover
         Try
-            Me.clear_cover_rebar_cage_option = CType(SectionDataRow.Item("clear_cover_rebar_cage_option"), Boolean)
+            Me.clear_cover_rebar_cage_option = CType(SectionDataRow.Item("clear_cover_rebar_cage_option"), String)
         Catch
-            Me.clear_cover_rebar_cage_option = False
-        End Try 'Rbar Cage Option 
+            Me.clear_cover_rebar_cage_option = "Clear Cover to Ties"
+        End Try 'Rebar Cage Option 
         Try
             Me.tie_size = CType(SectionDataRow.Item("tie_size"), Integer)
         Catch
@@ -1029,11 +1031,11 @@ Partial Public Class DrilledPierSection
         Catch
             Me.bottom_elevation = Nothing
         End Try 'Bottom Elevation
-        Try
-            Me.assume_min_steel_rho_override = CType(SectionDataRow.Item("assume_min_steel_rho_override"), Double)
-        Catch
-            Me.assume_min_steel_rho_override = Nothing
-        End Try 'Minimum Steel Rho Override 
+        'Try
+        '    Me.assume_min_steel_rho_override = CType(SectionDataRow.Item("assume_min_steel_rho_override"), Double)
+        'Catch
+        '    Me.assume_min_steel_rho_override = Nothing
+        'End Try 'Minimum Steel Rho Override 
         Try
             Me.local_drilled_pier_id = CType(SectionDataRow.Item("local_drilled_pier_id"), Integer)
         Catch
@@ -1427,11 +1429,6 @@ Partial Public Class DrilledPierSoilLayer
         Catch
             Me.skin_friction_override_uplift = Nothing
         End Try 'Ultimate Skin Friction (Tens)
-        'Try
-        '    Me.bearing_type_toggle = CType(SoilLayerDataRow.Item("bearing_type_toggle"), Boolean)
-        'Catch
-        '    Me.bearing_type_toggle = False
-        'End Try 'Use Ultimate Bearing
         Try
             Me.nominal_bearing_capacity = CType(SoilLayerDataRow.Item("nominal_bearing_capacity"), Double)
         Catch
