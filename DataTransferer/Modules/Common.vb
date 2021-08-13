@@ -5,7 +5,7 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "2870074"
+    Public BUNumber As String = "1870074"
     Public STR_ID As String = "A"
 End Module
 

@@ -63,6 +63,7 @@ Partial Public Class Pile
     Private prop_pile_quantity_asymmetric As Integer?
     Private prop_pile_spacing_min_asymmetric As Double?
     Private prop_quantity_piles_surrounding As Integer?
+    Private prop_pile_cap_reference As String
     Public Property soil_layers As New List(Of PileSoilLayer)
     Public Property pile_locations As New List(Of PileLocation)
     <Category("Pile Details"), Description(""), DisplayName("Pile_Id")>
@@ -569,6 +570,15 @@ Partial Public Class Pile
             Me.prop_quantity_piles_surrounding = Value
         End Set
     End Property
+    <Category("Pile Details"), Description(""), DisplayName("Pile_Cap_Reference")>
+    Public Property pile_cap_reference() As String
+        Get
+            Return Me.prop_pile_cap_reference
+        End Get
+        Set
+            Me.prop_pile_cap_reference = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -1041,6 +1051,11 @@ Partial Public Class Pile
         Catch
             Me.quantity_piles_surrounding = Nothing
         End Try 'Quantity_Piles_Surrounding
+        Try
+            Me.pile_cap_reference = CType(PileDataRow.Item("pile_cap_reference"), String)
+        Catch
+            Me.pile_cap_reference = ""
+        End Try 'Cap_Type
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
             Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("pile_fnd_id"), Integer)
@@ -1540,6 +1555,11 @@ Partial Public Class Pile
         Catch
             Me.quantity_piles_surrounding = Nothing
         End Try 'Quantity_Piles_Surrounding
+        Try
+            Me.pile_cap_reference = CType(GetOneExcelRange(path, "G47", "Input"), String)
+        Catch
+            Me.pile_cap_reference = ""
+        End Try 'Cap_Type
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil EXCEL").Rows
             Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
