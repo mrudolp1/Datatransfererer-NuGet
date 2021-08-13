@@ -63,8 +63,8 @@ Partial Public Class Pile
     Private prop_pile_quantity_asymmetric As Integer?
     Private prop_pile_spacing_min_asymmetric As Double?
     Private prop_quantity_piles_surrounding As Integer?
-    'Public Property soil_layers As New List(Of PileSoilLayer)
-    'Public Property pile_location As New List(Of PileLocation)
+    Public Property soil_layers As New List(Of PileSoilLayer)
+    Public Property pile_locations As New List(Of PileLocation)
     <Category("Pile Details"), Description(""), DisplayName("Pile_Id")>
     Public Property pile_id() As Integer?
         Get
@@ -1042,13 +1042,19 @@ Partial Public Class Pile
             Me.quantity_piles_surrounding = Nothing
         End Try 'Quantity_Piles_Surrounding
 
-        'For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
-        '    Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
-        'Next 'Add Soild Layers to to Pile Soil Layer Object
+        For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
+            Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("pile_fnd_id"), Integer)
+            If soilRefID = refID Then
+                Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
+            End If
+        Next 'Add Soild Layers to to Pile Soil Layer Object
 
-        'For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Location SQL").Rows
-        '    Me.pile_location.Add(New PileLocation(SoilLayerDataRow))
-        'Next 'Add Soild Layers to to Pile Location Object
+        For Each LocationDataRow As DataRow In ds.Tables("Pile Location SQL").Rows
+            Dim locRefID As Integer = CType(LocationDataRow.Item("pile_fnd_id"), Integer)
+            If locRefID = refID Then
+                Me.pile_locations.Add(New PileLocation(LocationDataRow))
+            End If
+        Next 'Add Soild Layers to to Pile Location Object
 
     End Sub 'Generate from EDS
 
@@ -1535,294 +1541,267 @@ Partial Public Class Pile
             Me.quantity_piles_surrounding = Nothing
         End Try 'Quantity_Piles_Surrounding
 
-        'For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil EXCEL").Rows
-        '    Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
-        'Next 'Add Soil Layers to to Pile Soil Layer Object
+        For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil EXCEL").Rows
+            Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
+        Next 'Add Soil Layers to to Pile Soil Layer Object
 
-        'For Each LocationDataRow As DataRow In ds.Tables("Pile Location EXCEL").Rows
-        '    Me.pile_location.Add(New PileLocation(LocationDataRow))
-        'Next 'Add Location to to Pile Location Object
+        For Each LocationDataRow As DataRow In ds.Tables("Pile Location EXCEL").Rows
+            Me.pile_locations.Add(New PileLocation(LocationDataRow))
+        Next 'Add Location to to Pile Location Object
 
     End Sub 'Generate from Excel
 #End Region
 
 End Class
-'Partial Public Class PileLocation
 
-'#Region "Define"
-'    Private prop_location_id As Integer
-'    Private prop_pile_x_coordinate As Double
-'    Private prop_pile_y_coordinate As Double
+Partial Public Class PileLocation
 
-'    <Category("Pile Location"), Description(""), DisplayName("Location_ID")>
-'    Public Property location_id() As Integer
-'        Get
-'            Return Me.prop_location_id
-'        End Get
-'        Set
-'            Me.prop_location_id = Value
-'        End Set
-'    End Property
-'    <Category("Pile Location"), Description(""), DisplayName("Pile_X_Coordinate")>
-'    Public Property pile_x_coordinate() As Double
-'        Get
-'            Return Me.prop_pile_x_coordinate
-'        End Get
-'        Set
-'            Me.prop_pile_x_coordinate = Value
-'        End Set
-'    End Property
-'    <Category("Pile Location"), Description(""), DisplayName("Pile_Y_Coordinate")>
-'    Public Property pile_y_coordinate() As Double
-'        Get
-'            Return Me.prop_pile_y_coordinate
-'        End Get
-'        Set
-'            Me.prop_pile_y_coordinate = Value
-'        End Set
-'    End Property
-'#End Region
+#Region "Define"
+    Private prop_location_id As Integer
+    Private prop_pile_x_coordinate As Double?
+    Private prop_pile_y_coordinate As Double?
+    <Category("Pile Location"), Description(""), DisplayName("Location_Id")>
+    Public Property location_id() As Integer
+        Get
+            Return Me.prop_location_id
+        End Get
+        Set
+            Me.prop_location_id = Value
+        End Set
+    End Property
+    <Category("Pile Location"), Description(""), DisplayName("Pile_X_Coordinate")>
+    Public Property pile_x_coordinate() As Double?
+        Get
+            Return Me.prop_pile_x_coordinate
+        End Get
+        Set
+            Me.prop_pile_x_coordinate = Value
+        End Set
+    End Property
+    <Category("Pile Location"), Description(""), DisplayName("Pile_Y_Coordinate")>
+    Public Property pile_y_coordinate() As Double?
+        Get
+            Return Me.prop_pile_y_coordinate
+        End Get
+        Set
+            Me.prop_pile_y_coordinate = Value
+        End Set
+    End Property
+#End Region
 
-'#Region "Constructors"
-'    Public Sub New()
-'        'Leave Method Empty
-'    End Sub
+#Region "Constructors"
+    Public Sub New()
+        'Leave Method Empty
+    End Sub
 
-'    Public Sub New(ByVal LocationDataRow As DataRow)
-'        Try
-'            Me.location_id = CType(LocationDataRow.Item("location_id"), Integer)
-'        Catch
-'            Me.location_id = 0
-'        End Try 'Location_Id
-'        Try
-'            Me.pile_x_coordinate = CType(LocationDataRow.Item("pile_x_coordinate"), Double)
-'        Catch
-'            Me.pile_x_coordinate = 0
-'        End Try 'Pile_X_Coordinate
-'        Try
-'            Me.pile_y_coordinate = CType(LocationDataRow.Item("pile_y_coordinate"), Double)
-'        Catch
-'            Me.pile_y_coordinate = 0
-'        End Try 'Pile_Y_Coordinate
-'    End Sub 'Generate from EDS
+    Public Sub New(ByVal LocationDataRow As DataRow)
+        Try
+            Me.location_id = CType(LocationDataRow.Item("location_id"), Integer)
+        Catch
+            Me.location_id = 0
+        End Try 'Location_Id
+        Try
+            If Not IsDBNull(CType(LocationDataRow.Item("pile_x_coordinate"), Double)) Then
+                Me.pile_x_coordinate = CType(LocationDataRow.Item("pile_x_coordinate"), Double)
+            Else
+                Me.pile_x_coordinate = Nothing
+            End If
+        Catch
+            Me.pile_x_coordinate = Nothing
+        End Try 'Pile_X_Coordinate
+        Try
+            If Not IsDBNull(CType(LocationDataRow.Item("pile_y_coordinate"), Double)) Then
+                Me.pile_y_coordinate = CType(LocationDataRow.Item("pile_y_coordinate"), Double)
+            Else
+                Me.pile_y_coordinate = Nothing
+            End If
+        Catch
+            Me.pile_y_coordinate = Nothing
+        End Try 'Pile_Y_Coordinate
+    End Sub 'Add a pile location to a pile
+#End Region
 
-'    'Public Sub New(ByVal path As String)
-'    '    Try
-'    '        Me.location_id = CType(GetOneExcelRange(path, "F5", "Moment of Inertia"), Integer)
-'    '    Catch
-'    '        Me.location_id = 0
-'    '    End Try 'Location_Id
-'    '    Try
-'    '        Me.pile_x_coordinate = CType(GetOneExcelRange(path, "K5", "Moment of Inertia"), Double)
-'    '    Catch
-'    '        Me.pile_x_coordinate = 0
-'    '    End Try 'Pile_X_Coordinate
-'    '    Try
-'    '        Me.pile_y_coordinate = CType(GetOneExcelRange(path, "L5", "Moment of Inertia"), Double)
-'    '    Catch
-'    '        Me.pile_y_coordinate = 0
-'    '    End Try 'Pile_Y_Coordinate
-'    'End Sub 'Generate from Excel
-'#End Region
+End Class
+Partial Public Class PileSoilLayer
 
-'End Class
-'Partial Public Class PileSoilLayer
+#Region "Define"
+    Private prop_soil_layer_id As Integer
+    Private prop_bottom_depth As Double?
+    Private prop_effective_soil_density As Double?
+    Private prop_cohesion As Double?
+    Private prop_friction_angle As Double?
+    'Private prop_skin_friction_override_uplift As Double?
+    Private prop_spt_blow_count As Integer?
+    Private prop_ultimate_skin_friction_comp As Double?
+    Private prop_ultimate_skin_friction_uplift As Double?
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Soil_Layer_Id")>
+    Public Property soil_layer_id() As Integer
+        Get
+            Return Me.prop_soil_layer_id
+        End Get
+        Set
+            Me.prop_soil_layer_id = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Bottom_Depth")>
+    Public Property bottom_depth() As Double?
+        Get
+            Return Me.prop_bottom_depth
+        End Get
+        Set
+            Me.prop_bottom_depth = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Effective_Soil_Density")>
+    Public Property effective_soil_density() As Double?
+        Get
+            Return Me.prop_effective_soil_density
+        End Get
+        Set
+            Me.prop_effective_soil_density = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Cohesion")>
+    Public Property cohesion() As Double?
+        Get
+            Return Me.prop_cohesion
+        End Get
+        Set
+            Me.prop_cohesion = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Friction_Angle")>
+    Public Property friction_angle() As Double?
+        Get
+            Return Me.prop_friction_angle
+        End Get
+        Set
+            Me.prop_friction_angle = Value
+        End Set
+    End Property
+    '<Category("Pile Soil Layer"), Description(""), DisplayName("Skin_Friction_Override_Uplift")>
+    'Public Property skin_friction_override_uplift() As Double?
+    '    Get
+    '        Return Me.prop_skin_friction_override_uplift
+    '    End Get
+    '    Set
+    '        Me.prop_skin_friction_override_uplift = Value
+    '    End Set
+    'End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Spt_Blow_Count")>
+    Public Property spt_blow_count() As Integer?
+        Get
+            Return Me.prop_spt_blow_count
+        End Get
+        Set
+            Me.prop_spt_blow_count = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Ultimate_Skin_Friction_Comp")>
+    Public Property ultimate_skin_friction_comp() As Double?
+        Get
+            Return Me.prop_ultimate_skin_friction_comp
+        End Get
+        Set
+            Me.prop_ultimate_skin_friction_comp = Value
+        End Set
+    End Property
+    <Category("Pile Soil Layer"), Description(""), DisplayName("Ultimate_Skin_Friction_Uplift")>
+    Public Property ultimate_skin_friction_uplift() As Double?
+        Get
+            Return Me.prop_ultimate_skin_friction_uplift
+        End Get
+        Set
+            Me.prop_ultimate_skin_friction_uplift = Value
+        End Set
+    End Property
+#End Region
 
-'#Region "Define"
-'    Private prop_soil_layer_id As Integer
-'    Private prop_bottom_depth As Double
-'    Private prop_effective_soil_density As Double
-'    Private prop_cohesion As Double
-'    Private prop_friction_angle As Double
-'    Private prop_skin_friction_override_uplift As Double
-'    Private prop_spt_blow_count As Integer
-'    Private prop_ultimate_skin_friction_comp As Double
-'    Private prop_ultimate_skin_friction_uplift As Double
+#Region "Constructors"
+    Public Sub New()
+        'Leave Method Empty
+    End Sub
 
+    Public Sub New(ByVal SoilLayerDataRow As DataRow)
+        Try
+            Me.soil_layer_id = CType(SoilLayerDataRow.Item("soil_layer_id"), Integer)
+        Catch
+            Me.soil_layer_id = 0
+        End Try 'Soil_Layer_Id
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("bottom_depth"), Double)) Then
+                Me.bottom_depth = CType(SoilLayerDataRow.Item("bottom_depth"), Double)
+            Else
+                Me.bottom_depth = Nothing
+            End If
+        Catch
+            Me.bottom_depth = Nothing
+        End Try 'Bottom_Depth
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("effective_soil_density"), Double)) Then
+                Me.effective_soil_density = CType(SoilLayerDataRow.Item("effective_soil_density"), Double)
+            Else
+                Me.effective_soil_density = Nothing
+            End If
+        Catch
+            Me.effective_soil_density = Nothing
+        End Try 'Effective_Soil_Density
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("cohesion"), Double)) Then
+                Me.cohesion = CType(SoilLayerDataRow.Item("cohesion"), Double)
+            Else
+                Me.cohesion = Nothing
+            End If
+        Catch
+            Me.cohesion = Nothing
+        End Try 'Cohesion
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("friction_angle"), Double)) Then
+                Me.friction_angle = CType(SoilLayerDataRow.Item("friction_angle"), Double)
+            Else
+                Me.friction_angle = Nothing
+            End If
+        Catch
+            Me.friction_angle = Nothing
+        End Try 'Friction_Angle
+        'Try
+        '    If Not IsDBNull(CType(SoilLayerDataRow.Item("skin_friction_override_uplift"), Double)) Then
+        '        Me.skin_friction_override_uplift = CType(SoilLayerDataRow.Item("skin_friction_override_uplift"), Double)
+        '    Else
+        '        Me.skin_friction_override_uplift = Nothing
+        '    End If
+        'Catch
+        '    Me.skin_friction_override_uplift = Nothing
+        'End Try 'Skin_Friction_Override_Uplift
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)) Then
+                Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)
+            Else
+                Me.spt_blow_count = Nothing
+            End If
+        Catch
+            Me.spt_blow_count = Nothing
+        End Try 'Spt_Blow_Count
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("ultimate_skin_friction_comp"), Double)) Then
+                Me.ultimate_skin_friction_comp = CType(SoilLayerDataRow.Item("ultimate_skin_friction_comp"), Double)
+            Else
+                Me.ultimate_skin_friction_comp = Nothing
+            End If
+        Catch
+            Me.ultimate_skin_friction_comp = Nothing
+        End Try 'Ultimate_Skin_Friction_Comp
+        Try
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("ultimate_skin_friction_uplift"), Double)) Then
+                Me.ultimate_skin_friction_uplift = CType(SoilLayerDataRow.Item("ultimate_skin_friction_uplift"), Double)
+            Else
+                Me.ultimate_skin_friction_uplift = Nothing
+            End If
+        Catch
+            Me.ultimate_skin_friction_uplift = Nothing
+        End Try 'Ultimate_Skin_Friction_Uplift
+    End Sub 'Add a soil layer to a pile
 
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Soil_Layer_ID")>
-'    Public Property soil_layer_id() As Integer
-'        Get
-'            Return Me.prop_soil_layer_id
-'        End Get
-'        Set
-'            Me.prop_soil_layer_id = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Bottom_Depth")>
-'    Public Property bottom_depth() As Double
-'        Get
-'            Return Me.prop_bottom_depth
-'        End Get
-'        Set
-'            Me.prop_bottom_depth = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Effective_Soil_Density")>
-'    Public Property effective_soil_density() As Double
-'        Get
-'            Return Me.prop_effective_soil_density
-'        End Get
-'        Set
-'            Me.prop_effective_soil_density = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Cohesion")>
-'    Public Property cohesion() As Double
-'        Get
-'            Return Me.prop_cohesion
-'        End Get
-'        Set
-'            Me.prop_cohesion = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Friction_Angle")>
-'    Public Property friction_angle() As Double
-'        Get
-'            Return Me.prop_friction_angle
-'        End Get
-'        Set
-'            Me.prop_friction_angle = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Skin_Friction_Override_Uplift")>
-'    Public Property skin_friction_override_uplift() As Double
-'        Get
-'            Return Me.prop_skin_friction_override_uplift
-'        End Get
-'        Set
-'            Me.prop_skin_friction_override_uplift = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Spt_Blow_Count")>
-'    Public Property spt_blow_count() As Integer
-'        Get
-'            Return Me.prop_spt_blow_count
-'        End Get
-'        Set
-'            Me.prop_spt_blow_count = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Ultimate_Skin_Friction_Comp")>
-'    Public Property ultimate_skin_friction_comp() As Double
-'        Get
-'            Return Me.prop_ultimate_skin_friction_comp
-'        End Get
-'        Set
-'            Me.prop_ultimate_skin_friction_comp = Value
-'        End Set
-'    End Property
-'    <Category("Pile Soil Layer"), Description(""), DisplayName("Ultimate_Skin_Friction_Uplift")>
-'    Public Property ultimate_skin_friction_uplift() As Double
-'        Get
-'            Return Me.prop_ultimate_skin_friction_uplift
-'        End Get
-'        Set
-'            Me.prop_ultimate_skin_friction_uplift = Value
-'        End Set
-'    End Property
-'#End Region
+#End Region
 
-'#Region "Constructors"
-'    Public Sub New()
-'        'Leave Method Empty
-'    End Sub
-
-'    Public Sub New(ByVal SoilLayerDataRow As DataRow)
-'        Try
-'            Me.soil_layer_id = CType(SoilLayerDataRow.Item("soil_layer_id"), Integer)
-'        Catch
-'            Me.soil_layer_id = 0
-'        End Try 'Soil_Layer_Id
-'        Try
-'            Me.bottom_depth = CType(SoilLayerDataRow.Item("bottom_depth"), Double)
-'        Catch
-'            Me.bottom_depth = 0
-'        End Try 'Bottom_Depth
-'        Try
-'            Me.effective_soil_density = CType(SoilLayerDataRow.Item("effective_soil_density"), Double)
-'        Catch
-'            Me.effective_soil_density = 0
-'        End Try 'Effective_Soil_Density
-'        Try
-'            Me.cohesion = CType(SoilLayerDataRow.Item("cohesion"), Double)
-'        Catch
-'            Me.cohesion = 0
-'        End Try 'Cohesion
-'        Try
-'            Me.friction_angle = CType(SoilLayerDataRow.Item("friction_angle"), Double)
-'        Catch
-'            Me.friction_angle = 0
-'        End Try 'Friction_Angle
-'        Try
-'            Me.skin_friction_override_uplift = CType(SoilLayerDataRow.Item("skin_friction_override_uplift"), Double)
-'        Catch
-'            Me.skin_friction_override_uplift = 0
-'        End Try 'Skin_Friction_Override_Uplift
-'        Try
-'            Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)
-'        Catch
-'            Me.spt_blow_count = 0
-'        End Try 'Spt_Blow_Count
-'        Try
-'            Me.ultimate_skin_friction_comp = CType(SoilLayerDataRow.Item("ultimate_skin_friction_comp"), Double)
-'        Catch
-'            Me.ultimate_skin_friction_comp = 0
-'        End Try 'Ultimate_Skin_Friction_Comp
-'        Try
-'            Me.ultimate_skin_friction_uplift = CType(SoilLayerDataRow.Item("ultimate_skin_friction_uplift"), Double)
-'        Catch
-'            Me.ultimate_skin_friction_uplift = 0
-'        End Try 'Ultimate_Skin_Friction_Uplift
-'    End Sub 'Generate from EDS
-
-'    'Public Sub New(ByVal path As String)
-'    '    Try
-'    '        Me.soil_layer_id = CType(GetOneExcelRange(path, "", ""), Integer)
-'    '    Catch
-'    '        Me.soil_layer_id = 0
-'    '    End Try 'Soil_Layer_Id
-'    '    Try
-'    '        Me.bottom_depth = CType(GetOneExcelRange(path, "H57", "Input"), Double)
-'    '    Catch
-'    '        Me.bottom_depth = 0
-'    '    End Try 'Bottom_Depth
-'    '    Try
-'    '        Me.effective_soil_density = CType(GetOneExcelRange(path, "K57", "Input"), Double)
-'    '    Catch
-'    '        Me.effective_soil_density = 0
-'    '    End Try 'Effective_Soil_Density
-'    '    Try
-'    '        Me.cohesion = CType(GetOneExcelRange(path, "I57", "Input"), Double)
-'    '    Catch
-'    '        Me.cohesion = 0
-'    '    End Try 'Cohesion
-'    '    Try
-'    '        Me.friction_angle = CType(GetOneExcelRange(path, "J57", ""), Double)
-'    '    Catch
-'    '        Me.friction_angle = 0
-'    '    End Try 'Friction_Angle
-'    '    Try
-'    '        Me.skin_friction_override_uplift = CType(GetOneExcelRange(path, "N54", "Input"), Double)
-'    '    Catch
-'    '        Me.skin_friction_override_uplift = 0
-'    '    End Try 'Skin_Friction_Override_Uplift
-'    '    Try
-'    '        Me.spt_blow_count = CType(GetOneExcelRange(path, "L57", "Input"), Integer)
-'    '    Catch
-'    '        Me.spt_blow_count = 0
-'    '    End Try 'Spt_Blow_Count
-'    '    Try
-'    '        Me.ultimate_skin_friction_comp = CType(GetOneExcelRange(path, "M57", "Input"), Double)
-'    '    Catch
-'    '        Me.ultimate_skin_friction_comp = 0
-'    '    End Try 'Ultimate_Skin_Friction_Comp
-'    '    Try
-'    '        Me.ultimate_skin_friction_uplift = CType(GetOneExcelRange(path, "N57", "Input"), Double)
-'    '    Catch
-'    '        Me.ultimate_skin_friction_uplift = 0
-'    '    End Try 'Ultimate_Skin_Friction_Uplift
-'    'End Sub 'Generate from Excel
-'#End Region
-
-'End Class
+End Class
