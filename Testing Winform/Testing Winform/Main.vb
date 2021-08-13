@@ -21,7 +21,7 @@ Partial Public Class frmMain
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\Pile Foundation (2.1.3) - Copy.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\870074\Adding Tables\Final Test With Location\ASYM Test\EDS - Pile Foundation (2.2.1.4) - Edits.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\870074\Adding Tables\Final Test With Location\ASYM Test\EDS2 - Pile Foundation (2.2.1.4) - Edits.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"

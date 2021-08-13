@@ -27,4 +27,5 @@ WHERE
     AND sm.ID=@ModelID
 ORDER BY
 	sl.Pile_fnd_id
-	,sl.bottom_depth
+    ,sl.ID
+	--,sl.bottom_depth
