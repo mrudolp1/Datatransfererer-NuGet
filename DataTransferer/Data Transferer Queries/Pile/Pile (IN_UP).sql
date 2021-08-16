@@ -37,12 +37,12 @@ Declare @IsCONFIG VARCHAR(50)
 			BEGIN
 				INSERT INTO foundation_details (model_id,foundation_type) OUTPUT INSERTED.ID INTO @Foundation VALUES(@ModelID,@FndType)
 				SELECT @FndID=FndID FROM @Foundation
-				--INSERT INTO pile_details VALUES ([INSERT ALL PILE DETAILS] DNU)
+				--INSERT INTO pile_details VALUES ([INSERT ALL PILE DETAILS] DNU3)
 			END
 		ELSE
 			BEGIN
 				SELECT @FndID=foundation_id FROM pile_details WHERE ID=@PID
-				--(SELECT * FROM TEMPORARY DNU)
+				--(SELECT * FROM TEMPORARY DNU3)
 			END
 	END --If foundation ID is NULL, insert a foundation based on the type provided and output the new foundation ID
 
