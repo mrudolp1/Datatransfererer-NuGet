@@ -18,6 +18,8 @@ Partial Public Class Pier_and_Pad
     Private prop_rectangular_foundation As Boolean
     Private prop_base_plate_distance_above_foundation As Double?
     Private prop_bolt_circle_bearing_plate_width As Double?
+    Private prop_basic_soil_check As Boolean
+    Private prop_structural_check As Boolean
 
     Private prop_pier_shape As String
     Private prop_pier_diameter As Double?
@@ -424,6 +426,24 @@ Partial Public Class Pier_and_Pad
             Me.prop_groundwater_depth = Value
         End Set
     End Property
+    <Category("Pier and Pad Details"), Description(""), DisplayName("Basic Soil Interaction up to 110% Acceptable1?")>
+    Public Property basic_soil_check() As Boolean
+        Get
+            Return Me.prop_basic_soil_check
+        End Get
+        Set
+            Me.prop_basic_soil_check = Value
+        End Set
+    End Property
+    <Category("Pier and Pad Details"), Description(""), DisplayName("Structural Checks up to 105% Acceptable?")>
+    Public Property structural_check() As Boolean
+        Get
+            Return Me.prop_structural_check
+        End Get
+        Set
+            Me.prop_structural_check = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -770,6 +790,16 @@ Partial Public Class Pier_and_Pad
         Catch
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
+        Try
+            Me.basic_soil_check = CType(PierandPadDataRow.Item("SoilInteractionBoolean"), Boolean)
+        Catch
+            Me.basic_soil_check = False
+        End Try 'Basic Soil Interaction up to 110% Acceptable?
+        Try
+            Me.structural_check = CType(PierandPadDataRow.Item("StructuralCheckBoolean"), Boolean)
+        Catch
+            Me.structural_check = False
+        End Try 'Structural Checks up to 105.0% Acceptable?
 
     End Sub 'Generate a pp from EDS
 
@@ -1120,6 +1150,16 @@ Partial Public Class Pier_and_Pad
         Catch
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
+        Try
+            Me.basic_soil_check = CType(GetOneExcelRange(path, "SoilInteractionBoolean"), Boolean)
+        Catch
+            Me.basic_soil_check = False
+        End Try 'Basic Soil Interaction up to 110% Acceptable?
+        Try
+            Me.structural_check = CType(GetOneExcelRange(path, "StructuralCheckBoolean"), Boolean)
+        Catch
+            Me.structural_check = False
+        End Try 'Structural Checks up to 105.0% Acceptable?
 
     End Sub 'Generate a pp from Excel
 

@@ -19,6 +19,8 @@ Public Class SST_Unit_Base
     Private prop_base_plate_distance_above_foundation As Double?
     Private prop_bolt_circle_bearing_plate_width As Double?
     Private prop_tower_centroid_offset As Boolean
+    Private prop_basic_soil_check As Boolean
+    Private prop_structural_check As Boolean
 
     Private prop_pier_shape As String
     Private prop_pier_diameter As Double?
@@ -434,6 +436,24 @@ Public Class SST_Unit_Base
             Me.prop_groundwater_depth = Value
         End Set
     End Property
+    <Category("Unit Base Details"), Description(""), DisplayName("Basic Soil Interaction up to 110% Acceptable1?")>
+    Public Property basic_soil_check() As Boolean
+        Get
+            Return Me.prop_basic_soil_check
+        End Get
+        Set
+            Me.prop_basic_soil_check = Value
+        End Set
+    End Property
+    <Category("Unit Base Details"), Description(""), DisplayName("Structural Checks up to 105% Acceptable?")>
+    Public Property structural_check() As Boolean
+        Get
+            Return Me.prop_structural_check
+        End Get
+        Set
+            Me.prop_structural_check = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -534,7 +554,7 @@ Public Class SST_Unit_Base
         Try
             Me.pier_shape = CType(UnitBaseDataRow.Item("pier_shape"), String)
         Catch
-            Me.pier_shape = "Circular"
+            Me.pier_shape = ""
         End Try 'Pier Shape
         Try
             If Not IsDBNull(CType(UnitBaseDataRow.Item("pier_diameter"), Double)) Then
@@ -787,6 +807,16 @@ Public Class SST_Unit_Base
         Catch
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
+        Try
+            Me.basic_soil_check = CType(UnitBaseDataRow.Item("SoilInteractionBoolean"), Boolean)
+        Catch
+            Me.basic_soil_check = False
+        End Try 'Basic Soil Interaction up to 110% Acceptable?
+        Try
+            Me.structural_check = CType(UnitBaseDataRow.Item("StructuralCheckBoolean"), Boolean)
+        Catch
+            Me.structural_check = False
+        End Try 'Structural Checks up to 105.0% Acceptable?
 
     End Sub 'Generate a Unit Base object from EDS
 
@@ -1136,6 +1166,16 @@ Public Class SST_Unit_Base
         Catch
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
+        Try
+            Me.basic_soil_check = CType(GetOneExcelRange(path, "SoilInteractionBoolean"), Boolean)
+        Catch
+            Me.basic_soil_check = False
+        End Try 'Basic Soil Interaction up to 110% Acceptable?
+        Try
+            Me.structural_check = CType(GetOneExcelRange(path, "StructuralCheckBoolean"), Boolean)
+        Catch
+            Me.structural_check = False
+        End Try 'Structural Checks up to 105.0% Acceptable?
 
     End Sub 'Generate a Unit Base object from Excel
 

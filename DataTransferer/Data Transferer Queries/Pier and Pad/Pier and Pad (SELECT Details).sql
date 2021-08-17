@@ -47,6 +47,8 @@ SELECT
 	,ppd.neglect_depth
 	,ppd.bearing_distribution_type
 	,ppd.groundwater_depth
+	,ppd.basic_soil_check
+	,ppd.structural_check
 
 FROM 
 	foundation_details fd

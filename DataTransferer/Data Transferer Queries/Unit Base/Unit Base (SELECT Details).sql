@@ -49,6 +49,8 @@ SELECT
 	,ub.bearing_distribution_type
 	,ub.groundwater_depth
 	,ub.tower_centroid_offset
+	,ub.basic_soil_check
+	,ub.structural_check
 FROM 
 	foundation_details fd
 	,unit_base_details ub 
