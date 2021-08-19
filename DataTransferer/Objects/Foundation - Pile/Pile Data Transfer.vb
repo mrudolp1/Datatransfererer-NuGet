@@ -10,7 +10,7 @@ Partial Public Class DataTransfererPile
     Private prop_ExcelFilePath As String
 
     Public Property Piles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.3).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.4).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property pileDS As New DataSet
@@ -35,8 +35,8 @@ Partial Public Class DataTransfererPile
         ds = MyDataSet
         pileID = LogOnUser
         pileDB = ActiveDatabase
-        BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing. 
-        STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing. 
+        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing. 
+        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing. 
     End Sub
 #End Region
 
@@ -138,8 +138,9 @@ Partial Public Class DataTransfererPile
 
             Else
 
-                'PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-                'PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS])", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS])")
+                PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+                PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+                PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
 
                 Dim tempUpdater As String = ""
                 tempUpdater += UpdatePileDetail(pf)
@@ -423,6 +424,7 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Moment of Inertia").Range("D12").Value = CType(pf.quantity_piles_surrounding, Integer)
                 Else .Worksheets("Moment of Inertia").Range("D12").ClearContents
                 End If
+                If Not IsNothing(pf.pile_cap_reference) Then .Worksheets("Input").Range("G47").Value = pf.pile_cap_reference
 
                 For Each pfSL As PileSoilLayer In pf.soil_layers
 
@@ -567,6 +569,7 @@ Partial Public Class DataTransfererPile
         insertString += "," & IIf(IsNothing(pf.pile_quantity_asymmetric), "Null", pf.pile_quantity_asymmetric.ToString)
         insertString += "," & IIf(IsNothing(pf.pile_spacing_min_asymmetric), "Null", pf.pile_spacing_min_asymmetric.ToString)
         insertString += "," & IIf(IsNothing(pf.quantity_piles_surrounding), "Null", pf.quantity_piles_surrounding.ToString)
+        insertString += "," & IIf(IsNothing(pf.pile_cap_reference), "Null", "'" & pf.pile_cap_reference.ToString & "'")
 
         Return insertString
     End Function
@@ -663,6 +666,7 @@ Partial Public Class DataTransfererPile
         updateString += ", pile_quantity_asymmetric=" & IIf(IsNothing(pf.pile_quantity_asymmetric), "Null", pf.pile_quantity_asymmetric.ToString)
         updateString += ", pile_spacing_min_asymmetric=" & IIf(IsNothing(pf.pile_spacing_min_asymmetric), "Null", pf.pile_spacing_min_asymmetric.ToString)
         updateString += ", quantity_piles_surrounding=" & IIf(IsNothing(pf.quantity_piles_surrounding), "Null", pf.quantity_piles_surrounding.ToString)
+        updateString += ", pile_cap_reference=" & IIf(IsNothing(pf.pile_cap_reference), "Null", "'" & pf.pile_cap_reference.ToString & "'")
         updateString += " WHERE ID = " & pf.pile_id.ToString
 
         Return updateString
