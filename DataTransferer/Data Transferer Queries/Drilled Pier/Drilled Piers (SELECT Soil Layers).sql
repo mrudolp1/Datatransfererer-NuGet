@@ -3,7 +3,7 @@
 SELECT 
 	sm.id model_id
 	,fd.id foundation_id
-	,dpd.ID drilled_pier_id
+	--,dpd.ID drilled_pier_id
 	,sl.drilled_pier_id
 	,sl.ID soil_layer_id
 	,sl.bottom_depth

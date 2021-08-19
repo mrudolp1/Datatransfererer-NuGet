@@ -12,7 +12,7 @@ Partial Public Class DataTransfererDrilledPier
     Private prop_ExcelFilePath As String
 
     Public Property DrilledPiers As New List(Of DrilledPier)
-    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-17-2021.xlsm"
+    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-19-2021.xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property dpDS As New DataSet
@@ -691,6 +691,50 @@ Partial Public Class DataTransfererDrilledPier
 
             'MsgBox(CountID)
 
+
+
+            'Dim list As List(Of Integer) = New List(Of Integer)({19, 23, 29})
+
+            '' Find value greater than 20.
+            'Dim val As Integer = list.FindLast(Function(value As Integer)
+            '                                       Return value > 20
+            '                                   End Function)
+            ''Console.WriteLine(val)
+            'MsgBox(val)
+
+
+            'Dim val As String
+
+            '' Find last 5-letter string.
+            'val = List.FindLast(Function(value As String)
+            '                        Return value.Length = 5
+            '                    End Function)
+            'Console.WriteLine("FINDLAST: {0}", val)
+
+
+
+            ''8-18-2021 TESTING START~~~~~~~~~~~~~~~~
+            'For Each dp As DrilledPier In DrilledPiers
+
+            '    Dim currentIdxVal As Integer
+            '    Dim lastIdxVal As Integer
+
+            '    currentIdxVal = DrilledPiers.IndexOf(dp)
+            '    lastIdxVal = DrilledPiers.LastIndexOf(dp, CType(dp.local_drilled_pier_id, Integer)) 'error here not recognizing the last matching index
+            '    'this line is is only looking at indeces up to the second value (local drilled pier)
+
+
+            '    'run for only the last index of local pier ids in list of drilled piers
+            '    If currentIdxVal = lastIdxVal Then
+            '        Console.WriteLine(currentIdxVal)
+            '    End If
+
+            'Next
+            ''8-18-2021 TESTING END~~~~~~~~~~~~~~~~
+
+
+
+
             Dim colCounter As Integer = 6
             Dim myCol As String
             Dim rowStart As Integer = 53
@@ -701,6 +745,10 @@ Partial Public Class DataTransfererDrilledPier
                 myCol = GetExcelColumnName(colCounter)
 
                 'DRILLED PIER DETAILS
+                If Not IsNothing(dp.pier_id) Then
+                    .Worksheets("Database").Range(myCol & rowStart - 1).Value = CType(dp.pier_id, Integer)
+                Else .Worksheets("Database").Range(myCol & rowStart - 1).ClearContents
+                End If
                 If Not IsNothing(dp.concrete_compressive_strength) Then
                     .Worksheets("Database").Range(myCol & rowStart + 7).Value = CType(dp.concrete_compressive_strength, Double)
                 Else .Worksheets("Database").Range(myCol & rowStart + 7).ClearContents
@@ -1054,9 +1102,9 @@ Partial Public Class DataTransfererDrilledPier
                 Next
 
                 dpRow += 1
-                    colCounter += 1
+                colCounter += 1
 
-                Next
+            Next
 
 
         End With

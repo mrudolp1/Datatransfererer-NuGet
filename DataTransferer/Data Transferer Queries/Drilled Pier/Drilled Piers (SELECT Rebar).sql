@@ -3,7 +3,7 @@
 SELECT 
 	sm.id model_id
 	,fd.id foundation_id
-	,s.drilled_pier_id
+	--,s.drilled_pier_id
 	,r.section_id
 	,r.ID rebar_id
 	,r.longitudinal_rebar_quantity
