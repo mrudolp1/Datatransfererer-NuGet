@@ -9,7 +9,7 @@ Partial Public Class frmMain
 #Region "Object Declarations"
     Public myUnitBases As New DataTransfererUnitBase
     Public myPierandPads As New DataTransfererPierandPad
-    Public myDrilledPiers As New DataTransfererDrilledPier
+    'Public myDrilledPiers As New DataTransfererDrilledPier
     Public myPiles As New DataTransfererPile
 
     Public BUNumber As String = ""
@@ -17,13 +17,13 @@ Partial Public Class frmMain
 
     'Import to Excel
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\EDS - Pier and Pad Foundation (4.1.2).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - Pile Foundation (2.2.1).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\Drilled Pier Foundation (5.1.0) - from EDS.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\" & "" & "EDS - Pile Foundation (2.2.1.5).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\Drilled Pier Foundation (5.1.0) - from EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\Pile Foundation (2.1.3) - Copy.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Drilled Pier Foundation (5.1.0) - TEST - 8-9-2021 - Original.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\Pile Foundation (2.2.1.5).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Drilled Pier Foundation (5.1.0) - TEST - 8-9-2021 - Original.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\SST Unit Base Foundation (4.0.4) - to EDS.xlsm"}
 #End Region
 
@@ -102,9 +102,9 @@ Partial Public Class frmMain
                 myPierandPads.ExcelFilePath = item
                 If myPierandPads.LoadFromEDS() Then myPierandPads.SaveToExcel()
             ElseIf item.Contains("Drilled Pier Foundation") Then
-                myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myDrilledPiers.ExcelFilePath = item
-                If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
+                'myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                'myDrilledPiers.ExcelFilePath = item
+                'If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
             ElseIf item.Contains("Pile Foundation") Then
                 myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPiles.ExcelFilePath = item
@@ -129,10 +129,10 @@ Partial Public Class frmMain
                 myPierandPads.LoadFromExcel()
                 myPierandPads.SaveToEDS()
             ElseIf item.Contains("Drilled Pier Foundation") Then
-                myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myDrilledPiers.ExcelFilePath = item
-                myDrilledPiers.LoadFromExcel()
-                myDrilledPiers.SaveToEDS()
+                'myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                'myDrilledPiers.ExcelFilePath = item
+                'myDrilledPiers.LoadFromExcel()
+                'myDrilledPiers.SaveToEDS()
             ElseIf item.Contains("Pile Foundation") Then
                 myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPiles.ExcelFilePath = item
@@ -146,7 +146,7 @@ Partial Public Class frmMain
     Sub ClearAllTools()
         myUnitBases.Clear()
         myPierandPads.Clear()
-        myDrilledPiers.Clear()
+        'myDrilledPiers.Clear()
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
