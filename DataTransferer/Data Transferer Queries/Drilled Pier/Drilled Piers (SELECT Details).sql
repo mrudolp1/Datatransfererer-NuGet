@@ -25,14 +25,14 @@ SELECT
 	,dpd.shear_override_crit_depth
 	,dpd.shear_crit_depth_override_comp
 	,dpd.shear_crit_depth_override_uplift
-	,dpd.drilled_pier_profile_qty
-	,dpd.soil_profiles
+	--,dpd.drilled_pier_profile_qty
+	--,dpd.soil_profiles
 	,dpd.local_drilled_pier_id
-	,dpd.rho_override_1
-	,dpd.rho_override_2
-	,dpd.rho_override_3
-	,dpd.rho_override_4
-	,dpd.rho_override_5
+	--,dpd.rho_override_1
+	--,dpd.rho_override_2
+	--,dpd.rho_override_3
+	--,dpd.rho_override_4
+	--,dpd.rho_override_5
 	,dpd.bearing_type_toggle
 FROM 
 	foundation_details fd

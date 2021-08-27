@@ -15,7 +15,7 @@ SELECT
     ,bp.swelling_expansive_soil
     ,bp.depth_of_expansive_soil
     ,bp.expansive_soil_force
-	,bp.local_drilled_pier_id
+	--,bp.local_drilled_pier_id
 FROM 
 	foundation_details fd
 	,drilled_pier_details dpd 

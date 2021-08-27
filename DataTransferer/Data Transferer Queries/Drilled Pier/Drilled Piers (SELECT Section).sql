@@ -13,7 +13,8 @@ SELECT
 	,s.bottom_elevation
 	--,s.assume_min_steel_rho_override
 	,s.local_section_id
-	,s.local_drilled_pier_id
+	--,s.local_drilled_pier_id
+	,s.rho_override
 FROM 
 	drilled_pier_section s 
 	,foundation_details fd
