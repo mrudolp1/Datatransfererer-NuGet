@@ -20,6 +20,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Belled).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Details).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Embedded).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Profile).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Rebar).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Section).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Soil Layers).sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
@@ -53,6 +61,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28IN_UP%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Belled%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Embedded%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Profile%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Rebar%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Section%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Soil Layers%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
