@@ -1,53 +1,144 @@
 ﻿Option Strict On
+Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary Text comparison instead of Text Comparison
 
 Imports System.ComponentModel
 Imports System.Data
 Imports System.IO
 
-Partial Public Class TNX_model
-    Private prop_units As tnx_units
-    'Private prop_code_data As tnx_code
-    Private prop_upper_structure As List(Of tnx_antenna_record)
-    Private prop_base_structure As List(Of tnx_tower_record)
-    Private prop_guy_wires As List(Of tnx_guy_record)
-    'Private prop_feed_lines As List(Of tnx_feed_line)
-    'Private prop_discrete_loads As List(Of tnx_discrete)
-    'Private prop_dishes As List(Of tnx_dish)
+Partial Public Class tnxModel
 
-    <Category("TNX"), Description(""), DisplayName("prop_units")>
-    Public Property units() As tnx_units
+    Private prop_settings As New tnxSettings()
+    Private prop_solutionSettings As New tnxSolutionSettings()
+    Private prop_MTOSettings As New tnxMTOSettings()
+    Private prop_reportSettings As New tnxReportSettings()
+    Private prop_CCIReport As New tnxCCIReport()
+    Private prop_code As New tnxCode()
+    Private prop_options As New tnxOptions()
+    Private prop_geometry As New tnxGeometry()
+    Private prop_feedLines As New List(Of tnxFeedLine)
+    Private prop_discreteLoads As New List(Of tnxDiscreteLoad)
+    Private prop_dishes As New List(Of tnxDish)
+    Private prop_userForces As New List(Of tnxUserForce)
+    Private prop_otherLines As New List(Of String())
+
+
+
+
+    <Category("TNX"), Description(""), DisplayName("Settings")>
+    Public Property settings() As tnxSettings
         Get
-            Return Me.prop_units
+            Return Me.prop_settings
         End Get
         Set
-            Me.prop_units = Value
+            Me.prop_settings = Value
         End Set
     End Property
-    <Category("TNX"), Description(""), DisplayName("Upper Structure")>
-    Public Property upper_structure() As List(Of tnx_antenna_record)
+    <Category("TNX"), Description(""), DisplayName("Solution Settings")>
+    Public Property solutionSettings() As tnxSolutionSettings
         Get
-            Return Me.prop_upper_structure
+            Return Me.prop_solutionSettings
         End Get
         Set
-            Me.prop_upper_structure = Value
+            Me.prop_solutionSettings = Value
         End Set
     End Property
-    <Category("TNX"), Description(""), DisplayName("Base Structure")>
-    Public Property base_structure() As List(Of tnx_tower_record)
+    <Category("TNX"), Description(""), DisplayName("MTO Settings")>
+    Public Property MTOSettings() As tnxMTOSettings
         Get
-            Return Me.prop_base_structure
+            Return Me.prop_MTOSettings
         End Get
         Set
-            Me.prop_base_structure = Value
+            Me.prop_MTOSettings = Value
         End Set
     End Property
-    <Category("TNX"), Description(""), DisplayName("Guy Wires")>
-    Public Property guy_wires() As List(Of tnx_guy_record)
+    <Category("TNX"), Description(""), DisplayName("Report Settings")>
+    Public Property reportSettings() As tnxReportSettings
         Get
-            Return Me.prop_guy_wires
+            Return Me.prop_reportSettings
         End Get
         Set
-            Me.prop_guy_wires = Value
+            Me.prop_reportSettings = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("CCI Report")>
+    Public Property CCIReport() As tnxCCIReport
+        Get
+            Return Me.prop_CCIReport
+        End Get
+        Set
+            Me.prop_CCIReport = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Code")>
+    Public Property code() As tnxCode
+        Get
+            Return Me.prop_code
+        End Get
+        Set
+            Me.prop_code = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Options")>
+    Public Property options() As tnxOptions
+        Get
+            Return Me.prop_options
+        End Get
+        Set
+            Me.prop_options = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Geometry")>
+    Public Property geometry() As tnxGeometry
+        Get
+            Return Me.prop_geometry
+        End Get
+        Set
+            Me.prop_geometry = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Feed Lines")>
+    Public Property feedLines() As List(Of tnxFeedLine)
+        Get
+            Return Me.prop_feedLines
+        End Get
+        Set
+            Me.prop_feedLines = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Discrete Loads")>
+    Public Property discreteLoads() As List(Of tnxDiscreteLoad)
+        Get
+            Return Me.prop_discreteLoads
+        End Get
+        Set
+            Me.prop_discreteLoads = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("Dishes")>
+    Public Property dishes() As List(Of tnxDish)
+        Get
+            Return Me.prop_dishes
+        End Get
+        Set
+            Me.prop_dishes = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("User Forces")>
+    Public Property userForces() As List(Of tnxUserForce)
+        Get
+            Return Me.prop_userForces
+        End Get
+        Set
+            Me.prop_userForces = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("All the other stuff")>
+    Public Property otherLines() As List(Of String())
+        Get
+            Return Me.prop_otherLines
+        End Get
+        Set
+            Me.prop_otherLines = Value
         End Set
     End Property
 
@@ -58,17 +149,14 @@ Partial Public Class TNX_model
     <Category("Constructor"), Description("Create TNX object from TNX file.")>
     Public Sub New(ByVal tnxPath As String)
 
-        Dim USUnits As Boolean = False
-        'instatiate lists
-        'Me.upper_structure = New List(Of tnx_antenna_record)
-        'Me.base_structure = New List(Of tnx_tower_record)
-        'Me.guy_wires = New List(Of tnx_guy_record)
+        Dim tnxVar As String
+        Dim tnxValue As String
+        Dim recIndex As Integer
+        Dim recordUSUnits As Boolean = False
+        Dim sectionFilter As String = ""
+        Dim caseFilter As String = ""
 
         For Each line In File.ReadLines(tnxPath)
-
-            Dim tnxVar As String
-            Dim tnxValue As String
-            Dim recIndex As Integer
 
             If Not line.Contains("=") Then
                 tnxVar = line
@@ -78,3176 +166,7059 @@ Partial Public Class TNX_model
                 tnxValue = Right(line, Len(line) - line.IndexOf("=") - 1)
             End If
 
-            Select Case tnxVar
-                    ''''Units''''
-                Case "UnitsSystem"
-                    If tnxValue <> "US" Then
-                        Throw New System.Exception("TNX file is not in US units.")
+            'Set caseFilter
+            Select Case sectionFilter
+                Case "Antenna"
+                    If Left(tnxVar, 7) = "Antenna" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
                     End If
-                Case "[US Units]"
-                    USUnits = True
-                    Me.units = New tnx_units
-                Case "[SI Units]"
-                    USUnits = False
-                Case "Length"
-                    Try
-                        If USUnits Then Me.units.Length = New tnx_length_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "LengthPrec"
-                    Try
-                        If USUnits Then Me.units.Length.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Coordinate"
-                    Try
-                        If USUnits Then Me.units.Coordinate = New tnx_coordinate_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "CoordinatePrec"
-                    Try
-                        If USUnits Then Me.units.Coordinate.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Force"
-                    Try
-                        If USUnits Then Me.units.Force = New tnx_force_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "ForcePrec"
-                    Try
-                        If USUnits Then Me.units.Force.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Load"
-                    Try
-                        If USUnits Then Me.units.Load = New tnx_load_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "LoadPrec"
-                    Try
-                        If USUnits Then Me.units.Load.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Moment"
-                    Try
-                        If USUnits Then Me.units.Moment = New tnx_moment_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "MomentPrec"
-                    Try
-                        If USUnits Then Me.units.Moment.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Properties"
-                    Try
-                        If USUnits Then Me.units.Properties = New tnx_properties_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "PropertiesPrec"
-                    Try
-                        If USUnits Then Me.units.Properties.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Pressure"
-                    Try
-                        If USUnits Then Me.units.Pressure = New tnx_pressure_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "PressurePrec"
-                    Try
-                        If USUnits Then Me.units.Pressure.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Velocity"
-                    Try
-                        If USUnits Then Me.units.Velocity = New tnx_velocity_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "VelocityPrec"
-                    Try
-                        If USUnits Then Me.units.Velocity.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Displacement"
-                    Try
-                        If USUnits Then Me.units.Displacement = New tnx_displacement_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "DisplacementPrec"
-                    Try
-                        If USUnits Then Me.units.Displacement.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Mass"
-                    Try
-                        If USUnits Then Me.units.Mass = New tnx_mass_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "MassPrec"
-                    Try
-                        If USUnits Then Me.units.Mass.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Acceleration"
-                    Try
-                        If USUnits Then Me.units.Acceleration = New tnx_acceleration_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AccelerationPrec"
-                    Try
-                        If USUnits Then Me.units.Acceleration.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Stress"
-                    Try
-                        If USUnits Then Me.units.Stress = New tnx_stress_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "StressPrec"
-                    Try
-                        If USUnits Then Me.units.Stress.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Density"
-                    Try
-                        If USUnits Then Me.units.Density = New tnx_density_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "DensityPrec"
-                    Try
-                        If USUnits Then Me.units.Density.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "UnitWt"
-                    Try
-                        If USUnits Then Me.units.UnitWt = New tnx_unitwt_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "UnitWtPrec"
-                    Try
-                        If USUnits Then Me.units.UnitWt.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Strength"
-                    Try
-                        If USUnits Then Me.units.Strength = New tnx_strength_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "StrengthPrec"
-                    Try
-                        If USUnits Then Me.units.Strength.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Modulus"
-                    Try
-                        If USUnits Then Me.units.Modulus = New tnx_modulus_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "ModulusPrec"
-                    Try
-                        If USUnits Then Me.units.Modulus.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Temperature"
-                    Try
-                        If USUnits Then Me.units.Temperature = New tnx_temperature_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TemperaturePrec"
-                    Try
-                        If USUnits Then Me.units.Temperature.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Printer"
-                    Try
-                        If USUnits Then Me.units.Printer = New tnx_printer_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "PrinterPrec"
-                    Try
-                        If USUnits Then Me.units.Printer.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Rotation"
-                    Try
-                        If USUnits Then Me.units.Rotation = New tnx_rotation_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "RotationPrec"
-                    Try
-                        If USUnits Then Me.units.Rotation.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "Spacing"
-                    Try
-                        If USUnits Then Me.units.Spacing = New tnx_spacing_unit(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "SpacingPrec"
-                    Try
-                        If USUnits Then Me.units.Spacing.precision = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
+                Case "Tower"
+                    If Left(tnxVar, 5) = "Tower" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case "Guy"
+                    If Left(tnxVar, 3) = "Guy" Or Left(tnxVar, 6) = "Anchor" Or Left(tnxVar, 7) = "Azimuth" Or Left(tnxVar, 6) = "Torque" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case "FeedLine"
+                    If Left(tnxVar, 8) = "FeedLine" Or Left(tnxVar, 8) = "AutoCalc" Or Left(tnxVar, 7) = "Exclude" Or Left(tnxVar, 4) = "Flat" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case "Discrete"
+                    'If Left(tnxVar, 9) = "TowerLoad" Or Left(tnxVar, 9) = "TowerVert" Or Left(tnxVar, 8) = "TowerOff" Or Left(tnxVar, 8) = "TowerLat" Or Left(tnxVar, 8) = "TowerAzi" Or Left(tnxVar, 8) = "TowerApp" Then
+                    If Left(tnxVar, 5) = "Tower" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case "Dish"
+                    If Left(tnxVar, 4) = "Dish" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case "UserForce"
+                    If Left(tnxVar, 9) = "UserForce" Then
+                        caseFilter = sectionFilter
+                    Else
+                        caseFilter = ""
+                    End If
+                Case Else
+                    caseFilter = ""
+            End Select
+
+            Select Case True
+                Case caseFilter = ""
+                    ''''These are all the individual options for the eri file. They are not part of a record which there may be multiple of.'''
+                    Select Case True
+                            ''''Main Section Filters''''
+                        Case tnxVar.Equals("NumAntennaRecs")
+                            Try
+                                sectionFilter = "Antenna"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumTowerRecs")
+                            Try
+                                sectionFilter = "Tower"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumGuyRecs")
+                            Try
+                                sectionFilter = "Guy"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumFeedLineRecs")
+                            Try
+                                sectionFilter = "FeedLine"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumTowerLoadRecs")
+                            Try
+                                sectionFilter = "Discrete"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumDishRecs")
+                            Try
+                                sectionFilter = "Dish"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("NumUserForceRecs")
+                            Try
+                                sectionFilter = "UserForce"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        ''''Units''''
+                        Case tnxVar.Equals("UnitsSystem")
+                            If tnxValue <> "US" Then
+                                Throw New System.Exception("TNX file is not in US units.")
+                            End If
+                            Me.settings.projectInfo.UnitsSystem = tnxValue
+                        Case tnxVar.Equals("[US Units]")
+                            recordUSUnits = True
+                            Me.otherLines.Add(New String() {tnxVar})
+                        Case tnxVar.Equals("[SI Units]")
+                            recordUSUnits = False
+                            Me.otherLines.Add(New String() {tnxVar})
+                        Case tnxVar.Equals("Length")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Length = New tnxLengthUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("LengthPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Length.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Coordinate")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Coordinate = New tnxCoordinateUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CoordinatePrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Coordinate.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Force")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Force = New tnxForceUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ForcePrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Force.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Load")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Load = New tnxLoadUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("LoadPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Load.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Moment")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Moment = New tnxMomentUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("MomentPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Moment.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Properties")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Properties = New tnxPropertiesUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PropertiesPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Properties.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Pressure")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Pressure = New tnxPressureUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PressurePrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Pressure.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Velocity")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Velocity = New tnxVelocityUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("VelocityPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Velocity.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Displacement")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Displacement = New tnxDisplacementUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplacementPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Displacement.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Mass")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Mass = New tnxMassUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("MassPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Mass.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Acceleration")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Acceleration = New tnxAccelerationUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AccelerationPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Acceleration.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Stress")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Stress = New tnxStressUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("StressPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Stress.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Density")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Density = New tnxDensityUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DensityPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Density.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UnitWt")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.UnitWt = New tnxUnitWTUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UnitWtPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.UnitWt.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Strength")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Strength = New tnxStrengthUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("StrengthPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Strength.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Modulus")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Modulus = New tnxModulusUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ModulusPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Modulus.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Temperature")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Temperature = New tnxTempUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TemperaturePrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Temperature.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Printer")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Printer = New tnxPrinterUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PrinterPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Printer.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Rotation")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Rotation = New tnxRotationUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RotationPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Rotation.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Spacing")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Spacing = New tnxSpacingUnit(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SpacingPrec")
+                            Try
+                                If recordUSUnits Then
+                                    Me.settings.USUnits.Spacing.precision = CInt(tnxValue)
+                                Else
+                                    Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                                End If
+                            Catch ex As Exception
+                            End Try
+                    ''''Project Info Settings
+                        Case tnxVar.Equals("DesignStandardSeries")
+                            Try
+                                Me.settings.projectInfo.DesignStandardSeries = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UnitsSystem")
+                            Try
+                                Me.settings.projectInfo.UnitsSystem = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ClientName")
+                            Try
+                                Me.settings.projectInfo.ClientName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ProjectName")
+                            Try
+                                Me.settings.projectInfo.ProjectName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ProjectNumber")
+                            Try
+                                Me.settings.projectInfo.ProjectNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CreatedBy")
+                            Try
+                                Me.settings.projectInfo.CreatedBy = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CreatedOn")
+                            Try
+                                Me.settings.projectInfo.CreatedOn = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("LastUsedBy")
+                            Try
+                                Me.settings.projectInfo.LastUsedBy = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("LastUsedOn")
+                            Try
+                                Me.settings.projectInfo.LastUsedOn = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("VersionUsed")
+                            Try
+                                Me.settings.projectInfo.VersionUsed = tnxValue
+                            Catch ex As Exception
+                            End Try
+                            '''User Info Settings
+                        Case tnxVar.Equals("ViewerUserName")
+                            Try
+                                Me.settings.userInfo.ViewerUserName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerCompanyName")
+                            Try
+                                Me.settings.userInfo.ViewerCompanyName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerStreetAddress")
+                            Try
+                                Me.settings.userInfo.ViewerStreetAddress = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerCityState")
+                            Try
+                                Me.settings.userInfo.ViewerCityState = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerPhone")
+                            Try
+                                Me.settings.userInfo.ViewerPhone = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerFAX")
+                            Try
+                                Me.settings.userInfo.ViewerFAX = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerLogo")
+                            Try
+                                Me.settings.userInfo.ViewerLogo = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ViewerCompanyBitmap")
+                            Try
+                                Me.settings.userInfo.ViewerCompanyBitmap = tnxValue
+                            Catch ex As Exception
+                            End Try
+                    ''''Code''''
+                        Case tnxVar.Equals("DesignCode")
+                            Try
+                                Me.code.design.DesignCode = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ERIDesignMode")
+                            Try
+                                Me.code.design.ERIDesignMode = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DoInteraction")
+                            Try
+                                Me.code.design.DoInteraction = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DoHorzInteraction")
+                            Try
+                                Me.code.design.DoHorzInteraction = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DoDiagInteraction")
+                            Try
+                                Me.code.design.DoDiagInteraction = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseMomentMagnification")
+                            Try
+                                Me.code.design.UseMomentMagnification = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseCodeStressRatio")
+                            Try
+                                Me.code.design.UseCodeStressRatio = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AllowStressRatio")
+                            Try
+                                Me.code.design.AllowStressRatio = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AllowAntStressRatio")
+                            Try
+                                Me.code.design.AllowAntStressRatio = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseCodeGuySF")
+                            Try
+                                Me.code.design.UseCodeGuySF = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuySF")
+                            Try
+                                Me.code.design.GuySF = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseTIA222H_AnnexS")
+                            Try
+                                Me.code.design.UseTIA222H_AnnexS = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TIA_222_H_AnnexS_Ratio")
+                            Try
+                                Me.code.design.TIA_222_H_AnnexS_Ratio = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PrintBitmaps")
+                            Try
+                                Me.code.design.PrintBitmaps = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("IceThickness")
+                            Try
+                                Me.code.ice.IceThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("IceDensity")
+                            Try
+                                Me.code.ice.IceDensity = Me.settings.USUnits.Density.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseModified_TIA_222_IceParameters")
+                            Try
+                                Me.code.ice.UseModified_TIA_222_IceParameters = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TIA_222_IceThicknessMultiplier")
+                            Try
+                                Me.code.ice.TIA_222_IceThicknessMultiplier = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DoNotUse_TIA_222_IceEscalation")
+                            Try
+                                Me.code.ice.DoNotUse_TIA_222_IceEscalation = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseIceEscalation")
+                            Try
+                                Me.code.ice.UseIceEscalation = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TempDrop")
+                            Try
+                                Me.code.thermal.TempDrop = Me.settings.USUnits.Temperature.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GroutFc")
+                            Try
+                                Me.code.misclCode.GroutFc = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBoltGrade")
+                            Try
+                                Me.code.misclCode.TowerBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBoltMinEdgeDist")
+                            Try
+                                Me.code.misclCode.TowerBoltMinEdgeDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindSpeed")
+                            Try
+                                Me.code.wind.WindSpeed = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindSpeedIce")
+                            Try
+                                Me.code.wind.WindSpeedIce = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindSpeedService")
+                            Try
+                                Me.code.wind.WindSpeedService = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseStateCountyLookup")
+                            Try
+                                Me.code.wind.UseStateCountyLookup = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("State")
+                            Try
+                                Me.code.wind.State = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("County")
+                            Try
+                                Me.code.wind.County = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseMaxKz")
+                            Try
+                                Me.code.wind.UseMaxKz = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCE_7_10_WindData")
+                            Try
+                                Me.code.wind.ASCE_7_10_WindData = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCE_7_10_ConvertWindToASD")
+                            Try
+                                Me.code.wind.ASCE_7_10_ConvertWindToASD = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseASCEWind")
+                            Try
+                                Me.code.wind.UseASCEWind = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AutoCalc_ASCE_GH")
+                            Try
+                                Me.code.wind.AutoCalc_ASCE_GH = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCE_ExposureCat")
+                            Try
+                                Me.code.wind.ASCE_ExposureCat = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCE_Year")
+                            Try
+                                Me.code.wind.ASCE_Year = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCEGh")
+                            Try
+                                Me.code.wind.ASCEGh = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ASCEI")
+                            Try
+                                Me.code.wind.ASCEI = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CalcWindAt")
+                            Try
+                                Me.code.wind.CalcWindAt = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindCalcPoints")
+                            Try
+                                Me.code.wind.WindCalcPoints = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindExposure")
+                            Try
+                                Me.code.wind.WindExposure = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("StructureCategory")
+                            Try
+                                Me.code.wind.StructureCategory = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RiskCategory")
+                            Try
+                                Me.code.wind.RiskCategory = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TopoCategory")
+                            Try
+                                Me.code.wind.TopoCategory = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RSMTopographicFeature")
+                            Try
+                                Me.code.wind.RSMTopographicFeature = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RSM_L")
+                            Try
+                                Me.code.wind.RSM_L = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RSM_X")
+                            Try
+                                Me.code.wind.RSM_X = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CrestHeight")
+                            Try
+                                Me.code.wind.CrestHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TIA_222_H_TopoFeatureDownwind")
+                            Try
+                                Me.code.wind.TIA_222_H_TopoFeatureDownwind = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("BaseElevAboveSeaLevel")
+                            Try
+                                Me.code.wind.BaseElevAboveSeaLevel = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ConsiderRooftopSpeedUp")
+                            Try
+                                Me.code.wind.ConsiderRooftopSpeedUp = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RooftopWS")
+                            Try
+                                Me.code.wind.RooftopWS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RooftopHS")
+                            Try
+                                Me.code.wind.RooftopHS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RooftopParapetHt")
+                            Try
+                                Me.code.wind.RooftopParapetHt = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RooftopXB")
+                            Try
+                                Me.code.wind.RooftopXB = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindZone")
+                            Try
+                                Me.code.wind.WindZone = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("EIACWindMult")
+                            Try
+                                Me.code.wind.EIACWindMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("EIACWindMultIce")
+                            Try
+                                Me.code.wind.EIACWindMultIce = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("EIACIgnoreCableDrag")
+                            Try
+                                Me.code.wind.EIACIgnoreCableDrag = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CSA_S37_RefVelPress")
+                            Try
+                                Me.code.wind.CSA_S37_RefVelPress = Me.settings.USUnits.Pressure.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CSA_S37_ReliabilityClass")
+                            Try
+                                Me.code.wind.CSA_S37_ReliabilityClass = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CSA_S37_ServiceabilityFactor")
+                            Try
+                                Me.code.wind.CSA_S37_ServiceabilityFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseASCE7_10_Seismic_Lcomb")
+                            Try
+                                Me.code.seismic.UseASCE7_10_Seismic_Lcomb = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SeismicSiteClass")
+                            Try
+                                Me.code.seismic.SeismicSiteClass = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SeismicSs")
+                            Try
+                                Me.code.seismic.SeismicSs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SeismicS1")
+                            Try
+                                Me.code.seismic.SeismicS1 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                    ''''Options''''
+                        Case tnxVar.Equals("UseClearSpans")
+                            Try
+                                Me.options.UseClearSpans = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseClearSpansKlr")
+                            Try
+                                Me.options.UseClearSpansKlr = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseFeedlineAsCylinder")
+                            Try
+                                Me.options.UseFeedlineAsCylinder = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseLegLoads")
+                            Try
+                                Me.options.UseLegLoads = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SRTakeCompression")
+                            Try
+                                Me.options.SRTakeCompression = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AllLegPanelsSame")
+                            Try
+                                Me.options.AllLegPanelsSame = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseCombinedBoltCapacity")
+                            Try
+                                Me.options.UseCombinedBoltCapacity = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SecHorzBracesLeg")
+                            Try
+                                Me.options.SecHorzBracesLeg = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SortByComponent")
+                            Try
+                                Me.options.SortByComponent = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SRCutEnds")
+                            Try
+                                Me.options.SRCutEnds = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SRConcentric")
+                            Try
+                                Me.options.SRConcentric = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CalcBlockShear")
+                            Try
+                                Me.options.CalcBlockShear = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Use4SidedDiamondBracing")
+                            Try
+                                Me.options.Use4SidedDiamondBracing = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TriangulateInnerBracing")
+                            Try
+                                Me.options.TriangulateInnerBracing = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PrintCarrierNotes")
+                            Try
+                                Me.options.PrintCarrierNotes = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AddIBCWindCase")
+                            Try
+                                Me.options.AddIBCWindCase = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("LegBoltsAtTop")
+                            Try
+                                Me.options.LegBoltsAtTop = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseTIA222Exemptions_MinBracingResistance")
+                            Try
+                                Me.options.UseTIA222Exemptions_MinBracingResistance = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseTIA222Exemptions_TensionSplice")
+                            Try
+                                Me.options.UseTIA222Exemptions_TensionSplice = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("IgnoreKLryFor60DegAngleLegs")
+                            Try
+                                Me.options.IgnoreKLryFor60DegAngleLegs = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseFeedlineTorque")
+                            Try
+                                Me.options.UseFeedlineTorque = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UsePinnedElements")
+                            Try
+                                Me.options.UsePinnedElements = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseRigidIndex")
+                            Try
+                                Me.options.UseRigidIndex = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseTrueCable")
+                            Try
+                                Me.options.UseTrueCable = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseASCELy")
+                            Try
+                                Me.options.UseASCELy = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CalcBracingForces")
+                            Try
+                                Me.options.CalcBracingForces = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("IgnoreBracingFEA")
+                            Try
+                                Me.options.IgnoreBracingFEA = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("BypassStabilityChecks")
+                            Try
+                                Me.options.BypassStabilityChecks = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseWindProjection")
+                            Try
+                                Me.options.UseWindProjection = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseDishCoeff")
+                            Try
+                                Me.options.UseDishCoeff = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AutoCalcTorqArmArea")
+                            Try
+                                Me.options.AutoCalcTorqArmArea = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("MastVert")
+                            'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
+                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
+                            Try
+                                Me.options.foundationStiffness.MastVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("MastHorz")
+                            'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
+                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
+                            Try
+                                Me.options.foundationStiffness.MastHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyVert")
+                            'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
+                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
+                            Try
+                                Me.options.foundationStiffness.GuyVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyHorz")
+                            'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
+                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
+                            Try
+                                Me.options.foundationStiffness.GuyHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GirtOffset")
+                            Try
+                                Me.options.defaultGirtOffsets.GirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GirtOffsetLatticedPole")
+                            Try
+                                Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("OffsetBotGirt")
+                            Try
+                                Me.options.defaultGirtOffsets.OffsetBotGirt = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CheckVonMises")
+                            Try
+                                Me.options.cantileverPoles.CheckVonMises = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SocketTopMount")
+                            Try
+                                Me.options.cantileverPoles.SocketTopMount = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PrintMonopoleAtIncrements")
+                            Try
+                                Me.options.cantileverPoles.PrintMonopoleAtIncrements = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseSubCriticalFlow")
+                            Try
+                                Me.options.cantileverPoles.UseSubCriticalFlow = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AssumePoleWithNoAttachments")
+                            Try
+                                Me.options.cantileverPoles.AssumePoleWithNoAttachments = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AssumePoleWithShroud")
+                            Try
+                                Me.options.cantileverPoles.AssumePoleWithShroud = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PoleCornerRadiusKnown")
+                            Try
+                                Me.options.cantileverPoles.PoleCornerRadiusKnown = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CantKFactor")
+                            Try
+                                Me.options.cantileverPoles.CantKFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("HogRodTakeup")
+                            Try
+                                Me.options.misclOptions.HogRodTakeup = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("RadiusSampleDist")
+                            Try
+                                Me.options.misclOptions.RadiusSampleDist = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDirOption")
+                            Try
+                                Me.options.windDirections.WindDirOption = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_0")
+                            Try
+                                Me.options.windDirections.WindDir0_0 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_1")
+                            Try
+                                Me.options.windDirections.WindDir0_1 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_2")
+                            Try
+                                Me.options.windDirections.WindDir0_2 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_3")
+                            Try
+                                Me.options.windDirections.WindDir0_3 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_4")
+                            Try
+                                Me.options.windDirections.WindDir0_4 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_5")
+                            Try
+                                Me.options.windDirections.WindDir0_5 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_6")
+                            Try
+                                Me.options.windDirections.WindDir0_6 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_7")
+                            Try
+                                Me.options.windDirections.WindDir0_7 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_8")
+                            Try
+                                Me.options.windDirections.WindDir0_8 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_9")
+                            Try
+                                Me.options.windDirections.WindDir0_9 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_10")
+                            Try
+                                Me.options.windDirections.WindDir0_10 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_11")
+                            Try
+                                Me.options.windDirections.WindDir0_11 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_12")
+                            Try
+                                Me.options.windDirections.WindDir0_12 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_13")
+                            Try
+                                Me.options.windDirections.WindDir0_13 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_14")
+                            Try
+                                Me.options.windDirections.WindDir0_14 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir0_15")
+                            Try
+                                Me.options.windDirections.WindDir0_15 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_0")
+                            Try
+                                Me.options.windDirections.WindDir1_0 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_1")
+                            Try
+                                Me.options.windDirections.WindDir1_1 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_2")
+                            Try
+                                Me.options.windDirections.WindDir1_2 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_3")
+                            Try
+                                Me.options.windDirections.WindDir1_3 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_4")
+                            Try
+                                Me.options.windDirections.WindDir1_4 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_5")
+                            Try
+                                Me.options.windDirections.WindDir1_5 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_6")
+                            Try
+                                Me.options.windDirections.WindDir1_6 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_7")
+                            Try
+                                Me.options.windDirections.WindDir1_7 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_8")
+                            Try
+                                Me.options.windDirections.WindDir1_8 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_9")
+                            Try
+                                Me.options.windDirections.WindDir1_9 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_10")
+                            Try
+                                Me.options.windDirections.WindDir1_10 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_11")
+                            Try
+                                Me.options.windDirections.WindDir1_11 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_12")
+                            Try
+                                Me.options.windDirections.WindDir1_12 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_13")
+                            Try
+                                Me.options.windDirections.WindDir1_13 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_14")
+                            Try
+                                Me.options.windDirections.WindDir1_14 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir1_15")
+                            Try
+                                Me.options.windDirections.WindDir1_15 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_0")
+                            Try
+                                Me.options.windDirections.WindDir2_0 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_1")
+                            Try
+                                Me.options.windDirections.WindDir2_1 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_2")
+                            Try
+                                Me.options.windDirections.WindDir2_2 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_3")
+                            Try
+                                Me.options.windDirections.WindDir2_3 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_4")
+                            Try
+                                Me.options.windDirections.WindDir2_4 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_5")
+                            Try
+                                Me.options.windDirections.WindDir2_5 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_6")
+                            Try
+                                Me.options.windDirections.WindDir2_6 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_7")
+                            Try
+                                Me.options.windDirections.WindDir2_7 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_8")
+                            Try
+                                Me.options.windDirections.WindDir2_8 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_9")
+                            Try
+                                Me.options.windDirections.WindDir2_9 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_10")
+                            Try
+                                Me.options.windDirections.WindDir2_10 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_11")
+                            Try
+                                Me.options.windDirections.WindDir2_11 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_12")
+                            Try
+                                Me.options.windDirections.WindDir2_12 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_13")
+                            Try
+                                Me.options.windDirections.WindDir2_13 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_14")
+                            Try
+                                Me.options.windDirections.WindDir2_14 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("WindDir2_15")
+                            Try
+                                Me.options.windDirections.WindDir2_15 = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SuppressWindPatternLoading")
+                            Try
+                                Me.options.windDirections.SuppressWindPatternLoading = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+
+                    ''''General Geometry''''
+                        Case tnxVar.Equals("TowerType")
+                            Try
+                                Me.geometry.TowerType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaType")
+                            Try
+                                Me.geometry.AntennaType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("OverallHeight")
+                            Try
+                                Me.geometry.OverallHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("BaseElevation")
+                            Try
+                                Me.geometry.BaseElevation = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Lambda")
+                            Try
+                                Me.geometry.Lambda = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopFaceWidth")
+                            Try
+                                Me.geometry.TowerTopFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBaseFaceWidth")
+                            Try
+                                Me.geometry.TowerBaseFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTaper")
+                            Try
+                                Me.geometry.TowerTaper = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyedMonopoleBaseType")
+                            Try
+                                Me.geometry.GuyedMonopoleBaseType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TaperHeight")
+                            Try
+                                Me.geometry.TaperHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("PivotHeight")
+                            Try
+                                Me.geometry.PivotHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AutoCalcGH")
+                            Try
+                                Me.geometry.AutoCalcGH = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserGHElev")
+                            Try
+                                Me.geometry.UserGHElev = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseIndexPlate")
+                            Try
+                                Me.geometry.UseIndexPlate = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("EnterUserDefinedGhValues")
+                            Try
+                                Me.geometry.EnterUserDefinedGhValues = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("BaseTowerGhInput")
+                            Try
+                                Me.geometry.BaseTowerGhInput = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UpperStructureGhInput")
+                            Try
+                                Me.geometry.UpperStructureGhInput = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("EnterUserDefinedCgValues")
+                            Try
+                                Me.geometry.EnterUserDefinedCgValues = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("BaseTowerCgInput")
+                            Try
+                                Me.geometry.BaseTowerCgInput = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UpperStructureCgInput")
+                            Try
+                                Me.geometry.UpperStructureCgInput = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaFaceWidth")
+                            Try
+                                Me.geometry.AntennaFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UseTopTakeup")
+                            Try
+                                Me.geometry.UseTopTakeup = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ConstantSlope")
+                            Try
+                                Me.geometry.ConstantSlope = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("[End Application]")
+                            Me.otherLines.Add(New String() {tnxVar})
+                            Exit For
+                        ''''Solution Options''''
+                        Case tnxVar.Equals("SolutionUsePDelta")
+                            Try
+                                Me.solutionSettings.SolutionUsePDelta = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SolutionMinStiffness")
+                            Try
+                                Me.solutionSettings.SolutionMinStiffness = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SolutionMaxStiffness")
+                            Try
+                                Me.solutionSettings.SolutionMaxStiffness = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SolutionMaxCycles")
+                            Try
+                                Me.solutionSettings.SolutionMaxCycles = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SolutionPower")
+                            Try
+                                Me.solutionSettings.SolutionPower = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("SolutionTolerance")
+                            Try
+                                Me.solutionSettings.SolutionTolerance = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                            '''''MTO Settings''''
+                        Case tnxVar.Equals("IncludeCapacityNote")
+                            Try
+                                Me.mtoSettings.IncludeCapacityNote = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("IncludeAppurtGraphics")
+                            Try
+                                Me.mtoSettings.IncludeAppurtGraphics = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplayNotes")
+                            Try
+                                Me.mtoSettings.DisplayNotes = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplayReactions")
+                            Try
+                                Me.mtoSettings.DisplayReactions = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplaySchedule")
+                            Try
+                                Me.mtoSettings.DisplaySchedule = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplayAppurtenanceTable")
+                            Try
+                                Me.mtoSettings.DisplayAppurtenanceTable = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DisplayMaterialStrengthTable")
+                            Try
+                                Me.mtoSettings.DisplayMaterialStrengthTable = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Notes")
+                            Try
+                                Me.MTOSettings.Notes.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        ''''Report Settings''''
+                        Case tnxVar.Equals("ReportInputCosts")
+                            Try
+                                Me.reportSettings.ReportInputCosts = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportInputGeometry")
+                            Try
+                                Me.reportSettings.ReportInputGeometry = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportInputOptions")
+                            Try
+                                Me.reportSettings.ReportInputOptions = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportMaxForces")
+                            Try
+                                Me.reportSettings.ReportMaxForces = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportInputMap")
+                            Try
+                                Me.reportSettings.ReportInputMap = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CostReportOutputType")
+                            Try
+                                Me.reportSettings.CostReportOutputType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("CapacityReportOutputType")
+                            Try
+                                Me.reportSettings.CapacityReportOutputType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintForceTotals")
+                            Try
+                                Me.reportSettings.ReportPrintForceTotals = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintForceDetails")
+                            Try
+                                Me.reportSettings.ReportPrintForceDetails = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintMastVectors")
+                            Try
+                                Me.reportSettings.ReportPrintMastVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintAntPoleVectors")
+                            Try
+                                Me.reportSettings.ReportPrintAntPoleVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintDiscreteVectors")
+                            Try
+                                Me.reportSettings.ReportPrintDiscreteVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintDishVectors")
+                            Try
+                                Me.reportSettings.ReportPrintDishVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintFeedTowerVectors")
+                            Try
+                                Me.reportSettings.ReportPrintFeedTowerVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintUserLoadVectors")
+                            Try
+                                Me.reportSettings.ReportPrintUserLoadVectors = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintPressures")
+                            Try
+                                Me.reportSettings.ReportPrintPressures = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintAppurtForces")
+                            Try
+                                Me.reportSettings.ReportPrintAppurtForces = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintGuyForces")
+                            Try
+                                Me.reportSettings.ReportPrintGuyForces = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintGuyStressing")
+                            Try
+                                Me.reportSettings.ReportPrintGuyStressing = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintDeflections")
+                            Try
+                                Me.reportSettings.ReportPrintDeflections = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintReactions")
+                            Try
+                                Me.reportSettings.ReportPrintReactions = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintStressChecks")
+                            Try
+                                Me.reportSettings.ReportPrintStressChecks = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintBoltChecks")
+                            Try
+                                Me.reportSettings.ReportPrintBoltChecks = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintInputGVerificationTables")
+                            Try
+                                Me.reportSettings.ReportPrintInputGVerificationTables = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ReportPrintOutputGVerificationTables")
+                            Try
+                                Me.reportSettings.ReportPrintOutputGVerificationTables = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        ''''CCI Report''''
+                        Case tnxVar.Equals("sReportProjectNumber")
+                            Try
+                                Me.CCIReport.sReportProjectNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportJobType")
+                            Try
+                                Me.CCIReport.sReportJobType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCarrierName")
+                            Try
+                                Me.CCIReport.sReportCarrierName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCarrierSiteNumber")
+                            Try
+                                Me.CCIReport.sReportCarrierSiteNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCarrierSiteName")
+                            Try
+                                Me.CCIReport.sReportCarrierSiteName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportSiteAddress")
+                            Try
+                                Me.CCIReport.sReportSiteAddress = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLatitudeDegree")
+                            Try
+                                Me.CCIReport.sReportLatitudeDegree = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLatitudeMinute")
+                            Try
+                                Me.CCIReport.sReportLatitudeMinute = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLatitudeSecond")
+                            Try
+                                Me.CCIReport.sReportLatitudeSecond = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLongitudeDegree")
+                            Try
+                                Me.CCIReport.sReportLongitudeDegree = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLongitudeMinute")
+                            Try
+                                Me.CCIReport.sReportLongitudeMinute = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLongitudeSecond")
+                            Try
+                                Me.CCIReport.sReportLongitudeSecond = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLocalCodeRequirement")
+                            Try
+                                Me.CCIReport.sReportLocalCodeRequirement = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportSiteHistory")
+                            Try
+                                Me.CCIReport.sReportSiteHistory = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportTowerManufacturer")
+                            Try
+                                Me.CCIReport.sReportTowerManufacturer = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportMonthManufactured")
+                            Try
+                                Me.CCIReport.sReportMonthManufactured = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportYearManufactured")
+                            Try
+                                Me.CCIReport.sReportYearManufactured = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportOriginalSpeed")
+                            Try
+                                Me.CCIReport.sReportOriginalSpeed = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportOriginalCode")
+                            Try
+                                Me.CCIReport.sReportOriginalCode = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportTowerType")
+                            Try
+                                Me.CCIReport.sReportTowerType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportEngrName")
+                            Try
+                                Me.CCIReport.sReportEngrName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportEngrTitle")
+                            Try
+                                Me.CCIReport.sReportEngrTitle = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportHQPhoneNumber")
+                            Try
+                                Me.CCIReport.sReportHQPhoneNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportEmailAddress")
+                            Try
+                                Me.CCIReport.sReportEmailAddress = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportLogoPath")
+                            Try
+                                Me.CCIReport.sReportLogoPath = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiContactName")
+                            Try
+                                Me.CCIReport.sReportCCiContactName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiAddress1")
+                            Try
+                                Me.CCIReport.sReportCCiAddress1 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiAddress2")
+                            Try
+                                Me.CCIReport.sReportCCiAddress2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiBUNumber")
+                            Try
+                                Me.CCIReport.sReportCCiBUNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiSiteName")
+                            Try
+                                Me.CCIReport.sReportCCiSiteName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiJDENumber")
+                            Try
+                                Me.CCIReport.sReportCCiJDENumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiWONumber")
+                            Try
+                                Me.CCIReport.sReportCCiWONumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiPONumber")
+                            Try
+                                Me.CCIReport.sReportCCiPONumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiAppNumber")
+                            Try
+                                Me.CCIReport.sReportCCiAppNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportCCiRevNumber")
+                            Try
+                                Me.CCIReport.sReportCCiRevNumber = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportDocsProvided")
+                            Try
+                                Me.CCIReport.sReportDocsProvided.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportRecommendations")
+                            Try
+                                Me.CCIReport.sReportRecommendations = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1")
+                            Try
+                                Me.CCIReport.sReportAppurt1.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2")
+                            Try
+                                Me.CCIReport.sReportAppurt2.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt3")
+                            Try
+                                Me.CCIReport.sReportAppurt3.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAddlCapacity")
+                            Try
+                                Me.CCIReport.sReportAddlCapacity.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAssumption")
+                            Try
+                                Me.CCIReport.sReportAssumption.Add(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note1")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note1 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note2")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note3")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note4")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note5")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note5 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note6")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note6 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt1Note7")
+                            Try
+                                Me.CCIReport.sReportAppurt1Note7 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note1")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note1 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note2")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note3")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note4")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note5")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note5 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note6")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note6 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAppurt2Note7")
+                            Try
+                                Me.CCIReport.sReportAppurt2Note7 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAddlCapacityNote1")
+                            Try
+                                Me.CCIReport.sReportAddlCapacityNote1 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAddlCapacityNote2")
+                            Try
+                                Me.CCIReport.sReportAddlCapacityNote2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAddlCapacityNote3")
+                            Try
+                                Me.CCIReport.sReportAddlCapacityNote3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("sReportAddlCapacityNote4")
+                            Try
+                                Me.CCIReport.sReportAddlCapacityNote4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case Else ''''All other lines
+                            If line.Contains("=") Then
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Else
+                                Me.otherLines.Add(New String() {tnxVar})
+                            End If
+                    End Select
+                Case caseFilter = "Antenna"
                     ''''Antenna Rec (Upper Structure)''''
-                Case "NumAntennaRecs"
-                    Try
-                        If CInt(tnxValue) > 0 Then
-                            Me.upper_structure = New List(Of tnx_antenna_record)
-                        End If
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRec"
-                    Try
-                        recIndex = CInt(tnxValue) - 1
-                        Me.upper_structure.Add(New tnx_antenna_record())
-                        Me.upper_structure(recIndex).AntennaRec = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBraceType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBraceType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHeight"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHeight = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalSpacing"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalSpacing = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalSpacingEx"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalSpacingEx = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaNumSections"
-                    Try
-                        Me.upper_structure(recIndex).AntennaNumSections = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaNumSesctions"
-                    Try
-                        Me.upper_structure(recIndex).AntennaNumSesctions = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaSectionLength"
-                    Try
-                        Me.upper_structure(recIndex).AntennaSectionLength = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerBracingGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerBracingGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerBracingMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerBracingMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLongHorizontalGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLongHorizontalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLongHorizontalMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLongHorizontalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerBracingType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerBracingType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerBracingSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerBracingSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtOffset"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtOffset = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtOffset"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtOffset = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHasKBraceEndPanels"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHasKBraceEndPanels = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHasHorizontals"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHasHorizontals = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLongHorizontalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLongHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLongHorizontalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLongHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalSize2"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalSize3"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalSize4"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalSize2"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalSize3"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalSize4"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaSubDiagLocation"
-                    Try
-                        Me.upper_structure(recIndex).AntennaSubDiagLocation = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalSize2"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalSize3"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalSize4"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipSize2"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipSize3"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipSize4"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaNumInnerGirts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaNumInnerGirts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaPoleShapeType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaPoleShapeType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaPoleSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaPoleSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaPoleGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaPoleGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaPoleMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaPoleMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaPoleSpliceLength"
-                    Try
-                        Me.upper_structure(recIndex).AntennaPoleSpliceLength = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleNumSides"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleNumSides = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleTopDiameter"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleTopDiameter = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleBotDiameter"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleBotDiameter = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleWallThickness"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleWallThickness = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleBendRadius"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleBendRadius = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTaperPoleMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTaperPoleMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaSWMult"
-                    Try
-                        Me.upper_structure(recIndex).AntennaSWMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaWPMult"
-                    Try
-                        Me.upper_structure(recIndex).AntennaWPMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaAutoCalcKSingleAngle"
-                    Try
-                        Me.upper_structure(recIndex).AntennaAutoCalcKSingleAngle = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaAutoCalcKSolidRound"
-                    Try
-                        Me.upper_structure(recIndex).AntennaAutoCalcKSolidRound = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaAfGusset"
-                    Try
-                        Me.upper_structure(recIndex).AntennaAfGusset = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTfGusset"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTfGusset = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaGussetBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaGussetBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaGussetGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaGussetGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaGussetMatlGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaGussetMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaAfMult"
-                    Try
-                        Me.upper_structure(recIndex).AntennaAfMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaArMult"
-                    Try
-                        Me.upper_structure(recIndex).AntennaArMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaFlatIPAPole"
-                    Try
-                        Me.upper_structure(recIndex).AntennaFlatIPAPole = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRoundIPAPole"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRoundIPAPole = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaFlatIPALeg"
-                    Try
-                        Me.upper_structure(recIndex).AntennaFlatIPALeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRoundIPALeg"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRoundIPALeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaFlatIPAHorizontal"
-                    Try
-                        Me.upper_structure(recIndex).AntennaFlatIPAHorizontal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRoundIPAHorizontal"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRoundIPAHorizontal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaFlatIPADiagonal"
-                    Try
-                        Me.upper_structure(recIndex).AntennaFlatIPADiagonal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRoundIPADiagonal"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRoundIPADiagonal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaCSA_S37_SpeedUpFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaCSA_S37_SpeedUpFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKLegs"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKLegs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKXBracedDiags"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKXBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKKBracedDiags"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKKBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKZBracedDiags"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKZBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKHorzs"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKHorzs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKSecHorzs"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKSecHorzs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKGirts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKGirts = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKInners"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKInners = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKXBracedDiagsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKXBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKKBracedDiagsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKKBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKZBracedDiagsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKZBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKHorzsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKHorzsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKSecHorzsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKSecHorzsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKGirtsY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKGirtsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKInnersY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKInnersY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedHorz"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedHorz = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedDiag"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedSubDiag"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedSubDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedSubHorz"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedSubHorz = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedVert"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedVert = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedHip"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedHip = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKRedHipDiag"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKRedHipDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKTLX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKTLX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKTLZ"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKTLZ = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKTLLeg"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKTLLeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerKTLX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerKTLX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerKTLZ"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerKTLZ = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerKTLLeg"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerKTLLeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchBoltLocationHoriz"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchBoltLocationHoriz = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchBoltLocationDiag"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchBoltLocationDiag = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchSpacing"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchSpacing = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchSpacingHorz"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchSpacingHorz = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchSpacingDiag"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchSpacingDiag = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaStitchSpacingRed"
-                    Try
-                        Me.upper_structure(recIndex).AntennaStitchSpacingRed = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegConnType"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegConnType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaLegBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaLegBoltEdgeDistance = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBotGirtGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBotGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaInnerGirtGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaInnerGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaShortHorizontalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaShortHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHorizontalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantDiagonalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubDiagonalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantSubHorizontalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantSubHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantVerticalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantVerticalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalBoltGrade"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalBoltSize"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalNumBolts"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalBoltEdgeDistance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalGageG1Distance"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalNetWidthDeduct"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaRedundantHipDiagonalUFactor"
-                    Try
-                        Me.upper_structure(recIndex).AntennaRedundantHipDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagonalOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagonalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaTopGirtOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaTopGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaBottomGirtOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaBottomGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaMidGirtOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaMidGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaHorizontalOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaHorizontalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaSecondaryHorizontalOutOfPlaneRestraint"
-                    Try
-                        Me.upper_structure(recIndex).AntennaSecondaryHorizontalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagOffsetNEY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagOffsetNEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagOffsetNEX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagOffsetNEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagOffsetPEY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagOffsetPEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaDiagOffsetPEX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaDiagOffsetPEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKbraceOffsetNEY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKbraceOffsetNEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKbraceOffsetNEX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKbraceOffsetNEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKbraceOffsetPEY"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKbraceOffsetPEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "AntennaKbraceOffsetPEX"
-                    Try
-                        Me.upper_structure(recIndex).AntennaKbraceOffsetPEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-
+                    Select Case True
+                        Case tnxVar.Equals("AntennaRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.geometry.upperStructure.Add(New tnxAntennaRecord())
+                                Me.geometry.upperStructure(recIndex).AntennaRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBraceType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBraceType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHeight")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalSpacing")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalSpacingEx")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaNumSections")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaNumSections = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaNumSesctions")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaNumSesctions = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaSectionLength")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerBracingGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerBracingMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLongHorizontalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLongHorizontalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerBracingType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerBracingSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtOffset")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtOffset = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtOffset")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtOffset = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHasKBraceEndPanels")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHasKBraceEndPanels = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHasHorizontals")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHasHorizontals = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLongHorizontalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLongHorizontalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaSubDiagLocation")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaSubDiagLocation = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaNumInnerGirts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaNumInnerGirts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaPoleShapeType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaPoleShapeType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaPoleSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaPoleSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaPoleGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaPoleMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaPoleMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaPoleSpliceLength")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaPoleSpliceLength = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleNumSides")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleNumSides = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleTopDiameter")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleTopDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleBotDiameter")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBotDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleWallThickness")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleWallThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleBendRadius")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBendRadius = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTaperPoleMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaSWMult")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaSWMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaWPMult")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaWPMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaAutoCalcKSingleAngle")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaAutoCalcKSingleAngle = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaAutoCalcKSolidRound")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaAutoCalcKSolidRound = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaAfGusset")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTfGusset")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaGussetBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaGussetGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaGussetMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaGussetMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaAfMult")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaAfMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaArMult")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaArMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaFlatIPAPole")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaFlatIPAPole = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRoundIPAPole")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRoundIPAPole = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaFlatIPALeg")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaFlatIPALeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRoundIPALeg")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRoundIPALeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaFlatIPAHorizontal")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaFlatIPAHorizontal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRoundIPAHorizontal")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRoundIPAHorizontal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaFlatIPADiagonal")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaFlatIPADiagonal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRoundIPADiagonal")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRoundIPADiagonal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaCSA_S37_SpeedUpFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaCSA_S37_SpeedUpFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKLegs")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKLegs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKXBracedDiags")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKXBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKKBracedDiags")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKKBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKZBracedDiags")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKZBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKHorzs")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKHorzs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKSecHorzs")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKSecHorzs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKGirts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKGirts = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKInners")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKInners = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKXBracedDiagsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKXBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKKBracedDiagsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKKBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKZBracedDiagsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKZBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKHorzsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKHorzsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKSecHorzsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKSecHorzsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKGirtsY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKGirtsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKInnersY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKInnersY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedHorz")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedHorz = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedDiag")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedSubDiag")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedSubDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedSubHorz")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedSubHorz = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedVert")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedVert = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedHip")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedHip = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKRedHipDiag")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKRedHipDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKTLX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKTLX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKTLZ")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKTLZ = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKTLLeg")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKTLLeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerKTLX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerKTLX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerKTLZ")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerKTLZ = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerKTLLeg")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerKTLLeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchBoltLocationHoriz")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchBoltLocationHoriz = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchBoltLocationDiag")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchBoltLocationDiag = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchSpacing")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchSpacingHorz")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchSpacingDiag")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaStitchSpacingRed")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegConnType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegConnType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaLegBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaLegBoltEdgeDistance = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBotGirtGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaInnerGirtGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaShortHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagonalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaTopGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaBottomGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaBottomGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaMidGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaMidGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaHorizontalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaSecondaryHorizontalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaSecondaryHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagOffsetNEY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagOffsetNEX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagOffsetPEY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaDiagOffsetPEX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKbraceOffsetNEY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKbraceOffsetNEX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKbraceOffsetPEY")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AntennaKbraceOffsetPEX")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "Tower"
                     ''''Tower Rec (Base Structure)''''
-                Case "NumTowerRecs"
-                    Try
-                        If CInt(tnxValue) > 0 Then
-                            Me.base_structure = New List(Of tnx_tower_record)
-                        End If
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRec"
-                    Try
-                        recIndex = CInt(tnxValue) - 1
-                        Me.base_structure.Add(New tnx_tower_record())
-                        Me.base_structure(recIndex).TowerRec = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDatabase"
-                    Try
-                        Me.base_structure(recIndex).TowerDatabase = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerName"
-                    Try
-                        Me.base_structure(recIndex).TowerName = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHeight"
-                    Try
-                        Me.base_structure(recIndex).TowerHeight = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFaceWidth"
-                    Try
-                        Me.base_structure(recIndex).TowerFaceWidth = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerNumSections"
-                    Try
-                        Me.base_structure(recIndex).TowerNumSections = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerSectionLength"
-                    Try
-                        Me.base_structure(recIndex).TowerSectionLength = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalSpacing"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalSpacing = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalSpacingEx"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalSpacingEx = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBraceType"
-                    Try
-                        Me.base_structure(recIndex).TowerBraceType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFaceBevel"
-                    Try
-                        Me.base_structure(recIndex).TowerFaceBevel = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtOffset"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtOffset = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtOffset"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtOffset = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHasKBraceEndPanels"
-                    Try
-                        Me.base_structure(recIndex).TowerHasKBraceEndPanels = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHasHorizontals"
-                    Try
-                        Me.base_structure(recIndex).TowerHasHorizontals = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegType"
-                    Try
-                        Me.base_structure(recIndex).TowerLegType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegSize"
-                    Try
-                        Me.base_structure(recIndex).TowerLegSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerLegGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerLegMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerBracingGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerBracingGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerBracingMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerBracingMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLongHorizontalGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerLongHorizontalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLongHorizontalMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerLongHorizontalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalType"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerBracingType"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerBracingType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerBracingSize"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerBracingSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtType"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtSize"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtType"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtSize"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerNumInnerGirts"
-                    Try
-                        Me.base_structure(recIndex).TowerNumInnerGirts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtType"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtSize"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLongHorizontalType"
-                    Try
-                        Me.base_structure(recIndex).TowerLongHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLongHorizontalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerLongHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalType"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalType"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalSize2"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalSize3"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalSize4"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalSize2"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalSize3"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalSize4"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerSubDiagLocation"
-                    Try
-                        Me.base_structure(recIndex).TowerSubDiagLocation = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipSize2"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipSize3"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipSize4"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalSize2"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalSize2 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalSize3"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalSize3 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalSize4"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalSize4 = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerSWMult"
-                    Try
-                        Me.base_structure(recIndex).TowerSWMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerWPMult"
-                    Try
-                        Me.base_structure(recIndex).TowerWPMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerAutoCalcKSingleAngle"
-                    Try
-                        Me.base_structure(recIndex).TowerAutoCalcKSingleAngle = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerAutoCalcKSolidRound"
-                    Try
-                        Me.base_structure(recIndex).TowerAutoCalcKSolidRound = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerAfGusset"
-                    Try
-                        Me.base_structure(recIndex).TowerAfGusset = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTfGusset"
-                    Try
-                        Me.base_structure(recIndex).TowerTfGusset = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerGussetBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerGussetBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerGussetGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerGussetGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerGussetMatlGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerGussetMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerAfMult"
-                    Try
-                        Me.base_structure(recIndex).TowerAfMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerArMult"
-                    Try
-                        Me.base_structure(recIndex).TowerArMult = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFlatIPAPole"
-                    Try
-                        Me.base_structure(recIndex).TowerFlatIPAPole = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRoundIPAPole"
-                    Try
-                        Me.base_structure(recIndex).TowerRoundIPAPole = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFlatIPALeg"
-                    Try
-                        Me.base_structure(recIndex).TowerFlatIPALeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRoundIPALeg"
-                    Try
-                        Me.base_structure(recIndex).TowerRoundIPALeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFlatIPAHorizontal"
-                    Try
-                        Me.base_structure(recIndex).TowerFlatIPAHorizontal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRoundIPAHorizontal"
-                    Try
-                        Me.base_structure(recIndex).TowerRoundIPAHorizontal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerFlatIPADiagonal"
-                    Try
-                        Me.base_structure(recIndex).TowerFlatIPADiagonal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRoundIPADiagonal"
-                    Try
-                        Me.base_structure(recIndex).TowerRoundIPADiagonal = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerCSA_S37_SpeedUpFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerCSA_S37_SpeedUpFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKLegs"
-                    Try
-                        Me.base_structure(recIndex).TowerKLegs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKXBracedDiags"
-                    Try
-                        Me.base_structure(recIndex).TowerKXBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKKBracedDiags"
-                    Try
-                        Me.base_structure(recIndex).TowerKKBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKZBracedDiags"
-                    Try
-                        Me.base_structure(recIndex).TowerKZBracedDiags = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKHorzs"
-                    Try
-                        Me.base_structure(recIndex).TowerKHorzs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKSecHorzs"
-                    Try
-                        Me.base_structure(recIndex).TowerKSecHorzs = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKGirts"
-                    Try
-                        Me.base_structure(recIndex).TowerKGirts = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKInners"
-                    Try
-                        Me.base_structure(recIndex).TowerKInners = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKXBracedDiagsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKXBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKKBracedDiagsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKKBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKZBracedDiagsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKZBracedDiagsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKHorzsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKHorzsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKSecHorzsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKSecHorzsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKGirtsY"
-                    Try
-                        Me.base_structure(recIndex).TowerKGirtsY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKInnersY"
-                    Try
-                        Me.base_structure(recIndex).TowerKInnersY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedHorz"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedHorz = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedDiag"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedSubDiag"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedSubDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedSubHorz"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedSubHorz = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedVert"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedVert = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedHip"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedHip = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKRedHipDiag"
-                    Try
-                        Me.base_structure(recIndex).TowerKRedHipDiag = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKTLX"
-                    Try
-                        Me.base_structure(recIndex).TowerKTLX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKTLZ"
-                    Try
-                        Me.base_structure(recIndex).TowerKTLZ = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKTLLeg"
-                    Try
-                        Me.base_structure(recIndex).TowerKTLLeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerKTLX"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerKTLX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerKTLZ"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerKTLZ = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerKTLLeg"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerKTLLeg = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchBoltLocationHoriz"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchBoltLocationHoriz = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchBoltLocationDiag"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchBoltLocationDiag = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchBoltLocationRed"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchBoltLocationRed = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchSpacing"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchSpacing = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchSpacingDiag"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchSpacingDiag = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchSpacingHorz"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchSpacingHorz = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerStitchSpacingRed"
-                    Try
-                        Me.base_structure(recIndex).TowerStitchSpacingRed = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerLegNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerLegUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegConnType"
-                    Try
-                        Me.base_structure(recIndex).TowerLegConnType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerLegNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerLegBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerLegBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerLegBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerLegBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBotGirtGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerBotGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerInnerGirtGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerInnerGirtGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerShortHorizontalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerShortHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHorizontalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantDiagonalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubDiagonalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantSubHorizontalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantSubHorizontalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantVerticalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantVerticalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalBoltGrade"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalBoltSize"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalNumBolts"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalBoltEdgeDistance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalGageG1Distance"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalGageG1Distance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalNetWidthDeduct"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerRedundantHipDiagonalUFactor"
-                    Try
-                        Me.base_structure(recIndex).TowerRedundantHipDiagonalUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagonalOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagonalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerTopGirtOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerTopGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerBottomGirtOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerBottomGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerMidGirtOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerMidGirtOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerHorizontalOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerHorizontalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerSecondaryHorizontalOutOfPlaneRestraint"
-                    Try
-                        Me.base_structure(recIndex).TowerSecondaryHorizontalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerUniqueFlag"
-                    Try
-                        Me.base_structure(recIndex).TowerUniqueFlag = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagOffsetNEY"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagOffsetNEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagOffsetNEX"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagOffsetNEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagOffsetPEY"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagOffsetPEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerDiagOffsetPEX"
-                    Try
-                        Me.base_structure(recIndex).TowerDiagOffsetPEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKbraceOffsetNEY"
-                    Try
-                        Me.base_structure(recIndex).TowerKbraceOffsetNEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKbraceOffsetNEX"
-                    Try
-                        Me.base_structure(recIndex).TowerKbraceOffsetNEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKbraceOffsetPEY"
-                    Try
-                        Me.base_structure(recIndex).TowerKbraceOffsetPEY = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TowerKbraceOffsetPEX"
-                    Try
-                        Me.base_structure(recIndex).TowerKbraceOffsetPEX = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                ''''Guy Rec''''
-                Case "NumGuyRecs"
-                    Try
-                        If CInt(tnxValue) > 0 Then
-                            Me.guy_wires = New List(Of tnx_guy_record)
-                        End If
-                    Catch ex As Exception
-                    End Try
-                Case "GuyRec"
-                    Try
-                        recIndex = CInt(tnxValue) - 1
-                        Me.guy_wires.Add(New tnx_guy_record())
-                        Me.guy_wires(recIndex).GuyRec = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyHeight"
-                    Try
-                        Me.guy_wires(recIndex).GuyHeight = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyAutoCalcKSingleAngle"
-                    Try
-                        Me.guy_wires(recIndex).GuyAutoCalcKSingleAngle = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyAutoCalcKSolidRound"
-                    Try
-                        Me.guy_wires(recIndex).GuyAutoCalcKSolidRound = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyMount"
-                    Try
-                        Me.guy_wires(recIndex).GuyMount = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmStyle"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmStyle = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyRadius"
-                    Try
-                        Me.guy_wires(recIndex).GuyRadius = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyRadius120"
-                    Try
-                        Me.guy_wires(recIndex).GuyRadius120 = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyRadius240"
-                    Try
-                        Me.guy_wires(recIndex).GuyRadius240 = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyRadius360"
-                    Try
-                        Me.guy_wires(recIndex).GuyRadius360 = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmRadius"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmRadius = Me.units.Length.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmLegAngle"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmLegAngle = Me.units.Rotation.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Azimuth0Adjustment"
-                    Try
-                        Me.guy_wires(recIndex).Azimuth0Adjustment = Me.units.Rotation.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Azimuth120Adjustment"
-                    Try
-                        Me.guy_wires(recIndex).Azimuth120Adjustment = Me.units.Rotation.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Azimuth240Adjustment"
-                    Try
-                        Me.guy_wires(recIndex).Azimuth240Adjustment = Me.units.Rotation.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Azimuth360Adjustment"
-                    Try
-                        Me.guy_wires(recIndex).Azimuth360Adjustment = Me.units.Rotation.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Anchor0Elevation"
-                    Try
-                        Me.guy_wires(recIndex).Anchor0Elevation = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Anchor120Elevation"
-                    Try
-                        Me.guy_wires(recIndex).Anchor120Elevation = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Anchor240Elevation"
-                    Try
-                        Me.guy_wires(recIndex).Anchor240Elevation = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "Anchor360Elevation"
-                    Try
-                        Me.guy_wires(recIndex).Anchor360Elevation = Me.units.Coordinate.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuySize"
-                    Try
-                        Me.guy_wires(recIndex).GuySize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "Guy120Size"
-                    Try
-                        Me.guy_wires(recIndex).Guy120Size = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "Guy240Size"
-                    Try
-                        Me.guy_wires(recIndex).Guy240Size = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "Guy360Size"
-                    Try
-                        Me.guy_wires(recIndex).Guy360Size = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmSize"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmSizeBot"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmSizeBot = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmType"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmGrade"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmMatlGrade"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmKFactor"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmKFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "TorqueArmKFactorY"
-                    Try
-                        Me.guy_wires(recIndex).TorqueArmKFactorY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffKFactorX"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffKFactorX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffKFactorY"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffKFactorY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagKFactorX"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagKFactorX = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagKFactorY"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagKFactorY = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyAutoCalc"
-                    Try
-                        Me.guy_wires(recIndex).GuyAutoCalc = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyAllGuysSame"
-                    Try
-                        Me.guy_wires(recIndex).GuyAllGuysSame = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyAllGuysAnchorSame"
-                    Try
-                        Me.guy_wires(recIndex).GuyAllGuysAnchorSame = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyIsStrapping"
-                    Try
-                        Me.guy_wires(recIndex).GuyIsStrapping = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffSizeBot"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffSizeBot = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffType"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffMatlGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyUpperDiagSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyUpperDiagSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyLowerDiagSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyLowerDiagSize = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagType"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagType = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagGrade = Me.units.Strength.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagMatlGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagMatlGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagNetWidthDeduct"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagUFactor"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagNumBolts"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagonalOutOfPlaneRestraint"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagonalOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagBoltGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagBoltSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagBoltEdgeDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyDiagBoltGageDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyDiagBoltGageDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffNetWidthDeduct"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffUFactor"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffNumBolts"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffOutOfPlaneRestraint"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffBoltGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffBoltSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffBoltEdgeDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPullOffBoltGageDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyPullOffBoltGageDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmNetWidthDeduct"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmNetWidthDeduct = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmUFactor"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmUFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmNumBolts"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmNumBolts = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmOutOfPlaneRestraint"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmOutOfPlaneRestraint = CBool(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmBoltGrade"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmBoltGrade = tnxValue
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmBoltSize"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmBoltSize = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmBoltEdgeDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmBoltEdgeDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyTorqueArmBoltGageDistance"
-                    Try
-                        Me.guy_wires(recIndex).GuyTorqueArmBoltGageDistance = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPerCentTension"
-                    Try
-                        Me.guy_wires(recIndex).GuyPerCentTension = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPerCentTension120"
-                    Try
-                        Me.guy_wires(recIndex).GuyPerCentTension120 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPerCentTension240"
-                    Try
-                        Me.guy_wires(recIndex).GuyPerCentTension240 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyPerCentTension360"
-                    Try
-                        Me.guy_wires(recIndex).GuyPerCentTension360 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyEffFactor"
-                    Try
-                        Me.guy_wires(recIndex).GuyEffFactor = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyEffFactor120"
-                    Try
-                        Me.guy_wires(recIndex).GuyEffFactor120 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyEffFactor240"
-                    Try
-                        Me.guy_wires(recIndex).GuyEffFactor240 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyEffFactor360"
-                    Try
-                        Me.guy_wires(recIndex).GuyEffFactor360 = CDbl(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyNumInsulators"
-                    Try
-                        Me.guy_wires(recIndex).GuyNumInsulators = CInt(tnxValue)
-                    Catch ex As Exception
-                    End Try
-                Case "GuyInsulatorLength"
-                    Try
-                        Me.guy_wires(recIndex).GuyInsulatorLength = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyInsulatorDia"
-                    Try
-                        Me.guy_wires(recIndex).GuyInsulatorDia = Me.units.Properties.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
-                Case "GuyInsulatorWt"
-                    Try
-                        Me.guy_wires(recIndex).GuyInsulatorWt = Me.units.Force.Convert_to_EDS_Default(CDbl(tnxValue))
-                    Catch ex As Exception
-                    End Try
+                    Select Case True
+                        Case tnxVar.Equals("TowerRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.geometry.baseStructure.Add(New tnxTowerRecord())
+                                Me.geometry.baseStructure(recIndex).TowerRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDatabase")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDatabase = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerName")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerName = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHeight")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFaceWidth")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFaceWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerNumSections")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerNumSections = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerSectionLength")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalSpacing")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalSpacingEx")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBraceType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBraceType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFaceBevel")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFaceBevel = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtOffset")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtOffset")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHasKBraceEndPanels")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHasKBraceEndPanels = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHasHorizontals")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHasHorizontals = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerBracingGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerBracingMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerBracingMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLongHorizontalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLongHorizontalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerBracingType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerBracingType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerBracingSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerBracingSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerNumInnerGirts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerNumInnerGirts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLongHorizontalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLongHorizontalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerSubDiagLocation")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerSubDiagLocation = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize2 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize3 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize4 = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerSWMult")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerSWMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerWPMult")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerWPMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAutoCalcKSingleAngle")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerAutoCalcKSingleAngle = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAutoCalcKSolidRound")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerAutoCalcKSolidRound = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAfGusset")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTfGusset")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerGussetBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerGussetGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerGussetMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerGussetMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAfMult")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerAfMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerArMult")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerArMult = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFlatIPAPole")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFlatIPAPole = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRoundIPAPole")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRoundIPAPole = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFlatIPALeg")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFlatIPALeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRoundIPALeg")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRoundIPALeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFlatIPAHorizontal")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFlatIPAHorizontal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRoundIPAHorizontal")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRoundIPAHorizontal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerFlatIPADiagonal")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerFlatIPADiagonal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRoundIPADiagonal")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRoundIPADiagonal = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerCSA_S37_SpeedUpFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerCSA_S37_SpeedUpFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKLegs")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKLegs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKXBracedDiags")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKXBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKKBracedDiags")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKKBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKZBracedDiags")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKZBracedDiags = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKHorzs")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKHorzs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKSecHorzs")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKSecHorzs = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKGirts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKGirts = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKInners")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKInners = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKXBracedDiagsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKXBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKKBracedDiagsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKKBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKZBracedDiagsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKZBracedDiagsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKHorzsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKHorzsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKSecHorzsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKSecHorzsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKGirtsY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKGirtsY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKInnersY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKInnersY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedHorz")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedHorz = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedDiag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedSubDiag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedSubDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedSubHorz")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedSubHorz = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedVert")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedVert = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedHip")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedHip = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKRedHipDiag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKRedHipDiag = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKTLX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKTLX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKTLZ")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKTLZ = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKTLLeg")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKTLLeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerKTLX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerKTLX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerKTLZ")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerKTLZ = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerKTLLeg")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerKTLLeg = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchBoltLocationHoriz")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationHoriz = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchBoltLocationDiag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationDiag = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchBoltLocationRed")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationRed = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchSpacing")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchSpacingDiag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchSpacingHorz")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerStitchSpacingRed")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegConnType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegConnType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLegBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBotGirtGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerInnerGirtGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerShortHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagonalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerTopGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerBottomGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerBottomGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerMidGirtOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerMidGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerHorizontalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerSecondaryHorizontalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerSecondaryHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerUniqueFlag")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerUniqueFlag = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagOffsetNEY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagOffsetNEX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagOffsetPEY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerDiagOffsetPEX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKbraceOffsetNEY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKbraceOffsetNEX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKbraceOffsetPEY")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerKbraceOffsetPEX")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "Guy"
+                    ''''Guy Rec''''
+                    Select Case True
+                        Case tnxVar.Equals("GuyRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.geometry.guyWires.Add(New tnxGuyRecord())
+                                Me.geometry.guyWires(recIndex).GuyRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyHeight")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyAutoCalcKSingleAngle")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyAutoCalcKSingleAngle = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyAutoCalcKSolidRound")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyAutoCalcKSolidRound = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyMount")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyMount = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmStyle")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmStyle = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyRadius")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyRadius120")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyRadius120 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyRadius240")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyRadius240 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyRadius360")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyRadius360 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmRadius")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmLegAngle")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmLegAngle = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Azimuth0Adjustment")
+                            Try
+                                Me.geometry.guyWires(recIndex).Azimuth0Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Azimuth120Adjustment")
+                            Try
+                                Me.geometry.guyWires(recIndex).Azimuth120Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Azimuth240Adjustment")
+                            Try
+                                Me.geometry.guyWires(recIndex).Azimuth240Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Azimuth360Adjustment")
+                            Try
+                                Me.geometry.guyWires(recIndex).Azimuth360Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Anchor0Elevation")
+                            Try
+                                Me.geometry.guyWires(recIndex).Anchor0Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Anchor120Elevation")
+                            Try
+                                Me.geometry.guyWires(recIndex).Anchor120Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Anchor240Elevation")
+                            Try
+                                Me.geometry.guyWires(recIndex).Anchor240Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Anchor360Elevation")
+                            Try
+                                Me.geometry.guyWires(recIndex).Anchor360Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuySize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuySize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Guy120Size")
+                            Try
+                                Me.geometry.guyWires(recIndex).Guy120Size = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Guy240Size")
+                            Try
+                                Me.geometry.guyWires(recIndex).Guy240Size = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("Guy360Size")
+                            Try
+                                Me.geometry.guyWires(recIndex).Guy360Size = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmSizeBot")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmSizeBot = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmType")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmMatlGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmKFactor")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmKFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TorqueArmKFactorY")
+                            Try
+                                Me.geometry.guyWires(recIndex).TorqueArmKFactorY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffKFactorX")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffKFactorX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffKFactorY")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffKFactorY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagKFactorX")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagKFactorX = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagKFactorY")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagKFactorY = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyAutoCalc")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyAutoCalc = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyAllGuysSame")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyAllGuysSame = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyAllGuysAnchorSame")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyAllGuysAnchorSame = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyIsStrapping")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyIsStrapping = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffSizeBot")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffSizeBot = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffType")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffMatlGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyUpperDiagSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyUpperDiagSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyLowerDiagSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyLowerDiagSize = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagType")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagMatlGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagMatlGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagNetWidthDeduct")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagUFactor")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagNumBolts")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagonalOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagBoltGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagBoltSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagBoltEdgeDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyDiagBoltGageDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffNetWidthDeduct")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffUFactor")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffNumBolts")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffBoltGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffBoltSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffBoltEdgeDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPullOffBoltGageDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmNetWidthDeduct")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmUFactor")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmUFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmNumBolts")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmNumBolts = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmOutOfPlaneRestraint")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmBoltGrade")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltGrade = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmBoltSize")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmBoltEdgeDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyTorqueArmBoltGageDistance")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPerCentTension")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPerCentTension = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPerCentTension120")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPerCentTension120 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPerCentTension240")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPerCentTension240 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyPerCentTension360")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyPerCentTension360 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyEffFactor")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyEffFactor = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyEffFactor120")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyEffFactor120 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyEffFactor240")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyEffFactor240 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyEffFactor360")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyEffFactor360 = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyNumInsulators")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyNumInsulators = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyInsulatorLength")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyInsulatorLength = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyInsulatorDia")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyInsulatorDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("GuyInsulatorWt")
+                            Try
+                                Me.geometry.guyWires(recIndex).GuyInsulatorWt = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "FeedLine"
+                    ''''Feed Lines''''
+                    Select Case True
+                        Case tnxVar.Equals("FeedLineRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.feedLines.Add(New tnxFeedLine())
+                                Me.feedLines(recIndex).FeedLineRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineEnabled")
+                            Try
+                                Me.feedLines(recIndex).FeedLineEnabled = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineDatabase")
+                            Try
+                                Me.feedLines(recIndex).FeedLineDatabase = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineDescription")
+                            Try
+                                Me.feedLines(recIndex).FeedLineDescription = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineClassificationCategory")
+                            Try
+                                Me.feedLines(recIndex).FeedLineClassificationCategory = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineNote")
+                            Try
+                                Me.feedLines(recIndex).FeedLineNote = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineNum")
+                            Try
+                                Me.feedLines(recIndex).FeedLineNum = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineUseShielding")
+                            Try
+                                Me.feedLines(recIndex).FeedLineUseShielding = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("ExcludeFeedLineFromTorque")
+                            Try
+                                Me.feedLines(recIndex).ExcludeFeedLineFromTorque = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineNumPerRow")
+                            Try
+                                Me.feedLines(recIndex).FeedLineNumPerRow = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineFace")
+                            Try
+                                Me.feedLines(recIndex).FeedLineFace = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineComponentType")
+                            Try
+                                Me.feedLines(recIndex).FeedLineComponentType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineGroupTreatmentType")
+                            Try
+                                Me.feedLines(recIndex).FeedLineGroupTreatmentType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineRoundClusterDia")
+                            Try
+                                Me.feedLines(recIndex).FeedLineRoundClusterDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWidth")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLinePerimeter")
+                            Try
+                                Me.feedLines(recIndex).FeedLinePerimeter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FlatAttachmentEffectiveWidthRatio")
+                            Try
+                                Me.feedLines(recIndex).FlatAttachmentEffectiveWidthRatio = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("AutoCalcFlatAttachmentEffectiveWidthRatio")
+                            Try
+                                Me.feedLines(recIndex).AutoCalcFlatAttachmentEffectiveWidthRatio = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineShieldingFactorKaNoIce")
+                            Try
+                                Me.feedLines(recIndex).FeedLineShieldingFactorKaNoIce = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineShieldingFactorKaIce")
+                            Try
+                                Me.feedLines(recIndex).FeedLineShieldingFactorKaIce = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineAutoCalcKa")
+                            Try
+                                Me.feedLines(recIndex).FeedLineAutoCalcKa = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineCaAaNoIce")
+                            'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
+                            Try
+                                Me.feedLines(recIndex).FeedLineCaAaNoIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineCaAaIce")
+                            'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
+                            Try
+                                Me.feedLines(recIndex).FeedLineCaAaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineCaAaIce_1")
+                            'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
+                            Try
+                                Me.feedLines(recIndex).FeedLineCaAaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineCaAaIce_2")
+                            'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
+                            Try
+                                Me.feedLines(recIndex).FeedLineCaAaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineCaAaIce_4")
+                            'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
+                            Try
+                                Me.feedLines(recIndex).FeedLineCaAaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWtNoIce")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWtNoIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWtIce")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWtIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWtIce_1")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWtIce_1 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWtIce_2")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWtIce_2 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineWtIce_4")
+                            Try
+                                Me.feedLines(recIndex).FeedLineWtIce_4 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineFaceOffset")
+                            Try
+                                Me.feedLines(recIndex).FeedLineFaceOffset = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineOffsetFrac")
+                            Try
+                                Me.feedLines(recIndex).FeedLineOffsetFrac = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLinePerimeterOffsetStartFrac")
+                            Try
+                                Me.feedLines(recIndex).FeedLinePerimeterOffsetStartFrac = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLinePerimeterOffsetEndFrac")
+                            Try
+                                Me.feedLines(recIndex).FeedLinePerimeterOffsetEndFrac = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineStartHt")
+                            Try
+                                Me.feedLines(recIndex).FeedLineStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineEndHt")
+                            Try
+                                Me.feedLines(recIndex).FeedLineEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineClearSpacing")
+                            Try
+                                Me.feedLines(recIndex).FeedLineClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("FeedLineRowClearSpacing")
+                            Try
+                                Me.feedLines(recIndex).FeedLineRowClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "Discrete"
+                    ''''Discrete''''
+                    Select Case True
+                        Case tnxVar.Equals("TowerLoadRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.discreteLoads.Add(New tnxDiscreteLoad())
+                                Me.discreteLoads(recIndex).TowerLoadRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadEnabled")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadEnabled = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadDatabase")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadDatabase = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadDescription")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadDescription = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadType")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadClassificationCategory")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadClassificationCategory = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadNote")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadNote = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadNum")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadNum = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadFace")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadFace = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerOffsetType")
+                            Try
+                                Me.discreteLoads(recIndex).TowerOffsetType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerOffsetDist")
+                            Try
+                                Me.discreteLoads(recIndex).TowerOffsetDist = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerVertOffset")
+                            Try
+                                Me.discreteLoads(recIndex).TowerVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLateralOffset")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAzimuthAdjustment")
+                            Try
+                                Me.discreteLoads(recIndex).TowerAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerAppurtSymbol")
+                            Try
+                                Me.discreteLoads(recIndex).TowerAppurtSymbol = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadShieldingFactorKaNoIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadShieldingFactorKaNoIce = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadShieldingFactorKaIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadShieldingFactorKaIce = CDbl(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadAutoCalcKa")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadAutoCalcKa = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaNoIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaNoIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_1")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_2")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_4")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaNoIce_Side")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaNoIce_Side = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_Side")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_Side_1")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_Side_2")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadCaAaIce_Side_4")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadWtNoIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadWtIce")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadWtIce_1")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadWtIce_2")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadWtIce_4")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadStartHt")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("TowerLoadEndHt")
+                            Try
+                                Me.discreteLoads(recIndex).TowerLoadEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "Dish"
+                    ''''Dishes''''
+                    Select Case True
+                        Case tnxVar.Equals("DishRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.dishes.Add(New tnxDish())
+                                Me.dishes(recIndex).DishRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishEnabled")
+                            Try
+                                Me.dishes(recIndex).DishEnabled = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishDatabase")
+                            Try
+                                Me.dishes(recIndex).DishDatabase = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishDescription")
+                            Try
+                                Me.dishes(recIndex).DishDescription = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishClassificationCategory")
+                            Try
+                                Me.dishes(recIndex).DishClassificationCategory = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishNote")
+                            Try
+                                Me.dishes(recIndex).DishNote = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishNum")
+                            Try
+                                Me.dishes(recIndex).DishNum = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishFace")
+                            Try
+                                Me.dishes(recIndex).DishFace = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishType")
+                            Try
+                                Me.dishes(recIndex).DishType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishOffsetType")
+                            Try
+                                Me.dishes(recIndex).DishOffsetType = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishVertOffset")
+                            Try
+                                Me.dishes(recIndex).DishVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishLateralOffset")
+                            Try
+                                Me.dishes(recIndex).DishLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishOffsetDist")
+                            Try
+                                Me.dishes(recIndex).DishOffsetDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishArea")
+                            Try
+                                Me.dishes(recIndex).DishArea = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishAreaIce")
+                            Try
+                                Me.dishes(recIndex).DishAreaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishAreaIce_1")
+                            Try
+                                Me.dishes(recIndex).DishAreaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishAreaIce_2")
+                            Try
+                                Me.dishes(recIndex).DishAreaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishAreaIce_4")
+                            Try
+                                Me.dishes(recIndex).DishAreaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishDiameter")
+                            Try
+                                Me.dishes(recIndex).DishDiameter = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishWtNoIce")
+                            Try
+                                Me.dishes(recIndex).DishWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishWtIce")
+                            Try
+                                Me.dishes(recIndex).DishWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishWtIce_1")
+                            Try
+                                Me.dishes(recIndex).DishWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishWtIce_2")
+                            Try
+                                Me.dishes(recIndex).DishWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishWtIce_4")
+                            Try
+                                Me.dishes(recIndex).DishWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishStartHt")
+                            Try
+                                Me.dishes(recIndex).DishStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishAzimuthAdjustment")
+                            Try
+                                Me.dishes(recIndex).DishAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("DishBeamWidth")
+                            Try
+                                Me.dishes(recIndex).DishBeamWidth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+                Case caseFilter = "UserForce"
+                    ''''UserForces''''
+                    Select Case True
+                        Case tnxVar.Equals("UserForceRec")
+                            Try
+                                recIndex = CInt(tnxValue) - 1
+                                Me.userForces.Add(New tnxUserForce())
+                                Me.userForces(recIndex).UserForceRec = CInt(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceEnabled")
+                            Try
+                                Me.userForces(recIndex).UserForceEnabled = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceDescription")
+                            Try
+                                Me.userForces(recIndex).UserForceDescription = tnxValue
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceStartHt")
+                            Try
+                                Me.userForces(recIndex).UserForceStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceOffset")
+                            Try
+                                Me.userForces(recIndex).UserForceOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceAzimuth")
+                            Try
+                                Me.userForces(recIndex).UserForceAzimuth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFxNoIce")
+                            Try
+                                Me.userForces(recIndex).UserForceFxNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFzNoIce")
+                            Try
+                                Me.userForces(recIndex).UserForceFzNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceAxialNoIce")
+                            Try
+                                Me.userForces(recIndex).UserForceAxialNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceShearNoIce")
+                            Try
+                                Me.userForces(recIndex).UserForceShearNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceCaAcNoIce")
+                            Try
+                                Me.userForces(recIndex).UserForceCaAcNoIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFxIce")
+                            Try
+                                Me.userForces(recIndex).UserForceFxIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFzIce")
+                            Try
+                                Me.userForces(recIndex).UserForceFzIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceAxialIce")
+                            Try
+                                Me.userForces(recIndex).UserForceAxialIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceShearIce")
+                            Try
+                                Me.userForces(recIndex).UserForceShearIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceCaAcIce")
+                            Try
+                                Me.userForces(recIndex).UserForceCaAcIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFxService")
+                            Try
+                                Me.userForces(recIndex).UserForceFxService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceFzService")
+                            Try
+                                Me.userForces(recIndex).UserForceFzService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceAxialService")
+                            Try
+                                Me.userForces(recIndex).UserForceAxialService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceShearService")
+                            Try
+                                Me.userForces(recIndex).UserForceShearService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceCaAcService")
+                            Try
+                                Me.userForces(recIndex).UserForceCaAcService = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceEhx")
+                            Try
+                                Me.userForces(recIndex).UserForceEhx = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceEhz")
+                            Try
+                                Me.userForces(recIndex).UserForceEhz = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceEv")
+                            Try
+                                Me.userForces(recIndex).UserForceEv = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("UserForceEh")
+                            Try
+                                Me.userForces(recIndex).UserForceEh = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                            Catch ex As Exception
+                            End Try
+                    End Select
+            End Select
+        Next
 
+    End Sub
 
-                    ''''End of the input data''''
-                Case "[End Application]"
-                    Exit For
+    Public Sub GenerateERI(FilePath As String)
+
+        Dim newERIList As New List(Of String)
+        Dim i As Integer
+
+        For Each line In Me.otherLines
+
+            Select Case True
+                Case line(0).Equals("[Common]")
+                    newERIList.Add(line(0))
+                    'Project Settings
+                    newERIList.Add("DesignStandardSeries=" & Me.settings.projectInfo.DesignStandardSeries)
+                    newERIList.Add("UnitsSystem=" & Me.settings.projectInfo.UnitsSystem)
+                    newERIList.Add("ClientName=" & Me.settings.projectInfo.ClientName)
+                    newERIList.Add("ProjectName=" & Me.settings.projectInfo.ProjectName)
+                    newERIList.Add("ProjectNumber=" & Me.settings.projectInfo.ProjectNumber)
+                    newERIList.Add("CreatedBy=" & Me.settings.projectInfo.CreatedBy)
+                    newERIList.Add("CreatedOn=" & Me.settings.projectInfo.CreatedOn)
+                    newERIList.Add("LastUsedBy=" & Me.settings.projectInfo.LastUsedBy)
+                    newERIList.Add("LastUsedOn=" & Me.settings.projectInfo.LastUsedOn)
+                    newERIList.Add("VersionUsed=" & Me.settings.projectInfo.VersionUsed)
+                Case line(0).Equals("[US Units]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("Length=" & Me.settings.USUnits.Length.value)
+                    newERIList.Add("LengthPrec=" & Me.settings.USUnits.Length.precision)
+                    newERIList.Add("Coordinate=" & Me.settings.USUnits.Coordinate.value)
+                    newERIList.Add("CoordinatePrec=" & Me.settings.USUnits.Coordinate.precision)
+                    newERIList.Add("Force=" & Me.settings.USUnits.Force.value)
+                    newERIList.Add("ForcePrec=" & Me.settings.USUnits.Force.precision)
+                    newERIList.Add("Load=" & Me.settings.USUnits.Load.value)
+                    newERIList.Add("LoadPrec=" & Me.settings.USUnits.Load.precision)
+                    newERIList.Add("Moment=" & Me.settings.USUnits.Moment.value)
+                    newERIList.Add("MomentPrec=" & Me.settings.USUnits.Moment.precision)
+                    newERIList.Add("Properties=" & Me.settings.USUnits.Properties.value)
+                    newERIList.Add("PropertiesPrec=" & Me.settings.USUnits.Properties.precision)
+                    newERIList.Add("Pressure=" & Me.settings.USUnits.Pressure.value)
+                    newERIList.Add("PressurePrec=" & Me.settings.USUnits.Pressure.precision)
+                    newERIList.Add("Velocity=" & Me.settings.USUnits.Velocity.value)
+                    newERIList.Add("VelocityPrec=" & Me.settings.USUnits.Velocity.precision)
+                    newERIList.Add("Displacement=" & Me.settings.USUnits.Displacement.value)
+                    newERIList.Add("DisplacementPrec=" & Me.settings.USUnits.Displacement.precision)
+                    newERIList.Add("Mass=" & Me.settings.USUnits.Mass.value)
+                    newERIList.Add("MassPrec=" & Me.settings.USUnits.Mass.precision)
+                    newERIList.Add("Acceleration=" & Me.settings.USUnits.Acceleration.value)
+                    newERIList.Add("AccelerationPrec=" & Me.settings.USUnits.Acceleration.precision)
+                    newERIList.Add("Stress=" & Me.settings.USUnits.Stress.value)
+                    newERIList.Add("StressPrec=" & Me.settings.USUnits.Stress.precision)
+                    newERIList.Add("Density=" & Me.settings.USUnits.Density.value)
+                    newERIList.Add("DensityPrec=" & Me.settings.USUnits.Density.precision)
+                    newERIList.Add("UnitWt=" & Me.settings.USUnits.UnitWt.value)
+                    newERIList.Add("UnitWtPrec=" & Me.settings.USUnits.UnitWt.precision)
+                    newERIList.Add("Strength=" & Me.settings.USUnits.Strength.value)
+                    newERIList.Add("StrengthPrec=" & Me.settings.USUnits.Strength.precision)
+                    newERIList.Add("Modulus=" & Me.settings.USUnits.Modulus.value)
+                    newERIList.Add("ModulusPrec=" & Me.settings.USUnits.Modulus.precision)
+                    newERIList.Add("Temperature=" & Me.settings.USUnits.Temperature.value)
+                    newERIList.Add("TemperaturePrec=" & Me.settings.USUnits.Temperature.precision)
+                    newERIList.Add("Printer=" & Me.settings.USUnits.Printer.value)
+                    newERIList.Add("PrinterPrec=" & Me.settings.USUnits.Printer.precision)
+                    newERIList.Add("Rotation=" & Me.settings.USUnits.Rotation.value)
+                    newERIList.Add("RotationPrec=" & Me.settings.USUnits.Rotation.precision)
+                    newERIList.Add("Spacing=" & Me.settings.USUnits.Spacing.value)
+                    newERIList.Add("SpacingPrec=" & Me.settings.USUnits.Spacing.precision)
+                Case line(0).Equals("[Structure]")
+                    newERIList.Add(line(0))
+                    'User Info Settings
+                    newERIList.Add("ViewerUserName=" & Me.settings.userInfo.ViewerUserName)
+                    newERIList.Add("ViewerCompanyName=" & Me.settings.userInfo.ViewerCompanyName)
+                    newERIList.Add("ViewerStreetAddress=" & Me.settings.userInfo.ViewerStreetAddress)
+                    newERIList.Add("ViewerCityState=" & Me.settings.userInfo.ViewerCityState)
+                    newERIList.Add("ViewerPhone=" & Me.settings.userInfo.ViewerPhone)
+                    newERIList.Add("ViewerFAX=" & Me.settings.userInfo.ViewerFAX)
+                    newERIList.Add("ViewerLogo=" & Me.settings.userInfo.ViewerLogo)
+                    newERIList.Add("ViewerCompanyBitmap=" & Me.settings.userInfo.ViewerCompanyBitmap)
+                    'Solution Settings
+                    newERIList.Add("SolutionUsePDelta=" & trueFalseYesNo(Me.solutionSettings.SolutionUsePDelta))
+                    newERIList.Add("SolutionMinStiffness=" & Me.solutionSettings.SolutionMinStiffness)
+                    newERIList.Add("SolutionMaxStiffness=" & Me.solutionSettings.SolutionMaxStiffness)
+                    newERIList.Add("SolutionMaxCycles=" & Me.solutionSettings.SolutionMaxCycles)
+                    newERIList.Add("SolutionPower=" & Me.solutionSettings.SolutionPower)
+                    newERIList.Add("SolutionTolerance=" & Me.solutionSettings.SolutionTolerance)
+                    'MTO Settings
+                    newERIList.Add("IncludeCapacityNote=" & trueFalseYesNo(Me.MTOSettings.IncludeCapacityNote))
+                    newERIList.Add("IncludeAppurtGraphics=" & trueFalseYesNo(Me.MTOSettings.IncludeAppurtGraphics))
+                    newERIList.Add("DisplayNotes=" & trueFalseYesNo(Me.MTOSettings.DisplayNotes))
+                    newERIList.Add("DisplayReactions=" & trueFalseYesNo(Me.MTOSettings.DisplayReactions))
+                    newERIList.Add("DisplaySchedule=" & trueFalseYesNo(Me.MTOSettings.DisplaySchedule))
+                    newERIList.Add("DisplayAppurtenanceTable=" & trueFalseYesNo(Me.MTOSettings.DisplayAppurtenanceTable))
+                    newERIList.Add("DisplayMaterialStrengthTable=" & trueFalseYesNo(Me.MTOSettings.DisplayMaterialStrengthTable))
+                    For Each note In Me.MTOSettings.Notes
+                        newERIList.Add("Notes=" & note)
+                    Next
+                    'Report Settings
+                    newERIList.Add("ReportInputCosts=" & trueFalseYesNo(Me.reportSettings.ReportInputCosts))
+                    newERIList.Add("ReportInputGeometry=" & trueFalseYesNo(Me.reportSettings.ReportInputGeometry))
+                    newERIList.Add("ReportInputOptions=" & trueFalseYesNo(Me.reportSettings.ReportInputOptions))
+                    newERIList.Add("ReportMaxForces=" & trueFalseYesNo(Me.reportSettings.ReportMaxForces))
+                    newERIList.Add("ReportInputMap=" & trueFalseYesNo(Me.reportSettings.ReportInputMap))
+                    newERIList.Add("CostReportOutputType=" & Me.reportSettings.CostReportOutputType)
+                    newERIList.Add("CapacityReportOutputType=" & Me.reportSettings.CapacityReportOutputType)
+                    newERIList.Add("ReportPrintForceTotals=" & trueFalseYesNo(Me.reportSettings.ReportPrintForceTotals))
+                    newERIList.Add("ReportPrintForceDetails=" & trueFalseYesNo(Me.reportSettings.ReportPrintForceDetails))
+                    newERIList.Add("ReportPrintMastVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintMastVectors))
+                    newERIList.Add("ReportPrintAntPoleVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintAntPoleVectors))
+                    newERIList.Add("ReportPrintDiscreteVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintDiscreteVectors))
+                    newERIList.Add("ReportPrintDishVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintDishVectors))
+                    newERIList.Add("ReportPrintFeedTowerVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintFeedTowerVectors))
+                    newERIList.Add("ReportPrintUserLoadVectors=" & trueFalseYesNo(Me.reportSettings.ReportPrintUserLoadVectors))
+                    newERIList.Add("ReportPrintPressures=" & trueFalseYesNo(Me.reportSettings.ReportPrintPressures))
+                    newERIList.Add("ReportPrintAppurtForces=" & trueFalseYesNo(Me.reportSettings.ReportPrintAppurtForces))
+                    newERIList.Add("ReportPrintGuyForces=" & trueFalseYesNo(Me.reportSettings.ReportPrintGuyForces))
+                    newERIList.Add("ReportPrintGuyStressing=" & trueFalseYesNo(Me.reportSettings.ReportPrintGuyStressing))
+                    newERIList.Add("ReportPrintDeflections=" & trueFalseYesNo(Me.reportSettings.ReportPrintDeflections))
+                    newERIList.Add("ReportPrintReactions=" & trueFalseYesNo(Me.reportSettings.ReportPrintReactions))
+                    newERIList.Add("ReportPrintStressChecks=" & trueFalseYesNo(Me.reportSettings.ReportPrintStressChecks))
+                    newERIList.Add("ReportPrintBoltChecks=" & trueFalseYesNo(Me.reportSettings.ReportPrintBoltChecks))
+                    newERIList.Add("ReportPrintInputGVerificationTables=" & trueFalseYesNo(Me.reportSettings.ReportPrintInputGVerificationTables))
+                    newERIList.Add("ReportPrintOutputGVerificationTables=" & trueFalseYesNo(Me.reportSettings.ReportPrintOutputGVerificationTables))
+                    'CCIReport
+                    newERIList.Add("sReportProjectNumber=" & Me.CCIReport.sReportProjectNumber)
+                    newERIList.Add("sReportJobType=" & Me.CCIReport.sReportJobType)
+                    newERIList.Add("sReportCarrierName=" & Me.CCIReport.sReportCarrierName)
+                    newERIList.Add("sReportCarrierSiteNumber=" & Me.CCIReport.sReportCarrierSiteNumber)
+                    newERIList.Add("sReportCarrierSiteName=" & Me.CCIReport.sReportCarrierSiteName)
+                    newERIList.Add("sReportSiteAddress=" & Me.CCIReport.sReportSiteAddress)
+                    newERIList.Add("sReportLatitudeDegree=" & Me.CCIReport.sReportLatitudeDegree)
+                    newERIList.Add("sReportLatitudeMinute=" & Me.CCIReport.sReportLatitudeMinute)
+                    newERIList.Add("sReportLatitudeSecond=" & Me.CCIReport.sReportLatitudeSecond)
+                    newERIList.Add("sReportLongitudeDegree=" & Me.CCIReport.sReportLongitudeDegree)
+                    newERIList.Add("sReportLongitudeMinute=" & Me.CCIReport.sReportLongitudeMinute)
+                    newERIList.Add("sReportLongitudeSecond=" & Me.CCIReport.sReportLongitudeSecond)
+                    newERIList.Add("sReportLocalCodeRequirement=" & Me.CCIReport.sReportLocalCodeRequirement)
+                    newERIList.Add("sReportSiteHistory=" & Me.CCIReport.sReportSiteHistory)
+                    newERIList.Add("sReportTowerManufacturer=" & Me.CCIReport.sReportTowerManufacturer)
+                    newERIList.Add("sReportMonthManufactured=" & Me.CCIReport.sReportMonthManufactured)
+                    newERIList.Add("sReportYearManufactured=" & Me.CCIReport.sReportYearManufactured)
+                    newERIList.Add("sReportOriginalSpeed=" & Me.CCIReport.sReportOriginalSpeed)
+                    newERIList.Add("sReportOriginalCode=" & Me.CCIReport.sReportOriginalCode)
+                    newERIList.Add("sReportTowerType=" & Me.CCIReport.sReportTowerType)
+                    newERIList.Add("sReportEngrName=" & Me.CCIReport.sReportEngrName)
+                    newERIList.Add("sReportEngrTitle=" & Me.CCIReport.sReportEngrTitle)
+                    newERIList.Add("sReportHQPhoneNumber=" & Me.CCIReport.sReportHQPhoneNumber)
+                    newERIList.Add("sReportEmailAddress=" & Me.CCIReport.sReportEmailAddress)
+                    newERIList.Add("sReportLogoPath=" & Me.CCIReport.sReportLogoPath)
+                    newERIList.Add("sReportCCiContactName=" & Me.CCIReport.sReportCCiContactName)
+                    newERIList.Add("sReportCCiAddress1=" & Me.CCIReport.sReportCCiAddress1)
+                    newERIList.Add("sReportCCiAddress2=" & Me.CCIReport.sReportCCiAddress2)
+                    newERIList.Add("sReportCCiBUNumber=" & Me.CCIReport.sReportCCiBUNumber)
+                    newERIList.Add("sReportCCiSiteName=" & Me.CCIReport.sReportCCiSiteName)
+                    newERIList.Add("sReportCCiJDENumber=" & Me.CCIReport.sReportCCiJDENumber)
+                    newERIList.Add("sReportCCiWONumber=" & Me.CCIReport.sReportCCiWONumber)
+                    newERIList.Add("sReportCCiPONumber=" & Me.CCIReport.sReportCCiPONumber)
+                    newERIList.Add("sReportCCiAppNumber=" & Me.CCIReport.sReportCCiAppNumber)
+                    newERIList.Add("sReportCCiRevNumber=" & Me.CCIReport.sReportCCiRevNumber)
+                    For Each row In Me.CCIReport.sReportDocsProvided
+                        newERIList.Add("sReportDocsProvided=" & row)
+                    Next
+                    newERIList.Add("sReportRecommendations=" & Me.CCIReport.sReportRecommendations)
+                    For Each row In Me.CCIReport.sReportAppurt1
+                        newERIList.Add("sReportAppurt1=" & row)
+                    Next
+                    For Each row In Me.CCIReport.sReportAppurt2
+                        newERIList.Add("sReportAppurt2=" & row)
+                    Next
+                    For Each row In Me.CCIReport.sReportAppurt3
+                        newERIList.Add("sReportAppurt3=" & row)
+                    Next
+                    For Each row In Me.CCIReport.sReportAddlCapacity
+                        newERIList.Add("sReportAddlCapacity=" & row)
+                    Next
+                    For Each row In Me.CCIReport.sReportAssumption
+                        newERIList.Add("sReportAssumption=" & row)
+                    Next
+                    newERIList.Add("sReportAppurt1Note1=" & Me.CCIReport.sReportAppurt1Note1)
+                    newERIList.Add("sReportAppurt1Note2=" & Me.CCIReport.sReportAppurt1Note2)
+                    newERIList.Add("sReportAppurt1Note3=" & Me.CCIReport.sReportAppurt1Note3)
+                    newERIList.Add("sReportAppurt1Note4=" & Me.CCIReport.sReportAppurt1Note4)
+                    newERIList.Add("sReportAppurt1Note5=" & Me.CCIReport.sReportAppurt1Note5)
+                    newERIList.Add("sReportAppurt1Note6=" & Me.CCIReport.sReportAppurt1Note6)
+                    newERIList.Add("sReportAppurt1Note7=" & Me.CCIReport.sReportAppurt1Note7)
+                    newERIList.Add("sReportAppurt2Note1=" & Me.CCIReport.sReportAppurt2Note1)
+                    newERIList.Add("sReportAppurt2Note2=" & Me.CCIReport.sReportAppurt2Note2)
+                    newERIList.Add("sReportAppurt2Note3=" & Me.CCIReport.sReportAppurt2Note3)
+                    newERIList.Add("sReportAppurt2Note4=" & Me.CCIReport.sReportAppurt2Note4)
+                    newERIList.Add("sReportAppurt2Note5=" & Me.CCIReport.sReportAppurt2Note5)
+                    newERIList.Add("sReportAppurt2Note6=" & Me.CCIReport.sReportAppurt2Note6)
+                    newERIList.Add("sReportAppurt2Note7=" & Me.CCIReport.sReportAppurt2Note7)
+                    newERIList.Add("sReportAddlCapacityNote1=" & Me.CCIReport.sReportAddlCapacityNote1)
+                    newERIList.Add("sReportAddlCapacityNote2=" & Me.CCIReport.sReportAddlCapacityNote2)
+                    newERIList.Add("sReportAddlCapacityNote3=" & Me.CCIReport.sReportAddlCapacityNote3)
+                    newERIList.Add("sReportAddlCapacityNote4=" & Me.CCIReport.sReportAddlCapacityNote4)
+                    'Code - Design
+                    newERIList.Add("DesignCode=" & Me.code.design.DesignCode)
+                    newERIList.Add("ERIDesignMode=" & Me.code.design.ERIDesignMode)
+                    newERIList.Add("DoInteraction=" & trueFalseYesNo(Me.code.design.DoInteraction))
+                    newERIList.Add("DoHorzInteraction=" & trueFalseYesNo(Me.code.design.DoHorzInteraction))
+                    newERIList.Add("DoDiagInteraction=" & trueFalseYesNo(Me.code.design.DoDiagInteraction))
+                    newERIList.Add("UseMomentMagnification=" & trueFalseYesNo(Me.code.design.UseMomentMagnification))
+                    newERIList.Add("UseCodeStressRatio=" & trueFalseYesNo(Me.code.design.UseCodeStressRatio))
+                    newERIList.Add("AllowStressRatio=" & Me.code.design.AllowStressRatio)
+                    newERIList.Add("AllowAntStressRatio=" & Me.code.design.AllowAntStressRatio)
+                    newERIList.Add("UseCodeGuySF=" & trueFalseYesNo(Me.code.design.UseCodeGuySF))
+                    newERIList.Add("GuySF=" & Me.code.design.GuySF)
+                    newERIList.Add("UseTIA222H_AnnexS=" & trueFalseYesNo(Me.code.design.UseTIA222H_AnnexS))
+                    newERIList.Add("TIA_222_H_AnnexS_Ratio=" & Me.code.design.TIA_222_H_AnnexS_Ratio)
+                    newERIList.Add("PrintBitmaps=" & trueFalseYesNo(Me.code.design.PrintBitmaps))
+                    'Code - Wind
+                    newERIList.Add("WindSpeed=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeed))
+                    newERIList.Add("WindSpeedIce=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeedIce))
+                    newERIList.Add("WindSpeedService=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeedService))
+                    newERIList.Add("UseStateCountyLookup=" & trueFalseYesNo(Me.code.wind.UseStateCountyLookup))
+                    newERIList.Add("State=" & Me.code.wind.State)
+                    newERIList.Add("County=" & Me.code.wind.County)
+                    newERIList.Add("UseMaxKz=" & trueFalseYesNo(Me.code.wind.UseMaxKz))
+                    newERIList.Add("ASCE_7_10_WindData=" & trueFalseYesNo(Me.code.wind.ASCE_7_10_WindData))
+                    newERIList.Add("ASCE_7_10_ConvertWindToASD=" & trueFalseYesNo(Me.code.wind.ASCE_7_10_ConvertWindToASD))
+                    newERIList.Add("UseASCEWind=" & trueFalseYesNo(Me.code.wind.UseASCEWind))
+                    newERIList.Add("AutoCalc_ASCE_GH=" & trueFalseYesNo(Me.code.wind.AutoCalc_ASCE_GH))
+                    newERIList.Add("ASCE_ExposureCat=" & Me.code.wind.ASCE_ExposureCat)
+                    newERIList.Add("ASCE_Year=" & Me.code.wind.ASCE_Year)
+                    newERIList.Add("ASCEGh=" & Me.code.wind.ASCEGh)
+                    newERIList.Add("ASCEI=" & Me.code.wind.ASCEI)
+                    newERIList.Add("CalcWindAt=" & Me.code.wind.CalcWindAt)
+                    newERIList.Add("WindCalcPoints=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.WindCalcPoints))
+                    newERIList.Add("WindExposure=" & Me.code.wind.WindExposure)
+                    newERIList.Add("StructureCategory=" & Me.code.wind.StructureCategory)
+                    newERIList.Add("RiskCategory=" & Me.code.wind.RiskCategory)
+                    newERIList.Add("TopoCategory=" & Me.code.wind.TopoCategory)
+                    newERIList.Add("RSMTopographicFeature=" & Me.code.wind.RSMTopographicFeature)
+                    newERIList.Add("RSM_L=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RSM_L))
+                    newERIList.Add("RSM_X=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RSM_X))
+                    newERIList.Add("CrestHeight=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.CrestHeight))
+                    newERIList.Add("TIA_222_H_TopoFeatureDownwind=" & trueFalseYesNo(Me.code.wind.TIA_222_H_TopoFeatureDownwind))
+                    newERIList.Add("BaseElevAboveSeaLevel=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.BaseElevAboveSeaLevel))
+                    newERIList.Add("ConsiderRooftopSpeedUp=" & trueFalseYesNo(Me.code.wind.ConsiderRooftopSpeedUp))
+                    newERIList.Add("RooftopWS=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RooftopWS))
+                    newERIList.Add("RooftopHS=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RooftopHS))
+                    newERIList.Add("RooftopParapetHt=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RooftopParapetHt))
+                    newERIList.Add("RooftopXB=" & Me.settings.USUnits.Length.convertToERIUnits(Me.code.wind.RooftopXB))
+                    newERIList.Add("WindZone=" & Me.code.wind.WindZone)
+                    newERIList.Add("EIACWindMult=" & Me.code.wind.EIACWindMult)
+                    newERIList.Add("EIACWindMultIce=" & Me.code.wind.EIACWindMultIce)
+                    newERIList.Add("EIACIgnoreCableDrag=" & trueFalseYesNo(Me.code.wind.EIACIgnoreCableDrag))
+                    newERIList.Add("CSA_S37_RefVelPress=" & Me.settings.USUnits.Pressure.convertToERIUnits(Me.code.wind.CSA_S37_RefVelPress))
+                    newERIList.Add("CSA_S37_ReliabilityClass=" & Me.code.wind.CSA_S37_ReliabilityClass)
+                    newERIList.Add("CSA_S37_ServiceabilityFactor=" & Me.code.wind.CSA_S37_ServiceabilityFactor)
+                    'Code - Seismic
+                    newERIList.Add("UseASCE7_10_Seismic_Lcomb=" & trueFalseYesNo(Me.code.seismic.UseASCE7_10_Seismic_Lcomb))
+                    newERIList.Add("SeismicSiteClass=" & Me.code.seismic.SeismicSiteClass)
+                    newERIList.Add("SeismicSs=" & Me.code.seismic.SeismicSs)
+                    newERIList.Add("SeismicS1=" & Me.code.seismic.SeismicS1)
+                    'Code - Ice
+                    newERIList.Add("IceThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.code.ice.IceThickness))
+                    newERIList.Add("IceDensity=" & Me.settings.USUnits.Density.convertToERIUnits(Me.code.ice.IceDensity))
+                    newERIList.Add("UseModified_TIA_222_IceParameters=" & trueFalseYesNo(Me.code.ice.UseModified_TIA_222_IceParameters))
+                    newERIList.Add("TIA_222_IceThicknessMultiplier=" & Me.code.ice.TIA_222_IceThicknessMultiplier)
+                    newERIList.Add("DoNotUse_TIA_222_IceEscalation=" & trueFalseYesNo(Me.code.ice.DoNotUse_TIA_222_IceEscalation))
+                    newERIList.Add("UseIceEscalation=" & trueFalseYesNo(Me.code.ice.UseIceEscalation))
+                    'Code - Thermal
+                    newERIList.Add("TempDrop=" & Me.settings.USUnits.Temperature.convertToERIUnits(Me.code.thermal.TempDrop))
+                    'Code - Miscl
+                    newERIList.Add("GroutFc=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.code.misclCode.GroutFc))
+                    newERIList.Add("TowerBoltGrade=" & Me.code.misclCode.TowerBoltGrade)
+                    newERIList.Add("TowerBoltMinEdgeDist=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.code.misclCode.TowerBoltMinEdgeDist))
+                    'Options - General
+                    newERIList.Add("UseClearSpans=" & trueFalseYesNo(Me.options.UseClearSpans))
+                    newERIList.Add("UseClearSpansKlr=" & trueFalseYesNo(Me.options.UseClearSpansKlr))
+                    newERIList.Add("UseFeedlineAsCylinder=" & trueFalseYesNo(Me.options.UseFeedlineAsCylinder))
+                    newERIList.Add("UseLegLoads=" & trueFalseYesNo(Me.options.UseLegLoads))
+                    newERIList.Add("SRTakeCompression=" & trueFalseYesNo(Me.options.SRTakeCompression))
+                    newERIList.Add("AllLegPanelsSame=" & trueFalseYesNo(Me.options.AllLegPanelsSame))
+                    newERIList.Add("UseCombinedBoltCapacity=" & trueFalseYesNo(Me.options.UseCombinedBoltCapacity))
+                    newERIList.Add("SecHorzBracesLeg=" & trueFalseYesNo(Me.options.SecHorzBracesLeg))
+                    newERIList.Add("SortByComponent=" & trueFalseYesNo(Me.options.SortByComponent))
+                    newERIList.Add("SRCutEnds=" & trueFalseYesNo(Me.options.SRCutEnds))
+                    newERIList.Add("SRConcentric=" & trueFalseYesNo(Me.options.SRConcentric))
+                    newERIList.Add("CalcBlockShear=" & trueFalseYesNo(Me.options.CalcBlockShear))
+                    newERIList.Add("Use4SidedDiamondBracing=" & trueFalseYesNo(Me.options.Use4SidedDiamondBracing))
+                    newERIList.Add("TriangulateInnerBracing=" & trueFalseYesNo(Me.options.TriangulateInnerBracing))
+                    newERIList.Add("PrintCarrierNotes=" & trueFalseYesNo(Me.options.PrintCarrierNotes))
+                    newERIList.Add("AddIBCWindCase=" & trueFalseYesNo(Me.options.AddIBCWindCase))
+                    newERIList.Add("LegBoltsAtTop=" & trueFalseYesNo(Me.options.LegBoltsAtTop))
+                    newERIList.Add("UseTIA222Exemptions_MinBracingResistance=" & trueFalseYesNo(Me.options.UseTIA222Exemptions_MinBracingResistance))
+                    newERIList.Add("UseTIA222Exemptions_TensionSplice=" & trueFalseYesNo(Me.options.UseTIA222Exemptions_TensionSplice))
+                    newERIList.Add("IgnoreKLryFor60DegAngleLegs=" & trueFalseYesNo(Me.options.IgnoreKLryFor60DegAngleLegs))
+                    newERIList.Add("UseFeedlineTorque=" & trueFalseYesNo(Me.options.UseFeedlineTorque))
+                    newERIList.Add("UsePinnedElements=" & trueFalseYesNo(Me.options.UsePinnedElements))
+                    newERIList.Add("UseRigidIndex=" & trueFalseYesNo(Me.options.UseRigidIndex))
+                    newERIList.Add("UseTrueCable=" & trueFalseYesNo(Me.options.UseTrueCable))
+                    newERIList.Add("UseASCELy=" & trueFalseYesNo(Me.options.UseASCELy))
+                    newERIList.Add("CalcBracingForces=" & trueFalseYesNo(Me.options.CalcBracingForces))
+                    newERIList.Add("IgnoreBracingFEA=" & trueFalseYesNo(Me.options.IgnoreBracingFEA))
+                    newERIList.Add("BypassStabilityChecks=" & trueFalseYesNo(Me.options.BypassStabilityChecks))
+                    newERIList.Add("UseWindProjection=" & trueFalseYesNo(Me.options.UseWindProjection))
+                    newERIList.Add("UseDishCoeff=" & trueFalseYesNo(Me.options.UseDishCoeff))
+                    newERIList.Add("AutoCalcTorqArmArea=" & trueFalseYesNo(Me.options.AutoCalcTorqArmArea))
+                    'Options - Foundations
+                    newERIList.Add("MastVert=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.MastVert))
+                    newERIList.Add("MastHorz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.MastHorz))
+                    newERIList.Add("GuyVert=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.GuyVert))
+                    newERIList.Add("GuyHorz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.GuyHorz))
+                    'Options - Poles
+                    newERIList.Add("CheckVonMises=" & trueFalseYesNo(Me.options.cantileverPoles.CheckVonMises))
+                    newERIList.Add("SocketTopMount=" & trueFalseYesNo(Me.options.cantileverPoles.SocketTopMount))
+                    newERIList.Add("PrintMonopoleAtIncrements=" & trueFalseYesNo(Me.options.cantileverPoles.PrintMonopoleAtIncrements))
+                    newERIList.Add("UseSubCriticalFlow=" & trueFalseYesNo(Me.options.cantileverPoles.UseSubCriticalFlow))
+                    newERIList.Add("AssumePoleWithNoAttachments=" & trueFalseYesNo(Me.options.cantileverPoles.AssumePoleWithNoAttachments))
+                    newERIList.Add("AssumePoleWithShroud=" & trueFalseYesNo(Me.options.cantileverPoles.AssumePoleWithShroud))
+                    newERIList.Add("PoleCornerRadiusKnown=" & trueFalseYesNo(Me.options.cantileverPoles.PoleCornerRadiusKnown))
+                    newERIList.Add("CantKFactor=" & Me.options.cantileverPoles.CantKFactor)
+                    'Options - Girts
+                    newERIList.Add("GirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.defaultGirtOffsets.GirtOffset))
+                    newERIList.Add("GirtOffsetLatticedPole=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.defaultGirtOffsets.GirtOffsetLatticedPole))
+                    newERIList.Add("OffsetBotGirt=" & trueFalseYesNo(Me.options.defaultGirtOffsets.OffsetBotGirt))
+                    'Options - Wind
+                    newERIList.Add("WindDirOption=" & Me.options.windDirections.WindDirOption)
+                    newERIList.Add("WindDir0_0=" & trueFalseYesNo(Me.options.windDirections.WindDir0_0))
+                    newERIList.Add("WindDir0_1=" & trueFalseYesNo(Me.options.windDirections.WindDir0_1))
+                    newERIList.Add("WindDir0_2=" & trueFalseYesNo(Me.options.windDirections.WindDir0_2))
+                    newERIList.Add("WindDir0_3=" & trueFalseYesNo(Me.options.windDirections.WindDir0_3))
+                    newERIList.Add("WindDir0_4=" & trueFalseYesNo(Me.options.windDirections.WindDir0_4))
+                    newERIList.Add("WindDir0_5=" & trueFalseYesNo(Me.options.windDirections.WindDir0_5))
+                    newERIList.Add("WindDir0_6=" & trueFalseYesNo(Me.options.windDirections.WindDir0_6))
+                    newERIList.Add("WindDir0_7=" & trueFalseYesNo(Me.options.windDirections.WindDir0_7))
+                    newERIList.Add("WindDir0_8=" & trueFalseYesNo(Me.options.windDirections.WindDir0_8))
+                    newERIList.Add("WindDir0_9=" & trueFalseYesNo(Me.options.windDirections.WindDir0_9))
+                    newERIList.Add("WindDir0_10=" & trueFalseYesNo(Me.options.windDirections.WindDir0_10))
+                    newERIList.Add("WindDir0_11=" & trueFalseYesNo(Me.options.windDirections.WindDir0_11))
+                    newERIList.Add("WindDir0_12=" & trueFalseYesNo(Me.options.windDirections.WindDir0_12))
+                    newERIList.Add("WindDir0_13=" & trueFalseYesNo(Me.options.windDirections.WindDir0_13))
+                    newERIList.Add("WindDir0_14=" & trueFalseYesNo(Me.options.windDirections.WindDir0_14))
+                    newERIList.Add("WindDir0_15=" & trueFalseYesNo(Me.options.windDirections.WindDir0_15))
+                    newERIList.Add("WindDir1_0=" & trueFalseYesNo(Me.options.windDirections.WindDir1_0))
+                    newERIList.Add("WindDir1_1=" & trueFalseYesNo(Me.options.windDirections.WindDir1_1))
+                    newERIList.Add("WindDir1_2=" & trueFalseYesNo(Me.options.windDirections.WindDir1_2))
+                    newERIList.Add("WindDir1_3=" & trueFalseYesNo(Me.options.windDirections.WindDir1_3))
+                    newERIList.Add("WindDir1_4=" & trueFalseYesNo(Me.options.windDirections.WindDir1_4))
+                    newERIList.Add("WindDir1_5=" & trueFalseYesNo(Me.options.windDirections.WindDir1_5))
+                    newERIList.Add("WindDir1_6=" & trueFalseYesNo(Me.options.windDirections.WindDir1_6))
+                    newERIList.Add("WindDir1_7=" & trueFalseYesNo(Me.options.windDirections.WindDir1_7))
+                    newERIList.Add("WindDir1_8=" & trueFalseYesNo(Me.options.windDirections.WindDir1_8))
+                    newERIList.Add("WindDir1_9=" & trueFalseYesNo(Me.options.windDirections.WindDir1_9))
+                    newERIList.Add("WindDir1_10=" & trueFalseYesNo(Me.options.windDirections.WindDir1_10))
+                    newERIList.Add("WindDir1_11=" & trueFalseYesNo(Me.options.windDirections.WindDir1_11))
+                    newERIList.Add("WindDir1_12=" & trueFalseYesNo(Me.options.windDirections.WindDir1_12))
+                    newERIList.Add("WindDir1_13=" & trueFalseYesNo(Me.options.windDirections.WindDir1_13))
+                    newERIList.Add("WindDir1_14=" & trueFalseYesNo(Me.options.windDirections.WindDir1_14))
+                    newERIList.Add("WindDir1_15=" & trueFalseYesNo(Me.options.windDirections.WindDir1_15))
+                    newERIList.Add("WindDir2_0=" & trueFalseYesNo(Me.options.windDirections.WindDir2_0))
+                    newERIList.Add("WindDir2_1=" & trueFalseYesNo(Me.options.windDirections.WindDir2_1))
+                    newERIList.Add("WindDir2_2=" & trueFalseYesNo(Me.options.windDirections.WindDir2_2))
+                    newERIList.Add("WindDir2_3=" & trueFalseYesNo(Me.options.windDirections.WindDir2_3))
+                    newERIList.Add("WindDir2_4=" & trueFalseYesNo(Me.options.windDirections.WindDir2_4))
+                    newERIList.Add("WindDir2_5=" & trueFalseYesNo(Me.options.windDirections.WindDir2_5))
+                    newERIList.Add("WindDir2_6=" & trueFalseYesNo(Me.options.windDirections.WindDir2_6))
+                    newERIList.Add("WindDir2_7=" & trueFalseYesNo(Me.options.windDirections.WindDir2_7))
+                    newERIList.Add("WindDir2_8=" & trueFalseYesNo(Me.options.windDirections.WindDir2_8))
+                    newERIList.Add("WindDir2_9=" & trueFalseYesNo(Me.options.windDirections.WindDir2_9))
+                    newERIList.Add("WindDir2_10=" & trueFalseYesNo(Me.options.windDirections.WindDir2_10))
+                    newERIList.Add("WindDir2_11=" & trueFalseYesNo(Me.options.windDirections.WindDir2_11))
+                    newERIList.Add("WindDir2_12=" & trueFalseYesNo(Me.options.windDirections.WindDir2_12))
+                    newERIList.Add("WindDir2_13=" & trueFalseYesNo(Me.options.windDirections.WindDir2_13))
+                    newERIList.Add("WindDir2_14=" & trueFalseYesNo(Me.options.windDirections.WindDir2_14))
+                    newERIList.Add("WindDir2_15=" & trueFalseYesNo(Me.options.windDirections.WindDir2_15))
+                    newERIList.Add("SuppressWindPatternLoading=" & trueFalseYesNo(Me.options.windDirections.SuppressWindPatternLoading))
+                    'Options - Miscl
+                    newERIList.Add("HogRodTakeup=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.misclOptions.HogRodTakeup))
+                    newERIList.Add("RadiusSampleDist=" & Me.settings.USUnits.Length.convertToERIUnits(Me.options.misclOptions.RadiusSampleDist))
+                    'General Geometry
+                    newERIList.Add("TowerType=" & Me.geometry.TowerType)
+                    newERIList.Add("AntennaType=" & Me.geometry.AntennaType)
+                    newERIList.Add("OverallHeight=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.OverallHeight))
+                    newERIList.Add("BaseElevation=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.BaseElevation))
+                    newERIList.Add("Lambda=" & Me.settings.USUnits.Spacing.convertToERIUnits(Me.geometry.Lambda))
+                    newERIList.Add("TowerTopFaceWidth=" & Me.settings.USUnits.Spacing.convertToERIUnits(Me.geometry.TowerTopFaceWidth))
+                    newERIList.Add("TowerBaseFaceWidth=" & Me.settings.USUnits.Spacing.convertToERIUnits(Me.geometry.TowerBaseFaceWidth))
+                    newERIList.Add("TowerTaper=" & Me.geometry.TowerTaper)
+                    newERIList.Add("GuyedMonopoleBaseType=" & Me.geometry.GuyedMonopoleBaseType)
+                    newERIList.Add("TaperHeight=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.TaperHeight))
+                    newERIList.Add("PivotHeight=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.PivotHeight))
+                    newERIList.Add("AutoCalcGH=" & trueFalseYesNo(Me.geometry.AutoCalcGH))
+                    newERIList.Add("UserGHElev=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.UserGHElev))
+                    newERIList.Add("UseIndexPlate=" & trueFalseYesNo(Me.geometry.UseIndexPlate))
+                    newERIList.Add("EnterUserDefinedGhValues=" & trueFalseYesNo(Me.geometry.EnterUserDefinedGhValues))
+                    newERIList.Add("BaseTowerGhInput=" & Me.geometry.BaseTowerGhInput)
+                    newERIList.Add("UpperStructureGhInput=" & Me.geometry.UpperStructureGhInput)
+                    newERIList.Add("EnterUserDefinedCgValues=" & trueFalseYesNo(Me.geometry.EnterUserDefinedCgValues))
+                    newERIList.Add("BaseTowerCgInput=" & Me.geometry.BaseTowerCgInput)
+                    newERIList.Add("UpperStructureCgInput=" & Me.geometry.UpperStructureCgInput)
+                    newERIList.Add("AntennaFaceWidth=" & Me.settings.USUnits.Spacing.convertToERIUnits(Me.geometry.AntennaFaceWidth))
+                    newERIList.Add("UseTopTakeup=" & trueFalseYesNo(Me.geometry.UseTopTakeup))
+                    newERIList.Add("ConstantSlope=" & trueFalseYesNo(Me.geometry.ConstantSlope))
+                Case line(0).Equals("NumAntennaRecs")
+                    newERIList.Add(line(0) & "=" & Me.geometry.upperStructure.Count)
+                    'For Each upperSection In Me.geometry.upperStructure
+                    For i = 0 To Me.geometry.upperStructure.Count - 1
+                        newERIList.Add("AntennaRec=" & Me.geometry.upperStructure(i).AntennaRec)
+                        newERIList.Add("AntennaBraceType=" & Me.geometry.upperStructure(i).AntennaBraceType)
+                        newERIList.Add("AntennaHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHeight))
+                        newERIList.Add("AntennaDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalSpacing))
+                        newERIList.Add("AntennaDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalSpacingEx))
+                        newERIList.Add("AntennaNumSections=" & Me.geometry.upperStructure(i).AntennaNumSections)
+                        newERIList.Add("AntennaNumSesctions=" & Me.geometry.upperStructure(i).AntennaNumSesctions)
+                        newERIList.Add("AntennaSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.upperStructure(i).AntennaSectionLength))
+                        newERIList.Add("AntennaLegType=" & Me.geometry.upperStructure(i).AntennaLegType)
+                        newERIList.Add("AntennaLegSize=" & Me.geometry.upperStructure(i).AntennaLegSize)
+                        newERIList.Add("AntennaLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegGrade))
+                        newERIList.Add("AntennaLegMatlGrade=" & Me.geometry.upperStructure(i).AntennaLegMatlGrade)
+                        newERIList.Add("AntennaDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalGrade))
+                        newERIList.Add("AntennaDiagonalMatlGrade=" & Me.geometry.upperStructure(i).AntennaDiagonalMatlGrade)
+                        newERIList.Add("AntennaInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerBracingGrade))
+                        newERIList.Add("AntennaInnerBracingMatlGrade=" & Me.geometry.upperStructure(i).AntennaInnerBracingMatlGrade)
+                        newERIList.Add("AntennaTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtGrade))
+                        newERIList.Add("AntennaTopGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaTopGirtMatlGrade)
+                        newERIList.Add("AntennaBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtGrade))
+                        newERIList.Add("AntennaBotGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaBotGirtMatlGrade)
+                        newERIList.Add("AntennaInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtGrade))
+                        newERIList.Add("AntennaInnerGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaInnerGirtMatlGrade)
+                        newERIList.Add("AntennaLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLongHorizontalGrade))
+                        newERIList.Add("AntennaLongHorizontalMatlGrade=" & Me.geometry.upperStructure(i).AntennaLongHorizontalMatlGrade)
+                        newERIList.Add("AntennaShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalGrade))
+                        newERIList.Add("AntennaShortHorizontalMatlGrade=" & Me.geometry.upperStructure(i).AntennaShortHorizontalMatlGrade)
+                        newERIList.Add("AntennaDiagonalType=" & Me.geometry.upperStructure(i).AntennaDiagonalType)
+                        newERIList.Add("AntennaDiagonalSize=" & Me.geometry.upperStructure(i).AntennaDiagonalSize)
+                        newERIList.Add("AntennaInnerBracingType=" & Me.geometry.upperStructure(i).AntennaInnerBracingType)
+                        newERIList.Add("AntennaInnerBracingSize=" & Me.geometry.upperStructure(i).AntennaInnerBracingSize)
+                        newERIList.Add("AntennaTopGirtType=" & Me.geometry.upperStructure(i).AntennaTopGirtType)
+                        newERIList.Add("AntennaTopGirtSize=" & Me.geometry.upperStructure(i).AntennaTopGirtSize)
+                        newERIList.Add("AntennaBotGirtType=" & Me.geometry.upperStructure(i).AntennaBotGirtType)
+                        newERIList.Add("AntennaBotGirtSize=" & Me.geometry.upperStructure(i).AntennaBotGirtSize)
+                        newERIList.Add("AntennaTopGirtOffset=" & Me.geometry.upperStructure(i).AntennaTopGirtOffset)
+                        newERIList.Add("AntennaBotGirtOffset=" & Me.geometry.upperStructure(i).AntennaBotGirtOffset)
+                        newERIList.Add("AntennaHasKBraceEndPanels=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHasKBraceEndPanels))
+                        newERIList.Add("AntennaHasHorizontals=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHasHorizontals))
+                        newERIList.Add("AntennaLongHorizontalType=" & Me.geometry.upperStructure(i).AntennaLongHorizontalType)
+                        newERIList.Add("AntennaLongHorizontalSize=" & Me.geometry.upperStructure(i).AntennaLongHorizontalSize)
+                        newERIList.Add("AntennaShortHorizontalType=" & Me.geometry.upperStructure(i).AntennaShortHorizontalType)
+                        newERIList.Add("AntennaShortHorizontalSize=" & Me.geometry.upperStructure(i).AntennaShortHorizontalSize)
+                        newERIList.Add("AntennaRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantGrade))
+                        newERIList.Add("AntennaRedundantMatlGrade=" & Me.geometry.upperStructure(i).AntennaRedundantMatlGrade)
+                        newERIList.Add("AntennaRedundantType=" & Me.geometry.upperStructure(i).AntennaRedundantType)
+                        newERIList.Add("AntennaRedundantDiagType=" & Me.geometry.upperStructure(i).AntennaRedundantDiagType)
+                        newERIList.Add("AntennaRedundantSubDiagonalType=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalType)
+                        newERIList.Add("AntennaRedundantSubHorizontalType=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalType)
+                        newERIList.Add("AntennaRedundantVerticalType=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalType)
+                        newERIList.Add("AntennaRedundantHipType=" & Me.geometry.upperStructure(i).AntennaRedundantHipType)
+                        newERIList.Add("AntennaRedundantHipDiagonalType=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalType)
+                        newERIList.Add("AntennaRedundantHorizontalSize=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize)
+                        newERIList.Add("AntennaRedundantHorizontalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize2)
+                        newERIList.Add("AntennaRedundantHorizontalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize3)
+                        newERIList.Add("AntennaRedundantHorizontalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize4)
+                        newERIList.Add("AntennaRedundantDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize)
+                        newERIList.Add("AntennaRedundantDiagonalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize2)
+                        newERIList.Add("AntennaRedundantDiagonalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize3)
+                        newERIList.Add("AntennaRedundantDiagonalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize4)
+                        newERIList.Add("AntennaRedundantSubHorizontalSize=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalSize)
+                        newERIList.Add("AntennaRedundantSubDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalSize)
+                        newERIList.Add("AntennaSubDiagLocation=" & Me.geometry.upperStructure(i).AntennaSubDiagLocation)
+                        newERIList.Add("AntennaRedundantVerticalSize=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalSize)
+                        newERIList.Add("AntennaRedundantHipDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize)
+                        newERIList.Add("AntennaRedundantHipDiagonalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize2)
+                        newERIList.Add("AntennaRedundantHipDiagonalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize3)
+                        newERIList.Add("AntennaRedundantHipDiagonalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize4)
+                        newERIList.Add("AntennaRedundantHipSize=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize)
+                        newERIList.Add("AntennaRedundantHipSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize2)
+                        newERIList.Add("AntennaRedundantHipSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize3)
+                        newERIList.Add("AntennaRedundantHipSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize4)
+                        newERIList.Add("AntennaNumInnerGirts=" & Me.geometry.upperStructure(i).AntennaNumInnerGirts)
+                        newERIList.Add("AntennaInnerGirtType=" & Me.geometry.upperStructure(i).AntennaInnerGirtType)
+                        newERIList.Add("AntennaInnerGirtSize=" & Me.geometry.upperStructure(i).AntennaInnerGirtSize)
+                        newERIList.Add("AntennaPoleShapeType=" & Me.geometry.upperStructure(i).AntennaPoleShapeType)
+                        newERIList.Add("AntennaPoleSize=" & Me.geometry.upperStructure(i).AntennaPoleSize)
+                        newERIList.Add("AntennaPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaPoleGrade))
+                        newERIList.Add("AntennaPoleMatlGrade=" & Me.geometry.upperStructure(i).AntennaPoleMatlGrade)
+                        newERIList.Add("AntennaPoleSpliceLength=" & Me.geometry.upperStructure(i).AntennaPoleSpliceLength)
+                        newERIList.Add("AntennaTaperPoleNumSides=" & Me.geometry.upperStructure(i).AntennaTaperPoleNumSides)
+                        newERIList.Add("AntennaTaperPoleTopDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleTopDiameter))
+                        newERIList.Add("AntennaTaperPoleBotDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleBotDiameter))
+                        newERIList.Add("AntennaTaperPoleWallThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleWallThickness))
+                        newERIList.Add("AntennaTaperPoleBendRadius=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleBendRadius))
+                        newERIList.Add("AntennaTaperPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleGrade))
+                        newERIList.Add("AntennaTaperPoleMatlGrade=" & Me.geometry.upperStructure(i).AntennaTaperPoleMatlGrade)
+                        newERIList.Add("AntennaSWMult=" & Me.geometry.upperStructure(i).AntennaSWMult)
+                        newERIList.Add("AntennaWPMult=" & Me.geometry.upperStructure(i).AntennaWPMult)
+                        newERIList.Add("AntennaAutoCalcKSingleAngle=" & Me.geometry.upperStructure(i).AntennaAutoCalcKSingleAngle)
+                        newERIList.Add("AntennaAutoCalcKSolidRound=" & Me.geometry.upperStructure(i).AntennaAutoCalcKSolidRound)
+                        newERIList.Add("AntennaAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.upperStructure(i).AntennaAfGusset))
+                        newERIList.Add("AntennaTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTfGusset))
+                        newERIList.Add("AntennaGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaGussetBoltEdgeDistance))
+                        newERIList.Add("AntennaGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaGussetGrade))
+                        newERIList.Add("AntennaGussetMatlGrade=" & Me.geometry.upperStructure(i).AntennaGussetMatlGrade)
+                        newERIList.Add("AntennaAfMult=" & Me.geometry.upperStructure(i).AntennaAfMult)
+                        newERIList.Add("AntennaArMult=" & Me.geometry.upperStructure(i).AntennaArMult)
+                        newERIList.Add("AntennaFlatIPAPole=" & Me.geometry.upperStructure(i).AntennaFlatIPAPole)
+                        newERIList.Add("AntennaRoundIPAPole=" & Me.geometry.upperStructure(i).AntennaRoundIPAPole)
+                        newERIList.Add("AntennaFlatIPALeg=" & Me.geometry.upperStructure(i).AntennaFlatIPALeg)
+                        newERIList.Add("AntennaRoundIPALeg=" & Me.geometry.upperStructure(i).AntennaRoundIPALeg)
+                        newERIList.Add("AntennaFlatIPAHorizontal=" & Me.geometry.upperStructure(i).AntennaFlatIPAHorizontal)
+                        newERIList.Add("AntennaRoundIPAHorizontal=" & Me.geometry.upperStructure(i).AntennaRoundIPAHorizontal)
+                        newERIList.Add("AntennaFlatIPADiagonal=" & Me.geometry.upperStructure(i).AntennaFlatIPADiagonal)
+                        newERIList.Add("AntennaRoundIPADiagonal=" & Me.geometry.upperStructure(i).AntennaRoundIPADiagonal)
+                        newERIList.Add("AntennaCSA_S37_SpeedUpFactor=" & Me.geometry.upperStructure(i).AntennaCSA_S37_SpeedUpFactor)
+                        newERIList.Add("AntennaKLegs=" & Me.geometry.upperStructure(i).AntennaKLegs)
+                        newERIList.Add("AntennaKXBracedDiags=" & Me.geometry.upperStructure(i).AntennaKXBracedDiags)
+                        newERIList.Add("AntennaKKBracedDiags=" & Me.geometry.upperStructure(i).AntennaKKBracedDiags)
+                        newERIList.Add("AntennaKZBracedDiags=" & Me.geometry.upperStructure(i).AntennaKZBracedDiags)
+                        newERIList.Add("AntennaKHorzs=" & Me.geometry.upperStructure(i).AntennaKHorzs)
+                        newERIList.Add("AntennaKSecHorzs=" & Me.geometry.upperStructure(i).AntennaKSecHorzs)
+                        newERIList.Add("AntennaKGirts=" & Me.geometry.upperStructure(i).AntennaKGirts)
+                        newERIList.Add("AntennaKInners=" & Me.geometry.upperStructure(i).AntennaKInners)
+                        newERIList.Add("AntennaKXBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKXBracedDiagsY)
+                        newERIList.Add("AntennaKKBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKKBracedDiagsY)
+                        newERIList.Add("AntennaKZBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKZBracedDiagsY)
+                        newERIList.Add("AntennaKHorzsY=" & Me.geometry.upperStructure(i).AntennaKHorzsY)
+                        newERIList.Add("AntennaKSecHorzsY=" & Me.geometry.upperStructure(i).AntennaKSecHorzsY)
+                        newERIList.Add("AntennaKGirtsY=" & Me.geometry.upperStructure(i).AntennaKGirtsY)
+                        newERIList.Add("AntennaKInnersY=" & Me.geometry.upperStructure(i).AntennaKInnersY)
+                        newERIList.Add("AntennaKRedHorz=" & Me.geometry.upperStructure(i).AntennaKRedHorz)
+                        newERIList.Add("AntennaKRedDiag=" & Me.geometry.upperStructure(i).AntennaKRedDiag)
+                        newERIList.Add("AntennaKRedSubDiag=" & Me.geometry.upperStructure(i).AntennaKRedSubDiag)
+                        newERIList.Add("AntennaKRedSubHorz=" & Me.geometry.upperStructure(i).AntennaKRedSubHorz)
+                        newERIList.Add("AntennaKRedVert=" & Me.geometry.upperStructure(i).AntennaKRedVert)
+                        newERIList.Add("AntennaKRedHip=" & Me.geometry.upperStructure(i).AntennaKRedHip)
+                        newERIList.Add("AntennaKRedHipDiag=" & Me.geometry.upperStructure(i).AntennaKRedHipDiag)
+                        newERIList.Add("AntennaKTLX=" & Me.geometry.upperStructure(i).AntennaKTLX)
+                        newERIList.Add("AntennaKTLZ=" & Me.geometry.upperStructure(i).AntennaKTLZ)
+                        newERIList.Add("AntennaKTLLeg=" & Me.geometry.upperStructure(i).AntennaKTLLeg)
+                        newERIList.Add("AntennaInnerKTLX=" & Me.geometry.upperStructure(i).AntennaInnerKTLX)
+                        newERIList.Add("AntennaInnerKTLZ=" & Me.geometry.upperStructure(i).AntennaInnerKTLZ)
+                        newERIList.Add("AntennaInnerKTLLeg=" & Me.geometry.upperStructure(i).AntennaInnerKTLLeg)
+                        newERIList.Add("AntennaStitchBoltLocationHoriz=" & Me.geometry.upperStructure(i).AntennaStitchBoltLocationHoriz)
+                        newERIList.Add("AntennaStitchBoltLocationDiag=" & Me.geometry.upperStructure(i).AntennaStitchBoltLocationDiag)
+                        newERIList.Add("AntennaStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacing))
+                        newERIList.Add("AntennaStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingHorz))
+                        newERIList.Add("AntennaStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingDiag))
+                        newERIList.Add("AntennaStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingRed))
+                        newERIList.Add("AntennaLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegNetWidthDeduct))
+                        newERIList.Add("AntennaLegUFactor=" & Me.geometry.upperStructure(i).AntennaLegUFactor)
+                        newERIList.Add("AntennaDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalNetWidthDeduct))
+                        newERIList.Add("AntennaTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtNetWidthDeduct))
+                        newERIList.Add("AntennaBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtNetWidthDeduct))
+                        newERIList.Add("AntennaInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtNetWidthDeduct))
+                        newERIList.Add("AntennaHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalNetWidthDeduct))
+                        newERIList.Add("AntennaShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalNetWidthDeduct))
+                        newERIList.Add("AntennaDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaDiagonalUFactor)
+                        newERIList.Add("AntennaTopGirtUFactor=" & Me.geometry.upperStructure(i).AntennaTopGirtUFactor)
+                        newERIList.Add("AntennaBotGirtUFactor=" & Me.geometry.upperStructure(i).AntennaBotGirtUFactor)
+                        newERIList.Add("AntennaInnerGirtUFactor=" & Me.geometry.upperStructure(i).AntennaInnerGirtUFactor)
+                        newERIList.Add("AntennaHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaHorizontalUFactor)
+                        newERIList.Add("AntennaShortHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaShortHorizontalUFactor)
+                        newERIList.Add("AntennaLegConnType=" & Me.geometry.upperStructure(i).AntennaLegConnType)
+                        newERIList.Add("AntennaLegNumBolts=" & Me.geometry.upperStructure(i).AntennaLegNumBolts)
+                        newERIList.Add("AntennaDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaDiagonalNumBolts)
+                        newERIList.Add("AntennaTopGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaTopGirtNumBolts)
+                        newERIList.Add("AntennaBotGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaBotGirtNumBolts)
+                        newERIList.Add("AntennaInnerGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaInnerGirtNumBolts)
+                        newERIList.Add("AntennaHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaHorizontalNumBolts)
+                        newERIList.Add("AntennaShortHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaShortHorizontalNumBolts)
+                        newERIList.Add("AntennaLegBoltGrade=" & Me.geometry.upperStructure(i).AntennaLegBoltGrade)
+                        newERIList.Add("AntennaLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegBoltSize))
+                        newERIList.Add("AntennaDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaDiagonalBoltGrade)
+                        newERIList.Add("AntennaDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalBoltSize))
+                        newERIList.Add("AntennaTopGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaTopGirtBoltGrade)
+                        newERIList.Add("AntennaTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtBoltSize))
+                        newERIList.Add("AntennaBotGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaBotGirtBoltGrade)
+                        newERIList.Add("AntennaBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtBoltSize))
+                        newERIList.Add("AntennaInnerGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaInnerGirtBoltGrade)
+                        newERIList.Add("AntennaInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtBoltSize))
+                        newERIList.Add("AntennaHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaHorizontalBoltGrade)
+                        newERIList.Add("AntennaHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalBoltSize))
+                        newERIList.Add("AntennaShortHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaShortHorizontalBoltGrade)
+                        newERIList.Add("AntennaShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalBoltSize))
+                        newERIList.Add("AntennaLegBoltEdgeDistance=" & Me.geometry.upperStructure(i).AntennaLegBoltEdgeDistance)
+                        newERIList.Add("AntennaDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalBoltEdgeDistance))
+                        newERIList.Add("AntennaTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtBoltEdgeDistance))
+                        newERIList.Add("AntennaBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtBoltEdgeDistance))
+                        newERIList.Add("AntennaInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtBoltEdgeDistance))
+                        newERIList.Add("AntennaHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalBoltEdgeDistance))
+                        newERIList.Add("AntennaShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalBoltEdgeDistance))
+                        newERIList.Add("AntennaDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalGageG1Distance))
+                        newERIList.Add("AntennaTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtGageG1Distance))
+                        newERIList.Add("AntennaBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtGageG1Distance))
+                        newERIList.Add("AntennaInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtGageG1Distance))
+                        newERIList.Add("AntennaHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalGageG1Distance))
+                        newERIList.Add("AntennaShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalGageG1Distance))
+                        newERIList.Add("AntennaRedundantHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltGrade)
+                        newERIList.Add("AntennaRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltSize))
+                        newERIList.Add("AntennaRedundantHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalNumBolts)
+                        newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalGageG1Distance))
+                        newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalUFactor)
+                        newERIList.Add("AntennaRedundantDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltGrade)
+                        newERIList.Add("AntennaRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltSize))
+                        newERIList.Add("AntennaRedundantDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalNumBolts)
+                        newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalGageG1Distance))
+                        newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalUFactor)
+                        newERIList.Add("AntennaRedundantSubDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltGrade)
+                        newERIList.Add("AntennaRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltSize))
+                        newERIList.Add("AntennaRedundantSubDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalNumBolts)
+                        newERIList.Add("AntennaRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalGageG1Distance))
+                        newERIList.Add("AntennaRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantSubDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalUFactor)
+                        newERIList.Add("AntennaRedundantSubHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltGrade)
+                        newERIList.Add("AntennaRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltSize))
+                        newERIList.Add("AntennaRedundantSubHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalNumBolts)
+                        newERIList.Add("AntennaRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalGageG1Distance))
+                        newERIList.Add("AntennaRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantSubHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalUFactor)
+                        newERIList.Add("AntennaRedundantVerticalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltGrade)
+                        newERIList.Add("AntennaRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltSize))
+                        newERIList.Add("AntennaRedundantVerticalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalNumBolts)
+                        newERIList.Add("AntennaRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalGageG1Distance))
+                        newERIList.Add("AntennaRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantVerticalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalUFactor)
+                        newERIList.Add("AntennaRedundantHipBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHipBoltGrade)
+                        newERIList.Add("AntennaRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipBoltSize))
+                        newERIList.Add("AntennaRedundantHipNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHipNumBolts)
+                        newERIList.Add("AntennaRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipGageG1Distance))
+                        newERIList.Add("AntennaRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantHipUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHipUFactor)
+                        newERIList.Add("AntennaRedundantHipDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltGrade)
+                        newERIList.Add("AntennaRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltSize))
+                        newERIList.Add("AntennaRedundantHipDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalNumBolts)
+                        newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltEdgeDistance))
+                        newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalGageG1Distance))
+                        newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalNetWidthDeduct))
+                        newERIList.Add("AntennaRedundantHipDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalUFactor)
+                        newERIList.Add("AntennaDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaDiagonalOutOfPlaneRestraint))
+                        newERIList.Add("AntennaTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaTopGirtOutOfPlaneRestraint))
+                        newERIList.Add("AntennaBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaBottomGirtOutOfPlaneRestraint))
+                        newERIList.Add("AntennaMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaMidGirtOutOfPlaneRestraint))
+                        newERIList.Add("AntennaHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHorizontalOutOfPlaneRestraint))
+                        newERIList.Add("AntennaSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaSecondaryHorizontalOutOfPlaneRestraint))
+                        newERIList.Add("AntennaDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetNEY))
+                        newERIList.Add("AntennaDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetNEX))
+                        newERIList.Add("AntennaDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetPEY))
+                        newERIList.Add("AntennaDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetPEX))
+                        newERIList.Add("AntennaKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetNEY))
+                        newERIList.Add("AntennaKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetNEX))
+                        newERIList.Add("AntennaKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEY))
+                        newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEX))
+
+                    Next i
+                Case line(0).Equals("NumTowerRecs")
+                    newERIList.Add(line(0) & "=" & Me.geometry.baseStructure.Count)
+                    For i = 0 To Me.geometry.baseStructure.Count - 1
+                        newERIList.Add("TowerRec=" & Me.geometry.baseStructure(i).TowerRec)
+                        newERIList.Add("TowerDatabase=" & Me.geometry.baseStructure(i).TowerDatabase)
+                        newERIList.Add("TowerName=" & Me.geometry.baseStructure(i).TowerName)
+                        newERIList.Add("TowerHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.baseStructure(i).TowerHeight))
+                        newERIList.Add("TowerFaceWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerFaceWidth))
+                        newERIList.Add("TowerNumSections=" & Me.geometry.baseStructure(i).TowerNumSections)
+                        newERIList.Add("TowerSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.baseStructure(i).TowerSectionLength))
+                        newERIList.Add("TowerDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalSpacing))
+                        newERIList.Add("TowerDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalSpacingEx))
+                        newERIList.Add("TowerBraceType=" & Me.geometry.baseStructure(i).TowerBraceType)
+                        newERIList.Add("TowerFaceBevel=" & Me.geometry.baseStructure(i).TowerFaceBevel)
+                        newERIList.Add("TowerTopGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtOffset))
+                        newERIList.Add("TowerBotGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtOffset))
+                        newERIList.Add("TowerHasKBraceEndPanels=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHasKBraceEndPanels))
+                        newERIList.Add("TowerHasHorizontals=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHasHorizontals))
+                        newERIList.Add("TowerLegType=" & Me.geometry.baseStructure(i).TowerLegType)
+                        newERIList.Add("TowerLegSize=" & Me.geometry.baseStructure(i).TowerLegSize)
+                        newERIList.Add("TowerLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegGrade))
+                        newERIList.Add("TowerLegMatlGrade=" & Me.geometry.baseStructure(i).TowerLegMatlGrade)
+                        newERIList.Add("TowerDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalGrade))
+                        newERIList.Add("TowerDiagonalMatlGrade=" & Me.geometry.baseStructure(i).TowerDiagonalMatlGrade)
+                        newERIList.Add("TowerInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerBracingGrade))
+                        newERIList.Add("TowerInnerBracingMatlGrade=" & Me.geometry.baseStructure(i).TowerInnerBracingMatlGrade)
+                        newERIList.Add("TowerTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtGrade))
+                        newERIList.Add("TowerTopGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerTopGirtMatlGrade)
+                        newERIList.Add("TowerBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtGrade))
+                        newERIList.Add("TowerBotGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerBotGirtMatlGrade)
+                        newERIList.Add("TowerInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtGrade))
+                        newERIList.Add("TowerInnerGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerInnerGirtMatlGrade)
+                        newERIList.Add("TowerLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerLongHorizontalGrade))
+                        newERIList.Add("TowerLongHorizontalMatlGrade=" & Me.geometry.baseStructure(i).TowerLongHorizontalMatlGrade)
+                        newERIList.Add("TowerShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalGrade))
+                        newERIList.Add("TowerShortHorizontalMatlGrade=" & Me.geometry.baseStructure(i).TowerShortHorizontalMatlGrade)
+                        newERIList.Add("TowerDiagonalType=" & Me.geometry.baseStructure(i).TowerDiagonalType)
+                        newERIList.Add("TowerDiagonalSize=" & Me.geometry.baseStructure(i).TowerDiagonalSize)
+                        newERIList.Add("TowerInnerBracingType=" & Me.geometry.baseStructure(i).TowerInnerBracingType)
+                        newERIList.Add("TowerInnerBracingSize=" & Me.geometry.baseStructure(i).TowerInnerBracingSize)
+                        newERIList.Add("TowerTopGirtType=" & Me.geometry.baseStructure(i).TowerTopGirtType)
+                        newERIList.Add("TowerTopGirtSize=" & Me.geometry.baseStructure(i).TowerTopGirtSize)
+                        newERIList.Add("TowerBotGirtType=" & Me.geometry.baseStructure(i).TowerBotGirtType)
+                        newERIList.Add("TowerBotGirtSize=" & Me.geometry.baseStructure(i).TowerBotGirtSize)
+                        newERIList.Add("TowerNumInnerGirts=" & Me.geometry.baseStructure(i).TowerNumInnerGirts)
+                        newERIList.Add("TowerInnerGirtType=" & Me.geometry.baseStructure(i).TowerInnerGirtType)
+                        newERIList.Add("TowerInnerGirtSize=" & Me.geometry.baseStructure(i).TowerInnerGirtSize)
+                        newERIList.Add("TowerLongHorizontalType=" & Me.geometry.baseStructure(i).TowerLongHorizontalType)
+                        newERIList.Add("TowerLongHorizontalSize=" & Me.geometry.baseStructure(i).TowerLongHorizontalSize)
+                        newERIList.Add("TowerShortHorizontalType=" & Me.geometry.baseStructure(i).TowerShortHorizontalType)
+                        newERIList.Add("TowerShortHorizontalSize=" & Me.geometry.baseStructure(i).TowerShortHorizontalSize)
+                        newERIList.Add("TowerRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantGrade))
+                        newERIList.Add("TowerRedundantMatlGrade=" & Me.geometry.baseStructure(i).TowerRedundantMatlGrade)
+                        newERIList.Add("TowerRedundantType=" & Me.geometry.baseStructure(i).TowerRedundantType)
+                        newERIList.Add("TowerRedundantDiagType=" & Me.geometry.baseStructure(i).TowerRedundantDiagType)
+                        newERIList.Add("TowerRedundantSubDiagonalType=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalType)
+                        newERIList.Add("TowerRedundantSubHorizontalType=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalType)
+                        newERIList.Add("TowerRedundantVerticalType=" & Me.geometry.baseStructure(i).TowerRedundantVerticalType)
+                        newERIList.Add("TowerRedundantHipType=" & Me.geometry.baseStructure(i).TowerRedundantHipType)
+                        newERIList.Add("TowerRedundantHipDiagonalType=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalType)
+                        newERIList.Add("TowerRedundantHorizontalSize=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize)
+                        newERIList.Add("TowerRedundantHorizontalSize2=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize2)
+                        newERIList.Add("TowerRedundantHorizontalSize3=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize3)
+                        newERIList.Add("TowerRedundantHorizontalSize4=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize4)
+                        newERIList.Add("TowerRedundantDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize)
+                        newERIList.Add("TowerRedundantDiagonalSize2=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize2)
+                        newERIList.Add("TowerRedundantDiagonalSize3=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize3)
+                        newERIList.Add("TowerRedundantDiagonalSize4=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize4)
+                        newERIList.Add("TowerRedundantSubHorizontalSize=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalSize)
+                        newERIList.Add("TowerRedundantSubDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalSize)
+                        newERIList.Add("TowerSubDiagLocation=" & Me.geometry.baseStructure(i).TowerSubDiagLocation)
+                        newERIList.Add("TowerRedundantVerticalSize=" & Me.geometry.baseStructure(i).TowerRedundantVerticalSize)
+                        newERIList.Add("TowerRedundantHipSize=" & Me.geometry.baseStructure(i).TowerRedundantHipSize)
+                        newERIList.Add("TowerRedundantHipSize2=" & Me.geometry.baseStructure(i).TowerRedundantHipSize2)
+                        newERIList.Add("TowerRedundantHipSize3=" & Me.geometry.baseStructure(i).TowerRedundantHipSize3)
+                        newERIList.Add("TowerRedundantHipSize4=" & Me.geometry.baseStructure(i).TowerRedundantHipSize4)
+                        newERIList.Add("TowerRedundantHipDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize)
+                        newERIList.Add("TowerRedundantHipDiagonalSize2=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize2)
+                        newERIList.Add("TowerRedundantHipDiagonalSize3=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize3)
+                        newERIList.Add("TowerRedundantHipDiagonalSize4=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize4)
+                        newERIList.Add("TowerSWMult=" & Me.geometry.baseStructure(i).TowerSWMult)
+                        newERIList.Add("TowerWPMult=" & Me.geometry.baseStructure(i).TowerWPMult)
+                        newERIList.Add("TowerAutoCalcKSingleAngle=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerAutoCalcKSingleAngle))
+                        newERIList.Add("TowerAutoCalcKSolidRound=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerAutoCalcKSolidRound))
+                        newERIList.Add("TowerAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.baseStructure(i).TowerAfGusset))
+                        newERIList.Add("TowerTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTfGusset))
+                        newERIList.Add("TowerGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerGussetBoltEdgeDistance))
+                        newERIList.Add("TowerGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerGussetGrade))
+                        newERIList.Add("TowerGussetMatlGrade=" & Me.geometry.baseStructure(i).TowerGussetMatlGrade)
+                        newERIList.Add("TowerAfMult=" & Me.geometry.baseStructure(i).TowerAfMult)
+                        newERIList.Add("TowerArMult=" & Me.geometry.baseStructure(i).TowerArMult)
+                        newERIList.Add("TowerFlatIPAPole=" & Me.geometry.baseStructure(i).TowerFlatIPAPole)
+                        newERIList.Add("TowerRoundIPAPole=" & Me.geometry.baseStructure(i).TowerRoundIPAPole)
+                        newERIList.Add("TowerFlatIPALeg=" & Me.geometry.baseStructure(i).TowerFlatIPALeg)
+                        newERIList.Add("TowerRoundIPALeg=" & Me.geometry.baseStructure(i).TowerRoundIPALeg)
+                        newERIList.Add("TowerFlatIPAHorizontal=" & Me.geometry.baseStructure(i).TowerFlatIPAHorizontal)
+                        newERIList.Add("TowerRoundIPAHorizontal=" & Me.geometry.baseStructure(i).TowerRoundIPAHorizontal)
+                        newERIList.Add("TowerFlatIPADiagonal=" & Me.geometry.baseStructure(i).TowerFlatIPADiagonal)
+                        newERIList.Add("TowerRoundIPADiagonal=" & Me.geometry.baseStructure(i).TowerRoundIPADiagonal)
+                        newERIList.Add("TowerCSA_S37_SpeedUpFactor=" & Me.geometry.baseStructure(i).TowerCSA_S37_SpeedUpFactor)
+                        newERIList.Add("TowerKLegs=" & Me.geometry.baseStructure(i).TowerKLegs)
+                        newERIList.Add("TowerKXBracedDiags=" & Me.geometry.baseStructure(i).TowerKXBracedDiags)
+                        newERIList.Add("TowerKKBracedDiags=" & Me.geometry.baseStructure(i).TowerKKBracedDiags)
+                        newERIList.Add("TowerKZBracedDiags=" & Me.geometry.baseStructure(i).TowerKZBracedDiags)
+                        newERIList.Add("TowerKHorzs=" & Me.geometry.baseStructure(i).TowerKHorzs)
+                        newERIList.Add("TowerKSecHorzs=" & Me.geometry.baseStructure(i).TowerKSecHorzs)
+                        newERIList.Add("TowerKGirts=" & Me.geometry.baseStructure(i).TowerKGirts)
+                        newERIList.Add("TowerKInners=" & Me.geometry.baseStructure(i).TowerKInners)
+                        newERIList.Add("TowerKXBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKXBracedDiagsY)
+                        newERIList.Add("TowerKKBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKKBracedDiagsY)
+                        newERIList.Add("TowerKZBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKZBracedDiagsY)
+                        newERIList.Add("TowerKHorzsY=" & Me.geometry.baseStructure(i).TowerKHorzsY)
+                        newERIList.Add("TowerKSecHorzsY=" & Me.geometry.baseStructure(i).TowerKSecHorzsY)
+                        newERIList.Add("TowerKGirtsY=" & Me.geometry.baseStructure(i).TowerKGirtsY)
+                        newERIList.Add("TowerKInnersY=" & Me.geometry.baseStructure(i).TowerKInnersY)
+                        newERIList.Add("TowerKRedHorz=" & Me.geometry.baseStructure(i).TowerKRedHorz)
+                        newERIList.Add("TowerKRedDiag=" & Me.geometry.baseStructure(i).TowerKRedDiag)
+                        newERIList.Add("TowerKRedSubDiag=" & Me.geometry.baseStructure(i).TowerKRedSubDiag)
+                        newERIList.Add("TowerKRedSubHorz=" & Me.geometry.baseStructure(i).TowerKRedSubHorz)
+                        newERIList.Add("TowerKRedVert=" & Me.geometry.baseStructure(i).TowerKRedVert)
+                        newERIList.Add("TowerKRedHip=" & Me.geometry.baseStructure(i).TowerKRedHip)
+                        newERIList.Add("TowerKRedHipDiag=" & Me.geometry.baseStructure(i).TowerKRedHipDiag)
+                        newERIList.Add("TowerKTLX=" & Me.geometry.baseStructure(i).TowerKTLX)
+                        newERIList.Add("TowerKTLZ=" & Me.geometry.baseStructure(i).TowerKTLZ)
+                        newERIList.Add("TowerKTLLeg=" & Me.geometry.baseStructure(i).TowerKTLLeg)
+                        newERIList.Add("TowerInnerKTLX=" & Me.geometry.baseStructure(i).TowerInnerKTLX)
+                        newERIList.Add("TowerInnerKTLZ=" & Me.geometry.baseStructure(i).TowerInnerKTLZ)
+                        newERIList.Add("TowerInnerKTLLeg=" & Me.geometry.baseStructure(i).TowerInnerKTLLeg)
+                        newERIList.Add("TowerStitchBoltLocationHoriz=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationHoriz)
+                        newERIList.Add("TowerStitchBoltLocationDiag=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationDiag)
+                        newERIList.Add("TowerStitchBoltLocationRed=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationRed)
+                        newERIList.Add("TowerStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacing))
+                        newERIList.Add("TowerStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingDiag))
+                        newERIList.Add("TowerStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingHorz))
+                        newERIList.Add("TowerStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingRed))
+                        newERIList.Add("TowerLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegNetWidthDeduct))
+                        newERIList.Add("TowerLegUFactor=" & Me.geometry.baseStructure(i).TowerLegUFactor)
+                        newERIList.Add("TowerDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalNetWidthDeduct))
+                        newERIList.Add("TowerTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtNetWidthDeduct))
+                        newERIList.Add("TowerBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtNetWidthDeduct))
+                        newERIList.Add("TowerInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtNetWidthDeduct))
+                        newERIList.Add("TowerHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalNetWidthDeduct))
+                        newERIList.Add("TowerShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalNetWidthDeduct))
+                        newERIList.Add("TowerDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerDiagonalUFactor)
+                        newERIList.Add("TowerTopGirtUFactor=" & Me.geometry.baseStructure(i).TowerTopGirtUFactor)
+                        newERIList.Add("TowerBotGirtUFactor=" & Me.geometry.baseStructure(i).TowerBotGirtUFactor)
+                        newERIList.Add("TowerInnerGirtUFactor=" & Me.geometry.baseStructure(i).TowerInnerGirtUFactor)
+                        newERIList.Add("TowerHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerHorizontalUFactor)
+                        newERIList.Add("TowerShortHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerShortHorizontalUFactor)
+                        newERIList.Add("TowerLegConnType=" & Me.geometry.baseStructure(i).TowerLegConnType)
+                        newERIList.Add("TowerLegNumBolts=" & Me.geometry.baseStructure(i).TowerLegNumBolts)
+                        newERIList.Add("TowerDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerDiagonalNumBolts)
+                        newERIList.Add("TowerTopGirtNumBolts=" & Me.geometry.baseStructure(i).TowerTopGirtNumBolts)
+                        newERIList.Add("TowerBotGirtNumBolts=" & Me.geometry.baseStructure(i).TowerBotGirtNumBolts)
+                        newERIList.Add("TowerInnerGirtNumBolts=" & Me.geometry.baseStructure(i).TowerInnerGirtNumBolts)
+                        newERIList.Add("TowerHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerHorizontalNumBolts)
+                        newERIList.Add("TowerShortHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerShortHorizontalNumBolts)
+                        newERIList.Add("TowerLegBoltGrade=" & Me.geometry.baseStructure(i).TowerLegBoltGrade)
+                        newERIList.Add("TowerLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegBoltSize))
+                        newERIList.Add("TowerDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerDiagonalBoltGrade)
+                        newERIList.Add("TowerDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalBoltSize))
+                        newERIList.Add("TowerTopGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerTopGirtBoltGrade)
+                        newERIList.Add("TowerTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtBoltSize))
+                        newERIList.Add("TowerBotGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerBotGirtBoltGrade)
+                        newERIList.Add("TowerBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtBoltSize))
+                        newERIList.Add("TowerInnerGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerInnerGirtBoltGrade)
+                        newERIList.Add("TowerInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtBoltSize))
+                        newERIList.Add("TowerHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerHorizontalBoltGrade)
+                        newERIList.Add("TowerHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalBoltSize))
+                        newERIList.Add("TowerShortHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerShortHorizontalBoltGrade)
+                        newERIList.Add("TowerShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalBoltSize))
+                        newERIList.Add("TowerLegBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegBoltEdgeDistance))
+                        newERIList.Add("TowerDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalBoltEdgeDistance))
+                        newERIList.Add("TowerTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtBoltEdgeDistance))
+                        newERIList.Add("TowerBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtBoltEdgeDistance))
+                        newERIList.Add("TowerInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtBoltEdgeDistance))
+                        newERIList.Add("TowerHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalBoltEdgeDistance))
+                        newERIList.Add("TowerShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalBoltEdgeDistance))
+                        newERIList.Add("TowerDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalGageG1Distance))
+                        newERIList.Add("TowerTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtGageG1Distance))
+                        newERIList.Add("TowerBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtGageG1Distance))
+                        newERIList.Add("TowerInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtGageG1Distance))
+                        newERIList.Add("TowerHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalGageG1Distance))
+                        newERIList.Add("TowerShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalGageG1Distance))
+                        newERIList.Add("TowerRedundantHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltGrade)
+                        newERIList.Add("TowerRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltSize))
+                        newERIList.Add("TowerRedundantHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalNumBolts)
+                        newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalGageG1Distance))
+                        newERIList.Add("TowerRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalUFactor)
+                        newERIList.Add("TowerRedundantDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltGrade)
+                        newERIList.Add("TowerRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltSize))
+                        newERIList.Add("TowerRedundantDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalNumBolts)
+                        newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalGageG1Distance))
+                        newERIList.Add("TowerRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalUFactor)
+                        newERIList.Add("TowerRedundantSubDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltGrade)
+                        newERIList.Add("TowerRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltSize))
+                        newERIList.Add("TowerRedundantSubDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalNumBolts)
+                        newERIList.Add("TowerRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalGageG1Distance))
+                        newERIList.Add("TowerRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantSubDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalUFactor)
+                        newERIList.Add("TowerRedundantSubHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltGrade)
+                        newERIList.Add("TowerRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltSize))
+                        newERIList.Add("TowerRedundantSubHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalNumBolts)
+                        newERIList.Add("TowerRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalGageG1Distance))
+                        newERIList.Add("TowerRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantSubHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalUFactor)
+                        newERIList.Add("TowerRedundantVerticalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantVerticalBoltGrade)
+                        newERIList.Add("TowerRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalBoltSize))
+                        newERIList.Add("TowerRedundantVerticalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantVerticalNumBolts)
+                        newERIList.Add("TowerRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalGageG1Distance))
+                        newERIList.Add("TowerRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantVerticalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantVerticalUFactor)
+                        newERIList.Add("TowerRedundantHipBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHipBoltGrade)
+                        newERIList.Add("TowerRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipBoltSize))
+                        newERIList.Add("TowerRedundantHipNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHipNumBolts)
+                        newERIList.Add("TowerRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipGageG1Distance))
+                        newERIList.Add("TowerRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipNetWidthDeduct))
+                        newERIList.Add("TowerRedundantHipUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHipUFactor)
+                        newERIList.Add("TowerRedundantHipDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltGrade)
+                        newERIList.Add("TowerRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltSize))
+                        newERIList.Add("TowerRedundantHipDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalNumBolts)
+                        newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltEdgeDistance))
+                        newERIList.Add("TowerRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalGageG1Distance))
+                        newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalNetWidthDeduct))
+                        newERIList.Add("TowerRedundantHipDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalUFactor)
+                        newERIList.Add("TowerDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerDiagonalOutOfPlaneRestraint))
+                        newERIList.Add("TowerTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerTopGirtOutOfPlaneRestraint))
+                        newERIList.Add("TowerBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerBottomGirtOutOfPlaneRestraint))
+                        newERIList.Add("TowerMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerMidGirtOutOfPlaneRestraint))
+                        newERIList.Add("TowerHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHorizontalOutOfPlaneRestraint))
+                        newERIList.Add("TowerSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerSecondaryHorizontalOutOfPlaneRestraint))
+                        newERIList.Add("TowerUniqueFlag=" & Me.geometry.baseStructure(i).TowerUniqueFlag)
+                        newERIList.Add("TowerDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetNEY))
+                        newERIList.Add("TowerDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetNEX))
+                        newERIList.Add("TowerDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetPEY))
+                        newERIList.Add("TowerDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetPEX))
+                        newERIList.Add("TowerKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetNEY))
+                        newERIList.Add("TowerKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetNEX))
+                        newERIList.Add("TowerKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetPEY))
+                        newERIList.Add("TowerKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetPEX))
+
+                    Next i
+                Case line(0).Equals("NumGuyRecs")
+                    newERIList.Add(line(0) & "=" & Me.geometry.guyWires.Count)
+                    For i = 0 To Me.geometry.guyWires.Count - 1
+                        newERIList.Add("GuyRec=" & Me.geometry.guyWires(i).GuyRec)
+                        newERIList.Add("GuyHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).GuyHeight))
+                        newERIList.Add("GuyAutoCalcKSingleAngle=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalcKSingleAngle))
+                        newERIList.Add("GuyAutoCalcKSolidRound=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalcKSolidRound))
+                        newERIList.Add("GuyMount=" & Me.geometry.guyWires(i).GuyMount)
+                        newERIList.Add("TorqueArmStyle=" & Me.geometry.guyWires(i).TorqueArmStyle)
+                        newERIList.Add("GuyRadius=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius))
+                        newERIList.Add("GuyRadius120=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius120))
+                        newERIList.Add("GuyRadius240=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius240))
+                        newERIList.Add("GuyRadius360=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius360))
+                        newERIList.Add("TorqueArmRadius=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmRadius))
+                        newERIList.Add("TorqueArmLegAngle=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmLegAngle))
+                        newERIList.Add("Azimuth0Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth0Adjustment))
+                        newERIList.Add("Azimuth120Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth120Adjustment))
+                        newERIList.Add("Azimuth240Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth240Adjustment))
+                        newERIList.Add("Azimuth360Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth360Adjustment))
+                        newERIList.Add("Anchor0Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor0Elevation))
+                        newERIList.Add("Anchor120Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor120Elevation))
+                        newERIList.Add("Anchor240Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor240Elevation))
+                        newERIList.Add("Anchor360Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor360Elevation))
+                        newERIList.Add("GuySize=" & Me.geometry.guyWires(i).GuySize)
+                        newERIList.Add("Guy120Size=" & Me.geometry.guyWires(i).Guy120Size)
+                        newERIList.Add("Guy240Size=" & Me.geometry.guyWires(i).Guy240Size)
+                        newERIList.Add("Guy360Size=" & Me.geometry.guyWires(i).Guy360Size)
+                        newERIList.Add("GuyGrade=" & Me.geometry.guyWires(i).GuyGrade)
+                        newERIList.Add("TorqueArmSize=" & Me.geometry.guyWires(i).TorqueArmSize)
+                        newERIList.Add("TorqueArmSizeBot=" & Me.geometry.guyWires(i).TorqueArmSizeBot)
+                        newERIList.Add("TorqueArmType=" & Me.geometry.guyWires(i).TorqueArmType)
+                        newERIList.Add("TorqueArmGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmGrade))
+                        newERIList.Add("TorqueArmMatlGrade=" & Me.geometry.guyWires(i).TorqueArmMatlGrade)
+                        newERIList.Add("TorqueArmKFactor=" & Me.geometry.guyWires(i).TorqueArmKFactor)
+                        newERIList.Add("TorqueArmKFactorY=" & Me.geometry.guyWires(i).TorqueArmKFactorY)
+                        newERIList.Add("GuyPullOffKFactorX=" & Me.geometry.guyWires(i).GuyPullOffKFactorX)
+                        newERIList.Add("GuyPullOffKFactorY=" & Me.geometry.guyWires(i).GuyPullOffKFactorY)
+                        newERIList.Add("GuyDiagKFactorX=" & Me.geometry.guyWires(i).GuyDiagKFactorX)
+                        newERIList.Add("GuyDiagKFactorY=" & Me.geometry.guyWires(i).GuyDiagKFactorY)
+                        newERIList.Add("GuyAutoCalc=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalc))
+                        newERIList.Add("GuyAllGuysSame=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAllGuysSame))
+                        newERIList.Add("GuyAllGuysAnchorSame=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAllGuysAnchorSame))
+                        newERIList.Add("GuyIsStrapping=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyIsStrapping))
+                        newERIList.Add("GuyPullOffSize=" & Me.geometry.guyWires(i).GuyPullOffSize)
+                        newERIList.Add("GuyPullOffSizeBot=" & Me.geometry.guyWires(i).GuyPullOffSizeBot)
+                        newERIList.Add("GuyPullOffType=" & Me.geometry.guyWires(i).GuyPullOffType)
+                        newERIList.Add("GuyPullOffGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffGrade))
+                        newERIList.Add("GuyPullOffMatlGrade=" & Me.geometry.guyWires(i).GuyPullOffMatlGrade)
+                        newERIList.Add("GuyUpperDiagSize=" & Me.geometry.guyWires(i).GuyUpperDiagSize)
+                        newERIList.Add("GuyLowerDiagSize=" & Me.geometry.guyWires(i).GuyLowerDiagSize)
+                        newERIList.Add("GuyDiagType=" & Me.geometry.guyWires(i).GuyDiagType)
+                        newERIList.Add("GuyDiagGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagGrade))
+                        newERIList.Add("GuyDiagMatlGrade=" & Me.geometry.guyWires(i).GuyDiagMatlGrade)
+                        newERIList.Add("GuyDiagNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagNetWidthDeduct))
+                        newERIList.Add("GuyDiagUFactor=" & Me.geometry.guyWires(i).GuyDiagUFactor)
+                        newERIList.Add("GuyDiagNumBolts=" & Me.geometry.guyWires(i).GuyDiagNumBolts)
+                        newERIList.Add("GuyDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyDiagonalOutOfPlaneRestraint))
+                        newERIList.Add("GuyDiagBoltGrade=" & Me.geometry.guyWires(i).GuyDiagBoltGrade)
+                        newERIList.Add("GuyDiagBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltSize))
+                        newERIList.Add("GuyDiagBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltEdgeDistance))
+                        newERIList.Add("GuyDiagBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltGageDistance))
+                        newERIList.Add("GuyPullOffNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffNetWidthDeduct))
+                        newERIList.Add("GuyPullOffUFactor=" & Me.geometry.guyWires(i).GuyPullOffUFactor)
+                        newERIList.Add("GuyPullOffNumBolts=" & Me.geometry.guyWires(i).GuyPullOffNumBolts)
+                        newERIList.Add("GuyPullOffOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyPullOffOutOfPlaneRestraint))
+                        newERIList.Add("GuyPullOffBoltGrade=" & Me.geometry.guyWires(i).GuyPullOffBoltGrade)
+                        newERIList.Add("GuyPullOffBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltSize))
+                        newERIList.Add("GuyPullOffBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltEdgeDistance))
+                        newERIList.Add("GuyPullOffBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltGageDistance))
+                        newERIList.Add("GuyTorqueArmNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmNetWidthDeduct))
+                        newERIList.Add("GuyTorqueArmUFactor=" & Me.geometry.guyWires(i).GuyTorqueArmUFactor)
+                        newERIList.Add("GuyTorqueArmNumBolts=" & Me.geometry.guyWires(i).GuyTorqueArmNumBolts)
+                        newERIList.Add("GuyTorqueArmOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyTorqueArmOutOfPlaneRestraint))
+                        newERIList.Add("GuyTorqueArmBoltGrade=" & Me.geometry.guyWires(i).GuyTorqueArmBoltGrade)
+                        newERIList.Add("GuyTorqueArmBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltSize))
+                        newERIList.Add("GuyTorqueArmBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltEdgeDistance))
+                        newERIList.Add("GuyTorqueArmBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltGageDistance))
+                        newERIList.Add("GuyPerCentTension=" & Me.geometry.guyWires(i).GuyPerCentTension)
+                        newERIList.Add("GuyPerCentTension120=" & Me.geometry.guyWires(i).GuyPerCentTension120)
+                        newERIList.Add("GuyPerCentTension240=" & Me.geometry.guyWires(i).GuyPerCentTension240)
+                        newERIList.Add("GuyPerCentTension360=" & Me.geometry.guyWires(i).GuyPerCentTension360)
+                        newERIList.Add("GuyEffFactor=" & Me.geometry.guyWires(i).GuyEffFactor)
+                        newERIList.Add("GuyEffFactor120=" & Me.geometry.guyWires(i).GuyEffFactor120)
+                        newERIList.Add("GuyEffFactor240=" & Me.geometry.guyWires(i).GuyEffFactor240)
+                        newERIList.Add("GuyEffFactor360=" & Me.geometry.guyWires(i).GuyEffFactor360)
+                        newERIList.Add("GuyNumInsulators=" & Me.geometry.guyWires(i).GuyNumInsulators)
+                        newERIList.Add("GuyInsulatorLength=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorLength))
+                        newERIList.Add("GuyInsulatorDia=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorDia))
+                        newERIList.Add("GuyInsulatorWt=" & Me.settings.USUnits.Force.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorWt))
+                    Next i
+                Case line(0).Equals("NumFeedLineRecs")
+                    newERIList.Add(line(0) & "=" & Me.feedLines.Count)
+                    For i = 0 To Me.feedLines.Count - 1
+                        newERIList.Add("FeedLineRec=" & Me.feedLines(i).FeedLineRec)
+                        newERIList.Add("FeedLineEnabled=" & trueFalseYesNo(Me.feedLines(i).FeedLineEnabled))
+                        newERIList.Add("FeedLineDatabase=" & Me.feedLines(i).FeedLineDatabase)
+                        newERIList.Add("FeedLineDescription=" & Me.feedLines(i).FeedLineDescription)
+                        newERIList.Add("FeedLineClassificationCategory=" & Me.feedLines(i).FeedLineClassificationCategory)
+                        newERIList.Add("FeedLineNote=" & Me.feedLines(i).FeedLineNote)
+                        newERIList.Add("FeedLineNum=" & Me.feedLines(i).FeedLineNum)
+                        newERIList.Add("FeedLineUseShielding=" & trueFalseYesNo(Me.feedLines(i).FeedLineUseShielding))
+                        newERIList.Add("ExcludeFeedLineFromTorque=" & trueFalseYesNo(Me.feedLines(i).ExcludeFeedLineFromTorque))
+                        newERIList.Add("FeedLineNumPerRow=" & Me.feedLines(i).FeedLineNumPerRow)
+                        newERIList.Add("FeedLineFace=" & Me.feedLines(i).FeedLineFace)
+                        newERIList.Add("FeedLineComponentType=" & Me.feedLines(i).FeedLineComponentType)
+                        newERIList.Add("FeedLineGroupTreatmentType=" & Me.feedLines(i).FeedLineGroupTreatmentType)
+                        newERIList.Add("FeedLineRoundClusterDia=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineRoundClusterDia))
+                        newERIList.Add("FeedLineWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineWidth))
+                        newERIList.Add("FeedLinePerimeter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLinePerimeter))
+                        newERIList.Add("FlatAttachmentEffectiveWidthRatio=" & Me.feedLines(i).FlatAttachmentEffectiveWidthRatio)
+                        newERIList.Add("AutoCalcFlatAttachmentEffectiveWidthRatio=" & trueFalseYesNo(Me.feedLines(i).AutoCalcFlatAttachmentEffectiveWidthRatio))
+                        newERIList.Add("FeedLineShieldingFactorKaNoIce=" & Me.feedLines(i).FeedLineShieldingFactorKaNoIce)
+                        newERIList.Add("FeedLineShieldingFactorKaIce=" & Me.feedLines(i).FeedLineShieldingFactorKaIce)
+                        newERIList.Add("FeedLineAutoCalcKa=" & trueFalseYesNo(Me.feedLines(i).FeedLineAutoCalcKa))
+                        newERIList.Add("FeedLineCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaNoIce))
+                        newERIList.Add("FeedLineCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce))
+                        newERIList.Add("FeedLineCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_1))
+                        newERIList.Add("FeedLineCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_2))
+                        newERIList.Add("FeedLineCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_4))
+                        newERIList.Add("FeedLineWtNoIce=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtNoIce))
+                        newERIList.Add("FeedLineWtIce=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce))
+                        newERIList.Add("FeedLineWtIce_1=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_1))
+                        newERIList.Add("FeedLineWtIce_2=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_2))
+                        newERIList.Add("FeedLineWtIce_4=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_4))
+                        newERIList.Add("FeedLineFaceOffset=" & Me.feedLines(i).FeedLineFaceOffset)
+                        newERIList.Add("FeedLineOffsetFrac=" & Me.feedLines(i).FeedLineOffsetFrac)
+                        newERIList.Add("FeedLinePerimeterOffsetStartFrac=" & Me.feedLines(i).FeedLinePerimeterOffsetStartFrac)
+                        newERIList.Add("FeedLinePerimeterOffsetEndFrac=" & Me.feedLines(i).FeedLinePerimeterOffsetEndFrac)
+                        newERIList.Add("FeedLineStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.feedLines(i).FeedLineStartHt))
+                        newERIList.Add("FeedLineEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.feedLines(i).FeedLineEndHt))
+                        newERIList.Add("FeedLineClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineClearSpacing))
+                        newERIList.Add("FeedLineRowClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineRowClearSpacing))
+                    Next i
+                Case line(0).Equals("NumTowerLoadRecs")
+                    newERIList.Add(line(0) & "=" & Me.discreteLoads.Count)
+                    For i = 0 To Me.discreteLoads.Count - 1
+                        newERIList.Add("TowerLoadRec=" & Me.discreteLoads(i).TowerLoadRec)
+                        newERIList.Add("TowerLoadEnabled=" & trueFalseYesNo(Me.discreteLoads(i).TowerLoadEnabled))
+                        newERIList.Add("TowerLoadDatabase=" & Me.discreteLoads(i).TowerLoadDatabase)
+                        newERIList.Add("TowerLoadDescription=" & Me.discreteLoads(i).TowerLoadDescription)
+                        newERIList.Add("TowerLoadType=" & Me.discreteLoads(i).TowerLoadType)
+                        newERIList.Add("TowerLoadClassificationCategory=" & Me.discreteLoads(i).TowerLoadClassificationCategory)
+                        newERIList.Add("TowerLoadNote=" & Me.discreteLoads(i).TowerLoadNote)
+                        newERIList.Add("TowerLoadNum=" & Me.discreteLoads(i).TowerLoadNum)
+                        newERIList.Add("TowerLoadFace=" & Me.discreteLoads(i).TowerLoadFace)
+                        newERIList.Add("TowerOffsetType=" & Me.discreteLoads(i).TowerOffsetType)
+                        newERIList.Add("TowerOffsetDist=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerOffsetDist))
+                        newERIList.Add("TowerVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerVertOffset))
+                        newERIList.Add("TowerLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLateralOffset))
+                        newERIList.Add("TowerAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.discreteLoads(i).TowerAzimuthAdjustment))
+                        newERIList.Add("TowerAppurtSymbol=" & Me.discreteLoads(i).TowerAppurtSymbol)
+                        newERIList.Add("TowerLoadShieldingFactorKaNoIce=" & Me.discreteLoads(i).TowerLoadShieldingFactorKaNoIce)
+                        newERIList.Add("TowerLoadShieldingFactorKaIce=" & Me.discreteLoads(i).TowerLoadShieldingFactorKaIce)
+                        newERIList.Add("TowerLoadAutoCalcKa=" & trueFalseYesNo(Me.discreteLoads(i).TowerLoadAutoCalcKa))
+                        newERIList.Add("TowerLoadCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaNoIce))
+                        newERIList.Add("TowerLoadCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce))
+                        newERIList.Add("TowerLoadCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_1))
+                        newERIList.Add("TowerLoadCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_2))
+                        newERIList.Add("TowerLoadCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_4))
+                        newERIList.Add("TowerLoadCaAaNoIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaNoIce_Side))
+                        newERIList.Add("TowerLoadCaAaIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side))
+                        newERIList.Add("TowerLoadCaAaIce_Side_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_1))
+                        newERIList.Add("TowerLoadCaAaIce_Side_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_2))
+                        newERIList.Add("TowerLoadCaAaIce_Side_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_4))
+                        newERIList.Add("TowerLoadWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtNoIce))
+                        newERIList.Add("TowerLoadWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce))
+                        newERIList.Add("TowerLoadWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_1))
+                        newERIList.Add("TowerLoadWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_2))
+                        newERIList.Add("TowerLoadWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_4))
+                        newERIList.Add("TowerLoadStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLoadStartHt))
+                        newERIList.Add("TowerLoadEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLoadEndHt))
+                    Next i
+                Case line(0).Equals("NumDishRecs")
+                    newERIList.Add(line(0) & "=" & Me.dishes.Count)
+                    For i = 0 To Me.dishes.Count - 1
+                        newERIList.Add("DishRec=" & Me.dishes(i).DishRec)
+                        newERIList.Add("DishEnabled=" & trueFalseYesNo(Me.dishes(i).DishEnabled))
+                        newERIList.Add("DishDatabase=" & Me.dishes(i).DishDatabase)
+                        newERIList.Add("DishDescription=" & Me.dishes(i).DishDescription)
+                        newERIList.Add("DishClassificationCategory=" & Me.dishes(i).DishClassificationCategory)
+                        newERIList.Add("DishNote=" & Me.dishes(i).DishNote)
+                        newERIList.Add("DishNum=" & Me.dishes(i).DishNum)
+                        newERIList.Add("DishFace=" & Me.dishes(i).DishFace)
+                        newERIList.Add("DishType=" & Me.dishes(i).DishType)
+                        newERIList.Add("DishOffsetType=" & Me.dishes(i).DishOffsetType)
+                        newERIList.Add("DishVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishVertOffset))
+                        newERIList.Add("DishLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishLateralOffset))
+                        newERIList.Add("DishOffsetDist=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.dishes(i).DishOffsetDist))
+                        newERIList.Add("DishArea=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishArea))
+                        newERIList.Add("DishAreaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce))
+                        newERIList.Add("DishAreaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_1))
+                        newERIList.Add("DishAreaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_2))
+                        newERIList.Add("DishAreaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_4))
+                        newERIList.Add("DishDiameter=" & Me.settings.USUnits.Length.convertToERIUnits(Me.dishes(i).DishDiameter))
+                        newERIList.Add("DishWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtNoIce))
+                        newERIList.Add("DishWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce))
+                        newERIList.Add("DishWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_1))
+                        newERIList.Add("DishWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_2))
+                        newERIList.Add("DishWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_4))
+                        newERIList.Add("DishStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishStartHt))
+                        newERIList.Add("DishAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.dishes(i).DishAzimuthAdjustment))
+                        newERIList.Add("DishBeamWidth=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.dishes(i).DishBeamWidth))
+                    Next i
+                Case line(0).Equals("NumUserForceRecs")
+                    newERIList.Add(line(0) & "=" & Me.userForces.Count)
+                    For i = 0 To Me.userForces.Count - 1
+                        newERIList.Add("UserForceRec=" & Me.userForces(i).UserForceRec)
+                        newERIList.Add("UserForceEnabled=" & trueFalseYesNo(Me.userForces(i).UserForceEnabled))
+                        newERIList.Add("UserForceDescription=" & Me.userForces(i).UserForceDescription)
+                        newERIList.Add("UserForceStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.userForces(i).UserForceStartHt))
+                        newERIList.Add("UserForceOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.userForces(i).UserForceOffset))
+                        newERIList.Add("UserForceAzimuth=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.userForces(i).UserForceAzimuth))
+                        newERIList.Add("UserForceFxNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxNoIce))
+                        newERIList.Add("UserForceFzNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzNoIce))
+                        newERIList.Add("UserForceAxialNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialNoIce))
+                        newERIList.Add("UserForceShearNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearNoIce))
+                        newERIList.Add("UserForceCaAcNoIce=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcNoIce))
+                        newERIList.Add("UserForceFxIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxIce))
+                        newERIList.Add("UserForceFzIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzIce))
+                        newERIList.Add("UserForceAxialIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialIce))
+                        newERIList.Add("UserForceShearIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearIce))
+                        newERIList.Add("UserForceCaAcIce=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcIce))
+                        newERIList.Add("UserForceFxService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxService))
+                        newERIList.Add("UserForceFzService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzService))
+                        newERIList.Add("UserForceAxialService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialService))
+                        newERIList.Add("UserForceShearService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearService))
+                        newERIList.Add("UserForceCaAcService=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcService))
+                        newERIList.Add("UserForceEhx=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEhx))
+                        newERIList.Add("UserForceEhz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEhz))
+                        newERIList.Add("UserForceEv=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEv))
+                        newERIList.Add("UserForceEh=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEh))
+                    Next i
+                Case Else
+                    If line.Count = 1 Then
+                        newERIList.Add(line(0))
+                    Else
+                        newERIList.Add(line(0) & "=" & line(1))
+                    End If
             End Select
 
         Next
 
+        File.WriteAllLines(FilePath, newERIList, Text.Encoding.ASCII)
+
     End Sub
+
+    Public Function trueFalseYesNo(input As String) As Boolean
+
+        If input.ToLower = "yes" Then
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
+
+    Public Function trueFalseYesNo(input As Boolean) As String
+
+        If input Then
+            Return "Yes"
+        Else
+            Return "No"
+        End If
+
+    End Function
+
 End Class
 
-Partial Public Class tnx_antenna_record
+#Region "Geometry"
+Partial Public Class tnxGeometry
+    Private prop_TowerType As String
+    Private prop_AntennaType As String
+    Private prop_OverallHeight As Double
+    Private prop_BaseElevation As Double
+    Private prop_Lambda As Double
+    Private prop_TowerTopFaceWidth As Double
+    Private prop_TowerBaseFaceWidth As Double
+    Private prop_TowerTaper As String
+    Private prop_GuyedMonopoleBaseType As String
+    Private prop_TaperHeight As Double
+    Private prop_PivotHeight As Double
+    Private prop_AutoCalcGH As Boolean
+    Private prop_UserGHElev As Double
+    Private prop_UseIndexPlate As Boolean
+    Private prop_EnterUserDefinedGhValues As Boolean
+    Private prop_BaseTowerGhInput As Double
+    Private prop_UpperStructureGhInput As Double
+    Private prop_EnterUserDefinedCgValues As Boolean
+    Private prop_BaseTowerCgInput As Double
+    Private prop_UpperStructureCgInput As Double
+    Private prop_AntennaFaceWidth As Double
+    Private prop_UseTopTakeup As Boolean
+    Private prop_ConstantSlope As Boolean
+    Private prop_upperStructure As New List(Of tnxAntennaRecord)
+    Private prop_baseStructure As New List(Of tnxTowerRecord)
+    Private prop_guyWires As New List(Of tnxGuyRecord)
+
+    <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
+    Public Property TowerType() As String
+        Get
+            Return Me.prop_TowerType
+        End Get
+        Set
+            Me.prop_TowerType = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Upper Structure Type"), DisplayName("AntennaType")>
+    Public Property AntennaType() As String
+        Get
+            Return Me.prop_AntennaType
+        End Get
+        Set
+            Me.prop_AntennaType = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("OverallHeight")>
+    Public Property OverallHeight() As Double
+        Get
+            Return Me.prop_OverallHeight
+        End Get
+        Set
+            Me.prop_OverallHeight = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("BaseElevation")>
+    Public Property BaseElevation() As Double
+        Get
+            Return Me.prop_BaseElevation
+        End Get
+        Set
+            Me.prop_BaseElevation = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("Lambda")>
+    Public Property Lambda() As Double
+        Get
+            Return Me.prop_Lambda
+        End Get
+        Set
+            Me.prop_Lambda = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("TowerTopFaceWidth")>
+    Public Property TowerTopFaceWidth() As Double
+        Get
+            Return Me.prop_TowerTopFaceWidth
+        End Get
+        Set
+            Me.prop_TowerTopFaceWidth = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("TowerBaseFaceWidth")>
+    Public Property TowerBaseFaceWidth() As Double
+        Get
+            Return Me.prop_TowerBaseFaceWidth
+        End Get
+        Set
+            Me.prop_TowerBaseFaceWidth = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Type - None, I-Beam, I-Beam Free, Taper, Taper-Free"), DisplayName("TowerTaper")>
+    Public Property TowerTaper() As String
+        Get
+            Return Me.prop_TowerTaper
+        End Get
+        Set
+            Me.prop_TowerTaper = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Type - Fixed Base, Pinned Base (Only active when base tower type is guyed and there are no base tower section in the model)"), DisplayName("GuyedMonopoleBaseType")>
+    Public Property GuyedMonopoleBaseType() As String
+        Get
+            Return Me.prop_GuyedMonopoleBaseType
+        End Get
+        Set
+            Me.prop_GuyedMonopoleBaseType = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Taper Height"), DisplayName("TaperHeight")>
+    Public Property TaperHeight() As Double
+        Get
+            Return Me.prop_TaperHeight
+        End Get
+        Set
+            Me.prop_TaperHeight = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("I-Beam Pivot Dist (replaces base taper height when base type is I-Beam or I-Beam Free)"), DisplayName("PivotHeight")>
+    Public Property PivotHeight() As Double
+        Get
+            Return Me.prop_PivotHeight
+        End Get
+        Set
+            Me.prop_PivotHeight = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("AutoCalcGH")>
+    Public Property AutoCalcGH() As Boolean
+        Get
+            Return Me.prop_AutoCalcGH
+        End Get
+        Set
+            Me.prop_AutoCalcGH = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("UserGHElev")>
+    Public Property UserGHElev() As Double
+        Get
+            Return Me.prop_UserGHElev
+        End Get
+        Set
+            Me.prop_UserGHElev = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Has Index Plate"), DisplayName("UseIndexPlate")>
+    Public Property UseIndexPlate() As Boolean
+        Get
+            Return Me.prop_UseIndexPlate
+        End Get
+        Set
+            Me.prop_UseIndexPlate = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Enter Pre-defined Gh values"), DisplayName("EnterUserDefinedGhValues")>
+    Public Property EnterUserDefinedGhValues() As Boolean
+        Get
+            Return Me.prop_EnterUserDefinedGhValues
+        End Get
+        Set
+            Me.prop_EnterUserDefinedGhValues = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Tower - Active when EnterUserDefinedGhValues = Yes"), DisplayName("BaseTowerGhInput")>
+    Public Property BaseTowerGhInput() As Double
+        Get
+            Return Me.prop_BaseTowerGhInput
+        End Get
+        Set
+            Me.prop_BaseTowerGhInput = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Upper Structure - Active when EnterUserDefinedGhValues = Yes"), DisplayName("UpperStructureGhInput")>
+    Public Property UpperStructureGhInput() As Double
+        Get
+            Return Me.prop_UpperStructureGhInput
+        End Get
+        Set
+            Me.prop_UpperStructureGhInput = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("CSA code only (This controls two inputs in the UI 'Use Default Cg Values' and 'Enter pre-defined Cg Values'. The checked status of the two inputs are always opposite and 'Use Default Cg Values' is opposite of the ERI value."), DisplayName("EnterUserDefinedCgValues")>
+    Public Property EnterUserDefinedCgValues() As Boolean
+        Get
+            Return Me.prop_EnterUserDefinedCgValues
+        End Get
+        Set
+            Me.prop_EnterUserDefinedCgValues = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("CSA code only"), DisplayName("BaseTowerCgInput")>
+    Public Property BaseTowerCgInput() As Double
+        Get
+            Return Me.prop_BaseTowerCgInput
+        End Get
+        Set
+            Me.prop_BaseTowerCgInput = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("CSA code only"), DisplayName("UpperStructureCgInput")>
+    Public Property UpperStructureCgInput() As Double
+        Get
+            Return Me.prop_UpperStructureCgInput
+        End Get
+        Set
+            Me.prop_UpperStructureCgInput = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Lattice Pole Width - Only applies to lattice upper structures"), DisplayName("AntennaFaceWidth")>
+    Public Property AntennaFaceWidth() As Double
+        Get
+            Return Me.prop_AntennaFaceWidth
+        End Get
+        Set
+            Me.prop_AntennaFaceWidth = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Top takeup on lambda"), DisplayName("UseTopTakeup")>
+    Public Property UseTopTakeup() As Boolean
+        Get
+            Return Me.prop_UseTopTakeup
+        End Get
+        Set
+            Me.prop_UseTopTakeup = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Constant Slope"), DisplayName("ConstantSlope")>
+    Public Property ConstantSlope() As Boolean
+        Get
+            Return Me.prop_ConstantSlope
+        End Get
+        Set
+            Me.prop_ConstantSlope = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("Upper Structure")>
+    Public Property upperStructure() As List(Of tnxAntennaRecord)
+        Get
+            Return Me.prop_upperStructure
+        End Get
+        Set
+            Me.prop_upperStructure = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("Base Structure")>
+    Public Property baseStructure() As List(Of tnxTowerRecord)
+        Get
+            Return Me.prop_baseStructure
+        End Get
+        Set
+            Me.prop_baseStructure = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description(""), DisplayName("Guy Wires")>
+    Public Property guyWires() As List(Of tnxGuyRecord)
+        Get
+            Return Me.prop_guyWires
+        End Get
+        Set
+            Me.prop_guyWires = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxAntennaRecord
     'upper structure
     Private prop_ID As Integer
     Private prop_tnxID As Integer
@@ -5793,7 +9764,7 @@ Partial Public Class tnx_antenna_record
 
 End Class
 
-Partial Public Class tnx_tower_record
+Partial Public Class tnxTowerRecord
     'base structure
     Private prop_ID As Integer
     Private prop_tnxID As Integer
@@ -8269,7 +12240,7 @@ Partial Public Class tnx_tower_record
 
 End Class
 
-Partial Public Class tnx_guy_record
+Partial Public Class tnxGuyRecord
     Private prop_ID As Integer
     Private prop_tnxID As Integer
     Private prop_GuyRec As Integer
@@ -9153,215 +13124,3970 @@ Partial Public Class tnx_guy_record
     End Property
 
 End Class
+#End Region
 
-#Region "Units"
-Partial Public Class tnx_units
+#Region "Loading"
 
-    Private propLength As tnx_length_unit
-    Private propCoordinate As tnx_coordinate_unit
-    Private propForce As tnx_force_unit
-    Private propLoad As tnx_load_unit
-    Private propMoment As tnx_moment_unit
-    Private propProperties As tnx_properties_unit
-    Private propPressure As tnx_pressure_unit
-    Private propVelocity As tnx_velocity_unit
-    Private propDisplacement As tnx_displacement_unit
-    Private propMass As tnx_mass_unit
-    Private propAcceleration As tnx_acceleration_unit
-    Private propStress As tnx_stress_unit
-    Private propDensity As tnx_density_unit
-    Private propUnitWt As tnx_unitwt_unit
-    Private propStrength As tnx_strength_unit
-    Private propModulus As tnx_modulus_unit
-    Private propTemperature As tnx_temperature_unit
-    Private propPrinter As tnx_printer_unit
-    Private propRotation As tnx_rotation_unit
-    Private propSpacing As tnx_spacing_unit
+Partial Public Class tnxFeedLine
+    Private prop_FeedLineRec As Integer
+    Private prop_FeedLineEnabled As Boolean
+    Private prop_FeedLineDatabase As String
+    Private prop_FeedLineDescription As String
+    Private prop_FeedLineClassificationCategory As String
+    Private prop_FeedLineNote As String
+    Private prop_FeedLineNum As Integer
+    Private prop_FeedLineUseShielding As Boolean
+    Private prop_ExcludeFeedLineFromTorque As Boolean
+    Private prop_FeedLineNumPerRow As Integer
+    Private prop_FeedLineFace As Integer
+    Private prop_FeedLineComponentType As String
+    Private prop_FeedLineGroupTreatmentType As String
+    Private prop_FeedLineRoundClusterDia As Double
+    Private prop_FeedLineWidth As Double
+    Private prop_FeedLinePerimeter As Double
+    Private prop_FlatAttachmentEffectiveWidthRatio As Double
+    Private prop_AutoCalcFlatAttachmentEffectiveWidthRatio As Boolean
+    Private prop_FeedLineShieldingFactorKaNoIce As Double
+    Private prop_FeedLineShieldingFactorKaIce As Double
+    Private prop_FeedLineAutoCalcKa As Boolean
+    Private prop_FeedLineCaAaNoIce As Double
+    Private prop_FeedLineCaAaIce As Double
+    Private prop_FeedLineCaAaIce_1 As Double
+    Private prop_FeedLineCaAaIce_2 As Double
+    Private prop_FeedLineCaAaIce_4 As Double
+    Private prop_FeedLineWtNoIce As Double
+    Private prop_FeedLineWtIce As Double
+    Private prop_FeedLineWtIce_1 As Double
+    Private prop_FeedLineWtIce_2 As Double
+    Private prop_FeedLineWtIce_4 As Double
+    Private prop_FeedLineFaceOffset As Double
+    Private prop_FeedLineOffsetFrac As Double
+    Private prop_FeedLinePerimeterOffsetStartFrac As Double
+    Private prop_FeedLinePerimeterOffsetEndFrac As Double
+    Private prop_FeedLineStartHt As Double
+    Private prop_FeedLineEndHt As Double
+    Private prop_FeedLineClearSpacing As Double
+    Private prop_FeedLineRowClearSpacing As Double
 
-    <Category("TNX Units"), Description(""), DisplayName("Length")>
-    Public Property Length() As tnx_length_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRec")>
+    Public Property FeedLineRec() As Integer
         Get
-            Return Me.propLength
+            Return Me.prop_FeedLineRec
         End Get
         Set
-            Me.propLength = Value
+            Me.prop_FeedLineRec = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Coordinate")>
-    Public Property Coordinate() As tnx_coordinate_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEnabled")>
+    Public Property FeedLineEnabled() As Boolean
         Get
-            Return Me.propCoordinate
+            Return Me.prop_FeedLineEnabled
         End Get
         Set
-            Me.propCoordinate = Value
+            Me.prop_FeedLineEnabled = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Force")>
-    Public Property Force() As tnx_force_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDatabase")>
+    Public Property FeedLineDatabase() As String
         Get
-            Return Me.propForce
+            Return Me.prop_FeedLineDatabase
         End Get
         Set
-            Me.propForce = Value
+            Me.prop_FeedLineDatabase = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Load")>
-    Public Property Load() As tnx_load_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDescription")>
+    Public Property FeedLineDescription() As String
         Get
-            Return Me.propLoad
+            Return Me.prop_FeedLineDescription
         End Get
         Set
-            Me.propLoad = Value
+            Me.prop_FeedLineDescription = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Moment")>
-    Public Property Moment() As tnx_moment_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClassificationCategory")>
+    Public Property FeedLineClassificationCategory() As String
         Get
-            Return Me.propMoment
+            Return Me.prop_FeedLineClassificationCategory
         End Get
         Set
-            Me.propMoment = Value
+            Me.prop_FeedLineClassificationCategory = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Properties")>
-    Public Property Properties() As tnx_properties_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNote")>
+    Public Property FeedLineNote() As String
         Get
-            Return Me.propProperties
+            Return Me.prop_FeedLineNote
         End Get
         Set
-            Me.propProperties = Value
+            Me.prop_FeedLineNote = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Pressure")>
-    Public Property Pressure() As tnx_pressure_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNum")>
+    Public Property FeedLineNum() As Integer
         Get
-            Return Me.propPressure
+            Return Me.prop_FeedLineNum
         End Get
         Set
-            Me.propPressure = Value
+            Me.prop_FeedLineNum = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Velocity")>
-    Public Property Velocity() As tnx_velocity_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineUseShielding")>
+    Public Property FeedLineUseShielding() As Boolean
         Get
-            Return Me.propVelocity
+            Return Me.prop_FeedLineUseShielding
         End Get
         Set
-            Me.propVelocity = Value
+            Me.prop_FeedLineUseShielding = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Displacement")>
-    Public Property Displacement() As tnx_displacement_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("ExcludeFeedLineFromTorque")>
+    Public Property ExcludeFeedLineFromTorque() As Boolean
         Get
-            Return Me.propDisplacement
+            Return Me.prop_ExcludeFeedLineFromTorque
         End Get
         Set
-            Me.propDisplacement = Value
+            Me.prop_ExcludeFeedLineFromTorque = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Mass")>
-    Public Property Mass() As tnx_mass_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNumPerRow")>
+    Public Property FeedLineNumPerRow() As Integer
         Get
-            Return Me.propMass
+            Return Me.prop_FeedLineNumPerRow
         End Get
         Set
-            Me.propMass = Value
+            Me.prop_FeedLineNumPerRow = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Acceleration")>
-    Public Property Acceleration() As tnx_acceleration_unit
+    <Category("TNX Feed Lines"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("FeedLineFace")>
+    Public Property FeedLineFace() As Integer
         Get
-            Return Me.propAcceleration
+            Return Me.prop_FeedLineFace
         End Get
         Set
-            Me.propAcceleration = Value
+            Me.prop_FeedLineFace = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Stress")>
-    Public Property Stress() As tnx_stress_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineComponentType")>
+    Public Property FeedLineComponentType() As String
         Get
-            Return Me.propStress
+            Return Me.prop_FeedLineComponentType
         End Get
         Set
-            Me.propStress = Value
+            Me.prop_FeedLineComponentType = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Density")>
-    Public Property Density() As tnx_density_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineGroupTreatmentType")>
+    Public Property FeedLineGroupTreatmentType() As String
         Get
-            Return Me.propDensity
+            Return Me.prop_FeedLineGroupTreatmentType
         End Get
         Set
-            Me.propDensity = Value
+            Me.prop_FeedLineGroupTreatmentType = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Unitwt")>
-    Public Property UnitWt() As tnx_unitwt_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRoundClusterDia")>
+    Public Property FeedLineRoundClusterDia() As Double
         Get
-            Return Me.propUnitWt
+            Return Me.prop_FeedLineRoundClusterDia
         End Get
         Set
-            Me.propUnitWt = Value
+            Me.prop_FeedLineRoundClusterDia = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Strength")>
-    Public Property Strength() As tnx_strength_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWidth")>
+    Public Property FeedLineWidth() As Double
         Get
-            Return Me.propStrength
+            Return Me.prop_FeedLineWidth
         End Get
         Set
-            Me.propStrength = Value
+            Me.prop_FeedLineWidth = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Modulus")>
-    Public Property Modulus() As tnx_modulus_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeter")>
+    Public Property FeedLinePerimeter() As Double
         Get
-            Return Me.propModulus
+            Return Me.prop_FeedLinePerimeter
         End Get
         Set
-            Me.propModulus = Value
+            Me.prop_FeedLinePerimeter = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Temperature")>
-    Public Property Temperature() As tnx_temperature_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FlatAttachmentEffectiveWidthRatio")>
+    Public Property FlatAttachmentEffectiveWidthRatio() As Double
         Get
-            Return Me.propTemperature
+            Return Me.prop_FlatAttachmentEffectiveWidthRatio
         End Get
         Set
-            Me.propTemperature = Value
+            Me.prop_FlatAttachmentEffectiveWidthRatio = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Printer")>
-    Public Property Printer() As tnx_printer_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("AutoCalcFlatAttachmentEffectiveWidthRatio")>
+    Public Property AutoCalcFlatAttachmentEffectiveWidthRatio() As Boolean
         Get
-            Return Me.propPrinter
+            Return Me.prop_AutoCalcFlatAttachmentEffectiveWidthRatio
         End Get
         Set
-            Me.propPrinter = Value
+            Me.prop_AutoCalcFlatAttachmentEffectiveWidthRatio = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Rotation")>
-    Public Property Rotation() As tnx_rotation_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaNoIce")>
+    Public Property FeedLineShieldingFactorKaNoIce() As Double
         Get
-            Return Me.propRotation
+            Return Me.prop_FeedLineShieldingFactorKaNoIce
         End Get
         Set
-            Me.propRotation = Value
+            Me.prop_FeedLineShieldingFactorKaNoIce = Value
         End Set
     End Property
-    <Category("TNX Units"), Description(""), DisplayName("Spacing")>
-    Public Property Spacing() As tnx_spacing_unit
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaIce")>
+    Public Property FeedLineShieldingFactorKaIce() As Double
         Get
-            Return Me.propSpacing
+            Return Me.prop_FeedLineShieldingFactorKaIce
         End Get
         Set
-            Me.propSpacing = Value
+            Me.prop_FeedLineShieldingFactorKaIce = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineAutoCalcKa")>
+    Public Property FeedLineAutoCalcKa() As Boolean
+        Get
+            Return Me.prop_FeedLineAutoCalcKa
+        End Get
+        Set
+            Me.prop_FeedLineAutoCalcKa = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaNoIce")>
+    Public Property FeedLineCaAaNoIce() As Double
+        Get
+            Return Me.prop_FeedLineCaAaNoIce
+        End Get
+        Set
+            Me.prop_FeedLineCaAaNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce")>
+    Public Property FeedLineCaAaIce() As Double
+        Get
+            Return Me.prop_FeedLineCaAaIce
+        End Get
+        Set
+            Me.prop_FeedLineCaAaIce = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_1")>
+    Public Property FeedLineCaAaIce_1() As Double
+        Get
+            Return Me.prop_FeedLineCaAaIce_1
+        End Get
+        Set
+            Me.prop_FeedLineCaAaIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_2")>
+    Public Property FeedLineCaAaIce_2() As Double
+        Get
+            Return Me.prop_FeedLineCaAaIce_2
+        End Get
+        Set
+            Me.prop_FeedLineCaAaIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_4")>
+    Public Property FeedLineCaAaIce_4() As Double
+        Get
+            Return Me.prop_FeedLineCaAaIce_4
+        End Get
+        Set
+            Me.prop_FeedLineCaAaIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtNoIce")>
+    Public Property FeedLineWtNoIce() As Double
+        Get
+            Return Me.prop_FeedLineWtNoIce
+        End Get
+        Set
+            Me.prop_FeedLineWtNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce")>
+    Public Property FeedLineWtIce() As Double
+        Get
+            Return Me.prop_FeedLineWtIce
+        End Get
+        Set
+            Me.prop_FeedLineWtIce = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_1")>
+    Public Property FeedLineWtIce_1() As Double
+        Get
+            Return Me.prop_FeedLineWtIce_1
+        End Get
+        Set
+            Me.prop_FeedLineWtIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_2")>
+    Public Property FeedLineWtIce_2() As Double
+        Get
+            Return Me.prop_FeedLineWtIce_2
+        End Get
+        Set
+            Me.prop_FeedLineWtIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_4")>
+    Public Property FeedLineWtIce_4() As Double
+        Get
+            Return Me.prop_FeedLineWtIce_4
+        End Get
+        Set
+            Me.prop_FeedLineWtIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineFaceOffset")>
+    Public Property FeedLineFaceOffset() As Double
+        Get
+            Return Me.prop_FeedLineFaceOffset
+        End Get
+        Set
+            Me.prop_FeedLineFaceOffset = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineOffsetFrac")>
+    Public Property FeedLineOffsetFrac() As Double
+        Get
+            Return Me.prop_FeedLineOffsetFrac
+        End Get
+        Set
+            Me.prop_FeedLineOffsetFrac = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetStartFrac")>
+    Public Property FeedLinePerimeterOffsetStartFrac() As Double
+        Get
+            Return Me.prop_FeedLinePerimeterOffsetStartFrac
+        End Get
+        Set
+            Me.prop_FeedLinePerimeterOffsetStartFrac = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetEndFrac")>
+    Public Property FeedLinePerimeterOffsetEndFrac() As Double
+        Get
+            Return Me.prop_FeedLinePerimeterOffsetEndFrac
+        End Get
+        Set
+            Me.prop_FeedLinePerimeterOffsetEndFrac = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineStartHt")>
+    Public Property FeedLineStartHt() As Double
+        Get
+            Return Me.prop_FeedLineStartHt
+        End Get
+        Set
+            Me.prop_FeedLineStartHt = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEndHt")>
+    Public Property FeedLineEndHt() As Double
+        Get
+            Return Me.prop_FeedLineEndHt
+        End Get
+        Set
+            Me.prop_FeedLineEndHt = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClearSpacing")>
+    Public Property FeedLineClearSpacing() As Double
+        Get
+            Return Me.prop_FeedLineClearSpacing
+        End Get
+        Set
+            Me.prop_FeedLineClearSpacing = Value
+        End Set
+    End Property
+    <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRowClearSpacing")>
+    Public Property FeedLineRowClearSpacing() As Double
+        Get
+            Return Me.prop_FeedLineRowClearSpacing
+        End Get
+        Set
+            Me.prop_FeedLineRowClearSpacing = Value
+        End Set
+    End Property
+
+
+End Class
+Partial Public Class tnxDiscreteLoad
+    Private prop_TowerLoadRec As Integer
+    Private prop_TowerLoadEnabled As Boolean
+    Private prop_TowerLoadDatabase As String
+    Private prop_TowerLoadDescription As String
+    Private prop_TowerLoadType As String
+    Private prop_TowerLoadClassificationCategory As String
+    Private prop_TowerLoadNote As String
+    Private prop_TowerLoadNum As Integer
+    Private prop_TowerLoadFace As Integer
+    Private prop_TowerOffsetType As String
+    Private prop_TowerOffsetDist As Double
+    Private prop_TowerVertOffset As Double
+    Private prop_TowerLateralOffset As Double
+    Private prop_TowerAzimuthAdjustment As Double
+    Private prop_TowerAppurtSymbol As String
+    Private prop_TowerLoadShieldingFactorKaNoIce As Double
+    Private prop_TowerLoadShieldingFactorKaIce As Double
+    Private prop_TowerLoadAutoCalcKa As Boolean
+    Private prop_TowerLoadCaAaNoIce As Double
+    Private prop_TowerLoadCaAaIce As Double
+    Private prop_TowerLoadCaAaIce_1 As Double
+    Private prop_TowerLoadCaAaIce_2 As Double
+    Private prop_TowerLoadCaAaIce_4 As Double
+    Private prop_TowerLoadCaAaNoIce_Side As Double
+    Private prop_TowerLoadCaAaIce_Side As Double
+    Private prop_TowerLoadCaAaIce_Side_1 As Double
+    Private prop_TowerLoadCaAaIce_Side_2 As Double
+    Private prop_TowerLoadCaAaIce_Side_4 As Double
+    Private prop_TowerLoadWtNoIce As Double
+    Private prop_TowerLoadWtIce As Double
+    Private prop_TowerLoadWtIce_1 As Double
+    Private prop_TowerLoadWtIce_2 As Double
+    Private prop_TowerLoadWtIce_4 As Double
+    Private prop_TowerLoadStartHt As Double
+    Private prop_TowerLoadEndHt As Double
+
+
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadRec")>
+    Public Property TowerLoadRec() As Integer
+        Get
+            Return Me.prop_TowerLoadRec
+        End Get
+        Set
+            Me.prop_TowerLoadRec = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEnabled")>
+    Public Property TowerLoadEnabled() As Boolean
+        Get
+            Return Me.prop_TowerLoadEnabled
+        End Get
+        Set
+            Me.prop_TowerLoadEnabled = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDatabase")>
+    Public Property TowerLoadDatabase() As String
+        Get
+            Return Me.prop_TowerLoadDatabase
+        End Get
+        Set
+            Me.prop_TowerLoadDatabase = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDescription")>
+    Public Property TowerLoadDescription() As String
+        Get
+            Return Me.prop_TowerLoadDescription
+        End Get
+        Set
+            Me.prop_TowerLoadDescription = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadType")>
+    Public Property TowerLoadType() As String
+        Get
+            Return Me.prop_TowerLoadType
+        End Get
+        Set
+            Me.prop_TowerLoadType = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadClassificationCategory")>
+    Public Property TowerLoadClassificationCategory() As String
+        Get
+            Return Me.prop_TowerLoadClassificationCategory
+        End Get
+        Set
+            Me.prop_TowerLoadClassificationCategory = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNote")>
+    Public Property TowerLoadNote() As String
+        Get
+            Return Me.prop_TowerLoadNote
+        End Get
+        Set
+            Me.prop_TowerLoadNote = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNum")>
+    Public Property TowerLoadNum() As Integer
+        Get
+            Return Me.prop_TowerLoadNum
+        End Get
+        Set
+            Me.prop_TowerLoadNum = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("TowerLoadFace")>
+    Public Property TowerLoadFace() As Integer
+        Get
+            Return Me.prop_TowerLoadFace
+        End Get
+        Set
+            Me.prop_TowerLoadFace = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetType")>
+    Public Property TowerOffsetType() As String
+        Get
+            Return Me.prop_TowerOffsetType
+        End Get
+        Set
+            Me.prop_TowerOffsetType = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetDist")>
+    Public Property TowerOffsetDist() As Double
+        Get
+            Return Me.prop_TowerOffsetDist
+        End Get
+        Set
+            Me.prop_TowerOffsetDist = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerVertOffset")>
+    Public Property TowerVertOffset() As Double
+        Get
+            Return Me.prop_TowerVertOffset
+        End Get
+        Set
+            Me.prop_TowerVertOffset = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLateralOffset")>
+    Public Property TowerLateralOffset() As Double
+        Get
+            Return Me.prop_TowerLateralOffset
+        End Get
+        Set
+            Me.prop_TowerLateralOffset = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAzimuthAdjustment")>
+    Public Property TowerAzimuthAdjustment() As Double
+        Get
+            Return Me.prop_TowerAzimuthAdjustment
+        End Get
+        Set
+            Me.prop_TowerAzimuthAdjustment = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAppurtSymbol")>
+    Public Property TowerAppurtSymbol() As String
+        Get
+            Return Me.prop_TowerAppurtSymbol
+        End Get
+        Set
+            Me.prop_TowerAppurtSymbol = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaNoIce")>
+    Public Property TowerLoadShieldingFactorKaNoIce() As Double
+        Get
+            Return Me.prop_TowerLoadShieldingFactorKaNoIce
+        End Get
+        Set
+            Me.prop_TowerLoadShieldingFactorKaNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaIce")>
+    Public Property TowerLoadShieldingFactorKaIce() As Double
+        Get
+            Return Me.prop_TowerLoadShieldingFactorKaIce
+        End Get
+        Set
+            Me.prop_TowerLoadShieldingFactorKaIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadAutoCalcKa")>
+    Public Property TowerLoadAutoCalcKa() As Boolean
+        Get
+            Return Me.prop_TowerLoadAutoCalcKa
+        End Get
+        Set
+            Me.prop_TowerLoadAutoCalcKa = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce")>
+    Public Property TowerLoadCaAaNoIce() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaNoIce
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce")>
+    Public Property TowerLoadCaAaIce() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_1")>
+    Public Property TowerLoadCaAaIce_1() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_1
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_2")>
+    Public Property TowerLoadCaAaIce_2() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_2
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_4")>
+    Public Property TowerLoadCaAaIce_4() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_4
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce_Side")>
+    Public Property TowerLoadCaAaNoIce_Side() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaNoIce_Side
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaNoIce_Side = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side")>
+    Public Property TowerLoadCaAaIce_Side() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_Side
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_Side = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_1")>
+    Public Property TowerLoadCaAaIce_Side_1() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_Side_1
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_Side_1 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_2")>
+    Public Property TowerLoadCaAaIce_Side_2() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_Side_2
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_Side_2 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_4")>
+    Public Property TowerLoadCaAaIce_Side_4() As Double
+        Get
+            Return Me.prop_TowerLoadCaAaIce_Side_4
+        End Get
+        Set
+            Me.prop_TowerLoadCaAaIce_Side_4 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtNoIce")>
+    Public Property TowerLoadWtNoIce() As Double
+        Get
+            Return Me.prop_TowerLoadWtNoIce
+        End Get
+        Set
+            Me.prop_TowerLoadWtNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce")>
+    Public Property TowerLoadWtIce() As Double
+        Get
+            Return Me.prop_TowerLoadWtIce
+        End Get
+        Set
+            Me.prop_TowerLoadWtIce = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_1")>
+    Public Property TowerLoadWtIce_1() As Double
+        Get
+            Return Me.prop_TowerLoadWtIce_1
+        End Get
+        Set
+            Me.prop_TowerLoadWtIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_2")>
+    Public Property TowerLoadWtIce_2() As Double
+        Get
+            Return Me.prop_TowerLoadWtIce_2
+        End Get
+        Set
+            Me.prop_TowerLoadWtIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_4")>
+    Public Property TowerLoadWtIce_4() As Double
+        Get
+            Return Me.prop_TowerLoadWtIce_4
+        End Get
+        Set
+            Me.prop_TowerLoadWtIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadStartHt")>
+    Public Property TowerLoadStartHt() As Double
+        Get
+            Return Me.prop_TowerLoadStartHt
+        End Get
+        Set
+            Me.prop_TowerLoadStartHt = Value
+        End Set
+    End Property
+    <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEndHt")>
+    Public Property TowerLoadEndHt() As Double
+        Get
+            Return Me.prop_TowerLoadEndHt
+        End Get
+        Set
+            Me.prop_TowerLoadEndHt = Value
         End Set
     End Property
 
 End Class
 
-Partial Public Class tnx_Unit_Property
+Partial Public Class tnxDish
+    Private prop_DishRec As Integer
+    Private prop_DishEnabled As Boolean
+    Private prop_DishDatabase As String
+    Private prop_DishDescription As String
+    Private prop_DishClassificationCategory As String
+    Private prop_DishNote As String
+    Private prop_DishNum As Integer
+    Private prop_DishFace As Integer
+    Private prop_DishType As String
+    Private prop_DishOffsetType As String
+    Private prop_DishVertOffset As Double
+    Private prop_DishLateralOffset As Double
+    Private prop_DishOffsetDist As Double
+    Private prop_DishArea As Double
+    Private prop_DishAreaIce As Double
+    Private prop_DishAreaIce_1 As Double
+    Private prop_DishAreaIce_2 As Double
+    Private prop_DishAreaIce_4 As Double
+    Private prop_DishDiameter As Double
+    Private prop_DishWtNoIce As Double
+    Private prop_DishWtIce As Double
+    Private prop_DishWtIce_1 As Double
+    Private prop_DishWtIce_2 As Double
+    Private prop_DishWtIce_4 As Double
+    Private prop_DishStartHt As Double
+    Private prop_DishAzimuthAdjustment As Double
+    Private prop_DishBeamWidth As Double
+
+    <Category("TNX Dish"), Description(""), DisplayName("DishRec")>
+    Public Property DishRec() As Integer
+        Get
+            Return Me.prop_DishRec
+        End Get
+        Set
+            Me.prop_DishRec = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishEnabled")>
+    Public Property DishEnabled() As Boolean
+        Get
+            Return Me.prop_DishEnabled
+        End Get
+        Set
+            Me.prop_DishEnabled = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishDatabase")>
+    Public Property DishDatabase() As String
+        Get
+            Return Me.prop_DishDatabase
+        End Get
+        Set
+            Me.prop_DishDatabase = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishDescription")>
+    Public Property DishDescription() As String
+        Get
+            Return Me.prop_DishDescription
+        End Get
+        Set
+            Me.prop_DishDescription = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishClassificationCategory")>
+    Public Property DishClassificationCategory() As String
+        Get
+            Return Me.prop_DishClassificationCategory
+        End Get
+        Set
+            Me.prop_DishClassificationCategory = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishNote")>
+    Public Property DishNote() As String
+        Get
+            Return Me.prop_DishNote
+        End Get
+        Set
+            Me.prop_DishNote = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishNum")>
+    Public Property DishNum() As Integer
+        Get
+            Return Me.prop_DishNum
+        End Get
+        Set
+            Me.prop_DishNum = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("DishFace")>
+    Public Property DishFace() As Integer
+        Get
+            Return Me.prop_DishFace
+        End Get
+        Set
+            Me.prop_DishFace = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishType")>
+    Public Property DishType() As String
+        Get
+            Return Me.prop_DishType
+        End Get
+        Set
+            Me.prop_DishType = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishOffsetType")>
+    Public Property DishOffsetType() As String
+        Get
+            Return Me.prop_DishOffsetType
+        End Get
+        Set
+            Me.prop_DishOffsetType = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishVertOffset")>
+    Public Property DishVertOffset() As Double
+        Get
+            Return Me.prop_DishVertOffset
+        End Get
+        Set
+            Me.prop_DishVertOffset = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishLateralOffset")>
+    Public Property DishLateralOffset() As Double
+        Get
+            Return Me.prop_DishLateralOffset
+        End Get
+        Set
+            Me.prop_DishLateralOffset = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishOffsetDist")>
+    Public Property DishOffsetDist() As Double
+        Get
+            Return Me.prop_DishOffsetDist
+        End Get
+        Set
+            Me.prop_DishOffsetDist = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishArea")>
+    Public Property DishArea() As Double
+        Get
+            Return Me.prop_DishArea
+        End Get
+        Set
+            Me.prop_DishArea = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce")>
+    Public Property DishAreaIce() As Double
+        Get
+            Return Me.prop_DishAreaIce
+        End Get
+        Set
+            Me.prop_DishAreaIce = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_1")>
+    Public Property DishAreaIce_1() As Double
+        Get
+            Return Me.prop_DishAreaIce_1
+        End Get
+        Set
+            Me.prop_DishAreaIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_2")>
+    Public Property DishAreaIce_2() As Double
+        Get
+            Return Me.prop_DishAreaIce_2
+        End Get
+        Set
+            Me.prop_DishAreaIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_4")>
+    Public Property DishAreaIce_4() As Double
+        Get
+            Return Me.prop_DishAreaIce_4
+        End Get
+        Set
+            Me.prop_DishAreaIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishDiameter")>
+    Public Property DishDiameter() As Double
+        Get
+            Return Me.prop_DishDiameter
+        End Get
+        Set
+            Me.prop_DishDiameter = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishWtNoIce")>
+    Public Property DishWtNoIce() As Double
+        Get
+            Return Me.prop_DishWtNoIce
+        End Get
+        Set
+            Me.prop_DishWtNoIce = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishWtIce")>
+    Public Property DishWtIce() As Double
+        Get
+            Return Me.prop_DishWtIce
+        End Get
+        Set
+            Me.prop_DishWtIce = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_1")>
+    Public Property DishWtIce_1() As Double
+        Get
+            Return Me.prop_DishWtIce_1
+        End Get
+        Set
+            Me.prop_DishWtIce_1 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_2")>
+    Public Property DishWtIce_2() As Double
+        Get
+            Return Me.prop_DishWtIce_2
+        End Get
+        Set
+            Me.prop_DishWtIce_2 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_4")>
+    Public Property DishWtIce_4() As Double
+        Get
+            Return Me.prop_DishWtIce_4
+        End Get
+        Set
+            Me.prop_DishWtIce_4 = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishStartHt")>
+    Public Property DishStartHt() As Double
+        Get
+            Return Me.prop_DishStartHt
+        End Get
+        Set
+            Me.prop_DishStartHt = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishAzimuthAdjustment")>
+    Public Property DishAzimuthAdjustment() As Double
+        Get
+            Return Me.prop_DishAzimuthAdjustment
+        End Get
+        Set
+            Me.prop_DishAzimuthAdjustment = Value
+        End Set
+    End Property
+    <Category("TNX Dish"), Description(""), DisplayName("DishBeamWidth")>
+    Public Property DishBeamWidth() As Double
+        Get
+            Return Me.prop_DishBeamWidth
+        End Get
+        Set
+            Me.prop_DishBeamWidth = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxUserForce
+    Private prop_UserForceRec As Integer
+    Private prop_UserForceEnabled As Boolean
+    Private prop_UserForceDescription As String
+    Private prop_UserForceStartHt As Double
+    Private prop_UserForceOffset As Double
+    Private prop_UserForceAzimuth As Double
+    Private prop_UserForceFxNoIce As Double
+    Private prop_UserForceFzNoIce As Double
+    Private prop_UserForceAxialNoIce As Double
+    Private prop_UserForceShearNoIce As Double
+    Private prop_UserForceCaAcNoIce As Double
+    Private prop_UserForceFxIce As Double
+    Private prop_UserForceFzIce As Double
+    Private prop_UserForceAxialIce As Double
+    Private prop_UserForceShearIce As Double
+    Private prop_UserForceCaAcIce As Double
+    Private prop_UserForceFxService As Double
+    Private prop_UserForceFzService As Double
+    Private prop_UserForceAxialService As Double
+    Private prop_UserForceShearService As Double
+    Private prop_UserForceCaAcService As Double
+    Private prop_UserForceEhx As Double
+    Private prop_UserForceEhz As Double
+    Private prop_UserForceEv As Double
+    Private prop_UserForceEh As Double
+
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceRec")>
+    Public Property UserForceRec() As Integer
+        Get
+            Return Me.prop_UserForceRec
+        End Get
+        Set
+            Me.prop_UserForceRec = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceEnabled")>
+    Public Property UserForceEnabled() As Boolean
+        Get
+            Return Me.prop_UserForceEnabled
+        End Get
+        Set
+            Me.prop_UserForceEnabled = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceDescription")>
+    Public Property UserForceDescription() As String
+        Get
+            Return Me.prop_UserForceDescription
+        End Get
+        Set
+            Me.prop_UserForceDescription = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceStartHt")>
+    Public Property UserForceStartHt() As Double
+        Get
+            Return Me.prop_UserForceStartHt
+        End Get
+        Set
+            Me.prop_UserForceStartHt = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceOffset")>
+    Public Property UserForceOffset() As Double
+        Get
+            Return Me.prop_UserForceOffset
+        End Get
+        Set
+            Me.prop_UserForceOffset = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceAzimuth")>
+    Public Property UserForceAzimuth() As Double
+        Get
+            Return Me.prop_UserForceAzimuth
+        End Get
+        Set
+            Me.prop_UserForceAzimuth = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFxNoIce")>
+    Public Property UserForceFxNoIce() As Double
+        Get
+            Return Me.prop_UserForceFxNoIce
+        End Get
+        Set
+            Me.prop_UserForceFxNoIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFzNoIce")>
+    Public Property UserForceFzNoIce() As Double
+        Get
+            Return Me.prop_UserForceFzNoIce
+        End Get
+        Set
+            Me.prop_UserForceFzNoIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialNoIce")>
+    Public Property UserForceAxialNoIce() As Double
+        Get
+            Return Me.prop_UserForceAxialNoIce
+        End Get
+        Set
+            Me.prop_UserForceAxialNoIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceShearNoIce")>
+    Public Property UserForceShearNoIce() As Double
+        Get
+            Return Me.prop_UserForceShearNoIce
+        End Get
+        Set
+            Me.prop_UserForceShearNoIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcNoIce")>
+    Public Property UserForceCaAcNoIce() As Double
+        Get
+            Return Me.prop_UserForceCaAcNoIce
+        End Get
+        Set
+            Me.prop_UserForceCaAcNoIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFxIce")>
+    Public Property UserForceFxIce() As Double
+        Get
+            Return Me.prop_UserForceFxIce
+        End Get
+        Set
+            Me.prop_UserForceFxIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFzIce")>
+    Public Property UserForceFzIce() As Double
+        Get
+            Return Me.prop_UserForceFzIce
+        End Get
+        Set
+            Me.prop_UserForceFzIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialIce")>
+    Public Property UserForceAxialIce() As Double
+        Get
+            Return Me.prop_UserForceAxialIce
+        End Get
+        Set
+            Me.prop_UserForceAxialIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceShearIce")>
+    Public Property UserForceShearIce() As Double
+        Get
+            Return Me.prop_UserForceShearIce
+        End Get
+        Set
+            Me.prop_UserForceShearIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcIce")>
+    Public Property UserForceCaAcIce() As Double
+        Get
+            Return Me.prop_UserForceCaAcIce
+        End Get
+        Set
+            Me.prop_UserForceCaAcIce = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFxService")>
+    Public Property UserForceFxService() As Double
+        Get
+            Return Me.prop_UserForceFxService
+        End Get
+        Set
+            Me.prop_UserForceFxService = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceFzService")>
+    Public Property UserForceFzService() As Double
+        Get
+            Return Me.prop_UserForceFzService
+        End Get
+        Set
+            Me.prop_UserForceFzService = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialService")>
+    Public Property UserForceAxialService() As Double
+        Get
+            Return Me.prop_UserForceAxialService
+        End Get
+        Set
+            Me.prop_UserForceAxialService = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceShearService")>
+    Public Property UserForceShearService() As Double
+        Get
+            Return Me.prop_UserForceShearService
+        End Get
+        Set
+            Me.prop_UserForceShearService = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcService")>
+    Public Property UserForceCaAcService() As Double
+        Get
+            Return Me.prop_UserForceCaAcService
+        End Get
+        Set
+            Me.prop_UserForceCaAcService = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceEhx")>
+    Public Property UserForceEhx() As Double
+        Get
+            Return Me.prop_UserForceEhx
+        End Get
+        Set
+            Me.prop_UserForceEhx = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceEhz")>
+    Public Property UserForceEhz() As Double
+        Get
+            Return Me.prop_UserForceEhz
+        End Get
+        Set
+            Me.prop_UserForceEhz = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceEv")>
+    Public Property UserForceEv() As Double
+        Get
+            Return Me.prop_UserForceEv
+        End Get
+        Set
+            Me.prop_UserForceEv = Value
+        End Set
+    End Property
+    <Category("TNX User Force"), Description(""), DisplayName("UserForceEh")>
+    Public Property UserForceEh() As Double
+        Get
+            Return Me.prop_UserForceEh
+        End Get
+        Set
+            Me.prop_UserForceEh = Value
+        End Set
+    End Property
+
+End Class
+
+#End Region
+
+#Region "Code"
+Partial Public Class tnxCode
+    Private prop_design As New tnxDesign()
+    Private prop_ice As New tnxIce()
+    Private prop_thermal As New tnxThermal()
+    Private prop_wind As New tnxWind()
+    Private prop_misclCode As New tnxMisclCode()
+    Private prop_seismic As New tnxSeismic()
+
+    <Category("TNX Code"), Description(""), DisplayName("Design")>
+    Public Property design() As tnxDesign
+        Get
+            Return Me.prop_design
+        End Get
+        Set
+            Me.prop_design = Value
+        End Set
+    End Property
+
+    <Category("TNX Code"), Description(""), DisplayName("Ice")>
+    Public Property ice() As tnxIce
+        Get
+            Return Me.prop_ice
+        End Get
+        Set
+            Me.prop_ice = Value
+        End Set
+    End Property
+
+    <Category("TNX Code"), Description(""), DisplayName("Thermal")>
+    Public Property thermal() As tnxThermal
+        Get
+            Return Me.prop_thermal
+        End Get
+        Set
+            Me.prop_thermal = Value
+        End Set
+    End Property
+
+    <Category("TNX Code"), Description(""), DisplayName("Wind")>
+    Public Property wind() As tnxWind
+        Get
+            Return Me.prop_wind
+        End Get
+        Set
+            Me.prop_wind = Value
+        End Set
+    End Property
+
+    <Category("TNX Code"), Description(""), DisplayName("Miscellaneous Code")>
+    Public Property misclCode() As tnxMisclCode
+        Get
+            Return Me.prop_misclCode
+        End Get
+        Set
+            Me.prop_misclCode = Value
+        End Set
+    End Property
+
+    <Category("TNX Code"), Description(""), DisplayName("Seismic")>
+    Public Property seismic() As tnxSeismic
+        Get
+            Return Me.prop_seismic
+        End Get
+        Set
+            Me.prop_seismic = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxDesign
+    Private prop_DesignCode As String
+    Private prop_ERIDesignMode As String
+    Private prop_DoInteraction As Boolean
+    Private prop_DoHorzInteraction As Boolean
+    Private prop_DoDiagInteraction As Boolean
+    Private prop_UseMomentMagnification As Boolean
+    Private prop_UseCodeStressRatio As Boolean
+    Private prop_AllowStressRatio As Double
+    Private prop_AllowAntStressRatio As Double
+    Private prop_UseCodeGuySF As Boolean
+    Private prop_GuySF As Double
+    Private prop_UseTIA222H_AnnexS As Boolean
+    Private prop_TIA_222_H_AnnexS_Ratio As Double
+    Private prop_PrintBitmaps As Boolean
+
+    <Category("TNX Code Design"), Description(""), DisplayName("DesignCode")>
+    Public Property DesignCode() As String
+        Get
+            Return Me.prop_DesignCode
+        End Get
+        Set
+            Me.prop_DesignCode = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("Analysis Only, Check Sections, Cyclic Design"), DisplayName("ERIDesignMode")>
+    Public Property ERIDesignMode() As String
+        Get
+            Return Me.prop_ERIDesignMode
+        End Get
+        Set
+            Me.prop_ERIDesignMode = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("consider moments - legs"), DisplayName("DoInteraction")>
+    Public Property DoInteraction() As Boolean
+        Get
+            Return Me.prop_DoInteraction
+        End Get
+        Set
+            Me.prop_DoInteraction = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("consider moments - horizontals"), DisplayName("DoHorzInteraction")>
+    Public Property DoHorzInteraction() As Boolean
+        Get
+            Return Me.prop_DoHorzInteraction
+        End Get
+        Set
+            Me.prop_DoHorzInteraction = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("consider moments - diagonals"), DisplayName("DoDiagInteraction")>
+    Public Property DoDiagInteraction() As Boolean
+        Get
+            Return Me.prop_DoDiagInteraction
+        End Get
+        Set
+            Me.prop_DoDiagInteraction = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("UseMomentMagnification")>
+    Public Property UseMomentMagnification() As Boolean
+        Get
+            Return Me.prop_UseMomentMagnification
+        End Get
+        Set
+            Me.prop_UseMomentMagnification = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("UseCodeStressRatio")>
+    Public Property UseCodeStressRatio() As Boolean
+        Get
+            Return Me.prop_UseCodeStressRatio
+        End Get
+        Set
+            Me.prop_UseCodeStressRatio = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("base structure allowable stress ratio"), DisplayName("AllowStressRatio")>
+    Public Property AllowStressRatio() As Double
+        Get
+            Return Me.prop_AllowStressRatio
+        End Get
+        Set
+            Me.prop_AllowStressRatio = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("upper structure allowable stress ratio"), DisplayName("AllowAntStressRatio")>
+    Public Property AllowAntStressRatio() As Double
+        Get
+            Return Me.prop_AllowAntStressRatio
+        End Get
+        Set
+            Me.prop_AllowAntStressRatio = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("UseCodeGuySF")>
+    Public Property UseCodeGuySF() As Boolean
+        Get
+            Return Me.prop_UseCodeGuySF
+        End Get
+        Set
+            Me.prop_UseCodeGuySF = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("GuySF")>
+    Public Property GuySF() As Double
+        Get
+            Return Me.prop_GuySF
+        End Get
+        Set
+            Me.prop_GuySF = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("UseTIA222H_AnnexS")>
+    Public Property UseTIA222H_AnnexS() As Boolean
+        Get
+            Return Me.prop_UseTIA222H_AnnexS
+        End Get
+        Set
+            Me.prop_UseTIA222H_AnnexS = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description("TIA-222-H Annex S allowable ratio"), DisplayName("TIA_222_H_AnnexS_Ratio")>
+    Public Property TIA_222_H_AnnexS_Ratio() As Double
+        Get
+            Return Me.prop_TIA_222_H_AnnexS_Ratio
+        End Get
+        Set
+            Me.prop_TIA_222_H_AnnexS_Ratio = Value
+        End Set
+    End Property
+    <Category("TNX Code Design"), Description(""), DisplayName("PrintBitmaps")>
+    Public Property PrintBitmaps() As Boolean
+        Get
+            Return Me.prop_PrintBitmaps
+        End Get
+        Set
+            Me.prop_PrintBitmaps = Value
+        End Set
+    End Property
+
+End Class
+Partial Public Class tnxIce
+    Private prop_IceThickness As Double
+    Private prop_IceDensity As Double
+    Private prop_UseModified_TIA_222_IceParameters As Boolean
+    Private prop_TIA_222_IceThicknessMultiplier As Double
+    Private prop_DoNotUse_TIA_222_IceEscalation As Boolean
+    Private prop_UseIceEscalation As Boolean
+
+    <Category("TNX Code Ice"), Description(""), DisplayName("IceThickness")>
+    Public Property IceThickness() As Double
+        Get
+            Return Me.prop_IceThickness
+        End Get
+        Set
+            Me.prop_IceThickness = Value
+        End Set
+    End Property
+    <Category("TNX Code Ice"), Description(""), DisplayName("IceDensity")>
+    Public Property IceDensity() As Double
+        Get
+            Return Me.prop_IceDensity
+        End Get
+        Set
+            Me.prop_IceDensity = Value
+        End Set
+    End Property
+    <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("UseModified_TIA_222_IceParameters")>
+    Public Property UseModified_TIA_222_IceParameters() As Boolean
+        Get
+            Return Me.prop_UseModified_TIA_222_IceParameters
+        End Get
+        Set
+            Me.prop_UseModified_TIA_222_IceParameters = Value
+        End Set
+    End Property
+    <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("TIA_222_IceThicknessMultiplier")>
+    Public Property TIA_222_IceThicknessMultiplier() As Double
+        Get
+            Return Me.prop_TIA_222_IceThicknessMultiplier
+        End Get
+        Set
+            Me.prop_TIA_222_IceThicknessMultiplier = Value
+        End Set
+    End Property
+    <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("DoNotUse_TIA_222_IceEscalation")>
+    Public Property DoNotUse_TIA_222_IceEscalation() As Boolean
+        Get
+            Return Me.prop_DoNotUse_TIA_222_IceEscalation
+        End Get
+        Set
+            Me.prop_DoNotUse_TIA_222_IceEscalation = Value
+        End Set
+    End Property
+    <Category("TNX Code Ice"), Description("TIA-222-F and earlier"), DisplayName("UseIceEscalation")>
+    Public Property UseIceEscalation() As Boolean
+        Get
+            Return Me.prop_UseIceEscalation
+        End Get
+        Set
+            Me.prop_UseIceEscalation = Value
+        End Set
+    End Property
+End Class
+Partial Public Class tnxThermal
+    Private prop_TempDrop As Double
+
+    <Category("TNX Code Thermal"), Description(""), DisplayName("TempDrop")>
+    Public Property TempDrop() As Double
+        Get
+            Return Me.prop_TempDrop
+        End Get
+        Set
+            Me.prop_TempDrop = Value
+        End Set
+    End Property
+End Class
+Partial Public Class tnxWind
+    Private prop_WindSpeed As Double
+    Private prop_WindSpeedIce As Double
+    Private prop_WindSpeedService As Double
+    Private prop_UseStateCountyLookup As Boolean
+    Private prop_State As String
+    Private prop_County As String
+    Private prop_UseMaxKz As Boolean
+    Private prop_ASCE_7_10_WindData As Boolean
+    Private prop_ASCE_7_10_ConvertWindToASD As Boolean
+    Private prop_UseASCEWind As Boolean
+    Private prop_AutoCalc_ASCE_GH As Boolean
+    Private prop_ASCE_ExposureCat As Integer
+    Private prop_ASCE_Year As Integer
+    Private prop_ASCEGh As Double
+    Private prop_ASCEI As Double
+    Private prop_CalcWindAt As Integer
+    Private prop_WindCalcPoints As Double
+    Private prop_WindExposure As Integer
+    Private prop_StructureCategory As Integer
+    Private prop_RiskCategory As Integer
+    Private prop_TopoCategory As Integer
+    Private prop_RSMTopographicFeature As Integer
+    Private prop_RSM_L As Double
+    Private prop_RSM_X As Double
+    Private prop_CrestHeight As Double
+    Private prop_TIA_222_H_TopoFeatureDownwind As Boolean
+    Private prop_BaseElevAboveSeaLevel As Double
+    Private prop_ConsiderRooftopSpeedUp As Boolean
+    Private prop_RooftopWS As Double
+    Private prop_RooftopHS As Double
+    Private prop_RooftopParapetHt As Double
+    Private prop_RooftopXB As Double
+    Private prop_WindZone As Integer
+    Private prop_EIACWindMult As Double
+    Private prop_EIACWindMultIce As Double
+    Private prop_EIACIgnoreCableDrag As Boolean
+    Private prop_CSA_S37_RefVelPress As Double
+    Private prop_CSA_S37_ReliabilityClass As Integer
+    Private prop_CSA_S37_ServiceabilityFactor As Double
+
+    <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeed")>
+    Public Property WindSpeed() As Double
+        Get
+            Return Me.prop_WindSpeed
+        End Get
+        Set
+            Me.prop_WindSpeed = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedIce")>
+    Public Property WindSpeedIce() As Double
+        Get
+            Return Me.prop_WindSpeedIce
+        End Get
+        Set
+            Me.prop_WindSpeedIce = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedService")>
+    Public Property WindSpeedService() As Double
+        Get
+            Return Me.prop_WindSpeedService
+        End Get
+        Set
+            Me.prop_WindSpeedService = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("UseStateCountyLookup")>
+    Public Property UseStateCountyLookup() As Boolean
+        Get
+            Return Me.prop_UseStateCountyLookup
+        End Get
+        Set
+            Me.prop_UseStateCountyLookup = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("State")>
+    Public Property State() As String
+        Get
+            Return Me.prop_State
+        End Get
+        Set
+            Me.prop_State = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("County")>
+    Public Property County() As String
+        Get
+            Return Me.prop_County
+        End Get
+        Set
+            Me.prop_County = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("UseMaxKz")>
+    Public Property UseMaxKz() As Boolean
+        Get
+            Return Me.prop_UseMaxKz
+        End Get
+        Set
+            Me.prop_UseMaxKz = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_WindData")>
+    Public Property ASCE_7_10_WindData() As Boolean
+        Get
+            Return Me.prop_ASCE_7_10_WindData
+        End Get
+        Set
+            Me.prop_ASCE_7_10_WindData = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_ConvertWindToASD")>
+    Public Property ASCE_7_10_ConvertWindToASD() As Boolean
+        Get
+            Return Me.prop_ASCE_7_10_ConvertWindToASD
+        End Get
+        Set
+            Me.prop_ASCE_7_10_ConvertWindToASD = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("Use Special Wind Profile"), DisplayName("UseASCEWind")>
+    Public Property UseASCEWind() As Boolean
+        Get
+            Return Me.prop_UseASCEWind
+        End Get
+        Set
+            Me.prop_UseASCEWind = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("Use TIA Gh Value"), DisplayName("AutoCalc_ASCE_GH")>
+    Public Property AutoCalc_ASCE_GH() As Boolean
+        Get
+            Return Me.prop_AutoCalc_ASCE_GH
+        End Get
+        Set
+            Me.prop_AutoCalc_ASCE_GH = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = B, 1 = C,  2 = D}"), DisplayName("ASCE_ExposureCat")>
+    Public Property ASCE_ExposureCat() As Integer
+        Get
+            Return Me.prop_ASCE_ExposureCat
+        End Get
+        Set
+            Me.prop_ASCE_ExposureCat = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = ASCE 7-88, 1 = ASCE 7-93, 2= ASCE 7-95, 3 = ASCE 7-98, 4 = ASCE 7-02, 5 = Cook Co., IL, 6 = WIS 53, 7 = Chicago}"), DisplayName("ASCE_Year")>
+    Public Property ASCE_Year() As Integer
+        Get
+            Return Me.prop_ASCE_Year
+        End Get
+        Set
+            Me.prop_ASCE_Year = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("ASCEGh")>
+    Public Property ASCEGh() As Double
+        Get
+            Return Me.prop_ASCEGh
+        End Get
+        Set
+            Me.prop_ASCEGh = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("ASCEI")>
+    Public Property ASCEI() As Double
+        Get
+            Return Me.prop_ASCEI
+        End Get
+        Set
+            Me.prop_ASCEI = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = Every Section, 1 = between guys, 2 = user specify (WindCalcPoints)}"), DisplayName("CalcWindAt")>
+    Public Property CalcWindAt() As Integer
+        Get
+            Return Me.prop_CalcWindAt
+        End Get
+        Set
+            Me.prop_CalcWindAt = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("WindCalcPoints")>
+    Public Property WindCalcPoints() As Double
+        Get
+            Return Me.prop_WindCalcPoints
+        End Get
+        Set
+            Me.prop_WindCalcPoints = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = B, 1 = C, 2 = D}"), DisplayName("WindExposure")>
+    Public Property WindExposure() As Integer
+        Get
+            Return Me.prop_WindExposure
+        End Get
+        Set
+            Me.prop_WindExposure = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("Structure Class - TIA-222-G Only {0 = I, 1 = II, 2 = III}"), DisplayName("StructureCategory")>
+    Public Property StructureCategory() As Integer
+        Get
+            Return Me.prop_StructureCategory
+        End Get
+        Set
+            Me.prop_StructureCategory = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("TIA-222-H Only {0 = I, 1 = II,  2 = III,  3 = IV}"), DisplayName("RiskCategory")>
+    Public Property RiskCategory() As Integer
+        Get
+            Return Me.prop_RiskCategory
+        End Get
+        Set
+            Me.prop_RiskCategory = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = 1, 1 = 2, 2 = 3, 3 = 4, 4 = 5/Rigorous Procedure}"), DisplayName("TopoCategory")>
+    Public Property TopoCategory() As Integer
+        Get
+            Return Me.prop_TopoCategory
+        End Get
+        Set
+            Me.prop_TopoCategory = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("{0 = Continuous Ridge, 1 = Flat Topped Ridge, 2 = Hill, 3 = Flat Topped Hill, 4 = Continuous Escarpment}"), DisplayName("RSMTopographicFeature")>
+    Public Property RSMTopographicFeature() As Integer
+        Get
+            Return Me.prop_RSMTopographicFeature
+        End Get
+        Set
+            Me.prop_RSMTopographicFeature = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RSM_L")>
+    Public Property RSM_L() As Double
+        Get
+            Return Me.prop_RSM_L
+        End Get
+        Set
+            Me.prop_RSM_L = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RSM_X")>
+    Public Property RSM_X() As Double
+        Get
+            Return Me.prop_RSM_X
+        End Get
+        Set
+            Me.prop_RSM_X = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("CrestHeight")>
+    Public Property CrestHeight() As Double
+        Get
+            Return Me.prop_CrestHeight
+        End Get
+        Set
+            Me.prop_CrestHeight = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("TIA_222_H_TopoFeatureDownwind")>
+    Public Property TIA_222_H_TopoFeatureDownwind() As Boolean
+        Get
+            Return Me.prop_TIA_222_H_TopoFeatureDownwind
+        End Get
+        Set
+            Me.prop_TIA_222_H_TopoFeatureDownwind = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("BaseElevAboveSeaLevel")>
+    Public Property BaseElevAboveSeaLevel() As Double
+        Get
+            Return Me.prop_BaseElevAboveSeaLevel
+        End Get
+        Set
+            Me.prop_BaseElevAboveSeaLevel = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("ConsiderRooftopSpeedUp")>
+    Public Property ConsiderRooftopSpeedUp() As Boolean
+        Get
+            Return Me.prop_ConsiderRooftopSpeedUp
+        End Get
+        Set
+            Me.prop_ConsiderRooftopSpeedUp = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RooftopWS")>
+    Public Property RooftopWS() As Double
+        Get
+            Return Me.prop_RooftopWS
+        End Get
+        Set
+            Me.prop_RooftopWS = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RooftopHS")>
+    Public Property RooftopHS() As Double
+        Get
+            Return Me.prop_RooftopHS
+        End Get
+        Set
+            Me.prop_RooftopHS = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RooftopParapetHt")>
+    Public Property RooftopParapetHt() As Double
+        Get
+            Return Me.prop_RooftopParapetHt
+        End Get
+        Set
+            Me.prop_RooftopParapetHt = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description(""), DisplayName("RooftopXB")>
+    Public Property RooftopXB() As Double
+        Get
+            Return Me.prop_RooftopXB
+        End Get
+        Set
+            Me.prop_RooftopXB = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("EIA-222-C and earlier {0 = A, 1 = B, 2 = C}"), DisplayName("WindZone")>
+    Public Property WindZone() As Integer
+        Get
+            Return Me.prop_WindZone
+        End Get
+        Set
+            Me.prop_WindZone = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMult")>
+    Public Property EIACWindMult() As Double
+        Get
+            Return Me.prop_EIACWindMult
+        End Get
+        Set
+            Me.prop_EIACWindMult = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMultIce")>
+    Public Property EIACWindMultIce() As Double
+        Get
+            Return Me.prop_EIACWindMultIce
+        End Get
+        Set
+            Me.prop_EIACWindMultIce = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("EIA-222-C and earlier - Set Cable Drag Factor to 1.0"), DisplayName("EIACIgnoreCableDrag")>
+    Public Property EIACIgnoreCableDrag() As Boolean
+        Get
+            Return Me.prop_EIACIgnoreCableDrag
+        End Get
+        Set
+            Me.prop_EIACIgnoreCableDrag = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_RefVelPress")>
+    Public Property CSA_S37_RefVelPress() As Double
+        Get
+            Return Me.prop_CSA_S37_RefVelPress
+        End Get
+        Set
+            Me.prop_CSA_S37_RefVelPress = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("CSA S37-01 only {0 = I, 1 = II, 2 = III}"), DisplayName("CSA_S37_ReliabilityClass")>
+    Public Property CSA_S37_ReliabilityClass() As Integer
+        Get
+            Return Me.prop_CSA_S37_ReliabilityClass
+        End Get
+        Set
+            Me.prop_CSA_S37_ReliabilityClass = Value
+        End Set
+    End Property
+    <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_ServiceabilityFactor")>
+    Public Property CSA_S37_ServiceabilityFactor() As Double
+        Get
+            Return Me.prop_CSA_S37_ServiceabilityFactor
+        End Get
+        Set
+            Me.prop_CSA_S37_ServiceabilityFactor = Value
+        End Set
+    End Property
+
+End Class
+Partial Public Class tnxMisclCode
+    Private prop_GroutFc As Double
+    Private prop_TowerBoltGrade As String
+    Private prop_TowerBoltMinEdgeDist As Double
+
+    <Category("TNX Code Miscellaneous"), Description(""), DisplayName("GroutFc")>
+    Public Property GroutFc() As Double
+        Get
+            Return Me.prop_GroutFc
+        End Get
+        Set
+            Me.prop_GroutFc = Value
+        End Set
+    End Property
+    <Category("TNX Code Miscellaneous"), Description("Default bolt grade"), DisplayName("TowerBoltGrade")>
+    Public Property TowerBoltGrade() As String
+        Get
+            Return Me.prop_TowerBoltGrade
+        End Get
+        Set
+            Me.prop_TowerBoltGrade = Value
+        End Set
+    End Property
+    <Category("TNX Code Miscellaneous"), Description("Not in UI"), DisplayName("TowerBoltMinEdgeDist")>
+    Public Property TowerBoltMinEdgeDist() As Double
+        Get
+            Return Me.prop_TowerBoltMinEdgeDist
+        End Get
+        Set
+            Me.prop_TowerBoltMinEdgeDist = Value
+        End Set
+    End Property
+End Class
+
+Partial Public Class tnxSeismic
+    Private prop_UseASCE7_10_Seismic_Lcomb As Boolean
+    Private prop_SeismicSiteClass As Integer
+    Private prop_SeismicSs As Double
+    Private prop_SeismicS1 As Double
+
+    <Category("TNX Code seismic"), Description(""), DisplayName("UseASCE7_10_Seismic_Lcomb")>
+    Public Property UseASCE7_10_Seismic_Lcomb() As Boolean
+        Get
+            Return Me.prop_UseASCE7_10_Seismic_Lcomb
+        End Get
+        Set
+            Me.prop_UseASCE7_10_Seismic_Lcomb = Value
+        End Set
+    End Property
+    <Category("TNX Code seismic"), Description("not in UI {0 = A, 1 = B, 2 = C, 3 = D, 4 = E} "), DisplayName("SeismicSiteClass")>
+    Public Property SeismicSiteClass() As Integer
+        Get
+            Return Me.prop_SeismicSiteClass
+        End Get
+        Set
+            Me.prop_SeismicSiteClass = Value
+        End Set
+    End Property
+    <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicSs")>
+    Public Property SeismicSs() As Double
+        Get
+            Return Me.prop_SeismicSs
+        End Get
+        Set
+            Me.prop_SeismicSs = Value
+        End Set
+    End Property
+    <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicS1")>
+    Public Property SeismicS1() As Double
+        Get
+            Return Me.prop_SeismicS1
+        End Get
+        Set
+            Me.prop_SeismicS1 = Value
+        End Set
+    End Property
+End Class
+
+
+#End Region
+
+#Region "Options"
+Partial Public Class tnxOptions
+    Private prop_UseClearSpans As Boolean
+    Private prop_UseClearSpansKlr As Boolean
+    Private prop_UseFeedlineAsCylinder As Boolean
+    Private prop_UseLegLoads As Boolean
+    Private prop_SRTakeCompression As Boolean
+    Private prop_AllLegPanelsSame As Boolean
+    Private prop_UseCombinedBoltCapacity As Boolean
+    Private prop_SecHorzBracesLeg As Boolean
+    Private prop_SortByComponent As Boolean
+    Private prop_SRCutEnds As Boolean
+    Private prop_SRConcentric As Boolean
+    Private prop_CalcBlockShear As Boolean
+    Private prop_Use4SidedDiamondBracing As Boolean
+    Private prop_TriangulateInnerBracing As Boolean
+    Private prop_PrintCarrierNotes As Boolean
+    Private prop_AddIBCWindCase As Boolean
+    Private prop_LegBoltsAtTop As Boolean
+    Private prop_UseTIA222Exemptions_MinBracingResistance As Boolean
+    Private prop_UseTIA222Exemptions_TensionSplice As Boolean
+    Private prop_IgnoreKLryFor60DegAngleLegs As Boolean
+    Private prop_UseFeedlineTorque As Boolean
+    Private prop_UsePinnedElements As Boolean
+    Private prop_UseRigidIndex As Boolean
+    Private prop_UseTrueCable As Boolean
+    Private prop_UseASCELy As Boolean
+    Private prop_CalcBracingForces As Boolean
+    Private prop_IgnoreBracingFEA As Boolean
+    Private prop_BypassStabilityChecks As Boolean
+    Private prop_UseWindProjection As Boolean
+    Private prop_UseDishCoeff As Boolean
+    Private prop_AutoCalcTorqArmArea As Boolean
+    Private prop_foundationStiffness As New tnxFoundaionStiffness()
+    Private prop_defaultGirtOffsets As New tnxDefaultGirtOffsets()
+    Private prop_cantileverPoles As New tnxCantileverPoles()
+    Private prop_windDirections As New tnxWindDirections()
+    Private prop_misclOptions As New tnxMisclOptions()
+
+    <Category("TNX Options"), Description(""), DisplayName("UseClearSpans")>
+    Public Property UseClearSpans() As Boolean
+        Get
+            Return Me.prop_UseClearSpans
+        End Get
+        Set
+            Me.prop_UseClearSpans = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description(""), DisplayName("UseClearSpansKlr")>
+    Public Property UseClearSpansKlr() As Boolean
+        Get
+            Return Me.prop_UseClearSpansKlr
+        End Get
+        Set
+            Me.prop_UseClearSpansKlr = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("treat feedline bundles as cylindrical"), DisplayName("UseFeedlineAsCylinder")>
+    Public Property UseFeedlineAsCylinder() As Boolean
+        Get
+            Return Me.prop_UseFeedlineAsCylinder
+        End Get
+        Set
+            Me.prop_UseFeedlineAsCylinder = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Distribute Leg Loads As Uniform"), DisplayName("UseLegLoads")>
+    Public Property UseLegLoads() As Boolean
+        Get
+            Return Me.prop_UseLegLoads
+        End Get
+        Set
+            Me.prop_UseLegLoads = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("SR Sleeve Bolts Resist Compression"), DisplayName("SRTakeCompression")>
+    Public Property SRTakeCompression() As Boolean
+        Get
+            Return Me.prop_SRTakeCompression
+        End Get
+        Set
+            Me.prop_SRTakeCompression = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("All Leg Panels Have Same Allowable"), DisplayName("AllLegPanelsSame")>
+    Public Property AllLegPanelsSame() As Boolean
+        Get
+            Return Me.prop_AllLegPanelsSame
+        End Get
+        Set
+            Me.prop_AllLegPanelsSame = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Include Bolts In Member Capacity"), DisplayName("UseCombinedBoltCapacity")>
+    Public Property UseCombinedBoltCapacity() As Boolean
+        Get
+            Return Me.prop_UseCombinedBoltCapacity
+        End Get
+        Set
+            Me.prop_UseCombinedBoltCapacity = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Secondary Horizontal Braces Leg"), DisplayName("SecHorzBracesLeg")>
+    Public Property SecHorzBracesLeg() As Boolean
+        Get
+            Return Me.prop_SecHorzBracesLeg
+        End Get
+        Set
+            Me.prop_SecHorzBracesLeg = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Sort Capacity Reports By Component"), DisplayName("SortByComponent")>
+    Public Property SortByComponent() As Boolean
+        Get
+            Return Me.prop_SortByComponent
+        End Get
+        Set
+            Me.prop_SortByComponent = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("SR Members Have Cut Ends"), DisplayName("SRCutEnds")>
+    Public Property SRCutEnds() As Boolean
+        Get
+            Return Me.prop_SRCutEnds
+        End Get
+        Set
+            Me.prop_SRCutEnds = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("SR Members Are Concentric"), DisplayName("SRConcentric")>
+    Public Property SRConcentric() As Boolean
+        Get
+            Return Me.prop_SRConcentric
+        End Get
+        Set
+            Me.prop_SRConcentric = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Include Angle Block Shear Check"), DisplayName("CalcBlockShear")>
+    Public Property CalcBlockShear() As Boolean
+        Get
+            Return Me.prop_CalcBlockShear
+        End Get
+        Set
+            Me.prop_CalcBlockShear = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Use Diamond Inner Bracing"), DisplayName("Use4SidedDiamondBracing")>
+    Public Property Use4SidedDiamondBracing() As Boolean
+        Get
+            Return Me.prop_Use4SidedDiamondBracing
+        End Get
+        Set
+            Me.prop_Use4SidedDiamondBracing = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Triangulate Diamond Inner Bracing"), DisplayName("TriangulateInnerBracing")>
+    Public Property TriangulateInnerBracing() As Boolean
+        Get
+            Return Me.prop_TriangulateInnerBracing
+        End Get
+        Set
+            Me.prop_TriangulateInnerBracing = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Print Carrier/Notes"), DisplayName("PrintCarrierNotes")>
+    Public Property PrintCarrierNotes() As Boolean
+        Get
+            Return Me.prop_PrintCarrierNotes
+        End Get
+        Set
+            Me.prop_PrintCarrierNotes = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Add IBC .6D+W Combination"), DisplayName("AddIBCWindCase")>
+    Public Property AddIBCWindCase() As Boolean
+        Get
+            Return Me.prop_AddIBCWindCase
+        End Get
+        Set
+            Me.prop_AddIBCWindCase = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Leg Bolts Are At Top Of Section"), DisplayName("LegBoltsAtTop")>
+    Public Property LegBoltsAtTop() As Boolean
+        Get
+            Return Me.prop_LegBoltsAtTop
+        End Get
+        Set
+            Me.prop_LegBoltsAtTop = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_MinBracingResistance")>
+    Public Property UseTIA222Exemptions_MinBracingResistance() As Boolean
+        Get
+            Return Me.prop_UseTIA222Exemptions_MinBracingResistance
+        End Get
+        Set
+            Me.prop_UseTIA222Exemptions_MinBracingResistance = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_TensionSplice")>
+    Public Property UseTIA222Exemptions_TensionSplice() As Boolean
+        Get
+            Return Me.prop_UseTIA222Exemptions_TensionSplice
+        End Get
+        Set
+            Me.prop_UseTIA222Exemptions_TensionSplice = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description(""), DisplayName("IgnoreKLryFor60DegAngleLegs")>
+    Public Property IgnoreKLryFor60DegAngleLegs() As Boolean
+        Get
+            Return Me.prop_IgnoreKLryFor60DegAngleLegs
+        End Get
+        Set
+            Me.prop_IgnoreKLryFor60DegAngleLegs = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Consider Feed Line Torque"), DisplayName("UseFeedlineTorque")>
+    Public Property UseFeedlineTorque() As Boolean
+        Get
+            Return Me.prop_UseFeedlineTorque
+        End Get
+        Set
+            Me.prop_UseFeedlineTorque = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Assume Legs Pinned"), DisplayName("UsePinnedElements")>
+    Public Property UsePinnedElements() As Boolean
+        Get
+            Return Me.prop_UsePinnedElements
+        End Get
+        Set
+            Me.prop_UsePinnedElements = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Assume Rigid Index Plate"), DisplayName("UseRigidIndex")>
+    Public Property UseRigidIndex() As Boolean
+        Get
+            Return Me.prop_UseRigidIndex
+        End Get
+        Set
+            Me.prop_UseRigidIndex = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Retension Guys To Initial Tension"), DisplayName("UseTrueCable")>
+    Public Property UseTrueCable() As Boolean
+        Get
+            Return Me.prop_UseTrueCable
+        End Get
+        Set
+            Me.prop_UseTrueCable = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Use ASCE 10 X-Brace Ly Rules"), DisplayName("UseASCELy")>
+    Public Property UseASCELy() As Boolean
+        Get
+            Return Me.prop_UseASCELy
+        End Get
+        Set
+            Me.prop_UseASCELy = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Calculate Forces in Supporing Bracing Members"), DisplayName("CalcBracingForces")>
+    Public Property CalcBracingForces() As Boolean
+        Get
+            Return Me.prop_CalcBracingForces
+        End Get
+        Set
+            Me.prop_CalcBracingForces = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Ignore Redundant Bracing in FEA"), DisplayName("IgnoreBracingFEA")>
+    Public Property IgnoreBracingFEA() As Boolean
+        Get
+            Return Me.prop_IgnoreBracingFEA
+        End Get
+        Set
+            Me.prop_IgnoreBracingFEA = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Bypass Mast Stability Checks"), DisplayName("BypassStabilityChecks")>
+    Public Property BypassStabilityChecks() As Boolean
+        Get
+            Return Me.prop_BypassStabilityChecks
+        End Get
+        Set
+            Me.prop_BypassStabilityChecks = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Project Wind Area Of Appurtenances"), DisplayName("UseWindProjection")>
+    Public Property UseWindProjection() As Boolean
+        Get
+            Return Me.prop_UseWindProjection
+        End Get
+        Set
+            Me.prop_UseWindProjection = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("Use Azimuth Dish Coefficients"), DisplayName("UseDishCoeff")>
+    Public Property UseDishCoeff() As Boolean
+        Get
+            Return Me.prop_UseDishCoeff
+        End Get
+        Set
+            Me.prop_UseDishCoeff = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description("AutoCalc Torque Arm Area"), DisplayName("AutoCalcTorqArmArea")>
+    Public Property AutoCalcTorqArmArea() As Boolean
+        Get
+            Return Me.prop_AutoCalcTorqArmArea
+        End Get
+        Set
+            Me.prop_AutoCalcTorqArmArea = Value
+        End Set
+    End Property
+
+    <Category("TNX Options"), Description(""), DisplayName("Foundation Stiffness Options")>
+    Public Property foundationStiffness() As tnxFoundaionStiffness
+        Get
+            Return Me.prop_foundationStiffness
+        End Get
+        Set
+            Me.prop_foundationStiffness = Value
+        End Set
+    End Property
+
+    <Category("TNX Options"), Description(""), DisplayName("Default Girt Offsets Options")>
+    Public Property defaultGirtOffsets() As tnxDefaultGirtOffsets
+        Get
+            Return Me.prop_defaultGirtOffsets
+        End Get
+        Set
+            Me.prop_defaultGirtOffsets = Value
+        End Set
+    End Property
+
+    <Category("TNX Options"), Description(""), DisplayName("Cantilever Pole Options")>
+    Public Property cantileverPoles() As tnxCantileverPoles
+        Get
+            Return Me.prop_cantileverPoles
+        End Get
+        Set
+            Me.prop_cantileverPoles = Value
+        End Set
+    End Property
+
+    <Category("TNX Options"), Description(""), DisplayName("Wind Direction Options")>
+    Public Property windDirections() As tnxWindDirections
+        Get
+            Return Me.prop_windDirections
+        End Get
+        Set
+            Me.prop_windDirections = Value
+        End Set
+    End Property
+
+    <Category("TNX Options"), Description(""), DisplayName("Miscellaneous Options")>
+    Public Property misclOptions() As tnxMisclOptions
+        Get
+            Return Me.prop_misclOptions
+        End Get
+        Set
+            Me.prop_misclOptions = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxFoundaionStiffness
+    Private prop_MastVert As Double
+    Private prop_MastHorz As Double
+    Private prop_GuyVert As Double
+    Private prop_GuyHorz As Double
+
+    <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastVert")>
+    Public Property MastVert() As Double
+        Get
+            Return Me.prop_MastVert
+        End Get
+        Set
+            Me.prop_MastVert = Value
+        End Set
+    End Property
+    <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastHorz")>
+    Public Property MastHorz() As Double
+        Get
+            Return Me.prop_MastHorz
+        End Get
+        Set
+            Me.prop_MastHorz = Value
+        End Set
+    End Property
+    <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyVert")>
+    Public Property GuyVert() As Double
+        Get
+            Return Me.prop_GuyVert
+        End Get
+        Set
+            Me.prop_GuyVert = Value
+        End Set
+    End Property
+    <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyHorz")>
+    Public Property GuyHorz() As Double
+        Get
+            Return Me.prop_GuyHorz
+        End Get
+        Set
+            Me.prop_GuyHorz = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxDefaultGirtOffsets
+    Private prop_GirtOffset As Double
+    Private prop_GirtOffsetLatticedPole As Double
+    Private prop_OffsetBotGirt As Boolean
+
+    <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffset")>
+    Public Property GirtOffset() As Double
+        Get
+            Return Me.prop_GirtOffset
+        End Get
+        Set
+            Me.prop_GirtOffset = Value
+        End Set
+    End Property
+    <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffsetLatticedPole")>
+    Public Property GirtOffsetLatticedPole() As Double
+        Get
+            Return Me.prop_GirtOffsetLatticedPole
+        End Get
+        Set
+            Me.prop_GirtOffsetLatticedPole = Value
+        End Set
+    End Property
+    <Category("TNX Default Girt Offset Options"), Description("offset girt at foundation"), DisplayName("OffsetBotGirt")>
+    Public Property OffsetBotGirt() As Boolean
+        Get
+            Return Me.prop_OffsetBotGirt
+        End Get
+        Set
+            Me.prop_OffsetBotGirt = Value
+        End Set
+    End Property
+End Class
+
+Partial Public Class tnxCantileverPoles
+    Private prop_CheckVonMises As Boolean
+    Private prop_SocketTopMount As Boolean
+    Private prop_PrintMonopoleAtIncrements As Boolean
+    Private prop_UseSubCriticalFlow As Boolean
+    Private prop_AssumePoleWithNoAttachments As Boolean
+    Private prop_AssumePoleWithShroud As Boolean
+    Private prop_PoleCornerRadiusKnown As Boolean
+    Private prop_CantKFactor As Double
+
+    <Category("TNX Cantilever Pole Options"), Description(")Include Shear-Torsion Interaction"), DisplayName("CheckVonMises")>
+    Public Property CheckVonMises() As Boolean
+        Get
+            Return Me.prop_CheckVonMises
+        End Get
+        Set
+            Me.prop_CheckVonMises = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Use Top Mounted Socket"), DisplayName("SocketTopMount")>
+    Public Property SocketTopMount() As Boolean
+        Get
+            Return Me.prop_SocketTopMount
+        End Get
+        Set
+            Me.prop_SocketTopMount = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Print Pole Stresses at Increments"), DisplayName("PrintMonopoleAtIncrements")>
+    Public Property PrintMonopoleAtIncrements() As Boolean
+        Get
+            Return Me.prop_PrintMonopoleAtIncrements
+        End Get
+        Set
+            Me.prop_PrintMonopoleAtIncrements = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Always Yse Sub-Critical Flow"), DisplayName("UseSubCriticalFlow")>
+    Public Property UseSubCriticalFlow() As Boolean
+        Get
+            Return Me.prop_UseSubCriticalFlow
+        End Get
+        Set
+            Me.prop_UseSubCriticalFlow = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Pole Without Linear Attachments"), DisplayName("AssumePoleWithNoAttachments")>
+    Public Property AssumePoleWithNoAttachments() As Boolean
+        Get
+            Return Me.prop_AssumePoleWithNoAttachments
+        End Get
+        Set
+            Me.prop_AssumePoleWithNoAttachments = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Pole With Shroud or No Appurtenances"), DisplayName("AssumePoleWithShroud")>
+    Public Property AssumePoleWithShroud() As Boolean
+        Get
+            Return Me.prop_AssumePoleWithShroud
+        End Get
+        Set
+            Me.prop_AssumePoleWithShroud = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Outside and Inside Corner Radii Are Known"), DisplayName("PoleCornerRadiusKnown")>
+    Public Property PoleCornerRadiusKnown() As Boolean
+        Get
+            Return Me.prop_PoleCornerRadiusKnown
+        End Get
+        Set
+            Me.prop_PoleCornerRadiusKnown = Value
+        End Set
+    End Property
+    <Category("TNX Cantilever Pole Options"), Description("Cantilevered Poles K Factor"), DisplayName("CantKFactor")>
+    Public Property CantKFactor() As Double
+        Get
+            Return Me.prop_CantKFactor
+        End Get
+        Set
+            Me.prop_CantKFactor = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxWindDirections
+    Private prop_WindDirOption As Integer
+    Private prop_WindDir0_0 As Boolean
+    Private prop_WindDir0_1 As Boolean
+    Private prop_WindDir0_2 As Boolean
+    Private prop_WindDir0_3 As Boolean
+    Private prop_WindDir0_4 As Boolean
+    Private prop_WindDir0_5 As Boolean
+    Private prop_WindDir0_6 As Boolean
+    Private prop_WindDir0_7 As Boolean
+    Private prop_WindDir0_8 As Boolean
+    Private prop_WindDir0_9 As Boolean
+    Private prop_WindDir0_10 As Boolean
+    Private prop_WindDir0_11 As Boolean
+    Private prop_WindDir0_12 As Boolean
+    Private prop_WindDir0_13 As Boolean
+    Private prop_WindDir0_14 As Boolean
+    Private prop_WindDir0_15 As Boolean
+    Private prop_WindDir1_0 As Boolean
+    Private prop_WindDir1_1 As Boolean
+    Private prop_WindDir1_2 As Boolean
+    Private prop_WindDir1_3 As Boolean
+    Private prop_WindDir1_4 As Boolean
+    Private prop_WindDir1_5 As Boolean
+    Private prop_WindDir1_6 As Boolean
+    Private prop_WindDir1_7 As Boolean
+    Private prop_WindDir1_8 As Boolean
+    Private prop_WindDir1_9 As Boolean
+    Private prop_WindDir1_10 As Boolean
+    Private prop_WindDir1_11 As Boolean
+    Private prop_WindDir1_12 As Boolean
+    Private prop_WindDir1_13 As Boolean
+    Private prop_WindDir1_14 As Boolean
+    Private prop_WindDir1_15 As Boolean
+    Private prop_WindDir2_0 As Boolean
+    Private prop_WindDir2_1 As Boolean
+    Private prop_WindDir2_2 As Boolean
+    Private prop_WindDir2_3 As Boolean
+    Private prop_WindDir2_4 As Boolean
+    Private prop_WindDir2_5 As Boolean
+    Private prop_WindDir2_6 As Boolean
+    Private prop_WindDir2_7 As Boolean
+    Private prop_WindDir2_8 As Boolean
+    Private prop_WindDir2_9 As Boolean
+    Private prop_WindDir2_10 As Boolean
+    Private prop_WindDir2_11 As Boolean
+    Private prop_WindDir2_12 As Boolean
+    Private prop_WindDir2_13 As Boolean
+    Private prop_WindDir2_14 As Boolean
+    Private prop_WindDir2_15 As Boolean
+    Private prop_SuppressWindPatternLoading As Boolean
+
+    <Category("TNX Wind Direction Options"), Description("Wind Directions - 0 = Basic 3, 1 = All, 2 = Custom"), DisplayName("WindDirOption")>
+    Public Property WindDirOption() As Integer
+        Get
+            Return Me.prop_WindDirOption
+        End Get
+        Set
+            Me.prop_WindDirOption = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 0 deg"), DisplayName("WindDir0_0")>
+    Public Property WindDir0_0() As Boolean
+        Get
+            Return Me.prop_WindDir0_0
+        End Get
+        Set
+            Me.prop_WindDir0_0 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 30 deg"), DisplayName("WindDir0_1")>
+    Public Property WindDir0_1() As Boolean
+        Get
+            Return Me.prop_WindDir0_1
+        End Get
+        Set
+            Me.prop_WindDir0_1 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 45 deg"), DisplayName("WindDir0_2")>
+    Public Property WindDir0_2() As Boolean
+        Get
+            Return Me.prop_WindDir0_2
+        End Get
+        Set
+            Me.prop_WindDir0_2 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 60 deg"), DisplayName("WindDir0_3")>
+    Public Property WindDir0_3() As Boolean
+        Get
+            Return Me.prop_WindDir0_3
+        End Get
+        Set
+            Me.prop_WindDir0_3 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 90 deg"), DisplayName("WindDir0_4")>
+    Public Property WindDir0_4() As Boolean
+        Get
+            Return Me.prop_WindDir0_4
+        End Get
+        Set
+            Me.prop_WindDir0_4 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 120 deg"), DisplayName("WindDir0_5")>
+    Public Property WindDir0_5() As Boolean
+        Get
+            Return Me.prop_WindDir0_5
+        End Get
+        Set
+            Me.prop_WindDir0_5 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 135 deg"), DisplayName("WindDir0_6")>
+    Public Property WindDir0_6() As Boolean
+        Get
+            Return Me.prop_WindDir0_6
+        End Get
+        Set
+            Me.prop_WindDir0_6 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 150 deg"), DisplayName("WindDir0_7")>
+    Public Property WindDir0_7() As Boolean
+        Get
+            Return Me.prop_WindDir0_7
+        End Get
+        Set
+            Me.prop_WindDir0_7 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 180 deg"), DisplayName("WindDir0_8")>
+    Public Property WindDir0_8() As Boolean
+        Get
+            Return Me.prop_WindDir0_8
+        End Get
+        Set
+            Me.prop_WindDir0_8 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 210 deg"), DisplayName("WindDir0_9")>
+    Public Property WindDir0_9() As Boolean
+        Get
+            Return Me.prop_WindDir0_9
+        End Get
+        Set
+            Me.prop_WindDir0_9 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 225 deg"), DisplayName("WindDir0_10")>
+    Public Property WindDir0_10() As Boolean
+        Get
+            Return Me.prop_WindDir0_10
+        End Get
+        Set
+            Me.prop_WindDir0_10 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 240 deg"), DisplayName("WindDir0_11")>
+    Public Property WindDir0_11() As Boolean
+        Get
+            Return Me.prop_WindDir0_11
+        End Get
+        Set
+            Me.prop_WindDir0_11 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 270 deg"), DisplayName("WindDir0_12")>
+    Public Property WindDir0_12() As Boolean
+        Get
+            Return Me.prop_WindDir0_12
+        End Get
+        Set
+            Me.prop_WindDir0_12 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 300 deg"), DisplayName("WindDir0_13")>
+    Public Property WindDir0_13() As Boolean
+        Get
+            Return Me.prop_WindDir0_13
+        End Get
+        Set
+            Me.prop_WindDir0_13 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 315 deg"), DisplayName("WindDir0_14")>
+    Public Property WindDir0_14() As Boolean
+        Get
+            Return Me.prop_WindDir0_14
+        End Get
+        Set
+            Me.prop_WindDir0_14 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind No Ice 330 deg"), DisplayName("WindDir0_15")>
+    Public Property WindDir0_15() As Boolean
+        Get
+            Return Me.prop_WindDir0_15
+        End Get
+        Set
+            Me.prop_WindDir0_15 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 0 deg"), DisplayName("WindDir1_0")>
+    Public Property WindDir1_0() As Boolean
+        Get
+            Return Me.prop_WindDir1_0
+        End Get
+        Set
+            Me.prop_WindDir1_0 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 30 deg"), DisplayName("WindDir1_1")>
+    Public Property WindDir1_1() As Boolean
+        Get
+            Return Me.prop_WindDir1_1
+        End Get
+        Set
+            Me.prop_WindDir1_1 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 45 deg"), DisplayName("WindDir1_2")>
+    Public Property WindDir1_2() As Boolean
+        Get
+            Return Me.prop_WindDir1_2
+        End Get
+        Set
+            Me.prop_WindDir1_2 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 60 deg"), DisplayName("WindDir1_3")>
+    Public Property WindDir1_3() As Boolean
+        Get
+            Return Me.prop_WindDir1_3
+        End Get
+        Set
+            Me.prop_WindDir1_3 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 90 deg"), DisplayName("WindDir1_4")>
+    Public Property WindDir1_4() As Boolean
+        Get
+            Return Me.prop_WindDir1_4
+        End Get
+        Set
+            Me.prop_WindDir1_4 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 120 deg"), DisplayName("WindDir1_5")>
+    Public Property WindDir1_5() As Boolean
+        Get
+            Return Me.prop_WindDir1_5
+        End Get
+        Set
+            Me.prop_WindDir1_5 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 135 deg"), DisplayName("WindDir1_6")>
+    Public Property WindDir1_6() As Boolean
+        Get
+            Return Me.prop_WindDir1_6
+        End Get
+        Set
+            Me.prop_WindDir1_6 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 150 deg"), DisplayName("WindDir1_7")>
+    Public Property WindDir1_7() As Boolean
+        Get
+            Return Me.prop_WindDir1_7
+        End Get
+        Set
+            Me.prop_WindDir1_7 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 180 deg"), DisplayName("WindDir1_8")>
+    Public Property WindDir1_8() As Boolean
+        Get
+            Return Me.prop_WindDir1_8
+        End Get
+        Set
+            Me.prop_WindDir1_8 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 210 deg"), DisplayName("WindDir1_9")>
+    Public Property WindDir1_9() As Boolean
+        Get
+            Return Me.prop_WindDir1_9
+        End Get
+        Set
+            Me.prop_WindDir1_9 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 225 deg"), DisplayName("WindDir1_10")>
+    Public Property WindDir1_10() As Boolean
+        Get
+            Return Me.prop_WindDir1_10
+        End Get
+        Set
+            Me.prop_WindDir1_10 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 240 deg"), DisplayName("WindDir1_11")>
+    Public Property WindDir1_11() As Boolean
+        Get
+            Return Me.prop_WindDir1_11
+        End Get
+        Set
+            Me.prop_WindDir1_11 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 270 deg"), DisplayName("WindDir1_12")>
+    Public Property WindDir1_12() As Boolean
+        Get
+            Return Me.prop_WindDir1_12
+        End Get
+        Set
+            Me.prop_WindDir1_12 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 300 deg"), DisplayName("WindDir1_13")>
+    Public Property WindDir1_13() As Boolean
+        Get
+            Return Me.prop_WindDir1_13
+        End Get
+        Set
+            Me.prop_WindDir1_13 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 315 deg"), DisplayName("WindDir1_14")>
+    Public Property WindDir1_14() As Boolean
+        Get
+            Return Me.prop_WindDir1_14
+        End Get
+        Set
+            Me.prop_WindDir1_14 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Ice 330 deg"), DisplayName("WindDir1_15")>
+    Public Property WindDir1_15() As Boolean
+        Get
+            Return Me.prop_WindDir1_15
+        End Get
+        Set
+            Me.prop_WindDir1_15 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 0 deg"), DisplayName("WindDir2_0")>
+    Public Property WindDir2_0() As Boolean
+        Get
+            Return Me.prop_WindDir2_0
+        End Get
+        Set
+            Me.prop_WindDir2_0 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 30 deg"), DisplayName("WindDir2_1")>
+    Public Property WindDir2_1() As Boolean
+        Get
+            Return Me.prop_WindDir2_1
+        End Get
+        Set
+            Me.prop_WindDir2_1 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 45 deg"), DisplayName("WindDir2_2")>
+    Public Property WindDir2_2() As Boolean
+        Get
+            Return Me.prop_WindDir2_2
+        End Get
+        Set
+            Me.prop_WindDir2_2 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 60 deg"), DisplayName("WindDir2_3")>
+    Public Property WindDir2_3() As Boolean
+        Get
+            Return Me.prop_WindDir2_3
+        End Get
+        Set
+            Me.prop_WindDir2_3 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 90 deg"), DisplayName("WindDir2_4")>
+    Public Property WindDir2_4() As Boolean
+        Get
+            Return Me.prop_WindDir2_4
+        End Get
+        Set
+            Me.prop_WindDir2_4 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 120 deg"), DisplayName("WindDir2_5")>
+    Public Property WindDir2_5() As Boolean
+        Get
+            Return Me.prop_WindDir2_5
+        End Get
+        Set
+            Me.prop_WindDir2_5 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 135 deg"), DisplayName("WindDir2_6")>
+    Public Property WindDir2_6() As Boolean
+        Get
+            Return Me.prop_WindDir2_6
+        End Get
+        Set
+            Me.prop_WindDir2_6 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 150 deg"), DisplayName("WindDir2_7")>
+    Public Property WindDir2_7() As Boolean
+        Get
+            Return Me.prop_WindDir2_7
+        End Get
+        Set
+            Me.prop_WindDir2_7 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 180 deg"), DisplayName("WindDir2_8")>
+    Public Property WindDir2_8() As Boolean
+        Get
+            Return Me.prop_WindDir2_8
+        End Get
+        Set
+            Me.prop_WindDir2_8 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 210 deg"), DisplayName("WindDir2_9")>
+    Public Property WindDir2_9() As Boolean
+        Get
+            Return Me.prop_WindDir2_9
+        End Get
+        Set
+            Me.prop_WindDir2_9 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 225 deg"), DisplayName("WindDir2_10")>
+    Public Property WindDir2_10() As Boolean
+        Get
+            Return Me.prop_WindDir2_10
+        End Get
+        Set
+            Me.prop_WindDir2_10 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 240 deg"), DisplayName("WindDir2_11")>
+    Public Property WindDir2_11() As Boolean
+        Get
+            Return Me.prop_WindDir2_11
+        End Get
+        Set
+            Me.prop_WindDir2_11 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 270 deg"), DisplayName("WindDir2_12")>
+    Public Property WindDir2_12() As Boolean
+        Get
+            Return Me.prop_WindDir2_12
+        End Get
+        Set
+            Me.prop_WindDir2_12 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 300 deg"), DisplayName("WindDir2_13")>
+    Public Property WindDir2_13() As Boolean
+        Get
+            Return Me.prop_WindDir2_13
+        End Get
+        Set
+            Me.prop_WindDir2_13 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 315 deg"), DisplayName("WindDir2_14")>
+    Public Property WindDir2_14() As Boolean
+        Get
+            Return Me.prop_WindDir2_14
+        End Get
+        Set
+            Me.prop_WindDir2_14 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Service 330 deg"), DisplayName("WindDir2_15")>
+    Public Property WindDir2_15() As Boolean
+        Get
+            Return Me.prop_WindDir2_15
+        End Get
+        Set
+            Me.prop_WindDir2_15 = Value
+        End Set
+    End Property
+    <Category("TNX Wind Direction Options"), Description("Wind Directions - Suppress Generation of Pattrn Loading"), DisplayName("SuppressWindPatternLoading")>
+    Public Property SuppressWindPatternLoading() As Boolean
+        Get
+            Return Me.prop_SuppressWindPatternLoading
+        End Get
+        Set
+            Me.prop_SuppressWindPatternLoading = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxMisclOptions
+    Private prop_HogRodTakeup As Double
+    Private prop_RadiusSampleDist As Double
+
+    <Category("TNX Miscl Options"), Description("Tension Only Take-Up"), DisplayName("HogRodTakeup")>
+    Public Property HogRodTakeup() As Double
+        Get
+            Return Me.prop_HogRodTakeup
+        End Get
+        Set
+            Me.prop_HogRodTakeup = Value
+        End Set
+    End Property
+    <Category("TNX Miscl Options"), Description("Sampling Distance"), DisplayName("RadiusSampleDist")>
+    Public Property RadiusSampleDist() As Double
+        Get
+            Return Me.prop_RadiusSampleDist
+        End Get
+        Set
+            Me.prop_RadiusSampleDist = Value
+        End Set
+    End Property
+
+End Class
+
+
+#End Region
+
+#Region "Settings"
+
+Partial Public Class tnxSettings
+    'Other settings are not saved in ERI file
+    Private prop_USUnits As New tnxUnits()
+    'Private prop_SIunits As tnxSIUnits 
+    Private prop_projectInfo As New tnxProjectInfo()
+    Private prop_userInfo As New tnxUserInfo()
+
+    <Category("TNX Setings"), Description(""), DisplayName("US Units")>
+    Public Property USUnits() As tnxUnits
+        Get
+            Return Me.prop_USUnits
+        End Get
+        Set
+            Me.prop_USUnits = Value
+        End Set
+    End Property
+    <Category("TNX Setings"), Description(""), DisplayName("Project Info")>
+    Public Property projectInfo() As tnxProjectInfo
+        Get
+            Return Me.prop_projectInfo
+        End Get
+        Set
+            Me.prop_projectInfo = Value
+        End Set
+    End Property
+    <Category("TNX Setings"), Description(""), DisplayName("User Info")>
+    Public Property userInfo() As tnxUserInfo
+        Get
+            Return Me.prop_userInfo
+        End Get
+        Set
+            Me.prop_userInfo = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxSolutionSettings
+    Private prop_SolutionUsePDelta As Boolean
+    Private prop_SolutionMinStiffness As Double
+    Private prop_SolutionMaxStiffness As Double
+    Private prop_SolutionMaxCycles As Integer
+    Private prop_SolutionPower As Double
+    Private prop_SolutionTolerance As Double
+
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionUsePDelta")>
+    Public Property SolutionUsePDelta() As Boolean
+        Get
+            Return Me.prop_SolutionUsePDelta
+        End Get
+        Set
+            Me.prop_SolutionUsePDelta = Value
+        End Set
+    End Property
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMinStiffness")>
+    Public Property SolutionMinStiffness() As Double
+        Get
+            Return Me.prop_SolutionMinStiffness
+        End Get
+        Set
+            Me.prop_SolutionMinStiffness = Value
+        End Set
+    End Property
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxStiffness")>
+    Public Property SolutionMaxStiffness() As Double
+        Get
+            Return Me.prop_SolutionMaxStiffness
+        End Get
+        Set
+            Me.prop_SolutionMaxStiffness = Value
+        End Set
+    End Property
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxCycles")>
+    Public Property SolutionMaxCycles() As Integer
+        Get
+            Return Me.prop_SolutionMaxCycles
+        End Get
+        Set
+            Me.prop_SolutionMaxCycles = Value
+        End Set
+    End Property
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionPower")>
+    Public Property SolutionPower() As Double
+        Get
+            Return Me.prop_SolutionPower
+        End Get
+        Set
+            Me.prop_SolutionPower = Value
+        End Set
+    End Property
+    <Category("TNX Solution Options"), Description(""), DisplayName("SolutionTolerance")>
+    Public Property SolutionTolerance() As Double
+        Get
+            Return Me.prop_SolutionTolerance
+        End Get
+        Set
+            Me.prop_SolutionTolerance = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxReportSettings
+    Private prop_ReportInputCosts As Boolean
+    Private prop_ReportInputGeometry As Boolean
+    Private prop_ReportInputOptions As Boolean
+    Private prop_ReportMaxForces As Boolean
+    Private prop_ReportInputMap As Boolean
+    Private prop_CostReportOutputType As String
+    Private prop_CapacityReportOutputType As String
+    Private prop_ReportPrintForceTotals As Boolean
+    Private prop_ReportPrintForceDetails As Boolean
+    Private prop_ReportPrintMastVectors As Boolean
+    Private prop_ReportPrintAntPoleVectors As Boolean
+    Private prop_ReportPrintDiscreteVectors As Boolean
+    Private prop_ReportPrintDishVectors As Boolean
+    Private prop_ReportPrintFeedTowerVectors As Boolean
+    Private prop_ReportPrintUserLoadVectors As Boolean
+    Private prop_ReportPrintPressures As Boolean
+    Private prop_ReportPrintAppurtForces As Boolean
+    Private prop_ReportPrintGuyForces As Boolean
+    Private prop_ReportPrintGuyStressing As Boolean
+    Private prop_ReportPrintDeflections As Boolean
+    Private prop_ReportPrintReactions As Boolean
+    Private prop_ReportPrintStressChecks As Boolean
+    Private prop_ReportPrintBoltChecks As Boolean
+    Private prop_ReportPrintInputGVerificationTables As Boolean
+    Private prop_ReportPrintOutputGVerificationTables As Boolean
+
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputCosts")>
+    Public Property ReportInputCosts() As Boolean
+        Get
+            Return Me.prop_ReportInputCosts
+        End Get
+        Set
+            Me.prop_ReportInputCosts = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputGeometry")>
+    Public Property ReportInputGeometry() As Boolean
+        Get
+            Return Me.prop_ReportInputGeometry
+        End Get
+        Set
+            Me.prop_ReportInputGeometry = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputOptions")>
+    Public Property ReportInputOptions() As Boolean
+        Get
+            Return Me.prop_ReportInputOptions
+        End Get
+        Set
+            Me.prop_ReportInputOptions = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportMaxForces")>
+    Public Property ReportMaxForces() As Boolean
+        Get
+            Return Me.prop_ReportMaxForces
+        End Get
+        Set
+            Me.prop_ReportMaxForces = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputMap")>
+    Public Property ReportInputMap() As Boolean
+        Get
+            Return Me.prop_ReportInputMap
+        End Get
+        Set
+            Me.prop_ReportInputMap = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description("{No Capacity Output, Capacity Summary, Capacity Details}"), DisplayName("CostReportOutputType")>
+    Public Property CostReportOutputType() As String
+        Get
+            Return Me.prop_CostReportOutputType
+        End Get
+        Set
+            Me.prop_CostReportOutputType = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description("{No Cost Output, Cost Summary, Cost Details}"), DisplayName("CapacityReportOutputType")>
+    Public Property CapacityReportOutputType() As String
+        Get
+            Return Me.prop_CapacityReportOutputType
+        End Get
+        Set
+            Me.prop_CapacityReportOutputType = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceTotals")>
+    Public Property ReportPrintForceTotals() As Boolean
+        Get
+            Return Me.prop_ReportPrintForceTotals
+        End Get
+        Set
+            Me.prop_ReportPrintForceTotals = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceDetails")>
+    Public Property ReportPrintForceDetails() As Boolean
+        Get
+            Return Me.prop_ReportPrintForceDetails
+        End Get
+        Set
+            Me.prop_ReportPrintForceDetails = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintMastVectors")>
+    Public Property ReportPrintMastVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintMastVectors
+        End Get
+        Set
+            Me.prop_ReportPrintMastVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAntPoleVectors")>
+    Public Property ReportPrintAntPoleVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintAntPoleVectors
+        End Get
+        Set
+            Me.prop_ReportPrintAntPoleVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDiscreteVectors")>
+    Public Property ReportPrintDiscreteVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintDiscreteVectors
+        End Get
+        Set
+            Me.prop_ReportPrintDiscreteVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDishVectors")>
+    Public Property ReportPrintDishVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintDishVectors
+        End Get
+        Set
+            Me.prop_ReportPrintDishVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintFeedTowerVectors")>
+    Public Property ReportPrintFeedTowerVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintFeedTowerVectors
+        End Get
+        Set
+            Me.prop_ReportPrintFeedTowerVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintUserLoadVectors")>
+    Public Property ReportPrintUserLoadVectors() As Boolean
+        Get
+            Return Me.prop_ReportPrintUserLoadVectors
+        End Get
+        Set
+            Me.prop_ReportPrintUserLoadVectors = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintPressures")>
+    Public Property ReportPrintPressures() As Boolean
+        Get
+            Return Me.prop_ReportPrintPressures
+        End Get
+        Set
+            Me.prop_ReportPrintPressures = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAppurtForces")>
+    Public Property ReportPrintAppurtForces() As Boolean
+        Get
+            Return Me.prop_ReportPrintAppurtForces
+        End Get
+        Set
+            Me.prop_ReportPrintAppurtForces = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyForces")>
+    Public Property ReportPrintGuyForces() As Boolean
+        Get
+            Return Me.prop_ReportPrintGuyForces
+        End Get
+        Set
+            Me.prop_ReportPrintGuyForces = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyStressing")>
+    Public Property ReportPrintGuyStressing() As Boolean
+        Get
+            Return Me.prop_ReportPrintGuyStressing
+        End Get
+        Set
+            Me.prop_ReportPrintGuyStressing = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDeflections")>
+    Public Property ReportPrintDeflections() As Boolean
+        Get
+            Return Me.prop_ReportPrintDeflections
+        End Get
+        Set
+            Me.prop_ReportPrintDeflections = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintReactions")>
+    Public Property ReportPrintReactions() As Boolean
+        Get
+            Return Me.prop_ReportPrintReactions
+        End Get
+        Set
+            Me.prop_ReportPrintReactions = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintStressChecks")>
+    Public Property ReportPrintStressChecks() As Boolean
+        Get
+            Return Me.prop_ReportPrintStressChecks
+        End Get
+        Set
+            Me.prop_ReportPrintStressChecks = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintBoltChecks")>
+    Public Property ReportPrintBoltChecks() As Boolean
+        Get
+            Return Me.prop_ReportPrintBoltChecks
+        End Get
+        Set
+            Me.prop_ReportPrintBoltChecks = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintInputGVerificationTables")>
+    Public Property ReportPrintInputGVerificationTables() As Boolean
+        Get
+            Return Me.prop_ReportPrintInputGVerificationTables
+        End Get
+        Set
+            Me.prop_ReportPrintInputGVerificationTables = Value
+        End Set
+    End Property
+    <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintOutputGVerificationTables")>
+    Public Property ReportPrintOutputGVerificationTables() As Boolean
+        Get
+            Return Me.prop_ReportPrintOutputGVerificationTables
+        End Get
+        Set
+            Me.prop_ReportPrintOutputGVerificationTables = Value
+        End Set
+    End Property
+End Class
+
+Partial Public Class tnxMTOSettings
+    Private prop_IncludeCapacityNote As Boolean
+    Private prop_IncludeAppurtGraphics As Boolean
+    Private prop_DisplayNotes As Boolean
+    Private prop_DisplayReactions As Boolean
+    Private prop_DisplaySchedule As Boolean
+    Private prop_DisplayAppurtenanceTable As Boolean
+    Private prop_DisplayMaterialStrengthTable As Boolean
+    Private prop_Notes As New List(Of String)
+
+    <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeCapacityNote")>
+    Public Property IncludeCapacityNote() As Boolean
+        Get
+            Return Me.prop_IncludeCapacityNote
+        End Get
+        Set
+            Me.prop_IncludeCapacityNote = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeAppurtGraphics")>
+    Public Property IncludeAppurtGraphics() As Boolean
+        Get
+            Return Me.prop_IncludeAppurtGraphics
+        End Get
+        Set
+            Me.prop_IncludeAppurtGraphics = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayNotes")>
+    Public Property DisplayNotes() As Boolean
+        Get
+            Return Me.prop_DisplayNotes
+        End Get
+        Set
+            Me.prop_DisplayNotes = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayReactions")>
+    Public Property DisplayReactions() As Boolean
+        Get
+            Return Me.prop_DisplayReactions
+        End Get
+        Set
+            Me.prop_DisplayReactions = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("DisplaySchedule")>
+    Public Property DisplaySchedule() As Boolean
+        Get
+            Return Me.prop_DisplaySchedule
+        End Get
+        Set
+            Me.prop_DisplaySchedule = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayAppurtenanceTable")>
+    Public Property DisplayAppurtenanceTable() As Boolean
+        Get
+            Return Me.prop_DisplayAppurtenanceTable
+        End Get
+        Set
+            Me.prop_DisplayAppurtenanceTable = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayMaterialStrengthTable")>
+    Public Property DisplayMaterialStrengthTable() As Boolean
+        Get
+            Return Me.prop_DisplayMaterialStrengthTable
+        End Get
+        Set
+            Me.prop_DisplayMaterialStrengthTable = Value
+        End Set
+    End Property
+    <Category("TNX MTO Settings"), Description(""), DisplayName("Notes")>
+    Public Property Notes() As List(Of String)
+        Get
+            Return Me.prop_Notes
+        End Get
+        Set
+            Me.prop_Notes = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxProjectInfo
+
+    Private prop_DesignStandardSeries As String
+    Private prop_UnitsSystem As String
+    Private prop_ClientName As String
+    Private prop_ProjectName As String
+    Private prop_ProjectNumber As String
+    Private prop_CreatedBy As String
+    Private prop_CreatedOn As String
+    Private prop_LastUsedBy As String
+    Private prop_LastUsedOn As String
+    Private prop_VersionUsed As String
+
+    <Category("TNX Project Info"), Description("TIA/EIA or CSA-S37"), DisplayName("DesignStandardSeries")>
+    Public Property DesignStandardSeries() As String
+        Get
+            Return Me.prop_DesignStandardSeries
+        End Get
+        Set
+            Me.prop_DesignStandardSeries = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description("US or SI"), DisplayName("UnitsSystem")>
+    Public Property UnitsSystem() As String
+        Get
+            Return Me.prop_UnitsSystem
+        End Get
+        Set
+            Me.prop_UnitsSystem = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("ClientName")>
+    Public Property ClientName() As String
+        Get
+            Return Me.prop_ClientName
+        End Get
+        Set
+            Me.prop_ClientName = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("ProjectName")>
+    Public Property ProjectName() As String
+        Get
+            Return Me.prop_ProjectName
+        End Get
+        Set
+            Me.prop_ProjectName = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("ProjectNumber")>
+    Public Property ProjectNumber() As String
+        Get
+            Return Me.prop_ProjectNumber
+        End Get
+        Set
+            Me.prop_ProjectNumber = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("CreatedBy")>
+    Public Property CreatedBy() As String
+        Get
+            Return Me.prop_CreatedBy
+        End Get
+        Set
+            Me.prop_CreatedBy = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("CreatedOn")>
+    Public Property CreatedOn() As String
+        Get
+            Return Me.prop_CreatedOn
+        End Get
+        Set
+            Me.prop_CreatedOn = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("LastUsedBy")>
+    Public Property LastUsedBy() As String
+        Get
+            Return Me.prop_LastUsedBy
+        End Get
+        Set
+            Me.prop_LastUsedBy = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("LastUsedOn")>
+    Public Property LastUsedOn() As String
+        Get
+            Return Me.prop_LastUsedOn
+        End Get
+        Set
+            Me.prop_LastUsedOn = Value
+        End Set
+    End Property
+    <Category("TNX Project Info"), Description(""), DisplayName("VersionUsed")>
+    Public Property VersionUsed() As String
+        Get
+            Return Me.prop_VersionUsed
+        End Get
+        Set
+            Me.prop_VersionUsed = Value
+        End Set
+    End Property
+
+
+End Class
+
+Partial Public Class tnxUserInfo
+
+    Private prop_ViewerUserName As String
+    Private prop_ViewerCompanyName As String
+    Private prop_ViewerStreetAddress As String
+    Private prop_ViewerCityState As String
+    Private prop_ViewerPhone As String
+    Private prop_ViewerFAX As String
+    Private prop_ViewerLogo As String
+    Private prop_ViewerCompanyBitmap As String
+
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerUserName")>
+    Public Property ViewerUserName() As String
+        Get
+            Return Me.prop_ViewerUserName
+        End Get
+        Set
+            Me.prop_ViewerUserName = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyName")>
+    Public Property ViewerCompanyName() As String
+        Get
+            Return Me.prop_ViewerCompanyName
+        End Get
+        Set
+            Me.prop_ViewerCompanyName = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerStreetAddress")>
+    Public Property ViewerStreetAddress() As String
+        Get
+            Return Me.prop_ViewerStreetAddress
+        End Get
+        Set
+            Me.prop_ViewerStreetAddress = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerCityState")>
+    Public Property ViewerCityState() As String
+        Get
+            Return Me.prop_ViewerCityState
+        End Get
+        Set
+            Me.prop_ViewerCityState = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerPhone")>
+    Public Property ViewerPhone() As String
+        Get
+            Return Me.prop_ViewerPhone
+        End Get
+        Set
+            Me.prop_ViewerPhone = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerFAX")>
+    Public Property ViewerFAX() As String
+        Get
+            Return Me.prop_ViewerFAX
+        End Get
+        Set
+            Me.prop_ViewerFAX = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerLogo")>
+    Public Property ViewerLogo() As String
+        Get
+            Return Me.prop_ViewerLogo
+        End Get
+        Set
+            Me.prop_ViewerLogo = Value
+        End Set
+    End Property
+    <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyBitmap")>
+    Public Property ViewerCompanyBitmap() As String
+        Get
+            Return Me.prop_ViewerCompanyBitmap
+        End Get
+        Set
+            Me.prop_ViewerCompanyBitmap = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxUnits
+
+    Private prop_Length As New tnxLengthUnit()
+    Private prop_Coordinate As New tnxCoordinateUnit()
+    Private prop_Force As New tnxForceUnit()
+    Private prop_Load As New tnxLoadUnit()
+    Private prop_Moment As New tnxMomentUnit()
+    Private prop_Properties As New tnxPropertiesUnit()
+    Private prop_Pressure As New tnxPressureUnit()
+    Private prop_Velocity As New tnxVelocityUnit()
+    Private prop_Displacement As New tnxDisplacementUnit()
+    Private prop_Mass As New tnxMassUnit()
+    Private prop_Acceleration As New tnxAccelerationUnit()
+    Private prop_Stress As New tnxStressUnit()
+    Private prop_Density As New tnxDensityUnit()
+    Private prop_UnitWt As New tnxUnitWTUnit()
+    Private prop_Strength As New tnxStrengthUnit()
+    Private prop_Modulus As New tnxModulusUnit()
+    Private prop_Temperature As New tnxTempUnit()
+    Private prop_Printer As New tnxPrinterUnit()
+    Private prop_Rotation As New tnxRotationUnit()
+    Private prop_Spacing As New tnxSpacingUnit()
+
+    <Category("TNX Units"), Description(""), DisplayName("Length")>
+    Public Property Length() As tnxLengthUnit
+        Get
+            Return Me.prop_Length
+        End Get
+        Set
+            Me.prop_Length = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Coordinate")>
+    Public Property Coordinate() As tnxCoordinateUnit
+        Get
+            Return Me.prop_Coordinate
+        End Get
+        Set
+            Me.prop_Coordinate = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Force")>
+    Public Property Force() As tnxForceUnit
+        Get
+            Return Me.prop_Force
+        End Get
+        Set
+            Me.prop_Force = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Load")>
+    Public Property Load() As tnxLoadUnit
+        Get
+            Return Me.prop_Load
+        End Get
+        Set
+            Me.prop_Load = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Moment")>
+    Public Property Moment() As tnxMomentUnit
+        Get
+            Return Me.prop_Moment
+        End Get
+        Set
+            Me.prop_Moment = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Properties")>
+    Public Property Properties() As tnxPropertiesUnit
+        Get
+            Return Me.prop_Properties
+        End Get
+        Set
+            Me.prop_Properties = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Pressure")>
+    Public Property Pressure() As tnxPressureUnit
+        Get
+            Return Me.prop_Pressure
+        End Get
+        Set
+            Me.prop_Pressure = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Velocity")>
+    Public Property Velocity() As tnxVelocityUnit
+        Get
+            Return Me.prop_Velocity
+        End Get
+        Set
+            Me.prop_Velocity = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Displacement")>
+    Public Property Displacement() As tnxDisplacementUnit
+        Get
+            Return Me.prop_Displacement
+        End Get
+        Set
+            Me.prop_Displacement = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Mass")>
+    Public Property Mass() As tnxMassUnit
+        Get
+            Return Me.prop_Mass
+        End Get
+        Set
+            Me.prop_Mass = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Acceleration")>
+    Public Property Acceleration() As tnxAccelerationUnit
+        Get
+            Return Me.prop_Acceleration
+        End Get
+        Set
+            Me.prop_Acceleration = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Stress")>
+    Public Property Stress() As tnxStressUnit
+        Get
+            Return Me.prop_Stress
+        End Get
+        Set
+            Me.prop_Stress = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Density")>
+    Public Property Density() As tnxDensityUnit
+        Get
+            Return Me.prop_Density
+        End Get
+        Set
+            Me.prop_Density = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Unitwt")>
+    Public Property UnitWt() As tnxUnitWTUnit
+        Get
+            Return Me.prop_UnitWt
+        End Get
+        Set
+            Me.prop_UnitWt = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Strength")>
+    Public Property Strength() As tnxStrengthUnit
+        Get
+            Return Me.prop_Strength
+        End Get
+        Set
+            Me.prop_Strength = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Modulus")>
+    Public Property Modulus() As tnxModulusUnit
+        Get
+            Return Me.prop_Modulus
+        End Get
+        Set
+            Me.prop_Modulus = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Temperature")>
+    Public Property Temperature() As tnxTempUnit
+        Get
+            Return Me.prop_Temperature
+        End Get
+        Set
+            Me.prop_Temperature = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Printer")>
+    Public Property Printer() As tnxPrinterUnit
+        Get
+            Return Me.prop_Printer
+        End Get
+        Set
+            Me.prop_Printer = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Rotation")>
+    Public Property Rotation() As tnxRotationUnit
+        Get
+            Return Me.prop_Rotation
+        End Get
+        Set
+            Me.prop_Rotation = Value
+        End Set
+    End Property
+    <Category("TNX Units"), Description(""), DisplayName("Spacing")>
+    Public Property Spacing() As tnxSpacingUnit
+        Get
+            Return Me.prop_Spacing
+        End Get
+        Set
+            Me.prop_Spacing = Value
+        End Set
+    End Property
+
+End Class
+
+Partial Public Class tnxUnitProperty
     'Variables need to be public for inheritance
     Public prop_value As String
     Public prop_precision As Integer
@@ -9408,7 +17134,7 @@ Partial Public Class tnx_Unit_Property
         Me.value = new_value
 
     End Sub
-    Public Overridable Function Convert_to_EDS_Default(InputValue As Double) As Double
+    Public Overridable Function convertToEDSDefaultUnits(InputValue As Double) As Double
 
         If Me.prop_value = "" Then
             Throw New System.Exception("Property value not set")
@@ -9420,10 +17146,22 @@ Partial Public Class tnx_Unit_Property
 
     End Function
 
+    Public Overridable Function convertToERIUnits(InputValue As Double) As Double
+
+        If Me.prop_value = "" Then
+            Throw New System.Exception("Property value not set")
+        ElseIf Me.prop_multiplier = 0 Then
+            Throw New System.Exception("Property multiplier not set")
+        End If
+
+        Return InputValue * Me.multiplier
+
+    End Function
+
 End Class
 
-Partial Public Class tnx_length_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxLengthUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9442,6 +17180,30 @@ Partial Public Class tnx_length_unit
         End Set
     End Property
 
+    Public Overridable Function convertAreaToEDSDefaultUnits(InputValue As Double) As Double
+
+        If Me.prop_value = "" Then
+            Throw New System.Exception("Property value not set")
+        ElseIf Me.prop_multiplier = 0 Then
+            Throw New System.Exception("Property multiplier not set")
+        End If
+
+        Return InputValue / (Me.multiplier * Me.multiplier)
+
+    End Function
+
+    Public Overridable Function convertAreaToERIUnits(InputValue As Double) As Double
+
+        If Me.prop_value = "" Then
+            Throw New System.Exception("Property value not set")
+        ElseIf Me.prop_multiplier = 0 Then
+            Throw New System.Exception("Property multiplier not set")
+        End If
+
+        Return InputValue * Me.multiplier * Me.multiplier
+
+    End Function
+
     Public Sub New()
     End Sub
     Public Sub New(new_value As String)
@@ -9452,8 +17214,8 @@ Partial Public Class tnx_length_unit
 
 End Class
 
-Partial Public Class tnx_coordinate_unit
-    Inherits tnx_length_unit
+Partial Public Class tnxCoordinateUnit
+    Inherits tnxLengthUnit
     Public Sub New()
     End Sub
     Public Sub New(new_value As String)
@@ -9463,8 +17225,8 @@ Partial Public Class tnx_coordinate_unit
     End Sub
 End Class
 
-Partial Public Class tnx_force_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxForceUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9492,8 +17254,8 @@ Partial Public Class tnx_force_unit
 
     End Sub
 End Class
-Partial Public Class tnx_load_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxLoadUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9519,8 +17281,8 @@ Partial Public Class tnx_load_unit
 
     End Sub
 End Class
-Partial Public Class tnx_moment_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxMomentUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9550,8 +17312,8 @@ Partial Public Class tnx_moment_unit
 
     End Sub
 End Class
-Partial Public Class tnx_properties_unit
-    Inherits tnx_length_unit
+Partial Public Class tnxPropertiesUnit
+    Inherits tnxLengthUnit
     Public Sub New()
     End Sub
     Public Sub New(new_value As String)
@@ -9560,8 +17322,8 @@ Partial Public Class tnx_properties_unit
 
     End Sub
 End Class
-Partial Public Class tnx_pressure_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxPressureUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9587,8 +17349,8 @@ Partial Public Class tnx_pressure_unit
 
     End Sub
 End Class
-Partial Public Class tnx_velocity_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxVelocityUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9614,9 +17376,9 @@ Partial Public Class tnx_velocity_unit
 
     End Sub
 End Class
-Partial Public Class tnx_displacement_unit
+Partial Public Class tnxDisplacementUnit
     'Note: This is called deflection in the TNX UI
-    Inherits tnx_length_unit
+    Inherits tnxLengthUnit
     Public Overrides Property precision() As Integer
         Get
             Return Me.prop_precision
@@ -9639,9 +17401,9 @@ Partial Public Class tnx_displacement_unit
 
     End Sub
 End Class
-Partial Public Class tnx_mass_unit
+Partial Public Class tnxMassUnit
     'This property isn't accessible in the TNX UI
-    Inherits tnx_Unit_Property
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9665,8 +17427,8 @@ Partial Public Class tnx_mass_unit
 
     End Sub
 End Class
-Partial Public Class tnx_acceleration_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxAccelerationUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9692,8 +17454,8 @@ Partial Public Class tnx_acceleration_unit
 
     End Sub
 End Class
-Partial Public Class tnx_stress_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxStressUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9719,8 +17481,8 @@ Partial Public Class tnx_stress_unit
 
     End Sub
 End Class
-Partial Public Class tnx_density_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxDensityUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9746,8 +17508,8 @@ Partial Public Class tnx_density_unit
 
     End Sub
 End Class
-Partial Public Class tnx_unitwt_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxUnitWTUnit
+    Inherits tnxUnitProperty
     'As of version 8.1.1.0 of TNX there is a bug in TNX, the unit wt is always tied to the density units.
     Public Overrides Property value() As String
         Get
@@ -9773,8 +17535,8 @@ Partial Public Class tnx_unitwt_unit
 
     End Sub
 End Class
-Partial Public Class tnx_strength_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxStrengthUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9800,8 +17562,8 @@ Partial Public Class tnx_strength_unit
 
     End Sub
 End Class
-Partial Public Class tnx_modulus_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxModulusUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9827,8 +17589,8 @@ Partial Public Class tnx_modulus_unit
 
     End Sub
 End Class
-Partial Public Class tnx_temperature_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxTempUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9849,7 +17611,7 @@ Partial Public Class tnx_temperature_unit
         End Set
     End Property
 
-    Public Overrides Function Convert_to_EDS_Default(InputValue As Double) As Double
+    Public Overrides Function convertToEDSDefaultUnits(InputValue As Double) As Double
 
         If Me.prop_value = "" Then
             Throw New System.Exception("Property value not set")
@@ -9857,6 +17619,20 @@ Partial Public Class tnx_temperature_unit
 
         If Me.prop_value = "C" Then
             Return InputValue * (9 / 5) + 32
+        Else
+            Return InputValue
+        End If
+
+    End Function
+
+    Public Overrides Function convertToERIUnits(InputValue As Double) As Double
+
+        If Me.prop_value = "" Then
+            Throw New System.Exception("Property value not set")
+        End If
+
+        If Me.prop_value = "C" Then
+            Return (InputValue - 32) * (5 / 9)
         Else
             Return InputValue
         End If
@@ -9871,9 +17647,9 @@ Partial Public Class tnx_temperature_unit
 
     End Sub
 End Class
-Partial Public Class tnx_printer_unit
+Partial Public Class tnxPrinterUnit
     'This property isn't accessible in the TNX UI
-    Inherits tnx_Unit_Property
+    Inherits tnxUnitProperty
 
     Public Overrides Property value() As String
         Get
@@ -9898,8 +17674,8 @@ Partial Public Class tnx_printer_unit
 
     End Sub
 End Class
-Partial Public Class tnx_rotation_unit
-    Inherits tnx_Unit_Property
+Partial Public Class tnxRotationUnit
+    Inherits tnxUnitProperty
 
     Public Overrides Property precision() As Integer
         Get
@@ -9941,8 +17717,8 @@ Partial Public Class tnx_rotation_unit
 
     End Sub
 End Class
-Partial Public Class tnx_spacing_unit
-    Inherits tnx_length_unit
+Partial Public Class tnxSpacingUnit
+    Inherits tnxLengthUnit
 
     Public Sub New()
     End Sub
@@ -9955,3 +17731,607 @@ End Class
 
 #End Region
 
+Partial Public Class tnxCCIReport
+    Private prop_sReportProjectNumber As String
+    Private prop_sReportJobType As String
+    Private prop_sReportCarrierName As String
+    Private prop_sReportCarrierSiteNumber As String
+    Private prop_sReportCarrierSiteName As String
+    Private prop_sReportSiteAddress As String
+    Private prop_sReportLatitudeDegree As Double
+    Private prop_sReportLatitudeMinute As Double
+    Private prop_sReportLatitudeSecond As Double
+    Private prop_sReportLongitudeDegree As Double
+    Private prop_sReportLongitudeMinute As Double
+    Private prop_sReportLongitudeSecond As Double
+    Private prop_sReportLocalCodeRequirement As String
+    Private prop_sReportSiteHistory As String
+    Private prop_sReportTowerManufacturer As String
+    Private prop_sReportMonthManufactured As String
+    Private prop_sReportYearManufactured As Integer
+    Private prop_sReportOriginalSpeed As Double
+    Private prop_sReportOriginalCode As String
+    Private prop_sReportTowerType As String
+    Private prop_sReportEngrName As String
+    Private prop_sReportEngrTitle As String
+    Private prop_sReportHQPhoneNumber As String
+    Private prop_sReportEmailAddress As String
+    Private prop_sReportLogoPath As String
+    Private prop_sReportCCiContactName As String
+    Private prop_sReportCCiAddress1 As String
+    Private prop_sReportCCiAddress2 As String
+    Private prop_sReportCCiBUNumber As String
+    Private prop_sReportCCiSiteName As String
+    Private prop_sReportCCiJDENumber As String
+    Private prop_sReportCCiWONumber As String
+    Private prop_sReportCCiPONumber As String
+    Private prop_sReportCCiAppNumber As String
+    Private prop_sReportCCiRevNumber As String
+    Private prop_sReportDocsProvided As New List(Of String)
+    Private prop_sReportRecommendations As String
+    Private prop_sReportAppurt1 As New List(Of String)
+    Private prop_sReportAppurt2 As New List(Of String)
+    Private prop_sReportAppurt3 As New List(Of String)
+    Private prop_sReportAddlCapacity As New List(Of String)
+    Private prop_sReportAssumption As New List(Of String)
+    Private prop_sReportAppurt1Note1 As String
+    Private prop_sReportAppurt1Note2 As String
+    Private prop_sReportAppurt1Note3 As String
+    Private prop_sReportAppurt1Note4 As String
+    Private prop_sReportAppurt1Note5 As String
+    Private prop_sReportAppurt1Note6 As String
+    Private prop_sReportAppurt1Note7 As String
+    Private prop_sReportAppurt2Note1 As String
+    Private prop_sReportAppurt2Note2 As String
+    Private prop_sReportAppurt2Note3 As String
+    Private prop_sReportAppurt2Note4 As String
+    Private prop_sReportAppurt2Note5 As String
+    Private prop_sReportAppurt2Note6 As String
+    Private prop_sReportAppurt2Note7 As String
+    Private prop_sReportAddlCapacityNote1 As String
+    Private prop_sReportAddlCapacityNote2 As String
+    Private prop_sReportAddlCapacityNote3 As String
+    Private prop_sReportAddlCapacityNote4 As String
+
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportProjectNumber")>
+    Public Property sReportProjectNumber() As String
+        Get
+            Return Me.prop_sReportProjectNumber
+        End Get
+        Set
+            Me.prop_sReportProjectNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportJobType")>
+    Public Property sReportJobType() As String
+        Get
+            Return Me.prop_sReportJobType
+        End Get
+        Set
+            Me.prop_sReportJobType = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierName")>
+    Public Property sReportCarrierName() As String
+        Get
+            Return Me.prop_sReportCarrierName
+        End Get
+        Set
+            Me.prop_sReportCarrierName = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteNumber")>
+    Public Property sReportCarrierSiteNumber() As String
+        Get
+            Return Me.prop_sReportCarrierSiteNumber
+        End Get
+        Set
+            Me.prop_sReportCarrierSiteNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteName")>
+    Public Property sReportCarrierSiteName() As String
+        Get
+            Return Me.prop_sReportCarrierSiteName
+        End Get
+        Set
+            Me.prop_sReportCarrierSiteName = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteAddress")>
+    Public Property sReportSiteAddress() As String
+        Get
+            Return Me.prop_sReportSiteAddress
+        End Get
+        Set
+            Me.prop_sReportSiteAddress = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeDegree")>
+    Public Property sReportLatitudeDegree() As Double
+        Get
+            Return Me.prop_sReportLatitudeDegree
+        End Get
+        Set
+            Me.prop_sReportLatitudeDegree = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeMinute")>
+    Public Property sReportLatitudeMinute() As Double
+        Get
+            Return Me.prop_sReportLatitudeMinute
+        End Get
+        Set
+            Me.prop_sReportLatitudeMinute = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeSecond")>
+    Public Property sReportLatitudeSecond() As Double
+        Get
+            Return Me.prop_sReportLatitudeSecond
+        End Get
+        Set
+            Me.prop_sReportLatitudeSecond = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeDegree")>
+    Public Property sReportLongitudeDegree() As Double
+        Get
+            Return Me.prop_sReportLongitudeDegree
+        End Get
+        Set
+            Me.prop_sReportLongitudeDegree = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeMinute")>
+    Public Property sReportLongitudeMinute() As Double
+        Get
+            Return Me.prop_sReportLongitudeMinute
+        End Get
+        Set
+            Me.prop_sReportLongitudeMinute = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeSecond")>
+    Public Property sReportLongitudeSecond() As Double
+        Get
+            Return Me.prop_sReportLongitudeSecond
+        End Get
+        Set
+            Me.prop_sReportLongitudeSecond = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLocalCodeRequirement")>
+    Public Property sReportLocalCodeRequirement() As String
+        Get
+            Return Me.prop_sReportLocalCodeRequirement
+        End Get
+        Set
+            Me.prop_sReportLocalCodeRequirement = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteHistory")>
+    Public Property sReportSiteHistory() As String
+        Get
+            Return Me.prop_sReportSiteHistory
+        End Get
+        Set
+            Me.prop_sReportSiteHistory = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerManufacturer")>
+    Public Property sReportTowerManufacturer() As String
+        Get
+            Return Me.prop_sReportTowerManufacturer
+        End Get
+        Set
+            Me.prop_sReportTowerManufacturer = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportMonthManufactured")>
+    Public Property sReportMonthManufactured() As String
+        Get
+            Return Me.prop_sReportMonthManufactured
+        End Get
+        Set
+            Me.prop_sReportMonthManufactured = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportYearManufactured")>
+    Public Property sReportYearManufactured() As Integer
+        Get
+            Return Me.prop_sReportYearManufactured
+        End Get
+        Set
+            Me.prop_sReportYearManufactured = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalSpeed")>
+    Public Property sReportOriginalSpeed() As Double
+        Get
+            Return Me.prop_sReportOriginalSpeed
+        End Get
+        Set
+            Me.prop_sReportOriginalSpeed = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalCode")>
+    Public Property sReportOriginalCode() As String
+        Get
+            Return Me.prop_sReportOriginalCode
+        End Get
+        Set
+            Me.prop_sReportOriginalCode = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerType")>
+    Public Property sReportTowerType() As String
+        Get
+            Return Me.prop_sReportTowerType
+        End Get
+        Set
+            Me.prop_sReportTowerType = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrName")>
+    Public Property sReportEngrName() As String
+        Get
+            Return Me.prop_sReportEngrName
+        End Get
+        Set
+            Me.prop_sReportEngrName = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrTitle")>
+    Public Property sReportEngrTitle() As String
+        Get
+            Return Me.prop_sReportEngrTitle
+        End Get
+        Set
+            Me.prop_sReportEngrTitle = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportHQPhoneNumber")>
+    Public Property sReportHQPhoneNumber() As String
+        Get
+            Return Me.prop_sReportHQPhoneNumber
+        End Get
+        Set
+            Me.prop_sReportHQPhoneNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportEmailAddress")>
+    Public Property sReportEmailAddress() As String
+        Get
+            Return Me.prop_sReportEmailAddress
+        End Get
+        Set
+            Me.prop_sReportEmailAddress = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportLogoPath")>
+    Public Property sReportLogoPath() As String
+        Get
+            Return Me.prop_sReportLogoPath
+        End Get
+        Set
+            Me.prop_sReportLogoPath = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiContactName")>
+    Public Property sReportCCiContactName() As String
+        Get
+            Return Me.prop_sReportCCiContactName
+        End Get
+        Set
+            Me.prop_sReportCCiContactName = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress1")>
+    Public Property sReportCCiAddress1() As String
+        Get
+            Return Me.prop_sReportCCiAddress1
+        End Get
+        Set
+            Me.prop_sReportCCiAddress1 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress2")>
+    Public Property sReportCCiAddress2() As String
+        Get
+            Return Me.prop_sReportCCiAddress2
+        End Get
+        Set
+            Me.prop_sReportCCiAddress2 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiBUNumber")>
+    Public Property sReportCCiBUNumber() As String
+        Get
+            Return Me.prop_sReportCCiBUNumber
+        End Get
+        Set
+            Me.prop_sReportCCiBUNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiSiteName")>
+    Public Property sReportCCiSiteName() As String
+        Get
+            Return Me.prop_sReportCCiSiteName
+        End Get
+        Set
+            Me.prop_sReportCCiSiteName = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiJDENumber")>
+    Public Property sReportCCiJDENumber() As String
+        Get
+            Return Me.prop_sReportCCiJDENumber
+        End Get
+        Set
+            Me.prop_sReportCCiJDENumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiWONumber")>
+    Public Property sReportCCiWONumber() As String
+        Get
+            Return Me.prop_sReportCCiWONumber
+        End Get
+        Set
+            Me.prop_sReportCCiWONumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiPONumber")>
+    Public Property sReportCCiPONumber() As String
+        Get
+            Return Me.prop_sReportCCiPONumber
+        End Get
+        Set
+            Me.prop_sReportCCiPONumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAppNumber")>
+    Public Property sReportCCiAppNumber() As String
+        Get
+            Return Me.prop_sReportCCiAppNumber
+        End Get
+        Set
+            Me.prop_sReportCCiAppNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiRevNumber")>
+    Public Property sReportCCiRevNumber() As String
+        Get
+            Return Me.prop_sReportCCiRevNumber
+        End Get
+        Set
+            Me.prop_sReportCCiRevNumber = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description("Reference Document Row. String format: Doc Type<~~>Remarks<~~>Ref No<~~>Source"), DisplayName("sReportDocsProvided")>
+    Public Property sReportDocsProvided() As List(Of String)
+        Get
+            Return Me.prop_sReportDocsProvided
+        End Get
+        Set
+            Me.prop_sReportDocsProvided = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportRecommendations")>
+    Public Property sReportRecommendations() As String
+        Get
+            Return Me.prop_sReportRecommendations
+        End Get
+        Set
+            Me.prop_sReportRecommendations = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description("Proposed Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Proposed"), DisplayName("sReportAppurt1")>
+    Public Property sReportAppurt1() As List(Of String)
+        Get
+            Return Me.prop_sReportAppurt1
+        End Get
+        Set
+            Me.prop_sReportAppurt1 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description("Existing Equipment Row. String format:MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Existing"), DisplayName("sReportAppurt2")>
+    Public Property sReportAppurt2() As List(Of String)
+        Get
+            Return Me.prop_sReportAppurt2
+        End Get
+        Set
+            Me.prop_sReportAppurt2 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description("Design Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>"), DisplayName("sReportAppurt2")>
+    Public Property sReportAppurt3() As List(Of String)
+        Get
+            Return Me.prop_sReportAppurt3
+        End Get
+        Set
+            Me.prop_sReportAppurt3 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description("Additional Capacity Row. String format: Component<~~>Note #<~~>Elevation<~~>Cap%<~~>Pass/Fail<~~>Include in Report {Yes/No}"), DisplayName("sReportAddlCapacity")>
+    Public Property sReportAddlCapacity() As List(Of String)
+        Get
+            Return Me.prop_sReportAddlCapacity
+        End Get
+        Set
+            Me.prop_sReportAddlCapacity = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAssumption")>
+    Public Property sReportAssumption() As List(Of String)
+        Get
+            Return Me.prop_sReportAssumption
+        End Get
+        Set
+            Me.prop_sReportAssumption = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note1")>
+    Public Property sReportAppurt1Note1() As String
+        Get
+            Return Me.prop_sReportAppurt1Note1
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note1 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note2")>
+    Public Property sReportAppurt1Note2() As String
+        Get
+            Return Me.prop_sReportAppurt1Note2
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note2 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note3")>
+    Public Property sReportAppurt1Note3() As String
+        Get
+            Return Me.prop_sReportAppurt1Note3
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note3 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note4")>
+    Public Property sReportAppurt1Note4() As String
+        Get
+            Return Me.prop_sReportAppurt1Note4
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note4 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note5")>
+    Public Property sReportAppurt1Note5() As String
+        Get
+            Return Me.prop_sReportAppurt1Note5
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note5 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note6")>
+    Public Property sReportAppurt1Note6() As String
+        Get
+            Return Me.prop_sReportAppurt1Note6
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note6 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note7")>
+    Public Property sReportAppurt1Note7() As String
+        Get
+            Return Me.prop_sReportAppurt1Note7
+        End Get
+        Set
+            Me.prop_sReportAppurt1Note7 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note1")>
+    Public Property sReportAppurt2Note1() As String
+        Get
+            Return Me.prop_sReportAppurt2Note1
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note1 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note2")>
+    Public Property sReportAppurt2Note2() As String
+        Get
+            Return Me.prop_sReportAppurt2Note2
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note2 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note3")>
+    Public Property sReportAppurt2Note3() As String
+        Get
+            Return Me.prop_sReportAppurt2Note3
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note3 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note4")>
+    Public Property sReportAppurt2Note4() As String
+        Get
+            Return Me.prop_sReportAppurt2Note4
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note4 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note5")>
+    Public Property sReportAppurt2Note5() As String
+        Get
+            Return Me.prop_sReportAppurt2Note5
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note5 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note6")>
+    Public Property sReportAppurt2Note6() As String
+        Get
+            Return Me.prop_sReportAppurt2Note6
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note6 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note7")>
+    Public Property sReportAppurt2Note7() As String
+        Get
+            Return Me.prop_sReportAppurt2Note7
+        End Get
+        Set
+            Me.prop_sReportAppurt2Note7 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote1")>
+    Public Property sReportAddlCapacityNote1() As String
+        Get
+            Return Me.prop_sReportAddlCapacityNote1
+        End Get
+        Set
+            Me.prop_sReportAddlCapacityNote1 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote2")>
+    Public Property sReportAddlCapacityNote2() As String
+        Get
+            Return Me.prop_sReportAddlCapacityNote2
+        End Get
+        Set
+            Me.prop_sReportAddlCapacityNote2 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote3")>
+    Public Property sReportAddlCapacityNote3() As String
+        Get
+            Return Me.prop_sReportAddlCapacityNote3
+        End Get
+        Set
+            Me.prop_sReportAddlCapacityNote3 = Value
+        End Set
+    End Property
+    <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote4")>
+    Public Property sReportAddlCapacityNote4() As String
+        Get
+            Return Me.prop_sReportAddlCapacityNote4
+        End Get
+        Set
+            Me.prop_sReportAddlCapacityNote4 = Value
+        End Set
+    End Property
+
+End Class
