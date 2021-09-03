@@ -31,12 +31,18 @@
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.pgSQL = New System.Windows.Forms.TabPage()
         Me.pgTNX = New System.Windows.Forms.TabPage()
-        Me.btnImportTNX = New System.Windows.Forms.Button()
         Me.btnExportTNX = New System.Windows.Forms.Button()
+        Me.btnImportTNX = New System.Windows.Forms.Button()
+        Me.propgridTNXObject = New System.Windows.Forms.PropertyGrid()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabControl1.SuspendLayout()
         Me.pgSQL.SuspendLayout()
         Me.pgTNX.SuspendLayout()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer1.Panel1.SuspendLayout()
+        Me.SplitContainer1.Panel2.SuspendLayout()
+        Me.SplitContainer1.SuspendLayout()
         Me.SuspendLayout()
         '
         'sqltoexcel
@@ -95,8 +101,7 @@
         '
         'pgTNX
         '
-        Me.pgTNX.Controls.Add(Me.btnExportTNX)
-        Me.pgTNX.Controls.Add(Me.btnImportTNX)
+        Me.pgTNX.Controls.Add(Me.SplitContainer1)
         Me.pgTNX.Location = New System.Drawing.Point(4, 22)
         Me.pgTNX.Name = "pgTNX"
         Me.pgTNX.Padding = New System.Windows.Forms.Padding(3)
@@ -105,23 +110,53 @@
         Me.pgTNX.Text = "TNX"
         Me.pgTNX.UseVisualStyleBackColor = True
         '
+        'btnExportTNX
+        '
+        Me.btnExportTNX.Location = New System.Drawing.Point(3, 81)
+        Me.btnExportTNX.Name = "btnExportTNX"
+        Me.btnExportTNX.Size = New System.Drawing.Size(160, 52)
+        Me.btnExportTNX.TabIndex = 2
+        Me.btnExportTNX.Text = "Export TNX"
+        Me.btnExportTNX.UseVisualStyleBackColor = True
+        '
         'btnImportTNX
         '
-        Me.btnImportTNX.Location = New System.Drawing.Point(24, 28)
+        Me.btnImportTNX.Location = New System.Drawing.Point(3, 3)
         Me.btnImportTNX.Name = "btnImportTNX"
         Me.btnImportTNX.Size = New System.Drawing.Size(160, 52)
         Me.btnImportTNX.TabIndex = 1
         Me.btnImportTNX.Text = "Import TNX"
         Me.btnImportTNX.UseVisualStyleBackColor = True
         '
-        'btnExportTNX
+        'propgridTNXObject
         '
-        Me.btnExportTNX.Location = New System.Drawing.Point(24, 117)
-        Me.btnExportTNX.Name = "btnExportTNX"
-        Me.btnExportTNX.Size = New System.Drawing.Size(160, 52)
-        Me.btnExportTNX.TabIndex = 2
-        Me.btnExportTNX.Text = "Export TNX"
-        Me.btnExportTNX.UseVisualStyleBackColor = True
+        Me.propgridTNXObject.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.propgridTNXObject.Location = New System.Drawing.Point(0, 0)
+        Me.propgridTNXObject.Name = "propgridTNXObject"
+        Me.propgridTNXObject.Size = New System.Drawing.Size(325, 201)
+        Me.propgridTNXObject.TabIndex = 3
+        '
+        'SplitContainer1
+        '
+        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.SplitContainer1.Location = New System.Drawing.Point(3, 3)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        '
+        'SplitContainer1.Panel1
+        '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.btnImportTNX)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.btnExportTNX)
+        Me.SplitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.propgridTNXObject)
+        Me.SplitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SplitContainer1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SplitContainer1.Size = New System.Drawing.Size(493, 201)
+        Me.SplitContainer1.SplitterDistance = 164
+        Me.SplitContainer1.TabIndex = 4
         '
         'frmMain
         '
@@ -138,6 +173,10 @@
         Me.TabControl1.ResumeLayout(False)
         Me.pgSQL.ResumeLayout(False)
         Me.pgTNX.ResumeLayout(False)
+        Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -150,6 +189,8 @@
     Friend WithEvents pgTNX As TabPage
     Friend WithEvents btnExportTNX As Button
     Friend WithEvents btnImportTNX As Button
+    Friend WithEvents propgridTNXObject As PropertyGrid
+    Friend WithEvents SplitContainer1 As SplitContainer
 
 #End Region
 

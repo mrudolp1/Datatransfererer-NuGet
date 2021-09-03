@@ -5,8 +5,6 @@ Imports System.Data.SqlClient
 Imports System.Security.Principal
 Imports System.IO
 
-Public tnxObject As New TNX_model
-
 Partial Public Class frmMain
 #Region "Object Declarations"
     Public myUnitBases As New DataTransfererUnitBase
@@ -163,14 +161,29 @@ Partial Public Class frmMain
 
     End Sub
 
+    Public tnxObject As tnxModel
     Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
         Dim eriFd As New OpenFileDialog
         eriFd.Multiselect = False
         eriFd.Filter = "TNX File|*.eri"
-        eriFd.InitialDirectory = eriDocDI.FullName
 
         If eriFd.ShowDialog = DialogResult.OK Then
-            eriFile = New FileInfo(eriFd.FileName)
+            tnxObject = New tnxModel(eriFd.FileName)
+            propgridTNXObject.SelectedObject = tnxObject
+        End If
+    End Sub
+
+    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
+        If tnxObject Is Nothing Then
+            MessageBox.Show("Import a file first.")
+            Exit Sub
+        End If
+
+        Dim eriFd As New SaveFileDialog
+        eriFd.Filter = "TNX File|*.eri"
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            tnxObject.GenerateERI(eriFd.FileName)
         End If
     End Sub
 End Class
