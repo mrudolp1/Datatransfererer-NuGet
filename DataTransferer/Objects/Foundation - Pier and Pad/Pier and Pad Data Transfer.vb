@@ -10,10 +10,10 @@ Partial Public Class DataTransfererPierandPad
     Private prop_ExcelFilePath As String
 
     Public Property PierAndPads As New List(Of Pier_and_Pad)
-    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress Objects\Pier and Pad Foundation (4.1.0) - EDS.xlsm"
+    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property ppDS As New DataSet
+    'Public Property ppDS As New DataSet
     Public Property ppDB As String
     Public Property ppID As WindowsIdentity
 
@@ -33,11 +33,12 @@ Partial Public Class DataTransfererPierandPad
     End Sub
 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-        ppDS = MyDataSet
+        'ppDS = MyDataSet
+        ds = MyDataSet
         ppID = LogOnUser
         ppDB = ActiveDatabase
-        BUNumber = BU
-        STR_ID = Strucutre_ID
+        'BUNumber = BU
+        'STR_ID = Strucutre_ID
     End Sub
 #End Region
 
@@ -49,13 +50,16 @@ Partial Public Class DataTransfererPierandPad
         'Load data to get pier and pad details data for the existing structure model
         For Each item As SQLParameter In PierAndPadSQLDataTables()
             PierAndPadLoader = QueryBuilderFromFile(queryPath & "Pier and Pad\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ppDS, ppDB, ppID, "0")
-            If ppDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
+            'DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ppDS, ppDB, ppID, "0")
+            DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ds, ppDB, ppID, "0")
+            'If ppDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
-        For Each Pier_And_PadDataRow As DataRow In ppDS.Tables("Pier and Pad General Details SQL").Rows
-            refid = CType(Pier_And_PadDataRow.Item("pp_id"), Integer)
+        'For Each Pier_And_PadDataRow As DataRow In ppDS.Tables("Pier and Pad General Details SQL").Rows
+        For Each Pier_And_PadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
+            'refid = CType(Pier_And_PadDataRow.Item("pp_id"), Integer) 
+            refid = CType(Pier_And_PadDataRow.Item("pier_pad_id"), Integer)
 
             PierAndPads.Add(New Pier_and_Pad(Pier_And_PadDataRow, refid))
         Next
@@ -324,6 +328,15 @@ Partial Public Class DataTransfererPierandPad
                 Else
                     .Worksheets("Input").Range("BC").ClearContents
                 End If
+
+                If Not IsNothing(pp.basic_soil_check) Then
+                    .Worksheets("Input").Range("SoilInteractionBoolean").Value = CType(pp.basic_soil_check, Boolean)
+                End If
+
+                If Not IsNothing(pp.basic_soil_check) Then
+                    .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(pp.structural_check, Boolean)
+                End If
+
             End With
 
             SaveAndClosePierAndPad()
@@ -387,6 +400,8 @@ Partial Public Class DataTransfererPierandPad
         insertString += "," & IIf(IsNothing(pp.base_plate_distance_above_foundation), "Null", pp.base_plate_distance_above_foundation.ToString)
         insertString += "," & IIf(IsNothing(pp.bolt_circle_bearing_plate_width), "Null", pp.bolt_circle_bearing_plate_width.ToString)
         insertString += "," & IIf(IsNothing(pp.pier_rebar_quantity), "Null", pp.pier_rebar_quantity.ToString)
+        insertString += "," & IIf(IsNothing(pp.basic_soil_check), "Null", "'" & pp.basic_soil_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(pp.structural_check), "Null", "'" & pp.structural_check.ToString & "'")
 
         Return insertString
     End Function
@@ -437,6 +452,8 @@ Partial Public Class DataTransfererPierandPad
         updateString += ", base_plate_distance_above_foundation=" & IIf(IsNothing(pp.base_plate_distance_above_foundation), "Null", pp.base_plate_distance_above_foundation.ToString)
         updateString += ", bolt_circle_bearing_plate_width=" & IIf(IsNothing(pp.bolt_circle_bearing_plate_width), "Null", pp.bolt_circle_bearing_plate_width.ToString)
         updateString += ", pier_rebar_quantity=" & IIf(IsNothing(pp.pier_rebar_quantity), "Null", pp.pier_rebar_quantity.ToString)
+        updateString += ", basic_soil_check=" & IIf(IsNothing(pp.basic_soil_check), "Null", "'" & pp.basic_soil_check.ToString & "'")
+        updateString += ", structural_check=" & IIf(IsNothing(pp.structural_check), "Null", "'" & pp.structural_check.ToString & "'")
         updateString += " WHERE ID = " & pp.pp_id.ToString
 
         Return updateString

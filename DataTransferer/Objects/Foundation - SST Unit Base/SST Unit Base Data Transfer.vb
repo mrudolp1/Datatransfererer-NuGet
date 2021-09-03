@@ -10,10 +10,10 @@ Partial Public Class DataTransfererUnitBase
     Private prop_ExcelFilePath As String
 
     Public Property UnitBases As New List(Of SST_Unit_Base)
-    Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\DevExpress Objects\Reference\SST Unit Base Foundation (4.0.4) - MRR.xlsm"
+    Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property ubDS As New DataSet
+    'Public Property ubDS As New DataSet
     Public Property ubDB As String
     Public Property ubID As WindowsIdentity
 
@@ -33,11 +33,12 @@ Partial Public Class DataTransfererUnitBase
     End Sub
 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-        ubDS = MyDataSet
+        'ubDS = MyDataSet
+        ds = MyDataSet
         ubID = LogOnUser
         ubDB = ActiveDatabase
-        BUNumber = BU
-        STR_ID = Strucutre_ID
+        'BUNumber = BU
+        'STR_ID = Strucutre_ID
     End Sub
 #End Region
 
@@ -49,12 +50,14 @@ Partial Public Class DataTransfererUnitBase
         'Load data to get Unit Base details for the existing structure model
         For Each item As SQLParameter In UnitBaseSQLDataTables()
             UnitBaseLoader = QueryBuilderFromFile(queryPath & "Unit Base\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
-            If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
+            'DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
+            DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ds, ubDB, ubID, "0")
+            'If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
+        'For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
+        For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
             refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
 
             UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
@@ -134,6 +137,9 @@ Partial Public Class DataTransfererUnitBase
                 If Not IsNothing(ub.neglect_depth) Then .Worksheets("Input").Range("N").Value = CType(ub.neglect_depth, Double)
                 If ub.bearing_distribution_type = False Then .Worksheets("Input").Range("Rock").Value = "Yes" Else .Worksheets("Input").Range("Rock").Value = "No"
                 If ub.groundwater_depth = -1 Then .Worksheets("Input").Range("gw").Value = "N/A" Else .Worksheets("Input").Range("gw").Value = CType(ub.groundwater_depth, Double) 'If -1 then set to N/A
+                If Not IsNothing(ub.basic_soil_check) Then .Worksheets("Input").Range("SoilInteractionBoolean").Value = ub.basic_soil_check
+                If Not IsNothing(ub.structural_check) Then .Worksheets("Input").Range("StructuralCheckBoolean").Value = ub.structural_check
+
 
                 'Seismic design category
                 'TIA
@@ -251,6 +257,8 @@ Partial Public Class DataTransfererUnitBase
         insertString += "," & IIf(IsNothing(ub.bolt_circle_bearing_plate_width), "Null", ub.bolt_circle_bearing_plate_width.ToString)
         insertString += "," & IIf(IsNothing(ub.tower_centroid_offset), "Null", "'" & ub.tower_centroid_offset.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.pier_rebar_quantity), "Null", ub.pier_rebar_quantity.ToString)
+        insertString += "," & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
 
         Return insertString
     End Function
@@ -302,6 +310,8 @@ Partial Public Class DataTransfererUnitBase
         updateString += ", neglect_depth=" & IIf(IsNothing(ub.neglect_depth), "Null", ub.neglect_depth.ToString)
         updateString += ", bearing_distribution_type=" & IIf(IsNothing(ub.bearing_distribution_type), "Null", "'" & ub.bearing_distribution_type.ToString & "'")
         updateString += ", groundwater_depth=" & IIf(IsNothing(ub.groundwater_depth), "Null", ub.groundwater_depth.ToString)
+        updateString += ", basic_soil_check=" & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
+        updateString += ", structural_check=" & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
         updateString += " WHERE ID=" & ub.unit_base_id & vbNewLine
 
         Return updateString

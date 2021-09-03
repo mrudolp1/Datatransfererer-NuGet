@@ -10,11 +10,11 @@ SELECT
 	,s.clear_cover_rebar_cage_option
 	,s.tie_size
 	,s.tie_spacing
-	,s.top_elevation
 	,s.bottom_elevation
-	,s.tie_yield_strength
-	,s.concrete_compressive_strength
-	,s.assum_min_steel_rho_override
+	--,s.assume_min_steel_rho_override
+	,s.local_section_id
+	--,s.local_drilled_pier_id
+	,s.rho_override
 FROM 
 	drilled_pier_section s 
 	,foundation_details fd
@@ -27,5 +27,5 @@ WHERE
 	AND sm.ID=@ModelID
 ORDER BY
 	s.drilled_pier_id
-	,s.top_elevation
+	--,s.top_elevation
 	,s.bottom_elevation

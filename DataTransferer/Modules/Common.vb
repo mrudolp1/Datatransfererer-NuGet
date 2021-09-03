@@ -4,8 +4,8 @@ Imports DevExpress.DataAccess.Excel
 
 Module IDoDeclare
     Public ds As New DataSet
-    Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Queries\"
-    Public BUNumber As String = "812123"
+    Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
+    Public BUNumber As String = "888891"
     Public STR_ID As String = "A"
 End Module
 
@@ -53,6 +53,8 @@ Public Module Common
         End If
 
         options.ImportSettings = importSettings
+        options.SkipHiddenColumns = False
+        options.SkipHiddenRows = False
 
         exDS.FileName = path
         exDS.SourceOptions = options

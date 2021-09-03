@@ -17,6 +17,7 @@ SELECT
     ,ep.pole_section_length
     ,ep.pole_taper_factor
     ,ep.pole_bend_radius_override
+	--,ep.local_drilled_pier_id
 FROM 
 	foundation_details fd
 	,drilled_pier_details dpd 

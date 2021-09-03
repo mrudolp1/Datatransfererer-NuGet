@@ -2,6 +2,8 @@
 
 Imports DevExpress.Spreadsheet
 Imports System.Security.Principal
+Imports Microsoft.Office.Interop.Excel
+Imports Microsoft.Office.Interop
 
 Partial Public Class DataTransfererDrilledPier
 
@@ -10,10 +12,9 @@ Partial Public Class DataTransfererDrilledPier
     Private prop_ExcelFilePath As String
 
     Public Property DrilledPiers As New List(Of DrilledPier)
-    Private Property DrilledPierTemplatePath As String = "C:\Users\imiller\source\repos\DevExpress Objects\Drilled Pier Foundation (4.2.3).xlsm"
+    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    Public Property dpDS As New DataSet
     Public Property dpDB As String
     Public Property dpID As WindowsIdentity
 
@@ -25,6 +26,8 @@ Partial Public Class DataTransfererDrilledPier
             Me.prop_ExcelFilePath = Value
         End Set
     End Property
+
+    Public Property xlApp As Object
 #End Region
 
 #Region "Constructors"
@@ -33,11 +36,12 @@ Partial Public Class DataTransfererDrilledPier
     End Sub
 
     Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-        dpDS = MyDataSet
+        'dpDS = MyDataSet
+        ds = MyDataSet
         dpID = LogOnUser
         dpDB = ActiveDatabase
-        BUNumber = BU
-        STR_ID = Strucutre_ID
+        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing.
+        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing.
     End Sub
 #End Region
 
@@ -50,12 +54,12 @@ Partial Public Class DataTransfererDrilledPier
         'Load data to get pier and pad details data for the existing structure model
         For Each item As SQLParameter In DrilledPierSQLDataTables()
             DrilledPierLoader = QueryBuilderFromFile(queryPath & "Drilled Pier\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, dpDS, dpDB, dpID, "0")
-            If dpDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
+            DoDaSQL.sqlLoader(DrilledPierLoader, item.sqlDatatable, ds, dpDB, dpID, "0")
+            'If ds.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        For Each DrilledPierDataRow As DataRow In dpDS.Tables("Drilled Pier General Details SQL").Rows
+        For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details SQL").Rows
             refid = CType(DrilledPierDataRow.Item("drilled_pier_id"), Integer)
 
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refid))
@@ -75,13 +79,16 @@ Partial Public Class DataTransfererDrilledPier
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
         For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details EXCEL").Rows
-            If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
-                refCol = "local_drilled_pier_id"
-                refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            Else
-                refCol = "drilled_pier_id"
-                refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            End If
+            'If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
+            '    refCol = "local_drilled_pier_id"
+            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
+            'Else
+            '    refCol = "drilled_pier_id"
+            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
+            'End If
+            ''commented out in case drilled pier id and local drilled pier id matched, prevents possible overriding of data
+            refCol = "local_drilled_pier_id"
+            refID = CType(DrilledPierDataRow.Item(refCol), Integer)
 
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refID, refCol))
         Next
@@ -94,19 +101,19 @@ Partial Public Class DataTransfererDrilledPier
         Dim mySoils As String = ""
         Dim mySections As String = ""
         Dim myRebar As String = ""
-        Dim myEmbedSections As String = ""
+        Dim myProfiles As String = ""
 
         For Each dp As DrilledPier In DrilledPiers
             Dim DrilledPierSaver As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers (IN_UP).sql")
-            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Sections (IN_UP).txt")
+            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Section (IN_UP).txt")
 
             DrilledPierSaver = DrilledPierSaver.Replace("[BU NUMBER]", BUNumber)
             DrilledPierSaver = DrilledPierSaver.Replace("[STRUCTURE ID]", STR_ID)
             DrilledPierSaver = DrilledPierSaver.Replace("[FOUNDATION TYPE]", "Drilled Pier")
             If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-                DrilledPierSaver = DrilledPierSaver.Replace("[DRILLED PIER ID]", "NULL")
+                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", "NULL")
             Else
-                DrilledPierSaver = DrilledPierSaver.Replace("[DRILLED PIER ID]", dp.pier_id.ToString)
+                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", dp.pier_id.ToString)
             End If
             DrilledPierSaver = DrilledPierSaver.Replace("[EMBED BOOLEAN]", dp.embedded_pole.ToString)
             DrilledPierSaver = DrilledPierSaver.Replace("[BELL BOOLEAN]", dp.belled_pier.ToString)
@@ -151,31 +158,46 @@ Partial Public Class DataTransfererDrilledPier
 
                 If dp.belled_pier Then
                     DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL BELLED PIER DETAILS]", InsertDrilledPierBell(dp.belled_details))
+                Else
+                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
+                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
+                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
+                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
                 End If 'Add Belled Pier INSERT Statment
 
                 If dp.embedded_pole Then
                     DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL EMBEDDED POLE DETAILS]", InsertDrilledPierEmbed(dp.embed_details))
-
-                    For Each eSec As DrilledPierEmbedSection In dp.embed_details.sections
-                        Dim tempEmbedSection As String = InsertDrilledPierEmbedSection(eSec)
-
-                        If Not firstOne Then
-                            myEmbedSections += ",(" & tempEmbedSection & ")"
-                        Else
-                            myEmbedSections += "(" & tempEmbedSection & ")"
-                        End If
-
-                        firstOne = False
-                    Next
-                    DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL EMBEDDED SECTIONS]", myEmbedSections)
+                Else
+                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
+                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
+                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
+                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
+                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
                 End If 'Add Embedded Pole INSERT Statment
+
+                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+                    Dim tempDrilledPierProfile As String = InsertDrilledPierProfile(dpp)
+
+                    If Not firstOne Then
+                        myProfiles += ",(" & tempDrilledPierProfile & ")"
+                    Else
+                        myProfiles += "(" & tempDrilledPierProfile & ")"
+                    End If
+
+                    firstOne = False
+                Next 'Add Pier Profile INSERT statements
+                DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL PIER PROFILES])", myProfiles)
+                firstOne = True
 
                 mySoils = ""
                 mySections = ""
-                myEmbedSections = ""
+                myProfiles = ""
             Else
                 Dim tempUpdater As String = ""
                 tempUpdater += UpdateDrilledPierDetail(dp)
+
+                'comment out soil layer insertion. Added in next step if a layer does not have an ID
+                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
 
                 For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
                     If dpsl.soil_layer_id = 0 Or IsDBNull(dpsl.soil_layer_id) Then
@@ -191,25 +213,26 @@ Partial Public Class DataTransfererDrilledPier
                     Else
                         tempUpdater += UpdateDrilledPierBell(dp.belled_details)
                     End If
+                Else
+                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
+                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
+                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
+                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
                 End If
 
                 If dp.embedded_pole Then
                     If dp.embed_details.embedded_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
                         tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-                        For Each eSec As DrilledPierEmbedSection In dp.embed_details.sections
-                            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(eSec) & ") " & vbNewLine
-                        Next
                         tempUpdater += " END " & vbNewLine
                     Else
                         tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-                        For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
-                            If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
-                                tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
-                            Else
-                                tempUpdater += UpdateDrilledPierEmbedSection(esec)
-                            End If
-                        Next
                     End If
+                Else
+                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
+                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
+                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
+                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
+                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
                 End If
 
                 For Each dpSec As DrilledPierSection In dp.sections
@@ -231,10 +254,21 @@ Partial Public Class DataTransfererDrilledPier
                     End If
                 Next
 
+                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])", "--INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])")
+                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+                    If dpp.profile_id = 0 Or IsDBNull(dpp.profile_id) Then
+                        tempUpdater += "INSERT INTO drilled_pier_profile VALUES (" & InsertDrilledPierProfile(dpp) & ") " & vbNewLine
+                    Else
+                        tempUpdater += UpdateDrilledPierProfile(dpp)
+                    End If
+                Next
+
                 DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
             End If
 
-            'sqlSender(DrilledPierSaver, 0)
+            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
+
+            sqlSender(DrilledPierSaver, dpDB, dpID, "0")
         Next
 
 
@@ -245,114 +279,724 @@ Partial Public Class DataTransfererDrilledPier
         Dim secRow As Integer = 3
         Dim rebRow As Integer = 3
         Dim soilRow As Integer = 3
-        Dim embedSecRow As Integer = 3
+        Dim profileRow As Integer = 3
 
         LoadNewDrilledPier()
 
         With NewDrilledPierWb
-            For Each dp As DrilledPier In DrilledPiers
-                .Worksheets("Details (SAPI)").Range("B" & dpRow).Value = dp.pier_id
-                .Worksheets("Details (SAPI)").Range("C" & dpRow).Value = dp.foundation_depth
-                .Worksheets("Details (SAPI)").Range("D" & dpRow).Value = dp.extension_above_grade
-                .Worksheets("Details (SAPI)").Range("E" & dpRow).Value = dp.groundwater_depth
-                .Worksheets("Details (SAPI)").Range("F" & dpRow).Value = dp.assume_min_steel
-                .Worksheets("Details (SAPI)").Range("G" & dpRow).Value = dp.check_shear_along_depth
-                '.Worksheets("Details (SAPI)").Range("H" & dpRow).Value = dp.utilize_skin_friction_methodology
-                .Worksheets("Details (SAPI)").Range("I" & dpRow).Value = dp.embedded_pole
-                .Worksheets("Details (SAPI)").Range("J" & dpRow).Value = dp.belled_pier
-                .Worksheets("Details (SAPI)").Range("K" & dpRow).Value = dp.soil_layer_quantity
 
+            Dim colCounter As Integer = 6
+            Dim myCol As String
+            Dim rowStart As Integer = 56
+
+            For Each dp As DrilledPier In DrilledPiers
+
+                colCounter = 6 + dp.local_drilled_pier_id
+                myCol = GetExcelColumnName(colCounter)
+
+                'DRILLED PIER DETAILS
+                If Not IsNothing(dp.pier_id) Then
+                    .Worksheets("Database").Range(myCol & rowStart - 54).Value = CType(dp.pier_id, Integer)
+                Else .Worksheets("Database").Range(myCol & rowStart - 54).ClearContents
+                End If
+                If Not IsNothing(dp.concrete_compressive_strength) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 7).Value = CType(dp.concrete_compressive_strength, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 7).ClearContents
+                End If
+                If Not IsNothing(dp.longitudinal_rebar_yield_strength) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 8).Value = CType(dp.longitudinal_rebar_yield_strength, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 8).ClearContents
+                End If
+                If Not IsNothing(dp.tie_yield_strength) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 9).Value = CType(dp.tie_yield_strength, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 9).ClearContents
+                End If
+                If Not IsNothing(dp.foundation_depth) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 10).Value = CType(dp.foundation_depth, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 10).ClearContents
+                End If
+                If Not IsNothing(dp.extension_above_grade) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 11).Value = CType(dp.extension_above_grade, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 11).ClearContents
+                End If
+                If CType(dp.groundwater_depth, Double) = -1 Then
+                    .Worksheets("Database").Range(myCol & rowStart + 17).Value = "N/A"
+                ElseIf Not IsNothing(dp.groundwater_depth) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 17).Value = CType(dp.groundwater_depth, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 17).ClearContents
+                End If
+                If Not IsNothing(dp.soil_layer_quantity) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 18).Value = CType(dp.soil_layer_quantity, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 18).ClearContents
+                End If
+                If Not IsNothing(dp.bearing_type_toggle) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 19).Value = CType(dp.bearing_type_toggle, String)
+                Else .Worksheets("Database").Range(myCol & rowStart + 19).ClearContents
+                End If
+                .Worksheets("Database").Range(myCol & rowStart + 97).Value = CType(dp.check_shear_along_depth, Boolean)
+                .Worksheets("Database").Range(myCol & rowStart + 98).Value = CType(dp.utilize_shear_friction_methodology, Boolean)
+                .Worksheets("Database").Range(myCol & rowStart + 100).Value = CType(dp.embedded_pole, Boolean)
+                .Worksheets("Database").Range(myCol & rowStart + 112).Value = CType(dp.belled_pier, Boolean)
+                .Worksheets("Database").Range(myCol & rowStart + 4389).Value = CType(dp.assume_min_steel, String)
+                .Worksheets("Database").Range(myCol & rowStart + 4390).Value = CType(dp.rebar_effective_depths, Boolean)
+                If Not IsNothing(dp.rebar_cage_2_fy_override) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 4391).Value = CType(dp.rebar_cage_2_fy_override, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 4391).ClearContents
+                End If
+                If Not IsNothing(dp.rebar_cage_3_fy_override) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 4392).Value = CType(dp.rebar_cage_3_fy_override, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 4392).ClearContents
+                End If
+                .Worksheets("Database").Range(myCol & rowStart + 99).Value = CType(dp.shear_override_crit_depth, Boolean)
+                If Not IsNothing(dp.shear_crit_depth_override_comp) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 374).Value = CType(dp.shear_crit_depth_override_comp, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 374).Formula = .Worksheets("Database").Range(GetExcelColumnName(colCounter + 51) & rowStart + 374).Formula
+                End If
+                If Not IsNothing(dp.shear_crit_depth_override_uplift) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 376).Value = CType(dp.shear_crit_depth_override_uplift, Double)
+                Else .Worksheets("Database").Range(myCol & rowStart + 376).Formula = .Worksheets("Database").Range(GetExcelColumnName(colCounter + 51) & rowStart + 376).Formula
+                End If
+
+                Dim depth As Integer = 0
+                Dim secBump As Integer = 0
+                Dim secStart As Integer = 20
+                Dim secCount As Integer = 1
+
+                'DRILLED PIER SECTION
                 For Each dpSec As DrilledPierSection In dp.sections
-                    .Worksheets("Sections (SAPI)").Range("C" & secRow).Value = dp.pier_id
-                    .Worksheets("Sections (SAPI)").Range("D" & secRow).Value = dpSec.section_id
-                    .Worksheets("Sections (SAPI)").Range("E" & secRow).Value = dpSec.pier_diameter
-                    .Worksheets("Sections (SAPI)").Range("F" & secRow).Value = dpSec.clear_cover
-                    .Worksheets("Sections (SAPI)").Range("G" & secRow).Value = dpSec.clear_cover_rebar_cage_option
-                    .Worksheets("Sections (SAPI)").Range("H" & secRow).Value = dpSec.tie_size
-                    .Worksheets("Sections (SAPI)").Range("I" & secRow).Value = dpSec.tie_spacing
-                    '.Worksheets("Sections (SAPI)").Range("J" & secRow).Value = dpSec.top_elevation
-                    .Worksheets("Sections (SAPI)").Range("K" & secRow).Value = dpSec.bottom_elevation
-                    '.Worksheets("Sections (SAPI)").Range("L" & secRow).Value = dpSec.tie_yield_strength
-                    '.Worksheets("Sections (SAPI)").Range("M" & secRow).Value = dpSec.concrete_compressive_strength
-                    '.Worksheets("Sections (SAPI)").Range("N" & secRow).Value = dpSec.assum_min_steel_rho_override
+
+                    If Not IsNothing(dpSec.section_id) Then
+                        .Worksheets("Database").Range(myCol & rowStart - 54 + secCount).Value = CType(dpSec.section_id, Integer)
+                    Else .Worksheets("Database").Range(myCol & rowStart - 54 + secCount).ClearContents
+                    End If
+
+                    If Not IsNothing(dpSec.pier_diameter) Then
+                        .Worksheets("Database").Range(myCol & rowStart + secStart + 0).Value = CType(dpSec.pier_diameter, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 0).ClearContents
+                    End If
+                    If Not IsNothing(dpSec.clear_cover) Then
+                        .Worksheets("Database").Range(myCol & rowStart + secStart + 3).Value = CType(dpSec.clear_cover, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 3).ClearContents
+                    End If
+                    If Not IsNothing(dpSec.tie_size) Then
+                        .Worksheets("Database").Range(myCol & rowStart + secStart + 4).Value = CType(dpSec.tie_size, Integer)
+                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 4).ClearContents
+                    End If
+                    If Not IsNothing(dpSec.tie_spacing) Then
+                        .Worksheets("Database").Range(myCol & rowStart + secStart + 5).Value = CType(dpSec.tie_spacing, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 5).ClearContents
+                    End If
+                    If Not IsNothing(dpSec.clear_cover_rebar_cage_option) Then
+                        .Worksheets("Database").Range(myCol & rowStart + secStart + 14).Value = CType(dpSec.clear_cover_rebar_cage_option, String)
+                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 14).ClearContents
+                    End If
+                    If Not IsNothing(dpSec.rho_override) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 4392 + secCount).Value = CType(dpSec.rho_override, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 4392 + secCount).ClearContents
+                    End If
+
+                    If secCount > 1 Then depth += 1
+                    If Not IsNothing(dpSec.bottom_elevation) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 12 + depth).Value = CType(dpSec.bottom_elevation, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 12 + depth).ClearContents
+                    End If
+
+                    'DRILLED PIER REBAR
+                    Dim rebCount As Integer = 1
 
                     For Each dpReb As DrilledPierRebar In dpSec.rebar
-                        .Worksheets("Rebar (SAPI)").Range("C" & rebRow).Value = dp.pier_id
-                        .Worksheets("Rebar (SAPI)").Range("D" & rebRow).Value = dpSec.section_id
-                        .Worksheets("Rebar (SAPI)").Range("E" & rebRow).Value = dpReb.rebar_id
-                        .Worksheets("Rebar (SAPI)").Range("F" & rebRow).Value = dpReb.longitudinal_rebar_quantity
-                        .Worksheets("Rebar (SAPI)").Range("G" & rebRow).Value = dpReb.longitudinal_rebar_size
-                        .Worksheets("Rebar (SAPI)").Range("H" & rebRow).Value = dpReb.longitudinal_rebar_cage_diameter
-                        .Worksheets("Rebar (SAPI)").Range("I" & rebRow).Value = dpReb.longitudinal_rebar_yield_strength
 
-                        rebRow += 1
+                        If Not IsNothing(dpReb.rebar_id) Then
+                            .Worksheets("Database").Range(myCol & rowStart - 48 + 3 * (secCount - 1) + (rebCount - 1)).Value = CType(dpReb.rebar_id, Integer)
+                        Else .Worksheets("Database").Range(myCol & rowStart - 48 + 3 * (secCount - 1) + (rebCount - 1)).ClearContents
+                        End If
+
+                        If rebCount = 1 Then
+                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 1).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 1).ClearContents
+                            End If
+                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 2).Value = CType(dpReb.longitudinal_rebar_size, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 2).ClearContents
+                            End If
+                        ElseIf rebCount = 2 Then
+                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 6).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 6).ClearContents
+                            End If
+                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 7).Value = CType(dpReb.longitudinal_rebar_size, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 7).ClearContents
+                            End If
+                            If Not IsNothing(dpReb.longitudinal_rebar_cage_diameter) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 8).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 8).ClearContents
+                            End If
+                        ElseIf rebCount = 3 Then
+                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 10).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 10).ClearContents
+                            End If
+                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 11).Value = CType(dpReb.longitudinal_rebar_size, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 11).ClearContents
+                            End If
+                            If Not IsNothing(dpReb.longitudinal_rebar_cage_diameter) Then
+                                .Worksheets("Database").Range(myCol & rowStart + secStart + 12).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Double)
+                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 12).ClearContents
+                            End If
+                        End If
+
+                        rebCount += 1
                     Next
 
-                    secRow += 1
+                    secCount += 1
+                    secBump += 15
+                    'secStart += secBump
+                    secStart += 15
+
                 Next
 
-                For Each dpSL As DrilledPierSoilLayer In dp.soil_layers
-                    .Worksheets("Soil Layers (SAPI)").Range("B" & soilRow).Value = dp.pier_id
-                    .Worksheets("Soil Layers (SAPI)").Range("C" & soilRow).Value = dpSL.soil_layer_id
-                    .Worksheets("Soil Layers (SAPI)").Range("D" & soilRow).Value = dpSL.bottom_depth
-                    .Worksheets("Soil Layers (SAPI)").Range("E" & soilRow).Value = dpSL.effective_soil_density
-                    .Worksheets("Soil Layers (SAPI)").Range("F" & soilRow).Value = dpSL.cohesion
-                    .Worksheets("Soil Layers (SAPI)").Range("G" & soilRow).Value = dpSL.friction_angle
-                    .Worksheets("Soil Layers (SAPI)").Range("H" & soilRow).Value = dpSL.skin_friction_override_comp
-                    .Worksheets("Soil Layers (SAPI)").Range("I" & soilRow).Value = dpSL.skin_friction_override_uplift
-                    '.Worksheets("Soil Layers (SAPI)").Range("J" & soilRow).Value = dpSL.bearing_type_toggle
-                    .Worksheets("Soil Layers (SAPI)").Range("K" & soilRow).Value = dpSL.nominal_bearing_capacity
-                    .Worksheets("Soil Layers (SAPI)").Range("L" & soilRow).Value = dpSL.spt_blow_count
+                'BELLED PIER
+                If dp.belled_pier = True Then
 
-                    soilRow += 1
-                Next
+                    If Not IsNothing(dp.belled_details.belled_pier_id) Then
+                        .Worksheets("Database").Range(myCol & rowStart - 3).Value = CType(dp.belled_details.belled_pier_id, Integer)
+                    Else .Worksheets("Database").Range(myCol & rowStart - 3).ClearContents
+                    End If
 
-                If ds.Tables("Belled Details SQL").Rows.Count > 0 Then
-                    .Worksheets("Belled (SAPI)").Range("B" & dpRow).Value = dp.pier_id
-                    .Worksheets("Belled (SAPI)").Range("C" & dpRow).Value = dp.belled_details.belled_pier_id
-                    .Worksheets("Belled (SAPI)").Range("D" & dpRow).Value = dp.belled_details.belled_pier_option
-                    .Worksheets("Belled (SAPI)").Range("E" & dpRow).Value = dp.belled_details.bottom_diameter_of_bell
-                    .Worksheets("Belled (SAPI)").Range("F" & dpRow).Value = dp.belled_details.bell_input_type
-                    .Worksheets("Belled (SAPI)").Range("G" & dpRow).Value = dp.belled_details.bell_angle
-                    .Worksheets("Belled (SAPI)").Range("H" & dpRow).Value = dp.belled_details.bell_height
-                    .Worksheets("Belled (SAPI)").Range("I" & dpRow).Value = dp.belled_details.bell_toe_height
-                    .Worksheets("Belled (SAPI)").Range("J" & dpRow).Value = dp.belled_details.neglect_top_soil_layer
-                    .Worksheets("Belled (SAPI)").Range("K" & dpRow).Value = dp.belled_details.swelling_expansive_soil
-                    .Worksheets("Belled (SAPI)").Range("L" & dpRow).Value = dp.belled_details.depth_of_expansive_soil
-                    .Worksheets("Belled (SAPI)").Range("M" & dpRow).Value = dp.belled_details.expansive_soil_force
+                    .Worksheets("Database").Range(myCol & rowStart + 112).Value = CType(dp.belled_pier, Boolean)
+                    If Not IsNothing(dp.belled_details.bottom_diameter_of_bell) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 113).Value = CType(dp.belled_details.bottom_diameter_of_bell, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 113).ClearContents
+                    End If
+                    If Not IsNothing(dp.belled_details.bell_angle) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 114).Value = CType(dp.belled_details.bell_angle, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 114).ClearContents
+                    End If
+                    .Worksheets("Database").Range(myCol & rowStart + 115).Value = CType(dp.belled_details.bell_input_type, String)
+                    If Not IsNothing(dp.belled_details.bell_height) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 116).Value = CType(dp.belled_details.bell_height, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 116).ClearContents
+                    End If
+                    If Not IsNothing(dp.belled_details.bell_toe_height) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 120).Value = CType(dp.belled_details.bell_toe_height, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 120).ClearContents
+                    End If
+                    .Worksheets("Database").Range(myCol & rowStart + 122).Value = CType(dp.belled_details.neglect_top_soil_layer, Boolean)
+                    .Worksheets("Database").Range(myCol & rowStart + 123).Value = CType(dp.belled_details.swelling_expansive_soil, Boolean)
+                    If Not IsNothing(dp.belled_details.depth_of_expansive_soil) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 124).Value = CType(dp.belled_details.depth_of_expansive_soil, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 124).ClearContents
+                    End If
+                    If Not IsNothing(dp.belled_details.expansive_soil_force) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 125).Value = CType(dp.belled_details.expansive_soil_force, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 125).ClearContents
+                    End If
+
                 End If
 
-                If ds.Tables("Embedded Details SQL").Rows.Count > 0 Then
-                    .Worksheets("Embedded (SAPI)").Range("B" & dpRow).Value = dp.pier_id
-                    .Worksheets("Embedded (SAPI)").Range("C" & dpRow).Value = dp.embed_details.embedded_id
-                    .Worksheets("Embedded (SAPI)").Range("D" & dpRow).Value = dp.embed_details.embedded_pole_option
-                    .Worksheets("Embedded (SAPI)").Range("E" & dpRow).Value = dp.embed_details.encased_in_concrete
-                    .Worksheets("Embedded (SAPI)").Range("F" & dpRow).Value = dp.embed_details.pole_side_quantity
-                    .Worksheets("Embedded (SAPI)").Range("G" & dpRow).Value = dp.embed_details.pole_yield_strength
-                    .Worksheets("Embedded (SAPI)").Range("H" & dpRow).Value = dp.embed_details.pole_thickness
-                    .Worksheets("Embedded (SAPI)").Range("I" & dpRow).Value = dp.embed_details.embedded_pole_input_type
-                    .Worksheets("Embedded (SAPI)").Range("J" & dpRow).Value = dp.embed_details.pole_diameter_toc
-                    .Worksheets("Embedded (SAPI)").Range("K" & dpRow).Value = dp.embed_details.pole_top_diameter
-                    .Worksheets("Embedded (SAPI)").Range("L" & dpRow).Value = dp.embed_details.pole_bottom_diameter
-                    .Worksheets("Embedded (SAPI)").Range("M" & dpRow).Value = dp.embed_details.pole_section_length
-                    .Worksheets("Embedded (SAPI)").Range("N" & dpRow).Value = dp.embed_details.pole_taper_factor
-                    .Worksheets("Embedded (SAPI)").Range("O" & dpRow).Value = dp.embed_details.pole_bend_radius_override
+                'EMBEDDED PIER
+                If dp.embedded_pole = True Then
 
-                    For Each eSec As DrilledPierEmbedSection In dp.embed_details.sections
-                        .Worksheets("Embedded (SAPI)").Range("B" & dpRow).Value = dp.pier_id
-                        'Section ID
-                        .Worksheets("Embedded (SAPI)").Range("D" & embedSecRow).Value = eSec.pier_diameter
+                    If Not IsNothing(dp.embed_details.embedded_id) Then
+                        .Worksheets("Database").Range(myCol & rowStart - 2).Value = CType(dp.embed_details.embedded_id, Integer)
+                    Else .Worksheets("Database").Range(myCol & rowStart - 2).ClearContents
+                    End If
 
-                        embedSecRow += 1
+                    .Worksheets("Database").Range(myCol & rowStart + 100).Value = CType(dp.embedded_pole, Boolean)
+                    .Worksheets("Database").Range(myCol & rowStart + 101).Value = CType(dp.embed_details.encased_in_concrete, Boolean)
+                    If Not IsNothing(dp.embed_details.pole_side_quantity) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 102).Value = CType(dp.embed_details.pole_side_quantity, Integer)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 102).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_yield_strength) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 103).Value = CType(dp.embed_details.pole_yield_strength, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 103).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_thickness) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 104).Value = CType(dp.embed_details.pole_thickness, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 104).ClearContents
+                    End If
+                    .Worksheets("Database").Range(myCol & rowStart + 105).Value = CType(dp.embed_details.embedded_pole_input_type, String)
+                    If Not IsNothing(dp.embed_details.pole_diameter_toc) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 106).Value = CType(dp.embed_details.pole_diameter_toc, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 106).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_top_diameter) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 107).Value = CType(dp.embed_details.pole_top_diameter, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 107).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_bottom_diameter) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 108).Value = CType(dp.embed_details.pole_bottom_diameter, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 108).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_section_length) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 109).Value = CType(dp.embed_details.pole_section_length, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 109).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_taper_factor) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 110).Value = CType(dp.embed_details.pole_taper_factor, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 110).ClearContents
+                    End If
+                    If Not IsNothing(dp.embed_details.pole_bend_radius_override) Then
+                        .Worksheets("Database").Range(myCol & rowStart + 111).Value = CType(dp.embed_details.pole_bend_radius_override, Double)
+                    Else .Worksheets("Database").Range(myCol & rowStart + 111).ClearContents
+                    End If
+
+                End If
+
+                'DRILLED PIER PROFILES
+                Dim summaryRowStart As Integer = 10
+
+                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+                    'Profile Return
+                    If Not IsNothing(dp.local_drilled_pier_id) Then
+                        .Worksheets("Profiles (RETURN)").Range("A" & profileRow).Value = CType(dp.local_drilled_pier_id, Integer)
+                    Else .Worksheets("Profiles (RETURN)").Range("A" & profileRow).ClearContents
+                    End If
+                    If Not IsNothing(dpp.reaction_position) Then
+                        .Worksheets("Profiles (RETURN)").Range("B" & profileRow).Value = CType(dpp.reaction_position, Integer)
+                    Else .Worksheets("Profiles (RETURN)").Range("B" & profileRow).ClearContents
+                    End If
+                    If Not IsNothing(dpp.drilled_pier_id) Then
+                        .Worksheets("Profiles (RETURN)").Range("C" & profileRow).Value = CType(dpp.drilled_pier_id, Integer)
+                    Else .Worksheets("Profiles (RETURN)").Range("C" & profileRow).ClearContents
+                    End If
+                    .Worksheets("Profiles (RETURN)").Range("D" & profileRow).Value = CType(dpp.profile_id, Integer)
+                    If Not IsNothing(dpp.reaction_location) Then
+                        .Worksheets("Profiles (RETURN)").Range("E" & profileRow).Value = CType(dpp.reaction_location, String)
+                    Else .Worksheets("Profiles (RETURN)").Range("E" & profileRow).ClearContents
+                    End If
+                    If Not IsNothing(dpp.drilled_pier_profile) Then
+                        .Worksheets("Profiles (RETURN)").Range("F" & profileRow).Value = CType(dpp.drilled_pier_profile, String)
+                    Else .Worksheets("Profiles (RETURN)").Range("F" & profileRow).ClearContents
+                    End If
+                    If Not IsNothing(dpp.soil_profile) Then
+                        .Worksheets("Profiles (RETURN)").Range("G" & profileRow).Value = CType(dpp.soil_profile, String)
+                    Else .Worksheets("Profiles (RETURN)").Range("G" & profileRow).ClearContents
+                    End If
+
+                    'SUMMARY
+                    If Not IsNothing(dpp.reaction_position) Then
+                        .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.drilled_pier_profile, String)
+                        If dpp.drilled_pier_profile = dpp.reaction_position Then
+                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
+                        Else
+                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = True
+                        End If
+                    End If
+                    If Not IsNothing(dpp.reaction_position) Then
+                        .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.soil_profile, String)
+                        If dpp.soil_profile = dpp.reaction_position Then
+                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
+                        Else
+                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = True
+                        End If
+                    End If
+                    .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
+                    .Worksheets("SUMMARY").Range("J" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.profile_id, Integer)
+
+                    profileRow += 1
+
+                Next
+
+                .Worksheets("SUMMARY").Range("EDSReactions").Value = True
+
+                'DRILLED PIER SOIL LAYER
+                Dim soilCount As Integer
+                Dim soilStart As Integer = 127
+                Dim soilColCounter As Integer
+                Dim mySoilCol As String
+
+                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+
+                    soilCount = 1
+
+                    soilColCounter = 6 + dpp.soil_profile
+                    mySoilCol = GetExcelColumnName(soilColCounter)
+
+                    For Each dpSL As DrilledPierSoilLayer In dp.soil_layers
+
+                        If Not IsNothing(dpSL.soil_layer_id) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart - 33 + (soilCount - 1)).Value = CType(dpSL.soil_layer_id, Integer)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart - 33 + (soilCount - 1)).ClearContents
+                        End If
+
+                        If Not IsNothing(dpSL.bottom_depth) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 0 + (soilCount - 1)).Value = CType(dpSL.bottom_depth, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 0 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.effective_soil_density) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 1 + (soilCount - 1)).Value = CType(dpSL.effective_soil_density, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 1 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.cohesion) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 2 + (soilCount - 1)).Value = CType(dpSL.cohesion, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 2 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.friction_angle) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 3 + (soilCount - 1)).Value = CType(dpSL.friction_angle, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 3 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.skin_friction_override_comp) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 4 + (soilCount - 1)).Value = CType(dpSL.skin_friction_override_comp, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 4 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.skin_friction_override_uplift) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 5 + (soilCount - 1)).Value = CType(dpSL.skin_friction_override_uplift, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 5 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.nominal_bearing_capacity) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 6 + (soilCount - 1)).Value = CType(dpSL.nominal_bearing_capacity, Double)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 6 + (soilCount - 1)).ClearContents
+                        End If
+                        If Not IsNothing(dpSL.spt_blow_count) Then
+                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 7 + (soilCount - 1)).Value = CType(dpSL.spt_blow_count, Integer)
+                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 7 + (soilCount - 1)).ClearContents
+                        End If
+
+                        soilCount += 1
                     Next
-                End If
+
+                Next
 
                 dpRow += 1
+                colCounter += 1
+
             Next
+
+
+
+
+            '~~~~~~~~POPULATE TOOL INPUTS WITH THE FIRST INSTANCE IN TOOL'S LOCAL DATABASE
+
+            Dim firstReaction As String = DrilledPiers(0).drilled_pier_profiles(0).reaction_location
+
+            If firstReaction = "Monopole" Then
+                .Worksheets("Foundation Input").Range("TowerType").Value = "Monopole"
+            ElseIf firstReaction = "Self Support" Then
+                .Worksheets("Foundation Input").Range("TowerType").Value = "Self Support"
+            ElseIf firstReaction = "Base" Then
+                .Worksheets("Foundation Input").Range("TowerType").Value = "Guyed (Base)"
+                .Worksheets("Foundation Input").Range("Location").Value = "Base"
+            End If
+
+            Dim firstPierProfile As Integer = DrilledPiers(0).drilled_pier_profiles(0).drilled_pier_profile
+            Dim firstSoilProfile As Integer = DrilledPiers(0).drilled_pier_profiles(0).soil_profile
+
+            colCounter = 7
+
+            myCol = GetExcelColumnName(colCounter)
+
+            If firstReaction <> "" Then
+
+                'MATERIAL PROPERTIES
+                If DrilledPiers(0).concrete_compressive_strength.HasValue Then
+                    .Worksheets("Foundation Input").Range("f\c").Value = CType(DrilledPiers(0).concrete_compressive_strength, Double)
+                Else .Worksheets("Foundation Input").Range("f\c").clearcontents
+                End If
+                If DrilledPiers(0).longitudinal_rebar_yield_strength.HasValue Then
+                    .Worksheets("Foundation Input").Range("Fy_rebar").Value = CType(DrilledPiers(0).longitudinal_rebar_yield_strength, Double)
+                Else .Worksheets("Foundation Input").Range("Fy_rebar").ClearContents
+                End If
+                If DrilledPiers(0).tie_yield_strength.HasValue Then
+                    .Worksheets("Foundation Input").Range("yield_tie").Value = CType(DrilledPiers(0).tie_yield_strength, Double)
+                Else .Worksheets("Foundation Input").Range("yield_tie").ClearContents
+                End If
+                If DrilledPiers(0).rebar_cage_2_fy_override.HasValue Then
+                    .Worksheets("Foundation Input").Range("RebarCage2FyOverride").Value = CType(DrilledPiers(0).rebar_cage_2_fy_override, Double)
+                Else .Worksheets("Foundation Input").Range("RebarCage2FyOverride").ClearContents
+                End If
+                If DrilledPiers(0).rebar_cage_3_fy_override.HasValue Then
+                    .Worksheets("Foundation Input").Range("RebarCage3FyOverride").Value = CType(DrilledPiers(0).rebar_cage_3_fy_override, Double)
+                Else .Worksheets("Foundation Input").Range("RebarCage3FyOverride").ClearContents
+                End If
+
+                'PIER DESIGN DATA (GENERAL)
+                If DrilledPiers(0).foundation_depth.HasValue Then
+                    .Worksheets("Foundation Input").Range("depth").Value = CType(DrilledPiers(0).foundation_depth, Double)
+                Else .Worksheets("Foundation Input").Range("depth").ClearContents
+                End If
+                If DrilledPiers(0).extension_above_grade.HasValue Then
+                    .Worksheets("Foundation Input").Range("ConcreteAboveGrade").Value = CType(DrilledPiers(0).extension_above_grade, Double)
+                Else .Worksheets("Foundation Input").Range("ConcreteAboveGrade").ClearContents
+                End If
+                'groundwater
+                If CType(DrilledPiers(0).groundwater_depth, Double) = -1 Then
+                    .Worksheets("Foundation Input").Range("GW").Value = "N/A"
+                Else .Worksheets("Foundation Input").Range("GW").Value = CType(DrilledPiers(0).groundwater_depth, Double)
+                End If
+                'soil layers
+                If DrilledPiers(0).soil_layer_quantity.HasValue Then
+                    .Worksheets("Foundation Input").Range("SoilLayerQty").Value = CType(DrilledPiers(0).soil_layer_quantity, Integer)
+                Else .Worksheets("Foundation Input").Range("SoilLayerQty").ClearContents
+                End If
+                'min steel
+                If Not IsNothing(CType(DrilledPiers(0).assume_min_steel, String)) Then
+                    .Worksheets("Foundation Input").Range("AssumeMinSteel").Value = CType(DrilledPiers(0).assume_min_steel, String)
+                Else .Worksheets("Foundation Input").Range("AssumeMinSteel").ClearContents
+                End If
+
+                'PIER DESIGN DATA (SECTIONS)
+                Dim secCount As Integer = 1
+                Dim secRowStart As Integer = 26
+
+                For Each dpSec As DrilledPierSection In DrilledPiers(0).sections
+
+                    If dpSec.pier_diameter.HasValue Then
+                        .Worksheets("Foundation Input").Range("D" & secRowStart).Value = CType(dpSec.pier_diameter, Double)
+                    Else .Worksheets("Foundation Input").Range("D" & secRowStart).ClearContents
+                    End If
+                    If dpSec.clear_cover.HasValue Then
+                        .Worksheets("Foundation Input").Range("D" & secRowStart + 3).Value = CType(dpSec.clear_cover, Double)
+                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 3).ClearContents
+                    End If
+                    If Not IsNothing(CType(dpSec.clear_cover_rebar_cage_option, String)) Then
+                        .Worksheets("Foundation Input").Range("B" & secRowStart + 3).Value = CType(dpSec.clear_cover_rebar_cage_option, String)
+                    Else .Worksheets("Foundation Input").Range("B" & secRowStart + 3).ClearContents
+                    End If
+                    If dpSec.tie_size.HasValue Then
+                        .Worksheets("Foundation Input").Range("D" & secRowStart + 4).Value = CType(dpSec.tie_size, Integer)
+                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 4).ClearContents
+                    End If
+                    If dpSec.tie_spacing.HasValue Then
+                        .Worksheets("Foundation Input").Range("D" & secRowStart + 5).Value = CType(dpSec.tie_spacing, Double)
+                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 5).ClearContents
+                    End If
+                    If dpSec.bottom_elevation.HasValue Then
+                        .Worksheets("Foundation Input").Range("Depth" & secCount).Value = CType(dpSec.bottom_elevation, Double)
+                    Else .Worksheets("Foundation Input").Range("Depth" & secCount).ClearContents
+                    End If
+                    If dpSec.rho_override.HasValue Then
+                        .Worksheets("Foundation Input").Range("rhoOverride" & secCount).Value = CType(dpSec.rho_override, Double)
+                    Else .Worksheets("Foundation Input").Range("rhoOverride" & secCount).ClearContents
+                    End If
+
+                    'PIER DESIGN DATA (REBAR)
+                    Dim rebCount As Integer = 1
+
+                    For Each dpReb As DrilledPierRebar In dpSec.rebar
+
+                        If rebCount = 1 Then
+                            If dpReb.longitudinal_rebar_quantity.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 1).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 1).ClearContents
+                            End If
+                            If dpReb.longitudinal_rebar_size.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 2).Value = CType(dpReb.longitudinal_rebar_size, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 2).ClearContents
+                            End If
+                        End If
+
+                        If rebCount = 2 Then
+                            If dpReb.longitudinal_rebar_quantity.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 6).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 6).ClearContents
+                            End If
+                            If dpReb.longitudinal_rebar_size.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 7).Value = CType(dpReb.longitudinal_rebar_size, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 7).ClearContents
+                            End If
+                            If dpReb.longitudinal_rebar_cage_diameter.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 8).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 8).ClearContents
+                            End If
+                        End If
+
+                        If rebCount = 3 Then
+                            If dpReb.longitudinal_rebar_quantity.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 10).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 10).ClearContents
+                            End If
+                            If dpReb.longitudinal_rebar_size.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 11).Value = CType(dpReb.longitudinal_rebar_size, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 11).ClearContents
+                            End If
+                            If dpReb.longitudinal_rebar_cage_diameter.HasValue Then
+                                .Worksheets("Foundation Input").Range("D" & secRowStart + 12).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Integer)
+                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 12).ClearContents
+                            End If
+                        End If
+
+                        rebCount += 1
+
+                    Next
+
+                    'populate rebar cage qty (hidden input in tool, typically populated by the Pier Options)
+                    .Worksheets("Foundation Input").Range("Rebar" & secCount).Value = rebCount - 1
+
+                    secCount += 1
+
+                    secRowStart += 16
+
+                Next
+
+
+                'SOIL
+                Dim soilRowStart As Integer = 121
+                Dim soilCount As Integer = 1
+
+                For Each dpSL As DrilledPierSoilLayer In DrilledPiers(0).soil_layers
+
+                    If dpSL.bottom_depth.HasValue Then
+                        .Worksheets("Foundation Input").Range("D" & soilRowStart + soilCount).Value = CType(dpSL.bottom_depth, Double)
+                    Else .Worksheets("Foundation Input").Range("D" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.effective_soil_density.HasValue Then
+                        .Worksheets("Foundation Input").Range("F" & soilRowStart + soilCount).Value = CType(dpSL.effective_soil_density, Double)
+                    Else .Worksheets("Foundation Input").Range("F" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.cohesion.HasValue Then
+                        .Worksheets("Foundation Input").Range("H" & soilRowStart + soilCount).Value = CType(dpSL.cohesion, Double)
+                    Else .Worksheets("Foundation Input").Range("H" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.friction_angle.HasValue Then
+                        .Worksheets("Foundation Input").Range("I" & soilRowStart + soilCount).Value = CType(dpSL.friction_angle, Double)
+                    Else .Worksheets("Foundation Input").Range("I" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.skin_friction_override_comp.HasValue Then
+                        .Worksheets("Foundation Input").Range("M" & soilRowStart + soilCount).Value = CType(dpSL.skin_friction_override_comp, Double)
+                    Else .Worksheets("Foundation Input").Range("M" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.skin_friction_override_uplift.HasValue Then
+                        .Worksheets("Foundation Input").Range("N" & soilRowStart + soilCount).Value = CType(dpSL.skin_friction_override_uplift, Double)
+                    Else .Worksheets("Foundation Input").Range("N" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.nominal_bearing_capacity.HasValue Then
+                        .Worksheets("Foundation Input").Range("O" & soilRowStart + soilCount).Value = CType(dpSL.nominal_bearing_capacity, Double)
+                    Else .Worksheets("Foundation Input").Range("O" & soilRowStart + soilCount).ClearContents
+                    End If
+                    If dpSL.spt_blow_count.HasValue Then
+                        .Worksheets("Foundation Input").Range("P" & soilRowStart + soilCount).Value = CType(dpSL.spt_blow_count, Integer)
+                    Else .Worksheets("Foundation Input").Range("P" & soilRowStart + soilCount).ClearContents
+                    End If
+
+                    soilCount += 1
+
+                Next
+
+
+                'OPTIONS
+                .Worksheets("Foundation Input").Range("EffectiveDepthInput").Value = CType(DrilledPiers(0).rebar_effective_depths, Boolean)
+                .Worksheets("Foundation Input").Range("ShearAlongDepth").Value = CType(DrilledPiers(0).check_shear_along_depth, Boolean)
+                .Worksheets("Foundation Input").Range("ShearFriction").Value = CType(DrilledPiers(0).utilize_shear_friction_methodology, Boolean)
+                .Worksheets("Foundation Input").Range("ShearInputOverride").Value = CType(DrilledPiers(0).shear_override_crit_depth, Boolean)
+                If .Worksheets("Foundation Input").Range("ShearInputOverride").Value = CType(DrilledPiers(0).shear_override_crit_depth, Boolean) = True Then
+                    If DrilledPiers(0).shear_crit_depth_override_comp.HasValue Then
+                        .Worksheets("Foundation Input").Range("ShearCritDepthComp").Value = CType(DrilledPiers(0).shear_crit_depth_override_comp, Double)
+                    End If
+                    If DrilledPiers(0).shear_crit_depth_override_uplift.HasValue Then
+                        .Worksheets("Foundation Input").Range("ShearCritDepthUplift").Value = CType(DrilledPiers(0).shear_crit_depth_override_uplift, Double)
+                    End If
+                End If
+
+
+                'BELLED PIER
+                .Worksheets("Belled Pier").Range("Belled").Value = CType(DrilledPiers(0).belled_pier, Boolean)
+                If DrilledPiers(0).belled_pier = True Then
+                    If DrilledPiers(0).belled_details.bottom_diameter_of_bell.HasValue Then
+                        .Worksheets("Belled Pier").Range("Dia_Bell").Value = CType(DrilledPiers(0).belled_details.bottom_diameter_of_bell, Double)
+                    Else .Worksheets("Belled Pier").Range("Dia_Bell").ClearContents
+                    End If
+                    If Not IsNothing(CType(DrilledPiers(0).belled_details.bell_input_type, String)) Then
+                        .Worksheets("Belled Pier").Range("BellInputType").Value = CType(DrilledPiers(0).belled_details.bell_input_type, String)
+                    Else .Worksheets("Belled Pier").Range("BellInputType").ClearContents
+                    End If
+                    If DrilledPiers(0).belled_details.bell_angle.HasValue Then
+                        .Worksheets("Belled Pier").Range("BellAngle").Value = CType(DrilledPiers(0).belled_details.bell_angle, Double)
+                    Else .Worksheets("Belled Pier").Range("BellAngle").ClearContents
+                    End If
+                    If DrilledPiers(0).belled_details.bell_height.HasValue Then
+                        .Worksheets("Belled Pier").Range("hbell").Value = CType(DrilledPiers(0).belled_details.bell_height, Double)
+                    Else .Worksheets("Belled Pier").Range("hbell").ClearContents
+                    End If
+                    If DrilledPiers(0).belled_details.bell_toe_height.HasValue Then
+                        .Worksheets("Belled Pier").Range("t_bell").Value = CType(DrilledPiers(0).belled_details.bell_toe_height, Double)
+                    Else .Worksheets("Belled Pier").Range("t_bell").ClearContents
+                    End If
+                    .Worksheets("Belled Pier").Range("Neglect_Top").Value = CType(DrilledPiers(0).belled_details.neglect_top_soil_layer, Boolean)
+                    .Worksheets("Belled Pier").Range("expansive").Value = CType(DrilledPiers(0).belled_details.expansive_soil_force, Boolean)
+                    If DrilledPiers(0).belled_details.depth_of_expansive_soil.HasValue Then
+                        .Worksheets("Belled Pier").Range("D_expansive").Value = CType(DrilledPiers(0).belled_details.depth_of_expansive_soil, Double)
+                    Else .Worksheets("Belled Pier").Range("D_expansive").ClearContents
+                    End If
+                    If DrilledPiers(0).belled_details.expansive_soil_force.HasValue Then
+                        .Worksheets("Belled Pier").Range("Force_Expansive").Value = CType(DrilledPiers(0).belled_details.expansive_soil_force, Double)
+                    Else .Worksheets("Belled Pier").Range("Force_Expansive").ClearContents
+                    End If
+                End If
+
+
+                'EMBEDDED POLE
+                .Worksheets("Soil Calculations").Range("Embedded").Value = CType(DrilledPiers(0).embedded_pole, Boolean)
+                If DrilledPiers(0).embedded_pole = True Then
+                    .Worksheets("Soil Calculations").Range("Encased").Value = CType(DrilledPiers(0).embed_details.encased_in_concrete, Boolean)
+                    If DrilledPiers(0).embed_details.pole_side_quantity.HasValue Then
+                        .Worksheets("Soil Calculations").Range("Sides").Value = CType(DrilledPiers(0).embed_details.pole_side_quantity, Integer)
+                    Else .Worksheets("Soil Calculations").Range("Sides").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_yield_strength.HasValue Then
+                        .Worksheets("Soil Calculations").Range("Fy").Value = CType(DrilledPiers(0).embed_details.pole_yield_strength, Double)
+                    Else .Worksheets("Soil Calculations").Range("Fy").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_thickness.HasValue Then
+                        .Worksheets("Soil Calculations").Range("t").Value = CType(DrilledPiers(0).embed_details.pole_thickness, Double)
+                    Else .Worksheets("Soil Calculations").Range("t").ClearContents
+                    End If
+                    If Not IsNothing(CType(DrilledPiers(0).embed_details.embedded_pole_input_type, String)) Then
+                        .Worksheets("Soil Calculations").Range("EmbeddedPoleInputType").Value = CType(DrilledPiers(0).embed_details.embedded_pole_input_type, String)
+                    Else .Worksheets("Soil Calculations").Range("EmbeddedPoleInputType").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_diameter_toc.HasValue Then
+                        .Worksheets("Soil Calculations").Range("dia_grade").Value = CType(DrilledPiers(0).embed_details.pole_diameter_toc, Double)
+                    Else .Worksheets("Soil Calculations").Range("dia_grade").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_top_diameter.HasValue Then
+                        .Worksheets("Soil Calculations").Range("TopDiameter").Value = CType(DrilledPiers(0).embed_details.pole_top_diameter, Double)
+                    Else .Worksheets("Soil Calculations").Range("TopDiameter").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_bottom_diameter.HasValue Then
+                        .Worksheets("Soil Calculations").Range("BottomDiameter").Value = CType(DrilledPiers(0).embed_details.pole_bottom_diameter, Double)
+                    Else .Worksheets("Soil Calculations").Range("BottomDiameter").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_section_length.HasValue Then
+                        .Worksheets("Soil Calculations").Range("LengthOfSection").Value = CType(DrilledPiers(0).embed_details.pole_section_length, Double)
+                    Else .Worksheets("Soil Calculations").Range("LengthOfSection").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_taper_factor.HasValue Then
+                        .Worksheets("Soil Calculations").Range("taper").Value = CType(DrilledPiers(0).embed_details.pole_taper_factor, Double)
+                    Else .Worksheets("Soil Calculations").Range("taper").ClearContents
+                    End If
+                    If DrilledPiers(0).embed_details.pole_bend_radius_override.HasValue Then
+                        .Worksheets("Soil Calculations").Range("bend_user").Value = CType(DrilledPiers(0).embed_details.pole_bend_radius_override, Double)
+                    Else .Worksheets("Soil Calculations").Range("bend_user").ClearContents
+                    End If
+                End If
+
+            End If
+
+
         End With
+
 
         SaveAndCloseDrilledPier()
     End Sub
+
+    Private Function GetExcelColumnName(columnNumber As Integer) As String
+        Dim dividend As Integer = columnNumber
+        Dim columnName As String = String.Empty
+        Dim modulo As Integer
+
+        While dividend > 0
+            modulo = (dividend - 1) Mod 26
+            columnName = Convert.ToChar(65 + modulo).ToString() & columnName
+            dividend = CInt((dividend - modulo) / 26)
+        End While
+
+        Return columnName
+    End Function
 
     Private Sub LoadNewDrilledPier()
         NewDrilledPierWb.LoadDocument(DrilledPierTemplatePath, DrilledPierFileType)
@@ -370,15 +1014,26 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@FndID"
-        insertString += "," & dp.foundation_depth.ToString
-        insertString += "," & dp.extension_above_grade.ToString
-        insertString += "," & dp.groundwater_depth.ToString
-        insertString += "," & "'" & dp.assume_min_steel.ToString & "'"
-        insertString += "," & "'" & dp.check_shear_along_depth.ToString & "'"
-        'insertString += "," & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
-        insertString += "," & "'" & dp.embedded_pole.ToString & "'"
-        insertString += "," & "'" & dp.belled_pier.ToString & "'"
-        insertString += "," & dp.soil_layer_quantity
+        insertString += "," & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
 
         Return insertString
     End Function
@@ -387,16 +1042,16 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@DpID"
-        insertString += "," & "'" & bp.belled_pier_option.ToString & "'"
-        insertString += "," & bp.bottom_diameter_of_bell.ToString
-        insertString += "," & "'" & bp.bell_input_type.ToString & "'"
-        insertString += "," & bp.bell_angle.ToString
-        insertString += "," & bp.bell_height.ToString
-        insertString += "," & bp.bell_toe_height.ToString
-        insertString += "," & "'" & bp.neglect_top_soil_layer.ToString & "'"
-        insertString += "," & "'" & bp.swelling_expansive_soil.ToString & "'"
-        insertString += "," & bp.depth_of_expansive_soil.ToString
-        insertString += "," & bp.expansive_soil_force.ToString
+        insertString += "," & IIf(IsNothing(bp.belled_pier_option), "Null", "'" & bp.belled_pier_option.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.bottom_diameter_of_bell), "Null", "'" & bp.bottom_diameter_of_bell.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.bell_input_type), "Null", "'" & bp.bell_input_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.bell_angle), "Null", "'" & bp.bell_angle.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.bell_height), "Null", "'" & bp.bell_height.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.bell_toe_height), "Null", "'" & bp.bell_toe_height.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.neglect_top_soil_layer), "Null", "'" & bp.neglect_top_soil_layer.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.swelling_expansive_soil), "Null", "'" & bp.swelling_expansive_soil.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.depth_of_expansive_soil), "Null", "'" & bp.depth_of_expansive_soil.ToString & "'")
+        insertString += "," & IIf(IsNothing(bp.expansive_soil_force), "Null", "'" & bp.expansive_soil_force.ToString & "'")
 
         Return insertString
     End Function
@@ -405,18 +1060,18 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@DpID"
-        insertString += "," & "'" & ep.embedded_pole_option.ToString & "'"
-        insertString += "," & "'" & ep.encased_in_concrete.ToString & "'"
-        insertString += "," & ep.pole_side_quantity.ToString
-        insertString += "," & ep.pole_yield_strength.ToString
-        insertString += "," & ep.pole_thickness.ToString
-        insertString += "," & "'" & ep.embedded_pole_input_type.ToString & "'"
-        insertString += "," & ep.pole_diameter_toc.ToString
-        insertString += "," & ep.pole_top_diameter.ToString
-        insertString += "," & ep.pole_bottom_diameter.ToString
-        insertString += "," & ep.pole_section_length.ToString
-        insertString += "," & ep.pole_taper_factor.ToString
-        insertString += "," & ep.pole_bend_radius_override.ToString
+        insertString += "," & IIf(IsNothing(ep.embedded_pole_option), "Null", "'" & ep.embedded_pole_option.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.encased_in_concrete), "Null", "'" & ep.encased_in_concrete.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_side_quantity), "Null", "'" & ep.pole_side_quantity.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_yield_strength), "Null", "'" & ep.pole_yield_strength.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_thickness), "Null", "'" & ep.pole_thickness.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.embedded_pole_input_type), "Null", "'" & ep.embedded_pole_input_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_diameter_toc), "Null", "'" & ep.pole_diameter_toc.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_top_diameter), "Null", "'" & ep.pole_top_diameter.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_bottom_diameter), "Null", "'" & ep.pole_bottom_diameter.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_section_length), "Null", "'" & ep.pole_section_length.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_taper_factor), "Null", "'" & ep.pole_taper_factor.ToString & "'")
+        insertString += "," & IIf(IsNothing(ep.pole_bend_radius_override), "Null", "'" & ep.pole_bend_radius_override.ToString & "'")
 
         Return insertString
     End Function
@@ -425,15 +1080,15 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@DpID"
-        insertString += "," & dpsl.bottom_depth.ToString
-        insertString += "," & dpsl.effective_soil_density.ToString
-        insertString += "," & dpsl.cohesion.ToString
-        insertString += "," & dpsl.friction_angle.ToString
-        insertString += "," & dpsl.skin_friction_override_comp.ToString
-        insertString += "," & dpsl.skin_friction_override_uplift.ToString
-        'insertString += "," & "'" & dpsl.bearing_type_toggle.ToString & "'"
-        insertString += "," & dpsl.nominal_bearing_capacity.ToString
-        insertString += "," & dpsl.spt_blow_count.ToString
+        insertString += "," & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
 
         Return insertString
     End Function
@@ -442,16 +1097,14 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@DpID"
-        insertString += "," & dpsec.pier_diameter.ToString
-        insertString += "," & dpsec.clear_cover.ToString
-        insertString += "," & "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'"
-        insertString += "," & dpsec.tie_size.ToString
-        insertString += "," & dpsec.tie_spacing.ToString
-        'insertString += "," & dpsec.top_elevation.ToString
-        insertString += "," & dpsec.bottom_elevation.ToString
-        'insertString += "," & dpsec.tie_yield_strength.ToString
-        'insertString += "," & dpsec.concrete_compressive_strength.ToString
-        'insertString += "," & dpsec.assum_min_steel_rho_override.ToString
+        insertString += "," & IIf(IsNothing(dpsec.pier_diameter), "Null", "'" & dpsec.pier_diameter.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.clear_cover), "Null", "'" & dpsec.clear_cover.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.clear_cover_rebar_cage_option), "Null", "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpsec.rho_override), "Null", "'" & dpsec.rho_override.ToString & "'")
 
         Return insertString
     End Function
@@ -460,19 +1113,21 @@ Partial Public Class DataTransfererDrilledPier
         Dim insertString As String = ""
 
         insertString += "@SecID"
-        insertString += "," & dpreb.longitudinal_rebar_quantity.ToString
-        insertString += "," & dpreb.longitudinal_rebar_size.ToString
-        insertString += "," & dpreb.longitudinal_rebar_cage_diameter.ToString
-        insertString += "," & dpreb.longitudinal_rebar_yield_strength.ToString
+        insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_quantity), "Null", "'" & dpreb.longitudinal_rebar_quantity.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_size), "Null", "'" & dpreb.longitudinal_rebar_size.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_cage_diameter), "Null", "'" & dpreb.longitudinal_rebar_cage_diameter.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpreb.local_rebar_id), "Null", "'" & dpreb.local_rebar_id.ToString & "'")
 
         Return insertString
     End Function
-
-    Private Function InsertDrilledPierEmbedSection(ByVal eSec As DrilledPierEmbedSection) As String
+    Private Function InsertDrilledPierProfile(ByVal dpp As DrilledPierProfile) As String
         Dim insertString As String = ""
 
-        insertString += "@EmbedID"
-        insertString += "," & "'" & eSec.pier_diameter.ToString & "'"
+        insertString += "@DpID"
+        insertString += "," & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
+        insertString += "," & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
 
         Return insertString
     End Function
@@ -483,15 +1138,26 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE drilled_pier_details SET "
-        updateString += "foundation_depth=" & dp.foundation_depth.ToString
-        updateString += ",extension_above_grade=" & dp.extension_above_grade.ToString
-        updateString += ",groundwater_depth=" & dp.groundwater_depth.ToString
-        updateString += ",assume_min_steel=" & "'" & dp.assume_min_steel.ToString & "'"
-        updateString += ",check_shear_along_depth=" & "'" & dp.check_shear_along_depth.ToString & "'"
-        'updateString += ",utilize_skin_friction_methodology=" & "'" & dp.utilize_skin_friction_methodology.ToString & "'"
-        updateString += ",embedded_pole=" & "'" & dp.embedded_pole.ToString & "'"
-        updateString += ",belled_pier=" & "'" & dp.belled_pier.ToString & "'"
-        updateString += ",soil_layer_quantity=" & dp.soil_layer_quantity.ToString
+        updateString += "foundation_depth=" & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
+        updateString += ", extension_above_grade=" & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
+        updateString += ", groundwater_depth=" & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
+        updateString += ", assume_min_steel=" & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
+        updateString += ", check_shear_along_depth=" & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
+        updateString += ", utilize_shear_friction_methodology=" & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
+        updateString += ", embedded_pole=" & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
+        updateString += ", belled_pier=" & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
+        updateString += ", soil_layer_quantity=" & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
+        updateString += ", concrete_compressive_strength=" & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
+        updateString += ", tie_yield_strength=" & IIf(IsNothing("'" & dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
+        updateString += ", longitudinal_rebar_yield_strength=" & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
+        updateString += ", rebar_effective_depths=" & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
+        updateString += ", rebar_cage_2_fy_override=" & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
+        updateString += ", rebar_cage_3_fy_override=" & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
+        updateString += ", shear_override_crit_depth=" & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
+        updateString += ", shear_crit_depth_override_comp=" & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
+        updateString += ", shear_crit_depth_override_uplift=" & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
+        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
+        updateString += ", bearing_type_toggle=" & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
         updateString += " WHERE ID=" & dp.pier_id & vbNewLine
 
         Return updateString
@@ -501,16 +1167,16 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE belled_pier_details SET "
-        updateString += "belled_pier_option=" & "'" & bp.belled_pier_option.ToString & "'"
-        updateString += ",bottom_diameter_of_bell=" & bp.bottom_diameter_of_bell.ToString
-        updateString += ",bell_input_type=" & "'" & bp.bell_input_type.ToString & "'"
-        updateString += ",bell_angle=" & bp.bell_angle.ToString
-        updateString += ",bell_height=" & bp.bell_height.ToString
-        updateString += ",bell_toe_height=" & bp.bell_toe_height.ToString
-        updateString += ",neglect_top_soil_layer=" & "'" & bp.neglect_top_soil_layer.ToString & "'"
-        updateString += ",swelling_expansive_soil=" & "'" & bp.swelling_expansive_soil.ToString & "'"
-        updateString += ",depth_of_expansive_soil=" & bp.depth_of_expansive_soil.ToString
-        updateString += ",expansive_soil_force=" & bp.expansive_soil_force.ToString
+        updateString += "belled_pier_option=" & IIf(IsNothing(bp.belled_pier_option), "Null", "'" & bp.belled_pier_option.ToString & "'")
+        updateString += ", bottom_diameter_of_bell=" & IIf(IsNothing(bp.bottom_diameter_of_bell), "Null", "'" & bp.bottom_diameter_of_bell.ToString & "'")
+        updateString += ", bell_input_type=" & IIf(IsNothing(bp.bell_input_type), "Null", "'" & bp.bell_input_type.ToString & "'")
+        updateString += ", bell_angle=" & IIf(IsNothing(bp.bell_angle), "Null", "'" & bp.bell_angle.ToString & "'")
+        updateString += ", bell_height=" & IIf(IsNothing(bp.bell_height), "Null", "'" & bp.bell_height.ToString & "'")
+        updateString += ", bell_toe_height=" & IIf(IsNothing(bp.bell_toe_height), "Null", "'" & bp.bell_toe_height.ToString & "'")
+        updateString += ", neglect_top_soil_layer=" & IIf(IsNothing(bp.neglect_top_soil_layer), "Null", "'" & bp.neglect_top_soil_layer.ToString & "'")
+        updateString += ", swelling_expansive_soil=" & IIf(IsNothing(bp.swelling_expansive_soil), "Null", "'" & bp.swelling_expansive_soil.ToString & "'")
+        updateString += ", depth_of_expansive_soil=" & IIf(IsNothing(bp.depth_of_expansive_soil), "Null", "'" & bp.depth_of_expansive_soil.ToString & "'")
+        updateString += ", expansive_soil_force=" & IIf(IsNothing(bp.expansive_soil_force), "Null", "'" & bp.expansive_soil_force.ToString & "'")
         updateString += " WHERE ID=" & bp.belled_pier_id & vbNewLine
 
         Return updateString
@@ -520,18 +1186,18 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE embedded_pole_details SET "
-        updateString += "embedded_pole_option=" & "'" & ep.embedded_pole_option.ToString & "'"
-        updateString += ",encased_in_concrete=" & "'" & ep.encased_in_concrete.ToString & "'"
-        updateString += ",pole_side_quantity=" & ep.pole_side_quantity.ToString
-        updateString += ",pole_yield_strength=" & ep.pole_yield_strength.ToString
-        updateString += ",pole_thickness=" & ep.pole_thickness.ToString
-        updateString += ",embedded_pole_input_type=" & "'" & ep.embedded_pole_input_type.ToString & "'"
-        updateString += ",pole_diameter_toc=" & ep.pole_diameter_toc.ToString
-        updateString += ",pole_top_diameter=" & ep.pole_top_diameter.ToString
-        updateString += ",pole_bottom_diameter=" & ep.pole_bottom_diameter.ToString
-        updateString += ",pole_section_length=" & ep.pole_section_length.ToString
-        updateString += ",pole_taper_factor=" & ep.pole_taper_factor.ToString
-        updateString += ",pole_bend_radius_override=" & ep.pole_bend_radius_override.ToString
+        updateString += "embedded_pole_option=" & IIf(IsNothing(ep.embedded_pole_option), "Null", "'" & ep.embedded_pole_option.ToString & "'")
+        updateString += ", encased_in_concrete=" & IIf(IsNothing(ep.encased_in_concrete), "Null", "'" & ep.encased_in_concrete.ToString & "'")
+        updateString += ", pole_side_quantity=" & IIf(IsNothing(ep.pole_side_quantity), "Null", "'" & ep.pole_side_quantity.ToString & "'")
+        updateString += ", pole_yield_strength=" & IIf(IsNothing(ep.pole_yield_strength), "Null", "'" & ep.pole_yield_strength.ToString & "'")
+        updateString += ", pole_thickness=" & IIf(IsNothing(ep.pole_thickness), "Null", "'" & ep.pole_thickness.ToString & "'")
+        updateString += ", embedded_pole_input_type=" & IIf(IsNothing(ep.embedded_pole_input_type), "Null", "'" & ep.embedded_pole_input_type.ToString & "'")
+        updateString += ", pole_diameter_toc=" & IIf(IsNothing(ep.pole_diameter_toc), "Null", "'" & ep.pole_diameter_toc.ToString & "'")
+        updateString += ", pole_top_diameter=" & IIf(IsNothing(ep.pole_top_diameter), "Null", "'" & ep.pole_top_diameter.ToString & "'")
+        updateString += ", pole_bottom_diameter=" & IIf(IsNothing(ep.pole_bottom_diameter), "Null", "'" & ep.pole_bottom_diameter.ToString & "'")
+        updateString += ", pole_section_length=" & IIf(IsNothing(ep.pole_section_length), "Null", "'" & ep.pole_section_length.ToString & "'")
+        updateString += ", pole_taper_factor=" & IIf(IsNothing(ep.pole_taper_factor), "Null", "'" & ep.pole_taper_factor.ToString & "'")
+        updateString += ", pole_bend_radius_override=" & IIf(IsNothing(ep.pole_bend_radius_override), "Null", "'" & ep.pole_bend_radius_override.ToString & "'")
         updateString += " WHERE ID=" & ep.embedded_id & vbNewLine
 
         Return updateString
@@ -541,15 +1207,15 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE drilled_pier_soil_layer SET "
-        updateString += ",bottom_depth=" & dpsl.bottom_depth.ToString
-        updateString += ",effective_soil_density=" & dpsl.effective_soil_density.ToString
-        updateString += ",cohesion=" & dpsl.cohesion.ToString
-        updateString += ",friction_angle=" & dpsl.friction_angle.ToString
-        updateString += ",skin_friction_override_comp=" & dpsl.skin_friction_override_comp.ToString
-        updateString += ",skin_friction_override_uplift=" & dpsl.skin_friction_override_uplift.ToString
-        'updateString += ",bearing_type_toggle=" & "'" & dpsl.bearing_type_toggle.ToString & "'"
-        updateString += ",nominal_bearing_capacity=" & dpsl.nominal_bearing_capacity.ToString
-        updateString += ",spt_blow_count=" & dpsl.spt_blow_count.ToString
+        updateString += "bottom_depth=" & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
+        updateString += ", effective_soil_density=" & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
+        updateString += ", cohesion=" & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
+        updateString += ", friction_angle=" & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
+        updateString += ", skin_friction_override_comp=" & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
+        updateString += ", skin_friction_override_uplift=" & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
+        updateString += ", nominal_bearing_capacity=" & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
+        updateString += ", spt_blow_count=" & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
+        updateString += ", local_soil_layer_id=" & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
         updateString += " WHERE ID=" & dpsl.soil_layer_id & vbNewLine
 
         Return updateString
@@ -559,16 +1225,14 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE drilled_pier_section SET "
-        updateString += "pier_diameter=" & dpsec.pier_diameter.ToString
-        updateString += ",clear_cover=" & dpsec.clear_cover.ToString
-        updateString += ",clear_cover_rebar_cage_option=" & "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'"
-        updateString += ",tie_size=" & dpsec.tie_size.ToString
-        updateString += ",tie_spacing=" & dpsec.tie_spacing.ToString
-        'updateString += ",top_elevation=" & dpsec.top_elevation.ToString
-        updateString += ",bottom_elevation=" & dpsec.bottom_elevation.ToString
-        'updateString += ",tie_yield_strength=" & dpsec.tie_yield_strength.ToString
-        'updateString += ",concrete_compressive_strength=" & dpsec.concrete_compressive_strength.ToString
-        'updateString += ",assum_min_steel_rho_override=" & dpsec.assum_min_steel_rho_override.ToString
+        updateString += "pier_diameter=" & IIf(IsNothing(dpsec.pier_diameter), "Null", "'" & dpsec.pier_diameter.ToString & "'")
+        updateString += ", clear_cover=" & IIf(IsNothing(dpsec.clear_cover), "Null", "'" & dpsec.clear_cover.ToString & "'")
+        updateString += ", clear_cover_rebar_cage_option=" & IIf(IsNothing(dpsec.clear_cover_rebar_cage_option), "Null", "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'")
+        updateString += ", tie_size=" & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
+        updateString += ", tie_spacing=" & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
+        updateString += ", bottom_elevation=" & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
+        updateString += ", local_section_id=" & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
+        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dpsec.rho_override), "Null", "'" & dpsec.rho_override.ToString & "'")
         updateString += " WHERE ID=" & dpsec.section_id & vbNewLine
 
         Return updateString
@@ -578,21 +1242,24 @@ Partial Public Class DataTransfererDrilledPier
         Dim updateString As String = ""
 
         updateString += "UPDATE drilled_pier_rebar SET "
-        updateString += "longitudinal_rebar_quantity=" & dpreb.longitudinal_rebar_quantity.ToString
-        updateString += ",longitudinal_rebar_size=" & dpreb.longitudinal_rebar_size.ToString
-        updateString += ",longitudinal_rebar_cage_diameter=" & dpreb.longitudinal_rebar_cage_diameter.ToString
-        updateString += ",longitudinal_rebar_yield_strength=" & dpreb.longitudinal_rebar_yield_strength.ToString
+        updateString += "longitudinal_rebar_quantity=" & IIf(IsNothing(dpreb.longitudinal_rebar_quantity), "Null", "'" & dpreb.longitudinal_rebar_quantity.ToString & "'")
+        updateString += ", longitudinal_rebar_size=" & IIf(IsNothing(dpreb.longitudinal_rebar_size), "Null", "'" & dpreb.longitudinal_rebar_size.ToString & "'")
+        updateString += ", longitudinal_rebar_cage_diameter=" & IIf(IsNothing(dpreb.longitudinal_rebar_cage_diameter), "Null", "'" & dpreb.longitudinal_rebar_cage_diameter.ToString & "'")
+        updateString += ", local_rebar_id=" & IIf(IsNothing(dpreb.local_rebar_id), "Null", "'" & dpreb.local_rebar_id.ToString & "'")
         updateString += " WHERE ID=" & dpreb.rebar_id & vbNewLine
 
         Return updateString
     End Function
 
-    Private Function UpdateDrilledPierEmbedSection(ByVal eSec As DrilledPierEmbedSection) As String
+    Private Function UpdateDrilledPierProfile(ByVal dpp As DrilledPierProfile) As String
         Dim updateString As String = ""
 
-        updateString += "UPDATE embedded_pole_section SET "
-        updateString += "pier_diameter=" & "'" & eSec.pier_diameter.ToString & "'"
-        updateString += " WHERE ID=" & eSec.section_id & vbNewLine
+        updateString += "UPDATE drilled_pier_profile SET "
+        updateString += ", reaction_position=" & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
+        updateString += ", reaction_location=" & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
+        updateString += ", drilled_pier_profile=" & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
+        updateString += ", soil_profile=" & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
+        updateString += " WHERE ID=" & dpp.profile_id & vbNewLine
 
         Return updateString
     End Function
@@ -613,7 +1280,7 @@ Partial Public Class DataTransfererDrilledPier
         MyParameters.Add(New SQLParameter("Drilled Pier Soil SQL", "Drilled Piers (SELECT Soil Layers).sql"))
         MyParameters.Add(New SQLParameter("Belled Details SQL", "Drilled Piers (SELECT Belled).sql"))
         MyParameters.Add(New SQLParameter("Embedded Details SQL", "Drilled Piers (SELECT Embedded).sql"))
-        MyParameters.Add(New SQLParameter("Embedded Section SQL", "Drilled Piers (SELECT Embedded Section).sql"))
+        MyParameters.Add(New SQLParameter("Drilled Pier Profiles SQL", "Drilled Piers (SELECT Profile).sql"))
 
         Return MyParameters
     End Function
@@ -621,13 +1288,13 @@ Partial Public Class DataTransfererDrilledPier
     Private Function DrilledPierExcelDTParameters() As List(Of EXCELDTParameter)
         Dim MyParameters As New List(Of EXCELDTParameter)
 
-        MyParameters.Add(New EXCELDTParameter("Drilled Pier General Details EXCEL", "A2:K1000", "Details (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Drilled Pier Section EXCEL", "A2:N1000", "Sections (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Drilled Pier Rebar EXCEL", "A2:I1000", "Rebar (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Drilled Pier Soil EXCEL", "A2:L1000", "Soil Layers (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Belled Details EXCEL", "A2:M1000", "Belled (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Embedded Details EXCEL", "A2:O1000", "Embedded (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("Embedded Section EXCEL", "A2:D1000", "Embedded Section (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("Drilled Pier General Details EXCEL", "A2:V1000", "Details (ENTER)"))
+        MyParameters.Add(New EXCELDTParameter("Drilled Pier Section EXCEL", "A2:K1000", "Sections (ENTER)"))
+        MyParameters.Add(New EXCELDTParameter("Drilled Pier Rebar EXCEL", "A2:I1000", "Rebar (ENTER)"))
+        MyParameters.Add(New EXCELDTParameter("Drilled Pier Soil EXCEL", "A2:L1502", "Soil Layers (ENTER)")) 'use range of 1000 to be safe that multiple generations of EDS values are brought in. This range need to go to 1500 values to match the tool's limit
+        MyParameters.Add(New EXCELDTParameter("Belled Details EXCEL", "A2:M1000", "Belled (ENTER)"))
+        MyParameters.Add(New EXCELDTParameter("Embedded Details EXCEL", "A2:O1000", "Embedded (ENTER)"))
+        MyParameters.Add(New EXCELDTParameter("Drilled Pier Profiles EXCEL", "A2:G1000", "Profiles (ENTER)"))
 
         Return MyParameters
     End Function

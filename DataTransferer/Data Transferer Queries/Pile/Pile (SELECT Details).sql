@@ -61,6 +61,7 @@ SELECT
     ,pd.pile_quantity_asymmetric
     ,pd.pile_spacing_min_asymmetric
     ,pd.quantity_piles_surrounding
+    ,pd.pile_cap_reference
 
 FROM
     foundation_details fd

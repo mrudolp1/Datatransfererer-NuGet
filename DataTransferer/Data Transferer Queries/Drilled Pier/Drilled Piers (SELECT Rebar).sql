@@ -3,13 +3,15 @@
 SELECT 
 	sm.id model_id
 	,fd.id foundation_id
-	,s.drilled_pier_id
+	--,s.drilled_pier_id
 	,r.section_id
 	,r.ID rebar_id
 	,r.longitudinal_rebar_quantity
 	,r.longitudinal_rebar_size
 	,r.longitudinal_rebar_cage_diameter
-	,r.longitudinal_rebar_yield_strength
+	,r.local_rebar_id
+	--,r.local_drilled_pier_id
+	--,r.local_section_id
 FROM 
 	drilled_pier_rebar r
 	,drilled_pier_section s 
@@ -24,5 +26,4 @@ WHERE
 	AND sm.ID=@ModelID
 ORDER BY
 	s.drilled_pier_id
-	,s.top_elevation
 	,s.bottom_elevation
