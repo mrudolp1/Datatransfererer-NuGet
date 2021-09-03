@@ -5,6 +5,8 @@ Imports System.Data.SqlClient
 Imports System.Security.Principal
 Imports System.IO
 
+Public tnxObject As New TNX_model
+
 Partial Public Class frmMain
 #Region "Object Declarations"
     Public myUnitBases As New DataTransfererUnitBase
@@ -135,5 +137,24 @@ Partial Public Class frmMain
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
         MsgBox("Stop touching me")
+    End Sub
+
+    Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
+
+    End Sub
+
+    Private Sub UploadExcelFilesToEDS(sender As Object, e As EventArgs) Handles exceltosql.Click
+
+    End Sub
+
+    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
+        Dim eriFd As New OpenFileDialog
+        eriFd.Multiselect = False
+        eriFd.Filter = "TNX File|*.eri"
+        eriFd.InitialDirectory = eriDocDI.FullName
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            eriFile = New FileInfo(eriFd.FileName)
+        End If
     End Sub
 End Class
