@@ -136,126 +136,218 @@ Partial Public Class DataTransfererPile
         Dim mySoils As String = ""
         Dim myLocations As String = ""
 
+        Dim PileSaver As String = QueryBuilderFromFile(queryPath & "Pile\Pile (IN_UP).sql")
 
-        For Each pf As Pile In Piles
-            'If pf.change_flag Then
+        PileSaver = PileSaver.Replace("[BU NUMBER]", BUNumber)
+        PileSaver = PileSaver.Replace("[STRUCTURE ID]", STR_ID)
+        PileSaver = PileSaver.Replace("[FOUNDATION TYPE]", "Pile")
+        If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
+            PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
+        Else
+            PileSaver = PileSaver.Replace("[Pile ID]", pf.pile_id.ToString)
+            'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePileDetail(pf))
+        End If
+        PileSaver = PileSaver.Replace("[INSERT ALL PILE DETAILS]", InsertPileDetail(pf))
+        PileSaver = PileSaver.Replace("[CONFIGURATION]", pf.pile_group_config.ToString)
 
-            'End If
-            Dim PileSaver As String = QueryBuilderFromFile(queryPath & "Pile\Pile (IN_UP).sql")
+        If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
+            If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
+                For Each pfsl As PileSoilLayer In pf.soil_layers
+                    Dim tempSoilLayer As String = InsertPileSoilLayer(pfsl)
 
-            PileSaver = PileSaver.Replace("[BU NUMBER]", BUNumber)
-            PileSaver = PileSaver.Replace("[STRUCTURE ID]", STR_ID)
-            PileSaver = PileSaver.Replace("[FOUNDATION TYPE]", "Pile")
-            If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
-                PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
-            Else
-                PileSaver = PileSaver.Replace("[Pile ID]", pf.pile_id.ToString)
-                'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePileDetail(pf))
-            End If
-            PileSaver = PileSaver.Replace("[INSERT ALL PILE DETAILS]", InsertPileDetail(pf))
-            PileSaver = PileSaver.Replace("[CONFIGURATION]", pf.pile_group_config.ToString)
+                    If Not firstOne Then
+                        mySoils += ",(" & tempSoilLayer & ")"
+                    Else
+                        mySoils += "(" & tempSoilLayer & ")"
+                    End If
 
-            If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
-                If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
-                    For Each pfsl As PileSoilLayer In pf.soil_layers
-                        Dim tempSoilLayer As String = InsertPileSoilLayer(pfsl)
+<<<<<<< HEAD
+                    For Each pf As Pile In Piles
+                        'If pf.change_flag Then
 
-                        If Not firstOne Then
-                            mySoils += ",(" & tempSoilLayer & ")"
+                        'End If
+                        Dim PileSaver As String = QueryBuilderFromFile(queryPath & "Pile\Pile (IN_UP).sql")
+
+                        PileSaver = PileSaver.Replace("[BU NUMBER]", BUNumber)
+                        PileSaver = PileSaver.Replace("[STRUCTURE ID]", STR_ID)
+                        PileSaver = PileSaver.Replace("[FOUNDATION TYPE]", "Pile")
+                        If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
+                            PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
+=======
+                    firstOne = False
+                Next 'Add Soil Layer INSERT statments
+                PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+                firstOne = True
+>>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
                         Else
-                            mySoils += "(" & tempSoilLayer & ")"
+                            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
                         End If
 
-                        firstOne = False
+                        If pf.pile_group_config = "Asymmetric" Then
+                            'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
+
+<<<<<<< HEAD
+                            If Not firstOne Then
+                                mySoils += ",(" & tempSoilLayer & ")"
+                            Else
+                                mySoils += "(" & tempSoilLayer & ")"
+                            End If
+
+                            firstOne = False
                     Next 'Add Soil Layer INSERT statments
                     PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
                     firstOne = True
-                Else
+                    Else
                     PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
                 End If
 
-                If pf.pile_group_config = "Asymmetric" Then
-                    'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
+            If pf.pile_group_config = "Asymmetric" Then
+                'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
 
-                    For Each pfpl As PileLocation In pf.pile_locations
-                        Dim tempLocation As String = InsertPileLocation(pfpl)
+                For Each pfpl As PileLocation In pf.pile_locations
+                    Dim tempLocation As String = InsertPileLocation(pfpl)
 
-                        If Not firstOne Then
-                            myLocations += ",(" & tempLocation & ")"
-                        Else
-                            myLocations += "(" & tempLocation & ")"
-                        End If
+                    If Not firstOne Then
+                        myLocations += ",(" & tempLocation & ")"
+                    Else
+                        myLocations += "(" & tempLocation & ")"
+                    End If
 
-                        firstOne = False
-                    Next
-                    PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
-                Else
-                    PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-                    PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
-                End If 'Add Embedded Pole INSERT Statment
-
-                mySoils = ""
-                myLocations = ""
-
+                    firstOne = False
+                Next
+                PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
             Else
-
                 PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-                PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
                 PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
+            End If 'Add Embedded Pole INSERT Statment
 
-                Dim tempUpdater As String = ""
-                tempUpdater += UpdatePileDetail(pf)
+            mySoils = ""
+            myLocations = ""
 
-                If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
-                    For Each pfsl As PileSoilLayer In pf.soil_layers
-                        If pfsl.soil_layer_id = 0 Or IsDBNull(pfsl.soil_layer_id) Then
-                            tempUpdater += "INSERT INTO pile_soil_layer VALUES (" & InsertPileSoilLayer(pfsl) & ") " & vbNewLine
-                        Else
-                            tempUpdater += UpdatePileSoilLayer(pfsl)
-                        End If
-                    Next
-                End If
+        Else
 
-                'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+            PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+            PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
+=======
+                For Each pfpl As PileLocation In pf.pile_locations
+                    Dim tempLocation As String = InsertPileLocation(pfpl)
 
-                'End If
+                    If Not firstOne Then
+                        myLocations += ",(" & tempLocation & ")"
+                    Else
+                        myLocations += "(" & tempLocation & ")"
+                    End If
 
-                If pf.pile_group_config = "Asymmetric" Then
+                    firstOne = False
+                Next
+                PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
+            Else
+                PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+                PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
+            End If 'Add Embedded Pole INSERT Statment
 
-                    For Each pfpl As PileLocation In pf.pile_locations
-                        If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
-                            tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
-                        Else
-                            tempUpdater += UpdatePileLocation(pfpl)
-                        End If
-                    Next
+            mySoils = ""
+            myLocations = ""
 
+        Else
+>>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
 
+            PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+            PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
 
+            Dim tempUpdater As String = ""
+            tempUpdater += UpdatePileDetail(pf)
 
-                    '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
-                    '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-                    '    For Each pfpl As PileLocation In pf.pile_locations
-                    '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
-                    '    Next
-                    '    tempUpdater += " END " & vbNewLine
-                    'Else
-                    '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-                    '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
-                    '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
-                    '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
-                    '        Else
-                    '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
-                    '        End If
-                    '    Next
-                    '    'End If
-                End If
-
-                PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
-
+            If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
+                For Each pfsl As PileSoilLayer In pf.soil_layers
+                    If pfsl.soil_layer_id = 0 Or IsDBNull(pfsl.soil_layer_id) Then
+                        tempUpdater += "INSERT INTO pile_soil_layer VALUES (" & InsertPileSoilLayer(pfsl) & ") " & vbNewLine
+                    Else
+                        tempUpdater += UpdatePileSoilLayer(pfsl)
+                    End If
+                Next
             End If
 
-            sqlSender(PileSaver, pileDB, pileID, "0")
+            'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+            'End If
+
+<<<<<<< HEAD
+            For Each pfpl As PileLocation In pf.pile_locations
+                If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
+                    tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                Else
+                    tempUpdater += UpdatePileLocation(pfpl)
+                End If
+            Next
+
+
+
+
+            '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
+            '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
+            '    For Each pfpl As PileLocation In pf.pile_locations
+            '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+            '    Next
+            '    tempUpdater += " END " & vbNewLine
+            'Else
+            '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
+            '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
+            '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
+            '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
+            '        End If
+            '    Next
+            '    'End If
+        End If
+
+        PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+        End If
+
+        sqlSender(PileSaver, pileDB, pileID, "0")
+        Next
+=======
+            If pf.pile_group_config = "Asymmetric" Then
+
+                For Each pfpl As PileLocation In pf.pile_locations
+                    If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
+                        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                    Else
+                        tempUpdater += UpdatePileLocation(pfpl)
+                    End If
+                Next
+
+
+
+
+                '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
+                '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
+                '    For Each pfpl As PileLocation In pf.pile_locations
+                '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                '    Next
+                '    tempUpdater += " END " & vbNewLine
+                'Else
+                '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
+                '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
+                '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
+                '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
+                '        Else
+                '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
+                '        End If
+                '    Next
+                '    'End If
+            End If
+
+            PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+        End If
+>>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
+
+        sqlSender(PileSaver, pileDB, pileID, "0")
     End Sub
 
     Public Sub SaveToEDS()
