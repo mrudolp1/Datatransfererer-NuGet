@@ -10,6 +10,7 @@ Partial Public Class DataTransfererPile
     Private prop_ExcelFilePath As String
 
     Public Property Piles As New List(Of Pile)
+    Public Property sqlPiles As New List(Of Pile)
     Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.5).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
@@ -41,7 +42,8 @@ Partial Public Class DataTransfererPile
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
+
+    Sub CreateSQLPiles(ByRef pileList As List(Of Pile))
         Dim refid As Integer
         Dim PileLoader As String
 
@@ -57,9 +59,13 @@ Partial Public Class DataTransfererPile
         For Each PileDataRow As DataRow In ds.Tables("Pile General Details SQL").Rows
             refid = CType(PileDataRow.Item("pile_id"), Integer)
 
-            Piles.Add(New Pile(PileDataRow, refid))
+            pileList.Add(New Pile(PileDataRow, refid))
         Next
+    End Sub
 
+    Public Function LoadFromEDS() As Boolean
+        CreateSQLPiles(Piles)
+        'Moved code to separate method, above (CreateSQLPiles) No changes were made to the code copied over
         Return True
     End Function 'Create Pile objects based on what is saved in EDS
 
@@ -99,11 +105,33 @@ Partial Public Class DataTransfererPile
 
 
 
+        'IEM 9/8/2021
+        CreateSQLPiles(sqlPiles)
+        If sqlPiles.Count > 0 Then
+            For Each fnd As Pile In Piles
+                For Each sqlfnd As Pile In sqlPiles
+                    If fnd.pile_id = sqlfnd.pile_id Then
+                        If CheckChanges(fnd, sqlfnd) Then
+                            isModelNeeded = True
+                            fndGroupNeeded = True
+                            Save1Pile(fnd)
+                        End If
+                        Exit For
+                    End If
+                Next
+            Next
+        Else
+            'Save the data because nothing exists in sql
+        End If
+
     End Sub 'Create Pile objects based on what is coming from the excel file
+
+
 #End Region
 
 #Region "Save Data"
-    Public Sub SaveToEDS()
+
+    Sub Save1Pile(ByVal pf As Pile)
         Dim firstOne As Boolean = True
         Dim mySoils As String = ""
         Dim myLocations As String = ""
@@ -228,9 +256,13 @@ Partial Public Class DataTransfererPile
             End If
 
             sqlSender(PileSaver, pileDB, pileID, "0")
+    End Sub
+
+    Public Sub SaveToEDS()
+        For Each pf As Pile In Piles
+            Save1Pile(pf)
+            'Moved code to separate method, above (Save1Pile) No changes were made to the code copied over
         Next
-
-
     End Sub
 
     Public Sub SaveToExcel()
@@ -608,7 +640,7 @@ Partial Public Class DataTransfererPile
                 End Try
             End With 'follows P&P format
 
-                SaveAndClosePile() 'follows P&P format
+            SaveAndClosePile() 'follows P&P format
 
         Next 'follows drilled pier format
 
@@ -860,5 +892,69 @@ Partial Public Class DataTransfererPile
 
 #End Region
 
+#Region "IEM"
+    Private changeDt As New DataTable
+    Private changeList As New List(Of AnalysisChanges)
+    Function CheckChanges(ByVal xlPile As Pile, ByVal sqlPile As Pile) As Boolean
+        Dim changesMade As Boolean = False
 
+
+        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+
+        'If xlPile.neglect_depth <> sqlPile.neglect_depth Then
+        '    changesMade = True
+        '    changeDt.Rows.Add("neglect_depth", xlPile.neglect_depth.ToString, sqlPile.neglect_depth.ToString, CurWO)
+        'End If
+
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        Return changesMade
+    End Function
+
+    Sub CreateChangeSummary(ByVal changedt As DataTable)
+        'Create your string based on data in the datatable
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+    End Sub
+
+    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pile Foundations"))
+            Return True
+        End If
+    End Function
+#End Region
+
+End Class
+
+
+Class AnalysisChanges
+    Property PreviousValue As String
+    Property NewValue As String
+    Property Name As String
+    Property PartofDatabase As String
+
+    Public Sub New(prev As String, Newval As String, name As String, db As String)
+
+    End Sub
 End Class

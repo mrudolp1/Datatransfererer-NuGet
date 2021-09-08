@@ -27,14 +27,7 @@ Partial Public Class DrilledPier
     Private prop_shear_crit_depth_override_comp As Double?
     Private prop_shear_crit_depth_override_uplift As Double?
     Private prop_bearing_type_toggle As String
-    Private prop_drilled_pier_profile_qty As Integer?
-    Private prop_soil_profiles As Integer?
     Private prop_foundation_id As Integer
-    Private prop_rho_override_1 As Double?
-    Private prop_rho_override_2 As Double?
-    Private prop_rho_override_3 As Double?
-    Private prop_rho_override_4 As Double?
-    Private prop_rho_override_5 As Double?
     Public Property soil_layers As New List(Of DrilledPierSoilLayer)
     Public Property sections As New List(Of DrilledPierSection)
     Public Property belled_details As DrilledPierBelledPier
@@ -202,7 +195,7 @@ Partial Public Class DrilledPier
             Return Me.prop_shear_override_crit_depth
         End Get
         Set
-            Me.prop_shear_override_crit_depth = False
+            Me.prop_shear_override_crit_depth = Value
         End Set
     End Property
     <Category("Drilled Pier Details"), Description(""), DisplayName("Shear Critical Depth Override - Compression")>
@@ -232,24 +225,6 @@ Partial Public Class DrilledPier
             Me.prop_bearing_type_toggle = Value
         End Set
     End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("Drilled Pier Profiles")>
-    Public Property drilled_pier_profile_qty() As Integer?
-        Get
-            Return Me.prop_drilled_pier_profile_qty
-        End Get
-        Set
-            Me.prop_drilled_pier_profile_qty = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("Soil Profiles")>
-    Public Property soil_profiles() As Integer?
-        Get
-            Return Me.prop_soil_profiles
-        End Get
-        Set
-            Me.prop_soil_profiles = Value
-        End Set
-    End Property
     <Category("Drilled Pier Details"), Description(""), DisplayName("Foundation ID")>
     Public Property foundation_id() As Integer
         Get
@@ -257,51 +232,6 @@ Partial Public Class DrilledPier
         End Get
         Set
             Me.prop_foundation_id = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("rho Override 1")>
-    Public Property rho_override_1() As Double?
-        Get
-            Return Me.prop_rho_override_1
-        End Get
-        Set
-            Me.prop_rho_override_1 = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("rho Override 2")>
-    Public Property rho_override_2() As Double?
-        Get
-            Return Me.prop_rho_override_2
-        End Get
-        Set
-            Me.prop_rho_override_2 = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("rho Override 3")>
-    Public Property rho_override_3() As Double?
-        Get
-            Return Me.prop_rho_override_3
-        End Get
-        Set
-            Me.prop_rho_override_3 = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("rho Override 4")>
-    Public Property rho_override_4() As Double?
-        Get
-            Return Me.prop_rho_override_4
-        End Get
-        Set
-            Me.prop_rho_override_4 = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Details"), Description(""), DisplayName("rho Override 5")>
-    Public Property rho_override_5() As Double?
-        Get
-            Return Me.prop_rho_override_5
-        End Get
-        Set
-            Me.prop_rho_override_5 = Value
         End Set
     End Property
 #End Region
@@ -351,11 +281,11 @@ Partial Public Class DrilledPier
             If Not IsDBNull(Me.groundwater_depth = CType(DrilledPierDataRow.Item("groundwater_depth"), Double)) Then
                 Me.groundwater_depth = CType(DrilledPierDataRow.Item("groundwater_depth"), Double)
             Else
-                Me.groundwater_depth = "N/A"
+                Me.groundwater_depth = Nothing
             End If
             'Me.groundwater_depth = CType(DrilledPierDataRow.Item("groundwater_depth"), Double)
         Catch
-            Me.groundwater_depth = "N/A"
+            Me.groundwater_depth = -1
         End Try 'Groundwater Depth
         Try
             Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), String)
@@ -425,7 +355,7 @@ Partial Public Class DrilledPier
         Try
             Me.rebar_effective_depths = CType(DrilledPierDataRow.Item("rebar_effective_depths"), Boolean)
         Catch
-            Me.rebar_effective_depths = True
+            Me.rebar_effective_depths = False
         End Try 'rebar_effective_depths
         Try
             If Not IsDBNull(Me.rebar_cage_2_fy_override = CType(DrilledPierDataRow.Item("rebar_cage_2_fy_override"), Double)) Then
@@ -448,30 +378,25 @@ Partial Public Class DrilledPier
             Me.rebar_cage_3_fy_override = Nothing
         End Try 'rebar_cage_3_fy_override
         Try
+            Me.shear_override_crit_depth = CType(DrilledPierDataRow.Item("shear_override_crit_depth"), Boolean)
+        Catch
+            Me.shear_override_crit_depth = False
+        End Try 'shear_override_crit_depth
+        Try
+            Me.shear_crit_depth_override_comp = CType(DrilledPierDataRow.Item("shear_crit_depth_override_comp"), Double)
+        Catch
+            Me.shear_crit_depth_override_comp = Nothing
+        End Try 'shear_crit_depth_override_comp
+        Try
+            Me.shear_crit_depth_override_uplift = CType(DrilledPierDataRow.Item("shear_crit_depth_override_uplift"), Double)
+        Catch
+            Me.shear_crit_depth_override_uplift = Nothing
+        End Try 'shear_crit_depth_override_uplift
+        Try
             Me.bearing_type_toggle = CType(DrilledPierDataRow.Item("bearing_type_toggle"), String)
         Catch
             Me.bearing_type_toggle = "Ult. Gross Bearing Capacity (ksf)"
         End Try 'Use Ultimate Gross/Net Bearing
-        Try
-            If Not IsDBNull(Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)) Then
-                Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)
-            Else
-                Me.drilled_pier_profile_qty = Nothing
-            End If
-            'Me.drilled_pier_profile = CType(DrilledPierDataRow.Item("drilled_pier_profile"), Integer)
-        Catch
-            Me.drilled_pier_profile_qty = Nothing
-        End Try 'drilled_pier_profile_qty
-        Try
-            If Not IsDBNull(Me.soil_profiles = CType(DrilledPierDataRow.Item("soil_profiles"), Integer)) Then
-                Me.soil_profiles = CType(DrilledPierDataRow.Item("soil_profiles"), Integer)
-            Else
-                Me.soil_profiles = Nothing
-            End If
-            'Me.soil_profile = CType(DrilledPierDataRow.Item("soil_profile"), Integer)
-        Catch
-            Me.soil_profiles = Nothing
-        End Try 'soil_profile
         Try
             If Not IsDBNull(Me.foundation_id = CType(DrilledPierDataRow.Item("foundation_id"), Integer)) Then
                 Me.foundation_id = CType(DrilledPierDataRow.Item("foundation_id"), Integer)
@@ -482,51 +407,6 @@ Partial Public Class DrilledPier
         Catch
             Me.foundation_id = Nothing
         End Try 'foundation_id
-        Try
-            If Not IsDBNull(Me.rho_override_1 = CType(DrilledPierDataRow.Item("rho_override_1"), Double)) Then
-                Me.rho_override_1 = CType(DrilledPierDataRow.Item("rho_override_1"), Double)
-            Else
-                Me.rho_override_1 = Nothing
-            End If
-        Catch
-            Me.rho_override_1 = Nothing
-        End Try 'rho_override_1
-        Try
-            If Not IsDBNull(Me.rho_override_2 = CType(DrilledPierDataRow.Item("rho_override_2"), Double)) Then
-                Me.rho_override_2 = CType(DrilledPierDataRow.Item("rho_override_2"), Double)
-            Else
-                Me.rho_override_2 = Nothing
-            End If
-        Catch
-            Me.rho_override_2 = Nothing
-        End Try 'rho_override_2
-        Try
-            If Not IsDBNull(Me.rho_override_3 = CType(DrilledPierDataRow.Item("rho_override_3"), Double)) Then
-                Me.rho_override_3 = CType(DrilledPierDataRow.Item("rho_override_3"), Double)
-            Else
-                Me.rho_override_3 = Nothing
-            End If
-        Catch
-            Me.rho_override_3 = Nothing
-        End Try 'rho_override_3
-        Try
-            If Not IsDBNull(Me.rho_override_4 = CType(DrilledPierDataRow.Item("rho_override_4"), Double)) Then
-                Me.rho_override_4 = CType(DrilledPierDataRow.Item("rho_override_4"), Double)
-            Else
-                Me.rho_override_4 = Nothing
-            End If
-        Catch
-            Me.rho_override_4 = Nothing
-        End Try 'rho_override_4
-        Try
-            If Not IsDBNull(Me.rho_override_5 = CType(DrilledPierDataRow.Item("rho_override_5"), Double)) Then
-                Me.rho_override_5 = CType(DrilledPierDataRow.Item("rho_override_5"), Double)
-            Else
-                Me.rho_override_5 = Nothing
-            End If
-        Catch
-            Me.rho_override_5 = Nothing
-        End Try 'rho_override_5
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil SQL").Rows
             Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("drilled_pier_id"), Integer)
@@ -613,9 +493,13 @@ Partial Public Class DrilledPier
             Me.extension_above_grade = Nothing
         End Try 'Extension Above Grade
         Try
-            Me.groundwater_depth = CType(DrilledPierDataRow.Item("groundwater_depth"), Double)
+            If Not IsNothing(CType(DrilledPierDataRow.Item("groundwater_depth"), Double)) Then
+                Me.groundwater_depth = CType(DrilledPierDataRow.Item("groundwater_depth"), Double)
+            Else
+                Me.groundwater_depth = Nothing
+            End If
         Catch
-            Me.groundwater_depth = Nothing
+            Me.groundwater_depth = -1
         End Try 'Groundwater Depth
         Try
             Me.assume_min_steel = CType(DrilledPierDataRow.Item("assume_min_steel"), String)
@@ -698,45 +582,10 @@ Partial Public Class DrilledPier
             Me.bearing_type_toggle = "Ult. Gross Bearing Capacity (ksf)"
         End Try 'bearing_type_toggle. Default to ultimate gross rather than ultimate net
         Try
-            Me.drilled_pier_profile_qty = CType(DrilledPierDataRow.Item("drilled_pier_profile_qty"), Integer)
-        Catch
-            Me.drilled_pier_profile_qty = Nothing
-        End Try 'drilled_pier_profile
-        Try
-            Me.soil_profiles = CType(DrilledPierDataRow.Item("soil_profiles"), Integer)
-        Catch
-            Me.soil_profiles = Nothing
-        End Try 'soil_profile
-        Try
             Me.foundation_id = CType(DrilledPierDataRow.Item("foundation_id"), Integer)
         Catch
             Me.foundation_id = Nothing
         End Try 'foundation_id
-        Try
-            Me.rho_override_1 = CType(DrilledPierDataRow.Item("rho_override_1"), Double)
-        Catch
-            Me.rho_override_1 = Nothing
-        End Try 'rho_override_1
-        Try
-            Me.rho_override_2 = CType(DrilledPierDataRow.Item("rho_override_2"), Double)
-        Catch
-            Me.rho_override_2 = Nothing
-        End Try 'rho_override_2
-        Try
-            Me.rho_override_3 = CType(DrilledPierDataRow.Item("rho_override_3"), Double)
-        Catch
-            Me.rho_override_3 = Nothing
-        End Try 'rho_override_3
-        Try
-            Me.rho_override_4 = CType(DrilledPierDataRow.Item("rho_override_4"), Double)
-        Catch
-            Me.rho_override_4 = Nothing
-        End Try 'rho_override_4
-        Try
-            Me.rho_override_5 = CType(DrilledPierDataRow.Item("rho_override_5"), Double)
-        Catch
-            Me.rho_override_5 = Nothing
-        End Try 'rho_override_5
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil EXCEL").Rows
             Dim soilRefID As Integer?
@@ -772,8 +621,8 @@ Partial Public Class DrilledPier
             Dim secID As Integer?
 
             Try
-                If Not IsNothing(CType(SectionDataRow.Item(refcol), Integer)) Then
-                    secID = CType(SectionDataRow.Item(refcol), Integer)
+                If Not IsNothing(CType(SectionDataRow.Item("local_section_id"), Integer)) Then
+                    secID = CType(SectionDataRow.Item("local_section_id"), Integer)
                 Else
                     secID = Nothing
                 End If
@@ -791,8 +640,8 @@ Partial Public Class DrilledPier
                     Dim rebSecID As Integer?
 
                     Try
-                        If Not IsNothing(CType(RebarDataRow.Item(refcol), Integer)) Then
-                            rebSecID = CType(RebarDataRow.Item(refcol), Integer)
+                        If Not IsNothing(CType(RebarDataRow.Item("local_section_id"), Integer)) Then
+                            rebSecID = CType(RebarDataRow.Item("local_section_id"), Integer)
                         Else
                             rebSecID = Nothing
                         End If
@@ -805,6 +654,7 @@ Partial Public Class DrilledPier
                     End If
 
                 Next 'Add Drilled Pier Rebar to Section Object
+
 
                 Me.sections.Add(newSec)
 
@@ -891,8 +741,7 @@ Partial Public Class DrilledPierSection
     Private prop_tie_size As Integer?
     Private prop_tie_spacing As Double?
     Private prop_bottom_elevation As Double?
-    'Private prop_assume_min_steel_rho_override As Double?
-    Private prop_local_drilled_pier_id As Integer?
+    Private prop_rho_override As Double?
     Public Property rebar As New List(Of DrilledPierRebar)
 
     <Category("Drilled Pier Sections"), Description(""), DisplayName("Section ID")>
@@ -967,22 +816,13 @@ Partial Public Class DrilledPierSection
             Me.prop_bottom_elevation = Value
         End Set
     End Property
-    '<Category("Drilled Pier Sections"), Description(""), DisplayName("Minimum Steel Rho Override")>
-    'Public Property assume_min_steel_rho_override() As Double?
-    '    Get
-    '        Return Me.prop_assume_min_steel_rho_override
-    '    End Get
-    '    Set
-    '        Me.prop_assume_min_steel_rho_override = Value
-    '    End Set
-    'End Property
-    <Category("Drilled Pier Sections"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id() As Integer?
+    <Category("Drilled Pier Sections"), Description(""), DisplayName("Rho Override (min. steel)")>
+    Public Property rho_override() As Double?
         Get
-            Return Me.prop_local_drilled_pier_id
+            Return Me.prop_rho_override
         End Get
         Set
-            Me.prop_local_drilled_pier_id = Value
+            Me.prop_rho_override = Value
         End Set
     End Property
 
@@ -1031,16 +871,11 @@ Partial Public Class DrilledPierSection
         Catch
             Me.bottom_elevation = Nothing
         End Try 'Bottom Elevation
-        'Try
-        '    Me.assume_min_steel_rho_override = CType(SectionDataRow.Item("assume_min_steel_rho_override"), Double)
-        'Catch
-        '    Me.assume_min_steel_rho_override = Nothing
-        'End Try 'Minimum Steel Rho Override 
         Try
-            Me.local_drilled_pier_id = CType(SectionDataRow.Item("local_drilled_pier_id"), Integer)
+            Me.rho_override = CType(SectionDataRow.Item("rho_override"), Double)
         Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'Local Drilled Pier ID
+            Me.rho_override = Nothing
+        End Try 'Bottom Elevation
 
     End Sub 'Add a Section to a Drilled Pier
 
@@ -1052,8 +887,6 @@ Partial Public Class DrilledPierRebar
     Private prop_longitudinal_rebar_size As Integer?
     Private prop_longitudinal_rebar_cage_diameter As Double?
     Private prop_local_rebar_id As Integer?
-    Private prop_local_drilled_pier_id As Integer?
-    Private prop_local_section_id As Integer?
 
     <Category("Drilled Pier Rebar"), Description(""), DisplayName("Rebar ID")>
     Public Property rebar_id() As Integer
@@ -1100,24 +933,6 @@ Partial Public Class DrilledPierRebar
             Me.prop_local_rebar_id = Value
         End Set
     End Property
-    <Category("Drilled Pier Rebar"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id() As Integer?
-        Get
-            Return Me.prop_local_drilled_pier_id
-        End Get
-        Set
-            Me.prop_local_drilled_pier_id = Value
-        End Set
-    End Property
-    <Category("Drilled Pier Rebar"), Description(""), DisplayName("Local Section ID")>
-    Public Property local_section_id() As Integer?
-        Get
-            Return Me.prop_local_section_id
-        End Get
-        Set
-            Me.prop_local_section_id = Value
-        End Set
-    End Property
 
     Sub New()
         'Leave method empty
@@ -1149,35 +964,15 @@ Partial Public Class DrilledPierRebar
         Catch
             Me.local_rebar_id = Nothing
         End Try 'Local Rebar ID
-        Try
-            Me.local_drilled_pier_id = CType(RebarDataRow.Item("local_drilled_pier_id"), Integer)
-        Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'Local Drilled Pier ID
-        Try
-            Me.local_section_id = CType(RebarDataRow.Item("local_section_id"), Integer)
-        Catch
-            Me.local_section_id = Nothing
-        End Try 'Local Section ID
     End Sub 'Add Rebar to a Section
 End Class
 Partial Public Class DrilledPierProfile
-    Private prop_local_drilled_pier_id As Integer?
     Private prop_profile_id As Integer
     Private prop_reaction_position As Integer?
     Private prop_reaction_location As String
     Private prop_drilled_pier_profile As Integer?
     Private prop_soil_profile As Integer?
     Private prop_drilled_pier_id As Integer?
-    <Category("Drilled Pier Profiles"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id() As Integer?
-        Get
-            Return Me.prop_local_drilled_pier_id
-        End Get
-        Set
-            Me.prop_local_drilled_pier_id = Value
-        End Set
-    End Property
     <Category("Drilled Pier Profiles"), Description(""), DisplayName("Profile ID")>
     Public Property profile_id() As Integer
         Get
@@ -1239,11 +1034,6 @@ Partial Public Class DrilledPierProfile
 
     Sub New(ByVal DrilledPierProfileRow As DataRow)
         Try
-            Me.local_drilled_pier_id = CType(DrilledPierProfileRow.Item("local_drilled_pier_id"), Integer)
-        Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'local_drilled_pier_id
-        Try
             Me.profile_id = CType(DrilledPierProfileRow.Item("profile_id"), Integer)
         Catch
             Me.profile_id = 0
@@ -1288,7 +1078,7 @@ Partial Public Class DrilledPierSoilLayer
     Private prop_nominal_bearing_capacity As Double?
     Private prop_spt_blow_count As Integer?
     Private prop_local_soil_layer_id As Integer?
-    Private prop_local_drilled_pier_id As Integer?
+    'Private prop_local_drilled_pier_id As Integer?
     <Category("Drilled Pier Soil Layers"), Description(""), DisplayName("Soil Layer ID")>
     Public Property soil_layer_id() As Integer
         Get
@@ -1379,15 +1169,6 @@ Partial Public Class DrilledPierSoilLayer
             Me.prop_local_soil_layer_id = Value
         End Set
     End Property
-    <Category("Drilled Pier Soil Layers"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id() As Integer?
-        Get
-            Return Me.prop_local_drilled_pier_id
-        End Get
-        Set
-            Me.prop_local_drilled_pier_id = Value
-        End Set
-    End Property
 
     Sub New()
         'Leave method empty
@@ -1444,11 +1225,6 @@ Partial Public Class DrilledPierSoilLayer
         Catch
             Me.local_soil_layer_id = Nothing
         End Try 'Local Soil Layer ID
-        Try
-            Me.local_drilled_pier_id = CType(SoilLayerDataRow.Item("local_drilled_pier_id"), Integer)
-        Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'Local Drilled Pier ID
     End Sub 'Add a Soil Layer to a Drilled Pier
 
 End Class
@@ -1465,7 +1241,6 @@ Partial Public Class DrilledPierBelledPier
     Private prop_swelling_expansive_soil As Boolean
     Private prop_depth_of_expansive_soil As Double?
     Private prop_expansive_soil_force As Double?
-    Private prop_local_drilled_pier_id As Integer?
     <Category("Belled Pier Details"), Description(""), DisplayName("Belled Pier ID")>
     Public Property belled_pier_id() As Integer
         Get
@@ -1565,14 +1340,6 @@ Partial Public Class DrilledPierBelledPier
             Me.prop_expansive_soil_force = Value
         End Set
     End Property
-    Public Property local_drilled_pier_id() As Integer?
-        Get
-            Return Me.prop_local_drilled_pier_id
-        End Get
-        Set
-            Me.prop_local_drilled_pier_id = Value
-        End Set
-    End Property
 
     Sub New()
         'Leave method empty
@@ -1634,11 +1401,6 @@ Partial Public Class DrilledPierBelledPier
         Catch
             Me.expansive_soil_force = Nothing
         End Try 'Expansive Soil Force
-        Try
-            Me.local_drilled_pier_id = CType(BelledDataRow.Item("local_drilled_pier_id"), Integer)
-        Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'Local Drilled Pier ID
     End Sub 'Add Belled Pier data to a Drilled Pier
 End Class
 
@@ -1656,7 +1418,6 @@ Partial Public Class DrilledPierEmbeddedPier
     Private prop_pole_section_length As Double?
     Private prop_pole_taper_factor As Double?
     Private prop_pole_bend_radius_override As Double?
-    Private prop_local_drilled_pier_id As Integer?
     <Category("Embedded Pier Details"), Description(""), DisplayName("Embedded Pole ID")>
     Public Property embedded_id() As Integer
         Get
@@ -1774,14 +1535,6 @@ Partial Public Class DrilledPierEmbeddedPier
             Me.prop_pole_bend_radius_override = Value
         End Set
     End Property
-    Public Property local_drilled_pier_id() As Integer?
-        Get
-            Return Me.prop_local_drilled_pier_id
-        End Get
-        Set
-            Me.prop_local_drilled_pier_id = Value
-        End Set
-    End Property
 
     Sub New()
         'Leave method empty
@@ -1853,11 +1606,6 @@ Partial Public Class DrilledPierEmbeddedPier
         Catch
             Me.pole_bend_radius_override = Nothing
         End Try 'Pole Bend Radius Override
-        Try
-            Me.local_drilled_pier_id = CType(EmbeddedDataRow.Item("local_drilled_pier_id"), Integer)
-        Catch
-            Me.local_drilled_pier_id = Nothing
-        End Try 'Local Drilled Pier ID
 
     End Sub 'Add Embedded Pole data to a Drilled Pier
 

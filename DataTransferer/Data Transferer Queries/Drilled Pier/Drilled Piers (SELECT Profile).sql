@@ -5,7 +5,7 @@ SELECT
 	,fd.id foundation_id
 	,dpp.drilled_pier_id
 	,dpp.ID profile_id
-	,dpp.local_drilled_pier_id
+	--,dpp.local_drilled_pier_id
 	,dpp.reaction_position
 	,dpp.reaction_location
 	,dpp.drilled_pier_profile
@@ -22,4 +22,4 @@ WHERE
 	AND sm.ID=@ModelID
 ORDER BY
 	dpp.drilled_pier_id
-	,dpp.local_drilled_pier_id
+	--,dpp.local_drilled_pier_id

@@ -5,8 +5,20 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "2814581"
+    Public BUNumber As String = "888891"
     Public STR_ID As String = "A"
+    Public CurWO As String = "1234567"
+    Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
+    Public fndGroupNeeded As Boolean = False
+
+    'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
+    Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
+
+    Public currentFndGroup As Integer
+    Public currentGuyConfig As Integer
+    Public currentConnGroup As Integer
+    'Lattice
+    'Pole
 End Module
 
 Public Module Common

@@ -10,8 +10,8 @@ SELECT
 	,r.longitudinal_rebar_size
 	,r.longitudinal_rebar_cage_diameter
 	,r.local_rebar_id
-	,r.local_drilled_pier_id
-	,r.local_section_id
+	--,r.local_drilled_pier_id
+	--,r.local_section_id
 FROM 
 	drilled_pier_rebar r
 	,drilled_pier_section s 
