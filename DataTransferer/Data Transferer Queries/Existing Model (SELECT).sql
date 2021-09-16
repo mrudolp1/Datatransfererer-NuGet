@@ -4,5 +4,6 @@ DECLARE @STR_ID VARCHAR(10)
 
 SET @BU = '[BU NUMBER]'
 SET @STR_ID = '[STRUCTURE_ID]'
-SELECT @ModelID=ID FROM structure_model WHERE bus_unit=@BU AND structure_id=@STR_ID AND existing_geometry='True'
+--SELECT @ModelID=ID FROM structure_model WHERE bus_unit=@BU AND structure_id=@STR_ID AND existing_geometry='True'
+SELECT @ModelID=model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID
 

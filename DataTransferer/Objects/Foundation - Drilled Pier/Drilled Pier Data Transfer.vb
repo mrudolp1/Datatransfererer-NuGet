@@ -580,7 +580,7 @@ Partial Public Class DataTransfererDrilledPier
 
                     'SUMMARY
                     If Not IsNothing(dpp.reaction_position) Then
-                        .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.drilled_pier_profile, String)
+                        .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.drilled_pier_profile, Integer)
                         If dpp.drilled_pier_profile = dpp.reaction_position Then
                             .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
                         Else
@@ -588,7 +588,7 @@ Partial Public Class DataTransfererDrilledPier
                         End If
                     End If
                     If Not IsNothing(dpp.reaction_position) Then
-                        .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.soil_profile, String)
+                        .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.soil_profile, Integer)
                         If dpp.soil_profile = dpp.reaction_position Then
                             .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
                         Else

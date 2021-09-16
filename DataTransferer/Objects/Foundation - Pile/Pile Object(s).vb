@@ -64,6 +64,7 @@ Partial Public Class Pile
     Private prop_pile_spacing_min_asymmetric As Double?
     Private prop_quantity_piles_surrounding As Integer?
     Private prop_pile_cap_reference As String
+    Private prop_change_flag As Boolean
     Public Property soil_layers As New List(Of PileSoilLayer)
     Public Property pile_locations As New List(Of PileLocation)
     <Category("Pile Details"), Description(""), DisplayName("Pile_Id")>
@@ -577,6 +578,15 @@ Partial Public Class Pile
         End Get
         Set
             Me.prop_pile_cap_reference = Value
+        End Set
+    End Property
+    <Category("Pile Details"), Description(""), DisplayName("Change_Flag")>
+    Public Property change_flag() As Boolean
+        Get
+            Return Me.prop_change_flag
+        End Get
+        Set
+            Me.prop_change_flag = Value
         End Set
     End Property
 #End Region
@@ -1570,6 +1580,75 @@ Partial Public Class Pile
         Next 'Add Location to to Pile Location Object
 
     End Sub 'Generate from Excel
+
+    '****Test Comparing Excel to EDS****
+    Public Sub New(ByVal path As String, ByVal PileDataRow As DataRow, refID As Integer)
+        'MsgBox("congrats")
+        Dim mychanges As String = ""
+        'Dim change_flag As Boolean = False
+        Me.change_flag = False
+
+        Try
+            If Not IsNothing(CType(GetOneExcelRange(path, "Ecc"), Double)) Then
+                Me.load_eccentricity = CType(GetOneExcelRange(path, "Ecc"), Double)
+            Else
+                Me.load_eccentricity = Nothing
+            End If
+        Catch
+            Me.load_eccentricity = Nothing
+        End Try 'Load_Eccentricity
+        If Me.load_eccentricity <> CType(PileDataRow.Item("load_eccentricity"), Double) Then
+            MsgBox("load_eccentricity =" & Me.load_eccentricity)
+            Dim tempchanges As String = "load_eccentricity = " & Me.load_eccentricity
+            mychanges += tempchanges & vbNewLine
+            Me.change_flag = True
+        End If
+
+
+        Try
+            If Not IsNothing(CType(GetOneExcelRange(path, "BC"), Double)) Then
+                Me.bolt_circle_bearing_plate_width = CType(GetOneExcelRange(path, "BC"), Double)
+            Else
+                Me.bolt_circle_bearing_plate_width = Nothing
+            End If
+        Catch
+            Me.bolt_circle_bearing_plate_width = Nothing
+        End Try 'Bolt_Circle_Bearing_Plate_Width
+        If Me.bolt_circle_bearing_plate_width <> CType(PileDataRow.Item("bolt_circle_bearing_plate_width"), Double) Then
+            MsgBox("bolt_circle_bearing_plate_width =" & Me.bolt_circle_bearing_plate_width)
+            Dim tempchanges As String = "bolt_circle_bearing_plate_width = " & Me.bolt_circle_bearing_plate_width
+            mychanges += tempchanges & vbNewLine
+            Me.change_flag = True
+        End If
+
+
+        Try
+            Me.pile_shape = CType(GetOneExcelRange(path, "D23", "Input"), String)
+        Catch
+            Me.pile_shape = ""
+        End Try 'Pile_Shape
+        If Me.pile_shape <> CType(PileDataRow.Item("pile_shape"), String) Then
+            MsgBox("pile_shape =" & Me.pile_shape)
+            Dim tempchanges As String = "pile_shape = " & Me.pile_shape
+            mychanges += tempchanges & vbNewLine
+            Me.change_flag = True
+        End If
+
+
+        Try
+            Me.pile_material = CType(GetOneExcelRange(path, "D24", "Input"), String)
+        Catch
+            Me.pile_material = ""
+        End Try 'Pile_Material
+        If Me.pile_material <> CType(PileDataRow.Item("pile_material"), String) Then
+            MsgBox("pile_material =" & Me.pile_material)
+            Dim tempchanges As String = "pile_material = " & Me.pile_material
+            mychanges += tempchanges & vbNewLine
+            Me.change_flag = True
+        End If
+    End Sub
+    '****Test Comparing Excel to EDS****
+
 #End Region
 
 End Class
