@@ -161,7 +161,47 @@ Partial Public Class frmMain
         myDrilledPiers.Clear()
     End Sub
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Dim count As Integer
+    count = 0
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        MsgBox("Rudy did it...")
+        count += 1
+        If count = 1 Then
+            MsgBox("Please stop touching me")
+        ElseIf count = 2 Then
+            MsgBox("Trying to sleep here...")
+        ElseIf count = 3 Then
+            MsgBox("*Clearly fake snoring sounds*")
+        ElseIf count = 4 Then
+            MsgBox("...")
+        ElseIf count = 5 Then
+            MsgBox("OH COME ON!")
+            count = 0
+        End If
     End Sub
 End Class

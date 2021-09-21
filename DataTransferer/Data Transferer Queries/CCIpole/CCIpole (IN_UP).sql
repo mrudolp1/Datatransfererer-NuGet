@@ -3,17 +3,31 @@ DECLARE @ModelID INT
 DECLARE @BU VARCHAR(10)
 DECLARE @STR_ID VARCHAR(10)
 DECLARE @STR_TYPE VARCHAR(50)
-DECLARE @Foundation TABLE(FndID INT)
-DECLARE @FndID INT
-DECLARE @FndType VARCHAR(255)
-DECLARE @DpID INT
-DECLARE @DrilledPier TABLE(DpID INT, IsEmbed BIT, IsBelled BIT)
-DECLARE @IsEmbed BIT
-DECLARE @IsBelled BIT
-DECLARE @EmbeddedPole TABLE(EmbedID INT)
-DECLARE @EmbedID INT
-DECLARE @DrilledPierSection Table(SecID INT)
-DEClARE @SecID INT
+DECLARE @PoleStructure TABLE(PoleID INT, CriteriaID INT)
+DECLARE @PoleID INT
+DECLARE @Criteria TABLE (CriteriaID INT)
+DECLARE @CriteriaID INT
+DECLARE @PoleSection TABLE (PoleSectionID INT)
+DECLARE @PoleSectionID INT
+DECLARE @PoleReinfSection TABLE (PoleReinfSectionID INT)
+DECLARE @PoleReinfSectionID INT
+DECLARE @ReinfGroups TABLE (ReinfGroupID INT)
+DECLARE @ReinfGroupID INT
+DECLARE @ReinfDetails TABLE (ReinfDetailID INT)
+DECLARE @ReinfDetailID INT
+DECLARE @IntGroups TABLE (IntGroupID INT)
+DECLARE @IntGroupID INT
+DECLARE @IntDetails TABLE (IntDetailID INT)
+DECLARE @IntDetailID INT
+DECLARE @PoleReinfResults TABLE (PoleReinfResultID INT)
+DECLARE @PoleReinfResultID INT
+DECLARE @PropReinf TABLE (ReinfID INT)
+DECLARE @ReinfID INT
+DECLARE @PropBolt TABLE (BoltID INT)
+DECLARE @BoltID INT
+DECLARE @PropMatl TABLE (MatlID INT)
+DECLARE @MatlID INT
+
 
 	--Minimum information needed to insert a new model into structure_model
 	SET @BU = '[BU NUMBER]'

@@ -8,7 +8,18 @@ Public Class CCIpole
 
 #Region "Define"
     Private prop_pole_structure_id As Integer
-    Public Property criteria As PoleAnalysisCriteria
+    Public Property criteria As PoleCriteria
+    Public Property unreinf_sections As New List(Of PoleSection)
+    Public Property reinf_sections As New List(Of PoleReinfSection)
+    Public Property reinf_groups As New List(Of PoleReinfGroup)
+    Public Property reinf_ids As New List(Of PoleReinfDetail)
+    Public Property int_groups As New List(Of PoleIntGroup)
+    Public Property int_ids As New List(Of PoleIntDetail)
+    Public Property reinf_section_results As New List(Of PoleReinfResults)
+    Public Property reinfs As New List(Of PropReinf)
+    Public Property bolts As New List(Of PropBolt)
+    Public Property matls As New List(Of PropMatl)
+
 
     <Category("Pole Structure"), Description(""), DisplayName("Pole Structure ID")>
     Public Property pole_structure_id() As Integer
@@ -45,7 +56,7 @@ Public Class CCIpole
         'IEM 9/8/2021
         'SELECT * FROM pole.pole_structure ps, pole.pole_analysis_criteria pac WHERE ps.criteria_id = pac.id
         Me.criteria = New PoleAnalysisCriteria(PoleStructureDataRow)
-    End Sub 'Generate a CCIpole object from EDS
+    End Sub 'Generate a CCIpole object from EDS or Excel Datarow
 
     'Public Sub New(ByVal path As String)
     '    Try
@@ -80,7 +91,7 @@ End Class
 
 
 #Region "CCIpole Extras"
-Partial Public Class PoleAnalysisCriteria
+Partial Public Class PoleCriteria
     Private prop_criteria_id As Integer
     Private prop_upper_structure_type As String
     Private prop_analysis_deg As Double?
@@ -1259,7 +1270,7 @@ Partial Public Class PoleReinfDetail
         End Try 'Note
     End Sub
 
-End Class 'Add Reinforcement Detail to CCIpole Object
+End Class 'Add Reinf Detail to CCIpole Object
 
 Partial Public Class PoleIntGroup
     Private prop_interference_group_id As Integer?
