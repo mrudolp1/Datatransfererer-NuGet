@@ -24,8 +24,8 @@ Partial Public Class frmMain
     Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\Guyed Anchor Block Foundation (4.1.0) - from EDS.xlsm"}
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\Pile Foundation (2.1.3) - Copy.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Drilled Pier Foundation (5.1.0) - Guyed.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\test\Pile Foundation (2.2.1.5).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Drilled Pier Foundation (5.1.0) - TEST - 8-9-2021 - Original.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\SST Unit Base Foundation (4.0.4) - to EDS.xlsm"}
     Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-1-2021.xlsm"}
 #End Region
@@ -162,6 +162,40 @@ Partial Public Class frmMain
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        MsgBox("Rudy did it...")
+        MsgBox("Stop touching me")
+    End Sub
+
+    Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
+
+    End Sub
+
+    Private Sub UploadExcelFilesToEDS(sender As Object, e As EventArgs) Handles exceltosql.Click
+
+    End Sub
+
+    Public tnxObject As tnxModel
+    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
+        Dim eriFd As New OpenFileDialog
+        eriFd.Multiselect = False
+        eriFd.Filter = "TNX File|*.eri"
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            tnxObject = New tnxModel(eriFd.FileName)
+            propgridTNXObject.SelectedObject = tnxObject
+        End If
+    End Sub
+
+    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
+        If tnxObject Is Nothing Then
+            MessageBox.Show("Import a file first.")
+            Exit Sub
+        End If
+
+        Dim eriFd As New SaveFileDialog
+        eriFd.Filter = "TNX File|*.eri"
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            tnxObject.GenerateERI(eriFd.FileName)
+        End If
     End Sub
 End Class

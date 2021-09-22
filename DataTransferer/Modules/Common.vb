@@ -5,11 +5,12 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "888892"
+    Public BUNumber As String = "870074"
     Public STR_ID As String = "A"
     Public CurWO As String = "1234567"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
-    Public fndGroupNeeded As Boolean = False
+    Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
+    Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
