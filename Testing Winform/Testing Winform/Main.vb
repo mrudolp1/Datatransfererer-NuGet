@@ -10,6 +10,7 @@ Partial Public Class frmMain
     Public myUnitBases As New DataTransfererUnitBase
     Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
+    Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     Public myPiles As New DataTransfererPile
 
     Public BUNumber As String = ""
@@ -17,16 +18,16 @@ Partial Public Class frmMain
 
     'Import to Excel
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\EDS - Pier and Pad Foundation (4.1.2).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\" & "" & "EDS - Pile Foundation (2.2.1.5).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - Pile Foundation (2.2.1).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\Drilled Pier Foundation (5.1.0) - from EDS.xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\SST Unit Base Foundation (4.1.0) - from EDS.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\Guyed Anchor Block Foundation (4.1.0) - from EDS.xlsm"}
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\EDS Time Trials\879477 - Pier and Pad Foundation (4.1.0).xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\New Table Structure\870074\ASYM Test\EDS3 - Pile Foundation (2.2.1.5) - Mod.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\New Table Structure\870074\ASYM Test\EDS2 - Pile Foundation (2.2.1.5) - Change 2.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\New Table Structure\870074\ASYM Test\Pile Foundation (2.2.1.5).xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\814581\test\Pile Foundation (2.2.1.5).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Drilled Pier Foundation (5.1.0) - TEST - 8-9-2021 - Original.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\SST Unit Base Foundation (4.0.4) - to EDS.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-1-2021.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -107,10 +108,14 @@ Partial Public Class frmMain
                 myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myDrilledPiers.ExcelFilePath = item
                 If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
+            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
+                myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myGuyedAnchorBlocks.ExcelFilePath = item
+                If myGuyedAnchorBlocks.LoadFromEDS() Then myGuyedAnchorBlocks.SaveToExcel()
             ElseIf item.Contains("Pile Foundation") Then
-                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPiles.ExcelFilePath = item
-                If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
+                'myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                'myPiles.ExcelFilePath = item
+                'If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
             End If
         Next
 
@@ -135,6 +140,11 @@ Partial Public Class frmMain
                 myDrilledPiers.ExcelFilePath = item
                 myDrilledPiers.LoadFromExcel()
                 myDrilledPiers.SaveToEDS()
+            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
+                myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myGuyedAnchorBlocks.ExcelFilePath = item
+                myGuyedAnchorBlocks.LoadFromExcel()
+                myGuyedAnchorBlocks.SaveToEDS()
             ElseIf item.Contains("Pile Foundation") Then
                 myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPiles.ExcelFilePath = item
@@ -149,8 +159,6 @@ Partial Public Class frmMain
         myUnitBases.Clear()
         myPierandPads.Clear()
         myDrilledPiers.Clear()
-        'myDrilledPiers.Clear()
-        myPiles.Clear()
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
