@@ -32,6 +32,7 @@
     <None Remove="Data Transferer Queries\Existing Model %28SELECT%29.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Data Transferer Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
@@ -87,6 +88,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pile\Pile %28IN_UP%29 - DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pile\Pile (IN_UP).sql">

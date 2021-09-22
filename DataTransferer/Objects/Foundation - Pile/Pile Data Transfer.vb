@@ -51,16 +51,14 @@ Partial Public Class DataTransfererPile
         For Each item As SQLParameter In PileSQLDataTables()
             PileLoader = QueryBuilderFromFile(queryPath & "Pile\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
             DoDaSQL.sqlLoader(PileLoader, item.sqlDatatable, ds, pileDB, pileID, "0")
-            'If pileDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
         'Custom Section to transfer data for the pile tool. Needs to be adjusted for each tool.
-
         For Each PileDataRow As DataRow In ds.Tables("Pile General Details SQL").Rows
             refid = CType(PileDataRow.Item("pile_id"), Integer)
-
             pileList.Add(New Pile(PileDataRow, refid))
         Next
+
     End Sub
 
     Public Function LoadFromEDS() As Boolean
@@ -73,56 +71,45 @@ Partial Public Class DataTransfererPile
 
 
         For Each item As EXCELDTParameter In PileExcelDTParameters()
-            'Get tables from excel file 
+            'Get additional tables from excel file 
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
-        'Piles.Add(New Pile(ExcelFilePath))
-
-        '****Test Comparing Excel to EDS****
-        Dim refid As Integer
-        Dim PileLoader As String
-        'Load data to get Pile details for the existing structure model
-        For Each item As SQLParameter In PileSQLDataTables()
-            PileLoader = QueryBuilderFromFile(queryPath & "Pile\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            DoDaSQL.sqlLoader(PileLoader, item.sqlDatatable, ds, pileDB, pileID, "0")
-            'If pileDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
-        Next
-
-        'Custom Section to transfer data for the pile tool. Needs to be adjusted for each tool.
-
-        For Each PileDataRow As DataRow In ds.Tables("Pile General Details SQL").Rows
-            refid = CType(PileDataRow.Item("pile_id"), Integer)
-
-            'Piles.Add(New Pile(PileDataRow, refid))
-            Piles.Add(New Pile(ExcelFilePath, PileDataRow, refid))
-        Next
+        Piles.Add(New Pile(ExcelFilePath))
 
 
-
-        'Return True
-        '****Test Comparing Excel to EDS****
-
-
-
-        'IEM 9/8/2021
+        'Pull SQL data, if applicable, to compare with excel data
         CreateSQLPiles(sqlPiles)
-        If sqlPiles.Count > 0 Then
-            For Each fnd As Pile In Piles
+
+        'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each fnd As Pile In Piles
+            If fnd.pile_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlfnd As Pile In sqlPiles
                     If fnd.pile_id = sqlfnd.pile_id Then
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
-                            fndGroupNeeded = True
-                            Save1Pile(fnd)
+                            isfndGroupNeeded = True
+                            isPileNeeded = True
                         End If
                         Exit For
                     End If
                 Next
-            Next
-        Else
-            'Save the data because nothing exists in sql
-        End If
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isfndGroupNeeded = True
+                isPileNeeded = True
+            End If
+        Next
+
+        'Else
+        '    'Save the data because nothing exists in sql
+        '    isModelNeeded = True
+        '    isfndGroupNeeded = True
+        '    isPileNeeded = True
+        '    End If
+
+        'End If
 
     End Sub 'Create Pile objects based on what is coming from the excel file
 
@@ -132,12 +119,12 @@ Partial Public Class DataTransfererPile
 #Region "Save Data"
 
     Sub Save1Pile(ByVal pf As Pile)
+
         Dim firstOne As Boolean = True
         Dim mySoils As String = ""
         Dim myLocations As String = ""
 
         Dim PileSaver As String = QueryBuilderFromFile(queryPath & "Pile\Pile (IN_UP).sql")
-
         PileSaver = PileSaver.Replace("[BU NUMBER]", BUNumber)
         PileSaver = PileSaver.Replace("[STRUCTURE ID]", STR_ID)
         PileSaver = PileSaver.Replace("[FOUNDATION TYPE]", "Pile")
@@ -145,14 +132,37 @@ Partial Public Class DataTransfererPile
             PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
         Else
             PileSaver = PileSaver.Replace("[Pile ID]", pf.pile_id.ToString)
-            'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePileDetail(pf))
         End If
+
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            PileSaver = PileSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            PileSaver = PileSaver.Replace("'[Model ID Needed]'", 0)
+        End If
+
+        'Determine if new foundation group ID needs created. 
+        If isfndGroupNeeded Then
+            PileSaver = PileSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+        Else
+            PileSaver = PileSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+        End If
+
+        'Determine if new Pile ID needs created
+        If isPileNeeded Then
+            PileSaver = PileSaver.Replace("'[Pile ID Needed]'", 1)
+        Else
+            PileSaver = PileSaver.Replace("'[Pile ID Needed]'", 0)
+        End If
+
         PileSaver = PileSaver.Replace("[INSERT ALL PILE DETAILS]", InsertPileDetail(pf))
         PileSaver = PileSaver.Replace("[CONFIGURATION]", pf.pile_group_config.ToString)
 
-        If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
-            If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
-                For Each pfsl As PileSoilLayer In pf.soil_layers
+        'If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then 'Don't need since only performing insert commands. 
+        If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
+            For Each pfsl As PileSoilLayer In pf.soil_layers
+                'line added below to avoid adding blank rows to tables when rows are removed. 
+                If Not IsNothing(pfsl.bottom_depth) Or Not IsNothing(pfsl.effective_soil_density) Or Not IsNothing(pfsl.cohesion) Or Not IsNothing(pfsl.friction_angle) Or Not IsNothing(pfsl.spt_blow_count) Or Not IsNothing(pfsl.ultimate_skin_friction_comp) Or Not IsNothing(pfsl.ultimate_skin_friction_uplift) Then
                     Dim tempSoilLayer As String = InsertPileSoilLayer(pfsl)
 
                     If Not firstOne Then
@@ -161,191 +171,97 @@ Partial Public Class DataTransfererPile
                         mySoils += "(" & tempSoilLayer & ")"
                     End If
 
-<<<<<<< HEAD
-                    For Each pf As Pile In Piles
-                        'If pf.change_flag Then
-
-                        'End If
-                        Dim PileSaver As String = QueryBuilderFromFile(queryPath & "Pile\Pile (IN_UP).sql")
-
-                        PileSaver = PileSaver.Replace("[BU NUMBER]", BUNumber)
-                        PileSaver = PileSaver.Replace("[STRUCTURE ID]", STR_ID)
-                        PileSaver = PileSaver.Replace("[FOUNDATION TYPE]", "Pile")
-                        If pf.pile_id = 0 Or IsDBNull(pf.pile_id) Then
-                            PileSaver = PileSaver.Replace("'[Pile ID]'", "NULL")
-=======
                     firstOne = False
-                Next 'Add Soil Layer INSERT statments
-                PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+                End If
+            Next 'Add Soil Layer INSERT statments
+            PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
                 firstOne = True
->>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
-                        Else
-                            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-                        End If
-
-                        If pf.pile_group_config = "Asymmetric" Then
-                            'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
-
-<<<<<<< HEAD
-                            If Not firstOne Then
-                                mySoils += ",(" & tempSoilLayer & ")"
-                            Else
-                                mySoils += "(" & tempSoilLayer & ")"
-                            End If
-
-                            firstOne = False
-                    Next 'Add Soil Layer INSERT statments
-                    PileSaver = PileSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-                    firstOne = True
-                    Else
-                    PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-                End If
-
-            If pf.pile_group_config = "Asymmetric" Then
-                'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
-
-                For Each pfpl As PileLocation In pf.pile_locations
-                    Dim tempLocation As String = InsertPileLocation(pfpl)
-
-                    If Not firstOne Then
-                        myLocations += ",(" & tempLocation & ")"
-                    Else
-                        myLocations += "(" & tempLocation & ")"
-                    End If
-
-                    firstOne = False
-                Next
-                PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
             Else
-                PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-                PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
-            End If 'Add Embedded Pole INSERT Statment
-
-            mySoils = ""
-            myLocations = ""
-
-        Else
-
-            PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-            PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
-=======
-                For Each pfpl As PileLocation In pf.pile_locations
-                    Dim tempLocation As String = InsertPileLocation(pfpl)
-
-                    If Not firstOne Then
-                        myLocations += ",(" & tempLocation & ")"
-                    Else
-                        myLocations += "(" & tempLocation & ")"
-                    End If
-
-                    firstOne = False
-                Next
-                PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
-            Else
-                PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-                PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
-            End If 'Add Embedded Pole INSERT Statment
-
-            mySoils = ""
-            myLocations = ""
-
-        Else
->>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
-
-            PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
-            PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-            PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
-
-            Dim tempUpdater As String = ""
-            tempUpdater += UpdatePileDetail(pf)
-
-            If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
-                For Each pfsl As PileSoilLayer In pf.soil_layers
-                    If pfsl.soil_layer_id = 0 Or IsDBNull(pfsl.soil_layer_id) Then
-                        tempUpdater += "INSERT INTO pile_soil_layer VALUES (" & InsertPileSoilLayer(pfsl) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdatePileSoilLayer(pfsl)
-                    End If
-                Next
+                PileSaver = PileSaver.Replace("INSERT INTO fnd.pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO fnd.pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
             End If
 
-            'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+        If pf.pile_group_config = "Asymmetric" Then
+            'PileSaver = PileSaver.Replace("[INSERT ALL PILE LOCATIONS]", InsertPileLocation(dp.embed_details))
 
-            'End If
-
-<<<<<<< HEAD
             For Each pfpl As PileLocation In pf.pile_locations
-                If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
-                    tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
-                Else
-                    tempUpdater += UpdatePileLocation(pfpl)
-                End If
-            Next
+                'line added below to avoid adding blank rows to tables when rows are removed. 
+                If Not IsNothing(pfpl.pile_x_coordinate) Or Not IsNothing(pfpl.pile_y_coordinate) Then
+                    Dim tempLocation As String = InsertPileLocation(pfpl)
 
-
-
-
-            '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
-            '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-            '    For Each pfpl As PileLocation In pf.pile_locations
-            '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
-            '    Next
-            '    tempUpdater += " END " & vbNewLine
-            'Else
-            '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-            '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
-            '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
-            '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
-            '        Else
-            '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
-            '        End If
-            '    Next
-            '    'End If
-        End If
-
-        PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
-
-        End If
-
-        sqlSender(PileSaver, pileDB, pileID, "0")
-        Next
-=======
-            If pf.pile_group_config = "Asymmetric" Then
-
-                For Each pfpl As PileLocation In pf.pile_locations
-                    If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
-                        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+                    If Not firstOne Then
+                        myLocations += ",(" & tempLocation & ")"
                     Else
-                        tempUpdater += UpdatePileLocation(pfpl)
+                        myLocations += "(" & tempLocation & ")"
                     End If
-                Next
+                End If
+                firstOne = False
+            Next
+            PileSaver = PileSaver.Replace("([INSERT ALL PILE LOCATIONS])", myLocations)
+        Else
+            PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+            PileSaver = PileSaver.Replace("INSERT INTO fnd.pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO fnd.pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
+        End If 'Add Embedded Pole INSERT Statment
+
+            mySoils = ""
+            myLocations = ""
+
+        'Else 'No longer need to perform update commands
+
+        '    PileSaver = PileSaver.Replace("BEGIN IF @IsCONFIG = 'Asymmetric'", "--BEGIN IF @IsCONFIG = 'Asymmetric'")
+        '    PileSaver = PileSaver.Replace("INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+        '    PileSaver = PileSaver.Replace("INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End", "--INSERT INTO pile_location VALUES ([INSERT ALL PILE LOCATIONS]) End")
+
+        '    Dim tempUpdater As String = ""
+        '    tempUpdater += UpdatePileDetail(pf)
+
+        '    If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
+        '        For Each pfsl As PileSoilLayer In pf.soil_layers
+        '            If pfsl.soil_layer_id = 0 Or IsDBNull(pfsl.soil_layer_id) Then
+        '                tempUpdater += "INSERT INTO pile_soil_layer VALUES (" & InsertPileSoilLayer(pfsl) & ") " & vbNewLine
+        '            Else
+        '                tempUpdater += UpdatePileSoilLayer(pfsl)
+        '            End If
+        '        Next
+        '    End If
+
+        '    'PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+
+        '    'End If
+
+        '    If pf.pile_group_config = "Asymmetric" Then
+
+        '        For Each pfpl As PileLocation In pf.pile_locations
+        '            If pfpl.location_id = 0 Or IsDBNull(pfpl.location_id) Then
+        '                tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+        '            Else
+        '                tempUpdater += UpdatePileLocation(pfpl)
+        '            End If
+        '        Next
 
 
 
 
-                '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
-                '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-                '    For Each pfpl As PileLocation In pf.pile_locations
-                '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
-                '    Next
-                '    tempUpdater += " END " & vbNewLine
-                'Else
-                '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-                '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
-                '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
-                '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
-                '        Else
-                '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
-                '        End If
-                '    Next
-                '    'End If
-            End If
+        '        '    'If pfpl.location_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
+        '        '    'tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
+        '        '    For Each pfpl As PileLocation In pf.pile_locations
+        '        '        tempUpdater += "INSERT INTO pile_location VALUES (" & InsertPileLocation(pfpl) & ") " & vbNewLine
+        '        '    Next
+        '        '    tempUpdater += " END " & vbNewLine
+        '        'Else
+        '        '    tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
+        '        '    For Each esec As DrilledPierEmbedSection In dp.embed_details.sections
+        '        '        If esec.section_id = 0 Or IsDBNull(esec.section_id) Then
+        '        '            tempUpdater += "INSERT INTO embedded_pole_section VALUES (" & InsertDrilledPierEmbedSection(esec).Replace("@EmbedID", dp.embed_details.embedded_id.ToString) & ") " & vbNewLine
+        '        '        Else
+        '        '            tempUpdater += UpdateDrilledPierEmbedSection(esec)
+        '        '        End If
+        '        '    Next
+        '        '    'End If
+        '    End If
 
-            PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
+        '    PileSaver = PileSaver.Replace("(SELECT * FROM TEMPORARY)", tempUpdater)
 
-        End If
->>>>>>> b5d900c7dabf63871016a46826cd402d18aaf2ce
+        'End If
 
         sqlSender(PileSaver, pileDB, pileID, "0")
     End Sub
@@ -756,9 +672,10 @@ Partial Public Class DataTransfererPile
     Private Function InsertPileDetail(ByVal pf As Pile) As String
         Dim insertString As String = ""
 
-        insertString += "@FndID"
+        'insertString += "@FndID"
+        'insertString += "@FndgrpID"
         'insertString += "," & IIf(IsNothing(pf.pile_id), "Null", pf.pile_id.ToString)
-        insertString += "," & IIf(IsNothing(pf.load_eccentricity), "Null", pf.load_eccentricity.ToString)
+        insertString += "" & IIf(IsNothing(pf.load_eccentricity), "Null", pf.load_eccentricity.ToString)
         insertString += "," & IIf(IsNothing(pf.bolt_circle_bearing_plate_width), "Null", pf.bolt_circle_bearing_plate_width.ToString)
         insertString += "," & IIf(IsNothing(pf.pile_shape), "Null", "'" & pf.pile_shape.ToString & "'")
         insertString += "," & IIf(IsNothing(pf.pile_material), "Null", "'" & pf.pile_material.ToString & "'")
@@ -971,65 +888,170 @@ Partial Public Class DataTransfererPile
         MyParameters.Add(New EXCELDTParameter("Pile Soil EXCEL", "A3:H17", "SAPI"))
         MyParameters.Add(New EXCELDTParameter("Pile Location EXCEL", "S3:U103", "SAPI"))
 
-        'MyParameters.Add(New EXCELDTParameter("Drilled Pier General Details EXCEL", "A2:K1000", "Details (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Section EXCEL", "A2:N1000", "Sections (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Rebar EXCEL", "A2:I1000", "Rebar (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Drilled Pier Soil EXCEL", "A2:L1000", "Soil Layers (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Belled Details EXCEL", "A2:M1000", "Belled (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Embedded Details EXCEL", "A2:O1000", "Embedded (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Embedded Section EXCEL", "A2:D1000", "Embedded Section (SAPI)"))
-
         Return MyParameters
     End Function
 
 #End Region
 
-#Region "IEM"
+#Region "Check Changes"
     Private changeDt As New DataTable
     Private changeList As New List(Of AnalysisChanges)
     Function CheckChanges(ByVal xlPile As Pile, ByVal sqlPile As Pile) As Boolean
         Dim changesMade As Boolean = False
-
 
         changeDt.Columns.Add("Variable", Type.GetType("System.String"))
         changeDt.Columns.Add("New Value", Type.GetType("System.String"))
         changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
         changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
-        'If xlPile.neglect_depth <> sqlPile.neglect_depth Then
-        '    changesMade = True
-        '    changeDt.Rows.Add("neglect_depth", xlPile.neglect_depth.ToString, sqlPile.neglect_depth.ToString, CurWO)
-        'End If
+        'Check Details
+        If Check1Change(xlPile.load_eccentricity, sqlPile.load_eccentricity, 1, "Load_Eccentricity") Then changesMade = True
+        If Check1Change(xlPile.bolt_circle_bearing_plate_width, sqlPile.bolt_circle_bearing_plate_width, 1, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(xlPile.pile_shape, sqlPile.pile_shape, 1, "Pile_Shape") Then changesMade = True
+        If Check1Change(xlPile.pile_material, sqlPile.pile_material, 1, "Pile_Material") Then changesMade = True
+        If Check1Change(xlPile.pile_length, sqlPile.pile_length, 1, "Pile_Length") Then changesMade = True
+        If Check1Change(xlPile.pile_diameter_width, sqlPile.pile_diameter_width, 1, "Pile_Diameter_Width") Then changesMade = True
+        If Check1Change(xlPile.pile_pipe_thickness, sqlPile.pile_pipe_thickness, 1, "Pile_Pipe_Thickness") Then changesMade = True
+        If Check1Change(xlPile.pile_soil_capacity_given, sqlPile.pile_soil_capacity_given, 1, "Pile_Soil_Capacity_Given") Then changesMade = True
+        If Check1Change(xlPile.steel_yield_strength, sqlPile.steel_yield_strength, 1, "Steel_Yield_Strength") Then changesMade = True
+        If Check1Change(xlPile.pile_type_option, sqlPile.pile_type_option, 1, "Pile_Type_Option") Then changesMade = True
+        If Check1Change(xlPile.rebar_quantity, sqlPile.rebar_quantity, 1, "Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlPile.pile_group_config, sqlPile.pile_group_config, 1, "Pile_Group_Config") Then changesMade = True
+        If Check1Change(xlPile.foundation_depth, sqlPile.foundation_depth, 1, "Foundation_Depth") Then changesMade = True
+        If Check1Change(xlPile.pad_thickness, sqlPile.pad_thickness, 1, "Pad_Thickness") Then changesMade = True
+        If Check1Change(xlPile.pad_width_dir1, sqlPile.pad_width_dir1, 1, "Pad_Width_Dir1") Then changesMade = True
+        If Check1Change(xlPile.pad_width_dir2, sqlPile.pad_width_dir2, 1, "Pad_Width_Dir2") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_size_bottom, sqlPile.pad_rebar_size_bottom, 1, "Pad_Rebar_Size_Bottom") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_size_top, sqlPile.pad_rebar_size_top, 1, "Pad_Rebar_Size_Top") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_quantity_bottom_dir1, sqlPile.pad_rebar_quantity_bottom_dir1, 1, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_quantity_top_dir1, sqlPile.pad_rebar_quantity_top_dir1, 1, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_quantity_bottom_dir2, sqlPile.pad_rebar_quantity_bottom_dir2, 1, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlPile.pad_rebar_quantity_top_dir2, sqlPile.pad_rebar_quantity_top_dir2, 1, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(xlPile.pier_shape, sqlPile.pier_shape, 1, "Pier_Shape") Then changesMade = True
+        If Check1Change(xlPile.pier_diameter, sqlPile.pier_diameter, 1, "Pier_Diameter") Then changesMade = True
+        If Check1Change(xlPile.extension_above_grade, sqlPile.extension_above_grade, 1, "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(xlPile.pier_rebar_size, sqlPile.pier_rebar_size, 1, "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(xlPile.pier_rebar_quantity, sqlPile.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlPile.pier_tie_size, sqlPile.pier_tie_size, 1, "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(xlPile.rebar_grade, sqlPile.rebar_grade, 1, "Rebar_Grade") Then changesMade = True
+        If Check1Change(xlPile.concrete_compressive_strength, sqlPile.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlPile.groundwater_depth, sqlPile.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlPile.total_soil_unit_weight, sqlPile.total_soil_unit_weight, 1, "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(xlPile.cohesion, sqlPile.cohesion, 1, "Cohesion") Then changesMade = True
+        If Check1Change(xlPile.friction_angle, sqlPile.friction_angle, 1, "Friction_Angle") Then changesMade = True
+        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlPile.spt_blow_count, sqlPile.spt_blow_count, 1, "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(xlPile.pile_negative_friction_force, sqlPile.pile_negative_friction_force, 1, "Pile_Negative_Friction_Force") Then changesMade = True
+        If Check1Change(xlPile.pile_ultimate_compression, sqlPile.pile_ultimate_compression, 1, "Pile_Ultimate_Compression") Then changesMade = True
+        If Check1Change(xlPile.pile_ultimate_tension, sqlPile.pile_ultimate_tension, 1, "Pile_Ultimate_Tension") Then changesMade = True
+        If Check1Change(xlPile.top_and_bottom_rebar_different, sqlPile.top_and_bottom_rebar_different, 1, "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(xlPile.ultimate_gross_end_bearing, sqlPile.ultimate_gross_end_bearing, 1, "Ultimate_Gross_End_Bearing") Then changesMade = True
+        If Check1Change(xlPile.skin_friction_given, sqlPile.skin_friction_given, 1, "Skin_Friction_Given") Then changesMade = True
+        If Check1Change(xlPile.pile_quantity_circular, sqlPile.pile_quantity_circular, 1, "Pile_Quantity_Circular") Then changesMade = True
+        If Check1Change(xlPile.group_diameter_circular, sqlPile.group_diameter_circular, 1, "Group_Diameter_Circular") Then changesMade = True
+        If Check1Change(xlPile.pile_column_quantity, sqlPile.pile_column_quantity, 1, "Pile_Column_Quantity") Then changesMade = True
+        If Check1Change(xlPile.pile_row_quantity, sqlPile.pile_row_quantity, 1, "Pile_Row_Quantity") Then changesMade = True
+        If Check1Change(xlPile.pile_columns_spacing, sqlPile.pile_columns_spacing, 1, "Pile_Columns_Spacing") Then changesMade = True
+        If Check1Change(xlPile.pile_row_spacing, sqlPile.pile_row_spacing, 1, "Pile_Row_Spacing") Then changesMade = True
+        If Check1Change(xlPile.group_efficiency_factor_given, sqlPile.group_efficiency_factor_given, 1, "Group_Efficiency_Factor_Given") Then changesMade = True
+        If Check1Change(xlPile.group_efficiency_factor, sqlPile.group_efficiency_factor, 1, "Group_Efficiency_Factor") Then changesMade = True
+        If Check1Change(xlPile.cap_type, sqlPile.cap_type, 1, "Cap_Type") Then changesMade = True
+        If Check1Change(xlPile.pile_quantity_asymmetric, sqlPile.pile_quantity_asymmetric, 1, "Pile_Quantity_Asymmetric") Then changesMade = True
+        If Check1Change(xlPile.pile_spacing_min_asymmetric, sqlPile.pile_spacing_min_asymmetric, 1, "Pile_Spacing_Min_Asymmetric") Then changesMade = True
+        If Check1Change(xlPile.quantity_piles_surrounding, sqlPile.quantity_piles_surrounding, 1, "Quantity_Piles_Surrounding") Then changesMade = True
+        If Check1Change(xlPile.pile_cap_reference, sqlPile.pile_cap_reference, 1, "Pile_Cap_Reference") Then changesMade = True
 
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
-        If Check1Change(xlPile.neglect_depth, sqlPile.neglect_depth, 1, "Neglect Depth") Then changesMade = True
+        'Check Soil Layer
+        'If xlPile.soil_layers.Count <> sqlPile.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below
+
+        If xlPile.pile_soil_capacity_given = False And xlPile.pile_shape <> "H-Pile" Then
+            For Each psl As PileSoilLayer In xlPile.soil_layers
+                For Each sqlpsl As PileSoilLayer In sqlPile.soil_layers
+                    If psl.soil_layer_id = sqlpsl.soil_layer_id Then
+
+                        If Check1Change(psl.bottom_depth, sqlpsl.bottom_depth, 1, "Bottom_Depth" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.effective_soil_density, sqlpsl.effective_soil_density, 1, "Effective_Soil_Density" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.cohesion, sqlpsl.cohesion, 1, "Cohesion" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.friction_angle, sqlpsl.friction_angle, 1, "Friction_Angle" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.spt_blow_count, sqlpsl.spt_blow_count, 1, "Spt_Blow_Count" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.ultimate_skin_friction_comp, sqlpsl.ultimate_skin_friction_comp, 1, "Ultimate_Skin_Friction_Comp" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.ultimate_skin_friction_uplift, sqlpsl.ultimate_skin_friction_uplift, 1, "Ultimate_Skin_Friction_Uplift" & psl.soil_layer_id.ToString) Then changesMade = True
+
+                        Exit For
+                    End If
+                    If psl.soil_layer_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
+
+                        If Check1Change(psl.bottom_depth, Nothing, 1, "Bottom_Depth" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.effective_soil_density, Nothing, 1, "Effective_Soil_Density" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.cohesion, Nothing, 1, "Cohesion" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.friction_angle, Nothing, 1, "Friction_Angle" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.spt_blow_count, Nothing, 1, "Spt_Blow_Count" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.ultimate_skin_friction_comp, Nothing, 1, "Ultimate_Skin_Friction_Comp" & psl.soil_layer_id.ToString) Then changesMade = True
+                        If Check1Change(psl.ultimate_skin_friction_uplift, Nothing, 1, "Ultimate_Skin_Friction_Uplift" & psl.soil_layer_id.ToString) Then changesMade = True
+
+                        Exit For
+                    End If
+                Next
+            Next
+
+        End If
+
+        'Pile Location
+        If xlPile.pile_group_config = "Asymmetric" Then
+            For Each pfpl As PileLocation In xlPile.pile_locations
+                For Each sqlpfpl As PileLocation In sqlPile.pile_locations
+                    If pfpl.location_id = sqlpfpl.location_id Then
+
+                        If Check1Change(pfpl.pile_x_coordinate, sqlpfpl.pile_x_coordinate, 1, "Pile_X_Coordinate" & pfpl.location_id.ToString) Then changesMade = True
+                        If Check1Change(pfpl.pile_y_coordinate, sqlpfpl.pile_y_coordinate, 1, "Pile_Y_Coordinate" & pfpl.location_id.ToString) Then changesMade = True
+
+                        Exit For
+                    End If
+                    If pfpl.location_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+
+                        If Check1Change(pfpl.pile_x_coordinate, Nothing, 1, "Pile_X_Coordinate" & pfpl.location_id.ToString) Then changesMade = True
+                        If Check1Change(pfpl.pile_y_coordinate, Nothing, 1, "Pile_Y_Coordinate" & pfpl.location_id.ToString) Then changesMade = True
+
+                        Exit For
+                    End If
+                Next
+            Next
+
+        End If
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
         Return changesMade
     End Function
 
-    Sub CreateChangeSummary(ByVal changedt As DataTable)
+    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
         'Create your string based on data in the datatable
         Dim summary As String
         Dim counter As Integer = 0
 
         For Each chng As AnalysisChanges In changeList
             If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously " & chng.PreviousValue
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously " & chng.PreviousValue
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             End If
 
             counter += 1
         Next
-    End Sub
+
+        'write to text file
+        'End Sub
+    End Function
 
     Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
         If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pile Foundations"))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pile Foundations"))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
             changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pile Foundations"))
             Return True
@@ -1047,6 +1069,9 @@ Class AnalysisChanges
     Property PartofDatabase As String
 
     Public Sub New(prev As String, Newval As String, name As String, db As String)
-
+        Me.PreviousValue = prev
+        Me.NewValue = Newval
+        Me.Name = name
+        Me.PartofDatabase = db
     End Sub
 End Class
