@@ -145,11 +145,11 @@ Partial Public Class frmMain
                 myGuyedAnchorBlocks.ExcelFilePath = item
                 myGuyedAnchorBlocks.LoadFromExcel()
                 myGuyedAnchorBlocks.SaveToEDS()
-            ElseIf item.Contains("Pile Foundation") Then
-                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPiles.ExcelFilePath = item
-                myPiles.LoadFromExcel()
-                myPiles.SaveToEDS()
+                'ElseIf item.Contains("Pile Foundation") Then
+                '    myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                '    myPiles.ExcelFilePath = item
+                '    myPiles.LoadFromExcel()
+                '    myPiles.SaveToEDS()
             End If
         Next
 
