@@ -192,7 +192,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                 myCol = GetExcelColumnName(colCounter)
 
                 'GUYED ANCHOR BLOCK DETAILS
-                If Not IsNothing(gab.ID) Then 'FIX NEEDED. RESULTS IN 0
+                If Not IsNothing(gab.ID) Then
                     .Worksheets("Database").Range(myCol & rowStart - 12).Value = CType(gab.ID, Integer)
                 Else .Worksheets("Database").Range(myCol & rowStart - 12).ClearContents
                 End If

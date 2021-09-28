@@ -42,7 +42,9 @@
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
     <None Remove="Data Transferer Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Existing Model %28SELECT%29.sql" />
+    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP) - dnu.sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details) - Copy.sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
@@ -148,6 +150,12 @@
     <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Profile%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29 - dnu.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -201,6 +209,8 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Spreadsheet.v20.2.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
