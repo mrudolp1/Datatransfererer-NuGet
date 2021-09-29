@@ -1062,16 +1062,16 @@ Partial Public Class DataTransfererPile
 End Class
 
 
-Class AnalysisChanges
-    Property PreviousValue As String
-    Property NewValue As String
-    Property Name As String
-    Property PartofDatabase As String
+'Class AnalysisChanges
+'    Property PreviousValue As String
+'    Property NewValue As String
+'    Property Name As String
+'    Property PartofDatabase As String
 
-    Public Sub New(prev As String, Newval As String, name As String, db As String)
-        Me.PreviousValue = prev
-        Me.NewValue = Newval
-        Me.Name = name
-        Me.PartofDatabase = db
-    End Sub
-End Class
+'    Public Sub New(prev As String, Newval As String, name As String, db As String)
+'        Me.PreviousValue = prev
+'        Me.NewValue = Newval
+'        Me.Name = name
+'        Me.PartofDatabase = db
+'    End Sub
+'End Class

@@ -11,6 +11,7 @@ Module IDoDeclare
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
+    Public isUnitBaseNeeded As Boolean = False 'Update Unit Base details & foundation details
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
@@ -276,5 +277,19 @@ Public Class EXCELRngParameter
     Sub New(ByVal xlNamedRange As String, ByVal EDSName As String)
         rangeName = xlNamedRange
         variableName = EDSName
+    End Sub
+End Class
+
+Public Class AnalysisChanges
+    Property PreviousValue As String
+    Property NewValue As String
+    Property Name As String
+    Property PartofDatabase As String
+
+    Public Sub New(prev As String, Newval As String, name As String, db As String)
+        Me.PreviousValue = prev
+        Me.NewValue = Newval
+        Me.Name = name
+        Me.PartofDatabase = db
     End Sub
 End Class
