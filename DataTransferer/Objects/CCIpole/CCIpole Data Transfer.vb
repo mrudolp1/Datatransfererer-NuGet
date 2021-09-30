@@ -5,93 +5,93 @@ Imports System.Security.Principal
 
 Partial Public Class DataTransfererCCIpole
 
-    '#Region "Define"
-    '    Private NewCCIpoleWb As New Workbook
-    '    Private prop_ExcelFilePath As String
+#Region "Define"
+    Private NewCCIpoleWb As New Workbook
+    Private prop_ExcelFilePath As String
 
-    '    Public Property Poles As New List(Of CCIpole)
-    '    Private Property CCIpoleTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\CCIpole (4.6.0) - TEMPLATE.xlsm"
-    '    Private Property CCIpoleFileType As DocumentFormat = DocumentFormat.Xlsm
+    Public Property Poles As New List(Of CCIpole)
+    Private Property CCIpoleTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\CCIpole (4.6.0) - TEMPLATE.xlsm"
+    Private Property CCIpoleFileType As DocumentFormat = DocumentFormat.Xlsm
 
-    '    Public Property poleDB As String
-    '    Public Property poleID As WindowsIdentity
+    Public Property poleDB As String
+    Public Property poleID As WindowsIdentity
 
-    '    Public Property ExcelFilePath() As String
-    '        Get
-    '            Return Me.prop_ExcelFilePath
-    '        End Get
-    '        Set
-    '            Me.prop_ExcelFilePath = Value
-    '        End Set
-    '    End Property
+    Public Property ExcelFilePath() As String
+        Get
+            Return Me.prop_ExcelFilePath
+        End Get
+        Set
+            Me.prop_ExcelFilePath = Value
+        End Set
+    End Property
 
-    '    Public Property xlApp As Object
-    '#End Region
+    Public Property xlApp As Object
+#End Region
 
-    '#Region "Constructors"
-    '    Public Sub New()
-    '        'Leave method empty
-    '    End Sub
+#Region "Constructors"
+    Public Sub New()
+        'Leave method empty
+    End Sub
 
-    '    Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
-    '        'dpDS = MyDataSet
-    '        ds = MyDataSet
-    '        poleID = LogOnUser
-    '        poleDB = ActiveDatabase
-    '        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing.
-    '        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing.
-    '    End Sub
-    '#End Region
+    Public Sub New(ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BU As String, ByVal Strucutre_ID As String)
+        'dpDS = MyDataSet
+        ds = MyDataSet
+        poleID = LogOnUser
+        poleDB = ActiveDatabase
+        'BUNumber = BU 'Need to turn back on when connecting to dashboard. Turned off for testing.
+        'STR_ID = Strucutre_ID 'Need to turn back on when connecting to dashboard. Turned off for testing.
+    End Sub
+#End Region
 
-    '#Region "Load Data"
-    '    Public Function LoadFromEDS() As Boolean
-    '        Dim refid As Integer
+#Region "Load Data"
+    Public Function LoadFromEDS() As Boolean
+        Dim refid As Integer
 
-    '        Dim CCIpoleLoader As String
+        Dim CCIpoleLoader As String
 
-    '        'Load data to get pier and pad details data for the existing structure model
-    '        For Each item As SQLParameter In CCIpoleSQLDataTables()
-    '            CCIpoleLoader = QueryBuilderFromFile(queryPath & "CCIpole\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-    '            DoDaSQL.sqlLoader(CCIpoleLoader, item.sqlDatatable, ds, poleDB, poleID, "0")
-    '            'If ds.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
-    '        Next
+        'Load data to get pier and pad details data for the existing structure model
+        For Each item As SQLParameter In CCIpoleSQLDataTables()
+            CCIpoleLoader = QueryBuilderFromFile(queryPath & "CCIpole\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
+            DoDaSQL.sqlLoader(CCIpoleLoader, item.sqlDatatable, ds, poleDB, poleID, "0")
+            'If ds.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
+        Next
 
-    '        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-    '        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details SQL").Rows
-    '            refid = CType(CCIpoleDataRow.Item("pole_structure_id"), Integer)
+        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
+        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details SQL").Rows
+            refid = CType(CCIpoleDataRow.Item("pole_structure_id"), Integer)
 
-    '            Poles.Add(New CCIpole(CCIpoleDataRow, refid))
-    '        Next
+            Poles.Add(New CCIpole(CCIpoleDataRow, refid))
+        Next
 
-    '        Return True
-    '    End Function 'Create Drilled Pier objects based on what is saved in EDS
+        Return True
+    End Function 'Create Drilled Pier objects based on what is saved in EDS
 
-    '    Public Sub LoadFromExcel()
-    '        Dim refID As Integer
-    '        Dim refCol As String
+    Public Sub LoadFromExcel()
+        Dim refID As Integer
+        Dim refCol As String
 
-    '        For Each item As EXCELDTParameter In CCIpoleExcelDTParameters()
-    '            'Get tables from excel file 
-    '            ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
-    '        Next
+        For Each item As EXCELDTParameter In CCIpoleExcelDTParameters()
+            'Get tables from excel file 
+            ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+        Next
 
-    '        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-    '        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details EXCEL").Rows
-    '            'If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
-    '            '    refCol = "local_drilled_pier_id"
-    '            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-    '            'Else
-    '            '    refCol = "drilled_pier_id"
-    '            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-    '            'End If
-    '            ''commented out in case drilled pier id and local drilled pier id matched, prevents possible overriding of data
-    '            refCol = "pole_structure_id"
-    '            refID = CType(CCIpoleDataRow.Item(refCol), Integer)
+        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
+        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details EXCEL").Rows
+            'If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
+            '    refCol = "local_drilled_pier_id"
+            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
+            'Else
+            '    refCol = "drilled_pier_id"
+            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
+            'End If
+            ''commented out in case drilled pier id and local drilled pier id matched, prevents possible overriding of data
+            refCol = "pole_structure_id"
+            refID = CType(CCIpoleDataRow.Item(refCol), Integer)
 
-    '            Poles.Add(New CCIpole(CCIpoleDataRow, refID))
-    '        Next
-    '    End Sub 'Create Drilled Pier objects based on what is coming from the excel file
-    '#End Region
+            Poles.Add(New CCIpole(CCIpoleDataRow, refID))
+        Next
+    End Sub 'Create Drilled Pier objects based on what is coming from the excel file
+#End Region
 
     '#Region "Save Data"
     '    Public Sub SaveToEDS()
@@ -1007,684 +1007,684 @@ Partial Public Class DataTransfererCCIpole
     '    End Sub
     '#End Region
 
-    '#Region "SQL Insert Statements"
-    '    Private Function InsertPoleCriteria(ByVal pc As PoleCriteria) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleCriteriaID"
-    '        insertString += "," & IIf(IsNothing(pc.criteria_id), "Null", pc.criteria_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pc.upper_structure_type), "Null", "'" & pc.upper_structure_type.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pc.analysis_deg), "Null", pc.analysis_deg.ToString)
-    '        insertString += "," & IIf(IsNothing(pc.geom_increment_length), "Null", pc.geom_increment_length.ToString)
-    '        insertString += "," & IIf(IsNothing(pc.vnum), "Null", "'" & pc.vnum.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pc.check_connections), "Null", "'" & pc.check_connections.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pc.hole_deformation), "Null", "'" & pc.hole_deformation.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pc.ineff_mod_check), "Null", "'" & pc.ineff_mod_check.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pc.modified), "Null", "'" & pc.modified.ToString & "'")
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleSection(ByVal ps As PoleSection) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleSectionID"
-    '        insertString += "," & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.length_splice), "Null", ps.length_splice.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.num_sides), "Null", ps.num_sides.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.diam_bot), "Null", ps.diam_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.diam_top), "Null", ps.diam_top.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.wall_thickness), "Null", ps.wall_thickness.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.bend_radius), "Null", ps.bend_radius.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.pole_type), "Null", "'" & ps.pole_type.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(ps.section_name), "Null", "'" & ps.section_name.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(ps.socket_length), "Null", ps.socket_length.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.weight_mult), "Null", ps.weight_mult.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.wp_mult), "Null", ps.wp_mult.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.af_factor), "Null", ps.af_factor.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.ar_factor), "Null", ps.ar_factor.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.round_area_ratio), "Null", ps.round_area_ratio.ToString)
-    '        insertString += "," & IIf(IsNothing(ps.flat_area_ratio), "Null", ps.flat_area_ratio.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleReinfSection(ByVal prs As PoleReinfSection) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleReinfSectionID"
-    '        insertString += "," & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.length_splice), "Null", prs.length_splice.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.num_sides), "Null", prs.num_sides.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.diam_bot), "Null", prs.diam_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.diam_top), "Null", prs.diam_top.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.wall_thickness), "Null", prs.wall_thickness.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.bend_radius), "Null", prs.bend_radius.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.steel_grade_id), "Null", prs.steel_grade_id.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.pole_type), "Null", "'" & prs.pole_type.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(prs.weight_mult), "Null", prs.weight_mult.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.section_name), "Null", "'" & prs.section_name.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(prs.socket_length), "Null", prs.socket_length.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.wp_mult), "Null", prs.wp_mult.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.af_factor), "Null", prs.af_factor.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.ar_factor), "Null", prs.ar_factor.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.round_area_ratio), "Null", prs.round_area_ratio.ToString)
-    '        insertString += "," & IIf(IsNothing(prs.flat_area_ratio), "Null", prs.flat_area_ratio.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleReinfGroup(ByVal prg As PoleReinfGroup) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleReinfGroupID"
-    '        insertString += "," & IIf(IsNothing(prg.reinf_group_id), "Null", prg.reinf_group_id.ToString)
-    '        insertString += "," & IIf(IsNothing(prg.elev_bot_actual), "Null", prg.elev_bot_actual.ToString)
-    '        insertString += "," & IIf(IsNothing(prg.elev_bot_eff), "Null", prg.elev_bot_eff.ToString)
-    '        insertString += "," & IIf(IsNothing(prg.elev_top_actual), "Null", prg.elev_top_actual.ToString)
-    '        insertString += "," & IIf(IsNothing(prg.elev_top_eff), "Null", prg.elev_top_eff.ToString)
-    '        insertString += "," & IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleReinfDetail(ByVal prd As PoleReinfDetail) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleReinfDetailID"
-    '        insertString += "," & IIf(IsNothing(prd.reinf_id), "Null", prd.reinf_id.ToString)
-    '        insertString += "," & IIf(IsNothing(prd.pole_flat), "Null", prd.pole_flat.ToString)
-    '        insertString += "," & IIf(IsNothing(prd.horizontal_offset), "Null", prd.horizontal_offset.ToString)
-    '        insertString += "," & IIf(IsNothing(prd.rotation), "Null", prd.rotation.ToString)
-    '        insertString += "," & IIf(IsNothing(prd.note), "Null", "'" & prd.note.ToString & "'")
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleIntGroup(ByVal pig As PoleIntGroup) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleIntGroupID"
-    '        insertString += "," & IIf(IsNothing(pig.interference_group_id), "Null", pig.interference_group_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pig.elev_bot), "Null", pig.elev_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pig.elev_top), "Null", pig.elev_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pig.width), "Null", pig.width.ToString)
-    '        insertString += "," & IIf(IsNothing(pig.description), "Null", "'" & pig.description.ToString & "'")
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleIntDetail(ByVal pid As PoleIntDetail) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@IntDetailID"
-    '        insertString += "," & IIf(IsNothing(pid.interference_id), "Null", pid.interference_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pid.pole_flat), "Null", pid.pole_flat.ToString)
-    '        insertString += "," & IIf(IsNothing(pid.horizontal_offset), "Null", pid.horizontal_offset.ToString)
-    '        insertString += "," & IIf(IsNothing(pid.rotation), "Null", pid.rotation.ToString)
-    '        insertString += "," & IIf(IsNothing(pid.note), "Null", "'" & pid.note.ToString & "'")
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPoleReinfResults(ByVal prr As PoleReinfResults) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@PoleReinfResultID"
-    '        insertString += "," & IIf(IsNothing(prr.section_id), "Null", prr.section_id.ToString)
-    '        insertString += "," & IIf(IsNothing(prr.work_order_seq_num), "Null", prr.work_order_seq_num.ToString)
-    '        insertString += "," & IIf(IsNothing(prr.reinf_group_id), "Null", prr.reinf_group_id.ToString)
-    '        insertString += "," & IIf(IsNothing(prr.result_lkup_value), "Null", prr.result_lkup_value.ToString)
-    '        insertString += "," & IIf(IsNothing(prr.rating), "Null", prr.rating.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPropReinf(ByVal pr As PropReinf) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@ReinfID"
-    '        insertString += "," & IIf(IsNothing(pr.reinf_db_id), "Null", pr.reinf_db_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.name), "Null", "'" & pr.name.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.type), "Null", "'" & pr.type.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.b), "Null", pr.b.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.h), "Null", pr.h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.sr_diam), "Null", pr.sr_diam.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.channel_thkns_web), "Null", pr.channel_thkns_web.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.channel_thkns_flange), "Null", pr.channel_thkns_flange.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.channel_eo), "Null", pr.channel_eo.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.channel_J), "Null", pr.channel_J.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.channel_Cw), "Null", pr.channel_Cw.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.area_gross), "Null", pr.area_gross.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.centroid), "Null", pr.centroid.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.istension), "Null", "'" & pr.istension.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.matl_id), "Null", pr.matl_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.Ix), "Null", pr.Ix.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.Iy), "Null", pr.Iy.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.Lu), "Null", pr.Lu.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.Kx), "Null", pr.Kx.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.Ky), "Null", pr.Ky.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_hole_size), "Null", pr.bolt_hole_size.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.area_net), "Null", pr.area_net.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.shear_lag), "Null", pr.shear_lag.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.connection_type_bot), "Null", "'" & pr.connection_type_bot.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_edge_dist_bot), "Null", pr.bolt_edge_dist_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.FlangeOrBP_connected_bot), "Null", "'" & pr.FlangeOrBP_connected_bot.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_grade_bot), "Null", pr.weld_grade_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_type_bot), "Null", "'" & pr.weld_trans_type_bot.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_length_bot), "Null", pr.weld_trans_length_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_groove_depth_bot), "Null", pr.weld_groove_depth_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_groove_angle_bot), "Null", pr.weld_groove_angle_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_fillet_size_bot), "Null", pr.weld_trans_fillet_size_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_eff_throat_bot), "Null", pr.weld_trans_eff_throat_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_type_bot), "Null", "'" & pr.weld_long_type_bot.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_length_bot), "Null", pr.weld_long_length_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_fillet_size_bot), "Null", pr.weld_long_fillet_size_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_eff_throat_bot), "Null", pr.weld_long_eff_throat_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.top_bot_connections_symmetrical), "Null", "'" & pr.top_bot_connections_symmetrical.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.connection_type_top), "Null", "'" & pr.connection_type_top.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.bolt_edge_dist_top), "Null", pr.bolt_edge_dist_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.FlangeOrBP_connected_top), "Null", "'" & pr.FlangeOrBP_connected_top.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_grade_top), "Null", pr.weld_grade_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_type_top), "Null", "'" & pr.weld_trans_type_top.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_length_top), "Null", pr.weld_trans_length_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_groove_depth_top), "Null", pr.weld_groove_depth_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_groove_angle_top), "Null", pr.weld_groove_angle_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_fillet_size_top), "Null", pr.weld_trans_fillet_size_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_trans_eff_throat_top), "Null", pr.weld_trans_eff_throat_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_type_top), "Null", "'" & pr.weld_long_type_top.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_length_top), "Null", pr.weld_long_length_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_fillet_size_top), "Null", pr.weld_long_fillet_size_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.weld_long_eff_throat_top), "Null", pr.weld_long_eff_throat_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.conn_length_bot), "Null", pr.conn_length_bot.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.conn_length_top), "Null", pr.conn_length_top.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_f), "Null", pr.cap_comp_xx_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_f), "Null", pr.cap_comp_yy_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_f), "Null", pr.cap_tens_yield_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_f), "Null", pr.cap_tens_rupture_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_shear_f), "Null", pr.cap_shear_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_f), "Null", pr.cap_bolt_shear_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_f), "Null", pr.cap_bolt_shear_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_f), "Null", pr.cap_boltshaft_bearing_nodeform_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_f), "Null", pr.cap_boltshaft_bearing_deform_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_f), "Null", pr.cap_boltshaft_bearing_nodeform_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_f), "Null", pr.cap_boltshaft_bearing_deform_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_f), "Null", pr.cap_boltreinf_bearing_nodeform_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_f), "Null", pr.cap_boltreinf_bearing_deform_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_f), "Null", pr.cap_boltreinf_bearing_nodeform_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_f), "Null", pr.cap_boltreinf_bearing_deform_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_f), "Null", pr.cap_weld_trans_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_f), "Null", pr.cap_weld_long_bot_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_f), "Null", pr.cap_weld_trans_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_f), "Null", pr.cap_weld_long_top_f.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_g), "Null", pr.cap_comp_xx_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_g), "Null", pr.cap_comp_yy_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_g), "Null", pr.cap_tens_yield_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_g), "Null", pr.cap_tens_rupture_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_shear_g), "Null", pr.cap_shear_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_g), "Null", pr.cap_bolt_shear_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_g), "Null", pr.cap_bolt_shear_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_g), "Null", pr.cap_boltshaft_bearing_nodeform_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_g), "Null", pr.cap_boltshaft_bearing_deform_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_g), "Null", pr.cap_boltshaft_bearing_nodeform_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_g), "Null", pr.cap_boltshaft_bearing_deform_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_g), "Null", pr.cap_boltreinf_bearing_nodeform_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_g), "Null", pr.cap_boltreinf_bearing_deform_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_g), "Null", pr.cap_boltreinf_bearing_nodeform_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_g), "Null", pr.cap_boltreinf_bearing_deform_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_g), "Null", pr.cap_weld_trans_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_g), "Null", pr.cap_weld_long_bot_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_g), "Null", pr.cap_weld_trans_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_g), "Null", pr.cap_weld_long_top_g.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_h), "Null", pr.cap_comp_xx_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_h), "Null", pr.cap_comp_yy_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_h), "Null", pr.cap_tens_yield_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_h), "Null", pr.cap_tens_rupture_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_shear_h), "Null", pr.cap_shear_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_h), "Null", pr.cap_bolt_shear_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_h), "Null", pr.cap_bolt_shear_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_h), "Null", pr.cap_boltshaft_bearing_nodeform_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_h), "Null", pr.cap_boltshaft_bearing_deform_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_h), "Null", pr.cap_boltshaft_bearing_nodeform_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_h), "Null", pr.cap_boltshaft_bearing_deform_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_h), "Null", pr.cap_boltreinf_bearing_nodeform_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_h), "Null", pr.cap_boltreinf_bearing_deform_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_h), "Null", pr.cap_boltreinf_bearing_nodeform_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_h), "Null", pr.cap_boltreinf_bearing_deform_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_h), "Null", pr.cap_weld_trans_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_h), "Null", pr.cap_weld_long_bot_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_h), "Null", pr.cap_weld_trans_top_h.ToString)
-    '        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_h), "Null", pr.cap_weld_long_top_h.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPropBolt(ByVal pb As PropBolt) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@BoltID"
-    '        insertString += "," & IIf(IsNothing(pb.bolt_db_id), "Null", pb.bolt_db_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.name), "Null", "'" & pb.name.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pb.description), "Null", "'" & pb.description.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pb.diam), "Null", pb.diam.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.area), "Null", pb.area.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.fu_bolt), "Null", pb.fu_bolt.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.sleeve_diam_out), "Null", pb.sleeve_diam_out.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.sleeve_diam_in), "Null", pb.sleeve_diam_in.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.fu_sleeve), "Null", pb.fu_sleeve.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revF), "Null", pb.bolt_n_sleeve_shear_revF.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revF), "Null", pb.bolt_x_sleeve_shear_revF.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revG), "Null", pb.bolt_n_sleeve_shear_revG.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revG), "Null", pb.bolt_x_sleeve_shear_revG.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revH), "Null", pb.bolt_n_sleeve_shear_revH.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revH), "Null", pb.bolt_x_sleeve_shear_revH.ToString)
-    '        insertString += "," & IIf(IsNothing(pb.rb_applied_revH), "Null", "'" & pb.rb_applied_revH.ToString & "'")
-
-    '        Return insertString
-    '    End Function
-
-    '    Private Function InsertPropMatl(ByVal pm As PropMatl) As String
-    '        Dim insertString As String = ""
-
-    '        insertString += "@MatlID"
-    '        insertString += "," & IIf(IsNothing(pm.matl_db_id), "Null", pm.matl_db_id.ToString)
-    '        insertString += "," & IIf(IsNothing(pm.name), "Null", "'" & pm.name.ToString & "'")
-    '        insertString += "," & IIf(IsNothing(pm.fy), "Null", pm.fy.ToString)
-    '        insertString += "," & IIf(IsNothing(pm.fu), "Null", pm.fu.ToString)
-
-    '        Return insertString
-    '    End Function
-
-    '#End Region
-
-    '#Region "SQL Update Statements"
-    '    Private Function UpdatePoleCriteria(ByVal pc As PoleCriteria) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_analysis_criteria SET "
-    '        updateString += " criteria_id=" & IIf(IsNothing(pc.criteria_id), "Null", pc.criteria_id.ToString)
-    '        updateString += ", upper_structure_type=" & IIf(IsNothing(pc.upper_structure_type), "Null", "'" & pc.upper_structure_type.ToString & "'")
-    '        updateString += ", analysis_deg=" & IIf(IsNothing(pc.analysis_deg), "Null", pc.analysis_deg.ToString)
-    '        updateString += ", geom_increment_length=" & IIf(IsNothing(pc.geom_increment_length), "Null", pc.geom_increment_length.ToString)
-    '        updateString += ", vnum=" & IIf(IsNothing(pc.vnum), "Null", "'" & pc.vnum.ToString & "'")
-    '        updateString += ", check_connections=" & IIf(IsNothing(pc.check_connections), "Null", "'" & pc.check_connections.ToString & "'")
-    '        updateString += ", hole_deformation=" & IIf(IsNothing(pc.hole_deformation), "Null", "'" & pc.hole_deformation.ToString & "'")
-    '        updateString += ", ineff_mod_check=" & IIf(IsNothing(pc.ineff_mod_check), "Null", "'" & pc.ineff_mod_check.ToString & "'")
-    '        updateString += ", modified=" & IIf(IsNothing(pc.modified), "Null", "'" & pc.modified.ToString & "'")
-    '        updateString += " WHERE ID = " & pc.criteria_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleSection(ByVal ps As PoleSection) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_section SET "
-    '        updateString += " section_id=" & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
-    '        updateString += ", analysis_section_id=" & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
-    '        updateString += ", elev_bot=" & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
-    '        updateString += ", elev_top=" & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
-    '        updateString += ", length_section=" & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
-    '        updateString += ", length_splice=" & IIf(IsNothing(ps.length_splice), "Null", ps.length_splice.ToString)
-    '        updateString += ", num_sides=" & IIf(IsNothing(ps.num_sides), "Null", ps.num_sides.ToString)
-    '        updateString += ", diam_bot=" & IIf(IsNothing(ps.diam_bot), "Null", ps.diam_bot.ToString)
-    '        updateString += ", diam_top=" & IIf(IsNothing(ps.diam_top), "Null", ps.diam_top.ToString)
-    '        updateString += ", wall_thickness=" & IIf(IsNothing(ps.wall_thickness), "Null", ps.wall_thickness.ToString)
-    '        updateString += ", bend_radius=" & IIf(IsNothing(ps.bend_radius), "Null", ps.bend_radius.ToString)
-    '        updateString += ", steel_grade=" & IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
-    '        updateString += ", pole_type=" & IIf(IsNothing(ps.pole_type), "Null", "'" & ps.pole_type.ToString & "'")
-    '        updateString += ", section_name=" & IIf(IsNothing(ps.section_name), "Null", "'" & ps.section_name.ToString & "'")
-    '        updateString += ", socket_length=" & IIf(IsNothing(ps.socket_length), "Null", ps.socket_length.ToString)
-    '        updateString += ", weight_mult=" & IIf(IsNothing(ps.weight_mult), "Null", ps.weight_mult.ToString)
-    '        updateString += ", wp_mult=" & IIf(IsNothing(ps.wp_mult), "Null", ps.wp_mult.ToString)
-    '        updateString += ", af_factor=" & IIf(IsNothing(ps.af_factor), "Null", ps.af_factor.ToString)
-    '        updateString += ", ar_factor=" & IIf(IsNothing(ps.ar_factor), "Null", ps.ar_factor.ToString)
-    '        updateString += ", round_area_ratio=" & IIf(IsNothing(ps.round_area_ratio), "Null", ps.round_area_ratio.ToString)
-    '        updateString += ", flat_area_ratio=" & IIf(IsNothing(ps.flat_area_ratio), "Null", ps.flat_area_ratio.ToString)
-    '        updateString += " WHERE ID = " & ps.section_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleReinfSection(ByVal prs As PoleReinfSection) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_reinf_section SET "
-    '        updateString += " section_ID=" & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
-    '        updateString += ", analysis_section_ID=" & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
-    '        updateString += ", elev_bot=" & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
-    '        updateString += ", elev_top=" & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
-    '        updateString += ", length_section=" & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
-    '        updateString += ", length_splice=" & IIf(IsNothing(prs.length_splice), "Null", prs.length_splice.ToString)
-    '        updateString += ", num_sides=" & IIf(IsNothing(prs.num_sides), "Null", prs.num_sides.ToString)
-    '        updateString += ", diam_bot=" & IIf(IsNothing(prs.diam_bot), "Null", prs.diam_bot.ToString)
-    '        updateString += ", diam_top=" & IIf(IsNothing(prs.diam_top), "Null", prs.diam_top.ToString)
-    '        updateString += ", wall_thickness=" & IIf(IsNothing(prs.wall_thickness), "Null", prs.wall_thickness.ToString)
-    '        updateString += ", bend_radius=" & IIf(IsNothing(prs.bend_radius), "Null", prs.bend_radius.ToString)
-    '        updateString += ", steel_grade_id=" & IIf(IsNothing(prs.steel_grade_id), "Null", prs.steel_grade_id.ToString)
-    '        updateString += ", pole_type=" & IIf(IsNothing(prs.pole_type), "Null", "'" & prs.pole_type.ToString & "'")
-    '        updateString += ", weight_mult=" & IIf(IsNothing(prs.weight_mult), "Null", prs.weight_mult.ToString)
-    '        updateString += ", section_name=" & IIf(IsNothing(prs.section_name), "Null", "'" & prs.section_name.ToString & "'")
-    '        updateString += ", socket_length=" & IIf(IsNothing(prs.socket_length), "Null", prs.socket_length.ToString)
-    '        updateString += ", wp_mult=" & IIf(IsNothing(prs.wp_mult), "Null", prs.wp_mult.ToString)
-    '        updateString += ", af_factor=" & IIf(IsNothing(prs.af_factor), "Null", prs.af_factor.ToString)
-    '        updateString += ", ar_factor=" & IIf(IsNothing(prs.ar_factor), "Null", prs.ar_factor.ToString)
-    '        updateString += ", round_area_ratio=" & IIf(IsNothing(prs.round_area_ratio), "Null", prs.round_area_ratio.ToString)
-    '        updateString += ", flat_area_ratio=" & IIf(IsNothing(prs.flat_area_ratio), "Null", prs.flat_area_ratio.ToString)
-    '        updateString += " WHERE ID = " & prs.section_ID.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleReinfGroup(ByVal prg As PoleReinfGroup) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_reinf_group SET "
-    '        updateString += " reinf_group_id=" & IIf(IsNothing(prg.reinf_group_id), "Null", prg.reinf_group_id.ToString)
-    '        updateString += ", elev_bot_actual=" & IIf(IsNothing(prg.elev_bot_actual), "Null", prg.elev_bot_actual.ToString)
-    '        updateString += ", elev_bot_eff=" & IIf(IsNothing(prg.elev_bot_eff), "Null", prg.elev_bot_eff.ToString)
-    '        updateString += ", elev_top_actual=" & IIf(IsNothing(prg.elev_top_actual), "Null", prg.elev_top_actual.ToString)
-    '        updateString += ", elev_top_eff=" & IIf(IsNothing(prg.elev_top_eff), "Null", prg.elev_top_eff.ToString)
-    '        updateString += ", reinf_db_id=" & IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)
-    '        updateString += " WHERE ID = " & prg.reinf_group_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleReinfDetail(ByVal prd As PoleReinfDetail) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_reinf_details SET "
-    '        updateString += " reinf_id=" & IIf(IsNothing(prd.reinf_id), "Null", prd.reinf_id.ToString)
-    '        updateString += ", pole_flat=" & IIf(IsNothing(prd.pole_flat), "Null", prd.pole_flat.ToString)
-    '        updateString += ", horizontal_offset=" & IIf(IsNothing(prd.horizontal_offset), "Null", prd.horizontal_offset.ToString)
-    '        updateString += ", rotation=" & IIf(IsNothing(prd.rotation), "Null", prd.rotation.ToString)
-    '        updateString += ", note=" & IIf(IsNothing(prd.note), "Null", "'" & prd.note.ToString & "'")
-    '        updateString += " WHERE ID = " & prd.reinf_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleIntGroup(ByVal pig As PoleIntGroup) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_interference_group SET "
-    '        updateString += " interference_group_id=" & IIf(IsNothing(pig.interference_group_id), "Null", pig.interference_group_id.ToString)
-    '        updateString += ", elev_bot=" & IIf(IsNothing(pig.elev_bot), "Null", pig.elev_bot.ToString)
-    '        updateString += ", elev_top=" & IIf(IsNothing(pig.elev_top), "Null", pig.elev_top.ToString)
-    '        updateString += ", width=" & IIf(IsNothing(pig.width), "Null", pig.width.ToString)
-    '        updateString += ", description=" & IIf(IsNothing(pig.description), "Null", "'" & pig.description.ToString & "'")
-    '        updateString += " WHERE ID = " & pig.interference_group_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleIntDetail(ByVal pid As PoleIntDetail) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_interference_details SET "
-    '        updateString += " interference_id=" & IIf(IsNothing(pid.interference_id), "Null", pid.interference_id.ToString)
-    '        updateString += ", pole_flat=" & IIf(IsNothing(pid.pole_flat), "Null", pid.pole_flat.ToString)
-    '        updateString += ", horizontal_offset=" & IIf(IsNothing(pid.horizontal_offset), "Null", pid.horizontal_offset.ToString)
-    '        updateString += ", rotation=" & IIf(IsNothing(pid.rotation), "Null", pid.rotation.ToString)
-    '        updateString += ", note=" & IIf(IsNothing(pid.note), "Null", "'" & pid.note.ToString & "'")
-    '        updateString += " WHERE ID = " & pid.interference_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePoleReinfResults(ByVal prr As PoleReinfResults) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE pole_reinf_results SET "
-    '        updateString += " section_id=" & IIf(IsNothing(prr.section_id), "Null", prr.section_id.ToString)
-    '        updateString += ", work_order_seq_num=" & IIf(IsNothing(prr.work_order_seq_num), "Null", prr.work_order_seq_num.ToString)
-    '        updateString += ", reinf_group_id=" & IIf(IsNothing(prr.reinf_group_id), "Null", prr.reinf_group_id.ToString)
-    '        updateString += ", result_lkup_value=" & IIf(IsNothing(prr.result_lkup_value), "Null", prr.result_lkup_value.ToString)
-    '        updateString += ", rating=" & IIf(IsNothing(prr.rating), "Null", prr.rating.ToString)
-    '        updateString += " WHERE ID = " & prr.section_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePropReinf(ByVal pr As PropReinf) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE memb_prop_flat_plate SET "
-    '        updateString += " reinf_db_id=" & IIf(IsNothing(pr.reinf_db_id), "Null", pr.reinf_db_id.ToString)
-    '        updateString += ", name=" & IIf(IsNothing(pr.name), "Null", "'" & pr.name.ToString & "'")
-    '        updateString += ", type=" & IIf(IsNothing(pr.type), "Null", "'" & pr.type.ToString & "'")
-    '        updateString += ", b=" & IIf(IsNothing(pr.b), "Null", pr.b.ToString)
-    '        updateString += ", h=" & IIf(IsNothing(pr.h), "Null", pr.h.ToString)
-    '        updateString += ", sr_diam=" & IIf(IsNothing(pr.sr_diam), "Null", pr.sr_diam.ToString)
-    '        updateString += ", channel_thkns_web=" & IIf(IsNothing(pr.channel_thkns_web), "Null", pr.channel_thkns_web.ToString)
-    '        updateString += ", channel_thkns_flange=" & IIf(IsNothing(pr.channel_thkns_flange), "Null", pr.channel_thkns_flange.ToString)
-    '        updateString += ", channel_eo=" & IIf(IsNothing(pr.channel_eo), "Null", pr.channel_eo.ToString)
-    '        updateString += ", channel_J=" & IIf(IsNothing(pr.channel_J), "Null", pr.channel_J.ToString)
-    '        updateString += ", channel_Cw=" & IIf(IsNothing(pr.channel_Cw), "Null", pr.channel_Cw.ToString)
-    '        updateString += ", area_gross=" & IIf(IsNothing(pr.area_gross), "Null", pr.area_gross.ToString)
-    '        updateString += ", centroid=" & IIf(IsNothing(pr.centroid), "Null", pr.centroid.ToString)
-    '        updateString += ", istension=" & IIf(IsNothing(pr.istension), "Null", "'" & pr.istension.ToString & "'")
-    '        updateString += ", matl_id=" & IIf(IsNothing(pr.matl_id), "Null", pr.matl_id.ToString)
-    '        updateString += ", Ix=" & IIf(IsNothing(pr.Ix), "Null", pr.Ix.ToString)
-    '        updateString += ", Iy=" & IIf(IsNothing(pr.Iy), "Null", pr.Iy.ToString)
-    '        updateString += ", Lu=" & IIf(IsNothing(pr.Lu), "Null", pr.Lu.ToString)
-    '        updateString += ", Kx=" & IIf(IsNothing(pr.Kx), "Null", pr.Kx.ToString)
-    '        updateString += ", Ky=" & IIf(IsNothing(pr.Ky), "Null", pr.Ky.ToString)
-    '        updateString += ", bolt_hole_size=" & IIf(IsNothing(pr.bolt_hole_size), "Null", pr.bolt_hole_size.ToString)
-    '        updateString += ", area_net=" & IIf(IsNothing(pr.area_net), "Null", pr.area_net.ToString)
-    '        updateString += ", shear_lag=" & IIf(IsNothing(pr.shear_lag), "Null", pr.shear_lag.ToString)
-    '        updateString += ", connection_type_bot=" & IIf(IsNothing(pr.connection_type_bot), "Null", "'" & pr.connection_type_bot.ToString & "'")
-    '        updateString += ", connection_cap_revF_bot=" & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
-    '        updateString += ", connection_cap_revG_bot=" & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
-    '        updateString += ", connection_cap_revH_bot=" & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
-    '        updateString += ", bolt_type_id_bot=" & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
-    '        updateString += ", bolt_N_or_X_bot=" & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
-    '        updateString += ", bolt_num_bot=" & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
-    '        updateString += ", bolt_spacing_bot=" & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
-    '        updateString += ", bolt_edge_dist_bot=" & IIf(IsNothing(pr.bolt_edge_dist_bot), "Null", pr.bolt_edge_dist_bot.ToString)
-    '        updateString += ", FlangeOrBP_connected_bot=" & IIf(IsNothing(pr.FlangeOrBP_connected_bot), "Null", "'" & pr.FlangeOrBP_connected_bot.ToString & "'")
-    '        updateString += ", weld_grade_bot=" & IIf(IsNothing(pr.weld_grade_bot), "Null", pr.weld_grade_bot.ToString)
-    '        updateString += ", weld_trans_type_bot=" & IIf(IsNothing(pr.weld_trans_type_bot), "Null", "'" & pr.weld_trans_type_bot.ToString & "'")
-    '        updateString += ", weld_trans_length_bot=" & IIf(IsNothing(pr.weld_trans_length_bot), "Null", pr.weld_trans_length_bot.ToString)
-    '        updateString += ", weld_groove_depth_bot=" & IIf(IsNothing(pr.weld_groove_depth_bot), "Null", pr.weld_groove_depth_bot.ToString)
-    '        updateString += ", weld_groove_angle_bot=" & IIf(IsNothing(pr.weld_groove_angle_bot), "Null", pr.weld_groove_angle_bot.ToString)
-    '        updateString += ", weld_trans_fillet_size_bot=" & IIf(IsNothing(pr.weld_trans_fillet_size_bot), "Null", pr.weld_trans_fillet_size_bot.ToString)
-    '        updateString += ", weld_trans_eff_throat_bot=" & IIf(IsNothing(pr.weld_trans_eff_throat_bot), "Null", pr.weld_trans_eff_throat_bot.ToString)
-    '        updateString += ", weld_long_type_bot=" & IIf(IsNothing(pr.weld_long_type_bot), "Null", "'" & pr.weld_long_type_bot.ToString & "'")
-    '        updateString += ", weld_long_length_bot=" & IIf(IsNothing(pr.weld_long_length_bot), "Null", pr.weld_long_length_bot.ToString)
-    '        updateString += ", weld_long_fillet_size_bot=" & IIf(IsNothing(pr.weld_long_fillet_size_bot), "Null", pr.weld_long_fillet_size_bot.ToString)
-    '        updateString += ", weld_long_eff_throat_bot=" & IIf(IsNothing(pr.weld_long_eff_throat_bot), "Null", pr.weld_long_eff_throat_bot.ToString)
-    '        updateString += ", top_bot_connections_symmetrical=" & IIf(IsNothing(pr.top_bot_connections_symmetrical), "Null", "'" & pr.top_bot_connections_symmetrical.ToString & "'")
-    '        updateString += ", connection_type_top=" & IIf(IsNothing(pr.connection_type_top), "Null", "'" & pr.connection_type_top.ToString & "'")
-    '        updateString += ", connection_cap_revF_top=" & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
-    '        updateString += ", connection_cap_revG_top=" & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
-    '        updateString += ", connection_cap_revH_top=" & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
-    '        updateString += ", bolt_type_id_top=" & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
-    '        updateString += ", bolt_N_or_X_top=" & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
-    '        updateString += ", bolt_num_top=" & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
-    '        updateString += ", bolt_spacing_top=" & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
-    '        updateString += ", bolt_edge_dist_top=" & IIf(IsNothing(pr.bolt_edge_dist_top), "Null", pr.bolt_edge_dist_top.ToString)
-    '        updateString += ", FlangeOrBP_connected_top=" & IIf(IsNothing(pr.FlangeOrBP_connected_top), "Null", "'" & pr.FlangeOrBP_connected_top.ToString & "'")
-    '        updateString += ", weld_grade_top=" & IIf(IsNothing(pr.weld_grade_top), "Null", pr.weld_grade_top.ToString)
-    '        updateString += ", weld_trans_type_top=" & IIf(IsNothing(pr.weld_trans_type_top), "Null", "'" & pr.weld_trans_type_top.ToString & "'")
-    '        updateString += ", weld_trans_length_top=" & IIf(IsNothing(pr.weld_trans_length_top), "Null", pr.weld_trans_length_top.ToString)
-    '        updateString += ", weld_groove_depth_top=" & IIf(IsNothing(pr.weld_groove_depth_top), "Null", pr.weld_groove_depth_top.ToString)
-    '        updateString += ", weld_groove_angle_top=" & IIf(IsNothing(pr.weld_groove_angle_top), "Null", pr.weld_groove_angle_top.ToString)
-    '        updateString += ", weld_trans_fillet_size_top=" & IIf(IsNothing(pr.weld_trans_fillet_size_top), "Null", pr.weld_trans_fillet_size_top.ToString)
-    '        updateString += ", weld_trans_eff_throat_top=" & IIf(IsNothing(pr.weld_trans_eff_throat_top), "Null", pr.weld_trans_eff_throat_top.ToString)
-    '        updateString += ", weld_long_type_top=" & IIf(IsNothing(pr.weld_long_type_top), "Null", "'" & pr.weld_long_type_top.ToString & "'")
-    '        updateString += ", weld_long_length_top=" & IIf(IsNothing(pr.weld_long_length_top), "Null", pr.weld_long_length_top.ToString)
-    '        updateString += ", weld_long_fillet_size_top=" & IIf(IsNothing(pr.weld_long_fillet_size_top), "Null", pr.weld_long_fillet_size_top.ToString)
-    '        updateString += ", weld_long_eff_throat_top=" & IIf(IsNothing(pr.weld_long_eff_throat_top), "Null", pr.weld_long_eff_throat_top.ToString)
-    '        updateString += ", conn_length_bot=" & IIf(IsNothing(pr.conn_length_bot), "Null", pr.conn_length_bot.ToString)
-    '        updateString += ", conn_length_top=" & IIf(IsNothing(pr.conn_length_top), "Null", pr.conn_length_top.ToString)
-    '        updateString += ", cap_comp_xx_f=" & IIf(IsNothing(pr.cap_comp_xx_f), "Null", pr.cap_comp_xx_f.ToString)
-    '        updateString += ", cap_comp_yy_f=" & IIf(IsNothing(pr.cap_comp_yy_f), "Null", pr.cap_comp_yy_f.ToString)
-    '        updateString += ", cap_tens_yield_f=" & IIf(IsNothing(pr.cap_tens_yield_f), "Null", pr.cap_tens_yield_f.ToString)
-    '        updateString += ", cap_tens_rupture_f=" & IIf(IsNothing(pr.cap_tens_rupture_f), "Null", pr.cap_tens_rupture_f.ToString)
-    '        updateString += ", cap_shear_f=" & IIf(IsNothing(pr.cap_shear_f), "Null", pr.cap_shear_f.ToString)
-    '        updateString += ", cap_bolt_shear_bot_f=" & IIf(IsNothing(pr.cap_bolt_shear_bot_f), "Null", pr.cap_bolt_shear_bot_f.ToString)
-    '        updateString += ", cap_bolt_shear_top_f=" & IIf(IsNothing(pr.cap_bolt_shear_top_f), "Null", pr.cap_bolt_shear_top_f.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_bot_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_f), "Null", pr.cap_boltshaft_bearing_nodeform_bot_f.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_bot_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_f), "Null", pr.cap_boltshaft_bearing_deform_bot_f.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_top_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_f), "Null", pr.cap_boltshaft_bearing_nodeform_top_f.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_top_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_f), "Null", pr.cap_boltshaft_bearing_deform_top_f.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_bot_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_f), "Null", pr.cap_boltreinf_bearing_nodeform_bot_f.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_bot_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_f), "Null", pr.cap_boltreinf_bearing_deform_bot_f.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_top_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_f), "Null", pr.cap_boltreinf_bearing_nodeform_top_f.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_top_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_f), "Null", pr.cap_boltreinf_bearing_deform_top_f.ToString)
-    '        updateString += ", cap_weld_trans_bot_f=" & IIf(IsNothing(pr.cap_weld_trans_bot_f), "Null", pr.cap_weld_trans_bot_f.ToString)
-    '        updateString += ", cap_weld_long_bot_f=" & IIf(IsNothing(pr.cap_weld_long_bot_f), "Null", pr.cap_weld_long_bot_f.ToString)
-    '        updateString += ", cap_weld_trans_top_f=" & IIf(IsNothing(pr.cap_weld_trans_top_f), "Null", pr.cap_weld_trans_top_f.ToString)
-    '        updateString += ", cap_weld_long_top_f=" & IIf(IsNothing(pr.cap_weld_long_top_f), "Null", pr.cap_weld_long_top_f.ToString)
-    '        updateString += ", cap_comp_xx_g=" & IIf(IsNothing(pr.cap_comp_xx_g), "Null", pr.cap_comp_xx_g.ToString)
-    '        updateString += ", cap_comp_yy_g=" & IIf(IsNothing(pr.cap_comp_yy_g), "Null", pr.cap_comp_yy_g.ToString)
-    '        updateString += ", cap_tens_yield_g=" & IIf(IsNothing(pr.cap_tens_yield_g), "Null", pr.cap_tens_yield_g.ToString)
-    '        updateString += ", cap_tens_rupture_g=" & IIf(IsNothing(pr.cap_tens_rupture_g), "Null", pr.cap_tens_rupture_g.ToString)
-    '        updateString += ", cap_shear_g=" & IIf(IsNothing(pr.cap_shear_g), "Null", pr.cap_shear_g.ToString)
-    '        updateString += ", cap_bolt_shear_bot_g=" & IIf(IsNothing(pr.cap_bolt_shear_bot_g), "Null", pr.cap_bolt_shear_bot_g.ToString)
-    '        updateString += ", cap_bolt_shear_top_g=" & IIf(IsNothing(pr.cap_bolt_shear_top_g), "Null", pr.cap_bolt_shear_top_g.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_bot_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_g), "Null", pr.cap_boltshaft_bearing_nodeform_bot_g.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_bot_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_g), "Null", pr.cap_boltshaft_bearing_deform_bot_g.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_top_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_g), "Null", pr.cap_boltshaft_bearing_nodeform_top_g.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_top_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_g), "Null", pr.cap_boltshaft_bearing_deform_top_g.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_bot_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_g), "Null", pr.cap_boltreinf_bearing_nodeform_bot_g.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_bot_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_g), "Null", pr.cap_boltreinf_bearing_deform_bot_g.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_top_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_g), "Null", pr.cap_boltreinf_bearing_nodeform_top_g.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_top_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_g), "Null", pr.cap_boltreinf_bearing_deform_top_g.ToString)
-    '        updateString += ", cap_weld_trans_bot_g=" & IIf(IsNothing(pr.cap_weld_trans_bot_g), "Null", pr.cap_weld_trans_bot_g.ToString)
-    '        updateString += ", cap_weld_long_bot_g=" & IIf(IsNothing(pr.cap_weld_long_bot_g), "Null", pr.cap_weld_long_bot_g.ToString)
-    '        updateString += ", cap_weld_trans_top_g=" & IIf(IsNothing(pr.cap_weld_trans_top_g), "Null", pr.cap_weld_trans_top_g.ToString)
-    '        updateString += ", cap_weld_long_top_g=" & IIf(IsNothing(pr.cap_weld_long_top_g), "Null", pr.cap_weld_long_top_g.ToString)
-    '        updateString += ", cap_comp_xx_h=" & IIf(IsNothing(pr.cap_comp_xx_h), "Null", pr.cap_comp_xx_h.ToString)
-    '        updateString += ", cap_comp_yy_h=" & IIf(IsNothing(pr.cap_comp_yy_h), "Null", pr.cap_comp_yy_h.ToString)
-    '        updateString += ", cap_tens_yield_h=" & IIf(IsNothing(pr.cap_tens_yield_h), "Null", pr.cap_tens_yield_h.ToString)
-    '        updateString += ", cap_tens_rupture_h=" & IIf(IsNothing(pr.cap_tens_rupture_h), "Null", pr.cap_tens_rupture_h.ToString)
-    '        updateString += ", cap_shear_h=" & IIf(IsNothing(pr.cap_shear_h), "Null", pr.cap_shear_h.ToString)
-    '        updateString += ", cap_bolt_shear_bot_h=" & IIf(IsNothing(pr.cap_bolt_shear_bot_h), "Null", pr.cap_bolt_shear_bot_h.ToString)
-    '        updateString += ", cap_bolt_shear_top_h=" & IIf(IsNothing(pr.cap_bolt_shear_top_h), "Null", pr.cap_bolt_shear_top_h.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_bot_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_h), "Null", pr.cap_boltshaft_bearing_nodeform_bot_h.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_bot_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_h), "Null", pr.cap_boltshaft_bearing_deform_bot_h.ToString)
-    '        updateString += ", cap_boltshaft_bearing_nodeform_top_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_h), "Null", pr.cap_boltshaft_bearing_nodeform_top_h.ToString)
-    '        updateString += ", cap_boltshaft_bearing_deform_top_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_h), "Null", pr.cap_boltshaft_bearing_deform_top_h.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_bot_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_h), "Null", pr.cap_boltreinf_bearing_nodeform_bot_h.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_bot_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_h), "Null", pr.cap_boltreinf_bearing_deform_bot_h.ToString)
-    '        updateString += ", cap_boltreinf_bearing_nodeform_top_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_h), "Null", pr.cap_boltreinf_bearing_nodeform_top_h.ToString)
-    '        updateString += ", cap_boltreinf_bearing_deform_top_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_h), "Null", pr.cap_boltreinf_bearing_deform_top_h.ToString)
-    '        updateString += ", cap_weld_trans_bot_h=" & IIf(IsNothing(pr.cap_weld_trans_bot_h), "Null", pr.cap_weld_trans_bot_h.ToString)
-    '        updateString += ", cap_weld_long_bot_h=" & IIf(IsNothing(pr.cap_weld_long_bot_h), "Null", pr.cap_weld_long_bot_h.ToString)
-    '        updateString += ", cap_weld_trans_top_h=" & IIf(IsNothing(pr.cap_weld_trans_top_h), "Null", pr.cap_weld_trans_top_h.ToString)
-    '        updateString += ", cap_weld_long_top_h=" & IIf(IsNothing(pr.cap_weld_long_top_h), "Null", pr.cap_weld_long_top_h.ToString)
-    '        updateString += " WHERE ID = " & pr.reinf_db_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePropBolt(ByVal pb As PropBolt) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE bolt_prop_flat_plate SET "
-    '        updateString += " bolt_db_id=" & IIf(IsNothing(pb.bolt_db_id), "Null", pb.bolt_db_id.ToString)
-    '        updateString += ", name=" & IIf(IsNothing(pb.name), "Null", "'" & pb.name.ToString & "'")
-    '        updateString += ", description=" & IIf(IsNothing(pb.description), "Null", "'" & pb.description.ToString & "'")
-    '        updateString += ", diam=" & IIf(IsNothing(pb.diam), "Null", pb.diam.ToString)
-    '        updateString += ", area=" & IIf(IsNothing(pb.area), "Null", pb.area.ToString)
-    '        updateString += ", fu_bolt=" & IIf(IsNothing(pb.fu_bolt), "Null", pb.fu_bolt.ToString)
-    '        updateString += ", sleeve_diam_out=" & IIf(IsNothing(pb.sleeve_diam_out), "Null", pb.sleeve_diam_out.ToString)
-    '        updateString += ", sleeve_diam_in=" & IIf(IsNothing(pb.sleeve_diam_in), "Null", pb.sleeve_diam_in.ToString)
-    '        updateString += ", fu_sleeve=" & IIf(IsNothing(pb.fu_sleeve), "Null", pb.fu_sleeve.ToString)
-    '        updateString += ", bolt_n_sleeve_shear_revF=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revF), "Null", pb.bolt_n_sleeve_shear_revF.ToString)
-    '        updateString += ", bolt_x_sleeve_shear_revF=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revF), "Null", pb.bolt_x_sleeve_shear_revF.ToString)
-    '        updateString += ", bolt_n_sleeve_shear_revG=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revG), "Null", pb.bolt_n_sleeve_shear_revG.ToString)
-    '        updateString += ", bolt_x_sleeve_shear_revG=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revG), "Null", pb.bolt_x_sleeve_shear_revG.ToString)
-    '        updateString += ", bolt_n_sleeve_shear_revH=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revH), "Null", pb.bolt_n_sleeve_shear_revH.ToString)
-    '        updateString += ", bolt_x_sleeve_shear_revH=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revH), "Null", pb.bolt_x_sleeve_shear_revH.ToString)
-    '        updateString += ", rb_applied_revH=" & IIf(IsNothing(pb.rb_applied_revH), "Null", "'" & pb.rb_applied_revH.ToString & "'")
-    '        updateString += " WHERE ID = " & pb.bolt_db_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '    Private Function UpdatePropMatl(ByVal pm As PropMatl) As String
-    '        Dim updateString As String = ""
-
-    '        updateString += "UPDATE matl_prop_flat_plate SET "
-    '        updateString += " matl_db_id=" & IIf(IsNothing(pm.matl_db_id), "Null", pm.matl_db_id.ToString)
-    '        updateString += ", name=" & IIf(IsNothing(pm.name), "Null", "'" & pm.name.ToString & "'")
-    '        updateString += ", fy=" & IIf(IsNothing(pm.fy), "Null", pm.fy.ToString)
-    '        updateString += ", fu=" & IIf(IsNothing(pm.fu), "Null", pm.fu.ToString)
-    '        updateString += " WHERE ID = " & pm.matl_db_id.ToString
-
-    '        Return updateString
-    '    End Function
-
-    '#End Region
-
-    '#Region "General"
-    '    Public Sub Clear()
-    '        ExcelFilePath = ""
-    '        Poles.Clear()
-    '    End Sub
-
-    '    Private Function CCIpoleSQLDataTables() As List(Of SQLParameter)
-    '        Dim MyParameters As New List(Of SQLParameter)
-
-    '        MyParameters.Add(New SQLParameter("CCIpole Criteria SQL", "CCIpole (SELECT Criteria).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Pole Sections SQL", "CCIpole (SELECT Pole Sections).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Pole Reinf Sections SQL", "CCIpole (SELECT Pole Reinf Sections).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Reinf Groups SQL", "CCIpole (SELECT Reinf Groups).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Reinf Details SQL", "CCIpole (SELECT Reinf Details).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Int Groups SQL", "CCIpole (SELECT Int Groups).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Int Details SQL", "CCIpole (SELECT Int Details).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Pole Reinf Results SQL", "CCIpole (SELECT Pole Reinf Results).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Reinf Property Details SQL", "CCIpole (SELECT Prop Reinfs).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Bolt Property Details SQL", "CCIpole (SELECT Prop Bolts).sql"))
-    '        MyParameters.Add(New SQLParameter("CCIpole Matl Property Details SQL", "CCIpole (SELECT Prop Matls).sql"))
-
-    '        Return MyParameters
-    '    End Function
-
-    '    Private Function CCIpoleExcelDTParameters() As List(Of EXCELDTParameter)
-    '        Dim MyParameters As New List(Of EXCELDTParameter)
-
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Criteria EXCEL", "A2:L3", "Analysis Criteria (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:U20", "Unreinf Pole (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Sections EXCEL", "A2:S200", "Reinf Pole (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Groups EXCEL", "A2:F50", "Reinf Groups (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Details EXCEL", "A2:F200", "Reinf ID (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:E50", "Interference Groups (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Int Details EXCEL", "A2:F200", "Interference ID (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:E200", "Reinf Results (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:DV50", "Reinforcements (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:P10", "Bolts (SAPI)"))
-    '        MyParameters.Add(New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:D10", "Materials (SAPI)"))
-
-    '        Return MyParameters
-    '    End Function
-    '#End Region
+#Region "SQL Insert Statements"
+    Private Function InsertPoleCriteria(ByVal pc As PoleCriteria) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleCriteriaID"
+        insertString += "," & IIf(IsNothing(pc.criteria_id), "Null", pc.criteria_id.ToString)
+        insertString += "," & IIf(IsNothing(pc.upper_structure_type), "Null", "'" & pc.upper_structure_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(pc.analysis_deg), "Null", pc.analysis_deg.ToString)
+        insertString += "," & IIf(IsNothing(pc.geom_increment_length), "Null", pc.geom_increment_length.ToString)
+        insertString += "," & IIf(IsNothing(pc.vnum), "Null", "'" & pc.vnum.ToString & "'")
+        insertString += "," & IIf(IsNothing(pc.check_connections), "Null", "'" & pc.check_connections.ToString & "'")
+        insertString += "," & IIf(IsNothing(pc.hole_deformation), "Null", "'" & pc.hole_deformation.ToString & "'")
+        insertString += "," & IIf(IsNothing(pc.ineff_mod_check), "Null", "'" & pc.ineff_mod_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(pc.modified), "Null", "'" & pc.modified.ToString & "'")
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleSection(ByVal ps As PoleSection) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleSectionID"
+        insertString += "," & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
+        insertString += "," & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
+        insertString += "," & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
+        insertString += "," & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
+        insertString += "," & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
+        insertString += "," & IIf(IsNothing(ps.length_splice), "Null", ps.length_splice.ToString)
+        insertString += "," & IIf(IsNothing(ps.num_sides), "Null", ps.num_sides.ToString)
+        insertString += "," & IIf(IsNothing(ps.diam_bot), "Null", ps.diam_bot.ToString)
+        insertString += "," & IIf(IsNothing(ps.diam_top), "Null", ps.diam_top.ToString)
+        insertString += "," & IIf(IsNothing(ps.wall_thickness), "Null", ps.wall_thickness.ToString)
+        insertString += "," & IIf(IsNothing(ps.bend_radius), "Null", ps.bend_radius.ToString)
+        insertString += "," & IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
+        insertString += "," & IIf(IsNothing(ps.pole_type), "Null", "'" & ps.pole_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(ps.section_name), "Null", "'" & ps.section_name.ToString & "'")
+        insertString += "," & IIf(IsNothing(ps.socket_length), "Null", ps.socket_length.ToString)
+        insertString += "," & IIf(IsNothing(ps.weight_mult), "Null", ps.weight_mult.ToString)
+        insertString += "," & IIf(IsNothing(ps.wp_mult), "Null", ps.wp_mult.ToString)
+        insertString += "," & IIf(IsNothing(ps.af_factor), "Null", ps.af_factor.ToString)
+        insertString += "," & IIf(IsNothing(ps.ar_factor), "Null", ps.ar_factor.ToString)
+        insertString += "," & IIf(IsNothing(ps.round_area_ratio), "Null", ps.round_area_ratio.ToString)
+        insertString += "," & IIf(IsNothing(ps.flat_area_ratio), "Null", ps.flat_area_ratio.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleReinfSection(ByVal prs As PoleReinfSection) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleReinfSectionID"
+        insertString += "," & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
+        insertString += "," & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
+        insertString += "," & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
+        insertString += "," & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
+        insertString += "," & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
+        insertString += "," & IIf(IsNothing(prs.length_splice), "Null", prs.length_splice.ToString)
+        insertString += "," & IIf(IsNothing(prs.num_sides), "Null", prs.num_sides.ToString)
+        insertString += "," & IIf(IsNothing(prs.diam_bot), "Null", prs.diam_bot.ToString)
+        insertString += "," & IIf(IsNothing(prs.diam_top), "Null", prs.diam_top.ToString)
+        insertString += "," & IIf(IsNothing(prs.wall_thickness), "Null", prs.wall_thickness.ToString)
+        insertString += "," & IIf(IsNothing(prs.bend_radius), "Null", prs.bend_radius.ToString)
+        insertString += "," & IIf(IsNothing(prs.steel_grade_id), "Null", prs.steel_grade_id.ToString)
+        insertString += "," & IIf(IsNothing(prs.pole_type), "Null", "'" & prs.pole_type.ToString & "'")
+        insertString += "," & IIf(IsNothing(prs.weight_mult), "Null", prs.weight_mult.ToString)
+        insertString += "," & IIf(IsNothing(prs.section_name), "Null", "'" & prs.section_name.ToString & "'")
+        insertString += "," & IIf(IsNothing(prs.socket_length), "Null", prs.socket_length.ToString)
+        insertString += "," & IIf(IsNothing(prs.wp_mult), "Null", prs.wp_mult.ToString)
+        insertString += "," & IIf(IsNothing(prs.af_factor), "Null", prs.af_factor.ToString)
+        insertString += "," & IIf(IsNothing(prs.ar_factor), "Null", prs.ar_factor.ToString)
+        insertString += "," & IIf(IsNothing(prs.round_area_ratio), "Null", prs.round_area_ratio.ToString)
+        insertString += "," & IIf(IsNothing(prs.flat_area_ratio), "Null", prs.flat_area_ratio.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleReinfGroup(ByVal prg As PoleReinfGroup) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleReinfGroupID"
+        insertString += "," & IIf(IsNothing(prg.reinf_group_id), "Null", prg.reinf_group_id.ToString)
+        insertString += "," & IIf(IsNothing(prg.elev_bot_actual), "Null", prg.elev_bot_actual.ToString)
+        insertString += "," & IIf(IsNothing(prg.elev_bot_eff), "Null", prg.elev_bot_eff.ToString)
+        insertString += "," & IIf(IsNothing(prg.elev_top_actual), "Null", prg.elev_top_actual.ToString)
+        insertString += "," & IIf(IsNothing(prg.elev_top_eff), "Null", prg.elev_top_eff.ToString)
+        insertString += "," & IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleReinfDetail(ByVal prd As PoleReinfDetail) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleReinfDetailID"
+        insertString += "," & IIf(IsNothing(prd.reinf_id), "Null", prd.reinf_id.ToString)
+        insertString += "," & IIf(IsNothing(prd.pole_flat), "Null", prd.pole_flat.ToString)
+        insertString += "," & IIf(IsNothing(prd.horizontal_offset), "Null", prd.horizontal_offset.ToString)
+        insertString += "," & IIf(IsNothing(prd.rotation), "Null", prd.rotation.ToString)
+        insertString += "," & IIf(IsNothing(prd.note), "Null", "'" & prd.note.ToString & "'")
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleIntGroup(ByVal pig As PoleIntGroup) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleIntGroupID"
+        insertString += "," & IIf(IsNothing(pig.interference_group_id), "Null", pig.interference_group_id.ToString)
+        insertString += "," & IIf(IsNothing(pig.elev_bot), "Null", pig.elev_bot.ToString)
+        insertString += "," & IIf(IsNothing(pig.elev_top), "Null", pig.elev_top.ToString)
+        insertString += "," & IIf(IsNothing(pig.width), "Null", pig.width.ToString)
+        insertString += "," & IIf(IsNothing(pig.description), "Null", "'" & pig.description.ToString & "'")
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleIntDetail(ByVal pid As PoleIntDetail) As String
+        Dim insertString As String = ""
+
+        insertString += "@IntDetailID"
+        insertString += "," & IIf(IsNothing(pid.interference_id), "Null", pid.interference_id.ToString)
+        insertString += "," & IIf(IsNothing(pid.pole_flat), "Null", pid.pole_flat.ToString)
+        insertString += "," & IIf(IsNothing(pid.horizontal_offset), "Null", pid.horizontal_offset.ToString)
+        insertString += "," & IIf(IsNothing(pid.rotation), "Null", pid.rotation.ToString)
+        insertString += "," & IIf(IsNothing(pid.note), "Null", "'" & pid.note.ToString & "'")
+
+        Return insertString
+    End Function
+
+    Private Function InsertPoleReinfResults(ByVal prr As PoleReinfResults) As String
+        Dim insertString As String = ""
+
+        insertString += "@PoleReinfResultID"
+        insertString += "," & IIf(IsNothing(prr.section_id), "Null", prr.section_id.ToString)
+        insertString += "," & IIf(IsNothing(prr.work_order_seq_num), "Null", prr.work_order_seq_num.ToString)
+        insertString += "," & IIf(IsNothing(prr.reinf_group_id), "Null", prr.reinf_group_id.ToString)
+        insertString += "," & IIf(IsNothing(prr.result_lkup_value), "Null", prr.result_lkup_value.ToString)
+        insertString += "," & IIf(IsNothing(prr.rating), "Null", prr.rating.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPropReinf(ByVal pr As PropReinf) As String
+        Dim insertString As String = ""
+
+        insertString += "@ReinfID"
+        insertString += "," & IIf(IsNothing(pr.reinf_db_id), "Null", pr.reinf_db_id.ToString)
+        insertString += "," & IIf(IsNothing(pr.name), "Null", "'" & pr.name.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.type), "Null", "'" & pr.type.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.b), "Null", pr.b.ToString)
+        insertString += "," & IIf(IsNothing(pr.h), "Null", pr.h.ToString)
+        insertString += "," & IIf(IsNothing(pr.sr_diam), "Null", pr.sr_diam.ToString)
+        insertString += "," & IIf(IsNothing(pr.channel_thkns_web), "Null", pr.channel_thkns_web.ToString)
+        insertString += "," & IIf(IsNothing(pr.channel_thkns_flange), "Null", pr.channel_thkns_flange.ToString)
+        insertString += "," & IIf(IsNothing(pr.channel_eo), "Null", pr.channel_eo.ToString)
+        insertString += "," & IIf(IsNothing(pr.channel_J), "Null", pr.channel_J.ToString)
+        insertString += "," & IIf(IsNothing(pr.channel_Cw), "Null", pr.channel_Cw.ToString)
+        insertString += "," & IIf(IsNothing(pr.area_gross), "Null", pr.area_gross.ToString)
+        insertString += "," & IIf(IsNothing(pr.centroid), "Null", pr.centroid.ToString)
+        insertString += "," & IIf(IsNothing(pr.istension), "Null", "'" & pr.istension.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.matl_id), "Null", pr.matl_id.ToString)
+        insertString += "," & IIf(IsNothing(pr.Ix), "Null", pr.Ix.ToString)
+        insertString += "," & IIf(IsNothing(pr.Iy), "Null", pr.Iy.ToString)
+        insertString += "," & IIf(IsNothing(pr.Lu), "Null", pr.Lu.ToString)
+        insertString += "," & IIf(IsNothing(pr.Kx), "Null", pr.Kx.ToString)
+        insertString += "," & IIf(IsNothing(pr.Ky), "Null", pr.Ky.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_hole_size), "Null", pr.bolt_hole_size.ToString)
+        insertString += "," & IIf(IsNothing(pr.area_net), "Null", pr.area_net.ToString)
+        insertString += "," & IIf(IsNothing(pr.shear_lag), "Null", pr.shear_lag.ToString)
+        insertString += "," & IIf(IsNothing(pr.connection_type_bot), "Null", "'" & pr.connection_type_bot.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_edge_dist_bot), "Null", pr.bolt_edge_dist_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.FlangeOrBP_connected_bot), "Null", "'" & pr.FlangeOrBP_connected_bot.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_grade_bot), "Null", pr.weld_grade_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_type_bot), "Null", "'" & pr.weld_trans_type_bot.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_trans_length_bot), "Null", pr.weld_trans_length_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_groove_depth_bot), "Null", pr.weld_groove_depth_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_groove_angle_bot), "Null", pr.weld_groove_angle_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_fillet_size_bot), "Null", pr.weld_trans_fillet_size_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_eff_throat_bot), "Null", pr.weld_trans_eff_throat_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_type_bot), "Null", "'" & pr.weld_long_type_bot.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_long_length_bot), "Null", pr.weld_long_length_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_fillet_size_bot), "Null", pr.weld_long_fillet_size_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_eff_throat_bot), "Null", pr.weld_long_eff_throat_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.top_bot_connections_symmetrical), "Null", "'" & pr.top_bot_connections_symmetrical.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.connection_type_top), "Null", "'" & pr.connection_type_top.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_edge_dist_top), "Null", pr.bolt_edge_dist_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.FlangeOrBP_connected_top), "Null", "'" & pr.FlangeOrBP_connected_top.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_grade_top), "Null", pr.weld_grade_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_type_top), "Null", "'" & pr.weld_trans_type_top.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_trans_length_top), "Null", pr.weld_trans_length_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_groove_depth_top), "Null", pr.weld_groove_depth_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_groove_angle_top), "Null", pr.weld_groove_angle_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_fillet_size_top), "Null", pr.weld_trans_fillet_size_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_trans_eff_throat_top), "Null", pr.weld_trans_eff_throat_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_type_top), "Null", "'" & pr.weld_long_type_top.ToString & "'")
+        insertString += "," & IIf(IsNothing(pr.weld_long_length_top), "Null", pr.weld_long_length_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_fillet_size_top), "Null", pr.weld_long_fillet_size_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.weld_long_eff_throat_top), "Null", pr.weld_long_eff_throat_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.conn_length_bot), "Null", pr.conn_length_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.conn_length_top), "Null", pr.conn_length_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_f), "Null", pr.cap_comp_xx_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_f), "Null", pr.cap_comp_yy_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_f), "Null", pr.cap_tens_yield_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_f), "Null", pr.cap_tens_rupture_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_shear_f), "Null", pr.cap_shear_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_f), "Null", pr.cap_bolt_shear_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_f), "Null", pr.cap_bolt_shear_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_f), "Null", pr.cap_boltshaft_bearing_nodeform_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_f), "Null", pr.cap_boltshaft_bearing_deform_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_f), "Null", pr.cap_boltshaft_bearing_nodeform_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_f), "Null", pr.cap_boltshaft_bearing_deform_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_f), "Null", pr.cap_boltreinf_bearing_nodeform_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_f), "Null", pr.cap_boltreinf_bearing_deform_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_f), "Null", pr.cap_boltreinf_bearing_nodeform_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_f), "Null", pr.cap_boltreinf_bearing_deform_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_f), "Null", pr.cap_weld_trans_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_f), "Null", pr.cap_weld_long_bot_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_f), "Null", pr.cap_weld_trans_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_f), "Null", pr.cap_weld_long_top_f.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_g), "Null", pr.cap_comp_xx_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_g), "Null", pr.cap_comp_yy_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_g), "Null", pr.cap_tens_yield_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_g), "Null", pr.cap_tens_rupture_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_shear_g), "Null", pr.cap_shear_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_g), "Null", pr.cap_bolt_shear_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_g), "Null", pr.cap_bolt_shear_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_g), "Null", pr.cap_boltshaft_bearing_nodeform_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_g), "Null", pr.cap_boltshaft_bearing_deform_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_g), "Null", pr.cap_boltshaft_bearing_nodeform_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_g), "Null", pr.cap_boltshaft_bearing_deform_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_g), "Null", pr.cap_boltreinf_bearing_nodeform_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_g), "Null", pr.cap_boltreinf_bearing_deform_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_g), "Null", pr.cap_boltreinf_bearing_nodeform_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_g), "Null", pr.cap_boltreinf_bearing_deform_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_g), "Null", pr.cap_weld_trans_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_g), "Null", pr.cap_weld_long_bot_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_g), "Null", pr.cap_weld_trans_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_g), "Null", pr.cap_weld_long_top_g.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_xx_h), "Null", pr.cap_comp_xx_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_comp_yy_h), "Null", pr.cap_comp_yy_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_yield_h), "Null", pr.cap_tens_yield_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_tens_rupture_h), "Null", pr.cap_tens_rupture_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_shear_h), "Null", pr.cap_shear_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_bot_h), "Null", pr.cap_bolt_shear_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_bolt_shear_top_h), "Null", pr.cap_bolt_shear_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_h), "Null", pr.cap_boltshaft_bearing_nodeform_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_h), "Null", pr.cap_boltshaft_bearing_deform_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_h), "Null", pr.cap_boltshaft_bearing_nodeform_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_h), "Null", pr.cap_boltshaft_bearing_deform_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_h), "Null", pr.cap_boltreinf_bearing_nodeform_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_h), "Null", pr.cap_boltreinf_bearing_deform_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_h), "Null", pr.cap_boltreinf_bearing_nodeform_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_h), "Null", pr.cap_boltreinf_bearing_deform_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_bot_h), "Null", pr.cap_weld_trans_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_bot_h), "Null", pr.cap_weld_long_bot_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_trans_top_h), "Null", pr.cap_weld_trans_top_h.ToString)
+        insertString += "," & IIf(IsNothing(pr.cap_weld_long_top_h), "Null", pr.cap_weld_long_top_h.ToString)
+
+        Return insertString
+    End Function
+
+    Private Function InsertPropBolt(ByVal pb As PropBolt) As String
+        Dim insertString As String = ""
+
+        insertString += "@BoltID"
+        insertString += "," & IIf(IsNothing(pb.bolt_db_id), "Null", pb.bolt_db_id.ToString)
+        insertString += "," & IIf(IsNothing(pb.name), "Null", "'" & pb.name.ToString & "'")
+        insertString += "," & IIf(IsNothing(pb.description), "Null", "'" & pb.description.ToString & "'")
+        insertString += "," & IIf(IsNothing(pb.diam), "Null", pb.diam.ToString)
+        insertString += "," & IIf(IsNothing(pb.area), "Null", pb.area.ToString)
+        insertString += "," & IIf(IsNothing(pb.fu_bolt), "Null", pb.fu_bolt.ToString)
+        insertString += "," & IIf(IsNothing(pb.sleeve_diam_out), "Null", pb.sleeve_diam_out.ToString)
+        insertString += "," & IIf(IsNothing(pb.sleeve_diam_in), "Null", pb.sleeve_diam_in.ToString)
+        insertString += "," & IIf(IsNothing(pb.fu_sleeve), "Null", pb.fu_sleeve.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revF), "Null", pb.bolt_n_sleeve_shear_revF.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revF), "Null", pb.bolt_x_sleeve_shear_revF.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revG), "Null", pb.bolt_n_sleeve_shear_revG.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revG), "Null", pb.bolt_x_sleeve_shear_revG.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_n_sleeve_shear_revH), "Null", pb.bolt_n_sleeve_shear_revH.ToString)
+        insertString += "," & IIf(IsNothing(pb.bolt_x_sleeve_shear_revH), "Null", pb.bolt_x_sleeve_shear_revH.ToString)
+        insertString += "," & IIf(IsNothing(pb.rb_applied_revH), "Null", "'" & pb.rb_applied_revH.ToString & "'")
+
+        Return insertString
+    End Function
+
+    Private Function InsertPropMatl(ByVal pm As PropMatl) As String
+        Dim insertString As String = ""
+
+        insertString += "@MatlID"
+        insertString += "," & IIf(IsNothing(pm.matl_db_id), "Null", pm.matl_db_id.ToString)
+        insertString += "," & IIf(IsNothing(pm.name), "Null", "'" & pm.name.ToString & "'")
+        insertString += "," & IIf(IsNothing(pm.fy), "Null", pm.fy.ToString)
+        insertString += "," & IIf(IsNothing(pm.fu), "Null", pm.fu.ToString)
+
+        Return insertString
+    End Function
+
+#End Region
+
+#Region "SQL Update Statements"
+    Private Function UpdatePoleCriteria(ByVal pc As PoleCriteria) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_analysis_criteria SET "
+        updateString += " criteria_id=" & IIf(IsNothing(pc.criteria_id), "Null", pc.criteria_id.ToString)
+        updateString += ", upper_structure_type=" & IIf(IsNothing(pc.upper_structure_type), "Null", "'" & pc.upper_structure_type.ToString & "'")
+        updateString += ", analysis_deg=" & IIf(IsNothing(pc.analysis_deg), "Null", pc.analysis_deg.ToString)
+        updateString += ", geom_increment_length=" & IIf(IsNothing(pc.geom_increment_length), "Null", pc.geom_increment_length.ToString)
+        updateString += ", vnum=" & IIf(IsNothing(pc.vnum), "Null", "'" & pc.vnum.ToString & "'")
+        updateString += ", check_connections=" & IIf(IsNothing(pc.check_connections), "Null", "'" & pc.check_connections.ToString & "'")
+        updateString += ", hole_deformation=" & IIf(IsNothing(pc.hole_deformation), "Null", "'" & pc.hole_deformation.ToString & "'")
+        updateString += ", ineff_mod_check=" & IIf(IsNothing(pc.ineff_mod_check), "Null", "'" & pc.ineff_mod_check.ToString & "'")
+        updateString += ", modified=" & IIf(IsNothing(pc.modified), "Null", "'" & pc.modified.ToString & "'")
+        updateString += " WHERE ID = " & pc.criteria_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleSection(ByVal ps As PoleSection) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_section SET "
+        updateString += " section_id=" & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
+        updateString += ", analysis_section_id=" & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
+        updateString += ", elev_bot=" & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
+        updateString += ", elev_top=" & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
+        updateString += ", length_section=" & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
+        updateString += ", length_splice=" & IIf(IsNothing(ps.length_splice), "Null", ps.length_splice.ToString)
+        updateString += ", num_sides=" & IIf(IsNothing(ps.num_sides), "Null", ps.num_sides.ToString)
+        updateString += ", diam_bot=" & IIf(IsNothing(ps.diam_bot), "Null", ps.diam_bot.ToString)
+        updateString += ", diam_top=" & IIf(IsNothing(ps.diam_top), "Null", ps.diam_top.ToString)
+        updateString += ", wall_thickness=" & IIf(IsNothing(ps.wall_thickness), "Null", ps.wall_thickness.ToString)
+        updateString += ", bend_radius=" & IIf(IsNothing(ps.bend_radius), "Null", ps.bend_radius.ToString)
+        updateString += ", steel_grade=" & IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
+        updateString += ", pole_type=" & IIf(IsNothing(ps.pole_type), "Null", "'" & ps.pole_type.ToString & "'")
+        updateString += ", section_name=" & IIf(IsNothing(ps.section_name), "Null", "'" & ps.section_name.ToString & "'")
+        updateString += ", socket_length=" & IIf(IsNothing(ps.socket_length), "Null", ps.socket_length.ToString)
+        updateString += ", weight_mult=" & IIf(IsNothing(ps.weight_mult), "Null", ps.weight_mult.ToString)
+        updateString += ", wp_mult=" & IIf(IsNothing(ps.wp_mult), "Null", ps.wp_mult.ToString)
+        updateString += ", af_factor=" & IIf(IsNothing(ps.af_factor), "Null", ps.af_factor.ToString)
+        updateString += ", ar_factor=" & IIf(IsNothing(ps.ar_factor), "Null", ps.ar_factor.ToString)
+        updateString += ", round_area_ratio=" & IIf(IsNothing(ps.round_area_ratio), "Null", ps.round_area_ratio.ToString)
+        updateString += ", flat_area_ratio=" & IIf(IsNothing(ps.flat_area_ratio), "Null", ps.flat_area_ratio.ToString)
+        updateString += " WHERE ID = " & ps.section_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleReinfSection(ByVal prs As PoleReinfSection) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_reinf_section SET "
+        updateString += " section_ID=" & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
+        updateString += ", analysis_section_ID=" & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
+        updateString += ", elev_bot=" & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
+        updateString += ", elev_top=" & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
+        updateString += ", length_section=" & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
+        updateString += ", length_splice=" & IIf(IsNothing(prs.length_splice), "Null", prs.length_splice.ToString)
+        updateString += ", num_sides=" & IIf(IsNothing(prs.num_sides), "Null", prs.num_sides.ToString)
+        updateString += ", diam_bot=" & IIf(IsNothing(prs.diam_bot), "Null", prs.diam_bot.ToString)
+        updateString += ", diam_top=" & IIf(IsNothing(prs.diam_top), "Null", prs.diam_top.ToString)
+        updateString += ", wall_thickness=" & IIf(IsNothing(prs.wall_thickness), "Null", prs.wall_thickness.ToString)
+        updateString += ", bend_radius=" & IIf(IsNothing(prs.bend_radius), "Null", prs.bend_radius.ToString)
+        updateString += ", steel_grade_id=" & IIf(IsNothing(prs.steel_grade_id), "Null", prs.steel_grade_id.ToString)
+        updateString += ", pole_type=" & IIf(IsNothing(prs.pole_type), "Null", "'" & prs.pole_type.ToString & "'")
+        updateString += ", weight_mult=" & IIf(IsNothing(prs.weight_mult), "Null", prs.weight_mult.ToString)
+        updateString += ", section_name=" & IIf(IsNothing(prs.section_name), "Null", "'" & prs.section_name.ToString & "'")
+        updateString += ", socket_length=" & IIf(IsNothing(prs.socket_length), "Null", prs.socket_length.ToString)
+        updateString += ", wp_mult=" & IIf(IsNothing(prs.wp_mult), "Null", prs.wp_mult.ToString)
+        updateString += ", af_factor=" & IIf(IsNothing(prs.af_factor), "Null", prs.af_factor.ToString)
+        updateString += ", ar_factor=" & IIf(IsNothing(prs.ar_factor), "Null", prs.ar_factor.ToString)
+        updateString += ", round_area_ratio=" & IIf(IsNothing(prs.round_area_ratio), "Null", prs.round_area_ratio.ToString)
+        updateString += ", flat_area_ratio=" & IIf(IsNothing(prs.flat_area_ratio), "Null", prs.flat_area_ratio.ToString)
+        updateString += " WHERE ID = " & prs.section_ID.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleReinfGroup(ByVal prg As PoleReinfGroup) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_reinf_group SET "
+        updateString += " reinf_group_id=" & IIf(IsNothing(prg.reinf_group_id), "Null", prg.reinf_group_id.ToString)
+        updateString += ", elev_bot_actual=" & IIf(IsNothing(prg.elev_bot_actual), "Null", prg.elev_bot_actual.ToString)
+        updateString += ", elev_bot_eff=" & IIf(IsNothing(prg.elev_bot_eff), "Null", prg.elev_bot_eff.ToString)
+        updateString += ", elev_top_actual=" & IIf(IsNothing(prg.elev_top_actual), "Null", prg.elev_top_actual.ToString)
+        updateString += ", elev_top_eff=" & IIf(IsNothing(prg.elev_top_eff), "Null", prg.elev_top_eff.ToString)
+        updateString += ", reinf_db_id=" & IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)
+        updateString += " WHERE ID = " & prg.reinf_group_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleReinfDetail(ByVal prd As PoleReinfDetail) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_reinf_details SET "
+        updateString += " reinf_id=" & IIf(IsNothing(prd.reinf_id), "Null", prd.reinf_id.ToString)
+        updateString += ", pole_flat=" & IIf(IsNothing(prd.pole_flat), "Null", prd.pole_flat.ToString)
+        updateString += ", horizontal_offset=" & IIf(IsNothing(prd.horizontal_offset), "Null", prd.horizontal_offset.ToString)
+        updateString += ", rotation=" & IIf(IsNothing(prd.rotation), "Null", prd.rotation.ToString)
+        updateString += ", note=" & IIf(IsNothing(prd.note), "Null", "'" & prd.note.ToString & "'")
+        updateString += " WHERE ID = " & prd.reinf_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleIntGroup(ByVal pig As PoleIntGroup) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_interference_group SET "
+        updateString += " interference_group_id=" & IIf(IsNothing(pig.interference_group_id), "Null", pig.interference_group_id.ToString)
+        updateString += ", elev_bot=" & IIf(IsNothing(pig.elev_bot), "Null", pig.elev_bot.ToString)
+        updateString += ", elev_top=" & IIf(IsNothing(pig.elev_top), "Null", pig.elev_top.ToString)
+        updateString += ", width=" & IIf(IsNothing(pig.width), "Null", pig.width.ToString)
+        updateString += ", description=" & IIf(IsNothing(pig.description), "Null", "'" & pig.description.ToString & "'")
+        updateString += " WHERE ID = " & pig.interference_group_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleIntDetail(ByVal pid As PoleIntDetail) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_interference_details SET "
+        updateString += " interference_id=" & IIf(IsNothing(pid.interference_id), "Null", pid.interference_id.ToString)
+        updateString += ", pole_flat=" & IIf(IsNothing(pid.pole_flat), "Null", pid.pole_flat.ToString)
+        updateString += ", horizontal_offset=" & IIf(IsNothing(pid.horizontal_offset), "Null", pid.horizontal_offset.ToString)
+        updateString += ", rotation=" & IIf(IsNothing(pid.rotation), "Null", pid.rotation.ToString)
+        updateString += ", note=" & IIf(IsNothing(pid.note), "Null", "'" & pid.note.ToString & "'")
+        updateString += " WHERE ID = " & pid.interference_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePoleReinfResults(ByVal prr As PoleReinfResults) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE pole_reinf_results SET "
+        updateString += " section_id=" & IIf(IsNothing(prr.section_id), "Null", prr.section_id.ToString)
+        updateString += ", work_order_seq_num=" & IIf(IsNothing(prr.work_order_seq_num), "Null", prr.work_order_seq_num.ToString)
+        updateString += ", reinf_group_id=" & IIf(IsNothing(prr.reinf_group_id), "Null", prr.reinf_group_id.ToString)
+        updateString += ", result_lkup_value=" & IIf(IsNothing(prr.result_lkup_value), "Null", prr.result_lkup_value.ToString)
+        updateString += ", rating=" & IIf(IsNothing(prr.rating), "Null", prr.rating.ToString)
+        updateString += " WHERE ID = " & prr.section_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePropReinf(ByVal pr As PropReinf) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE memb_prop_flat_plate SET "
+        updateString += " reinf_db_id=" & IIf(IsNothing(pr.reinf_db_id), "Null", pr.reinf_db_id.ToString)
+        updateString += ", name=" & IIf(IsNothing(pr.name), "Null", "'" & pr.name.ToString & "'")
+        updateString += ", type=" & IIf(IsNothing(pr.type), "Null", "'" & pr.type.ToString & "'")
+        updateString += ", b=" & IIf(IsNothing(pr.b), "Null", pr.b.ToString)
+        updateString += ", h=" & IIf(IsNothing(pr.h), "Null", pr.h.ToString)
+        updateString += ", sr_diam=" & IIf(IsNothing(pr.sr_diam), "Null", pr.sr_diam.ToString)
+        updateString += ", channel_thkns_web=" & IIf(IsNothing(pr.channel_thkns_web), "Null", pr.channel_thkns_web.ToString)
+        updateString += ", channel_thkns_flange=" & IIf(IsNothing(pr.channel_thkns_flange), "Null", pr.channel_thkns_flange.ToString)
+        updateString += ", channel_eo=" & IIf(IsNothing(pr.channel_eo), "Null", pr.channel_eo.ToString)
+        updateString += ", channel_J=" & IIf(IsNothing(pr.channel_J), "Null", pr.channel_J.ToString)
+        updateString += ", channel_Cw=" & IIf(IsNothing(pr.channel_Cw), "Null", pr.channel_Cw.ToString)
+        updateString += ", area_gross=" & IIf(IsNothing(pr.area_gross), "Null", pr.area_gross.ToString)
+        updateString += ", centroid=" & IIf(IsNothing(pr.centroid), "Null", pr.centroid.ToString)
+        updateString += ", istension=" & IIf(IsNothing(pr.istension), "Null", "'" & pr.istension.ToString & "'")
+        updateString += ", matl_id=" & IIf(IsNothing(pr.matl_id), "Null", pr.matl_id.ToString)
+        updateString += ", Ix=" & IIf(IsNothing(pr.Ix), "Null", pr.Ix.ToString)
+        updateString += ", Iy=" & IIf(IsNothing(pr.Iy), "Null", pr.Iy.ToString)
+        updateString += ", Lu=" & IIf(IsNothing(pr.Lu), "Null", pr.Lu.ToString)
+        updateString += ", Kx=" & IIf(IsNothing(pr.Kx), "Null", pr.Kx.ToString)
+        updateString += ", Ky=" & IIf(IsNothing(pr.Ky), "Null", pr.Ky.ToString)
+        updateString += ", bolt_hole_size=" & IIf(IsNothing(pr.bolt_hole_size), "Null", pr.bolt_hole_size.ToString)
+        updateString += ", area_net=" & IIf(IsNothing(pr.area_net), "Null", pr.area_net.ToString)
+        updateString += ", shear_lag=" & IIf(IsNothing(pr.shear_lag), "Null", pr.shear_lag.ToString)
+        updateString += ", connection_type_bot=" & IIf(IsNothing(pr.connection_type_bot), "Null", "'" & pr.connection_type_bot.ToString & "'")
+        updateString += ", connection_cap_revF_bot=" & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
+        updateString += ", connection_cap_revG_bot=" & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
+        updateString += ", connection_cap_revH_bot=" & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
+        updateString += ", bolt_type_id_bot=" & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
+        updateString += ", bolt_N_or_X_bot=" & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
+        updateString += ", bolt_num_bot=" & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
+        updateString += ", bolt_spacing_bot=" & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
+        updateString += ", bolt_edge_dist_bot=" & IIf(IsNothing(pr.bolt_edge_dist_bot), "Null", pr.bolt_edge_dist_bot.ToString)
+        updateString += ", FlangeOrBP_connected_bot=" & IIf(IsNothing(pr.FlangeOrBP_connected_bot), "Null", "'" & pr.FlangeOrBP_connected_bot.ToString & "'")
+        updateString += ", weld_grade_bot=" & IIf(IsNothing(pr.weld_grade_bot), "Null", pr.weld_grade_bot.ToString)
+        updateString += ", weld_trans_type_bot=" & IIf(IsNothing(pr.weld_trans_type_bot), "Null", "'" & pr.weld_trans_type_bot.ToString & "'")
+        updateString += ", weld_trans_length_bot=" & IIf(IsNothing(pr.weld_trans_length_bot), "Null", pr.weld_trans_length_bot.ToString)
+        updateString += ", weld_groove_depth_bot=" & IIf(IsNothing(pr.weld_groove_depth_bot), "Null", pr.weld_groove_depth_bot.ToString)
+        updateString += ", weld_groove_angle_bot=" & IIf(IsNothing(pr.weld_groove_angle_bot), "Null", pr.weld_groove_angle_bot.ToString)
+        updateString += ", weld_trans_fillet_size_bot=" & IIf(IsNothing(pr.weld_trans_fillet_size_bot), "Null", pr.weld_trans_fillet_size_bot.ToString)
+        updateString += ", weld_trans_eff_throat_bot=" & IIf(IsNothing(pr.weld_trans_eff_throat_bot), "Null", pr.weld_trans_eff_throat_bot.ToString)
+        updateString += ", weld_long_type_bot=" & IIf(IsNothing(pr.weld_long_type_bot), "Null", "'" & pr.weld_long_type_bot.ToString & "'")
+        updateString += ", weld_long_length_bot=" & IIf(IsNothing(pr.weld_long_length_bot), "Null", pr.weld_long_length_bot.ToString)
+        updateString += ", weld_long_fillet_size_bot=" & IIf(IsNothing(pr.weld_long_fillet_size_bot), "Null", pr.weld_long_fillet_size_bot.ToString)
+        updateString += ", weld_long_eff_throat_bot=" & IIf(IsNothing(pr.weld_long_eff_throat_bot), "Null", pr.weld_long_eff_throat_bot.ToString)
+        updateString += ", top_bot_connections_symmetrical=" & IIf(IsNothing(pr.top_bot_connections_symmetrical), "Null", "'" & pr.top_bot_connections_symmetrical.ToString & "'")
+        updateString += ", connection_type_top=" & IIf(IsNothing(pr.connection_type_top), "Null", "'" & pr.connection_type_top.ToString & "'")
+        updateString += ", connection_cap_revF_top=" & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
+        updateString += ", connection_cap_revG_top=" & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
+        updateString += ", connection_cap_revH_top=" & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
+        updateString += ", bolt_type_id_top=" & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
+        updateString += ", bolt_N_or_X_top=" & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
+        updateString += ", bolt_num_top=" & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
+        updateString += ", bolt_spacing_top=" & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
+        updateString += ", bolt_edge_dist_top=" & IIf(IsNothing(pr.bolt_edge_dist_top), "Null", pr.bolt_edge_dist_top.ToString)
+        updateString += ", FlangeOrBP_connected_top=" & IIf(IsNothing(pr.FlangeOrBP_connected_top), "Null", "'" & pr.FlangeOrBP_connected_top.ToString & "'")
+        updateString += ", weld_grade_top=" & IIf(IsNothing(pr.weld_grade_top), "Null", pr.weld_grade_top.ToString)
+        updateString += ", weld_trans_type_top=" & IIf(IsNothing(pr.weld_trans_type_top), "Null", "'" & pr.weld_trans_type_top.ToString & "'")
+        updateString += ", weld_trans_length_top=" & IIf(IsNothing(pr.weld_trans_length_top), "Null", pr.weld_trans_length_top.ToString)
+        updateString += ", weld_groove_depth_top=" & IIf(IsNothing(pr.weld_groove_depth_top), "Null", pr.weld_groove_depth_top.ToString)
+        updateString += ", weld_groove_angle_top=" & IIf(IsNothing(pr.weld_groove_angle_top), "Null", pr.weld_groove_angle_top.ToString)
+        updateString += ", weld_trans_fillet_size_top=" & IIf(IsNothing(pr.weld_trans_fillet_size_top), "Null", pr.weld_trans_fillet_size_top.ToString)
+        updateString += ", weld_trans_eff_throat_top=" & IIf(IsNothing(pr.weld_trans_eff_throat_top), "Null", pr.weld_trans_eff_throat_top.ToString)
+        updateString += ", weld_long_type_top=" & IIf(IsNothing(pr.weld_long_type_top), "Null", "'" & pr.weld_long_type_top.ToString & "'")
+        updateString += ", weld_long_length_top=" & IIf(IsNothing(pr.weld_long_length_top), "Null", pr.weld_long_length_top.ToString)
+        updateString += ", weld_long_fillet_size_top=" & IIf(IsNothing(pr.weld_long_fillet_size_top), "Null", pr.weld_long_fillet_size_top.ToString)
+        updateString += ", weld_long_eff_throat_top=" & IIf(IsNothing(pr.weld_long_eff_throat_top), "Null", pr.weld_long_eff_throat_top.ToString)
+        updateString += ", conn_length_bot=" & IIf(IsNothing(pr.conn_length_bot), "Null", pr.conn_length_bot.ToString)
+        updateString += ", conn_length_top=" & IIf(IsNothing(pr.conn_length_top), "Null", pr.conn_length_top.ToString)
+        updateString += ", cap_comp_xx_f=" & IIf(IsNothing(pr.cap_comp_xx_f), "Null", pr.cap_comp_xx_f.ToString)
+        updateString += ", cap_comp_yy_f=" & IIf(IsNothing(pr.cap_comp_yy_f), "Null", pr.cap_comp_yy_f.ToString)
+        updateString += ", cap_tens_yield_f=" & IIf(IsNothing(pr.cap_tens_yield_f), "Null", pr.cap_tens_yield_f.ToString)
+        updateString += ", cap_tens_rupture_f=" & IIf(IsNothing(pr.cap_tens_rupture_f), "Null", pr.cap_tens_rupture_f.ToString)
+        updateString += ", cap_shear_f=" & IIf(IsNothing(pr.cap_shear_f), "Null", pr.cap_shear_f.ToString)
+        updateString += ", cap_bolt_shear_bot_f=" & IIf(IsNothing(pr.cap_bolt_shear_bot_f), "Null", pr.cap_bolt_shear_bot_f.ToString)
+        updateString += ", cap_bolt_shear_top_f=" & IIf(IsNothing(pr.cap_bolt_shear_top_f), "Null", pr.cap_bolt_shear_top_f.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_bot_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_f), "Null", pr.cap_boltshaft_bearing_nodeform_bot_f.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_bot_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_f), "Null", pr.cap_boltshaft_bearing_deform_bot_f.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_top_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_f), "Null", pr.cap_boltshaft_bearing_nodeform_top_f.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_top_f=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_f), "Null", pr.cap_boltshaft_bearing_deform_top_f.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_bot_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_f), "Null", pr.cap_boltreinf_bearing_nodeform_bot_f.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_bot_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_f), "Null", pr.cap_boltreinf_bearing_deform_bot_f.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_top_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_f), "Null", pr.cap_boltreinf_bearing_nodeform_top_f.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_top_f=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_f), "Null", pr.cap_boltreinf_bearing_deform_top_f.ToString)
+        updateString += ", cap_weld_trans_bot_f=" & IIf(IsNothing(pr.cap_weld_trans_bot_f), "Null", pr.cap_weld_trans_bot_f.ToString)
+        updateString += ", cap_weld_long_bot_f=" & IIf(IsNothing(pr.cap_weld_long_bot_f), "Null", pr.cap_weld_long_bot_f.ToString)
+        updateString += ", cap_weld_trans_top_f=" & IIf(IsNothing(pr.cap_weld_trans_top_f), "Null", pr.cap_weld_trans_top_f.ToString)
+        updateString += ", cap_weld_long_top_f=" & IIf(IsNothing(pr.cap_weld_long_top_f), "Null", pr.cap_weld_long_top_f.ToString)
+        updateString += ", cap_comp_xx_g=" & IIf(IsNothing(pr.cap_comp_xx_g), "Null", pr.cap_comp_xx_g.ToString)
+        updateString += ", cap_comp_yy_g=" & IIf(IsNothing(pr.cap_comp_yy_g), "Null", pr.cap_comp_yy_g.ToString)
+        updateString += ", cap_tens_yield_g=" & IIf(IsNothing(pr.cap_tens_yield_g), "Null", pr.cap_tens_yield_g.ToString)
+        updateString += ", cap_tens_rupture_g=" & IIf(IsNothing(pr.cap_tens_rupture_g), "Null", pr.cap_tens_rupture_g.ToString)
+        updateString += ", cap_shear_g=" & IIf(IsNothing(pr.cap_shear_g), "Null", pr.cap_shear_g.ToString)
+        updateString += ", cap_bolt_shear_bot_g=" & IIf(IsNothing(pr.cap_bolt_shear_bot_g), "Null", pr.cap_bolt_shear_bot_g.ToString)
+        updateString += ", cap_bolt_shear_top_g=" & IIf(IsNothing(pr.cap_bolt_shear_top_g), "Null", pr.cap_bolt_shear_top_g.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_bot_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_g), "Null", pr.cap_boltshaft_bearing_nodeform_bot_g.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_bot_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_g), "Null", pr.cap_boltshaft_bearing_deform_bot_g.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_top_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_g), "Null", pr.cap_boltshaft_bearing_nodeform_top_g.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_top_g=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_g), "Null", pr.cap_boltshaft_bearing_deform_top_g.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_bot_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_g), "Null", pr.cap_boltreinf_bearing_nodeform_bot_g.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_bot_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_g), "Null", pr.cap_boltreinf_bearing_deform_bot_g.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_top_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_g), "Null", pr.cap_boltreinf_bearing_nodeform_top_g.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_top_g=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_g), "Null", pr.cap_boltreinf_bearing_deform_top_g.ToString)
+        updateString += ", cap_weld_trans_bot_g=" & IIf(IsNothing(pr.cap_weld_trans_bot_g), "Null", pr.cap_weld_trans_bot_g.ToString)
+        updateString += ", cap_weld_long_bot_g=" & IIf(IsNothing(pr.cap_weld_long_bot_g), "Null", pr.cap_weld_long_bot_g.ToString)
+        updateString += ", cap_weld_trans_top_g=" & IIf(IsNothing(pr.cap_weld_trans_top_g), "Null", pr.cap_weld_trans_top_g.ToString)
+        updateString += ", cap_weld_long_top_g=" & IIf(IsNothing(pr.cap_weld_long_top_g), "Null", pr.cap_weld_long_top_g.ToString)
+        updateString += ", cap_comp_xx_h=" & IIf(IsNothing(pr.cap_comp_xx_h), "Null", pr.cap_comp_xx_h.ToString)
+        updateString += ", cap_comp_yy_h=" & IIf(IsNothing(pr.cap_comp_yy_h), "Null", pr.cap_comp_yy_h.ToString)
+        updateString += ", cap_tens_yield_h=" & IIf(IsNothing(pr.cap_tens_yield_h), "Null", pr.cap_tens_yield_h.ToString)
+        updateString += ", cap_tens_rupture_h=" & IIf(IsNothing(pr.cap_tens_rupture_h), "Null", pr.cap_tens_rupture_h.ToString)
+        updateString += ", cap_shear_h=" & IIf(IsNothing(pr.cap_shear_h), "Null", pr.cap_shear_h.ToString)
+        updateString += ", cap_bolt_shear_bot_h=" & IIf(IsNothing(pr.cap_bolt_shear_bot_h), "Null", pr.cap_bolt_shear_bot_h.ToString)
+        updateString += ", cap_bolt_shear_top_h=" & IIf(IsNothing(pr.cap_bolt_shear_top_h), "Null", pr.cap_bolt_shear_top_h.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_bot_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_h), "Null", pr.cap_boltshaft_bearing_nodeform_bot_h.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_bot_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_bot_h), "Null", pr.cap_boltshaft_bearing_deform_bot_h.ToString)
+        updateString += ", cap_boltshaft_bearing_nodeform_top_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_nodeform_top_h), "Null", pr.cap_boltshaft_bearing_nodeform_top_h.ToString)
+        updateString += ", cap_boltshaft_bearing_deform_top_h=" & IIf(IsNothing(pr.cap_boltshaft_bearing_deform_top_h), "Null", pr.cap_boltshaft_bearing_deform_top_h.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_bot_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_h), "Null", pr.cap_boltreinf_bearing_nodeform_bot_h.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_bot_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_bot_h), "Null", pr.cap_boltreinf_bearing_deform_bot_h.ToString)
+        updateString += ", cap_boltreinf_bearing_nodeform_top_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_nodeform_top_h), "Null", pr.cap_boltreinf_bearing_nodeform_top_h.ToString)
+        updateString += ", cap_boltreinf_bearing_deform_top_h=" & IIf(IsNothing(pr.cap_boltreinf_bearing_deform_top_h), "Null", pr.cap_boltreinf_bearing_deform_top_h.ToString)
+        updateString += ", cap_weld_trans_bot_h=" & IIf(IsNothing(pr.cap_weld_trans_bot_h), "Null", pr.cap_weld_trans_bot_h.ToString)
+        updateString += ", cap_weld_long_bot_h=" & IIf(IsNothing(pr.cap_weld_long_bot_h), "Null", pr.cap_weld_long_bot_h.ToString)
+        updateString += ", cap_weld_trans_top_h=" & IIf(IsNothing(pr.cap_weld_trans_top_h), "Null", pr.cap_weld_trans_top_h.ToString)
+        updateString += ", cap_weld_long_top_h=" & IIf(IsNothing(pr.cap_weld_long_top_h), "Null", pr.cap_weld_long_top_h.ToString)
+        updateString += " WHERE ID = " & pr.reinf_db_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePropBolt(ByVal pb As PropBolt) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE bolt_prop_flat_plate SET "
+        updateString += " bolt_db_id=" & IIf(IsNothing(pb.bolt_db_id), "Null", pb.bolt_db_id.ToString)
+        updateString += ", name=" & IIf(IsNothing(pb.name), "Null", "'" & pb.name.ToString & "'")
+        updateString += ", description=" & IIf(IsNothing(pb.description), "Null", "'" & pb.description.ToString & "'")
+        updateString += ", diam=" & IIf(IsNothing(pb.diam), "Null", pb.diam.ToString)
+        updateString += ", area=" & IIf(IsNothing(pb.area), "Null", pb.area.ToString)
+        updateString += ", fu_bolt=" & IIf(IsNothing(pb.fu_bolt), "Null", pb.fu_bolt.ToString)
+        updateString += ", sleeve_diam_out=" & IIf(IsNothing(pb.sleeve_diam_out), "Null", pb.sleeve_diam_out.ToString)
+        updateString += ", sleeve_diam_in=" & IIf(IsNothing(pb.sleeve_diam_in), "Null", pb.sleeve_diam_in.ToString)
+        updateString += ", fu_sleeve=" & IIf(IsNothing(pb.fu_sleeve), "Null", pb.fu_sleeve.ToString)
+        updateString += ", bolt_n_sleeve_shear_revF=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revF), "Null", pb.bolt_n_sleeve_shear_revF.ToString)
+        updateString += ", bolt_x_sleeve_shear_revF=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revF), "Null", pb.bolt_x_sleeve_shear_revF.ToString)
+        updateString += ", bolt_n_sleeve_shear_revG=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revG), "Null", pb.bolt_n_sleeve_shear_revG.ToString)
+        updateString += ", bolt_x_sleeve_shear_revG=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revG), "Null", pb.bolt_x_sleeve_shear_revG.ToString)
+        updateString += ", bolt_n_sleeve_shear_revH=" & IIf(IsNothing(pb.bolt_n_sleeve_shear_revH), "Null", pb.bolt_n_sleeve_shear_revH.ToString)
+        updateString += ", bolt_x_sleeve_shear_revH=" & IIf(IsNothing(pb.bolt_x_sleeve_shear_revH), "Null", pb.bolt_x_sleeve_shear_revH.ToString)
+        updateString += ", rb_applied_revH=" & IIf(IsNothing(pb.rb_applied_revH), "Null", "'" & pb.rb_applied_revH.ToString & "'")
+        updateString += " WHERE ID = " & pb.bolt_db_id.ToString
+
+        Return updateString
+    End Function
+
+    Private Function UpdatePropMatl(ByVal pm As PropMatl) As String
+        Dim updateString As String = ""
+
+        updateString += "UPDATE matl_prop_flat_plate SET "
+        updateString += " matl_db_id=" & IIf(IsNothing(pm.matl_db_id), "Null", pm.matl_db_id.ToString)
+        updateString += ", name=" & IIf(IsNothing(pm.name), "Null", "'" & pm.name.ToString & "'")
+        updateString += ", fy=" & IIf(IsNothing(pm.fy), "Null", pm.fy.ToString)
+        updateString += ", fu=" & IIf(IsNothing(pm.fu), "Null", pm.fu.ToString)
+        updateString += " WHERE ID = " & pm.matl_db_id.ToString
+
+        Return updateString
+    End Function
+
+#End Region
+
+#Region "General"
+    Public Sub Clear()
+        ExcelFilePath = ""
+        Poles.Clear()
+    End Sub
+
+    Private Function CCIpoleSQLDataTables() As List(Of SQLParameter)
+        Dim MyParameters As New List(Of SQLParameter)
+
+        MyParameters.Add(New SQLParameter("CCIpole Criteria SQL", "CCIpole (SELECT Criteria).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Pole Sections SQL", "CCIpole (SELECT Pole Sections).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Pole Reinf Sections SQL", "CCIpole (SELECT Pole Reinf Sections).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Reinf Groups SQL", "CCIpole (SELECT Reinf Groups).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Reinf Details SQL", "CCIpole (SELECT Reinf Details).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Int Groups SQL", "CCIpole (SELECT Int Groups).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Int Details SQL", "CCIpole (SELECT Int Details).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Pole Reinf Results SQL", "CCIpole (SELECT Pole Reinf Results).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Reinf Property Details SQL", "CCIpole (SELECT Prop Reinfs).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Bolt Property Details SQL", "CCIpole (SELECT Prop Bolts).sql"))
+        MyParameters.Add(New SQLParameter("CCIpole Matl Property Details SQL", "CCIpole (SELECT Prop Matls).sql"))
+
+        Return MyParameters
+    End Function
+
+    Private Function CCIpoleExcelDTParameters() As List(Of EXCELDTParameter)
+        Dim MyParameters As New List(Of EXCELDTParameter)
+
+        MyParameters.Add(New EXCELDTParameter("CCIpole Criteria EXCEL", "A2:L3", "Analysis Criteria (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:U20", "Unreinf Pole (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Sections EXCEL", "A2:S200", "Reinf Pole (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Groups EXCEL", "A2:F50", "Reinf Groups (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Details EXCEL", "A2:F200", "Reinf ID (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:E50", "Interference Groups (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Int Details EXCEL", "A2:F200", "Interference ID (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:E200", "Reinf Results (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:DV50", "Reinforcements (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:P10", "Bolts (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:D10", "Materials (SAPI)"))
+
+        Return MyParameters
+    End Function
+#End Region
 
 End Class

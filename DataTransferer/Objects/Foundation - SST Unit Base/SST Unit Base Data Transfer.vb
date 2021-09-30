@@ -10,6 +10,7 @@ Partial Public Class DataTransfererUnitBase
     Private prop_ExcelFilePath As String
 
     Public Property UnitBases As New List(Of SST_Unit_Base)
+    Public Property sqlUnitBases As New List(Of SST_Unit_Base)
     Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
@@ -43,51 +44,146 @@ Partial Public Class DataTransfererUnitBase
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
+    Sub CreateSQLUnitBases(ByRef UnitBaseList As List(Of SST_Unit_Base))
         Dim refid As Integer
         Dim UnitBaseLoader As String
 
         'Load data to get Unit Base details for the existing structure model
         For Each item As SQLParameter In UnitBaseSQLDataTables()
             UnitBaseLoader = QueryBuilderFromFile(queryPath & "Unit Base\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            'DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
             DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ds, ubDB, ubID, "0")
-            'If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
-        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        'For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
+        'Custom Section to transfer data for the Unit Base tool. Needs to be adjusted for each tool.
         For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
             refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
-
-            UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
+            UnitBaseList.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
         Next
 
+    End Sub
+
+    Public Function LoadFromEDS() As Boolean
+        'Dim refid As Integer
+        'Dim UnitBaseLoader As String
+
+        ''Load data to get Unit Base details for the existing structure model
+        'For Each item As SQLParameter In UnitBaseSQLDataTables()
+        '    UnitBaseLoader = QueryBuilderFromFile(queryPath & "Unit Base\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
+        '    'DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
+        '    DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ds, ubDB, ubID, "0")
+        '    'If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
+        'Next
+
+        ''Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
+        ''For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
+        'For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
+        '    refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
+
+        '    UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
+        'Next
+        CreateSQLUnitBases(UnitBases)
         Return True
     End Function 'Create Unit Base objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
+        'UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
+
+        For Each item As EXCELDTParameter In UnitBaseExcelDTParameters()
+            'Get additional tables from excel file 
+            ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+        Next
+
         UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
+
+
+        'Pull SQL data, if applicable, to compare with excel data
+        CreateSQLUnitBases(sqlUnitBases)
+
+        'If sqlUnitBases.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each fnd As SST_Unit_Base In UnitBases
+            If fnd.unit_base_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+                For Each sqlfnd As SST_Unit_Base In UnitBases
+                    If fnd.unit_base_id = sqlfnd.unit_base_id Then
+                        If CheckChanges(fnd, sqlfnd) Then
+                            isModelNeeded = True
+                            isfndGroupNeeded = True
+                            isUnitBaseNeeded = True
+                        End If
+                        Exit For
+                    End If
+                Next
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isfndGroupNeeded = True
+                isUnitBaseNeeded = True
+            End If
+        Next
+
     End Sub 'Create Unit Base objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
+
+    Sub Save1UnitBase(ByVal ub As SST_Unit_Base)
+
+        Dim firstOne As Boolean = True
+        Dim mySoils As String = ""
+        Dim myLocations As String = ""
+
+        Dim UnitBaseSaver As String = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
+        UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
+        UnitBaseSaver = UnitBaseSaver.Replace("[STRUCTURE ID]", STR_ID)
+        UnitBaseSaver = UnitBaseSaver.Replace("[FOUNDATION TYPE]", "Unit Base")
+        If ub.unit_base_id = 0 Or IsDBNull(ub.unit_base_id) Then
+            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID]'", "NULL")
+        Else
+            UnitBaseSaver = UnitBaseSaver.Replace("[UNIT BASE ID]", ub.unit_base_id.ToString)
+        End If
+
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            UnitBaseSaver = UnitBaseSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            UnitBaseSaver = UnitBaseSaver.Replace("'[Model ID Needed]'", 0)
+        End If
+
+        'Determine if new foundation group ID needs created. 
+        If isfndGroupNeeded Then
+            UnitBaseSaver = UnitBaseSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+        Else
+            UnitBaseSaver = UnitBaseSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+        End If
+
+        'Determine if new ID needs created
+        If isUnitBaseNeeded Then
+            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 1)
+        Else
+            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 0)
+        End If
+
+        UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
+
+        sqlSender(UnitBaseSaver, ubDB, ubID, "0")
+    End Sub
+
     Public Sub SaveToEDS()
         For Each ub As SST_Unit_Base In UnitBases
-            Dim UnitBaseSaver As String = Common.QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
+            Save1UnitBase(ub)
+            'Dim UnitBaseSaver As String = Common.QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
 
-            UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
-            UnitBaseSaver = UnitBaseSaver.Replace("[STRUCTURE ID]", STR_ID)
-            UnitBaseSaver = UnitBaseSaver.Replace("[FOUNDATION TYPE]", "Unit Base")
-            If ub.unit_base_id = 0 Or IsDBNull(ub.unit_base_id) Then
-                UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID]'", "NULL")
-            Else
-                UnitBaseSaver = UnitBaseSaver.Replace("[UNIT BASE ID]", ub.unit_base_id.ToString)
-                UnitBaseSaver = UnitBaseSaver.Replace("(SELECT * FROM TEMPORARY)", UpdateUnitBaseDetail(ub))
-            End If
-            UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
+            'UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
+            'UnitBaseSaver = UnitBaseSaver.Replace("[STRUCTURE ID]", STR_ID)
+            'UnitBaseSaver = UnitBaseSaver.Replace("[FOUNDATION TYPE]", "Unit Base")
+            'If ub.unit_base_id = 0 Or IsDBNull(ub.unit_base_id) Then
+            '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID]'", "NULL")
+            'Else
+            '    UnitBaseSaver = UnitBaseSaver.Replace("[UNIT BASE ID]", ub.unit_base_id.ToString)
+            '    UnitBaseSaver = UnitBaseSaver.Replace("(SELECT * FROM TEMPORARY)", UpdateUnitBaseDetail(ub))
+            'End If
+            'UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
 
-            sqlSender(UnitBaseSaver, ubDB, ubID, "0")
+            'sqlSender(UnitBaseSaver, ubDB, ubID, "0")
         Next
     End Sub
 
@@ -215,8 +311,8 @@ Partial Public Class DataTransfererUnitBase
     Private Function InsertUnitBaseDetail(ByVal ub As SST_Unit_Base) As String
         Dim insertString As String = ""
 
-        insertString += "@FndID"
-        insertString += "," & IIf(IsNothing(ub.pier_shape), "Null", "'" & ub.pier_shape.ToString & "'")
+        'insertString += "@FndID"
+        insertString += "" & IIf(IsNothing(ub.pier_shape), "Null", "'" & ub.pier_shape.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.pier_diameter), "Null", ub.pier_diameter.ToString)
         insertString += "," & IIf(IsNothing(ub.extension_above_grade), "Null", ub.extension_above_grade.ToString)
         insertString += "," & IIf(IsNothing(ub.pier_rebar_size), "Null", ub.pier_rebar_size.ToString)
@@ -331,6 +427,15 @@ Partial Public Class DataTransfererUnitBase
         Return MyParameters
     End Function
 
+    Private Function UnitBaseExcelDTParameters() As List(Of EXCELDTParameter)
+        Dim MyParameters As New List(Of EXCELDTParameter)
+
+        'MyParameters.Add(New EXCELDTParameter("Pile Soil EXCEL", "A3:H17", "SAPI"))
+        'MyParameters.Add(New EXCELDTParameter("Pile Location EXCEL", "S3:U103", "SAPI"))
+
+        Return MyParameters
+    End Function
+
     'Alternate Excel DataLink Option:
     'Private Function UnitBaseExcelRngParameters() As List(Of EXCELRngParameter)
     '    Dim MyParameters As New List(Of EXCELRngParameter)
@@ -380,6 +485,106 @@ Partial Public Class DataTransfererUnitBase
 
     '    Return MyParameters
     'End Function
+
 #End Region
 
+
+#Region "Check Changes"
+    Private changeDt As New DataTable
+    Private changeList As New List(Of AnalysisChanges)
+    Function CheckChanges(ByVal xlUnitBase As SST_Unit_Base, ByVal sqlUnitBase As SST_Unit_Base) As Boolean
+        Dim changesMade As Boolean = False
+
+        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+
+        'Check Details
+        If Check1Change(xlUnitBase.pier_shape, sqlUnitBase.pier_shape, 1, "Pier_Shape") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_diameter, sqlUnitBase.pier_diameter, 1, "Pier_Diameter") Then changesMade = True
+        If Check1Change(xlUnitBase.extension_above_grade, sqlUnitBase.extension_above_grade, 1, "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_rebar_size, sqlUnitBase.pier_rebar_size, 1, "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_tie_size, sqlUnitBase.pier_tie_size, 1, "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_tie_quantity, sqlUnitBase.pier_tie_quantity, 1, "Pier_Tie_Quantity") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_reinforcement_type, sqlUnitBase.pier_reinforcement_type, 1, "Pier_Reinforcement_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_clear_cover, sqlUnitBase.pier_clear_cover, 1, "Pier_Clear_Cover") Then changesMade = True
+        If Check1Change(xlUnitBase.foundation_depth, sqlUnitBase.foundation_depth, 1, "Foundation_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_width_1, sqlUnitBase.pad_width_1, 1, "Pad_Width_1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_width_2, sqlUnitBase.pad_width_2, 1, "Pad_Width_2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_thickness, sqlUnitBase.pad_thickness, 1, "Pad_Thickness") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_top_dir1, sqlUnitBase.pad_rebar_size_top_dir1, 1, "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir1, sqlUnitBase.pad_rebar_size_bottom_dir1, 1, "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_top_dir2, sqlUnitBase.pad_rebar_size_top_dir2, 1, "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir2, sqlUnitBase.pad_rebar_size_bottom_dir2, 1, "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir1, sqlUnitBase.pad_rebar_quantity_top_dir1, 1, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir1, sqlUnitBase.pad_rebar_quantity_bottom_dir1, 1, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir2, sqlUnitBase.pad_rebar_quantity_top_dir2, 1, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir2, sqlUnitBase.pad_rebar_quantity_bottom_dir2, 1, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_clear_cover, sqlUnitBase.pad_clear_cover, 1, "Pad_Clear_Cover") Then changesMade = True
+        If Check1Change(xlUnitBase.rebar_grade, sqlUnitBase.rebar_grade, 1, "Rebar_Grade") Then changesMade = True
+        If Check1Change(xlUnitBase.concrete_compressive_strength, sqlUnitBase.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlUnitBase.dry_concrete_density, sqlUnitBase.dry_concrete_density, 1, "Dry_Concrete_Density") Then changesMade = True
+        If Check1Change(xlUnitBase.total_soil_unit_weight, sqlUnitBase.total_soil_unit_weight, 1, "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(xlUnitBase.bearing_type, sqlUnitBase.bearing_type, 1, "Bearing_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.nominal_bearing_capacity, sqlUnitBase.nominal_bearing_capacity, 1, "Nominal_Bearing_Capacity") Then changesMade = True
+        If Check1Change(xlUnitBase.cohesion, sqlUnitBase.cohesion, 1, "Cohesion") Then changesMade = True
+        If Check1Change(xlUnitBase.friction_angle, sqlUnitBase.friction_angle, 1, "Friction_Angle") Then changesMade = True
+        If Check1Change(xlUnitBase.spt_blow_count, sqlUnitBase.spt_blow_count, 1, "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(xlUnitBase.base_friction_factor, sqlUnitBase.base_friction_factor, 1, "Base_Friction_Factor") Then changesMade = True
+        If Check1Change(xlUnitBase.neglect_depth, sqlUnitBase.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.bearing_distribution_type, sqlUnitBase.bearing_distribution_type, 1, "Bearing_Distribution_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.groundwater_depth, sqlUnitBase.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.top_and_bottom_rebar_different, sqlUnitBase.top_and_bottom_rebar_different, 1, "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(xlUnitBase.block_foundation, sqlUnitBase.block_foundation, 1, "Block_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.rectangular_foundation, sqlUnitBase.rectangular_foundation, 1, "Rectangular_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.base_plate_distance_above_foundation, sqlUnitBase.base_plate_distance_above_foundation, 1, "Base_Plate_Distance_Above_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.bolt_circle_bearing_plate_width, sqlUnitBase.bolt_circle_bearing_plate_width, 1, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(xlUnitBase.tower_centroid_offset, sqlUnitBase.tower_centroid_offset, 1, "Tower_Centroid_Offset") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, 1, "Structural_Check") Then changesMade = True
+        'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
+
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
+    End Function
+
+    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+        'Create your string based on data in the datatable
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+
+        'write to text file
+        'End Sub
+    End Function
+
+    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
+            Return True
+        End If
+    End Function
+
+#End Region
 End Class
