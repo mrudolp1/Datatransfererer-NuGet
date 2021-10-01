@@ -11,7 +11,7 @@ Partial Public Class DataTransfererUnitBase
 
     Public Property UnitBases As New List(Of SST_Unit_Base)
     Public Property sqlUnitBases As New List(Of SST_Unit_Base)
-    Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
+    Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ubDS As New DataSet
@@ -422,6 +422,7 @@ Partial Public Class DataTransfererUnitBase
 
     Private Function UnitBaseSQLDataTables() As List(Of SQLParameter)
         Dim MyParameters As New List(Of SQLParameter)
+
         MyParameters.Add(New SQLParameter("Unit Base General Details SQL", "Unit Base (SELECT Details).sql"))
 
         Return MyParameters
