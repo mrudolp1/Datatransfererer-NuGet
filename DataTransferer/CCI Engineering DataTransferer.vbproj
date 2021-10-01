@@ -50,6 +50,7 @@
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
@@ -154,6 +155,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29 - DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP).sql">

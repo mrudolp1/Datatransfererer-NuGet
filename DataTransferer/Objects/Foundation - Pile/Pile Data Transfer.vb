@@ -11,7 +11,7 @@ Partial Public Class DataTransfererPile
 
     Public Property Piles As New List(Of Pile)
     Public Property sqlPiles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Pile EDS Testing\Test Sites\Pile Foundation (2.2.1.5).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Pile Foundation (2.2.1.5).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property pileDS As New DataSet
@@ -1062,16 +1062,16 @@ Partial Public Class DataTransfererPile
 End Class
 
 
-'Class AnalysisChanges
-'    Property PreviousValue As String
-'    Property NewValue As String
-'    Property Name As String
-'    Property PartofDatabase As String
+Class AnalysisChanges
+    Property PreviousValue As String
+    Property NewValue As String
+    Property Name As String
+    Property PartofDatabase As String
 
-'    Public Sub New(prev As String, Newval As String, name As String, db As String)
-'        Me.PreviousValue = prev
-'        Me.NewValue = Newval
-'        Me.Name = name
-'        Me.PartofDatabase = db
-'    End Sub
-'End Class
+    Public Sub New(prev As String, Newval As String, name As String, db As String)
+        Me.PreviousValue = prev
+        Me.NewValue = Newval
+        Me.Name = name
+        Me.PartofDatabase = db
+    End Sub
+End Class

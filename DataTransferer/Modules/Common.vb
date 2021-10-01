@@ -5,13 +5,13 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "811945"
+    Public BUNumber As String = "879480"
     Public STR_ID As String = "A"
-    Public CurWO As String = "1111111"
+    Public CurWO As String = "8794801"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
-    Public isUnitBaseNeeded As Boolean = False 'Update Unit Base details & foundation details
+    Public isPierAndPadNeeded As Boolean = False 'Update pier and pad details & foundation details
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
@@ -69,7 +69,6 @@ Public Module Common
         options.ImportSettings = importSettings
         options.SkipHiddenColumns = False
         options.SkipHiddenRows = False
-        options.UseFirstRowAsHeader = False
 
         exDS.FileName = path
         exDS.SourceOptions = options
@@ -77,8 +76,7 @@ Public Module Common
 
         val = ExcelDatasourceToDataTable(exDS, ws & "|" & rng)
 
-        Return val.Rows(0).ItemArray(0)
-        'Return val.Columns(0).ColumnName
+        Return val.Columns(0).ColumnName
     End Function
 
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource
@@ -279,19 +277,5 @@ Public Class EXCELRngParameter
     Sub New(ByVal xlNamedRange As String, ByVal EDSName As String)
         rangeName = xlNamedRange
         variableName = EDSName
-    End Sub
-End Class
-
-Public Class AnalysisChanges
-    Property PreviousValue As String
-    Property NewValue As String
-    Property Name As String
-    Property PartofDatabase As String
-
-    Public Sub New(prev As String, Newval As String, name As String, db As String)
-        Me.PreviousValue = prev
-        Me.NewValue = Newval
-        Me.Name = name
-        Me.PartofDatabase = db
     End Sub
 End Class

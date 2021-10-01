@@ -9,8 +9,9 @@ Partial Public Class DataTransfererPierandPad
     Private NewPierAndPadWb As New Workbook
     Private prop_ExcelFilePath As String
 
-    Public Property PierAndPads As New List(Of Pier_and_Pad)
-    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE.xlsm"
+    Public Property PierAndPads As New List(Of PierAndPad)
+    Public Property sqlPierAndPads As New List(Of PierAndPad)
+    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 9-30-2021.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ppDS As New DataSet
@@ -43,66 +44,144 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
+
+    Sub CreateSQLPierAndPad(ByRef ppList As List(Of PierAndPad))
         Dim refid As Integer
         Dim PierAndPadLoader As String
 
         'Load data to get pier and pad details data for the existing structure model
         For Each item As SQLParameter In PierAndPadSQLDataTables()
             PierAndPadLoader = QueryBuilderFromFile(queryPath & "Pier and Pad\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-            'DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ppDS, ppDB, ppID, "0")
             DoDaSQL.sqlLoader(PierAndPadLoader, item.sqlDatatable, ds, ppDB, ppID, "0")
-            'If ppDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
         Next
 
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
-        'For Each Pier_And_PadDataRow As DataRow In ppDS.Tables("Pier and Pad General Details SQL").Rows
-        For Each Pier_And_PadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
-            'refid = CType(Pier_And_PadDataRow.Item("pp_id"), Integer) 
-            refid = CType(Pier_And_PadDataRow.Item("pier_pad_id"), Integer)
-
-            PierAndPads.Add(New Pier_and_Pad(Pier_And_PadDataRow, refid))
+        For Each PierAndPadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
+            refid = CType(PierAndPadDataRow.Item("pp_id"), Integer)
+            PierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
         Next
-
+    End Sub
+    Public Function LoadFromEDS() As Boolean
+        CreateSQLPierAndPad(PierAndPads)
         Return True
     End Function 'Create Pier and Pad objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
-        PierAndPads.Add(New Pier_and_Pad(ExcelFilePath))
+
+        Dim refID As Integer
+        Dim refCol As String
+
+        For Each item As EXCELDTParameter In PierAndPadExcelDTParameters()
+            'Get additional tables from excel file 
+            ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+        Next
+
+
+        For Each PierandPadDataRow As DataRow In ds.Tables("Pier and Pad General Details EXCEL").Rows
+
+            refCol = "pp_id"
+            refID = CType(PierandPadDataRow.Item(refCol), Integer)
+
+            PierAndPads.Add(New PierAndPad(PierandPadDataRow, refID, refCol))
+
+        Next
+
+
+        'Pull SQL data, if applicable, to compare with excel data
+        CreateSQLPierAndPad(sqlPierAndPads)
+
+        'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each fnd As PierAndPad In PierAndPads
+            If fnd.pp_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+                For Each sqlfnd As PierAndPad In sqlPierAndPads
+                    If fnd.pp_id = sqlfnd.pp_id Then
+                        If CheckChanges(fnd, sqlfnd) Then
+                            isModelNeeded = True
+                            isfndGroupNeeded = True
+                            isPierAndPadNeeded = True
+                        End If
+                        Exit For
+                    End If
+                Next
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isfndGroupNeeded = True
+                isPierAndPadNeeded = True
+            End If
+        Next
+
+        'Else
+        '    'Save the data because nothing exists in sql
+        '    isModelNeeded = True
+        '    isfndGroupNeeded = True
+        '    isPileNeeded = True
+        '    End If
+
+        'End If
+
     End Sub 'Create Pier and Pad objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
+    Sub Save1PierAndPad(ByVal pp As PierAndPad)
+
+        Dim firstOne As Boolean = True
+
+        Dim PierAndPadSaver As String = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (IN_UP).sql")
+        PierAndPadSaver = PierAndPadSaver.Replace("[BU NUMBER]", BUNumber)
+        PierAndPadSaver = PierAndPadSaver.Replace("[STRUCTURE ID]", STR_ID)
+        PierAndPadSaver = PierAndPadSaver.Replace("[FOUNDATION TYPE]", "Pier and Pad")
+        If pp.pp_id = 0 Or IsDBNull(pp.pp_id) Then
+            PierAndPadSaver = PierAndPadSaver.Replace("'[PIER AND PAD ID]'", "NULL")
+        Else
+            PierAndPadSaver = PierAndPadSaver.Replace("[PIER AND PAD ID]", pp.pp_id.ToString)
+        End If
+
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            PierAndPadSaver = PierAndPadSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            PierAndPadSaver = PierAndPadSaver.Replace("'[Model ID Needed]'", 0)
+        End If
+
+        'Determine if new foundation group ID needs created. 
+        If isfndGroupNeeded Then
+            PierAndPadSaver = PierAndPadSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+        Else
+            PierAndPadSaver = PierAndPadSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+        End If
+
+        'Determine if new foundation ID needs created
+        If isPierAndPadNeeded Then
+            PierAndPadSaver = PierAndPadSaver.Replace("'[PIER AND PAD ID Needed]'", 1)
+        Else
+            PierAndPadSaver = PierAndPadSaver.Replace("'[PIER AND PAD ID Needed]'", 0)
+        End If
+
+        PierAndPadSaver = PierAndPadSaver.Replace("'[INSERT ALL PIER AND PAD DETAILS]'", InsertPierAndPadDetail(pp))
+
+        sqlSender(PierAndPadSaver, ppDB, ppID, "0")
+
+    End Sub
     Public Sub SaveToEDS()
         Dim firstOne As Boolean = True
 
-        For Each pp As Pier_and_Pad In PierAndPads
-            Dim PierAndPadSaver As String = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (IN_UP).sql")
-
-            PierAndPadSaver = PierAndPadSaver.Replace("[BU NUMBER]", BUNumber)
-            PierAndPadSaver = PierAndPadSaver.Replace("[STRUCTURE ID]", STR_ID)
-            PierAndPadSaver = PierAndPadSaver.Replace("[FOUNDATION TYPE]", "Pier and Pad")
-            If pp.pp_id = 0 Or IsDBNull(pp.pp_id) Then
-                PierAndPadSaver = PierAndPadSaver.Replace("'[PIER AND PAD ID]'", "NULL")
-            Else
-                PierAndPadSaver = PierAndPadSaver.Replace("[PIER AND PAD ID]", pp.pp_id.ToString)
-                PierAndPadSaver = PierAndPadSaver.Replace("(SELECT * FROM TEMPORARY)", UpdatePierAndPadDetail(pp))
-            End If
-            PierAndPadSaver = PierAndPadSaver.Replace("[INSERT ALL PIER AND PAD DETAILS]", InsertPierAndPadDetail(pp))
-
-            sqlSender(PierAndPadSaver, ppDB, ppID, "0")
+        For Each pp As PierAndPad In PierAndPads
+            Save1PierAndPad(pp)
         Next
+
     End Sub
 
     Public Sub SaveToExcel()
-        For Each pp As Pier_and_Pad In PierAndPads
-            'MRP 7/20/21 - clear contents in Excel if object value is nothing (NULL from SQL). If multiple objects exist within the list and values are not cleared, values from another instance of the object may remain populated in the latest tool
+        For Each pp As PierAndPad In PierAndPads
+
             LoadNewPierAndPad()
 
             With NewPierAndPadWb
                 .Worksheets("Input").Range("ID").Value = CType(pp.pp_id, Integer)
                 If Not IsNothing(pp.pier_shape) Then
-                    .Worksheets("Input").Range("shape").Value = pp.pier_shape
+                    .Worksheets("Input").Range("shape").Value = CType(pp.pier_shape, String)
                 End If
 
                 If Not IsNothing(pp.pier_diameter) Then
@@ -124,7 +203,7 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.pier_rebar_quantity) Then
-                    .Worksheets("Input").Range("mc").Value = CType(pp.pier_rebar_quantity, Integer)
+                    .Worksheets("Input").Range("mc").Value = CType(pp.pier_rebar_quantity, Double)
                 Else
                     .Worksheets("Input").Range("mc").ClearContents
                 End If
@@ -136,13 +215,13 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.pier_tie_quantity) Then
-                    .Worksheets("Input").Range("mt").Value = CType(pp.pier_tie_quantity, Integer)
+                    .Worksheets("Input").Range("mt").Value = CType(pp.pier_tie_quantity, Double)
                 Else
                     .Worksheets("Input").Range("mt").ClearContents
                 End If
 
                 If Not IsNothing(pp.pier_reinforcement_type) Then
-                    .Worksheets("Input").Range("PierReinfType").Value = pp.pier_reinforcement_type
+                    .Worksheets("Input").Range("PierReinfType").Value = CType(pp.pier_reinforcement_type, String)
                 End If
 
                 If Not IsNothing(pp.pier_clear_cover) Then
@@ -200,25 +279,25 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.pad_rebar_quantity_top_dir1) Then
-                    .Worksheets("Input").Range("mptop").Value = CType(pp.pad_rebar_quantity_top_dir1, Integer)
+                    .Worksheets("Input").Range("mptop").Value = CType(pp.pad_rebar_quantity_top_dir1, Double)
                 Else
                     .Worksheets("Input").Range("mptop").ClearContents
                 End If
 
                 If Not IsNothing(pp.pad_rebar_quantity_bottom_dir1) Then
-                    .Worksheets("Input").Range("mp").Value = CType(pp.pad_rebar_quantity_bottom_dir1, Integer)
+                    .Worksheets("Input").Range("mp").Value = CType(pp.pad_rebar_quantity_bottom_dir1, Double)
                 Else
                     .Worksheets("Input").Range("mp").ClearContents
                 End If
 
                 If Not IsNothing(pp.pad_rebar_quantity_top_dir2) Then
-                    .Worksheets("Input").Range("mptop2").Value = CType(pp.pad_rebar_quantity_top_dir2, Integer)
+                    .Worksheets("Input").Range("mptop2").Value = CType(pp.pad_rebar_quantity_top_dir2, Double)
                 Else
                     .Worksheets("Input").Range("mptop2").ClearContents
                 End If
 
                 If Not IsNothing(pp.pad_rebar_quantity_bottom_dir2) Then
-                    .Worksheets("Input").Range("mp_2").Value = CType(pp.pad_rebar_quantity_bottom_dir2, Integer)
+                    .Worksheets("Input").Range("mp_2").Value = CType(pp.pad_rebar_quantity_bottom_dir2, Double)
                 Else
                     .Worksheets("Input").Range("mp_2").ClearContents
                 End If
@@ -254,7 +333,7 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.bearing_type) Then
-                    .Worksheets("Input").Range("BearingType").Value = pp.bearing_type
+                    .Worksheets("Input").Range("BearingType").Value = CType(pp.bearing_type, String)
                 Else
                     .Worksheets("Input").Range("BearingType").ClearContents
                 End If
@@ -278,7 +357,7 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.spt_blow_count) Then
-                    .Worksheets("Input").Range("N_blows").Value = CType(pp.spt_blow_count, Integer)
+                    .Worksheets("Input").Range("N_blows").Value = CType(pp.spt_blow_count, Double)
                 Else
                     .Worksheets("Input").Range("N_blows").ClearContents
                 End If
@@ -306,15 +385,15 @@ Partial Public Class DataTransfererPierandPad
                 End If
 
                 If Not IsNothing(pp.top_and_bottom_rebar_different) Then
-                    .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = pp.top_and_bottom_rebar_different
+                    .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = CType(pp.top_and_bottom_rebar_different, Boolean)
                 End If
 
                 If Not IsNothing(pp.block_foundation) Then
-                    .Worksheets("Input").Range("BlockFoundationBoolean").Value = pp.block_foundation
+                    .Worksheets("Input").Range("BlockFoundationBoolean").Value = CType(pp.block_foundation, Boolean)
                 End If
 
                 If Not IsNothing(pp.rectangular_foundation) Then
-                    .Worksheets("Input").Range("RectangularPadBoolean").Value = pp.rectangular_foundation
+                    .Worksheets("Input").Range("RectangularPadBoolean").Value = CType(pp.rectangular_foundation, Boolean)
                 End If
 
                 If Not IsNothing(pp.base_plate_distance_above_foundation) Then
@@ -333,7 +412,7 @@ Partial Public Class DataTransfererPierandPad
                     .Worksheets("Input").Range("SoilInteractionBoolean").Value = CType(pp.basic_soil_check, Boolean)
                 End If
 
-                If Not IsNothing(pp.basic_soil_check) Then
+                If Not IsNothing(pp.structural_check) Then
                     .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(pp.structural_check, Boolean)
                 End If
 
@@ -356,11 +435,10 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "SQL Insert Statements"
-    Private Function InsertPierAndPadDetail(ByVal pp As Pier_and_Pad) As String
+    Private Function InsertPierAndPadDetail(ByVal pp As PierAndPad) As String
         Dim insertString As String = ""
 
-        insertString += "@FndID"
-        insertString += "," & IIf(IsNothing(pp.pier_shape), "Null", "'" & pp.pier_shape.ToString & "'")
+        insertString += IIf(IsNothing(pp.pier_shape), "Null", "'" & pp.pier_shape.ToString & "'")
         insertString += "," & IIf(IsNothing(pp.pier_diameter), "Null", pp.pier_diameter.ToString)
         insertString += "," & IIf(IsNothing(pp.extension_above_grade), "Null", pp.extension_above_grade.ToString)
         insertString += "," & IIf(IsNothing(pp.pier_rebar_size), "Null", pp.pier_rebar_size.ToString)
@@ -402,63 +480,12 @@ Partial Public Class DataTransfererPierandPad
         insertString += "," & IIf(IsNothing(pp.pier_rebar_quantity), "Null", pp.pier_rebar_quantity.ToString)
         insertString += "," & IIf(IsNothing(pp.basic_soil_check), "Null", "'" & pp.basic_soil_check.ToString & "'")
         insertString += "," & IIf(IsNothing(pp.structural_check), "Null", "'" & pp.structural_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(pp.tool_version), "Null", "'" & pp.tool_version.ToString & "'")
 
         Return insertString
     End Function
 #End Region
 
-#Region "SQL Update Statements"
-    Private Function UpdatePierAndPadDetail(ByVal pp As Pier_and_Pad) As String
-        Dim updateString As String = ""
-
-        updateString += "UPDATE pier_pad_details SET "
-        updateString += " pier_shape=" & IIf(IsNothing(pp.pier_shape), "Null", "'" & pp.pier_shape.ToString & "'")
-        updateString += ", pier_diameter=" & IIf(IsNothing(pp.pier_diameter), "Null", pp.pier_diameter.ToString)
-        updateString += ", extension_above_grade=" & IIf(IsNothing(pp.extension_above_grade), "Null", pp.extension_above_grade.ToString)
-        updateString += ", pier_rebar_size=" & IIf(IsNothing(pp.pier_rebar_size), "Null", pp.pier_rebar_size.ToString)
-        updateString += ", pier_tie_size=" & IIf(IsNothing(pp.pier_tie_size), "Null", pp.pier_tie_size.ToString)
-        updateString += ", pier_tie_quantity=" & IIf(IsNothing(pp.pier_tie_quantity), "Null", pp.pier_tie_quantity.ToString)
-        updateString += ", pier_reinforcement_type=" & IIf(IsNothing(pp.pier_reinforcement_type), "Null", "'" & pp.pier_reinforcement_type.ToString & "'")
-        updateString += ", pier_clear_cover=" & IIf(IsNothing(pp.pier_clear_cover), "Null", pp.pier_clear_cover.ToString)
-        updateString += ", foundation_depth=" & IIf(IsNothing(pp.foundation_depth), "Null", pp.foundation_depth.ToString)
-        updateString += ", pad_width_1=" & IIf(IsNothing(pp.pad_width_1), "Null", pp.pad_width_1.ToString)
-        updateString += ", pad_width_2=" & IIf(IsNothing(pp.pad_width_2), "Null", pp.pad_width_2.ToString)
-        updateString += ", pad_thickness=" & IIf(IsNothing(pp.pad_thickness), "Null", pp.pad_thickness.ToString)
-        updateString += ", pad_rebar_size_top_dir1=" & IIf(IsNothing(pp.pad_rebar_size_top_dir1), "Null", pp.pad_rebar_size_top_dir1.ToString)
-        updateString += ", pad_rebar_size_bottom_dir1=" & IIf(IsNothing(pp.pad_rebar_size_bottom_dir1), "Null", pp.pad_rebar_size_bottom_dir1.ToString)
-        updateString += ", pad_rebar_size_top_dir2=" & IIf(IsNothing(pp.pad_rebar_size_top_dir2), "Null", pp.pad_rebar_size_top_dir2.ToString)
-        updateString += ", pad_rebar_size_bottom_dir2=" & IIf(IsNothing(pp.pad_rebar_size_bottom_dir2), "Null", pp.pad_rebar_size_bottom_dir2.ToString)
-        updateString += ", pad_rebar_quantity_top_dir1=" & IIf(IsNothing(pp.pad_rebar_quantity_top_dir1), "Null", pp.pad_rebar_quantity_top_dir1.ToString)
-        updateString += ", pad_rebar_quantity_bottom_dir1=" & IIf(IsNothing(pp.pad_rebar_quantity_bottom_dir1), "Null", pp.pad_rebar_quantity_bottom_dir1.ToString)
-        updateString += ", pad_rebar_quantity_top_dir2=" & IIf(IsNothing(pp.pad_rebar_quantity_top_dir2), "Null", pp.pad_rebar_quantity_top_dir2.ToString)
-        updateString += ", pad_rebar_quantity_bottom_dir2=" & IIf(IsNothing(pp.pad_rebar_quantity_bottom_dir2), "Null", pp.pad_rebar_quantity_bottom_dir2.ToString)
-        updateString += ", pad_clear_cover=" & IIf(IsNothing(pp.pad_clear_cover), "Null", pp.pad_clear_cover.ToString)
-        updateString += ", rebar_grade=" & IIf(IsNothing(pp.rebar_grade), "Null", pp.rebar_grade.ToString)
-        updateString += ", concrete_compressive_strength=" & IIf(IsNothing(pp.concrete_compressive_strength), "Null", pp.concrete_compressive_strength.ToString)
-        updateString += ", dry_concrete_density=" & IIf(IsNothing(pp.dry_concrete_density), "Null", pp.dry_concrete_density.ToString)
-        updateString += ", total_soil_unit_weight=" & IIf(IsNothing(pp.total_soil_unit_weight), "Null", pp.total_soil_unit_weight.ToString)
-        updateString += ", bearing_type=" & IIf(IsNothing(pp.bearing_type), "Null", "'" & pp.bearing_type.ToString & "'")
-        updateString += ", nominal_bearing_capacity=" & IIf(IsNothing(pp.nominal_bearing_capacity), "Null", pp.nominal_bearing_capacity.ToString)
-        updateString += ", cohesion=" & IIf(IsNothing(pp.cohesion), "Null", pp.cohesion.ToString)
-        updateString += ", friction_angle=" & IIf(IsNothing(pp.friction_angle), "Null", pp.friction_angle.ToString)
-        updateString += ", spt_blow_count=" & IIf(IsNothing(pp.spt_blow_count), "Null", pp.spt_blow_count.ToString)
-        updateString += ", base_friction_factor=" & IIf(IsNothing(pp.base_friction_factor), "Null", pp.base_friction_factor.ToString)
-        updateString += ", neglect_depth=" & IIf(IsNothing(pp.neglect_depth), "Null", pp.neglect_depth.ToString)
-        updateString += ", bearing_distribution_type=" & IIf(IsNothing(pp.bearing_distribution_type), "Null", "'" & pp.bearing_distribution_type.ToString & "'")
-        updateString += ", groundwater_depth=" & IIf(IsNothing(pp.groundwater_depth), "Null", pp.groundwater_depth.ToString)
-        updateString += ", top_and_bottom_rebar_different=" & IIf(IsNothing(pp.top_and_bottom_rebar_different), "Null", "'" & pp.top_and_bottom_rebar_different.ToString & "'")
-        updateString += ", block_foundation=" & IIf(IsNothing(pp.block_foundation), "Null", "'" & pp.block_foundation.ToString & "'")
-        updateString += ", rectangular_foundation=" & IIf(IsNothing(pp.rectangular_foundation), "Null", "'" & pp.rectangular_foundation.ToString & "'")
-        updateString += ", base_plate_distance_above_foundation=" & IIf(IsNothing(pp.base_plate_distance_above_foundation), "Null", pp.base_plate_distance_above_foundation.ToString)
-        updateString += ", bolt_circle_bearing_plate_width=" & IIf(IsNothing(pp.bolt_circle_bearing_plate_width), "Null", pp.bolt_circle_bearing_plate_width.ToString)
-        updateString += ", pier_rebar_quantity=" & IIf(IsNothing(pp.pier_rebar_quantity), "Null", pp.pier_rebar_quantity.ToString)
-        updateString += ", basic_soil_check=" & IIf(IsNothing(pp.basic_soil_check), "Null", "'" & pp.basic_soil_check.ToString & "'")
-        updateString += ", structural_check=" & IIf(IsNothing(pp.structural_check), "Null", "'" & pp.structural_check.ToString & "'")
-        updateString += " WHERE ID = " & pp.pp_id.ToString
-
-        Return updateString
-    End Function
-#End Region
 
 #Region "General"
     Public Sub Clear()
@@ -470,155 +497,133 @@ Partial Public Class DataTransfererPierandPad
         Dim MyParameters As New List(Of SQLParameter)
 
         MyParameters.Add(New SQLParameter("Pier and Pad General Details SQL", "Pier and Pad (SELECT Details).sql"))
+        'MyParameters.Add(New SQLParameter("Pier and Pad Modified Ranges SQL", "Pier and Pad (SELECT Modified Ranges).sql"))
 
         Return MyParameters
     End Function
 
-    'Private Function Pier_And_PadExcelDTParameters() As List(Of EXCELDTParameter) 'MRP - Edit this code to reference Input worksheet rather than Details table
-    '    Dim MyParameters As New List(Of EXCELDTParameter)
+    Private Function PierAndPadExcelDTParameters() As List(Of EXCELDTParameter)
+        Dim MyParameters As New List(Of EXCELDTParameter)
 
-    '    MyParameters.Add(New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AP1000", "Details (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Pier and Pad Modified Ranges EXCEL", "A1:E1000", "Modified Ranges"))
 
-    '    Return MyParameters
-    'End Function
+        Return MyParameters
+    End Function
 
-    'Private Function Pier_And_PadExcelRngParameters() As List(Of EXCELRngParameter)
-    'Dim myLst As New List(Of EXCELRngParameter)
+#End Region
 
-    '''''''myLst.Add(New EXCELRngParameter("test_value", "soil_layer_Count"))
-    '''''''myLst.Add(New EXCELRngParameter("ID", "pp_id"))
-    '''''''myLst.Add(New EXCELRngParameter("E", "extension_above_grade"))
-    '''''''myLst.Add(New EXCELRngParameter("D", "foundation_depth"))
-    '''''''myLst.Add(New EXCELRngParameter("F\c", "concrete_compressive_strength"))
-    '''''''myLst.Add(New EXCELRngParameter("ConcreteDensity", "dry_concrete_density"))
-    '''''''myLst.Add(New EXCELRngParameter("Fy", "rebar_grade"))
-    '''''''myLst.Add(New EXCELRngParameter("DifferentReinforcementBoolean", "top_and_bottom_rebar_different"))
-    '''''''myLst.Add(New EXCELRngParameter("BlockFoundationBoolean", "block_foundation"))
-    '''''''myLst.Add(New EXCELRngParameter("RectangularPadBoolean", "rectangular_foundation"))
-    '''''''myLst.Add(New EXCELRngParameter("bpdist", "base_plate_distance_above_foundation"))
-    '''''''myLst.Add(New EXCELRngParameter("BC", "bolt_circle_bearing_plate_width"))
-    '''''''myLst.Add(New EXCELRngParameter("shape", "pier_shape"))
-    '''''''myLst.Add(New EXCELRngParameter("dpier", "pier_diameter"))
-    '''''''myLst.Add(New EXCELRngParameter("mc", "pier_rebar_quantity"))
-    '''''''myLst.Add(New EXCELRngParameter("Sc", "pier_rebar_size"))
-    '''''''myLst.Add(New EXCELRngParameter("mt", "pier_tie_quantity"))
-    '''''''myLst.Add(New EXCELRngParameter("St", "pier_tie_size"))
-    '''''''myLst.Add(New EXCELRngParameter("PierReinfType", "pier_reinforcement_type"))
-    '''''''myLst.Add(New EXCELRngParameter("ccpier", "pier_clear_cover"))
-    '''''''myLst.Add(New EXCELRngParameter("W", "pad_width_1"))
-    '''''''myLst.Add(New EXCELRngParameter("W.dir2", "pad_width_2"))
-    '''''''myLst.Add(New EXCELRngParameter("T", "pad_thickness"))
-    '''''''myLst.Add(New EXCELRngParameter("sptop", "pad_rebar_size_top_dir1"))
-    '''''''myLst.Add(New EXCELRngParameter("Sp", "pad_rebar_size_bottom_dir1"))
-    '''''''myLst.Add(New EXCELRngParameter("sptop2", "pad_rebar_size_top_dir2"))
-    '''''''myLst.Add(New EXCELRngParameter("sp_2", "pad_rebar_size_bottom_dir2"))
-    '''''''myLst.Add(New EXCELRngParameter("mptop", "pad_rebar_quantity_top_dir1"))
-    '''''''myLst.Add(New EXCELRngParameter("mp", "pad_rebar_quantity_bottom_dir1"))
-    '''''''myLst.Add(New EXCELRngParameter("mptop2", "pad_rebar_quantity_top_dir2"))
-    '''''''myLst.Add(New EXCELRngParameter("mp_2", "pad_rebar_quantity_bottom_dir2"))
-    '''''''myLst.Add(New EXCELRngParameter("ccpad", "pad_clear_cover"))
-    '''''''myLst.Add(New EXCELRngParameter("γ", "total_soil_unit_weight"))
-    '''''''myLst.Add(New EXCELRngParameter("BearingType", "bearing_type"))
-    '''''''myLst.Add(New EXCELRngParameter("Qinput", "nominal_bearing_capacity"))
-    '''''''myLst.Add(New EXCELRngParameter("Cu", "cohesion"))
-    '''''''myLst.Add(New EXCELRngParameter("ϕ", "friction_angle"))
-    '''''''myLst.Add(New EXCELRngParameter("N_blows", "spt_blow_count"))
-    '''''''myLst.Add(New EXCELRngParameter("μ", "base_friction_factor"))
-    '''''''myLst.Add(New EXCELRngParameter("N", "neglect_depth"))
-    '''''''myLst.Add(New EXCELRngParameter("Rock", "bearing_distribution_type"))
-    '''''''myLst.Add(New EXCELRngParameter("gw", "groundwater_depth"))
+#Region "Check Changes"
+    Private changeDt As New DataTable
+    Private changeList As New List(Of AnalysisChanges)
+    Function CheckChanges(ByVal xlPierAndPad As PierAndPad, ByVal sqlPierAndPad As PierAndPad) As Boolean
+        Dim changesMade As Boolean = False
 
-    '''''''Return myLst
+        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
-    'Dim myvar As String
+        'Check Details
+        If Check1Change(xlPierAndPad.pier_shape, sqlPierAndPad.pier_shape, 1, "Pier_Shape") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_diameter, sqlPierAndPad.pier_diameter, 1, "Pier_Diameter") Then changesMade = True
+        If Check1Change(xlPierAndPad.extension_above_grade, sqlPierAndPad.extension_above_grade, 1, "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_rebar_size, sqlPierAndPad.pier_rebar_size, 1, "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_tie_size, sqlPierAndPad.pier_tie_size, 1, "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_tie_quantity, sqlPierAndPad.pier_tie_quantity, 1, "Pier_Tie_Quantity") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_reinforcement_type, sqlPierAndPad.pier_reinforcement_type, 1, "Pier_Reinforcement_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_clear_cover, sqlPierAndPad.pier_clear_cover, 1, "Pier_Clear_Cover") Then changesMade = True
+        If Check1Change(xlPierAndPad.foundation_depth, sqlPierAndPad.foundation_depth, 1, "Foundation_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_width_1, sqlPierAndPad.pad_width_1, 1, "Pad_Width_1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_width_2, sqlPierAndPad.pad_width_2, 1, "Pad_Width_2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_thickness, sqlPierAndPad.pad_thickness, 1, "Pad_Thickness") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir1, sqlPierAndPad.pad_rebar_size_top_dir1, 1, "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir1, sqlPierAndPad.pad_rebar_size_bottom_dir1, 1, "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir2, sqlPierAndPad.pad_rebar_size_top_dir2, 1, "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir2, sqlPierAndPad.pad_rebar_size_bottom_dir2, 1, "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir1, sqlPierAndPad.pad_rebar_quantity_top_dir1, 1, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir1, sqlPierAndPad.pad_rebar_quantity_bottom_dir1, 1, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir2, sqlPierAndPad.pad_rebar_quantity_top_dir2, 1, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir2, sqlPierAndPad.pad_rebar_quantity_bottom_dir2, 1, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_clear_cover, sqlPierAndPad.pad_clear_cover, 1, "Pad_Clear_Cover") Then changesMade = True
+        If Check1Change(xlPierAndPad.rebar_grade, sqlPierAndPad.rebar_grade, 1, "Rebar_Grade") Then changesMade = True
+        If Check1Change(xlPierAndPad.concrete_compressive_strength, sqlPierAndPad.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlPierAndPad.dry_concrete_density, sqlPierAndPad.dry_concrete_density, 1, "Dry_Concrete_Density") Then changesMade = True
+        If Check1Change(xlPierAndPad.total_soil_unit_weight, sqlPierAndPad.total_soil_unit_weight, 1, "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(xlPierAndPad.bearing_type, sqlPierAndPad.bearing_type, 1, "Bearing_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.nominal_bearing_capacity, sqlPierAndPad.nominal_bearing_capacity, 1, "Nominal_Bearing_Capacity") Then changesMade = True
+        If Check1Change(xlPierAndPad.cohesion, sqlPierAndPad.cohesion, 1, "Cohesion") Then changesMade = True
+        If Check1Change(xlPierAndPad.friction_angle, sqlPierAndPad.friction_angle, 1, "Friction_Angle") Then changesMade = True
+        If Check1Change(xlPierAndPad.spt_blow_count, sqlPierAndPad.spt_blow_count, 1, "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(xlPierAndPad.base_friction_factor, sqlPierAndPad.base_friction_factor, 1, "Base_Friction_Factor") Then changesMade = True
+        If Check1Change(xlPierAndPad.neglect_depth, sqlPierAndPad.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.bearing_distribution_type, sqlPierAndPad.bearing_distribution_type, 1, "Bearing_Distribution_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.groundwater_depth, sqlPierAndPad.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.top_and_bottom_rebar_different, sqlPierAndPad.top_and_bottom_rebar_different, 1, "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(xlPierAndPad.block_foundation, sqlPierAndPad.block_foundation, 1, "Block_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.rectangular_foundation, sqlPierAndPad.rectangular_foundation, 1, "Rectangular_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.base_plate_distance_above_foundation, sqlPierAndPad.base_plate_distance_above_foundation, 1, "Base_Plate_Distance_Above_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.bolt_circle_bearing_plate_width, sqlPierAndPad.bolt_circle_bearing_plate_width, 1, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_rebar_quantity, sqlPierAndPad.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlPierAndPad.basic_soil_check, sqlPierAndPad.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlPierAndPad.structural_check, sqlPierAndPad.structural_check, 1, "Structural_Check") Then changesMade = True
+        If Check1Change(xlPierAndPad.tool_version, sqlPierAndPad.tool_version, 1, "Tool_Version") Then changesMade = True
 
-    'For Each itm As EXCELRngParameter In myLst
-    '    If itm.variableName = "pp_id" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "extension_above_grade" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "foundation_depth" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "concrete_compressive_strength" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "dry_concrete_density" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "rebar_grade" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "top_and_bottom_rebar_different" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "block_foundation" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "rectangular_foundation" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "base_plate_distance_above_foundation" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "bolt_circle_bearing_plate_width" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_shape" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_diameter" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_rebar_quantity" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_rebar_size" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_tie_quantity" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_tie_size" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_reinforcement_type" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pier_clear_cover" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_width_1" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_width_2" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_thickness" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_size_top_dir1" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_size_bottom_dir1" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_size_top_dir2" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_size_bottom_dir2" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_quantity_top_dir1" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_quantity_bottom_dir1" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_quantity_top_dir2" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_rebar_quantity_bottom_dir2" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "pad_clear_cover" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "total_soil_unit_weight" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "bearing_type" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "nominal_bearing_capacity" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "cohesion" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "friction_angle" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "spt_blow_count" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "base_friction_factor" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "neglect_depth" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "bearing_distribution_type" Then
-    '        myvar = itm.rangeValue
-    '    ElseIf itm.rangeName = "groundwater_depth" Then
-    '        myvar = itm.rangeValue
-    '    End If
-    'Next
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
 
-    'End Function
+    End Function
+
+    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+        'Create your string based on data in the datatable
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+
+        'write to text file
+        'End Sub
+    End Function
+
+    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+            Return True
+        End If
+    End Function
 #End Region
 
 End Class
+
+
+'Class PierAndPadAnalysisChanges
+'    Property PreviousValue As String
+'    Property NewValue As String
+'    Property Name As String
+'    Property PartofDatabase As String
+
+'    Public Sub New(prev As String, Newval As String, name As String, db As String)
+'        Me.PreviousValue = prev
+'        Me.NewValue = Newval
+'        Me.Name = name
+'        Me.PartofDatabase = db
+'    End Sub
+'End Class
