@@ -2,7 +2,7 @@
 
 SELECT 
 	fd.foundation_type --might need to remove/adjust
-    ,smx.ID 
+    --,smx.ID
     ,sm.ID model_id
     ,fg.ID foundation_group_id
     ,fd.ID foundation_id
