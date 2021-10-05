@@ -79,4 +79,3 @@ WHERE
     AND sm.foundation_group_id=fg.ID
     AND fg.ID=fd.foundation_group_id
     AND fd.details_id=pd.ID
-
