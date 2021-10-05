@@ -17,7 +17,8 @@ Partial Public Class Pile
     Private prop_pile_soil_capacity_given As Boolean
     Private prop_steel_yield_strength As Double?
     Private prop_pile_type_option As String
-    Private prop_rebar_quantity As Integer?
+    'Private prop_rebar_quantity As Integer? -Adjusting some integers to Double
+    Private prop_rebar_quantity As Double?
     Private prop_pile_group_config As String
     Private prop_foundation_depth As Double?
     Private prop_pad_thickness As Double?
@@ -25,15 +26,21 @@ Partial Public Class Pile
     Private prop_pad_width_dir2 As Double?
     Private prop_pad_rebar_size_bottom As Integer?
     Private prop_pad_rebar_size_top As Integer?
-    Private prop_pad_rebar_quantity_bottom_dir1 As Integer?
-    Private prop_pad_rebar_quantity_top_dir1 As Integer?
-    Private prop_pad_rebar_quantity_bottom_dir2 As Integer?
-    Private prop_pad_rebar_quantity_top_dir2 As Integer?
+    'Private prop_pad_rebar_quantity_bottom_dir1 As Integer?
+    Private prop_pad_rebar_quantity_bottom_dir1 As Double?
+    'Private prop_pad_rebar_quantity_top_dir1 As Integer?
+    Private prop_pad_rebar_quantity_top_dir1 As Double?
+    'Private prop_pad_rebar_quantity_bottom_dir2 As Integer?
+    Private prop_pad_rebar_quantity_bottom_dir2 As Double?
+    'Private prop_pad_rebar_quantity_top_dir2 As Integer?
+    Private prop_pad_rebar_quantity_top_dir2 As Double?
     Private prop_pier_shape As String
-    Private prop_pier_diameter As Integer?
+    'Private prop_pier_diameter As Integer?
+    Private prop_pier_diameter As Double?
     Private prop_extension_above_grade As Double?
     Private prop_pier_rebar_size As Integer?
-    Private prop_pier_rebar_quantity As Integer?
+    'Private prop_pier_rebar_quantity As Integer?
+    Private prop_pier_rebar_quantity As Double?
     Private prop_pier_tie_size As Integer?
     'Private prop_pier_tie_quantity As Integer? '(Remove, not applicable for Piles. Need to remove from SQL Database)
     Private prop_rebar_grade As Double?
@@ -43,7 +50,8 @@ Partial Public Class Pile
     Private prop_cohesion As Double?
     Private prop_friction_angle As Double?
     Private prop_neglect_depth As Double?
-    Private prop_spt_blow_count As Integer?
+    'Private prop_spt_blow_count As Integer?
+    Private prop_spt_blow_count As Double?
     Private prop_pile_negative_friction_force As Double?
     Private prop_pile_ultimate_compression As Double?
     Private prop_pile_ultimate_tension As Double?
@@ -51,20 +59,28 @@ Partial Public Class Pile
     'Private prop_top_and_bottom_rebar_different As String
     Private prop_ultimate_gross_end_bearing As Double?
     Private prop_skin_friction_given As Boolean
-    Private prop_pile_quantity_circular As Integer?
+    'Private prop_pile_quantity_circular As Integer?
+    Private prop_pile_quantity_circular As Double?
     Private prop_group_diameter_circular As Double?
-    Private prop_pile_column_quantity As Integer?
-    Private prop_pile_row_quantity As Integer?
+    'Private prop_pile_column_quantity As Integer?
+    Private prop_pile_column_quantity As Double?
+    'Private prop_pile_row_quantity As Integer?
+    Private prop_pile_row_quantity As Double?
     Private prop_pile_columns_spacing As Double?
     Private prop_pile_row_spacing As Double?
     Private prop_group_efficiency_factor_given As Boolean
     Private prop_group_efficiency_factor As Double?
     Private prop_cap_type As String
-    Private prop_pile_quantity_asymmetric As Integer?
+    'Private prop_pile_quantity_asymmetric As Integer?
+    Private prop_pile_quantity_asymmetric As Double?
     Private prop_pile_spacing_min_asymmetric As Double?
-    Private prop_quantity_piles_surrounding As Integer?
+    'Private prop_quantity_piles_surrounding As Integer?
+    Private prop_quantity_piles_surrounding As Double?
     Private prop_pile_cap_reference As String
     'Private prop_change_flag As Boolean
+    Private prop_tool_version As String
+    Private prop_Soil_110 As Boolean
+    Private prop_Structural_105 As Boolean
     Public Property soil_layers As New List(Of PileSoilLayer)
     Public Property pile_locations As New List(Of PileLocation)
     <Category("Pile Details"), Description(""), DisplayName("Pile_Id")>
@@ -167,7 +183,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Rebar_Quantity")>
-    Public Property rebar_quantity() As Integer?
+    Public Property rebar_quantity() As Double?
         Get
             Return Me.prop_rebar_quantity
         End Get
@@ -239,7 +255,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pad_Rebar_Quantity_Bottom_Dir1")>
-    Public Property pad_rebar_quantity_bottom_dir1() As Integer?
+    Public Property pad_rebar_quantity_bottom_dir1() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_bottom_dir1
         End Get
@@ -248,7 +264,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pad_Rebar_Quantity_Top_Dir1")>
-    Public Property pad_rebar_quantity_top_dir1() As Integer?
+    Public Property pad_rebar_quantity_top_dir1() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_top_dir1
         End Get
@@ -257,7 +273,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pad_Rebar_Quantity_Bottom_Dir2")>
-    Public Property pad_rebar_quantity_bottom_dir2() As Integer?
+    Public Property pad_rebar_quantity_bottom_dir2() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_bottom_dir2
         End Get
@@ -266,7 +282,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pad_Rebar_Quantity_Top_Dir2")>
-    Public Property pad_rebar_quantity_top_dir2() As Integer?
+    Public Property pad_rebar_quantity_top_dir2() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_top_dir2
         End Get
@@ -284,7 +300,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pier_Diameter")>
-    Public Property pier_diameter() As Integer?
+    Public Property pier_diameter() As Double?
         Get
             Return Me.prop_pier_diameter
         End Get
@@ -311,7 +327,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pier_Rebar_Quantity")>
-    Public Property pier_rebar_quantity() As Integer?
+    Public Property pier_rebar_quantity() As Double?
         Get
             Return Me.prop_pier_rebar_quantity
         End Get
@@ -401,7 +417,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Spt_Blow_Count")>
-    Public Property spt_blow_count() As Integer?
+    Public Property spt_blow_count() As Double?
         Get
             Return Me.prop_spt_blow_count
         End Get
@@ -464,7 +480,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pile_Quantity_Circular")>
-    Public Property pile_quantity_circular() As Integer?
+    Public Property pile_quantity_circular() As Double?
         Get
             Return Me.prop_pile_quantity_circular
         End Get
@@ -482,7 +498,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pile_Column_Quantity")>
-    Public Property pile_column_quantity() As Integer?
+    Public Property pile_column_quantity() As Double?
         Get
             Return Me.prop_pile_column_quantity
         End Get
@@ -491,7 +507,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pile_Row_Quantity")>
-    Public Property pile_row_quantity() As Integer?
+    Public Property pile_row_quantity() As Double?
         Get
             Return Me.prop_pile_row_quantity
         End Get
@@ -545,7 +561,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Pile_Quantity_Asymmetric")>
-    Public Property pile_quantity_asymmetric() As Integer?
+    Public Property pile_quantity_asymmetric() As Double?
         Get
             Return Me.prop_pile_quantity_asymmetric
         End Get
@@ -563,7 +579,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile Details"), Description(""), DisplayName("Quantity_Piles_Surrounding")>
-    Public Property quantity_piles_surrounding() As Integer?
+    Public Property quantity_piles_surrounding() As Double?
         Get
             Return Me.prop_quantity_piles_surrounding
         End Get
@@ -580,15 +596,34 @@ Partial Public Class Pile
             Me.prop_pile_cap_reference = Value
         End Set
     End Property
-    '<Category("Pile Details"), Description(""), DisplayName("Change_Flag")>
-    'Public Property change_flag() As Boolean
-    '    Get
-    '        Return Me.prop_change_flag
-    '    End Get
-    '    Set
-    '        Me.prop_change_flag = Value
-    '    End Set
-    'End Property
+    <Category("Pile Details"), Description(""), DisplayName("Tool_Version")>
+    Public Property tool_version() As String
+        Get
+            Return Me.prop_tool_version
+        End Get
+        Set
+            Me.prop_tool_version = Value
+        End Set
+    End Property
+    <Category("Pile Details"), Description(""), DisplayName("Soil_110")>
+    Public Property Soil_110() As Boolean
+        Get
+            Return Me.prop_Soil_110
+        End Get
+        Set
+            Me.prop_Soil_110 = Value
+        End Set
+    End Property
+    <Category("Pile Details"), Description(""), DisplayName("Structural_105")>
+    Public Property Structural_105() As Boolean
+        Get
+            Return Me.prop_Structural_105
+        End Get
+        Set
+            Me.prop_Structural_105 = Value
+        End Set
+    End Property
+
 #End Region
 
 #Region "Constructors"
@@ -677,8 +712,8 @@ Partial Public Class Pile
             Me.pile_type_option = ""
         End Try 'Pile_Type_Option
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("rebar_quantity"), Integer)) Then
-                Me.rebar_quantity = CType(PileDataRow.Item("rebar_quantity"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("rebar_quantity"), Double)) Then
+                Me.rebar_quantity = CType(PileDataRow.Item("rebar_quantity"), Double)
             Else
                 Me.rebar_quantity = Nothing
             End If
@@ -745,8 +780,8 @@ Partial Public Class Pile
             Me.pad_rebar_size_top = Nothing
         End Try 'Pad_Rebar_Size_Top
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir1"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir1 = CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir1"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir1 = CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir1 = Nothing
             End If
@@ -754,8 +789,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_bottom_dir1 = Nothing
         End Try 'Pad_Rebar_Quantity_Bottom_Dir1
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir1 = CType(PileDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_top_dir1"), Double)) Then
+                Me.pad_rebar_quantity_top_dir1 = CType(PileDataRow.Item("pad_rebar_quantity_top_dir1"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir1 = Nothing
             End If
@@ -763,8 +798,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_top_dir1 = Nothing
         End Try 'Pad_Rebar_Quantity_Top_Dir1
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir2"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir2 = CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir2"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir2 = CType(PileDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir2 = Nothing
             End If
@@ -772,8 +807,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_bottom_dir2 = Nothing
         End Try 'Pad_Rebar_Quantity_Bottom_Dir2
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_top_dir2"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir2 = CType(PileDataRow.Item("pad_rebar_quantity_top_dir2"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pad_rebar_quantity_top_dir2"), Double)) Then
+                Me.pad_rebar_quantity_top_dir2 = CType(PileDataRow.Item("pad_rebar_quantity_top_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir2 = Nothing
             End If
@@ -790,8 +825,8 @@ Partial Public Class Pile
             Me.pier_shape = ""
         End Try 'Pier_Shape
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pier_diameter"), Integer)) Then
-                Me.pier_diameter = CType(PileDataRow.Item("pier_diameter"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pier_diameter"), Double)) Then
+                Me.pier_diameter = CType(PileDataRow.Item("pier_diameter"), Double)
             Else
                 Me.pier_diameter = Nothing
             End If
@@ -817,8 +852,8 @@ Partial Public Class Pile
             Me.pier_rebar_size = Nothing
         End Try 'Pier_Rebar_Size
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pier_rebar_quantity"), Integer)) Then
-                Me.pier_rebar_quantity = CType(PileDataRow.Item("pier_rebar_quantity"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pier_rebar_quantity"), Double)) Then
+                Me.pier_rebar_quantity = CType(PileDataRow.Item("pier_rebar_quantity"), Double)
             Else
                 Me.pier_rebar_quantity = Nothing
             End If
@@ -907,8 +942,8 @@ Partial Public Class Pile
             Me.neglect_depth = Nothing
         End Try 'Neglect_Depth
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("spt_blow_count"), Integer)) Then
-                Me.spt_blow_count = CType(PileDataRow.Item("spt_blow_count"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("spt_blow_count"), Double)) Then
+                Me.spt_blow_count = CType(PileDataRow.Item("spt_blow_count"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If
@@ -962,8 +997,8 @@ Partial Public Class Pile
             Me.skin_friction_given = False
         End Try 'Skin_Friction_Given
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pile_quantity_circular"), Integer)) Then
-                Me.pile_quantity_circular = CType(PileDataRow.Item("pile_quantity_circular"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pile_quantity_circular"), Double)) Then
+                Me.pile_quantity_circular = CType(PileDataRow.Item("pile_quantity_circular"), Double)
             Else
                 Me.pile_quantity_circular = Nothing
             End If
@@ -980,8 +1015,8 @@ Partial Public Class Pile
             Me.group_diameter_circular = Nothing
         End Try 'Group_Diameter_Circular
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pile_column_quantity"), Integer)) Then
-                Me.pile_column_quantity = CType(PileDataRow.Item("pile_column_quantity"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pile_column_quantity"), Double)) Then
+                Me.pile_column_quantity = CType(PileDataRow.Item("pile_column_quantity"), Double)
             Else
                 Me.pile_column_quantity = Nothing
             End If
@@ -989,8 +1024,8 @@ Partial Public Class Pile
             Me.pile_column_quantity = Nothing
         End Try 'Pile_Column_Quantity
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pile_row_quantity"), Integer)) Then
-                Me.pile_row_quantity = CType(PileDataRow.Item("pile_row_quantity"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pile_row_quantity"), Double)) Then
+                Me.pile_row_quantity = CType(PileDataRow.Item("pile_row_quantity"), Double)
             Else
                 Me.pile_row_quantity = Nothing
             End If
@@ -1035,8 +1070,8 @@ Partial Public Class Pile
             Me.cap_type = ""
         End Try 'Cap_Type
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("pile_quantity_asymmetric"), Integer)) Then
-                Me.pile_quantity_asymmetric = CType(PileDataRow.Item("pile_quantity_asymmetric"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("pile_quantity_asymmetric"), Double)) Then
+                Me.pile_quantity_asymmetric = CType(PileDataRow.Item("pile_quantity_asymmetric"), Double)
             Else
                 Me.pile_quantity_asymmetric = Nothing
             End If
@@ -1053,8 +1088,8 @@ Partial Public Class Pile
             Me.pile_spacing_min_asymmetric = Nothing
         End Try 'Pile_Spacing_Min_Asymmetric
         Try
-            If Not IsDBNull(CType(PileDataRow.Item("quantity_piles_surrounding"), Integer)) Then
-                Me.quantity_piles_surrounding = CType(PileDataRow.Item("quantity_piles_surrounding"), Integer)
+            If Not IsDBNull(CType(PileDataRow.Item("quantity_piles_surrounding"), Double)) Then
+                Me.quantity_piles_surrounding = CType(PileDataRow.Item("quantity_piles_surrounding"), Double)
             Else
                 Me.quantity_piles_surrounding = Nothing
             End If
@@ -1066,6 +1101,21 @@ Partial Public Class Pile
         Catch
             Me.pile_cap_reference = ""
         End Try 'Cap_Type
+        Try
+            Me.tool_version = CType(PileDataRow.Item("tool_version"), String)
+        Catch
+            Me.tool_version = ""
+        End Try 'Tool_Version
+        Try
+            Me.Soil_110 = CType(PileDataRow.Item("Soil_110"), Boolean)
+        Catch
+            Me.Soil_110 = True
+        End Try 'Soil_110
+        Try
+            Me.Structural_105 = CType(PileDataRow.Item("Structural_105"), Boolean)
+        Catch
+            Me.Structural_105 = True
+        End Try 'Structural_105
 
         If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
             For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
@@ -1172,8 +1222,8 @@ Partial Public Class Pile
             Me.pile_type_option = ""
         End Try 'Pile_Type_Option
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "Pquan"), Integer)) Then
-                Me.rebar_quantity = CType(GetOneExcelRange(path, "Pquan"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "Pquan"), Double)) Then
+                Me.rebar_quantity = CType(GetOneExcelRange(path, "Pquan"), Double)
             Else
                 Me.rebar_quantity = Nothing
             End If
@@ -1240,8 +1290,8 @@ Partial Public Class Pile
             Me.pad_rebar_size_top = Nothing
         End Try 'Pad_Rebar_Size_Top
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir1 = CType(GetOneExcelRange(path, "Mpad"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir1 = CType(GetOneExcelRange(path, "Mpad"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir1 = Nothing
             End If
@@ -1249,8 +1299,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_bottom_dir1 = Nothing
         End Try 'Pad_Rebar_Quantity_Bottom_Dir1
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_top"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir1 = CType(GetOneExcelRange(path, "Mpad_top"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_top"), Double)) Then
+                Me.pad_rebar_quantity_top_dir1 = CType(GetOneExcelRange(path, "Mpad_top"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir1 = Nothing
             End If
@@ -1258,8 +1308,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_top_dir1 = Nothing
         End Try 'Pad_Rebar_Quantity_Top_Dir1
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_y"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir2 = CType(GetOneExcelRange(path, "Mpad_y"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_y"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir2 = CType(GetOneExcelRange(path, "Mpad_y"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir2 = Nothing
             End If
@@ -1267,8 +1317,8 @@ Partial Public Class Pile
             Me.pad_rebar_quantity_bottom_dir2 = Nothing
         End Try 'Pad_Rebar_Quantity_Bottom_Dir2
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_y_top"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir2 = CType(GetOneExcelRange(path, "Mpad_y_top"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "Mpad_y_top"), Double)) Then
+                Me.pad_rebar_quantity_top_dir2 = CType(GetOneExcelRange(path, "Mpad_y_top"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir2 = Nothing
             End If
@@ -1285,8 +1335,8 @@ Partial Public Class Pile
             Me.pier_shape = ""
         End Try 'Pier_Shape
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "di"), Integer)) Then
-                Me.pier_diameter = CType(GetOneExcelRange(path, "di"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "di"), Double)) Then
+                Me.pier_diameter = CType(GetOneExcelRange(path, "di"), Double)
             Else
                 Me.pier_diameter = Nothing
             End If
@@ -1312,8 +1362,8 @@ Partial Public Class Pile
             Me.pier_rebar_size = Nothing
         End Try 'Pier_Rebar_Size
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mc"), Integer)) Then
-                Me.pier_rebar_quantity = CType(GetOneExcelRange(path, "mc"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mc"), Double)) Then
+                Me.pier_rebar_quantity = CType(GetOneExcelRange(path, "mc"), Double)
             Else
                 Me.pier_rebar_quantity = Nothing
             End If
@@ -1402,8 +1452,8 @@ Partial Public Class Pile
             Me.neglect_depth = Nothing
         End Try 'Neglect_Depth
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "N_blows"), Integer)) Then
-                Me.spt_blow_count = CType(GetOneExcelRange(path, "N_blows"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "N_blows"), Double)) Then
+                Me.spt_blow_count = CType(GetOneExcelRange(path, "N_blows"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If
@@ -1463,8 +1513,8 @@ Partial Public Class Pile
         End Try 'Skin_Friction_Given
         If Me.pile_group_config = "Circular" Then
             Try
-                If Not IsNothing(CType(GetOneExcelRange(path, "D36", "Input"), Integer)) Then
-                    Me.pile_quantity_circular = CType(GetOneExcelRange(path, "D36", "Input"), Integer)
+                If Not IsNothing(CType(GetOneExcelRange(path, "D36", "Input"), Double)) Then
+                    Me.pile_quantity_circular = CType(GetOneExcelRange(path, "D36", "Input"), Double)
                 Else
                     Me.pile_quantity_circular = Nothing
                 End If
@@ -1483,8 +1533,8 @@ Partial Public Class Pile
         End If
         If Me.pile_group_config = "Rectangular" Then
             Try
-                If Not IsNothing(CType(GetOneExcelRange(path, "D36", "Input"), Integer)) Then
-                    Me.pile_column_quantity = CType(GetOneExcelRange(path, "D36", "Input"), Integer)
+                If Not IsNothing(CType(GetOneExcelRange(path, "D36", "Input"), Double)) Then
+                    Me.pile_column_quantity = CType(GetOneExcelRange(path, "D36", "Input"), Double)
                 Else
                     Me.pile_column_quantity = Nothing
                 End If
@@ -1492,8 +1542,8 @@ Partial Public Class Pile
                 Me.pile_column_quantity = Nothing
             End Try 'Pile_Column_Quantity
             Try
-                If Not IsNothing(CType(GetOneExcelRange(path, "D37", "Input"), Integer)) Then
-                    Me.pile_row_quantity = CType(GetOneExcelRange(path, "D37", "Input"), Integer)
+                If Not IsNothing(CType(GetOneExcelRange(path, "D37", "Input"), Double)) Then
+                    Me.pile_row_quantity = CType(GetOneExcelRange(path, "D37", "Input"), Double)
                 Else
                     Me.pile_row_quantity = Nothing
                 End If
@@ -1543,8 +1593,8 @@ Partial Public Class Pile
             Me.cap_type = ""
         End Try 'Cap_Type
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "D10", "Moment of Inertia"), Integer)) Then
-                Me.pile_quantity_asymmetric = CType(GetOneExcelRange(path, "D10", "Moment of Inertia"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "D10", "Moment of Inertia"), Double)) Then
+                Me.pile_quantity_asymmetric = CType(GetOneExcelRange(path, "D10", "Moment of Inertia"), Double)
             Else
                 Me.pile_quantity_asymmetric = Nothing
             End If
@@ -1561,8 +1611,8 @@ Partial Public Class Pile
             Me.pile_spacing_min_asymmetric = Nothing
         End Try 'Pile_Spacing_Min_Asymmetric
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "D12", "Moment of Inertia"), Integer)) Then
-                Me.quantity_piles_surrounding = CType(GetOneExcelRange(path, "D12", "Moment of Inertia"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "D12", "Moment of Inertia"), Double)) Then
+                Me.quantity_piles_surrounding = CType(GetOneExcelRange(path, "D12", "Moment of Inertia"), Double)
             Else
                 Me.quantity_piles_surrounding = Nothing
             End If
@@ -1574,6 +1624,21 @@ Partial Public Class Pile
         Catch
             Me.pile_cap_reference = ""
         End Try 'Cap_Type
+        Try
+            Me.tool_version = CType(GetOneExcelRange(path, "Revision"), String)
+        Catch
+            Me.tool_version = ""
+        End Try 'Tool_Version
+        Try
+            Me.Soil_110 = CType(GetOneExcelRange(path, "Z13", "Input"), Boolean)
+        Catch
+            Me.Soil_110 = True
+        End Try 'Soil_110
+        Try
+            Me.Structural_105 = CType(GetOneExcelRange(path, "Z14", "Input"), Boolean)
+        Catch
+            Me.Structural_105 = True
+        End Try 'Structural_105
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil EXCEL").Rows
             Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
@@ -1666,7 +1731,8 @@ Partial Public Class PileSoilLayer
     Private prop_cohesion As Double?
     Private prop_friction_angle As Double?
     'Private prop_skin_friction_override_uplift As Double?
-    Private prop_spt_blow_count As Integer?
+    'Private prop_spt_blow_count As Integer?
+    Private prop_spt_blow_count As Double?
     Private prop_ultimate_skin_friction_comp As Double?
     Private prop_ultimate_skin_friction_uplift As Double?
     <Category("Pile Soil Layer"), Description(""), DisplayName("Soil_Layer_Id")>
@@ -1724,7 +1790,7 @@ Partial Public Class PileSoilLayer
     '    End Set
     'End Property
     <Category("Pile Soil Layer"), Description(""), DisplayName("Spt_Blow_Count")>
-    Public Property spt_blow_count() As Integer?
+    Public Property spt_blow_count() As Double?
         Get
             Return Me.prop_spt_blow_count
         End Get
@@ -1809,8 +1875,8 @@ Partial Public Class PileSoilLayer
         '    Me.skin_friction_override_uplift = Nothing
         'End Try 'Skin_Friction_Override_Uplift
         Try
-            If Not IsDBNull(CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)) Then
-                Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)
+            If Not IsDBNull(CType(SoilLayerDataRow.Item("spt_blow_count"), Double)) Then
+                Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If

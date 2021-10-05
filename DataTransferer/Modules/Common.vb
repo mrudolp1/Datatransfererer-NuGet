@@ -5,7 +5,7 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "870074"
+    Public BUNumber As String = "1879444"
     Public STR_ID As String = "A"
     Public CurWO As String = "1234567"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
@@ -68,6 +68,7 @@ Public Module Common
         options.ImportSettings = importSettings
         options.SkipHiddenColumns = False
         options.SkipHiddenRows = False
+        options.UseFirstRowAsHeader = False
 
         exDS.FileName = path
         exDS.SourceOptions = options
@@ -75,7 +76,8 @@ Public Module Common
 
         val = ExcelDatasourceToDataTable(exDS, ws & "|" & rng)
 
-        Return val.Columns(0).ColumnName
+        Return val.Rows(0).ItemArray(0)
+        'Return val.Columns(0).ColumnName
     End Function
 
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource

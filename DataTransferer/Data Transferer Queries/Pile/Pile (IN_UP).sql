@@ -37,16 +37,18 @@ DECLARE @PileNeeded BIT --NEW
 IF EXISTS(SELECT * FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID) 
 BEGIN
 	--If exists, select model_id from structure_model_xref
-	INSERT INTO @Model (ModelID) SELECT model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID ORDER BY model_id
+	INSERT INTO @Model (ModelID) SELECT model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID AND isActive='True' --ORDER BY model_id
 	SELECT @ModelID=ModelID FROM @Model
 	--If changes occurred with any field in structure_model table, create new model ID for reference
 	IF @ModelNeeded = 1 --TRUE (Reference ismodelneeded)
 	BEGIN
+		--Update status to FALSE for existing model_id
+		UPDATE gen.structure_model_xref Set isActive='False' WHERE model_id=@ModelID
 		--Create new Model ID by copying previous data and pasting new row into Structure_model
 		INSERT INTO gen.structure_model (connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id) OUTPUT Inserted.id INTO @Model SELECT connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id FROM gen.structure_model WHERE id=@ModelID
 		SELECT @ModelID=ModelID FROM @Model
 		--Create new row in structure_model_xref, associating BU to newly created Model ID
-		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id) VALUES (@ModelID,@BU,@STR_ID)
+		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 	END
 END
 ELSE
@@ -55,7 +57,7 @@ BEGIN
 	INSERT INTO gen.structure_model OUTPUT Inserted.ID INTO @Model DEFAULT VALUES
 	SELECT @ModelID=ModelID FROM @Model
 	--Create new row in structure_model_xref, associating BU to newly created Model ID
-	INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id) VALUES (@ModelID,@BU,@STR_ID)
+	INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 END--Select existing model ID or insert new
 
 
@@ -87,7 +89,7 @@ BEGIN
 	IF @PileNeeded = 1 --TRUE  
 	BEGIN
 		--INSERT Details
-		INSERT INTO fnd.pile_details (load_eccentricity,bolt_circle_bearing_plate_width,pile_shape,pile_material,pile_length,pile_diameter_width,pile_pipe_thickness,pile_soil_capacity_given,steel_yield_strength,pile_type_option,rebar_quantity,pile_group_config,foundation_depth,pad_thickness,pad_width_dir1,pad_width_dir2,pad_rebar_size_bottom,pad_rebar_size_top,pad_rebar_quantity_bottom_dir1,pad_rebar_quantity_top_dir1,pad_rebar_quantity_bottom_dir2,pad_rebar_quantity_top_dir2,pier_shape,pier_diameter,extension_above_grade,pier_rebar_size,pier_rebar_quantity,pier_tie_size,rebar_grade,concrete_compressive_strength,groundwater_depth,total_soil_unit_weight,cohesion,friction_angle,neglect_depth,spt_blow_count,pile_negative_friction_force,pile_ultimate_compression,pile_ultimate_tension,top_and_bottom_rebar_different,ultimate_gross_end_bearing,skin_friction_given,pile_quantity_circular,group_diameter_circular,pile_column_quantity,pile_row_quantity,pile_columns_spacing,pile_row_spacing,group_efficiency_factor_given,group_efficiency_factor,cap_type,pile_quantity_asymmetric,pile_spacing_min_asymmetric,quantity_piles_surrounding,pile_cap_reference) OUTPUT INSERTED.ID INTO @Pile VALUES ([INSERT ALL PILE DETAILS])
+		INSERT INTO fnd.pile_details (load_eccentricity,bolt_circle_bearing_plate_width,pile_shape,pile_material,pile_length,pile_diameter_width,pile_pipe_thickness,pile_soil_capacity_given,steel_yield_strength,pile_type_option,rebar_quantity,pile_group_config,foundation_depth,pad_thickness,pad_width_dir1,pad_width_dir2,pad_rebar_size_bottom,pad_rebar_size_top,pad_rebar_quantity_bottom_dir1,pad_rebar_quantity_top_dir1,pad_rebar_quantity_bottom_dir2,pad_rebar_quantity_top_dir2,pier_shape,pier_diameter,extension_above_grade,pier_rebar_size,pier_rebar_quantity,pier_tie_size,rebar_grade,concrete_compressive_strength,groundwater_depth,total_soil_unit_weight,cohesion,friction_angle,neglect_depth,spt_blow_count,pile_negative_friction_force,pile_ultimate_compression,pile_ultimate_tension,top_and_bottom_rebar_different,ultimate_gross_end_bearing,skin_friction_given,pile_quantity_circular,group_diameter_circular,pile_column_quantity,pile_row_quantity,pile_columns_spacing,pile_row_spacing,group_efficiency_factor_given,group_efficiency_factor,cap_type,pile_quantity_asymmetric,pile_spacing_min_asymmetric,quantity_piles_surrounding,pile_cap_reference,tool_version,Soil_110,Structural_105) OUTPUT INSERTED.ID INTO @Pile VALUES ([INSERT ALL PILE DETAILS])
 		SELECT @PID=PID FROM @Pile
 
 		--INSERT Soil Layers 

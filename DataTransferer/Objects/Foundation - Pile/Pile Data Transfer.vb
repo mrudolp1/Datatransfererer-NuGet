@@ -11,7 +11,7 @@ Partial Public Class DataTransfererPile
 
     Public Property Piles As New List(Of Pile)
     Public Property sqlPiles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.5).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.6).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property pileDS As New DataSet
@@ -325,9 +325,16 @@ Partial Public Class DataTransfererPile
                     .Worksheets("Input").Range("D30").Value = CType(pf.steel_yield_strength, Double)
                 Else .Worksheets("Input").Range("D30").ClearContents
                 End If
-                If Not IsNothing(pf.pile_type_option) Then .Worksheets("Input").Range("Psize").Value = pf.pile_type_option
+                'If Not IsNothing(pf.pile_type_option) Then .Worksheets("Input").Range("Psize").Value = pf.pile_type_option
+                If Not IsNothing(pf.pile_type_option) Then
+                    If pf.pile_material = "Concrete" Then
+                        .Worksheets("Input").Range("Psize").Value = CType(pf.pile_type_option, Integer)
+                    Else
+                        .Worksheets("Input").Range("Psize").Value = CType(pf.pile_type_option, String)
+                    End If
+                End If
                 If Not IsNothing(pf.rebar_quantity) Then
-                    .Worksheets("Input").Range("Pquan").Value = CType(pf.rebar_quantity, Integer)
+                    .Worksheets("Input").Range("Pquan").Value = CType(pf.rebar_quantity, Double)
                 Else .Worksheets("Input").Range("Pquan").ClearContents
                 End If
                 If Not IsNothing(pf.pile_group_config) Then .Worksheets("Input").Range("Config").Value = pf.pile_group_config
@@ -356,24 +363,24 @@ Partial Public Class DataTransfererPile
                 Else .Worksheets("Input").Range("Spad_top").ClearContents
                 End If
                 If Not IsNothing(pf.pad_rebar_quantity_bottom_dir1) Then
-                    .Worksheets("Input").Range("Mpad").Value = CType(pf.pad_rebar_quantity_bottom_dir1, Integer)
+                    .Worksheets("Input").Range("Mpad").Value = CType(pf.pad_rebar_quantity_bottom_dir1, Double)
                 Else .Worksheets("Input").Range("Mpad").ClearContents
                 End If
                 If Not IsNothing(pf.pad_rebar_quantity_top_dir1) Then
-                    .Worksheets("Input").Range("Mpad_top").Value = CType(pf.pad_rebar_quantity_top_dir1, Integer)
+                    .Worksheets("Input").Range("Mpad_top").Value = CType(pf.pad_rebar_quantity_top_dir1, Double)
                 Else .Worksheets("Input").Range("Mpad_top").ClearContents
                 End If
                 If Not IsNothing(pf.pad_rebar_quantity_bottom_dir2) Then
-                    .Worksheets("Input").Range("Mpad_y").Value = CType(pf.pad_rebar_quantity_bottom_dir2, Integer)
+                    .Worksheets("Input").Range("Mpad_y").Value = CType(pf.pad_rebar_quantity_bottom_dir2, Double)
                 Else .Worksheets("Input").Range("Mpad_y").ClearContents
                 End If
                 If Not IsNothing(pf.pad_rebar_quantity_top_dir2) Then
-                    .Worksheets("Input").Range("Mpad_y_top").Value = CType(pf.pad_rebar_quantity_top_dir2, Integer)
+                    .Worksheets("Input").Range("Mpad_y_top").Value = CType(pf.pad_rebar_quantity_top_dir2, Double)
                 Else .Worksheets("Input").Range("Mpad_y_top").ClearContents
                 End If
                 If Not IsNothing(pf.pier_shape) Then .Worksheets("Input").Range("D57").Value = pf.pier_shape
                 If Not IsNothing(pf.pier_diameter) Then
-                    .Worksheets("Input").Range("di").Value = CType(pf.pier_diameter, Integer)
+                    .Worksheets("Input").Range("di").Value = CType(pf.pier_diameter, Double)
                 Else .Worksheets("Input").Range("di").ClearContents
                 End If
                 If Not IsNothing(pf.extension_above_grade) Then
@@ -385,7 +392,7 @@ Partial Public Class DataTransfererPile
                 Else .Worksheets("Input").Range("Rs").ClearContents
                 End If
                 If Not IsNothing(pf.pier_rebar_quantity) Then
-                    .Worksheets("Input").Range("mc").Value = CType(pf.pier_rebar_quantity, Integer)
+                    .Worksheets("Input").Range("mc").Value = CType(pf.pier_rebar_quantity, Double)
                 Else .Worksheets("Input").Range("mc").ClearContents
                 End If
                 If Not IsNothing(pf.pier_tie_size) Then
@@ -406,7 +413,8 @@ Partial Public Class DataTransfererPile
                 End If
                 If Not IsNothing(pf.groundwater_depth) Then
                     .Worksheets("Input").Range("D69").Value = CType(pf.groundwater_depth, Double)
-                Else .Worksheets("Input").Range("D69").ClearContents
+                    'Else .Worksheets("Input").Range("D69").ClearContents 'adjusted so will always report N/A if null
+                Else .Worksheets("Input").Range("D69").Value = "N/A"
                 End If
                 If Not IsNothing(pf.total_soil_unit_weight) Then
                     .Worksheets("Input").Range("γsoil_dry").Value = CType(pf.total_soil_unit_weight, Double)
@@ -425,7 +433,7 @@ Partial Public Class DataTransfererPile
                 Else .Worksheets("Input").Range("ND").ClearContents
                 End If
                 If Not IsNothing(pf.spt_blow_count) Then
-                    .Worksheets("Input").Range("N_blows").Value = CType(pf.spt_blow_count, Integer)
+                    .Worksheets("Input").Range("N_blows").Value = CType(pf.spt_blow_count, Double)
                 Else .Worksheets("Input").Range("N_blows").ClearContents
                 End If
                 If Not IsNothing(pf.pile_negative_friction_force) Then
@@ -454,7 +462,7 @@ Partial Public Class DataTransfererPile
 
                 If pf.pile_group_config = "Circular" Then
                     If Not IsNothing(pf.pile_quantity_circular) Then
-                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_quantity_circular, Integer)
+                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_quantity_circular, Double)
                     Else .Worksheets("Input").Range("D36").ClearContents
                     End If
                     If Not IsNothing(pf.group_diameter_circular) Then
@@ -465,11 +473,11 @@ Partial Public Class DataTransfererPile
 
                 If pf.pile_group_config = "Rectangular" Then
                     If Not IsNothing(pf.pile_column_quantity) Then
-                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_column_quantity, Integer)
+                        .Worksheets("Input").Range("D36").Value = CType(pf.pile_column_quantity, Double)
                     Else .Worksheets("Input").Range("D36").ClearContents
                     End If
                     If Not IsNothing(pf.pile_row_quantity) Then
-                        .Worksheets("Input").Range("D37").Value = CType(pf.pile_row_quantity, Integer)
+                        .Worksheets("Input").Range("D37").Value = CType(pf.pile_row_quantity, Double)
                     Else .Worksheets("Input").Range("D37").ClearContents
                     End If
                 End If
@@ -495,7 +503,7 @@ Partial Public Class DataTransfererPile
                 End If
                 If Not IsNothing(pf.cap_type) Then .Worksheets("Input").Range("D45").Value = pf.cap_type
                 If Not IsNothing(pf.pile_quantity_asymmetric) Then
-                    .Worksheets("Moment of Inertia").Range("D10").Value = CType(pf.pile_quantity_asymmetric, Integer)
+                    .Worksheets("Moment of Inertia").Range("D10").Value = CType(pf.pile_quantity_asymmetric, Double)
                 Else .Worksheets("Moment of Inertia").Range("D10").ClearContents
                 End If
                 If Not IsNothing(pf.pile_spacing_min_asymmetric) Then
@@ -503,10 +511,13 @@ Partial Public Class DataTransfererPile
                 Else .Worksheets("Moment of Inertia").Range("D11").ClearContents
                 End If
                 If Not IsNothing(pf.quantity_piles_surrounding) Then
-                    .Worksheets("Moment of Inertia").Range("D12").Value = CType(pf.quantity_piles_surrounding, Integer)
+                    .Worksheets("Moment of Inertia").Range("D12").Value = CType(pf.quantity_piles_surrounding, Double)
                 Else .Worksheets("Moment of Inertia").Range("D12").ClearContents
                 End If
                 If Not IsNothing(pf.pile_cap_reference) Then .Worksheets("Input").Range("G47").Value = pf.pile_cap_reference
+                'If Not IsNothing(pf.tool_version) Then .Worksheets("Revision History").Range("Revision").Value = pf.tool_version
+                If Not IsNothing(pf.Soil_110) Then .Worksheets("Input").Range("Z13").Value = pf.Soil_110
+                If Not IsNothing(pf.Structural_105) Then .Worksheets("Input").Range("Z14").Value = pf.Structural_105
 
                 If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
                     For Each pfSL As PileSoilLayer In pf.soil_layers
@@ -575,7 +586,7 @@ Partial Public Class DataTransfererPile
                         'Else .Worksheets("Input").Range("N54").ClearContents
                         'End If
                         If Not IsNothing(pfSL.spt_blow_count) Then
-                            .Worksheets("Input").Range("L" & soilRow).Value = CType(pfSL.spt_blow_count, Integer)
+                            .Worksheets("Input").Range("L" & soilRow).Value = CType(pfSL.spt_blow_count, Double)
                             'Else .Worksheets("Input").Range("L" & soilRow).ClearContents
                         End If
                         If Not IsNothing(pfSL.ultimate_skin_friction_comp) Then
@@ -638,14 +649,14 @@ Partial Public Class DataTransfererPile
                 End If
 
                 'Resizing Image
-                Try
-                    With .Worksheets("Input").Charts(0)
-                        .Width = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir1, Double) * 4.19 '4.19 multiplier determined through trial and error. 
-                        .Height = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir2, Double) * 4.19
-                    End With
-                Catch
-                    'error handling to avoid dividing by zero
-                End Try
+                'Try
+                '    With .Worksheets("Input").Charts(0)
+                '        .Width = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir1, Double) * 4.19 '4.19 multiplier determined through trial and error. 
+                '        .Height = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir2, Double) * 4.19
+                '    End With
+                'Catch
+                '    'error handling to avoid dividing by zero
+                'End Try
             End With 'follows P&P format
 
             SaveAndClosePile() 'follows P&P format
@@ -703,7 +714,6 @@ Partial Public Class DataTransfererPile
         insertString += "," & IIf(IsNothing(pf.pier_rebar_size), "Null", pf.pier_rebar_size.ToString)
         insertString += "," & IIf(IsNothing(pf.pier_rebar_quantity), "Null", pf.pier_rebar_quantity.ToString)
         insertString += "," & IIf(IsNothing(pf.pier_tie_size), "Null", pf.pier_tie_size.ToString)
-        'insertString += "," & IIf(IsNothing(pf.pier_tie_quantity), "Null", pf.pier_tie_quantity.ToString)
         insertString += "," & IIf(IsNothing(pf.rebar_grade), "Null", pf.rebar_grade.ToString)
         insertString += "," & IIf(IsNothing(pf.concrete_compressive_strength), "Null", pf.concrete_compressive_strength.ToString)
         insertString += "," & IIf(IsNothing(pf.groundwater_depth), "Null", pf.groundwater_depth.ToString)
@@ -731,6 +741,9 @@ Partial Public Class DataTransfererPile
         insertString += "," & IIf(IsNothing(pf.pile_spacing_min_asymmetric), "Null", pf.pile_spacing_min_asymmetric.ToString)
         insertString += "," & IIf(IsNothing(pf.quantity_piles_surrounding), "Null", pf.quantity_piles_surrounding.ToString)
         insertString += "," & IIf(IsNothing(pf.pile_cap_reference), "Null", "'" & pf.pile_cap_reference.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.tool_version), "Null", "'" & pf.tool_version.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.Soil_110), "Null", "'" & pf.Soil_110.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.Structural_105), "Null", "'" & pf.Structural_105.ToString & "'")
 
         Return insertString
     End Function
@@ -960,6 +973,10 @@ Partial Public Class DataTransfererPile
         If Check1Change(xlPile.pile_spacing_min_asymmetric, sqlPile.pile_spacing_min_asymmetric, 1, "Pile_Spacing_Min_Asymmetric") Then changesMade = True
         If Check1Change(xlPile.quantity_piles_surrounding, sqlPile.quantity_piles_surrounding, 1, "Quantity_Piles_Surrounding") Then changesMade = True
         If Check1Change(xlPile.pile_cap_reference, sqlPile.pile_cap_reference, 1, "Pile_Cap_Reference") Then changesMade = True
+        'If Check1Change(xlPile.tool_version, sqlPile.tool_version, 1, "Tool_Version") Then changesMade = True
+        If Check1Change(xlPile.Soil_110, sqlPile.Soil_110, 1, "Soil_110") Then changesMade = True
+        If Check1Change(xlPile.Structural_105, sqlPile.Structural_105, 1, "Structural_105") Then changesMade = True
+
 
         'Check Soil Layer
         'If xlPile.soil_layers.Count <> sqlPile.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below

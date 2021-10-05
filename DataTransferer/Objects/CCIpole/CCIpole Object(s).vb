@@ -55,7 +55,7 @@ Public Class CCIpole
 
         'IEM 9/8/2021
         'SELECT * FROM pole.pole_structure ps, pole.pole_analysis_criteria pac WHERE ps.criteria_id = pac.id
-        Me.criteria = New PoleAnalysisCriteria(PoleStructureDataRow)
+        Me.criteria = New PoleCriteria(PoleStructureDataRow)
     End Sub 'Generate a CCIpole object from EDS or Excel Datarow
 
     'Public Sub New(ByVal path As String)
