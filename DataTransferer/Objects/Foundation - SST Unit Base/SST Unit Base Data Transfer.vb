@@ -107,7 +107,7 @@ Partial Public Class DataTransfererUnitBase
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
-                            isUnitBaseNeeded = True
+                            'isUnitBaseNeeded = True
                         End If
                         Exit For
                     End If
@@ -116,7 +116,7 @@ Partial Public Class DataTransfererUnitBase
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
                 isfndGroupNeeded = True
-                isUnitBaseNeeded = True
+                'isUnitBaseNeeded = True
             End If
         Next
 
@@ -155,12 +155,12 @@ Partial Public Class DataTransfererUnitBase
             UnitBaseSaver = UnitBaseSaver.Replace("'[Fnd GRP ID Needed]'", 0)
         End If
 
-        'Determine if new ID needs created
-        If isUnitBaseNeeded Then
-            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 1)
-        Else
-            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 0)
-        End If
+        ''Determine if new ID needs created
+        'If isUnitBaseNeeded Then
+        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 1)
+        'Else
+        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 0)
+        'End If
 
         UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
 
