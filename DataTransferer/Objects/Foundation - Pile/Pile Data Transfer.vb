@@ -674,6 +674,7 @@ Partial Public Class DataTransfererPile
     End Sub
 
     Private Sub SaveAndClosePile()
+        NewPileWb.Calculate()
         NewPileWb.EndUpdate()
         NewPileWb.SaveDocument(ExcelFilePath, PileFileType)
     End Sub
