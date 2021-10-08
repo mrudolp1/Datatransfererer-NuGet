@@ -5,9 +5,9 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "3811932"
+    Public BUNumber As String = "879481"
     Public STR_ID As String = "A"
-    Public CurWO As String = "8794801"
+    Public CurWO As String = "879481"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details

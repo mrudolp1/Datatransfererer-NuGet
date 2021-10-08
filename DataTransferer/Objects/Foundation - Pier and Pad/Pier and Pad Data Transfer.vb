@@ -11,7 +11,7 @@ Partial Public Class DataTransfererPierandPad
 
     Public Property PierAndPads As New List(Of PierAndPad)
     Public Property sqlPierAndPads As New List(Of PierAndPad)
-    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 9-30-2021.xlsm"
+    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ppDS As New DataSet
@@ -58,7 +58,7 @@ Partial Public Class DataTransfererPierandPad
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
         For Each PierAndPadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
             refid = CType(PierAndPadDataRow.Item("pp_id"), Integer)
-            PierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
+            sqlPierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
         Next
     End Sub
     Public Function LoadFromEDS() As Boolean
@@ -521,7 +521,7 @@ Partial Public Class DataTransfererPierandPad
 
         changeDt.Columns.Add("Variable", Type.GetType("System.String"))
         changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previous Value", Type.GetType("System.String"))
         changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
         'Check Details

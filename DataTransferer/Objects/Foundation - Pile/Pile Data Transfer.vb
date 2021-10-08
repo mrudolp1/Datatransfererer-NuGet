@@ -11,7 +11,7 @@ Partial Public Class DataTransfererPile
 
     Public Property Piles As New List(Of Pile)
     Public Property sqlPiles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.6).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Pile Foundation (2.2.1.6).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property pileDS As New DataSet
