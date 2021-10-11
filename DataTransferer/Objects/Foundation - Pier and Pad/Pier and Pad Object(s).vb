@@ -1402,7 +1402,7 @@ Partial Public Class PierAndPad
             Me.neglect_depth = Nothing
         End Try 'Neglect Depth
         Try
-            If CType(PierandPadDataRow.Item("bearing_distribution_type"), String) = "Yes" Then
+            If CType(PierandPadDataRow.Item("bearing_distribution_type"), String) = "No" Then
                 Me.bearing_distribution_type = False
             Else
                 Me.bearing_distribution_type = True
