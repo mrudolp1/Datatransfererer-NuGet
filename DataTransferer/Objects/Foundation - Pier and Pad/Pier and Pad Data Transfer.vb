@@ -58,7 +58,8 @@ Partial Public Class DataTransfererPierandPad
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
         For Each PierAndPadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
             refid = CType(PierAndPadDataRow.Item("pp_id"), Integer)
-            sqlPierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
+            'sqlPierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
+            ppList.Add(New PierAndPad(PierAndPadDataRow, refid))
         Next
     End Sub
     Public Function LoadFromEDS() As Boolean
@@ -429,6 +430,7 @@ Partial Public Class DataTransfererPierandPad
     End Sub
 
     Private Sub SaveAndClosePierAndPad()
+        NewPierAndPadWb.Calculate()
         NewPierAndPadWb.EndUpdate()
         NewPierAndPadWb.SaveDocument(ExcelFilePath, PierAndPadFileType)
     End Sub

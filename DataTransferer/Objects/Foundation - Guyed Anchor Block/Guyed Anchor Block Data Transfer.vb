@@ -79,7 +79,20 @@ Partial Public Class DataTransfererGuyedAnchorBlock
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
-        GuyedAnchorBlocks.Add(New GuyedAnchorBlock(ExcelFilePath))
+
+        Dim refID As Integer
+        Dim refCol As String
+
+        'Custom Section to transfer data for the tool. Needs to be adjusted for each tool.
+        For Each GuyedAnchorBlockDataRow As DataRow In ds.Tables("Guyed Anchor Block General Details EXCEL").Rows
+
+            refCol = "local_anchor_id"
+            refID = CType(GuyedAnchorBlockDataRow.Item(refCol), Integer)
+
+            GuyedAnchorBlocks.Add(New GuyedAnchorBlock(GuyedAnchorBlockDataRow, refID, refCol))
+        Next
+
+        'GuyedAnchorBlocks.Add(New GuyedAnchorBlock(ExcelFilePath))
 
 
         'Pull SQL data, if applicable, to compare with excel data
@@ -129,98 +142,107 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         Dim mySoils As String = ""
         Dim myProfiles As String = ""
 
-        For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
-            Dim GuyedAnchorBlockSaver As String = QueryBuilderFromFile(queryPath & "Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql")
+        'For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
+
+        Dim GuyedAnchorBlockSaver As String = QueryBuilderFromFile(queryPath & "Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql")
 
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[BU NUMBER]", BUNumber)
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[STRUCTURE ID]", STR_ID)
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[FOUNDATION TYPE]", "Guyed Anchor Block")
-            If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", "NULL")
-            Else
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", gab.anchor_id.ToString)
-            End If
+        If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", "NULL")
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", gab.anchor_id.ToString)
+        End If
 
-            'Determine if new foundation group ID needs created. 
-            If isfndGroupNeeded Then
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 1)
-            Else
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 0)
-            End If
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Model ID Needed]'", 0)
+        End If
 
-            'Determine if new Pile ID needs created
-            If isGuyedAnchorBlockNeeded Then
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 1)
-            Else
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 0)
-            End If
+        'Determine if new foundation group ID needs created. 
+        If isfndGroupNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+        End If
 
-            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+        'Determine if new Guyed Anchor Block ID needs created
+        If isGuyedAnchorBlockNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 0)
+        End If
 
-            If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
-                For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
-                    Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
+        GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
 
-                    If Not firstOne Then
-                        mySoils += ",(" & tempSoilLayer & ")"
-                    Else
-                        mySoils += "(" & tempSoilLayer & ")"
-                    End If
+        If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
+            For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
+                Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
 
-                    firstOne = False
-                Next 'Add Soil Layer INSERT statments
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-                firstOne = True
+                If Not firstOne Then
+                    mySoils += ",(" & tempSoilLayer & ")"
+                Else
+                    mySoils += "(" & tempSoilLayer & ")"
+                End If
 
-                For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
-                    Dim tempGuyedAnchorBlockProfile As String = InsertGuyedAnchorBlockProfile(gabp)
+                firstOne = False
+            Next 'Add Soil Layer INSERT statments
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+            firstOne = True
 
-                    If Not firstOne Then
-                        myProfiles += ",(" & tempGuyedAnchorBlockProfile & ")"
-                    Else
-                        myProfiles += "(" & tempGuyedAnchorBlockProfile & ")"
-                    End If
+            For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
+                Dim tempGuyedAnchorBlockProfile As String = InsertGuyedAnchorBlockProfile(gabp)
 
-                    firstOne = False
-                Next 'Add Pier Profile INSERT statements
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", myProfiles)
-                firstOne = True
-            End If
+                If Not firstOne Then
+                    myProfiles += ",(" & tempGuyedAnchorBlockProfile & ")"
+                Else
+                    myProfiles += "(" & tempGuyedAnchorBlockProfile & ")"
+                End If
 
-            mySoils = ""
-            myProfiles = ""
+                firstOne = False
+            Next 'Add Pier Profile INSERT statements
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", myProfiles)
+            firstOne = True
+        End If
 
-            'Else
-            '    Dim tempUpdater As String = ""
-            '    tempUpdater += UpdateGuyedAnchorBlockDetail(gab)
+        mySoils = ""
+        myProfiles = ""
 
-            '    'comment out soil layer insertion. Added in next step if a layer does not have an ID
-            '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+        'Else
+        '    Dim tempUpdater As String = ""
+        '    tempUpdater += UpdateGuyedAnchorBlockDetail(gab)
 
-            '    For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
-            '        If gabsl.soil_layer_id = 0 Or IsDBNull(gabsl.soil_layer_id) Then
-            '            tempUpdater += "INSERT INTO anchor_soil_layer VALUES (" & InsertGuyedAnchorBlockSoilLayer(gabsl) & ") " & vbNewLine
-            '        Else
-            '            tempUpdater += UpdateGuyedAnchorBlockSoilLayer(gabsl)
-            '        End If
-            '    Next
+        '    'comment out soil layer insertion. Added in next step if a layer does not have an ID
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
 
-            '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", "--INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])")
-            '    For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
-            '        If gabp.profile_id = 0 Or IsDBNull(gabp.profile_id) Then
-            '            tempUpdater += "INSERT INTO anchor_profile VALUES (" & InsertGuyedAnchorBlockProfile(gabp) & ") " & vbNewLine
-            '        Else
-            '            tempUpdater += UpdateGuyedAnchorBlockProfile(gabp)
-            '        End If
-            '    Next
+        '    For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
+        '        If gabsl.soil_layer_id = 0 Or IsDBNull(gabsl.soil_layer_id) Then
+        '            tempUpdater += "INSERT INTO anchor_soil_layer VALUES (" & InsertGuyedAnchorBlockSoilLayer(gabsl) & ") " & vbNewLine
+        '        Else
+        '            tempUpdater += UpdateGuyedAnchorBlockSoilLayer(gabsl)
+        '        End If
+        '    Next
 
-            '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
-            'End If
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", "--INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])")
+        '    For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
+        '        If gabp.profile_id = 0 Or IsDBNull(gabp.profile_id) Then
+        '            tempUpdater += "INSERT INTO anchor_profile VALUES (" & InsertGuyedAnchorBlockProfile(gabp) & ") " & vbNewLine
+        '        Else
+        '            tempUpdater += UpdateGuyedAnchorBlockProfile(gabp)
+        '        End If
+        '    Next
 
-            'GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
+        'End If
 
-            sqlSender(GuyedAnchorBlockSaver, gabDB, gabID, "0")
-        Next
+        'GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+
+        sqlSender(GuyedAnchorBlockSaver, gabDB, gabID, "0")
+
+        'Next
 
     End Sub
 

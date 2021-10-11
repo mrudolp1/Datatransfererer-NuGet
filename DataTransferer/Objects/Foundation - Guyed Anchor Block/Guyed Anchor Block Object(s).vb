@@ -556,10 +556,10 @@ Partial Public Class GuyedAnchorBlock
             If Not IsDBNull(Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_section"), String)) Then
                 Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_sectione"), String)
             Else
-                Me.anchor_shaft_section = Nothing
+                Me.anchor_shaft_section = ""
             End If
         Catch
-            Me.anchor_shaft_section = Nothing
+            Me.anchor_shaft_section = ""
         End Try 'Guyed Anchor Block Anchor Section Type
         Try
             If Not IsDBNull(Me.anchor_rebar_grade = CType(GuyedAnchorBlockDataRow.Item("anchor_rebar_grade"), Double)) Then
@@ -716,369 +716,176 @@ Partial Public Class GuyedAnchorBlock
     End Sub 'Generate a guyed anchor block from EDS
 
     'Public Sub New(ByVal GuyedAnchorBlockDataRow As DataRow, ByVal refID As Integer, ByVal refcol As String, ByVal constants As List(Of EXCELRngParameter))
-    'Public Sub New(ByVal GuyedAnchorBlockDataRow As DataRow, ByVal refID As Integer, ByVal refcol As String)
-    '    'Public Sub New(ByVal path As String)
-    '    'General Guyed Anchor Block Details
-    '    Try
-    '        Me.anchor_id = CType(GuyedAnchorBlockDataRow.Item("anchor_id"), Integer)
-    '    Catch
-    '        Me.anchor_id = 0
-    '    End Try 'Guyed Anchor Block ID
-    '    'Try
-    '    '    Me.anchor_location = CType(GuyedAnchorBlockDataRow.Item("anchor_location"), String)
-    '    'Catch
-    '    '    Me.anchor_location = ""
-    '    'End Try 'Guyed Anchor Block Location
-    '    'Try
-    '    '    Me.guy_anchor_radius = CType(GuyedAnchorBlockDataRow.Item("guy_anchor_radius"), Double)
-    '    'Catch
-    '    '    Me.guy_anchor_radius = -1 'Set stored value of -1 to "" (Empty) in tool
-    '    'End Try 'Guyed Anchor Block Radius
-    '    Try
-    '        Me.local_anchor_profile = CType(GuyedAnchorBlockDataRow.Item("local_anchor_profile"), Integer)
-    '    Catch
-    '        Me.local_anchor_profile = Nothing
-    '    End Try 'Local Anchor Profile
-    '    Try
-    '        Me.local_anchor_id = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer)
-    '    Catch
-    '        Me.local_anchor_id = Nothing
-    '    End Try 'Local Anchor ID
-    '    Try
-    '        Me.anchor_depth = CType(GuyedAnchorBlockDataRow.Item("anchor_depth"), Double)
-    '    Catch
-    '        Me.anchor_depth = Nothing
-    '    End Try 'Guyed Anchor Block Depth
-    '    Try
-    '        Me.anchor_width = CType(GuyedAnchorBlockDataRow.Item("anchor_width"), Double)
-    '    Catch
-    '        Me.anchor_width = Nothing
-    '    End Try 'Guyed Anchor Block Width
-    '    Try
-    '        Me.anchor_thickness = CType(GuyedAnchorBlockDataRow.Item("anchor_thickness"), Double)
-    '    Catch
-    '        Me.anchor_thickness = Nothing
-    '    End Try 'Guyed Anchor Block Thickness
-    '    Try
-    '        Me.anchor_length = CType(GuyedAnchorBlockDataRow.Item("anchor_length"), Double)
-    '    Catch
-    '        Me.anchor_length = Nothing
-    '    End Try 'Guyed Anchor Block Length
-    '    Try
-    '        Me.anchor_toe_width = CType(GuyedAnchorBlockDataRow.Item("anchor_toe_width"), Double)
-    '    Catch
-    '        Me.anchor_toe_width = Nothing
-    '    End Try 'Guyed Anchor Block Toe Width
-    '    Try
-    '        Me.anchor_top_rebar_size = CType(GuyedAnchorBlockDataRow.Item("anchor_top_rebar_size"), Integer)
-    '    Catch
-    '        Me.anchor_top_rebar_size = Nothing
-    '    End Try 'Guyed Anchor Block Top Rebar Size
-    '    Try
-    '        Me.anchor_top_rebar_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_top_rebar_quantity"), Integer)
-    '    Catch
-    '        Me.anchor_top_rebar_quantity = Nothing
-    '    End Try 'Guyed Anchor Block Top Rebar Quantity
-    '    Try
-    '        Me.anchor_front_rebar_size = CType(GuyedAnchorBlockDataRow.Item("anchor_front_rebar_size"), Integer)
-    '    Catch
-    '        Me.anchor_front_rebar_size = Nothing
-    '    End Try 'Guyed Anchor Block Front Rebar Size
-    '    Try
-    '        Me.anchor_front_rebar_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_front_rebar_quantity"), Integer)
-    '    Catch
-    '        Me.anchor_front_rebar_quantity = Nothing
-    '    End Try 'Guyed Anchor Block Front Rebar Quantity
-    '    Try
-    '        Me.anchor_stirrup_size = CType(GuyedAnchorBlockDataRow.Item("anchor_stirrup_size"), Integer)
-    '    Catch
-    '        Me.anchor_stirrup_size = Nothing
-    '    End Try 'Guyed Anchor Block Stirrup Size
-    '    Try
-    '        Me.anchor_shaft_diameter = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_diameter"), Double)
-    '    Catch
-    '        Me.anchor_shaft_diameter = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Shaft Diameter
-    '    Try
-    '        Me.anchor_shaft_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_quantity"), Integer)
-    '    Catch
-    '        Me.anchor_shaft_quantity = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Shaft Quantity
-    '    Try
-    '        Me.anchor_shaft_area_override = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_area_override"), Double)
-    '    Catch
-    '        Me.anchor_shaft_area_override = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Area Override
-    '    Try
-    '        Me.anchor_shaft_shear_lag_factor = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_shear_lag_factor"), Double)
-    '    Catch
-    '        Me.anchor_shaft_shear_lag_factor = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Shear Lag Factor
-    '    Try
-    '        Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_section"), String)
-    '    Catch
-    '        Me.anchor_shaft_section = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Section Type
-    '    Try
-    '        Me.anchor_rebar_grade = CType(GuyedAnchorBlockDataRow.Item("anchor_rebar_grade"), Double)
-    '    Catch
-    '        Me.anchor_rebar_grade = Nothing
-    '    End Try 'Guyed Anchor Block Rebar Grade
-    '    Try
-    '        Me.concrete_compressive_strength = CType(GuyedAnchorBlockDataRow.Item("concrete_compressive_strength"), Double)
-    '    Catch
-    '        Me.concrete_compressive_strength = Nothing
-    '    End Try 'Guyed Anchor Block Concrete Compressive Strength
-    '    Try
-    '        Me.clear_cover = CType(GuyedAnchorBlockDataRow.Item("clear_cover"), Double)
-    '    Catch
-    '        Me.clear_cover = Nothing
-    '    End Try 'Guyed Anchor Block Clear Cover
-    '    Try
-    '        Me.anchor_shaft_yield_strength = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_yield_strength"), Double)
-    '    Catch
-    '        Me.anchor_shaft_yield_strength = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Shaft Yield Strength
-    '    Try
-    '        Me.anchor_shaft_ultimate_strength = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_ultimate_strength"), Double)
-    '    Catch
-    '        Me.anchor_shaft_ultimate_strength = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Shaft Ultimate Strength
-    '    Try
-    '        Me.neglect_depth = CType(GuyedAnchorBlockDataRow.Item("neglect_depth"), Double)
-    '    Catch
-    '        Me.neglect_depth = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Neglect Depth
-    '    Try
-    '        Me.groundwater_depth = CType(GuyedAnchorBlockDataRow.Item("groundwater_depth"), Double)
-    '    Catch
-    '        Me.groundwater_depth = -1 'Set stored value of -1 to "N/A" in tool
-    '    End Try 'Guyed Anchor Block Anchor Groundwater Depth
-    '    Try
-    '        Me.soil_layer_quantity = CType(GuyedAnchorBlockDataRow.Item("soil_layer_quantity"), Integer)
-    '    Catch
-    '        Me.soil_layer_quantity = Nothing
-    '    End Try 'Guyed Anchor Block Anchor Soil Layer Quantity
-    '    Try
-    '        Me.rebar_known = CType(GuyedAnchorBlockDataRow.Item("rebar_known"), Boolean)
-    '    Catch
-    '        Me.rebar_known = Nothing
-    '    End Try 'Rebar Known
-    '    Try
-    '        Me.anchor_shaft_known = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_known"), Boolean)
-    '    Catch
-    '        Me.anchor_shaft_known = Nothing
-    '    End Try 'Anchor Shaft Known
-    '    Try
-    '        Me.basic_soil_check = CType(GuyedAnchorBlockDataRow.Item("basic_soil_check"), Boolean)
-    '    Catch
-    '        Me.basic_soil_check = Nothing
-    '    End Try 'Basic Soil Interaction up to 110%?
-    '    Try
-    '        Me.structural_check = CType(GuyedAnchorBlockDataRow.Item("structural_check"), Boolean)
-    '    Catch
-    '        Me.structural_check = Nothing
-    '    End Try 'Structural Checks up to 105%?
-    '    Try
-    '        Me.tool_version = CType(GuyedAnchorBlockDataRow.Item("tool_version"), String)
-    '    Catch
-    '        Me.tool_version = Nothing
-    '    End Try 'Tool Version
-    '    Try
-    '        Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
-    '    Catch
-    '        Me.foundation_id = Nothing
-    '    End Try 'Foundation ID
-
-    '    For Each SoilLayerDataRow As DataRow In ds.Tables("Guyed Anchor Block Soil EXCEL").Rows
-    '        'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item(refcol), Integer)
-    '        'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("local_anchor_profile"), Integer)
-
-    '        'If soilRefID = refID Then
-    '        If CType(SoilLayerDataRow.Item("local_soil_profile"), Integer) = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer) Then
-    '            Me.soil_layers.Add(New GuyedAnchorBlockSoilLayer(SoilLayerDataRow))
-    '        End If
-    '    Next 'Add Soil Layers to to Guyed Anchor Block Object
-
-    '    For Each GuyedAnchorBlockProfileDataRow As DataRow In ds.Tables("Guyed Anchor Block Profiles EXCEL").Rows 'WIP
-    '        Dim profileID As Integer?
-
-    '        'Try
-    '        '    If Not IsNothing(CType(GuyedAnchorBlockProfileDataRow.Item(refcol), Integer)) Then
-    '        '        profileID = CType(GuyedAnchorBlockProfileDataRow.Item(refcol), Integer)
-    '        '    Else
-    '        '        profileID = Nothing
-    '        '    End If
-    '        'Catch
-    '        '    profileID = Nothing
-    '        'End Try 'Profile Reference ID
-
-    '        'If profileID = refID Then
-    '        If CType(GuyedAnchorBlockProfileDataRow.Item("local_anchor_id"), Integer) = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer) Then
-    '            Me.anchor_profiles.Add(New GuyedAnchorBlockProfile(GuyedAnchorBlockProfileDataRow))
-    '        End If
-    '    Next 'Add Profiles to to Drilled Pier Object
-    'End Sub 'Generate a guyed anchor block from Excel
-
-    Public Sub New(ByVal path As String)
+    Public Sub New(ByVal GuyedAnchorBlockDataRow As DataRow, ByVal refID As Integer, ByVal refcol As String)
+        'Public Sub New(ByVal path As String)
         'General Guyed Anchor Block Details
         Try
-            Me.anchor_id = CType(GetOneExcelRange(path, "anchor_id"), Integer)
+            Me.anchor_id = CType(GuyedAnchorBlockDataRow.Item("anchor_id"), Integer)
         Catch
             Me.anchor_id = 0
         End Try 'Guyed Anchor Block ID
+        'Try
+        '    Me.anchor_location = CType(GuyedAnchorBlockDataRow.Item("anchor_location"), String)
+        'Catch
+        '    Me.anchor_location = ""
+        'End Try 'Guyed Anchor Block Location
+        'Try
+        '    Me.guy_anchor_radius = CType(GuyedAnchorBlockDataRow.Item("guy_anchor_radius"), Double)
+        'Catch
+        '    Me.guy_anchor_radius = -1 'Set stored value of -1 to "" (Empty) in tool
+        'End Try 'Guyed Anchor Block Radius
         Try
-            Me.local_anchor_profile = CType(GetOneExcelRange(path, "local_anchor_profile"), Integer)
+            Me.local_anchor_profile = CType(GuyedAnchorBlockDataRow.Item("local_anchor_profile"), Integer)
         Catch
             Me.local_anchor_profile = Nothing
         End Try 'Local Anchor Profile
         Try
-            Me.local_anchor_id = CType(GetOneExcelRange(path, "local_anchor_id"), Integer)
+            Me.local_anchor_id = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer)
         Catch
             Me.local_anchor_id = Nothing
         End Try 'Local Anchor ID
         Try
-            Me.anchor_depth = CType(GetOneExcelRange(path, "anchor_depth"), Double)
+            Me.anchor_depth = CType(GuyedAnchorBlockDataRow.Item("anchor_depth"), Double)
         Catch
             Me.anchor_depth = Nothing
         End Try 'Guyed Anchor Block Depth
         Try
-            Me.anchor_width = CType(GetOneExcelRange(path, "anchor_width"), Double)
+            Me.anchor_width = CType(GuyedAnchorBlockDataRow.Item("anchor_width"), Double)
         Catch
             Me.anchor_width = Nothing
         End Try 'Guyed Anchor Block Width
         Try
-            Me.anchor_thickness = CType(GetOneExcelRange(path, "anchor_thickness"), Double)
+            Me.anchor_thickness = CType(GuyedAnchorBlockDataRow.Item("anchor_thickness"), Double)
         Catch
             Me.anchor_thickness = Nothing
         End Try 'Guyed Anchor Block Thickness
         Try
-            Me.anchor_length = CType(GetOneExcelRange(path, "anchor_length"), Double)
+            Me.anchor_length = CType(GuyedAnchorBlockDataRow.Item("anchor_length"), Double)
         Catch
             Me.anchor_length = Nothing
         End Try 'Guyed Anchor Block Length
         Try
-            Me.anchor_toe_width = CType(GetOneExcelRange(path, "anchor_toe_width"), Double)
+            Me.anchor_toe_width = CType(GuyedAnchorBlockDataRow.Item("anchor_toe_width"), Double)
         Catch
             Me.anchor_toe_width = Nothing
         End Try 'Guyed Anchor Block Toe Width
         Try
-            Me.anchor_top_rebar_size = CType(GetOneExcelRange(path, "anchor_top_rebar_size"), Integer)
+            Me.anchor_top_rebar_size = CType(GuyedAnchorBlockDataRow.Item("anchor_top_rebar_size"), Integer)
         Catch
             Me.anchor_top_rebar_size = Nothing
         End Try 'Guyed Anchor Block Top Rebar Size
         Try
-            Me.anchor_top_rebar_quantity = CType(GetOneExcelRange(path, "anchor_top_rebar_quantity"), Integer)
+            Me.anchor_top_rebar_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_top_rebar_quantity"), Integer)
         Catch
             Me.anchor_top_rebar_quantity = Nothing
         End Try 'Guyed Anchor Block Top Rebar Quantity
         Try
-            Me.anchor_front_rebar_size = CType(GetOneExcelRange(path, "anchor_front_rebar_size"), Integer)
+            Me.anchor_front_rebar_size = CType(GuyedAnchorBlockDataRow.Item("anchor_front_rebar_size"), Integer)
         Catch
             Me.anchor_front_rebar_size = Nothing
         End Try 'Guyed Anchor Block Front Rebar Size
         Try
-            Me.anchor_front_rebar_quantity = CType(GetOneExcelRange(path, "anchor_front_rebar_quantity"), Integer)
+            Me.anchor_front_rebar_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_front_rebar_quantity"), Integer)
         Catch
             Me.anchor_front_rebar_quantity = Nothing
         End Try 'Guyed Anchor Block Front Rebar Quantity
         Try
-            Me.anchor_stirrup_size = CType(GetOneExcelRange(path, "anchor_stirrup_size"), Integer)
+            Me.anchor_stirrup_size = CType(GuyedAnchorBlockDataRow.Item("anchor_stirrup_size"), Integer)
         Catch
             Me.anchor_stirrup_size = Nothing
         End Try 'Guyed Anchor Block Stirrup Size
         Try
-            Me.anchor_shaft_diameter = CType(GetOneExcelRange(path, "anchor_shaft_diameter"), Double)
+            Me.anchor_shaft_diameter = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_diameter"), Double)
         Catch
             Me.anchor_shaft_diameter = Nothing
         End Try 'Guyed Anchor Block Anchor Shaft Diameter
         Try
-            Me.anchor_shaft_quantity = CType(GetOneExcelRange(path, "anchor_shaft_quantity"), Integer)
+            Me.anchor_shaft_quantity = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_quantity"), Integer)
         Catch
             Me.anchor_shaft_quantity = Nothing
         End Try 'Guyed Anchor Block Anchor Shaft Quantity
         Try
-            Me.anchor_shaft_area_override = CType(GetOneExcelRange(path, "anchor_shaft_area_override"), Double)
+            Me.anchor_shaft_area_override = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_area_override"), Double)
         Catch
             Me.anchor_shaft_area_override = Nothing
         End Try 'Guyed Anchor Block Anchor Area Override
         Try
-            Me.anchor_shaft_shear_lag_factor = CType(GetOneExcelRange(path, "anchor_shaft_shear_lag_factor"), Double)
+            Me.anchor_shaft_shear_lag_factor = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_shear_lag_factor"), Double)
         Catch
             Me.anchor_shaft_shear_lag_factor = Nothing
         End Try 'Guyed Anchor Block Anchor Shear Lag Factor
         Try
-            Me.anchor_shaft_section = CType(GetOneExcelRange(path, "anchor_shaft_section"), String)
+            Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_section"), String)
         Catch
-            Me.anchor_shaft_section = Nothing
+            Me.anchor_shaft_section = ""
         End Try 'Guyed Anchor Block Anchor Section Type
         Try
-            Me.anchor_rebar_grade = CType(GetOneExcelRange(path, "anchor_rebar_grade"), Double)
+            Me.anchor_rebar_grade = CType(GuyedAnchorBlockDataRow.Item("anchor_rebar_grade"), Double)
         Catch
             Me.anchor_rebar_grade = Nothing
         End Try 'Guyed Anchor Block Rebar Grade
         Try
-            Me.concrete_compressive_strength = CType(GetOneExcelRange(path, "concrete_compressive_strength"), Double)
+            Me.concrete_compressive_strength = CType(GuyedAnchorBlockDataRow.Item("concrete_compressive_strength"), Double)
         Catch
             Me.concrete_compressive_strength = Nothing
         End Try 'Guyed Anchor Block Concrete Compressive Strength
         Try
-            Me.clear_cover = CType(GetOneExcelRange(path, "clear_cover"), Double)
+            Me.clear_cover = CType(GuyedAnchorBlockDataRow.Item("clear_cover"), Double)
         Catch
             Me.clear_cover = Nothing
         End Try 'Guyed Anchor Block Clear Cover
         Try
-            Me.anchor_shaft_yield_strength = CType(GetOneExcelRange(path, "anchor_shaft_yield_strength"), Double)
+            Me.anchor_shaft_yield_strength = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_yield_strength"), Double)
         Catch
             Me.anchor_shaft_yield_strength = Nothing
         End Try 'Guyed Anchor Block Anchor Shaft Yield Strength
         Try
-            Me.anchor_shaft_ultimate_strength = CType(GetOneExcelRange(path, "anchor_shaft_ultimate_strength"), Double)
+            Me.anchor_shaft_ultimate_strength = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_ultimate_strength"), Double)
         Catch
             Me.anchor_shaft_ultimate_strength = Nothing
         End Try 'Guyed Anchor Block Anchor Shaft Ultimate Strength
         Try
-            Me.neglect_depth = CType(GetOneExcelRange(path, "neglect_depth"), Double)
+            Me.neglect_depth = CType(GuyedAnchorBlockDataRow.Item("neglect_depth"), Double)
         Catch
             Me.neglect_depth = Nothing
         End Try 'Guyed Anchor Block Anchor Neglect Depth
         Try
-            Me.groundwater_depth = CType(GetOneExcelRange(path, "groundwater_depth"), Double)
+            Me.groundwater_depth = CType(GuyedAnchorBlockDataRow.Item("groundwater_depth"), Double)
         Catch
             Me.groundwater_depth = -1 'Set stored value of -1 to "N/A" in tool
         End Try 'Guyed Anchor Block Anchor Groundwater Depth
         Try
-            Me.soil_layer_quantity = CType(GetOneExcelRange(path, "soil_layer_quantity"), Integer)
+            Me.soil_layer_quantity = CType(GuyedAnchorBlockDataRow.Item("soil_layer_quantity"), Integer)
         Catch
             Me.soil_layer_quantity = Nothing
         End Try 'Guyed Anchor Block Anchor Soil Layer Quantity
         Try
-            Me.rebar_known = CType(GetOneExcelRange(path, "rebar_known"), Boolean)
+            Me.rebar_known = CType(GuyedAnchorBlockDataRow.Item("rebar_known"), Boolean)
         Catch
             Me.rebar_known = Nothing
         End Try 'Rebar Known
         Try
-            Me.anchor_shaft_known = CType(GetOneExcelRange(path, "anchor_shaft_known"), Boolean)
+            Me.anchor_shaft_known = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_known"), Boolean)
         Catch
             Me.anchor_shaft_known = Nothing
         End Try 'Anchor Shaft Known
         Try
-            Me.basic_soil_check = CType(GetOneExcelRange(path, "basic_soil_check"), Boolean)
+            Me.basic_soil_check = CType(GuyedAnchorBlockDataRow.Item("basic_soil_check"), Boolean)
         Catch
             Me.basic_soil_check = Nothing
         End Try 'Basic Soil Interaction up to 110%?
         Try
-            Me.structural_check = CType(GetOneExcelRange(path, "structural_check"), Boolean)
+            Me.structural_check = CType(GuyedAnchorBlockDataRow.Item("structural_check"), Boolean)
         Catch
             Me.structural_check = Nothing
         End Try 'Structural Checks up to 105%?
         Try
-            Me.tool_version = CType(GetOneExcelRange(path, "tool_version"), String)
+            Me.tool_version = CType(GuyedAnchorBlockDataRow.Item("tool_version"), String)
         Catch
-            Me.tool_version = Nothing
+            Me.tool_version = ""
         End Try 'Tool Version
         Try
-            Me.foundation_id = CType(GetOneExcelRange(path, "foundation_id"), Integer)
+            Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
         Catch
             Me.foundation_id = Nothing
         End Try 'Foundation ID
@@ -1088,7 +895,7 @@ Partial Public Class GuyedAnchorBlock
             'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("local_anchor_profile"), Integer)
 
             'If soilRefID = refID Then
-            If CType(SoilLayerDataRow.Item("local_soil_profile"), Integer) = CType(GetOneExcelRange(path, "local_anchor_id"), Integer) Then
+            If CType(SoilLayerDataRow.Item("local_soil_profile"), Integer) = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer) Then
                 Me.soil_layers.Add(New GuyedAnchorBlockSoilLayer(SoilLayerDataRow))
             End If
         Next 'Add Soil Layers to to Guyed Anchor Block Object
@@ -1107,11 +914,210 @@ Partial Public Class GuyedAnchorBlock
             'End Try 'Profile Reference ID
 
             'If profileID = refID Then
-            If CType(GuyedAnchorBlockProfileDataRow.Item("local_anchor_id"), Integer) = CType(GetOneExcelRange(path, "local_anchor_id"), Integer) Then
+            If CType(GuyedAnchorBlockProfileDataRow.Item("local_anchor_id"), Integer) = CType(GuyedAnchorBlockDataRow.Item("local_anchor_id"), Integer) Then
                 Me.anchor_profiles.Add(New GuyedAnchorBlockProfile(GuyedAnchorBlockProfileDataRow))
             End If
         Next 'Add Profiles to to Drilled Pier Object
     End Sub 'Generate a guyed anchor block from Excel
+
+    'Public Sub New(ByVal path As String)
+    '    'General Guyed Anchor Block Details
+    '    Try
+    '        Me.anchor_id = CType(GetOneExcelRange(path, "anchor_id"), Integer)
+    '    Catch
+    '        Me.anchor_id = 0
+    '    End Try 'Guyed Anchor Block ID
+    '    Try
+    '        Me.local_anchor_profile = CType(GetOneExcelRange(path, "local_anchor_profile"), Integer)
+    '    Catch
+    '        Me.local_anchor_profile = Nothing
+    '    End Try 'Local Anchor Profile
+    '    Try
+    '        Me.local_anchor_id = CType(GetOneExcelRange(path, "local_anchor_id"), Integer)
+    '    Catch
+    '        Me.local_anchor_id = Nothing
+    '    End Try 'Local Anchor ID
+    '    Try
+    '        Me.anchor_depth = CType(GetOneExcelRange(path, "anchor_depth"), Double)
+    '    Catch
+    '        Me.anchor_depth = Nothing
+    '    End Try 'Guyed Anchor Block Depth
+    '    Try
+    '        Me.anchor_width = CType(GetOneExcelRange(path, "anchor_width"), Double)
+    '    Catch
+    '        Me.anchor_width = Nothing
+    '    End Try 'Guyed Anchor Block Width
+    '    Try
+    '        Me.anchor_thickness = CType(GetOneExcelRange(path, "anchor_thickness"), Double)
+    '    Catch
+    '        Me.anchor_thickness = Nothing
+    '    End Try 'Guyed Anchor Block Thickness
+    '    Try
+    '        Me.anchor_length = CType(GetOneExcelRange(path, "anchor_length"), Double)
+    '    Catch
+    '        Me.anchor_length = Nothing
+    '    End Try 'Guyed Anchor Block Length
+    '    Try
+    '        Me.anchor_toe_width = CType(GetOneExcelRange(path, "anchor_toe_width"), Double)
+    '    Catch
+    '        Me.anchor_toe_width = Nothing
+    '    End Try 'Guyed Anchor Block Toe Width
+    '    Try
+    '        Me.anchor_top_rebar_size = CType(GetOneExcelRange(path, "anchor_top_rebar_size"), Integer)
+    '    Catch
+    '        Me.anchor_top_rebar_size = Nothing
+    '    End Try 'Guyed Anchor Block Top Rebar Size
+    '    Try
+    '        Me.anchor_top_rebar_quantity = CType(GetOneExcelRange(path, "anchor_top_rebar_quantity"), Integer)
+    '    Catch
+    '        Me.anchor_top_rebar_quantity = Nothing
+    '    End Try 'Guyed Anchor Block Top Rebar Quantity
+    '    Try
+    '        Me.anchor_front_rebar_size = CType(GetOneExcelRange(path, "anchor_front_rebar_size"), Integer)
+    '    Catch
+    '        Me.anchor_front_rebar_size = Nothing
+    '    End Try 'Guyed Anchor Block Front Rebar Size
+    '    Try
+    '        Me.anchor_front_rebar_quantity = CType(GetOneExcelRange(path, "anchor_front_rebar_quantity"), Integer)
+    '    Catch
+    '        Me.anchor_front_rebar_quantity = Nothing
+    '    End Try 'Guyed Anchor Block Front Rebar Quantity
+    '    Try
+    '        Me.anchor_stirrup_size = CType(GetOneExcelRange(path, "anchor_stirrup_size"), Integer)
+    '    Catch
+    '        Me.anchor_stirrup_size = Nothing
+    '    End Try 'Guyed Anchor Block Stirrup Size
+    '    Try
+    '        Me.anchor_shaft_diameter = CType(GetOneExcelRange(path, "anchor_shaft_diameter"), Double)
+    '    Catch
+    '        Me.anchor_shaft_diameter = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Shaft Diameter
+    '    Try
+    '        Me.anchor_shaft_quantity = CType(GetOneExcelRange(path, "anchor_shaft_quantity"), Integer)
+    '    Catch
+    '        Me.anchor_shaft_quantity = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Shaft Quantity
+    '    Try
+    '        Me.anchor_shaft_area_override = CType(GetOneExcelRange(path, "anchor_shaft_area_override"), Double)
+    '    Catch
+    '        Me.anchor_shaft_area_override = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Area Override
+    '    Try
+    '        Me.anchor_shaft_shear_lag_factor = CType(GetOneExcelRange(path, "anchor_shaft_shear_lag_factor"), Double)
+    '    Catch
+    '        Me.anchor_shaft_shear_lag_factor = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Shear Lag Factor
+    '    Try
+    '        Me.anchor_shaft_section = CType(GetOneExcelRange(path, "anchor_shaft_section"), String)
+    '    Catch
+    '        Me.anchor_shaft_section = ""
+    '    End Try 'Guyed Anchor Block Anchor Section Type
+    '    Try
+    '        Me.anchor_rebar_grade = CType(GetOneExcelRange(path, "anchor_rebar_grade"), Double)
+    '    Catch
+    '        Me.anchor_rebar_grade = Nothing
+    '    End Try 'Guyed Anchor Block Rebar Grade
+    '    Try
+    '        Me.concrete_compressive_strength = CType(GetOneExcelRange(path, "concrete_compressive_strength"), Double)
+    '    Catch
+    '        Me.concrete_compressive_strength = Nothing
+    '    End Try 'Guyed Anchor Block Concrete Compressive Strength
+    '    Try
+    '        Me.clear_cover = CType(GetOneExcelRange(path, "clear_cover"), Double)
+    '    Catch
+    '        Me.clear_cover = Nothing
+    '    End Try 'Guyed Anchor Block Clear Cover
+    '    Try
+    '        Me.anchor_shaft_yield_strength = CType(GetOneExcelRange(path, "anchor_shaft_yield_strength"), Double)
+    '    Catch
+    '        Me.anchor_shaft_yield_strength = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Shaft Yield Strength
+    '    Try
+    '        Me.anchor_shaft_ultimate_strength = CType(GetOneExcelRange(path, "anchor_shaft_ultimate_strength"), Double)
+    '    Catch
+    '        Me.anchor_shaft_ultimate_strength = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Shaft Ultimate Strength
+    '    Try
+    '        Me.neglect_depth = CType(GetOneExcelRange(path, "neglect_depth"), Double)
+    '    Catch
+    '        Me.neglect_depth = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Neglect Depth
+    '    Try
+    '        Me.groundwater_depth = CType(GetOneExcelRange(path, "groundwater_depth"), Double)
+    '    Catch
+    '        Me.groundwater_depth = -1 'Set stored value of -1 to "N/A" in tool
+    '    End Try 'Guyed Anchor Block Anchor Groundwater Depth
+    '    Try
+    '        Me.soil_layer_quantity = CType(GetOneExcelRange(path, "soil_layer_quantity"), Integer)
+    '    Catch
+    '        Me.soil_layer_quantity = Nothing
+    '    End Try 'Guyed Anchor Block Anchor Soil Layer Quantity
+    '    Try
+    '        Me.rebar_known = CType(GetOneExcelRange(path, "rebar_known"), Boolean)
+    '    Catch
+    '        Me.rebar_known = Nothing
+    '    End Try 'Rebar Known
+    '    Try
+    '        Me.anchor_shaft_known = CType(GetOneExcelRange(path, "anchor_shaft_known"), Boolean)
+    '    Catch
+    '        Me.anchor_shaft_known = Nothing
+    '    End Try 'Anchor Shaft Known
+    '    Try
+    '        Me.basic_soil_check = CType(GetOneExcelRange(path, "basic_soil_check"), Boolean)
+    '    Catch
+    '        Me.basic_soil_check = Nothing
+    '    End Try 'Basic Soil Interaction up to 110%?
+    '    Try
+    '        Me.structural_check = CType(GetOneExcelRange(path, "structural_check"), Boolean)
+    '    Catch
+    '        Me.structural_check = Nothing
+    '    End Try 'Structural Checks up to 105%?
+    '    Try
+    '        Me.tool_version = CType(GetOneExcelRange(path, "tool_version"), String)
+    '    Catch
+    '        Me.tool_version = ""
+    '    End Try 'Tool Version
+    '    Try
+    '        Me.foundation_id = CType(GetOneExcelRange(path, "foundation_id"), Integer)
+    '    Catch
+    '        Me.foundation_id = Nothing
+    '    End Try 'Foundation ID
+
+    '    'For Each GuyedAnchorBlockDataRow As DataRow In ds.Tables("Guyed Anchor Block General Details EXCEL").Rows
+    '    '    If CType(GuyedAnchorBlockDataRow.Item("local_soil_profile"), Integer) = CType(GetOneExcelRange(path, "local_anchor_id"), Integer) Then
+    '    '        'GuyedAnchorBlocks.Add(New GuyedAnchorBlockSoilLayer(GuyedAnchorBlockDataRow))
+    '    '    End If
+    '    'Next 'Add Soil Layers to to Guyed Anchor Block Object
+
+    'For Each SoilLayerDataRow As DataRow In ds.Tables("Guyed Anchor Block Soil EXCEL").Rows
+    '        'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item(refcol), Integer)
+    '        'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("local_anchor_profile"), Integer)
+
+    '        'If soilRefID = refID Then
+    '        If CType(SoilLayerDataRow.Item("local_soil_profile"), Integer) = CType(GetOneExcelRange(path, "local_anchor_id"), Integer) Then
+    '            Me.soil_layers.Add(New GuyedAnchorBlockSoilLayer(SoilLayerDataRow))
+    '        End If
+    '    Next 'Add Soil Layers to to Guyed Anchor Block Object
+
+    '    For Each GuyedAnchorBlockProfileDataRow As DataRow In ds.Tables("Guyed Anchor Block Profiles EXCEL").Rows 'WIP
+    '        Dim profileID As Integer?
+
+    '        'Try
+    '        '    If Not IsNothing(CType(GuyedAnchorBlockProfileDataRow.Item(refcol), Integer)) Then
+    '        '        profileID = CType(GuyedAnchorBlockProfileDataRow.Item(refcol), Integer)
+    '        '    Else
+    '        '        profileID = Nothing
+    '        '    End If
+    '        'Catch
+    '        '    profileID = Nothing
+    '        'End Try 'Profile Reference ID
+
+    '        'If profileID = refID Then
+    '        If CType(GuyedAnchorBlockProfileDataRow.Item("local_anchor_id"), Integer) = CType(GetOneExcelRange(path, "local_anchor_id"), Integer) Then
+    '            Me.anchor_profiles.Add(New GuyedAnchorBlockProfile(GuyedAnchorBlockProfileDataRow))
+    '        End If
+    '    Next 'Add Profiles to to Drilled Pier Object
+    'End Sub 'Generate a guyed anchor block from Excel
 
 #End Region
 

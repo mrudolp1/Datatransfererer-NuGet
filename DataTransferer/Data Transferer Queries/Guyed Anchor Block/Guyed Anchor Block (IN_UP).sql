@@ -16,7 +16,7 @@ DECLARE @FndType VARCHAR(255)
 DECLARE @FndGroupNeeded BIT 
 --Guyed Anchor Block Declarations
 DECLARE @GABID INT
-DECLARE @GAB TABLE(PID INT)
+DECLARE @GAB TABLE(GABID INT)
 DECLARE @GABNeeded BIT
 
 	--Minimum information needed to insert a new model into structure_model
@@ -27,7 +27,6 @@ DECLARE @GABNeeded BIT
 	--Foundation ID will need passed in. Either a number or the text NULL without quotes
 	SET @FndType = '[FOUNDATION TYPE]'
 	SET @GABID = '[GUYED ANCHOR BLOCK ID]'
-	Set @IsCONFIG = '[CONFIGURATION]'
 	Set @FndGroupNeeded = '[Fnd GRP ID Needed]'
 	Set @GABNeeded = '[GUYED ANCHOR BLOCK ID Needed]'
 
@@ -87,7 +86,7 @@ BEGIN
 	IF @GABNeeded = 1 --TRUE  
 	BEGIN
 		--INSERT Details
-		INSERT INTO fnd.pile_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
+		INSERT INTO fnd.anchor_block_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
 		SELECT @GABID=GABID FROM @GAB
 
 		--INSERT Soil Layers 
@@ -96,7 +95,7 @@ BEGIN
 			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 		--END
 
-		INSERT INTO fnd.anchor_block_profiles VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
+		INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
 
 		UPDATE fnd.foundation_details Set details_id=@GABID WHERE ID=@FndID
 
