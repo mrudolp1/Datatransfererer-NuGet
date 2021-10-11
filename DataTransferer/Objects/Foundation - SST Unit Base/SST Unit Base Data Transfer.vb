@@ -155,7 +155,7 @@ Partial Public Class DataTransfererUnitBase
             UnitBaseSaver = UnitBaseSaver.Replace("'[Fnd GRP ID Needed]'", 0)
         End If
 
-        ''Determine if new ID needs created
+        'Determine if new ID needs created
         'If isUnitBaseNeeded Then
         '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 1)
         'Else
