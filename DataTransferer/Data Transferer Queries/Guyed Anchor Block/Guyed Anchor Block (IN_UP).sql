@@ -1,95 +1,104 @@
---structure_model -> P: model_id, foundation_group_id
---structure model xref -> model_id, bus_unit, structure_id
---foundation_group_id -> P: foundation_id, details_id, foundation_type, foundation_group_id, guy_group_id
---anchor_block_details -> P: anchor_id
---anchor_block_soil_layer -> P: layer_id, F: anchor_id
---guy profile. Similar logic to soil layer
-
---create model ID first
---associate BU and Structure to it in structure xref
---create foundation group id
---assign foundation group (how is this determined, folder in which all tools are saved?). For this query, just create new entries to insert for all cases. Must create foundation group first
---create foundations ids (P) for each foundaiton in the group (F)
---create anchor block details ID (P) group (F)
---retroactively add details_id to the foundation details ID (must have details ID created first)
---create soil layer ID (P). Accociate with anchor id (F)
---guy profile. Similar logic to soil layer
-
-
-DECLARE @ModelID INT
+--Model Declarations
 DECLARE @Model TABLE(ModelID INT)
-
+DECLARE @ModelID INT
+--Structure Info Declarations
 DECLARE @BU VARCHAR(10)
-
-DECLARE @StrID VARCHAR(10)
-DECLARE @StrType VARCHAR(50)
-
-DECLARE @FndGrpID INT
-DECLARE @FndGrp TABLE(FndGrpID INT)
-
+DECLARE @STR_ID VARCHAR(10)
+DECLARE @ModelNeeded BIT --NEW
+--DECLARE @STR_TYPE VARCHAR(50)
+--Foundation Group Declarations
+DECLARE @Fndgrp TABLE(FndgrpID INT)
+DECLARE @FndgrpID INT
+--Foundation Type Declarations
+DECLARE @Foundation TABLE(FndID INT)
 DECLARE @FndID INT
-DECLARE @Fnd TABLE(FndID INT)
-
 DECLARE @FndType VARCHAR(255)
+DECLARE @FndGroupNeeded BIT 
+--Guyed Anchor Block Declarations
+DECLARE @GABID INT
+DECLARE @GAB TABLE(GABID INT)
+DECLARE @GABNeeded BIT
 
-DECLARE @GabID INT
-DECLARE @Gab TABLE(GabID INT)
+	--Minimum information needed to insert a new model into structure_model
+	SET @BU = '[BU NUMBER]'
+	SET @STR_ID = '[STRUCTURE ID]'
+	Set @ModelNeeded = '[Model ID Needed]'
 
+	--Foundation ID will need passed in. Either a number or the text NULL without quotes
+	SET @FndType = '[FOUNDATION TYPE]'
+	SET @GABID = '[GUYED ANCHOR BLOCK ID]'
+	Set @FndGroupNeeded = '[Fnd GRP ID Needed]'
+	Set @GABNeeded = '[GUYED ANCHOR BLOCK ID Needed]'
 
-SET @BU = '[BU Number]'
-SET @StrID = '[STRUCTURE ID]'
-SET @FndType = '[FOUNDATION TYPE]'
---SET @GabID = '[GUYED ANCHOR BLOCK ID]'
-
---CREATE ANCHOR DETAIL
---CREATE SOIL LAYERS ASSOCIATED WITH ANCHOR DETAIL
---CREATE PROFILES ASSOCIATED WITH ANCHOR DETAIL
-
-------(DO THESE ONLY ONCE PER TOOL, NOT PER ANCHOR!!!!) ADD CODE IF FIRST THEN, ELSE------
---CREATE FOUNDATION GROUP 
---CREATE/UPDATE STRUCTURE MODEL
---CREATE/UPDATE STRUCTURE MODEL XREF
-
---CREATE FOUNDATION DETAILS, LINKING TO FOUNDATION GROUP AND ANCHOR DETAILS
-
-
---START ANCHOR DETAILS
+--Determine model_id (Table Impacts: gen.structure_model_xref & gen.structure_model)
+IF EXISTS(SELECT * FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID) 
 BEGIN
-
-	INSERT INTO fnd.anchor_block_details OUTPUT INSERTED.ID INTO @Gab VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
-	SELECT @GabID=GabID FROM @Gab
-
-	--SOIL LAYERS
-	INSERT INTO fnd.anchor_block_soil_layer VALUES([INSERT ALL SOIL LAYERS])
-
-	--PROFILES
-	INSERT INTO fnd.anchor_block_profile VALUES([INSERT ALL PROFILES])
-
-END
---END ANCHOR DETAILS
-
-
---START SITE-SPECIFIC
-BEGIN
-	
-	--FOUNDATION GROUP (may need to edit to DEFAULT VALUES if inserting into table with only a primary key)
-	INSERT INTO fnd.foundation_group OUTPUT INSERTED.ID INTO @FndGrp 
-	SELECT @FndGrpID=FndGrpID FROM @FndGrp
-
-	--STRUCUTRE MODEL (must incorporate with other code. Should not create a new structure model simply because of foundation information, must include all tables)
-	INSERT INTO gen.structure_model OUTPUT INSERTED.ID INTO @Model
+	--If exists, select model_id from structure_model_xref
+	INSERT INTO @Model (ModelID) SELECT model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID AND isActive='True' --ORDER BY model_id
 	SELECT @ModelID=ModelID FROM @Model
-
-	--STRUCUTRE MODEL CROSS-REFERENCE (must incorporate with other code. Should not create a new BU simply because of foundation information, must include all tables)
-	INSERT INTO gen.structure_model_xref VALUES(@ModelID,@BU,@StrID)
-
+	--If changes occurred with any field in structure_model table, create new model ID for reference
+	IF @ModelNeeded = 1 --TRUE (Reference ismodelneeded)
+	BEGIN
+		--Update status to FALSE for existing model_id
+		UPDATE gen.structure_model_xref Set isActive='False' WHERE model_id=@ModelID
+		--Create new Model ID by copying previous data and pasting new row into Structure_model
+		INSERT INTO gen.structure_model (connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id) OUTPUT Inserted.id INTO @Model SELECT connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id FROM gen.structure_model WHERE id=@ModelID
+		SELECT @ModelID=ModelID FROM @Model
+		--Create new row in structure_model_xref, associating BU to newly created Model ID
+		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
+	END
 END
---END SITE-SPECIFIC
-
---START FOUNDATION DETAILS
+ELSE
 BEGIN
+	-- Create new Model ID by adding row to Structure_model 
+	INSERT INTO gen.structure_model OUTPUT Inserted.ID INTO @Model DEFAULT VALUES
+	SELECT @ModelID=ModelID FROM @Model
+	--Create new row in structure_model_xref, associating BU to newly created Model ID
+	INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
+END--Select existing model ID or insert new
 
-	INSERT INTO fnd.foundation_details VALUES(@FndGrpID,@FndType,@GabID)
 
-END
---END FOUNDATION DETAILS
+--Determine foundation_group_id (Table Impacts: gen.structure_model & fnd.foundation_group & fnd.foundation_details)
+IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
+BEGIN
+	---Before creating new foundation ID, Need to select foundation detail per most recent foundation group and insert new row in foundation details
+	IF @GABID IS NULL
+	Begin
+		-- Create new Foundation ID by adding row to foundation_details
+		INSERT INTO fnd.foundation_details (foundation_type) OUTPUT Inserted.id INTO @Foundation VALUES (@FndType)
+		SELECT @FndID=FndID FROM @Foundation
+	End
+	ELSE
+	BEGIN
+		--Create new Foundation ID by copying previous data and pasting new row into foundation_details
+		SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+		INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@GABID
+		SELECT @FndID=FndID FROM @Foundation
+	END
+
+	--Create new foundation group ID by adding row to foundation_group
+	INSERT INTO fnd.foundation_group OUTPUT Inserted.ID INTO @Fndgrp DEFAULT VALUES
+	SELECT @FndgrpID=FndgrpID FROM @Fndgrp
+	UPDATE gen.structure_model Set foundation_group_id=@FndgrpID WHERE ID=@ModelID
+	UPDATE fnd.foundation_details Set foundation_group_id=@FndgrpID WHERE ID=@FndID
+
+	--Determine Foundation_ID
+	IF @GABNeeded = 1 --TRUE  
+	BEGIN
+		--INSERT Details
+		INSERT INTO fnd.anchor_block_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
+		SELECT @GABID=GABID FROM @GAB
+
+		--INSERT Soil Layers 
+		--IF @PileCap = 0 --FALSE
+		--BEGIN
+			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+		--END
+
+		INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
+
+		UPDATE fnd.foundation_details Set details_id=@GABID WHERE ID=@FndID
+
+	END
+
+END--Select existing foundation group or insert new

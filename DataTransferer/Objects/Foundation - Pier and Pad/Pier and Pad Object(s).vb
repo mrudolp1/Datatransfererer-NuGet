@@ -57,7 +57,7 @@ Partial Public Class PierAndPad
     Private prop_tool_version As String
     Private prop_modified As Boolean
 
-    Public Property ModifiedRanges As New List(Of ModifiedRange)
+    'Public Property ModifiedRanges As New List(Of ModifiedRange)
 
     <Category("Pier and Pad Details"), Description(""), DisplayName("Pier and Pad ID")>
     Public Property pp_id() As Integer
@@ -814,12 +814,12 @@ Partial Public Class PierAndPad
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
         Try
-            Me.basic_soil_check = CType(PierandPadDataRow.Item("SoilInteractionBoolean"), Boolean)
+            Me.basic_soil_check = CType(PierandPadDataRow.Item("basic_soil_check"), Boolean)
         Catch
             Me.basic_soil_check = False
         End Try 'Basic Soil Interaction up to 110% Acceptable?
         Try
-            Me.structural_check = CType(PierandPadDataRow.Item("StructuralCheckBoolean"), Boolean)
+            Me.structural_check = CType(PierandPadDataRow.Item("structural_check"), Boolean)
         Catch
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?
@@ -829,14 +829,14 @@ Partial Public Class PierAndPad
             Me.tool_version = ""
         End Try 'Tool Version
 
-        If Me.modified = True Then
-            For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges SQL").Rows
-                Dim modRefID As Integer = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
-                If modRefID = refID Then
-                    Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
-                End If
-            Next 'Add Modified Ranges to Modified Range Object
-        End If
+        'If Me.modified = True Then
+        '    For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges SQL").Rows
+        '        Dim modRefID As Integer = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
+        '        If modRefID = refID Then
+        '            Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
+        '        End If
+        '    Next 'Add Modified Ranges to Modified Range Object
+        'End If
 
     End Sub 'Generate a pp from EDS
 
@@ -1403,7 +1403,7 @@ Partial Public Class PierAndPad
             Me.neglect_depth = Nothing
         End Try 'Neglect Depth
         Try
-            If CType(PierandPadDataRow.Item("bearing_distribution_type"), String) = "Yes" Then
+            If CType(PierandPadDataRow.Item("bearing_distribution_type"), String) = "No" Then
                 Me.bearing_distribution_type = False
             Else
                 Me.bearing_distribution_type = True
@@ -1452,84 +1452,84 @@ Partial Public Class PierAndPad
 End Class
 
 #Region "Pier and Pad Extras"
-Partial Public Class ModifiedRange
-    Private prop_modified_id As Integer
-    Private prop_sheet_name As String
-    Private prop_cell_range As String
-    Private prop_cell_name As String
-    Private prop_override As String
+'Partial Public Class ModifiedRange
+'    Private prop_modified_id As Integer
+'    Private prop_sheet_name As String
+'    Private prop_cell_range As String
+'    Private prop_cell_name As String
+'    Private prop_override As String
 
-    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Modified ID")>
-    Public Property modified_id() As Integer
-        Get
-            Return Me.prop_modified_id
-        End Get
-        Set
-            Me.prop_modified_id = Value
-        End Set
-    End Property
-    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Sheet Name")>
-    Public Property sheet_name() As String
-        Get
-            Return Me.prop_sheet_name
-        End Get
-        Set
-            Me.prop_sheet_name = Value
-        End Set
-    End Property
-    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Range")>
-    Public Property cell_range() As String
-        Get
-            Return Me.prop_cell_range
-        End Get
-        Set
-            Me.prop_cell_range = Value
-        End Set
-    End Property
-    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Name")>
-    Public Property cell_name() As String
-        Get
-            Return Me.prop_cell_name
-        End Get
-        Set
-            Me.prop_cell_name = Value
-        End Set
-    End Property
-    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Override")>
-    Public Property override() As String
-        Get
-            Return Me.prop_override
-        End Get
-        Set
-            Me.prop_override = Value
-        End Set
-    End Property
-    Sub New(ByVal ModifiedRangeDataRow As DataRow)
-        Try
-            Me.modified_id = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
-        Catch
-            Me.modified_id = 0
-        End Try 'Modified ID
-        Try
-            Me.sheet_name = CType(ModifiedRangeDataRow.Item("sheet_name"), String)
-        Catch
-            Me.sheet_name = ""
-        End Try 'Sheet Name
-        Try
-            Me.cell_range = CType(ModifiedRangeDataRow.Item("cell_range"), String)
-        Catch
-            Me.cell_range = ""
-        End Try 'Cell Range
-        Try
-            Me.cell_name = CType(ModifiedRangeDataRow.Item("cell_name"), String)
-        Catch
-            Me.cell_name = ""
-        End Try 'Cell Name
-        Try
-            Me.override = CType(ModifiedRangeDataRow.Item("override"), String)
-        Catch
-            Me.override = ""
-        End Try 'Override
-    End Sub
-End Class
+'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Modified ID")>
+'    Public Property modified_id() As Integer
+'        Get
+'            Return Me.prop_modified_id
+'        End Get
+'        Set
+'            Me.prop_modified_id = Value
+'        End Set
+'    End Property
+'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Sheet Name")>
+'    Public Property sheet_name() As String
+'        Get
+'            Return Me.prop_sheet_name
+'        End Get
+'        Set
+'            Me.prop_sheet_name = Value
+'        End Set
+'    End Property
+'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Range")>
+'    Public Property cell_range() As String
+'        Get
+'            Return Me.prop_cell_range
+'        End Get
+'        Set
+'            Me.prop_cell_range = Value
+'        End Set
+'    End Property
+'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Name")>
+'    Public Property cell_name() As String
+'        Get
+'            Return Me.prop_cell_name
+'        End Get
+'        Set
+'            Me.prop_cell_name = Value
+'        End Set
+'    End Property
+'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Override")>
+'    Public Property override() As String
+'        Get
+'            Return Me.prop_override
+'        End Get
+'        Set
+'            Me.prop_override = Value
+'        End Set
+'    End Property
+'    Sub New(ByVal ModifiedRangeDataRow As DataRow)
+'        Try
+'            Me.modified_id = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
+'        Catch
+'            Me.modified_id = 0
+'        End Try 'Modified ID
+'        Try
+'            Me.sheet_name = CType(ModifiedRangeDataRow.Item("sheet_name"), String)
+'        Catch
+'            Me.sheet_name = ""
+'        End Try 'Sheet Name
+'        Try
+'            Me.cell_range = CType(ModifiedRangeDataRow.Item("cell_range"), String)
+'        Catch
+'            Me.cell_range = ""
+'        End Try 'Cell Range
+'        Try
+'            Me.cell_name = CType(ModifiedRangeDataRow.Item("cell_name"), String)
+'        Catch
+'            Me.cell_name = ""
+'        End Try 'Cell Name
+'        Try
+'            Me.override = CType(ModifiedRangeDataRow.Item("override"), String)
+'        Catch
+'            Me.override = ""
+'        End Try 'Override
+'End Sub
+'End Class
 #End Region

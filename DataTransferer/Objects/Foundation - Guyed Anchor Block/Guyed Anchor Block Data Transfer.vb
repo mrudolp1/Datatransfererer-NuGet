@@ -12,7 +12,8 @@ Partial Public Class DataTransfererGuyedAnchorBlock
     Private prop_ExcelFilePath As String
 
     Public Property GuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
-    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-9-2021.xlsm"
+    Public Property sqlGuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
+    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-8-2021.xlsm"
     Private Property GuyedAnchorBlockFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property gabDB As String
@@ -45,9 +46,9 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
-        Dim refid As Integer
 
+    Sub CreateSQLGuyedAnchorBlocks(ByRef GuyedAnchorBlocks As List(Of GuyedAnchorBlock))
+        Dim refid As Integer
         Dim GuyedAnchorBlockLoader As String
 
         'Load data to get pier and pad details data for the existing structure model
@@ -60,21 +61,27 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         'Custom Section to transfer data for the tool. Needs to be adjusted for each tool.
         For Each GuyedAnchorBlockDataRow As DataRow In ds.Tables("Guyed Anchor Block General Details SQL").Rows
             refid = CType(GuyedAnchorBlockDataRow.Item("ID"), Integer)
-
             GuyedAnchorBlocks.Add(New GuyedAnchorBlock(GuyedAnchorBlockDataRow, refid))
         Next
 
+    End Sub
+
+    Public Function LoadFromEDS() As Boolean
+        CreateSQLGuyedAnchorBlocks(GuyedAnchorBlocks)
         Return True
     End Function 'Create Guyed Anchor Block objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
-        Dim refID As Integer
-        Dim refCol As String
+
 
         For Each item As EXCELDTParameter In GuyedAnchorBlockExcelDTParameters()
             'Get tables from excel file 
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
+
+
+        Dim refID As Integer
+        Dim refCol As String
 
         'Custom Section to transfer data for the tool. Needs to be adjusted for each tool.
         For Each GuyedAnchorBlockDataRow As DataRow In ds.Tables("Guyed Anchor Block General Details EXCEL").Rows
@@ -84,92 +91,165 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 
             GuyedAnchorBlocks.Add(New GuyedAnchorBlock(GuyedAnchorBlockDataRow, refID, refCol))
         Next
+
+        'GuyedAnchorBlocks.Add(New GuyedAnchorBlock(ExcelFilePath))
+
+
+        'Pull SQL data, if applicable, to compare with excel data
+        CreateSQLGuyedAnchorBlocks(sqlGuyedAnchorBlocks)
+
+        'If sqlGuyedAnchorBlocks.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
+            If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks
+                    If fnd.ID = sqlfnd.ID Then
+                        If CheckChanges(fnd, sqlfnd) Then
+                            isModelNeeded = True
+                            isfndGroupNeeded = True
+                            isGuyedAnchorBlockNeeded = True
+                        End If
+                        Exit For
+                    End If
+                Next
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isfndGroupNeeded = True
+                isGuyedAnchorBlockNeeded = True
+            End If
+        Next
+
+
+        'Dim refID As Integer
+        'Dim refCol As String
+
+
+        ''Custom Section to transfer data for the tool. Needs to be adjusted for each tool.
+        'For Each GuyedAnchorBlockDataRow As DataRow In ds.Tables("Guyed Anchor Block General Details EXCEL").Rows
+
+        '    refCol = "local_anchor_id"
+        '    refID = CType(GuyedAnchorBlockDataRow.Item(refCol), Integer)
+
+        '    GuyedAnchorBlocks.Add(New GuyedAnchorBlock(GuyedAnchorBlockDataRow, refID, refCol))
+        'Next
     End Sub 'Create Guyed Anchor Block  objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
-    Public Sub SaveToEDS()
+    Sub Save1GuyedAnchorBlock(ByVal gab As GuyedAnchorBlock)
+
         Dim firstOne As Boolean = True
         Dim mySoils As String = ""
         Dim myProfiles As String = ""
 
-        For Each gab As GuyedAnchorBlock In GuyedAnchorBlocks
-            Dim GuyedAnchorBlockSaver As String = QueryBuilderFromFile(queryPath & "Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql")
+        'For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
+
+        Dim GuyedAnchorBlockSaver As String = QueryBuilderFromFile(queryPath & "Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql")
 
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[BU NUMBER]", BUNumber)
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[STRUCTURE ID]", STR_ID)
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[FOUNDATION TYPE]", "Guyed Anchor Block")
-            If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", "NULL")
-            Else
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", gab.anchor_id.ToString)
-            End If
-            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+        If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", "NULL")
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID]'", gab.anchor_id.ToString)
+        End If
 
-            If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
-                For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
-                    Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Model ID Needed]'", 0)
+        End If
 
-                    If Not firstOne Then
-                        mySoils += ",(" & tempSoilLayer & ")"
-                    Else
-                        mySoils += "(" & tempSoilLayer & ")"
-                    End If
+        'Determine if new foundation group ID needs created. 
+        If isfndGroupNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+        End If
 
-                    firstOne = False
-                Next 'Add Soil Layer INSERT statments
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-                firstOne = True
+        'Determine if new Guyed Anchor Block ID needs created
+        If isGuyedAnchorBlockNeeded Then
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 1)
+        Else
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("'[GUYED ANCHOR BLOCK ID Needed]'", 0)
+        End If
 
-                For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
-                    Dim tempGuyedAnchorBlockProfile As String = InsertGuyedAnchorBlockProfile(gabp)
+        GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
 
-                    If Not firstOne Then
-                        myProfiles += ",(" & tempGuyedAnchorBlockProfile & ")"
-                    Else
-                        myProfiles += "(" & tempGuyedAnchorBlockProfile & ")"
-                    End If
+        If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
+            For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
+                Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
 
-                    firstOne = False
-                Next 'Add Pier Profile INSERT statements
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", myProfiles)
-                firstOne = True
+                If Not firstOne Then
+                    mySoils += ",(" & tempSoilLayer & ")"
+                Else
+                    mySoils += "(" & tempSoilLayer & ")"
+                End If
 
-                mySoils = ""
-                myProfiles = ""
-            Else
-                Dim tempUpdater As String = ""
-                tempUpdater += UpdateGuyedAnchorBlockDetail(gab)
+                firstOne = False
+            Next 'Add Soil Layer INSERT statments
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+            firstOne = True
 
-                'comment out soil layer insertion. Added in next step if a layer does not have an ID
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+            For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
+                Dim tempGuyedAnchorBlockProfile As String = InsertGuyedAnchorBlockProfile(gabp)
 
-                For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
-                    If gabsl.soil_layer_id = 0 Or IsDBNull(gabsl.soil_layer_id) Then
-                        tempUpdater += "INSERT INTO anchor_soil_layer VALUES (" & InsertGuyedAnchorBlockSoilLayer(gabsl) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdateGuyedAnchorBlockSoilLayer(gabsl)
-                    End If
-                Next
+                If Not firstOne Then
+                    myProfiles += ",(" & tempGuyedAnchorBlockProfile & ")"
+                Else
+                    myProfiles += "(" & tempGuyedAnchorBlockProfile & ")"
+                End If
 
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", "--INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])")
-                For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
-                    If gabp.profile_id = 0 Or IsDBNull(gabp.profile_id) Then
-                        tempUpdater += "INSERT INTO anchor_profile VALUES (" & InsertGuyedAnchorBlockProfile(gabp) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdateGuyedAnchorBlockProfile(gabp)
-                    End If
-                Next
+                firstOne = False
+            Next 'Add Pier Profile INSERT statements
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", myProfiles)
+            firstOne = True
+        End If
 
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
-            End If
+        mySoils = ""
+        myProfiles = ""
 
-            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+        'Else
+        '    Dim tempUpdater As String = ""
+        '    tempUpdater += UpdateGuyedAnchorBlockDetail(gab)
 
-            sqlSender(GuyedAnchorBlockSaver, gabDB, gabID, "0")
+        '    'comment out soil layer insertion. Added in next step if a layer does not have an ID
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO anchor_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+
+        '    For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
+        '        If gabsl.soil_layer_id = 0 Or IsDBNull(gabsl.soil_layer_id) Then
+        '            tempUpdater += "INSERT INTO anchor_soil_layer VALUES (" & InsertGuyedAnchorBlockSoilLayer(gabsl) & ") " & vbNewLine
+        '        Else
+        '            tempUpdater += UpdateGuyedAnchorBlockSoilLayer(gabsl)
+        '        End If
+        '    Next
+
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", "--INSERT INTO anchor_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])")
+        '    For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
+        '        If gabp.profile_id = 0 Or IsDBNull(gabp.profile_id) Then
+        '            tempUpdater += "INSERT INTO anchor_profile VALUES (" & InsertGuyedAnchorBlockProfile(gabp) & ") " & vbNewLine
+        '        Else
+        '            tempUpdater += UpdateGuyedAnchorBlockProfile(gabp)
+        '        End If
+        '    Next
+
+        '    GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
+        'End If
+
+        'GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
+
+        sqlSender(GuyedAnchorBlockSaver, gabDB, gabID, "0")
+
+        'Next
+
+    End Sub
+
+    Public Sub SaveToEDS()
+        For Each gab As GuyedAnchorBlock In GuyedAnchorBlocks
+            Save1GuyedAnchorBlock(gab)
         Next
-
-
     End Sub
 
     Public Sub SaveToExcel()
@@ -257,8 +337,8 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                     .Worksheets("Database").Range(myCol & rowStart + 14).Value = CType(gab.anchor_shaft_shear_lag_factor, Double)
                 Else .Worksheets("Database").Range(myCol & rowStart + 14).ClearContents
                 End If
-                If Not IsNothing(gab.anchor_shaft_section_type) Then
-                    .Worksheets("Database").Range(myCol & rowStart + 15).Value = CType(gab.anchor_shaft_section_type, String)
+                If Not IsNothing(gab.anchor_shaft_section) Then
+                    .Worksheets("Database").Range(myCol & rowStart + 15).Value = CType(gab.anchor_shaft_section, String)
                 Else .Worksheets("Database").Range(myCol & rowStart + 15).ClearContents
                 End If
                 If Not IsNothing(gab.rebar_known) Then
@@ -649,178 +729,67 @@ Partial Public Class DataTransfererGuyedAnchorBlock
     Private Function InsertGuyedAnchorBlockDetail(ByVal gab As GuyedAnchorBlock) As String
         Dim insertString As String = ""
 
-        insertString += "@FndID"
-        'insertString += "," & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
-        '    insertString += "," & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
+        'insertString += "@FndID"
+        insertString += IIf(IsNothing(gab.anchor_depth), "Null", gab.anchor_depth.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_width), "Null", gab.anchor_width.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_thickness), "Null", gab.anchor_thickness.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_length), "Null", gab.anchor_length.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_toe_width), "Null", gab.anchor_toe_width.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_top_rebar_size), "Null", gab.anchor_top_rebar_size.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_top_rebar_quantity), "Null", gab.anchor_top_rebar_quantity.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_front_rebar_size), "Null", gab.anchor_front_rebar_size.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_front_rebar_quantity), "Null", gab.anchor_front_rebar_quantity.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_stirrup_size), "Null", gab.anchor_stirrup_size.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_diameter), "Null", gab.anchor_shaft_diameter.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_quantity), "Null", gab.anchor_shaft_quantity.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_area_override), "Null", gab.anchor_shaft_area_override.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_shear_lag_factor), "Null", gab.anchor_shaft_shear_lag_factor.ToString)
+        insertString += "," & IIf(IsNothing(gab.concrete_compressive_strength), "Null", gab.concrete_compressive_strength.ToString)
+        insertString += "," & IIf(IsNothing(gab.clear_cover), "Null", gab.clear_cover.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_yield_strength), "Null", gab.anchor_shaft_yield_strength.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_ultimate_strength), "Null", gab.anchor_shaft_ultimate_strength.ToString)
+        insertString += "," & IIf(IsNothing(gab.neglect_depth), "Null", gab.neglect_depth.ToString)
+        insertString += "," & IIf(IsNothing(gab.groundwater_depth), "Null", gab.groundwater_depth.ToString)
+        insertString += "," & IIf(IsNothing(gab.soil_layer_quantity), "Null", gab.soil_layer_quantity.ToString)
+        insertString += "," & IIf(IsNothing(gab.tool_version), "Null", "'" & gab.tool_version.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_section), "Null", "'" & gab.anchor_shaft_section.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.anchor_rebar_grade), "Null", gab.anchor_rebar_grade.ToString)
+        insertString += "," & IIf(IsNothing(gab.anchor_shaft_known), "Null", "'" & gab.anchor_shaft_known.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.basic_soil_check), "Null", "'" & gab.basic_soil_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.structural_check), "Null", "'" & gab.structural_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.rebar_known), "Null", "'" & gab.rebar_known.ToString & "'")
+        insertString += "," & IIf(IsNothing(gab.local_anchor_id), "Null", gab.local_anchor_id.ToString)
+        insertString += "," & IIf(IsNothing(gab.local_anchor_profile), "Null", gab.local_anchor_profile.ToString)
 
         Return insertString
     End Function
-    Private Function InsertGuyedAnchorBlockSoilLayer(ByVal dpsl As GuyedAnchorBlockSoilLayer) As String
+    Private Function InsertGuyedAnchorBlockSoilLayer(ByVal gabsl As GuyedAnchorBlockSoilLayer) As String
         Dim insertString As String = ""
 
-        'insertString += "@DpID"
-        'insertString += "," & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
+        insertString += "@GABID"
+        insertString += "," & IIf(IsNothing(gabsl.bottom_depth), "Null", "'" & gabsl.bottom_depth.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.effective_soil_density), "Null", "'" & gabsl.effective_soil_density.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.cohesion), "Null", "'" & gabsl.cohesion.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.friction_angle), "Null", "'" & gabsl.friction_angle.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.skin_friction_override_uplift), "Null", "'" & gabsl.skin_friction_override_uplift.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.spt_blow_count), "Null", "'" & gabsl.spt_blow_count.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.local_soil_layer_id), "Null", "'" & gabsl.local_soil_layer_id.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabsl.local_soil_profile), "Null", "'" & gabsl.local_soil_profile.ToString & "'")
 
         Return insertString
     End Function
     Private Function InsertGuyedAnchorBlockProfile(ByVal gabp As GuyedAnchorBlockProfile) As String
         Dim insertString As String = ""
 
-        'insertString += "@DpID"
-        'insertString += "," & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
-        'insertString += "," & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
+        insertString += "@GABID"
+        insertString += "," & IIf(IsNothing(gabp.reaction_location), "Null", "'" & gabp.reaction_location.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabp.anchor_profile), "Null", "'" & gabp.anchor_profile.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabp.soil_profile), "Null", "'" & gabp.soil_profile.ToString & "'")
+        insertString += "," & IIf(IsNothing(gabp.local_anchor_id), "Null", "'" & gabp.local_anchor_id.ToString & "'")
 
         Return insertString
     End Function
-    'Private Function InsertDrilledPierDetail(ByVal dp As DrilledPier) As String
-    '    Dim insertString As String = ""
 
-    '    insertString += "@FndID"
-    '    insertString += "," & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
-
-    '    Return insertString
-    'End Function
-
-    'Private Function InsertDrilledPierBell(ByVal bp As DrilledPierBelledPier) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@DpID"
-    '    insertString += "," & IIf(IsNothing(bp.belled_pier_option), "Null", "'" & bp.belled_pier_option.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.bottom_diameter_of_bell), "Null", "'" & bp.bottom_diameter_of_bell.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.bell_input_type), "Null", "'" & bp.bell_input_type.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.bell_angle), "Null", "'" & bp.bell_angle.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.bell_height), "Null", "'" & bp.bell_height.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.bell_toe_height), "Null", "'" & bp.bell_toe_height.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.neglect_top_soil_layer), "Null", "'" & bp.neglect_top_soil_layer.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.swelling_expansive_soil), "Null", "'" & bp.swelling_expansive_soil.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.depth_of_expansive_soil), "Null", "'" & bp.depth_of_expansive_soil.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(bp.expansive_soil_force), "Null", "'" & bp.expansive_soil_force.ToString & "'")
-
-    '    Return insertString
-    'End Function
-
-    'Private Function InsertDrilledPierEmbed(ByVal ep As DrilledPierEmbeddedPier) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@DpID"
-    '    insertString += "," & IIf(IsNothing(ep.embedded_pole_option), "Null", "'" & ep.embedded_pole_option.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.encased_in_concrete), "Null", "'" & ep.encased_in_concrete.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_side_quantity), "Null", "'" & ep.pole_side_quantity.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_yield_strength), "Null", "'" & ep.pole_yield_strength.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_thickness), "Null", "'" & ep.pole_thickness.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.embedded_pole_input_type), "Null", "'" & ep.embedded_pole_input_type.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_diameter_toc), "Null", "'" & ep.pole_diameter_toc.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_top_diameter), "Null", "'" & ep.pole_top_diameter.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_bottom_diameter), "Null", "'" & ep.pole_bottom_diameter.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_section_length), "Null", "'" & ep.pole_section_length.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_taper_factor), "Null", "'" & ep.pole_taper_factor.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(ep.pole_bend_radius_override), "Null", "'" & ep.pole_bend_radius_override.ToString & "'")
-
-    '    Return insertString
-    'End Function
-
-    'Private Function InsertDrilledPierSoilLayer(ByVal dpsl As DrilledPierSoilLayer) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@DpID"
-    '    insertString += "," & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
-
-    '    Return insertString
-    'End Function
-
-    'Private Function InsertDrilledPierSection(ByVal dpsec As DrilledPierSection) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@DpID"
-    '    insertString += "," & IIf(IsNothing(dpsec.pier_diameter), "Null", "'" & dpsec.pier_diameter.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.clear_cover), "Null", "'" & dpsec.clear_cover.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.clear_cover_rebar_cage_option), "Null", "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpsec.rho_override), "Null", "'" & dpsec.rho_override.ToString & "'")
-
-    '    Return insertString
-    'End Function
-
-    'Private Function InsertDrilledPierRebar(ByVal dpreb As DrilledPierRebar) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@SecID"
-    '    insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_quantity), "Null", "'" & dpreb.longitudinal_rebar_quantity.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_size), "Null", "'" & dpreb.longitudinal_rebar_size.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpreb.longitudinal_rebar_cage_diameter), "Null", "'" & dpreb.longitudinal_rebar_cage_diameter.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpreb.local_rebar_id), "Null", "'" & dpreb.local_rebar_id.ToString & "'")
-
-    '    Return insertString
-    'End Function
-    'Private Function InsertDrilledPierProfile(ByVal dpp As DrilledPierProfile) As String
-    '    Dim insertString As String = ""
-
-    '    insertString += "@DpID"
-    '    insertString += "," & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
-    '    insertString += "," & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
-
-    '    Return insertString
-    'End Function
 #End Region
 
 #Region "SQL Update Statements"
@@ -1037,6 +1006,147 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         MyParameters.Add(New EXCELDTParameter("Guyed Anchor Block Profiles EXCEL", "A2:G52", "Profiles (ENTER)"))
 
         Return MyParameters
+    End Function
+#End Region
+
+#Region "Check Changes"
+    Private changeDt As New DataTable
+    Private changeList As New List(Of AnalysisChanges)
+    Function CheckChanges(ByVal xlGuyedAnchorBlock As GuyedAnchorBlock, ByVal sqlGuyedAnchorBlock As GuyedAnchorBlock) As Boolean
+        Dim changesMade As Boolean = False
+
+        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+
+        'Check Details
+        If Check1Change(xlGuyedAnchorBlock.anchor_depth, sqlGuyedAnchorBlock.anchor_depth, 1, "Anchor_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_width, sqlGuyedAnchorBlock.anchor_width, 1, "Anchor_Width") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_thickness, sqlGuyedAnchorBlock.anchor_thickness, 1, "Anchor_Thickness") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_length, sqlGuyedAnchorBlock.anchor_length, 1, "Anchor_Length") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_toe_width, sqlGuyedAnchorBlock.anchor_toe_width, 1, "Anchor_Toe_Width") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_size, sqlGuyedAnchorBlock.anchor_top_rebar_size, 1, "Anchor_Top_Rebar_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_quantity, sqlGuyedAnchorBlock.anchor_top_rebar_quantity, 1, "Anchor_Top_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_size, sqlGuyedAnchorBlock.anchor_front_rebar_size, 1, "Anchor_Front_Rebar_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_quantity, sqlGuyedAnchorBlock.anchor_front_rebar_quantity, 1, "Anchor_Front_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_stirrup_size, sqlGuyedAnchorBlock.anchor_stirrup_size, 1, "Anchor_Stirrup_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_diameter, sqlGuyedAnchorBlock.anchor_shaft_diameter, 1, "Anchor_Shaft_Diameter") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_quantity, sqlGuyedAnchorBlock.anchor_shaft_quantity, 1, "Anchor_Shaft_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_area_override, sqlGuyedAnchorBlock.anchor_shaft_area_override, 1, "Anchor_Shaft_Area_Override") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, sqlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, 1, "Anchor_Shaft_Shear_Lag_Factor") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.concrete_compressive_strength, sqlGuyedAnchorBlock.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.clear_cover, sqlGuyedAnchorBlock.clear_cover, 1, "Clear_Cover") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_yield_strength, sqlGuyedAnchorBlock.anchor_shaft_yield_strength, 1, "Anchor_Shaft_Yield_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_ultimate_strength, sqlGuyedAnchorBlock.anchor_shaft_ultimate_strength, 1, "Anchor_Shaft_Ultimate_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.neglect_depth, sqlGuyedAnchorBlock.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.groundwater_depth, sqlGuyedAnchorBlock.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.soil_layer_quantity, sqlGuyedAnchorBlock.soil_layer_quantity, 1, "Soil_Layer_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.tool_version, sqlGuyedAnchorBlock.tool_version, 1, "Tool_Version") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_section, sqlGuyedAnchorBlock.anchor_shaft_section, 1, "Anchor_Shaft_Section") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_rebar_grade, sqlGuyedAnchorBlock.anchor_rebar_grade, 1, "Anchor_Rebar_Grade") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_known, sqlGuyedAnchorBlock.anchor_shaft_known, 1, "Anchor_Shaft_Known") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.basic_soil_check, sqlGuyedAnchorBlock.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.structural_check, sqlGuyedAnchorBlock.structural_check, 1, "Structural_Check") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.rebar_known, sqlGuyedAnchorBlock.rebar_known, 1, "Rebar_Known") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.local_anchor_id, sqlGuyedAnchorBlock.local_anchor_id, 1, "Local_Anchor_Id") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.local_anchor_profile, sqlGuyedAnchorBlock.local_anchor_profile, 1, "Local_Anchor_Profile") Then changesMade = True
+
+        'Check Soil Layer
+        'If xlGuyedAnchorBlock.soil_layers.Count <> sqlGuyedAnchorBlock.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below
+
+        For Each gabsl As GuyedAnchorBlockSoilLayer In xlGuyedAnchorBlock.soil_layers
+            For Each sqlgabsl As GuyedAnchorBlockSoilLayer In sqlGuyedAnchorBlock.soil_layers
+
+                If gabsl.soil_layer_id = sqlgabsl.soil_layer_id Then
+                    If Check1Change(gabsl.bottom_depth, sqlgabsl.bottom_depth, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.effective_soil_density, sqlgabsl.effective_soil_density, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.cohesion, sqlgabsl.cohesion, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.friction_angle, sqlgabsl.friction_angle, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.skin_friction_override_uplift, sqlgabsl.skin_friction_override_uplift, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.spt_blow_count, sqlgabsl.spt_blow_count, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.local_soil_layer_id, sqlgabsl.local_soil_layer_id, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.local_soil_profile, sqlgabsl.local_soil_profile, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+                If gabsl.soil_layer_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
+                    If Check1Change(gabsl.bottom_depth, Nothing, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.effective_soil_density, Nothing, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.cohesion, Nothing, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.friction_angle, Nothing, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.skin_friction_override_uplift, Nothing, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.spt_blow_count, Nothing, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.local_soil_layer_id, Nothing, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.local_soil_profile, Nothing, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+            Next
+        Next
+
+        'Guyed Anchor Block Profiles
+        For Each gabp As GuyedAnchorBlockProfile In xlGuyedAnchorBlock.anchor_profiles
+            For Each sqlgabp As GuyedAnchorBlockProfile In sqlGuyedAnchorBlock.anchor_profiles
+
+                If gabp.ID = sqlgabp.ID Then
+                    If Check1Change(gabp.reaction_location, sqlgabp.reaction_location, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.anchor_profile, sqlgabp.anchor_profile, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.soil_profile, sqlgabp.soil_profile, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.local_anchor_id, sqlgabp.local_anchor_id, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+                If gabp.ID = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(gabp.reaction_location, Nothing, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.anchor_profile, Nothing, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.soil_profile, Nothing, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
+                    If Check1Change(gabp.local_anchor_id, Nothing, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+            Next
+        Next
+
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
+
+    End Function
+
+    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+        'Create your string based on data in the datatable
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+
+        'write to text file
+        'End Sub
+    End Function
+
+    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+            Return True
+        End If
     End Function
 #End Region
 

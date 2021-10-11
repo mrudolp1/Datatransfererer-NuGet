@@ -374,7 +374,7 @@ Partial Public Class DataTransfererPierandPad
                     .Worksheets("Input").Range("N").Value = CType(pp.neglect_depth, Double)
                 End If
 
-                If pp.bearing_distribution_type = True Then
+                If pp.bearing_distribution_type = False Then
                     .Worksheets("Input").Range("Rock").Value = "No"
                 Else
                     .Worksheets("Input").Range("Rock").Value = "Yes"
@@ -431,6 +431,7 @@ Partial Public Class DataTransfererPierandPad
     End Sub
 
     Private Sub SaveAndClosePierAndPad()
+        NewPierAndPadWb.Calculate()
         NewPierAndPadWb.EndUpdate()
         NewPierAndPadWb.SaveDocument(ExcelFilePath, PierAndPadFileType)
     End Sub
