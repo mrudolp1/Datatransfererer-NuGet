@@ -11,7 +11,8 @@ Partial Public Class DataTransfererPierandPad
 
     Public Property PierAndPads As New List(Of PierAndPad)
     Public Property sqlPierAndPads As New List(Of PierAndPad)
-    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    'Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\Template\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ppDS As New DataSet
@@ -58,7 +59,8 @@ Partial Public Class DataTransfererPierandPad
         'Custom Section to transfer data for the pier and pad tool. Needs to be adjusted for each tool.
         For Each PierAndPadDataRow As DataRow In ds.Tables("Pier and Pad General Details SQL").Rows
             refid = CType(PierAndPadDataRow.Item("pp_id"), Integer)
-            sqlPierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
+            'sqlPierAndPads.Add(New PierAndPad(PierAndPadDataRow, refid))
+            ppList.Add(New PierAndPad(PierAndPadDataRow, refid))
         Next
     End Sub
     Public Function LoadFromEDS() As Boolean

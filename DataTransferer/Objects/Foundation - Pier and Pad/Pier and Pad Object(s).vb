@@ -1264,7 +1264,8 @@ Partial Public Class PierAndPad
         Try
             Me.pier_shape = CType(PierandPadDataRow.Item("pier_shape"), String)
         Catch
-            Me.pier_shape = Nothing
+            'Me.pier_shape = Nothing
+            Me.pier_shape = ""
         End Try 'Pier Shape
         Try
             Me.pier_diameter = CType(PierandPadDataRow.Item("pier_diameter"), Double)

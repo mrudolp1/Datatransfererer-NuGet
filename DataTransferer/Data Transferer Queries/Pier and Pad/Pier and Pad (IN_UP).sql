@@ -71,7 +71,7 @@ IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 				INSERT INTO fnd.foundation_details (foundation_type) OUTPUT Inserted.id INTO @Foundation VALUES (@FndType)
 				SELECT @FndID=FndID FROM @Foundation
 			END
-		END
+		--END
 	ELSE
 		BEGIN
 			--Create new Foundation ID by copying previous data and pasting new row into foundation_details
@@ -91,8 +91,8 @@ IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 		BEGIN
 			--INSERT Details
 			--Determine Foundation_ID
-			IF @PPNeeded = 1 --TRUE  
-				BEGIN
+			--IF @PPNeeded = 1 --TRUE  
+				--BEGIN
 					--INSERT Details
 					INSERT INTO fnd.pier_pad_details (pier_shape
 						,pier_diameter
