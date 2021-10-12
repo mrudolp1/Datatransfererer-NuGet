@@ -168,7 +168,7 @@ Partial Public Class DataTransfererUnitBase
             UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 0)
         End If
 
-        UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
+        UnitBaseSaver = UnitBaseSaver.Replace("'[INSERT ALL UNIT BASE DETAILS]'", InsertUnitBaseDetail(ub))
 
         sqlSender(UnitBaseSaver, ubDB, ubID, "0")
     End Sub
@@ -505,10 +505,10 @@ Partial Public Class DataTransfererUnitBase
     Function CheckChanges(ByVal xlUnitBase As SST_Unit_Base, ByVal sqlUnitBase As SST_Unit_Base) As Boolean
         Dim changesMade As Boolean = False
 
-        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        'changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
         'Check Details
         If Check1Change(xlUnitBase.pier_shape, sqlUnitBase.pier_shape, 1, "Pier_Shape") Then changesMade = True
