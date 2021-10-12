@@ -63,6 +63,9 @@ SELECT
     ,pd.pile_spacing_min_asymmetric
     ,pd.quantity_piles_surrounding
     ,pd.pile_cap_reference
+    ,pd.tool_version
+    ,pd.Soil_110
+    ,pd.Structural_105
 
 FROM
     gen.structure_model_xref smx
