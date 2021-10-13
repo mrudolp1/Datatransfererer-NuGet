@@ -12,7 +12,8 @@ Partial Public Class DataTransfererDrilledPier
     Private prop_ExcelFilePath As String
 
     Public Property DrilledPiers As New List(Of DrilledPier)
-    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"
+    Public Property sqlDrilledPiers As New List(Of DrilledPier)
+    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 10-13-2021.xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property dpDB As String
@@ -46,7 +47,7 @@ Partial Public Class DataTransfererDrilledPier
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
+    Sub CreateSQLDrilledPiers(ByRef DrilledPiers As List(Of DrilledPier))
         Dim refid As Integer
 
         Dim DrilledPierLoader As String
@@ -61,217 +62,290 @@ Partial Public Class DataTransfererDrilledPier
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
         For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details SQL").Rows
             refid = CType(DrilledPierDataRow.Item("drilled_pier_id"), Integer)
-
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refid))
         Next
 
+    End Sub
+
+    Public Function LoadFromEDS() As Boolean
+        CreateSQLDrilledPiers(DrilledPiers)
         Return True
     End Function 'Create Drilled Pier objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
-        Dim refID As Integer
-        Dim refCol As String
 
         For Each item As EXCELDTParameter In DrilledPierExcelDTParameters()
             'Get tables from excel file 
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
+        Dim refID As Integer
+        Dim refCol As String
+
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
         For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details EXCEL").Rows
-            'If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
-            '    refCol = "local_drilled_pier_id"
-            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            'Else
-            '    refCol = "drilled_pier_id"
-            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            'End If
-            ''commented out in case drilled pier id and local drilled pier id matched, prevents possible overriding of data
+
             refCol = "local_drilled_pier_id"
             refID = CType(DrilledPierDataRow.Item(refCol), Integer)
 
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refID, refCol))
         Next
+
+        'Pull SQL data, if applicable, to compare with excel data
+        CreateSQLDrilledPiers(sqlDrilledPiers)
+
+        'If sqlGuyedAnchorBlocks.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each fnd As DrilledPier In DrilledPiers
+            'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+            If fnd.pier_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+                For Each sqlfnd As DrilledPier In sqlDrilledPiers 'MRP - turned off for testing. Need to update Check Changes Logic
+                    'If fnd.ID = sqlfnd.ID Then
+                    If fnd.pier_id = sqlfnd.pier_id Then
+                        If CheckChanges(fnd, sqlfnd) Then
+                            isModelNeeded = True
+                            isfndGroupNeeded = True
+                            isDrilledPierNeeded = True
+                        End If
+                        Exit For
+                    End If
+                Next
+
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isfndGroupNeeded = True
+                isDrilledPierNeeded = True
+            End If
+        Next
+
     End Sub 'Create Drilled Pier objects based on what is coming from the excel file
 #End Region
 
 #Region "Save Data"
+    Sub Save1DrilledPier(ByVal dp As DrilledPier)
+
+        'Dim firstOne As Boolean = True
+        'Dim mySoils As String = ""
+        'Dim mySections As String = ""
+        'Dim myRebar As String = ""
+        'Dim myProfiles As String = ""
+
+        'For Each dp As DrilledPier In DrilledPiers
+
+        Dim DrilledPierSaver As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers (IN_UP).sql")
+        Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Section (IN_UP).txt")
+
+        DrilledPierSaver = DrilledPierSaver.Replace("[BU NUMBER]", BUNumber)
+        DrilledPierSaver = DrilledPierSaver.Replace("[STRUCTURE ID]", STR_ID)
+        DrilledPierSaver = DrilledPierSaver.Replace("[FOUNDATION TYPE]", "Drilled Pier")
+        If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
+            DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", "NULL")
+        Else
+            DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", dp.pier_id.ToString)
+        End If
+
+        'create new information only once per tool, rather than each instance of the foundation from the tool
+        If firstDrilledPier Then
+
+            'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+            If isModelNeeded Then
+                DrilledPierSaver = DrilledPierSaver.Replace("'[Model ID Needed]'", 1)
+            Else
+                DrilledPierSaver = DrilledPierSaver.Replace("'[Model ID Needed]'", 0)
+            End If
+
+            'Determine if new foundation group ID needs created. 
+            If isfndGroupNeeded Then
+                DrilledPierSaver = DrilledPierSaver.Replace("'[Fnd GRP ID Needed]'", 1)
+            Else
+                DrilledPierSaver = DrilledPierSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+            End If
+
+        Else
+
+            DrilledPierSaver = DrilledPierSaver.Replace("'[Model ID Needed]'", 0)
+            DrilledPierSaver = DrilledPierSaver.Replace("'[Fnd GRP ID Needed]'", 0)
+
+        End If
+
+        'Determine if new Drilled Pier ID needs created
+        If isDrilledPierNeeded Then
+            DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID Needed]'", 1)
+        Else
+            DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID Needed]'", 0)
+        End If
+
+
+        DrilledPierSaver = DrilledPierSaver.Replace("[EMBED BOOLEAN]", dp.embedded_pole.ToString)
+        DrilledPierSaver = DrilledPierSaver.Replace("[BELL BOOLEAN]", dp.belled_pier.ToString)
+        DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS]", InsertDrilledPierDetail(dp))
+
+        If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
+            For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
+                Dim tempSoilLayer As String = InsertDrilledPierSoilLayer(dpsl)
+
+                If Not firstOne Then
+                    mySoils += ",(" & tempSoilLayer & ")"
+                Else
+                    mySoils += "(" & tempSoilLayer & ")"
+                End If
+
+                firstOne = False
+            Next 'Add Soil Layer INSERT statments
+            DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+            firstOne = True
+
+            For Each dpsec As DrilledPierSection In dp.sections
+                Dim tempSection As String = dpSectionQuery.Replace("[DRILLED PIER SECTION]", InsertDrilledPierSection(dpsec))
+
+                For Each dpreb In dpsec.rebar
+                    Dim temprebar As String = InsertDrilledPierRebar(dpreb)
+
+                    If Not firstOne Then
+                        myRebar += ",(" & temprebar & ")"
+                    Else
+                        myRebar += "(" & temprebar & ")"
+                    End If
+
+                    firstOne = False
+                Next 'Add Rebar INSERT Statements
+
+                tempSection = tempSection.Replace("([DRILLED PIER SECTION REBAR])", myRebar)
+                firstOne = True
+                myRebar = ""
+                mySections += tempSection + vbNewLine
+            Next 'Add Section INSERT Statements
+            DrilledPierSaver = DrilledPierSaver.Replace("--*[DRILLED PIER SECTIONS]*--", mySections)
+
+            If dp.belled_pier Then
+                DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL BELLED PIER DETAILS]", InsertDrilledPierBell(dp.belled_details))
+            Else
+                DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
+                DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
+                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO fnd.belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
+                DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
+            End If 'Add Belled Pier INSERT Statment
+
+            If dp.embedded_pole Then
+                DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL EMBEDDED POLE DETAILS]", InsertDrilledPierEmbed(dp.embed_details))
+            Else
+                DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
+                DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
+                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO fnd.embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
+                DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
+                DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
+            End If 'Add Embedded Pole INSERT Statment
+
+            For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+                Dim tempDrilledPierProfile As String = InsertDrilledPierProfile(dpp)
+
+                If Not firstOne Then
+                    myProfiles += ",(" & tempDrilledPierProfile & ")"
+                Else
+                    myProfiles += "(" & tempDrilledPierProfile & ")"
+                End If
+
+                firstOne = False
+            Next 'Add Pier Profile INSERT statements
+            DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL DRILLED PIER PROFILES])", myProfiles)
+            firstOne = True
+
+            mySoils = ""
+            mySections = ""
+            myProfiles = ""
+            'Else
+            '    Dim tempUpdater As String = ""
+            '    tempUpdater += UpdateDrilledPierDetail(dp)
+
+            '    'comment out soil layer insertion. Added in next step if a layer does not have an ID
+            '    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+
+            '    For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
+            '        If dpsl.soil_layer_id = 0 Or IsDBNull(dpsl.soil_layer_id) Then
+            '            tempUpdater += "INSERT INTO drilled_pier_soil_layers VALUES (" & InsertDrilledPierSoilLayer(dpsl) & ") " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierSoilLayer(dpsl)
+            '        End If
+            '    Next
+
+            '    If dp.belled_pier Then
+            '        If dp.belled_details.belled_pier_id = 0 Or IsDBNull(dp.belled_details.belled_pier_id) Then
+            '            tempUpdater += "INSERT INTO belled_pier_details VALUES (" & InsertDrilledPierBell(dp.belled_details) & ") " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierBell(dp.belled_details)
+            '        End If
+            '    Else
+            '        DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
+            '    End If
+
+            '    If dp.embedded_pole Then
+            '        If dp.embed_details.embedded_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
+            '            tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
+            '            tempUpdater += " END " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
+            '        End If
+            '    Else
+            '        DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
+            '        DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
+            '    End If
+
+            '    For Each dpSec As DrilledPierSection In dp.sections
+            '        If dpSec.section_id = 0 Or IsDBNull(dpSec.section_id) Then
+            '            tempUpdater += "BEGIN INSERT INTO drilled_pier_section OUTPUT INSERTED.ID INTO @DrilledPierSection VALUES (" & InsertDrilledPierSection(dpSec) & ") " & vbNewLine & " SELECT @SecID=SecID FROM @DrilledPierSection"
+            '            For Each dpreb As DrilledPierRebar In dpSec.rebar
+            '                tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb) & ") " & vbNewLine
+            '            Next
+            '            tempUpdater += " END " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierSection(dpSec)
+            '            For Each dpreb As DrilledPierRebar In dpSec.rebar
+            '                If dpreb.rebar_id = 0 Or IsDBNull(dpreb.rebar_id) Then
+            '                    tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb).Replace("@SecID", dpSec.section_id.ToString) & ") " & vbNewLine
+            '                Else
+            '                    tempUpdater += UpdateDrilledPierRebar(dpreb)
+            '                End If
+            '            Next
+            '        End If
+            '    Next
+
+            '    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])", "--INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])")
+            '    For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
+            '        If dpp.profile_id = 0 Or IsDBNull(dpp.profile_id) Then
+            '            tempUpdater += "INSERT INTO drilled_pier_profile VALUES (" & InsertDrilledPierProfile(dpp) & ") " & vbNewLine
+            '        Else
+            '            tempUpdater += UpdateDrilledPierProfile(dpp)
+            '        End If
+            '    Next
+
+            '    DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
+        End If
+
+        DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
+
+        sqlSender(DrilledPierSaver, dpDB, dpID, "0")
+
+        'Next
+
+    End Sub
+
+    Dim firstDrilledPier As Boolean = True
+    Dim firstOne As Boolean = True
+    Dim mySoils As String = ""
+    Dim mySections As String = ""
+    Dim myRebar As String = ""
+    Dim myProfiles As String = ""
+
     Public Sub SaveToEDS()
-        Dim firstOne As Boolean = True
-        Dim mySoils As String = ""
-        Dim mySections As String = ""
-        Dim myRebar As String = ""
-        Dim myProfiles As String = ""
-
         For Each dp As DrilledPier In DrilledPiers
-            Dim DrilledPierSaver As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers (IN_UP).sql")
-            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Section (IN_UP).txt")
-
-            DrilledPierSaver = DrilledPierSaver.Replace("[BU NUMBER]", BUNumber)
-            DrilledPierSaver = DrilledPierSaver.Replace("[STRUCTURE ID]", STR_ID)
-            DrilledPierSaver = DrilledPierSaver.Replace("[FOUNDATION TYPE]", "Drilled Pier")
-            If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", "NULL")
-            Else
-                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", dp.pier_id.ToString)
-            End If
-            DrilledPierSaver = DrilledPierSaver.Replace("[EMBED BOOLEAN]", dp.embedded_pole.ToString)
-            DrilledPierSaver = DrilledPierSaver.Replace("[BELL BOOLEAN]", dp.belled_pier.ToString)
-            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS]", InsertDrilledPierDetail(dp))
-
-            If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-                For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
-                    Dim tempSoilLayer As String = InsertDrilledPierSoilLayer(dpsl)
-
-                    If Not firstOne Then
-                        mySoils += ",(" & tempSoilLayer & ")"
-                    Else
-                        mySoils += "(" & tempSoilLayer & ")"
-                    End If
-
-                    firstOne = False
-                Next 'Add Soil Layer INSERT statments
-                DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-                firstOne = True
-
-                For Each dpsec As DrilledPierSection In dp.sections
-                    Dim tempSection As String = dpSectionQuery.Replace("[DRILLED PIER SECTION]", InsertDrilledPierSection(dpsec))
-
-                    For Each dpreb In dpsec.rebar
-                        Dim temprebar As String = InsertDrilledPierRebar(dpreb)
-
-                        If Not firstOne Then
-                            myRebar += ",(" & temprebar & ")"
-                        Else
-                            myRebar += "(" & temprebar & ")"
-                        End If
-
-                        firstOne = False
-                    Next 'Add Rebar INSERT Statements
-
-                    tempSection = tempSection.Replace("([DRILLED PIER SECTION REBAR])", myRebar)
-                    firstOne = True
-                    myRebar = ""
-                    mySections += tempSection + vbNewLine
-                Next 'Add Section INSERT Statements
-                DrilledPierSaver = DrilledPierSaver.Replace("--*[DRILLED PIER SECTIONS]*--", mySections)
-
-                If dp.belled_pier Then
-                    DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL BELLED PIER DETAILS]", InsertDrilledPierBell(dp.belled_details))
-                Else
-                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
-                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
-                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
-                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
-                End If 'Add Belled Pier INSERT Statment
-
-                If dp.embedded_pole Then
-                    DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL EMBEDDED POLE DETAILS]", InsertDrilledPierEmbed(dp.embed_details))
-                Else
-                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
-                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
-                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
-                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
-                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
-                End If 'Add Embedded Pole INSERT Statment
-
-                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-                    Dim tempDrilledPierProfile As String = InsertDrilledPierProfile(dpp)
-
-                    If Not firstOne Then
-                        myProfiles += ",(" & tempDrilledPierProfile & ")"
-                    Else
-                        myProfiles += "(" & tempDrilledPierProfile & ")"
-                    End If
-
-                    firstOne = False
-                Next 'Add Pier Profile INSERT statements
-                DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL PIER PROFILES])", myProfiles)
-                firstOne = True
-
-                mySoils = ""
-                mySections = ""
-                myProfiles = ""
-            Else
-                Dim tempUpdater As String = ""
-                tempUpdater += UpdateDrilledPierDetail(dp)
-
-                'comment out soil layer insertion. Added in next step if a layer does not have an ID
-                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-
-                For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
-                    If dpsl.soil_layer_id = 0 Or IsDBNull(dpsl.soil_layer_id) Then
-                        tempUpdater += "INSERT INTO drilled_pier_soil_layers VALUES (" & InsertDrilledPierSoilLayer(dpsl) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdateDrilledPierSoilLayer(dpsl)
-                    End If
-                Next
-
-                If dp.belled_pier Then
-                    If dp.belled_details.belled_pier_id = 0 Or IsDBNull(dp.belled_details.belled_pier_id) Then
-                        tempUpdater += "INSERT INTO belled_pier_details VALUES (" & InsertDrilledPierBell(dp.belled_details) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdateDrilledPierBell(dp.belled_details)
-                    End If
-                Else
-                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
-                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
-                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
-                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
-                End If
-
-                If dp.embedded_pole Then
-                    If dp.embed_details.embedded_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
-                        tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-                        tempUpdater += " END " & vbNewLine
-                    Else
-                        tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-                    End If
-                Else
-                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
-                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
-                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
-                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
-                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
-                End If
-
-                For Each dpSec As DrilledPierSection In dp.sections
-                    If dpSec.section_id = 0 Or IsDBNull(dpSec.section_id) Then
-                        tempUpdater += "BEGIN INSERT INTO drilled_pier_section OUTPUT INSERTED.ID INTO @DrilledPierSection VALUES (" & InsertDrilledPierSection(dpSec) & ") " & vbNewLine & " SELECT @SecID=SecID FROM @DrilledPierSection"
-                        For Each dpreb As DrilledPierRebar In dpSec.rebar
-                            tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb) & ") " & vbNewLine
-                        Next
-                        tempUpdater += " END " & vbNewLine
-                    Else
-                        tempUpdater += UpdateDrilledPierSection(dpSec)
-                        For Each dpreb As DrilledPierRebar In dpSec.rebar
-                            If dpreb.rebar_id = 0 Or IsDBNull(dpreb.rebar_id) Then
-                                tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb).Replace("@SecID", dpSec.section_id.ToString) & ") " & vbNewLine
-                            Else
-                                tempUpdater += UpdateDrilledPierRebar(dpreb)
-                            End If
-                        Next
-                    End If
-                Next
-
-                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])", "--INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])")
-                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-                    If dpp.profile_id = 0 Or IsDBNull(dpp.profile_id) Then
-                        tempUpdater += "INSERT INTO drilled_pier_profile VALUES (" & InsertDrilledPierProfile(dpp) & ") " & vbNewLine
-                    Else
-                        tempUpdater += UpdateDrilledPierProfile(dpp)
-                    End If
-                Next
-
-                DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
-            End If
-
-            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
-
-            sqlSender(DrilledPierSaver, dpDB, dpID, "0")
+            Save1DrilledPier(dp)
         Next
-
-
     End Sub
 
     Public Sub SaveToExcel()
@@ -975,6 +1049,9 @@ Partial Public Class DataTransfererDrilledPier
                     End If
                 End If
 
+                'LOCATION
+                .Worksheets("Foundation Input").Range("Location").Value = firstReaction
+
             End If
 
 
@@ -1004,6 +1081,7 @@ Partial Public Class DataTransfererDrilledPier
     End Sub
 
     Private Sub SaveAndCloseDrilledPier()
+        NewDrilledPierWb.Calculate()
         NewDrilledPierWb.EndUpdate()
         NewDrilledPierWb.SaveDocument(ExcelFilePath, DrilledPierFileType)
     End Sub
@@ -1133,137 +1211,139 @@ Partial Public Class DataTransfererDrilledPier
     End Function
 #End Region
 
-#Region "SQL Update Statements"
-    Private Function UpdateDrilledPierDetail(ByVal dp As DrilledPier) As String
-        Dim updateString As String = ""
+    '#Region "SQL Update Statements"
+    '    Private Function UpdateDrilledPierDetail(ByVal dp As DrilledPier) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE drilled_pier_details SET "
-        updateString += "foundation_depth=" & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
-        updateString += ", extension_above_grade=" & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
-        updateString += ", groundwater_depth=" & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
-        updateString += ", assume_min_steel=" & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
-        updateString += ", check_shear_along_depth=" & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
-        updateString += ", utilize_shear_friction_methodology=" & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
-        updateString += ", embedded_pole=" & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
-        updateString += ", belled_pier=" & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
-        updateString += ", soil_layer_quantity=" & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
-        updateString += ", concrete_compressive_strength=" & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
-        updateString += ", tie_yield_strength=" & IIf(IsNothing("'" & dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
-        updateString += ", longitudinal_rebar_yield_strength=" & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
-        updateString += ", rebar_effective_depths=" & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
-        updateString += ", rebar_cage_2_fy_override=" & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
-        updateString += ", rebar_cage_3_fy_override=" & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
-        updateString += ", shear_override_crit_depth=" & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
-        updateString += ", shear_crit_depth_override_comp=" & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
-        updateString += ", shear_crit_depth_override_uplift=" & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
-        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
-        updateString += ", bearing_type_toggle=" & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
-        updateString += " WHERE ID=" & dp.pier_id & vbNewLine
+    '        updateString += "UPDATE drilled_pier_details SET "
+    '        updateString += "foundation_depth=" & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
+    '        updateString += ", extension_above_grade=" & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
+    '        updateString += ", groundwater_depth=" & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
+    '        updateString += ", assume_min_steel=" & IIf(IsNothing(dp.assume_min_steel), "Null", "'" & dp.assume_min_steel.ToString & "'")
+    '        updateString += ", check_shear_along_depth=" & IIf(IsNothing(dp.check_shear_along_depth), "Null", "'" & dp.check_shear_along_depth.ToString & "'")
+    '        updateString += ", utilize_shear_friction_methodology=" & IIf(IsNothing(dp.utilize_shear_friction_methodology), "Null", "'" & dp.utilize_shear_friction_methodology.ToString & "'")
+    '        updateString += ", embedded_pole=" & IIf(IsNothing(dp.embedded_pole), "Null", "'" & dp.embedded_pole.ToString & "'")
+    '        updateString += ", belled_pier=" & IIf(IsNothing(dp.belled_pier), "Null", "'" & dp.belled_pier.ToString & "'")
+    '        updateString += ", soil_layer_quantity=" & IIf(IsNothing(dp.soil_layer_quantity), "Null", "'" & dp.soil_layer_quantity.ToString & "'")
+    '        updateString += ", concrete_compressive_strength=" & IIf(IsNothing(dp.concrete_compressive_strength), "Null", "'" & dp.concrete_compressive_strength.ToString & "'")
+    '        updateString += ", tie_yield_strength=" & IIf(IsNothing("'" & dp.tie_yield_strength), "Null", "'" & dp.tie_yield_strength.ToString & "'")
+    '        updateString += ", longitudinal_rebar_yield_strength=" & IIf(IsNothing(dp.longitudinal_rebar_yield_strength), "Null", "'" & dp.longitudinal_rebar_yield_strength.ToString & "'")
+    '        updateString += ", rebar_effective_depths=" & IIf(IsNothing(dp.rebar_effective_depths), "Null", "'" & dp.rebar_effective_depths.ToString & "'")
+    '        updateString += ", rebar_cage_2_fy_override=" & IIf(IsNothing(dp.rebar_cage_2_fy_override), "Null", "'" & dp.rebar_cage_2_fy_override.ToString & "'")
+    '        updateString += ", rebar_cage_3_fy_override=" & IIf(IsNothing(dp.rebar_cage_3_fy_override), "Null", "'" & dp.rebar_cage_3_fy_override.ToString & "'")
+    '        updateString += ", shear_override_crit_depth=" & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
+    '        updateString += ", shear_crit_depth_override_comp=" & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
+    '        updateString += ", shear_crit_depth_override_uplift=" & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
+    '        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
+    '        updateString += ", bearing_type_toggle=" & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
+    '        updateString += ", modified=" & IIf(IsNothing(dp.modified), "Null", "'" & dp.modified.ToString & "'")
+    '        updateString += ", local_drilled_pier_profile=" & IIf(IsNothing(dp.local_drilled_pier_profile), "Null", "'" & dp.local_drilled_pier_profile.ToString & "'")
+    '        updateString += " WHERE ID=" & dp.pier_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierBell(ByVal bp As DrilledPierBelledPier) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierBell(ByVal bp As DrilledPierBelledPier) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE belled_pier_details SET "
-        updateString += "belled_pier_option=" & IIf(IsNothing(bp.belled_pier_option), "Null", "'" & bp.belled_pier_option.ToString & "'")
-        updateString += ", bottom_diameter_of_bell=" & IIf(IsNothing(bp.bottom_diameter_of_bell), "Null", "'" & bp.bottom_diameter_of_bell.ToString & "'")
-        updateString += ", bell_input_type=" & IIf(IsNothing(bp.bell_input_type), "Null", "'" & bp.bell_input_type.ToString & "'")
-        updateString += ", bell_angle=" & IIf(IsNothing(bp.bell_angle), "Null", "'" & bp.bell_angle.ToString & "'")
-        updateString += ", bell_height=" & IIf(IsNothing(bp.bell_height), "Null", "'" & bp.bell_height.ToString & "'")
-        updateString += ", bell_toe_height=" & IIf(IsNothing(bp.bell_toe_height), "Null", "'" & bp.bell_toe_height.ToString & "'")
-        updateString += ", neglect_top_soil_layer=" & IIf(IsNothing(bp.neglect_top_soil_layer), "Null", "'" & bp.neglect_top_soil_layer.ToString & "'")
-        updateString += ", swelling_expansive_soil=" & IIf(IsNothing(bp.swelling_expansive_soil), "Null", "'" & bp.swelling_expansive_soil.ToString & "'")
-        updateString += ", depth_of_expansive_soil=" & IIf(IsNothing(bp.depth_of_expansive_soil), "Null", "'" & bp.depth_of_expansive_soil.ToString & "'")
-        updateString += ", expansive_soil_force=" & IIf(IsNothing(bp.expansive_soil_force), "Null", "'" & bp.expansive_soil_force.ToString & "'")
-        updateString += " WHERE ID=" & bp.belled_pier_id & vbNewLine
+    '        updateString += "UPDATE belled_pier_details SET "
+    '        updateString += "belled_pier_option=" & IIf(IsNothing(bp.belled_pier_option), "Null", "'" & bp.belled_pier_option.ToString & "'")
+    '        updateString += ", bottom_diameter_of_bell=" & IIf(IsNothing(bp.bottom_diameter_of_bell), "Null", "'" & bp.bottom_diameter_of_bell.ToString & "'")
+    '        updateString += ", bell_input_type=" & IIf(IsNothing(bp.bell_input_type), "Null", "'" & bp.bell_input_type.ToString & "'")
+    '        updateString += ", bell_angle=" & IIf(IsNothing(bp.bell_angle), "Null", "'" & bp.bell_angle.ToString & "'")
+    '        updateString += ", bell_height=" & IIf(IsNothing(bp.bell_height), "Null", "'" & bp.bell_height.ToString & "'")
+    '        updateString += ", bell_toe_height=" & IIf(IsNothing(bp.bell_toe_height), "Null", "'" & bp.bell_toe_height.ToString & "'")
+    '        updateString += ", neglect_top_soil_layer=" & IIf(IsNothing(bp.neglect_top_soil_layer), "Null", "'" & bp.neglect_top_soil_layer.ToString & "'")
+    '        updateString += ", swelling_expansive_soil=" & IIf(IsNothing(bp.swelling_expansive_soil), "Null", "'" & bp.swelling_expansive_soil.ToString & "'")
+    '        updateString += ", depth_of_expansive_soil=" & IIf(IsNothing(bp.depth_of_expansive_soil), "Null", "'" & bp.depth_of_expansive_soil.ToString & "'")
+    '        updateString += ", expansive_soil_force=" & IIf(IsNothing(bp.expansive_soil_force), "Null", "'" & bp.expansive_soil_force.ToString & "'")
+    '        updateString += " WHERE ID=" & bp.belled_pier_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierEmbed(ByVal ep As DrilledPierEmbeddedPier) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierEmbed(ByVal ep As DrilledPierEmbeddedPier) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE embedded_pole_details SET "
-        updateString += "embedded_pole_option=" & IIf(IsNothing(ep.embedded_pole_option), "Null", "'" & ep.embedded_pole_option.ToString & "'")
-        updateString += ", encased_in_concrete=" & IIf(IsNothing(ep.encased_in_concrete), "Null", "'" & ep.encased_in_concrete.ToString & "'")
-        updateString += ", pole_side_quantity=" & IIf(IsNothing(ep.pole_side_quantity), "Null", "'" & ep.pole_side_quantity.ToString & "'")
-        updateString += ", pole_yield_strength=" & IIf(IsNothing(ep.pole_yield_strength), "Null", "'" & ep.pole_yield_strength.ToString & "'")
-        updateString += ", pole_thickness=" & IIf(IsNothing(ep.pole_thickness), "Null", "'" & ep.pole_thickness.ToString & "'")
-        updateString += ", embedded_pole_input_type=" & IIf(IsNothing(ep.embedded_pole_input_type), "Null", "'" & ep.embedded_pole_input_type.ToString & "'")
-        updateString += ", pole_diameter_toc=" & IIf(IsNothing(ep.pole_diameter_toc), "Null", "'" & ep.pole_diameter_toc.ToString & "'")
-        updateString += ", pole_top_diameter=" & IIf(IsNothing(ep.pole_top_diameter), "Null", "'" & ep.pole_top_diameter.ToString & "'")
-        updateString += ", pole_bottom_diameter=" & IIf(IsNothing(ep.pole_bottom_diameter), "Null", "'" & ep.pole_bottom_diameter.ToString & "'")
-        updateString += ", pole_section_length=" & IIf(IsNothing(ep.pole_section_length), "Null", "'" & ep.pole_section_length.ToString & "'")
-        updateString += ", pole_taper_factor=" & IIf(IsNothing(ep.pole_taper_factor), "Null", "'" & ep.pole_taper_factor.ToString & "'")
-        updateString += ", pole_bend_radius_override=" & IIf(IsNothing(ep.pole_bend_radius_override), "Null", "'" & ep.pole_bend_radius_override.ToString & "'")
-        updateString += " WHERE ID=" & ep.embedded_id & vbNewLine
+    '        updateString += "UPDATE embedded_pole_details SET "
+    '        updateString += "embedded_pole_option=" & IIf(IsNothing(ep.embedded_pole_option), "Null", "'" & ep.embedded_pole_option.ToString & "'")
+    '        updateString += ", encased_in_concrete=" & IIf(IsNothing(ep.encased_in_concrete), "Null", "'" & ep.encased_in_concrete.ToString & "'")
+    '        updateString += ", pole_side_quantity=" & IIf(IsNothing(ep.pole_side_quantity), "Null", "'" & ep.pole_side_quantity.ToString & "'")
+    '        updateString += ", pole_yield_strength=" & IIf(IsNothing(ep.pole_yield_strength), "Null", "'" & ep.pole_yield_strength.ToString & "'")
+    '        updateString += ", pole_thickness=" & IIf(IsNothing(ep.pole_thickness), "Null", "'" & ep.pole_thickness.ToString & "'")
+    '        updateString += ", embedded_pole_input_type=" & IIf(IsNothing(ep.embedded_pole_input_type), "Null", "'" & ep.embedded_pole_input_type.ToString & "'")
+    '        updateString += ", pole_diameter_toc=" & IIf(IsNothing(ep.pole_diameter_toc), "Null", "'" & ep.pole_diameter_toc.ToString & "'")
+    '        updateString += ", pole_top_diameter=" & IIf(IsNothing(ep.pole_top_diameter), "Null", "'" & ep.pole_top_diameter.ToString & "'")
+    '        updateString += ", pole_bottom_diameter=" & IIf(IsNothing(ep.pole_bottom_diameter), "Null", "'" & ep.pole_bottom_diameter.ToString & "'")
+    '        updateString += ", pole_section_length=" & IIf(IsNothing(ep.pole_section_length), "Null", "'" & ep.pole_section_length.ToString & "'")
+    '        updateString += ", pole_taper_factor=" & IIf(IsNothing(ep.pole_taper_factor), "Null", "'" & ep.pole_taper_factor.ToString & "'")
+    '        updateString += ", pole_bend_radius_override=" & IIf(IsNothing(ep.pole_bend_radius_override), "Null", "'" & ep.pole_bend_radius_override.ToString & "'")
+    '        updateString += " WHERE ID=" & ep.embedded_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierSoilLayer(ByVal dpsl As DrilledPierSoilLayer) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierSoilLayer(ByVal dpsl As DrilledPierSoilLayer) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE drilled_pier_soil_layer SET "
-        updateString += "bottom_depth=" & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
-        updateString += ", effective_soil_density=" & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
-        updateString += ", cohesion=" & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
-        updateString += ", friction_angle=" & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
-        updateString += ", skin_friction_override_comp=" & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
-        updateString += ", skin_friction_override_uplift=" & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
-        updateString += ", nominal_bearing_capacity=" & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
-        updateString += ", spt_blow_count=" & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
-        updateString += ", local_soil_layer_id=" & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
-        updateString += " WHERE ID=" & dpsl.soil_layer_id & vbNewLine
+    '        updateString += "UPDATE drilled_pier_soil_layer SET "
+    '        updateString += "bottom_depth=" & IIf(IsNothing(dpsl.bottom_depth), "Null", "'" & dpsl.bottom_depth.ToString & "'")
+    '        updateString += ", effective_soil_density=" & IIf(IsNothing(dpsl.effective_soil_density), "Null", "'" & dpsl.effective_soil_density.ToString & "'")
+    '        updateString += ", cohesion=" & IIf(IsNothing(dpsl.cohesion), "Null", "'" & dpsl.cohesion.ToString & "'")
+    '        updateString += ", friction_angle=" & IIf(IsNothing(dpsl.friction_angle), "Null", "'" & dpsl.friction_angle.ToString & "'")
+    '        updateString += ", skin_friction_override_comp=" & IIf(IsNothing(dpsl.skin_friction_override_comp), "Null", "'" & dpsl.skin_friction_override_comp.ToString & "'")
+    '        updateString += ", skin_friction_override_uplift=" & IIf(IsNothing(dpsl.skin_friction_override_uplift), "Null", "'" & dpsl.skin_friction_override_uplift.ToString & "'")
+    '        updateString += ", nominal_bearing_capacity=" & IIf(IsNothing(dpsl.nominal_bearing_capacity), "Null", "'" & dpsl.nominal_bearing_capacity.ToString & "'")
+    '        updateString += ", spt_blow_count=" & IIf(IsNothing(dpsl.spt_blow_count), "Null", "'" & dpsl.spt_blow_count.ToString & "'")
+    '        updateString += ", local_soil_layer_id=" & IIf(IsNothing(dpsl.local_soil_layer_id), "Null", "'" & dpsl.local_soil_layer_id.ToString & "'")
+    '        updateString += " WHERE ID=" & dpsl.soil_layer_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierSection(ByVal dpsec As DrilledPierSection) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierSection(ByVal dpsec As DrilledPierSection) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE drilled_pier_section SET "
-        updateString += "pier_diameter=" & IIf(IsNothing(dpsec.pier_diameter), "Null", "'" & dpsec.pier_diameter.ToString & "'")
-        updateString += ", clear_cover=" & IIf(IsNothing(dpsec.clear_cover), "Null", "'" & dpsec.clear_cover.ToString & "'")
-        updateString += ", clear_cover_rebar_cage_option=" & IIf(IsNothing(dpsec.clear_cover_rebar_cage_option), "Null", "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'")
-        updateString += ", tie_size=" & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
-        updateString += ", tie_spacing=" & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
-        updateString += ", bottom_elevation=" & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
-        updateString += ", local_section_id=" & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
-        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dpsec.rho_override), "Null", "'" & dpsec.rho_override.ToString & "'")
-        updateString += " WHERE ID=" & dpsec.section_id & vbNewLine
+    '        updateString += "UPDATE drilled_pier_section SET "
+    '        updateString += "pier_diameter=" & IIf(IsNothing(dpsec.pier_diameter), "Null", "'" & dpsec.pier_diameter.ToString & "'")
+    '        updateString += ", clear_cover=" & IIf(IsNothing(dpsec.clear_cover), "Null", "'" & dpsec.clear_cover.ToString & "'")
+    '        updateString += ", clear_cover_rebar_cage_option=" & IIf(IsNothing(dpsec.clear_cover_rebar_cage_option), "Null", "'" & dpsec.clear_cover_rebar_cage_option.ToString & "'")
+    '        updateString += ", tie_size=" & IIf(IsNothing(dpsec.tie_size), "Null", "'" & dpsec.tie_size.ToString & "'")
+    '        updateString += ", tie_spacing=" & IIf(IsNothing(dpsec.tie_spacing), "Null", "'" & dpsec.tie_spacing.ToString & "'")
+    '        updateString += ", bottom_elevation=" & IIf(IsNothing(dpsec.bottom_elevation), "Null", "'" & dpsec.bottom_elevation.ToString & "'")
+    '        updateString += ", local_section_id=" & IIf(IsNothing(dpsec.local_section_id), "Null", "'" & dpsec.local_section_id.ToString & "'")
+    '        updateString += ", local_drilled_pier_id=" & IIf(IsNothing(dpsec.rho_override), "Null", "'" & dpsec.rho_override.ToString & "'")
+    '        updateString += " WHERE ID=" & dpsec.section_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierRebar(ByVal dpreb As DrilledPierRebar) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierRebar(ByVal dpreb As DrilledPierRebar) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE drilled_pier_rebar SET "
-        updateString += "longitudinal_rebar_quantity=" & IIf(IsNothing(dpreb.longitudinal_rebar_quantity), "Null", "'" & dpreb.longitudinal_rebar_quantity.ToString & "'")
-        updateString += ", longitudinal_rebar_size=" & IIf(IsNothing(dpreb.longitudinal_rebar_size), "Null", "'" & dpreb.longitudinal_rebar_size.ToString & "'")
-        updateString += ", longitudinal_rebar_cage_diameter=" & IIf(IsNothing(dpreb.longitudinal_rebar_cage_diameter), "Null", "'" & dpreb.longitudinal_rebar_cage_diameter.ToString & "'")
-        updateString += ", local_rebar_id=" & IIf(IsNothing(dpreb.local_rebar_id), "Null", "'" & dpreb.local_rebar_id.ToString & "'")
-        updateString += " WHERE ID=" & dpreb.rebar_id & vbNewLine
+    '        updateString += "UPDATE drilled_pier_rebar SET "
+    '        updateString += "longitudinal_rebar_quantity=" & IIf(IsNothing(dpreb.longitudinal_rebar_quantity), "Null", "'" & dpreb.longitudinal_rebar_quantity.ToString & "'")
+    '        updateString += ", longitudinal_rebar_size=" & IIf(IsNothing(dpreb.longitudinal_rebar_size), "Null", "'" & dpreb.longitudinal_rebar_size.ToString & "'")
+    '        updateString += ", longitudinal_rebar_cage_diameter=" & IIf(IsNothing(dpreb.longitudinal_rebar_cage_diameter), "Null", "'" & dpreb.longitudinal_rebar_cage_diameter.ToString & "'")
+    '        updateString += ", local_rebar_id=" & IIf(IsNothing(dpreb.local_rebar_id), "Null", "'" & dpreb.local_rebar_id.ToString & "'")
+    '        updateString += " WHERE ID=" & dpreb.rebar_id & vbNewLine
 
-        Return updateString
-    End Function
+    '        Return updateString
+    '    End Function
 
-    Private Function UpdateDrilledPierProfile(ByVal dpp As DrilledPierProfile) As String
-        Dim updateString As String = ""
+    '    Private Function UpdateDrilledPierProfile(ByVal dpp As DrilledPierProfile) As String
+    '        Dim updateString As String = ""
 
-        updateString += "UPDATE drilled_pier_profile SET "
-        updateString += ", reaction_position=" & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
-        updateString += ", reaction_location=" & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
-        updateString += ", drilled_pier_profile=" & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
-        updateString += ", soil_profile=" & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
-        updateString += " WHERE ID=" & dpp.profile_id & vbNewLine
+    '        updateString += "UPDATE drilled_pier_profile SET "
+    '        updateString += ", reaction_position=" & IIf(IsNothing(dpp.reaction_position), "Null", "'" & dpp.reaction_position.ToString & "'")
+    '        updateString += ", reaction_location=" & IIf(IsNothing(dpp.reaction_location), "Null", "'" & dpp.reaction_location.ToString & "'")
+    '        updateString += ", drilled_pier_profile=" & IIf(IsNothing(dpp.drilled_pier_profile), "Null", "'" & dpp.drilled_pier_profile.ToString & "'")
+    '        updateString += ", soil_profile=" & IIf(IsNothing(dpp.soil_profile), "Null", "'" & dpp.soil_profile.ToString & "'")
+    '        updateString += " WHERE ID=" & dpp.profile_id & vbNewLine
 
-        Return updateString
-    End Function
-#End Region
+    '        Return updateString
+    '    End Function
+    '#End Region
 
 #Region "General"
     Public Sub Clear()
@@ -1297,6 +1377,147 @@ Partial Public Class DataTransfererDrilledPier
         MyParameters.Add(New EXCELDTParameter("Drilled Pier Profiles EXCEL", "A2:G1000", "Profiles (ENTER)"))
 
         Return MyParameters
+    End Function
+#End Region
+
+#Region "Check Changes"
+    Private changeDt As New DataTable
+    Private changeList As New List(Of AnalysisChanges)
+    Function CheckChanges(ByVal xlDrilledPier As DrilledPier, ByVal sqlDrilledPier As DrilledPier) As Boolean
+        Dim changesMade As Boolean = False
+
+        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+
+        ''Check Details
+        'If Check1Change(xlGuyedAnchorBlock.anchor_depth, sqlGuyedAnchorBlock.anchor_depth, 1, "Anchor_Depth") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_width, sqlGuyedAnchorBlock.anchor_width, 1, "Anchor_Width") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_thickness, sqlGuyedAnchorBlock.anchor_thickness, 1, "Anchor_Thickness") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_length, sqlGuyedAnchorBlock.anchor_length, 1, "Anchor_Length") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_toe_width, sqlGuyedAnchorBlock.anchor_toe_width, 1, "Anchor_Toe_Width") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_size, sqlGuyedAnchorBlock.anchor_top_rebar_size, 1, "Anchor_Top_Rebar_Size") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_quantity, sqlGuyedAnchorBlock.anchor_top_rebar_quantity, 1, "Anchor_Top_Rebar_Quantity") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_size, sqlGuyedAnchorBlock.anchor_front_rebar_size, 1, "Anchor_Front_Rebar_Size") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_quantity, sqlGuyedAnchorBlock.anchor_front_rebar_quantity, 1, "Anchor_Front_Rebar_Quantity") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_stirrup_size, sqlGuyedAnchorBlock.anchor_stirrup_size, 1, "Anchor_Stirrup_Size") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_diameter, sqlGuyedAnchorBlock.anchor_shaft_diameter, 1, "Anchor_Shaft_Diameter") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_quantity, sqlGuyedAnchorBlock.anchor_shaft_quantity, 1, "Anchor_Shaft_Quantity") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_area_override, sqlGuyedAnchorBlock.anchor_shaft_area_override, 1, "Anchor_Shaft_Area_Override") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, sqlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, 1, "Anchor_Shaft_Shear_Lag_Factor") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.concrete_compressive_strength, sqlGuyedAnchorBlock.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.clear_cover, sqlGuyedAnchorBlock.clear_cover, 1, "Clear_Cover") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_yield_strength, sqlGuyedAnchorBlock.anchor_shaft_yield_strength, 1, "Anchor_Shaft_Yield_Strength") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_ultimate_strength, sqlGuyedAnchorBlock.anchor_shaft_ultimate_strength, 1, "Anchor_Shaft_Ultimate_Strength") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.neglect_depth, sqlGuyedAnchorBlock.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.groundwater_depth, sqlGuyedAnchorBlock.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.soil_layer_quantity, sqlGuyedAnchorBlock.soil_layer_quantity, 1, "Soil_Layer_Quantity") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.tool_version, sqlGuyedAnchorBlock.tool_version, 1, "Tool_Version") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_section, sqlGuyedAnchorBlock.anchor_shaft_section, 1, "Anchor_Shaft_Section") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_rebar_grade, sqlGuyedAnchorBlock.anchor_rebar_grade, 1, "Anchor_Rebar_Grade") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_known, sqlGuyedAnchorBlock.anchor_shaft_known, 1, "Anchor_Shaft_Known") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.basic_soil_check, sqlGuyedAnchorBlock.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.structural_check, sqlGuyedAnchorBlock.structural_check, 1, "Structural_Check") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.rebar_known, sqlGuyedAnchorBlock.rebar_known, 1, "Rebar_Known") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.local_anchor_id, sqlGuyedAnchorBlock.local_anchor_id, 1, "Local_Anchor_Id") Then changesMade = True
+        'If Check1Change(xlGuyedAnchorBlock.local_anchor_profile, sqlGuyedAnchorBlock.local_anchor_profile, 1, "Local_Anchor_Profile") Then changesMade = True
+
+        ''Check Soil Layer
+        ''If xlGuyedAnchorBlock.soil_layers.Count <> sqlGuyedAnchorBlock.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below
+
+        'For Each gabsl As GuyedAnchorBlockSoilLayer In xlGuyedAnchorBlock.soil_layers
+        '    For Each sqlgabsl As GuyedAnchorBlockSoilLayer In sqlGuyedAnchorBlock.soil_layers
+
+        '        If gabsl.soil_layer_id = sqlgabsl.soil_layer_id Then
+        '            If Check1Change(gabsl.bottom_depth, sqlgabsl.bottom_depth, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.effective_soil_density, sqlgabsl.effective_soil_density, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.cohesion, sqlgabsl.cohesion, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.friction_angle, sqlgabsl.friction_angle, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.skin_friction_override_uplift, sqlgabsl.skin_friction_override_uplift, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.spt_blow_count, sqlgabsl.spt_blow_count, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.local_soil_layer_id, sqlgabsl.local_soil_layer_id, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.local_soil_profile, sqlgabsl.local_soil_profile, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            Exit For
+        '        End If
+
+        '        If gabsl.soil_layer_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
+        '            If Check1Change(gabsl.bottom_depth, Nothing, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.effective_soil_density, Nothing, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.cohesion, Nothing, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.friction_angle, Nothing, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.skin_friction_override_uplift, Nothing, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.spt_blow_count, Nothing, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.local_soil_layer_id, Nothing, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            If Check1Change(gabsl.local_soil_profile, Nothing, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+        '            Exit For
+        '        End If
+
+        '    Next
+        'Next
+
+        ''Guyed Anchor Block Profiles
+        'For Each gabp As GuyedAnchorBlockProfile In xlGuyedAnchorBlock.anchor_profiles
+        '    For Each sqlgabp As GuyedAnchorBlockProfile In sqlGuyedAnchorBlock.anchor_profiles
+
+        '        If gabp.ID = sqlgabp.ID Then
+        '            If Check1Change(gabp.reaction_location, sqlgabp.reaction_location, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.anchor_profile, sqlgabp.anchor_profile, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.soil_profile, sqlgabp.soil_profile, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.local_anchor_id, sqlgabp.local_anchor_id, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
+        '            Exit For
+        '        End If
+
+        '        If gabp.ID = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+        '            If Check1Change(gabp.reaction_location, Nothing, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.anchor_profile, Nothing, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.soil_profile, Nothing, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
+        '            If Check1Change(gabp.local_anchor_id, Nothing, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
+        '            Exit For
+        '        End If
+
+        '    Next
+        'Next
+
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
+
+    End Function
+
+    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+        'Create your string based on data in the datatable
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+
+        'write to text file
+        'End Sub
+    End Function
+
+    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Drilled Pier Foundations"))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Drilled Pier Foundations"))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Drilled Pier Foundations"))
+            Return True
+        End If
     End Function
 #End Region
 

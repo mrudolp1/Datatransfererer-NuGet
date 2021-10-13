@@ -110,6 +110,7 @@ SELECT
     ,ppd.basic_soil_check
     ,ppd.structural_check
     ,ppd.tool_version
+    ,ppd.modified
 
 FROM
     gen.structure_model_xref smx

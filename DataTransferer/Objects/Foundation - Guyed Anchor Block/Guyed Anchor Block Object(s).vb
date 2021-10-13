@@ -38,8 +38,9 @@ Partial Public Class GuyedAnchorBlock
     Private prop_structural_check As Boolean
     Private prop_tool_version As String
     Private prop_local_anchor_id As Integer?
-    Private prop_foundation_id As Integer?
+    'Private prop_foundation_id As Integer?
     Private prop_ID As Integer
+    Private prop_modified As Boolean
     Public Property soil_layers As New List(Of GuyedAnchorBlockSoilLayer)
     Public Property anchor_profiles As New List(Of GuyedAnchorBlockProfile)
 
@@ -365,15 +366,15 @@ Partial Public Class GuyedAnchorBlock
             Me.prop_tool_version = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Foundation ID")>
-    Public Property foundation_id() As Integer?
-        Get
-            Return Me.prop_foundation_id
-        End Get
-        Set
-            Me.prop_foundation_id = Value
-        End Set
-    End Property
+    '<Category("Guyed Anchor Block Details"), Description(""), DisplayName("Foundation ID")>
+    'Public Property foundation_id() As Integer?
+    '    Get
+    '        Return Me.prop_foundation_id
+    '    End Get
+    '    Set
+    '        Me.prop_foundation_id = Value
+    '    End Set
+    'End Property
     <Category("Guyed Anchor Block Details"), Description(""), DisplayName("ID")>
     Public Property ID() As Integer
         Get
@@ -381,6 +382,15 @@ Partial Public Class GuyedAnchorBlock
         End Get
         Set
             Me.prop_ID = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Modified")>
+    Public Property modified() As Boolean
+        Get
+            Return Me.prop_modified
+        End Get
+        Set
+            Me.prop_modified = Value
         End Set
     End Property
 
@@ -637,10 +647,10 @@ Partial Public Class GuyedAnchorBlock
             If Not IsDBNull(Me.rebar_known = CType(GuyedAnchorBlockDataRow.Item("rebar_known"), Boolean)) Then
                 Me.rebar_known = CType(GuyedAnchorBlockDataRow.Item("rebar_known"), Boolean)
             Else
-                Me.rebar_known = Nothing
+                Me.rebar_known = True
             End If
         Catch
-            Me.rebar_known = Nothing
+            Me.rebar_known = True
         End Try 'Rebar Known
         Try
             If Not IsDBNull(Me.anchor_shaft_known = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_known"), Boolean)) Then
@@ -678,15 +688,15 @@ Partial Public Class GuyedAnchorBlock
         Catch
             Me.tool_version = ""
         End Try 'Tool Version
-        Try
-            If Not IsDBNull(Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)) Then
-                Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
-            Else
-                Me.foundation_id = Nothing
-            End If
-        Catch
-            Me.foundation_id = Nothing
-        End Try 'Foundation ID
+        'Try
+        '    If Not IsDBNull(Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)) Then
+        '        Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
+        '    Else
+        '        Me.foundation_id = Nothing
+        '    End If
+        'Catch
+        '    Me.foundation_id = Nothing
+        'End Try 'Foundation ID
         Try
             If Not IsDBNull(Me.ID = CType(GuyedAnchorBlockDataRow.Item("ID"), Integer)) Then
                 Me.ID = CType(GuyedAnchorBlockDataRow.Item("ID"), Integer)
@@ -696,6 +706,15 @@ Partial Public Class GuyedAnchorBlock
         Catch
             Me.ID = 0
         End Try 'ID
+        Try
+            If Not IsDBNull(Me.modified = CType(GuyedAnchorBlockDataRow.Item("modified"), Boolean)) Then
+                Me.modified = CType(GuyedAnchorBlockDataRow.Item("modified"), Boolean)
+            Else
+                Me.modified = False
+            End If
+        Catch
+            Me.modified = False
+        End Try 'modified
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Guyed Anchor Block Soil SQL").Rows
             Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("anchor_id"), Integer)
@@ -872,23 +891,28 @@ Partial Public Class GuyedAnchorBlock
         Try
             Me.basic_soil_check = CType(GuyedAnchorBlockDataRow.Item("basic_soil_check"), Boolean)
         Catch
-            Me.basic_soil_check = Nothing
+            Me.basic_soil_check = False
         End Try 'Basic Soil Interaction up to 110%?
         Try
             Me.structural_check = CType(GuyedAnchorBlockDataRow.Item("structural_check"), Boolean)
         Catch
-            Me.structural_check = Nothing
+            Me.structural_check = False
         End Try 'Structural Checks up to 105%?
         Try
             Me.tool_version = CType(GuyedAnchorBlockDataRow.Item("tool_version"), String)
         Catch
             Me.tool_version = ""
         End Try 'Tool Version
+        'Try
+        '    Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
+        'Catch
+        '    Me.foundation_id = Nothing
+        'End Try 'Foundation ID
         Try
-            Me.foundation_id = CType(GuyedAnchorBlockDataRow.Item("foundation_id"), Integer)
+            Me.modified = CType(GuyedAnchorBlockDataRow.Item("modified"), Boolean)
         Catch
-            Me.foundation_id = Nothing
-        End Try 'Foundation ID
+            Me.modified = False
+        End Try 'modified
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Guyed Anchor Block Soil EXCEL").Rows
             'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item(refcol), Integer)
@@ -1428,10 +1452,10 @@ Partial Public Class GuyedAnchorBlockProfile
             If Not IsDBNull(Me.reaction_location = CType(GuyedAnchorBlockProfileDataRow.Item("reaction_location"), String)) Then
                 Me.reaction_location = CType(GuyedAnchorBlockProfileDataRow.Item("reaction_location"), String)
             Else
-                Me.reaction_location = Nothing
+                Me.reaction_location = ""
             End If
         Catch
-            Me.reaction_location = Nothing
+            Me.reaction_location = ""
         End Try 'Reaction Location
         Try
             If Not IsDBNull(Me.anchor_profile = CType(GuyedAnchorBlockProfileDataRow.Item("anchor_profile"), Integer)) Then

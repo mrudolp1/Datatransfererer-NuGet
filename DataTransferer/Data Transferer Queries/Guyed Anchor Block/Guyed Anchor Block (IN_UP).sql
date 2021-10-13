@@ -58,23 +58,25 @@ BEGIN
 END--Select existing model ID or insert new
 
 
+--MRP - 10-11-21 EDITED this to separate foundation group from foundation ID. There should only be one group added per guy anchor block tool
+---------------------------------------------------------------------------------------------------------------------------------------------------
 --Determine foundation_group_id (Table Impacts: gen.structure_model & fnd.foundation_group & fnd.foundation_details)
 IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 BEGIN
 	---Before creating new foundation ID, Need to select foundation detail per most recent foundation group and insert new row in foundation details
 	IF @GABID IS NULL
-	Begin
-		-- Create new Foundation ID by adding row to foundation_details
-		INSERT INTO fnd.foundation_details (foundation_type) OUTPUT Inserted.id INTO @Foundation VALUES (@FndType)
-		SELECT @FndID=FndID FROM @Foundation
-	End
+		BEGIN
+			-- Create new Foundation ID by adding row to foundation_details
+			INSERT INTO fnd.foundation_details (foundation_type) OUTPUT Inserted.id INTO @Foundation VALUES (@FndType)
+			SELECT @FndID=FndID FROM @Foundation
+		END
 	ELSE
-	BEGIN
-		--Create new Foundation ID by copying previous data and pasting new row into foundation_details
-		SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
-		INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@GABID
-		SELECT @FndID=FndID FROM @Foundation
-	END
+		BEGIN
+			--Create new Foundation ID by copying previous data and pasting new row into foundation_details
+			SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+			INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@GABID
+			SELECT @FndID=FndID FROM @Foundation
+		END
 
 	--Create new foundation group ID by adding row to foundation_group
 	INSERT INTO fnd.foundation_group OUTPUT Inserted.ID INTO @Fndgrp DEFAULT VALUES
@@ -84,21 +86,47 @@ BEGIN
 
 	--Determine Foundation_ID
 	IF @GABNeeded = 1 --TRUE  
-	BEGIN
-		--INSERT Details
-		INSERT INTO fnd.anchor_block_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
-		SELECT @GABID=GABID FROM @GAB
+		BEGIN
+			--INSERT Details
+			INSERT INTO fnd.anchor_block_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
+			SELECT @GABID=GABID FROM @GAB
 
-		--INSERT Soil Layers 
-		--IF @PileCap = 0 --FALSE
-		--BEGIN
+			--INSERT Soil Layers 
 			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
-		--END
 
-		INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
+			--INSERT Profile
+			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
 
-		UPDATE fnd.foundation_details Set details_id=@GABID WHERE ID=@FndID
+			UPDATE fnd.foundation_details Set details_id=@GABID WHERE ID=@FndID
 
-	END
+		END
 
 END--Select existing foundation group or insert new
+
+IF @FndGroupNeeded = 0 --FALSE --if Foundation Group is not Needed
+
+	--Determine Foundation_ID
+	IF @GABNeeded = 1 --TRUE  
+		BEGIN
+			--INSERT Details
+			INSERT INTO fnd.anchor_block_details (anchor_depth,anchor_width,anchor_thickness,anchor_length,anchor_toe_width,anchor_top_rebar_size,anchor_top_rebar_quantity,anchor_front_rebar_size,anchor_front_rebar_quantity,anchor_stirrup_size,anchor_shaft_diameter,anchor_shaft_quantity,anchor_shaft_area_override,anchor_shaft_shear_lag_factor,concrete_compressive_strength,clear_cover,anchor_shaft_yield_strength,anchor_shaft_ultimate_strength,neglect_depth,groundwater_depth,soil_layer_quantity,tool_version,anchor_shaft_section,anchor_rebar_grade,anchor_shaft_known,basic_soil_check,structural_check,rebar_known,local_anchor_id,local_anchor_profile) OUTPUT INSERTED.ID INTO @GAB VALUES ([INSERT ALL GUYED ANCHOR BLOCK DETAILS])
+			SELECT @GABID=GABID FROM @GAB
+
+			--INSERT Soil Layers 
+			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+
+			--INSERT Profile
+			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
+
+			--SELECT EXISTING FOUNDATION GROUP ID
+			SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+			
+			--INSERT Foundation ID into Foundation Details
+			INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,details_id) OUTPUT INSERTED.ID INTO @Foundation VALUES (@FndgrpID,@FndType,@GABID)
+			SELECT @FndID=FndID FROM @Foundation
+
+		END
+
+
+
+
