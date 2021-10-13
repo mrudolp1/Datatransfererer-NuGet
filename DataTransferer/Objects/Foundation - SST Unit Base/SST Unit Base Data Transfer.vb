@@ -44,7 +44,7 @@ Partial Public Class DataTransfererUnitBase
 #End Region
 
 #Region "Load Data"
-    Sub CreateSQLUnitBases(ByRef UnitBaseList As List(Of SST_Unit_Base))
+    Sub CreateSQLUnitBase(ByRef UnitBaseList As List(Of SST_Unit_Base))
         Dim refid As Integer
         Dim UnitBaseLoader As String
 
@@ -57,7 +57,7 @@ Partial Public Class DataTransfererUnitBase
         'Custom Section to transfer data for the Unit Base tool. Needs to be adjusted for each tool.
         For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
             refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
-            UnitBaseList.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
+            UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid)) 'UnitBaseList?
         Next
 
     End Sub
@@ -81,23 +81,29 @@ Partial Public Class DataTransfererUnitBase
 
         '    UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
         'Next
-        CreateSQLUnitBases(UnitBases)
+        CreateSQLUnitBase(UnitBases)
         Return True
     End Function 'Create Unit Base objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
-        'UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
 
         For Each item As EXCELDTParameter In UnitBaseExcelDTParameters()
             'Get additional tables from excel file 
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
-        UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
+        UnitBases.Add(New SST_Unit_Base(ExcelFilePath)) 'Option 1: Connect to excel and pull values from cells
 
+        'Dim refID As Integer
+        'Dim refCol As String
+        'For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details EXCEL").Rows 'Option 2: Connect to excel and pull datarow from SAPI tab
+        '    refCol = "unit_base_id"
+        '    refID = CType(UnitBaseDataRow.Item(refCol), Integer)
+        '    UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refID, refCol))
+        'Next
 
         'Pull SQL data, if applicable, to compare with excel data
-        CreateSQLUnitBases(sqlUnitBases)
+        CreateSQLUnitBase(sqlUnitBases)
 
         'If sqlUnitBases.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As SST_Unit_Base In UnitBases
@@ -107,7 +113,7 @@ Partial Public Class DataTransfererUnitBase
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
-                            'isUnitBaseNeeded = True
+                            isUnitBaseNeeded = True
                         End If
                         Exit For
                     End If
@@ -116,7 +122,7 @@ Partial Public Class DataTransfererUnitBase
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
                 isfndGroupNeeded = True
-                'isUnitBaseNeeded = True
+                isUnitBaseNeeded = True
             End If
         Next
 
@@ -156,13 +162,13 @@ Partial Public Class DataTransfererUnitBase
         End If
 
         'Determine if new ID needs created
-        'If isUnitBaseNeeded Then
-        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 1)
-        'Else
-        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID ID Needed]'", 0)
-        'End If
+        If isUnitBaseNeeded Then
+            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 1)
+        Else
+            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 0)
+        End If
 
-        UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
+        UnitBaseSaver = UnitBaseSaver.Replace("'[INSERT ALL UNIT BASE DETAILS]'", InsertUnitBaseDetail(ub))
 
         sqlSender(UnitBaseSaver, ubDB, ubID, "0")
     End Sub
@@ -235,6 +241,7 @@ Partial Public Class DataTransfererUnitBase
                 If ub.groundwater_depth = -1 Then .Worksheets("Input").Range("gw").Value = "N/A" Else .Worksheets("Input").Range("gw").Value = CType(ub.groundwater_depth, Double) 'If -1 then set to N/A
                 If Not IsNothing(ub.basic_soil_check) Then .Worksheets("Input").Range("SoilInteractionBoolean").Value = ub.basic_soil_check
                 If Not IsNothing(ub.structural_check) Then .Worksheets("Input").Range("StructuralCheckBoolean").Value = ub.structural_check
+                'If Not IsNothing(ub.tool_version) Then .Worksheets("Revision").Range("vnum").Value = ub.tool_version
 
 
                 'Seismic design category
@@ -355,6 +362,7 @@ Partial Public Class DataTransfererUnitBase
         insertString += "," & IIf(IsNothing(ub.pier_rebar_quantity), "Null", ub.pier_rebar_quantity.ToString)
         insertString += "," & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
 
         Return insertString
     End Function
@@ -408,6 +416,7 @@ Partial Public Class DataTransfererUnitBase
         updateString += ", groundwater_depth=" & IIf(IsNothing(ub.groundwater_depth), "Null", ub.groundwater_depth.ToString)
         updateString += ", basic_soil_check=" & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         updateString += ", structural_check=" & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
+        updateString += ", tool_version=" & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
         updateString += " WHERE ID=" & ub.unit_base_id & vbNewLine
 
         Return updateString
@@ -431,7 +440,7 @@ Partial Public Class DataTransfererUnitBase
     Private Function UnitBaseExcelDTParameters() As List(Of EXCELDTParameter)
         Dim MyParameters As New List(Of EXCELDTParameter)
 
-        'MyParameters.Add(New EXCELDTParameter("Pile Soil EXCEL", "A3:H17", "SAPI"))
+        MyParameters.Add(New EXCELDTParameter("Unit Base General Details EXCEL", "A2:AP3", "Details (SAPI)"))
         'MyParameters.Add(New EXCELDTParameter("Pile Location EXCEL", "S3:U103", "SAPI"))
 
         Return MyParameters
@@ -496,10 +505,10 @@ Partial Public Class DataTransfererUnitBase
     Function CheckChanges(ByVal xlUnitBase As SST_Unit_Base, ByVal sqlUnitBase As SST_Unit_Base) As Boolean
         Dim changesMade As Boolean = False
 
-        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        'changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
         'Check Details
         If Check1Change(xlUnitBase.pier_shape, sqlUnitBase.pier_shape, 1, "Pier_Shape") Then changesMade = True
@@ -545,6 +554,7 @@ Partial Public Class DataTransfererUnitBase
         If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
         If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
         If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, 1, "Structural_Check") Then changesMade = True
+        If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
         'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary

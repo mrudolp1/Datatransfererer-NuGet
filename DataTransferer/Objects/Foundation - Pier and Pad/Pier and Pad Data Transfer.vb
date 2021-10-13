@@ -11,7 +11,8 @@ Partial Public Class DataTransfererPierandPad
 
     Public Property PierAndPads As New List(Of PierAndPad)
     Public Property sqlPierAndPads As New List(Of PierAndPad)
-    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    'Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    Private Property PierAndPadTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\Template\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
     Private Property PierAndPadFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ppDS As New DataSet

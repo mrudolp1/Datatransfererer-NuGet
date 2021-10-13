@@ -8,52 +8,57 @@ Public Class SST_Unit_Base
 
 #Region "Define"
     Private prop_unit_base_id As Integer?
-    Private prop_extension_above_grade As Double?
-    Private prop_foundation_depth As Double?
-    Private prop_concrete_compressive_strength As Double?
-    Private prop_dry_concrete_density As Double?
-    Private prop_rebar_grade As Double?
-    Private prop_top_and_bottom_rebar_different As Boolean
-    Private prop_block_foundation As Boolean
-    Private prop_rectangular_foundation As Boolean
-    Private prop_base_plate_distance_above_foundation As Double?
-    Private prop_bolt_circle_bearing_plate_width As Double?
-    Private prop_tower_centroid_offset As Boolean
-    Private prop_basic_soil_check As Boolean
-    Private prop_structural_check As Boolean
+    Private prop_extension_above_grade As Double? '
+    Private prop_foundation_depth As Double? '
+    Private prop_concrete_compressive_strength As Double? '
+    Private prop_dry_concrete_density As Double? '
+    Private prop_rebar_grade As Double? '
+    Private prop_top_and_bottom_rebar_different As Boolean '
+    Private prop_block_foundation As Boolean '
+    Private prop_rectangular_foundation As Boolean '
+    Private prop_base_plate_distance_above_foundation As Double? '
+    Private prop_bolt_circle_bearing_plate_width As Double? '
+    Private prop_tower_centroid_offset As Boolean '
+    Private prop_basic_soil_check As Boolean '
+    Private prop_structural_check As Boolean '
 
-    Private prop_pier_shape As String
-    Private prop_pier_diameter As Double?
+    Private prop_pier_shape As String '
+    Private prop_pier_diameter As Double? '
     Private prop_pier_rebar_quantity As Integer?
-    Private prop_pier_rebar_size As Integer?
+    Private prop_pier_rebar_size As Integer? '
     Private prop_pier_tie_quantity As Integer?
-    Private prop_pier_tie_size As Integer?
-    Private prop_pier_reinforcement_type As String
-    Private prop_pier_clear_cover As Double?
+    Private prop_pier_tie_size As Integer? '
+    Private prop_pier_reinforcement_type As String '
+    Private prop_pier_clear_cover As Double? '
 
-    Private prop_pad_width_1 As Double?
-    Private prop_pad_width_2 As Double?
-    Private prop_pad_thickness As Double?
-    Private prop_pad_rebar_size_top_dir1 As Integer?
-    Private prop_pad_rebar_size_bottom_dir1 As Integer?
-    Private prop_pad_rebar_size_top_dir2 As Integer?
-    Private prop_pad_rebar_size_bottom_dir2 As Integer?
-    Private prop_pad_rebar_quantity_top_dir1 As Integer?
-    Private prop_pad_rebar_quantity_bottom_dir1 As Integer?
-    Private prop_pad_rebar_quantity_top_dir2 As Integer?
-    Private prop_pad_rebar_quantity_bottom_dir2 As Integer?
-    Private prop_pad_clear_cover As Double?
+    Private prop_pad_width_1 As Double? '
+    Private prop_pad_width_2 As Double? '
+    Private prop_pad_thickness As Double? '
+    Private prop_pad_rebar_size_top_dir1 As Integer? '
+    Private prop_pad_rebar_size_bottom_dir1 As Integer? '
+    Private prop_pad_rebar_size_top_dir2 As Integer? '
+    Private prop_pad_rebar_size_bottom_dir2 As Integer? '
+    Private prop_pad_rebar_quantity_top_dir1 As Integer? '
+    Private prop_pad_rebar_quantity_bottom_dir1 As Integer? '
+    Private prop_pad_rebar_quantity_top_dir2 As Integer? '
+    Private prop_pad_rebar_quantity_bottom_dir2 As Integer? '
+    Private prop_pad_clear_cover As Double? '
 
-    Private prop_total_soil_unit_weight As Double?
-    Private prop_bearing_type As String
-    Private prop_nominal_bearing_capacity As Double?
-    Private prop_cohesion As Double?
-    Private prop_friction_angle As Double?
-    Private prop_spt_blow_count As Integer?
-    Private prop_base_friction_factor As Double?
-    Private prop_neglect_depth As Double?
-    Private prop_bearing_distribution_type As Boolean
-    Private prop_groundwater_depth As Double?
+    Private prop_total_soil_unit_weight As Double? '
+    Private prop_bearing_type As String '
+    Private prop_nominal_bearing_capacity As Double? '
+    Private prop_cohesion As Double? '
+    Private prop_friction_angle As Double? '
+    Private prop_spt_blow_count As Integer? '
+    Private prop_base_friction_factor As Double? '
+    Private prop_neglect_depth As Double? '
+    Private prop_bearing_distribution_type As Boolean '
+    Private prop_groundwater_depth As Double? '
+
+    Private prop_tool_version As String '
+    'Private prop_modified As Boolean
+
+    'Public Property ModifiedRanges As New List(Of ModifiedRange)
 
     <Category("Unit Base Details"), Description(""), DisplayName("Unit Base ID")>
     Public Property unit_base_id() As Integer?
@@ -454,6 +459,24 @@ Public Class SST_Unit_Base
             Me.prop_structural_check = Value
         End Set
     End Property
+    <Category("Unit Base Details"), Description(""), DisplayName("Tool Version")>
+    Public Property tool_version() As String
+        Get
+            Return Me.prop_tool_version
+        End Get
+        Set
+            Me.prop_tool_version = Value
+        End Set
+    End Property
+    '<Category("Unit Base Details"), Description(""), DisplayName("Modified")>
+    'Public Property modified() As Boolean
+    '    Get
+    '        Return Me.prop_modified
+    '    End Get
+    '    Set
+    '        Me.prop_modified = Value
+    '    End Set
+    'End Property
 #End Region
 
 #Region "Constructors"
@@ -817,6 +840,20 @@ Public Class SST_Unit_Base
         Catch
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?
+        Try
+            Me.tool_version = CType(UnitBaseDataRow.Item("vnum"), String)
+        Catch
+            Me.tool_version = ""
+        End Try 'Tool Version
+
+        'If Me.modified = True Then
+        '    For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges SQL").Rows
+        '        Dim modRefID As Integer = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
+        '        If modRefID = refID Then
+        '            Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
+        '        End If
+        '    Next 'Add Modified Ranges to Modified Range Object
+        'End If
 
     End Sub 'Generate a Unit Base object from EDS
 
@@ -1176,6 +1213,11 @@ Public Class SST_Unit_Base
         Catch
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?
+        Try
+            Me.tool_version = CType(GetOneExcelRange(path, "vnum"), String)
+        Catch
+            Me.tool_version = Nothing
+        End Try 'Tool Version
 
     End Sub 'Generate a Unit Base object from Excel
 
