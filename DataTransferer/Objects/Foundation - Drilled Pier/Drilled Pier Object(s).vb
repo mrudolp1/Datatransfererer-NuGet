@@ -28,6 +28,8 @@ Partial Public Class DrilledPier
     Private prop_shear_crit_depth_override_uplift As Double?
     Private prop_bearing_type_toggle As String
     Private prop_foundation_id As Integer
+    Private prop_modified As Boolean
+    Private prop_local_drilled_pier_profile As Integer?
     Public Property soil_layers As New List(Of DrilledPierSoilLayer)
     Public Property sections As New List(Of DrilledPierSection)
     Public Property belled_details As DrilledPierBelledPier
@@ -234,6 +236,24 @@ Partial Public Class DrilledPier
             Me.prop_foundation_id = Value
         End Set
     End Property
+    <Category("Drilled Pier Details"), Description(""), DisplayName("Modified")>
+    Public Property modified() As Boolean
+        Get
+            Return Me.prop_modified
+        End Get
+        Set
+            Me.prop_modified = Value
+        End Set
+    End Property
+    <Category("Drilled Pier Details"), Description(""), DisplayName("Local Drilled Pier Profiles")>
+    Public Property local_drilled_pier_profile() As Integer?
+        Get
+            Return Me.prop_local_drilled_pier_profile
+        End Get
+        Set
+            Me.prop_local_drilled_pier_profile = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -407,6 +427,20 @@ Partial Public Class DrilledPier
         Catch
             Me.foundation_id = Nothing
         End Try 'foundation_id
+        Try
+            Me.modified = CType(DrilledPierDataRow.Item("modified"), Boolean)
+        Catch
+            Me.modified = False
+        End Try 'modified
+        Try
+            If Not IsDBNull(Me.local_drilled_pier_profile = CType(DrilledPierDataRow.Item("local_drilled_pier_profile"), Integer)) Then
+                Me.local_drilled_pier_profile = CType(DrilledPierDataRow.Item("local_drilled_pier_profile"), Integer)
+            Else
+                Me.local_drilled_pier_profile = Nothing
+            End If
+        Catch
+            Me.local_drilled_pier_profile = Nothing
+        End Try 'local_drilled_pier_profile
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil SQL").Rows
             Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("drilled_pier_id"), Integer)
@@ -586,6 +620,16 @@ Partial Public Class DrilledPier
         Catch
             Me.foundation_id = Nothing
         End Try 'foundation_id
+        Try
+            Me.modified = CType(DrilledPierDataRow.Item("modified"), Boolean)
+        Catch
+            Me.modified = False
+        End Try 'modified
+        Try
+            Me.local_drilled_pier_profile = CType(DrilledPierDataRow.Item("local_drilled_pier_profile"), Integer)
+        Catch
+            Me.local_drilled_pier_profile = Nothing
+        End Try 'local_drilled_pier_profile
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil EXCEL").Rows
             Dim soilRefID As Integer?
@@ -1076,7 +1120,7 @@ Partial Public Class DrilledPierSoilLayer
     Private prop_skin_friction_override_comp As Double?
     Private prop_skin_friction_override_uplift As Double?
     Private prop_nominal_bearing_capacity As Double?
-    Private prop_spt_blow_count As Integer?
+    Private prop_spt_blow_count As Double?
     Private prop_local_soil_layer_id As Integer?
     'Private prop_local_drilled_pier_id As Integer?
     <Category("Drilled Pier Soil Layers"), Description(""), DisplayName("Soil Layer ID")>
@@ -1152,7 +1196,7 @@ Partial Public Class DrilledPierSoilLayer
         End Set
     End Property
     <Category("Drilled Pier Soil Layers"), Description(""), DisplayName("SPT Blow Count")>
-    Public Property spt_blow_count() As Integer?
+    Public Property spt_blow_count() As Double?
         Get
             Return Me.prop_spt_blow_count
         End Get
@@ -1216,7 +1260,7 @@ Partial Public Class DrilledPierSoilLayer
             Me.nominal_bearing_capacity = Nothing
         End Try 'Bearing Capacity
         Try
-            Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Integer)
+            Me.spt_blow_count = CType(SoilLayerDataRow.Item("spt_blow_count"), Double)
         Catch
             Me.spt_blow_count = Nothing
         End Try 'SPT Blow Count

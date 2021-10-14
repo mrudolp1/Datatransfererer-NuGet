@@ -39,6 +39,7 @@
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
+    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
     <None Remove="Data Transferer Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Existing Model %28SELECT%29.sql" />
@@ -107,6 +108,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Criteria%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP).sql">

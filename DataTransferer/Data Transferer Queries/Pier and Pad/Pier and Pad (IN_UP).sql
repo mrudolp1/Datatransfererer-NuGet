@@ -136,7 +136,8 @@ IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 						,pier_rebar_quantity
 						,basic_soil_check
 						,structural_check
-						,tool_version) OUTPUT INSERTED.ID INTO @PP VALUES ('[INSERT ALL PIER AND PAD DETAILS]')
+						,tool_version,
+						modified) OUTPUT INSERTED.ID INTO @PP VALUES ('[INSERT ALL PIER AND PAD DETAILS]')
 					SELECT @PPID=PPID FROM @PP
 
 					UPDATE fnd.foundation_details Set details_id=@PPID WHERE ID=@FndID
