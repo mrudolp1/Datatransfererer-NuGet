@@ -5,13 +5,14 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "806889"
+    Public BUNumber As String = "857704"
     Public STR_ID As String = "A"
-    Public CurWO As String = "806889"
+    Public CurWO As String = "3333333"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
     Public isPierAndPadNeeded As Boolean = False 'Update pier and pad details & foundation details
+    Public isUnitBaseNeeded As Boolean = False 'Update Unit Base details & foundation details
     Public isGuyedAnchorBlockNeeded As Boolean = False 'Update guyed anchor block details & foundation details
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
@@ -22,6 +23,10 @@ Module IDoDeclare
     Public currentConnGroup As Integer
     'Lattice
     'Pole
+
+    Public changeDt As New DataTable
+    Public changeList As New List(Of AnalysisChanges)
+
 End Module
 
 Public Module Common
@@ -229,6 +234,52 @@ Public Module Common
     'End Sub
 #End Region
 
+#Region "CheckChanges"
+
+    Public Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+        Dim summary As String
+        Dim counter As Integer = 0
+
+        For Each chng As AnalysisChanges In changeList
+            If counter = 0 Then
+                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            Else
+                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+            End If
+
+            counter += 1
+        Next
+
+    End Function
+
+    Public Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal db As String, ByVal variable As String) As Boolean
+        If changeDt.Columns.Count = 0 Then
+            changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+            changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+            changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+            changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        End If
+
+        If newValue <> oldvalue Then
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            Return True
+        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            Return True
+        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
+
+#End Region
+
 End Module
 
 Public Class SQLParameter
@@ -280,5 +331,19 @@ Public Class EXCELRngParameter
     Sub New(ByVal xlNamedRange As String, ByVal EDSName As String)
         rangeName = xlNamedRange
         variableName = EDSName
+    End Sub
+End Class
+
+Public Class AnalysisChanges
+    Property PreviousValue As String
+    Property NewValue As String
+    Property Name As String
+    Property PartofDatabase As String
+
+    Public Sub New(prev As String, Newval As String, name As String, db As String)
+        Me.PreviousValue = prev
+        Me.NewValue = Newval
+        Me.Name = name
+        Me.PartofDatabase = db
     End Sub
 End Class

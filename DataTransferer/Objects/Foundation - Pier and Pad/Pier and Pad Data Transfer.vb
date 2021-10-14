@@ -517,101 +517,101 @@ Partial Public Class DataTransfererPierandPad
 #End Region
 
 #Region "Check Changes"
-    Private changeDt As New DataTable
-    Private changeList As New List(Of AnalysisChanges)
+    'Private changeDt As New DataTable
+    'Private changeList As New List(Of AnalysisChanges)
     Function CheckChanges(ByVal xlPierAndPad As PierAndPad, ByVal sqlPierAndPad As PierAndPad) As Boolean
         Dim changesMade As Boolean = False
 
-        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("Previous Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        'changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Previous Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
         'Check Details
-        If Check1Change(xlPierAndPad.pier_shape, sqlPierAndPad.pier_shape, 1, "Pier_Shape") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_diameter, sqlPierAndPad.pier_diameter, 1, "Pier_Diameter") Then changesMade = True
-        If Check1Change(xlPierAndPad.extension_above_grade, sqlPierAndPad.extension_above_grade, 1, "Extension_Above_Grade") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_rebar_size, sqlPierAndPad.pier_rebar_size, 1, "Pier_Rebar_Size") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_tie_size, sqlPierAndPad.pier_tie_size, 1, "Pier_Tie_Size") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_tie_quantity, sqlPierAndPad.pier_tie_quantity, 1, "Pier_Tie_Quantity") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_reinforcement_type, sqlPierAndPad.pier_reinforcement_type, 1, "Pier_Reinforcement_Type") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_clear_cover, sqlPierAndPad.pier_clear_cover, 1, "Pier_Clear_Cover") Then changesMade = True
-        If Check1Change(xlPierAndPad.foundation_depth, sqlPierAndPad.foundation_depth, 1, "Foundation_Depth") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_width_1, sqlPierAndPad.pad_width_1, 1, "Pad_Width_1") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_width_2, sqlPierAndPad.pad_width_2, 1, "Pad_Width_2") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_thickness, sqlPierAndPad.pad_thickness, 1, "Pad_Thickness") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir1, sqlPierAndPad.pad_rebar_size_top_dir1, 1, "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir1, sqlPierAndPad.pad_rebar_size_bottom_dir1, 1, "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir2, sqlPierAndPad.pad_rebar_size_top_dir2, 1, "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir2, sqlPierAndPad.pad_rebar_size_bottom_dir2, 1, "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir1, sqlPierAndPad.pad_rebar_quantity_top_dir1, 1, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir1, sqlPierAndPad.pad_rebar_quantity_bottom_dir1, 1, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir2, sqlPierAndPad.pad_rebar_quantity_top_dir2, 1, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir2, sqlPierAndPad.pad_rebar_quantity_bottom_dir2, 1, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
-        If Check1Change(xlPierAndPad.pad_clear_cover, sqlPierAndPad.pad_clear_cover, 1, "Pad_Clear_Cover") Then changesMade = True
-        If Check1Change(xlPierAndPad.rebar_grade, sqlPierAndPad.rebar_grade, 1, "Rebar_Grade") Then changesMade = True
-        If Check1Change(xlPierAndPad.concrete_compressive_strength, sqlPierAndPad.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
-        If Check1Change(xlPierAndPad.dry_concrete_density, sqlPierAndPad.dry_concrete_density, 1, "Dry_Concrete_Density") Then changesMade = True
-        If Check1Change(xlPierAndPad.total_soil_unit_weight, sqlPierAndPad.total_soil_unit_weight, 1, "Total_Soil_Unit_Weight") Then changesMade = True
-        If Check1Change(xlPierAndPad.bearing_type, sqlPierAndPad.bearing_type, 1, "Bearing_Type") Then changesMade = True
-        If Check1Change(xlPierAndPad.nominal_bearing_capacity, sqlPierAndPad.nominal_bearing_capacity, 1, "Nominal_Bearing_Capacity") Then changesMade = True
-        If Check1Change(xlPierAndPad.cohesion, sqlPierAndPad.cohesion, 1, "Cohesion") Then changesMade = True
-        If Check1Change(xlPierAndPad.friction_angle, sqlPierAndPad.friction_angle, 1, "Friction_Angle") Then changesMade = True
-        If Check1Change(xlPierAndPad.spt_blow_count, sqlPierAndPad.spt_blow_count, 1, "Spt_Blow_Count") Then changesMade = True
-        If Check1Change(xlPierAndPad.base_friction_factor, sqlPierAndPad.base_friction_factor, 1, "Base_Friction_Factor") Then changesMade = True
-        If Check1Change(xlPierAndPad.neglect_depth, sqlPierAndPad.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
-        If Check1Change(xlPierAndPad.bearing_distribution_type, sqlPierAndPad.bearing_distribution_type, 1, "Bearing_Distribution_Type") Then changesMade = True
-        If Check1Change(xlPierAndPad.groundwater_depth, sqlPierAndPad.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
-        If Check1Change(xlPierAndPad.top_and_bottom_rebar_different, sqlPierAndPad.top_and_bottom_rebar_different, 1, "Top_And_Bottom_Rebar_Different") Then changesMade = True
-        If Check1Change(xlPierAndPad.block_foundation, sqlPierAndPad.block_foundation, 1, "Block_Foundation") Then changesMade = True
-        If Check1Change(xlPierAndPad.rectangular_foundation, sqlPierAndPad.rectangular_foundation, 1, "Rectangular_Foundation") Then changesMade = True
-        If Check1Change(xlPierAndPad.base_plate_distance_above_foundation, sqlPierAndPad.base_plate_distance_above_foundation, 1, "Base_Plate_Distance_Above_Foundation") Then changesMade = True
-        If Check1Change(xlPierAndPad.bolt_circle_bearing_plate_width, sqlPierAndPad.bolt_circle_bearing_plate_width, 1, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
-        If Check1Change(xlPierAndPad.pier_rebar_quantity, sqlPierAndPad.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
-        If Check1Change(xlPierAndPad.basic_soil_check, sqlPierAndPad.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
-        If Check1Change(xlPierAndPad.structural_check, sqlPierAndPad.structural_check, 1, "Structural_Check") Then changesMade = True
-        If Check1Change(xlPierAndPad.tool_version, sqlPierAndPad.tool_version, 1, "Tool_Version") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_shape, sqlPierAndPad.pier_shape, "Pier and Pad", "Pier_Shape") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_diameter, sqlPierAndPad.pier_diameter, "Pier and Pad", "Pier_Diameter") Then changesMade = True
+        If Check1Change(xlPierAndPad.extension_above_grade, sqlPierAndPad.extension_above_grade, "Pier and Pad", "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_rebar_size, sqlPierAndPad.pier_rebar_size, "Pier and Pad", "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_tie_size, sqlPierAndPad.pier_tie_size, "Pier and Pad", "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_tie_quantity, sqlPierAndPad.pier_tie_quantity, "Pier and Pad", "Pier_Tie_Quantity") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_reinforcement_type, sqlPierAndPad.pier_reinforcement_type, "Pier and Pad", "Pier_Reinforcement_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_clear_cover, sqlPierAndPad.pier_clear_cover, "Pier and Pad", "Pier_Clear_Cover") Then changesMade = True
+        If Check1Change(xlPierAndPad.foundation_depth, sqlPierAndPad.foundation_depth, "Pier and Pad", "Foundation_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_width_1, sqlPierAndPad.pad_width_1, "Pier and Pad", "Pad_Width_1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_width_2, sqlPierAndPad.pad_width_2, "Pier and Pad", "Pad_Width_2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_thickness, sqlPierAndPad.pad_thickness, "Pier and Pad", "Pad_Thickness") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir1, sqlPierAndPad.pad_rebar_size_top_dir1, "Pier and Pad", "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir1, sqlPierAndPad.pad_rebar_size_bottom_dir1, "Pier and Pad", "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_top_dir2, sqlPierAndPad.pad_rebar_size_top_dir2, "Pier and Pad", "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_size_bottom_dir2, sqlPierAndPad.pad_rebar_size_bottom_dir2, "Pier and Pad", "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir1, sqlPierAndPad.pad_rebar_quantity_top_dir1, "Pier and Pad", "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir1, sqlPierAndPad.pad_rebar_quantity_bottom_dir1, "Pier and Pad", "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_top_dir2, sqlPierAndPad.pad_rebar_quantity_top_dir2, "Pier and Pad", "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_rebar_quantity_bottom_dir2, sqlPierAndPad.pad_rebar_quantity_bottom_dir2, "Pier and Pad", "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlPierAndPad.pad_clear_cover, sqlPierAndPad.pad_clear_cover, "Pier and Pad", "Pad_Clear_Cover") Then changesMade = True
+        If Check1Change(xlPierAndPad.rebar_grade, sqlPierAndPad.rebar_grade, "Pier and Pad", "Rebar_Grade") Then changesMade = True
+        If Check1Change(xlPierAndPad.concrete_compressive_strength, sqlPierAndPad.concrete_compressive_strength, "Pier and Pad", "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlPierAndPad.dry_concrete_density, sqlPierAndPad.dry_concrete_density, "Pier and Pad", "Dry_Concrete_Density") Then changesMade = True
+        If Check1Change(xlPierAndPad.total_soil_unit_weight, sqlPierAndPad.total_soil_unit_weight, "Pier and Pad", "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(xlPierAndPad.bearing_type, sqlPierAndPad.bearing_type, "Pier and Pad", "Bearing_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.nominal_bearing_capacity, sqlPierAndPad.nominal_bearing_capacity, "Pier and Pad", "Nominal_Bearing_Capacity") Then changesMade = True
+        If Check1Change(xlPierAndPad.cohesion, sqlPierAndPad.cohesion, "Pier and Pad", "Cohesion") Then changesMade = True
+        If Check1Change(xlPierAndPad.friction_angle, sqlPierAndPad.friction_angle, "Pier and Pad", "Friction_Angle") Then changesMade = True
+        If Check1Change(xlPierAndPad.spt_blow_count, sqlPierAndPad.spt_blow_count, "Pier and Pad", "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(xlPierAndPad.base_friction_factor, sqlPierAndPad.base_friction_factor, "Pier and Pad", "Base_Friction_Factor") Then changesMade = True
+        If Check1Change(xlPierAndPad.neglect_depth, sqlPierAndPad.neglect_depth, "Pier and Pad", "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.bearing_distribution_type, sqlPierAndPad.bearing_distribution_type, "Pier and Pad", "Bearing_Distribution_Type") Then changesMade = True
+        If Check1Change(xlPierAndPad.groundwater_depth, sqlPierAndPad.groundwater_depth, "Pier and Pad", "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlPierAndPad.top_and_bottom_rebar_different, sqlPierAndPad.top_and_bottom_rebar_different, "Pier and Pad", "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(xlPierAndPad.block_foundation, sqlPierAndPad.block_foundation, "Pier and Pad", "Block_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.rectangular_foundation, sqlPierAndPad.rectangular_foundation, "Pier and Pad", "Rectangular_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.base_plate_distance_above_foundation, sqlPierAndPad.base_plate_distance_above_foundation, "Pier and Pad", "Base_Plate_Distance_Above_Foundation") Then changesMade = True
+        If Check1Change(xlPierAndPad.bolt_circle_bearing_plate_width, sqlPierAndPad.bolt_circle_bearing_plate_width, "Pier and Pad", "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(xlPierAndPad.pier_rebar_quantity, sqlPierAndPad.pier_rebar_quantity, "Pier and Pad", "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlPierAndPad.basic_soil_check, sqlPierAndPad.basic_soil_check, "Pier and Pad", "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlPierAndPad.structural_check, sqlPierAndPad.structural_check, "Pier and Pad", "Structural_Check") Then changesMade = True
+        If Check1Change(xlPierAndPad.tool_version, sqlPierAndPad.tool_version, "Pier and Pad", "Tool_Version") Then changesMade = True
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary
         Return changesMade
 
     End Function
 
-    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
-        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
-        'Create your string based on data in the datatable
-        Dim summary As String
-        Dim counter As Integer = 0
+    'Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+    '    'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+    '    'Create your string based on data in the datatable
+    '    Dim summary As String
+    '    Dim counter As Integer = 0
 
-        For Each chng As AnalysisChanges In changeList
-            If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            End If
+    '    For Each chng As AnalysisChanges In changeList
+    '        If counter = 0 Then
+    '            summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        Else
+    '            summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        End If
 
-            counter += 1
-        Next
+    '        counter += 1
+    '    Next
 
-        'write to text file
-        'End Sub
-    End Function
+    '    'write to text file
+    '    'End Sub
+    'End Function
 
-    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
-        If newValue <> oldvalue Then
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
-            Return True
-        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
-            Return True
-        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
-            Return True
-        End If
-    End Function
+    'Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+    '    If newValue <> oldvalue Then
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+    '        Return True
+    '    ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+    '        Return True
+    '    ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Pier and Pad Foundations"))
+    '        Return True
+    '    End If
+    'End Function
 #End Region
 
 End Class

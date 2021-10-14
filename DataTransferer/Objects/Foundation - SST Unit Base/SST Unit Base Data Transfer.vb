@@ -57,7 +57,7 @@ Partial Public Class DataTransfererUnitBase
         'Custom Section to transfer data for the Unit Base tool. Needs to be adjusted for each tool.
         For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
             refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
-            UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid)) 'UnitBaseList?
+            UnitBaseList.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
         Next
 
     End Sub
@@ -108,7 +108,7 @@ Partial Public Class DataTransfererUnitBase
         'If sqlUnitBases.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As SST_Unit_Base In UnitBases
             If fnd.unit_base_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
-                For Each sqlfnd As SST_Unit_Base In UnitBases
+                For Each sqlfnd As SST_Unit_Base In sqlUnitBases
                     If fnd.unit_base_id = sqlfnd.unit_base_id Then
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
@@ -134,8 +134,6 @@ Partial Public Class DataTransfererUnitBase
     Sub Save1UnitBase(ByVal ub As SST_Unit_Base)
 
         Dim firstOne As Boolean = True
-        Dim mySoils As String = ""
-        Dim myLocations As String = ""
 
         Dim UnitBaseSaver As String = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
         UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
@@ -211,9 +209,9 @@ Partial Public Class DataTransfererUnitBase
                 If Not IsNothing(ub.tower_centroid_offset) Then .Worksheets("Input").Range("TowerCentroidOffsetBoolean").Value = ub.tower_centroid_offset
                 If Not IsNothing(ub.pier_shape) Then .Worksheets("Input").Range("shape").Value = ub.pier_shape
                 If Not IsNothing(ub.pier_diameter) Then .Worksheets("Input").Range("dpier").Value = CType(ub.pier_diameter, Double) Else .Worksheets("Input").Range("dpier").ClearContents
-                If Not IsNothing(ub.pier_rebar_quantity) Then .Worksheets("Input").Range("mc").Value = CType(ub.pier_rebar_quantity, Integer) Else .Worksheets("Input").Range("mc").ClearContents
+                If Not IsNothing(ub.pier_rebar_quantity) Then .Worksheets("Input").Range("mc").Value = CType(ub.pier_rebar_quantity, Double) Else .Worksheets("Input").Range("mc").ClearContents
                 If Not IsNothing(ub.pier_rebar_size) Then .Worksheets("Input").Range("Sc").Value = CType(ub.pier_rebar_size, Integer) Else .Worksheets("Input").Range("Sc").ClearContents
-                If Not IsNothing(ub.pier_tie_quantity) Then .Worksheets("Input").Range("mt").Value = CType(ub.pier_tie_quantity, Integer) Else .Worksheets("Input").Range("mt").ClearContents
+                If Not IsNothing(ub.pier_tie_quantity) Then .Worksheets("Input").Range("mt").Value = CType(ub.pier_tie_quantity, Double) Else .Worksheets("Input").Range("mt").ClearContents
                 If Not IsNothing(ub.pier_tie_size) Then .Worksheets("Input").Range("St").Value = CType(ub.pier_tie_size, Integer) Else .Worksheets("Input").Range("St").ClearContents
                 If Not IsNothing(ub.pier_reinforcement_type) Then .Worksheets("Input").Range("PierReinfType").Value = ub.pier_reinforcement_type
                 If Not IsNothing(ub.pier_clear_cover) Then .Worksheets("Input").Range("ccpier").Value = CType(ub.pier_clear_cover, Double) Else .Worksheets("Input").Range("ccpier").ClearContents
@@ -224,17 +222,17 @@ Partial Public Class DataTransfererUnitBase
                 If Not IsNothing(ub.pad_rebar_size_bottom_dir1) Then .Worksheets("Input").Range("Sp").Value = CType(ub.pad_rebar_size_bottom_dir1, Integer) Else .Worksheets("Input").Range("Sp").ClearContents
                 If Not IsNothing(ub.pad_rebar_size_top_dir2) Then .Worksheets("Input").Range("sptop2").Value = CType(ub.pad_rebar_size_top_dir2, Integer) Else .Worksheets("Input").Range("sptop2").ClearContents
                 If Not IsNothing(ub.pad_rebar_size_bottom_dir2) Then .Worksheets("Input").Range("sp_2").Value = CType(ub.pad_rebar_size_bottom_dir2, Integer) Else .Worksheets("Input").Range("sp_2").ClearContents
-                If Not IsNothing(ub.pad_rebar_quantity_top_dir1) Then .Worksheets("Input").Range("mptop").Value = CType(ub.pad_rebar_quantity_top_dir1, Integer) Else .Worksheets("Input").Range("mptop").ClearContents
-                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir1) Then .Worksheets("Input").Range("mp").Value = CType(ub.pad_rebar_quantity_bottom_dir1, Integer) Else .Worksheets("Input").Range("mp").ClearContents
-                If Not IsNothing(ub.pad_rebar_quantity_top_dir2) Then .Worksheets("Input").Range("mptop2").Value = CType(ub.pad_rebar_quantity_top_dir2, Integer) Else .Worksheets("Input").Range("mptop2").ClearContents
-                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir2) Then .Worksheets("Input").Range("mp_2").Value = CType(ub.pad_rebar_quantity_bottom_dir2, Integer) Else .Worksheets("Input").Range("mp_2").ClearContents
+                If Not IsNothing(ub.pad_rebar_quantity_top_dir1) Then .Worksheets("Input").Range("mptop").Value = CType(ub.pad_rebar_quantity_top_dir1, Double) Else .Worksheets("Input").Range("mptop").ClearContents
+                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir1) Then .Worksheets("Input").Range("mp").Value = CType(ub.pad_rebar_quantity_bottom_dir1, Double) Else .Worksheets("Input").Range("mp").ClearContents
+                If Not IsNothing(ub.pad_rebar_quantity_top_dir2) Then .Worksheets("Input").Range("mptop2").Value = CType(ub.pad_rebar_quantity_top_dir2, Double) Else .Worksheets("Input").Range("mptop2").ClearContents
+                If Not IsNothing(ub.pad_rebar_quantity_bottom_dir2) Then .Worksheets("Input").Range("mp_2").Value = CType(ub.pad_rebar_quantity_bottom_dir2, Double) Else .Worksheets("Input").Range("mp_2").ClearContents
                 If Not IsNothing(ub.pad_clear_cover) Then .Worksheets("Input").Range("ccpad").Value = CType(ub.pad_clear_cover, Double) Else .Worksheets("Input").Range("ccpad").ClearContents
                 If Not IsNothing(ub.total_soil_unit_weight) Then .Worksheets("Input").Range("γ").Value = CType(ub.total_soil_unit_weight, Double) Else .Worksheets("Input").Range("γ").ClearContents
                 If Not IsNothing(ub.bearing_type) Then .Worksheets("Input").Range("BearingType").Value = ub.bearing_type
                 If Not IsNothing(ub.nominal_bearing_capacity) Then .Worksheets("Input").Range("Qinput").Value = CType(ub.nominal_bearing_capacity, Double) Else .Worksheets("Input").Range("Qinput").ClearContents
                 If Not IsNothing(ub.cohesion) Then .Worksheets("Input").Range("Cu").Value = CType(ub.cohesion, Double) Else .Worksheets("Input").Range("Cu").ClearContents
                 If Not IsNothing(ub.friction_angle) Then .Worksheets("Input").Range("ϕ").Value = CType(ub.friction_angle, Double) Else .Worksheets("Input").Range("ϕ").ClearContents
-                If Not IsNothing(ub.spt_blow_count) Then .Worksheets("Input").Range("N_blows").Value = CType(ub.spt_blow_count, Integer) Else .Worksheets("Input").Range("N_blows").ClearContents
+                If Not IsNothing(ub.spt_blow_count) Then .Worksheets("Input").Range("N_blows").Value = CType(ub.spt_blow_count, Double) Else .Worksheets("Input").Range("N_blows").ClearContents
                 If Not IsNothing(ub.base_friction_factor) Then .Worksheets("Input").Range("μ").Value = CType(ub.base_friction_factor, Double) Else .Worksheets("Input").Range("μ").ClearContents
                 If Not IsNothing(ub.neglect_depth) Then .Worksheets("Input").Range("N").Value = CType(ub.neglect_depth, Double)
                 If ub.bearing_distribution_type = False Then .Worksheets("Input").Range("Rock").Value = "Yes" Else .Worksheets("Input").Range("Rock").Value = "No"
@@ -242,6 +240,7 @@ Partial Public Class DataTransfererUnitBase
                 If Not IsNothing(ub.basic_soil_check) Then .Worksheets("Input").Range("SoilInteractionBoolean").Value = ub.basic_soil_check
                 If Not IsNothing(ub.structural_check) Then .Worksheets("Input").Range("StructuralCheckBoolean").Value = ub.structural_check
                 'If Not IsNothing(ub.tool_version) Then .Worksheets("Revision").Range("vnum").Value = ub.tool_version
+                If Not IsNothing(ub.modified) Then .Worksheets("Input").Range("modified").Value = ub.modified
 
 
                 'Seismic design category
@@ -309,6 +308,7 @@ Partial Public Class DataTransfererUnitBase
     End Sub
 
     Private Sub SaveAndCloseUnitBase()
+        NewUnitBaseWb.Calculate()
         NewUnitBaseWb.EndUpdate()
         NewUnitBaseWb.SaveDocument(ExcelFilePath, UnitBaseFileType)
     End Sub
@@ -363,6 +363,7 @@ Partial Public Class DataTransfererUnitBase
         insertString += "," & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
+        insertString += "," & IIf(IsNothing(ub.modified), "Null", "'" & ub.modified.ToString & "'")
 
         Return insertString
     End Function
@@ -417,6 +418,7 @@ Partial Public Class DataTransfererUnitBase
         updateString += ", basic_soil_check=" & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         updateString += ", structural_check=" & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
         updateString += ", tool_version=" & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
+        updateString += ", modified=" & IIf(IsNothing(ub.modified), "Null", "'" & ub.modified.ToString & "'")
         updateString += " WHERE ID=" & ub.unit_base_id & vbNewLine
 
         Return updateString
@@ -433,6 +435,7 @@ Partial Public Class DataTransfererUnitBase
         Dim MyParameters As New List(Of SQLParameter)
 
         MyParameters.Add(New SQLParameter("Unit Base General Details SQL", "Unit Base (SELECT Details).sql"))
+        'MyParameters.Add(New SQLParameter("Unit Base Modified Ranges SQL", "Unit Base (SELECT Modified Ranges).sql"))
 
         Return MyParameters
     End Function
@@ -440,8 +443,8 @@ Partial Public Class DataTransfererUnitBase
     Private Function UnitBaseExcelDTParameters() As List(Of EXCELDTParameter)
         Dim MyParameters As New List(Of EXCELDTParameter)
 
-        MyParameters.Add(New EXCELDTParameter("Unit Base General Details EXCEL", "A2:AP3", "Details (SAPI)"))
-        'MyParameters.Add(New EXCELDTParameter("Pile Location EXCEL", "S3:U103", "SAPI"))
+        MyParameters.Add(New EXCELDTParameter("Unit Base General Details EXCEL", "A2:AT3", "Details (SAPI)"))
+        'MyParameters.Add(New EXCELDTParameter("Unit Base Modified Ranges EXCEL", "A1:E1000", "Modified Ranges"))
 
         Return MyParameters
     End Function
@@ -500,102 +503,97 @@ Partial Public Class DataTransfererUnitBase
 
 
 #Region "Check Changes"
-    Private changeDt As New DataTable
-    Private changeList As New List(Of AnalysisChanges)
+    'Private changeDt As New DataTable
+    'Private changeList As New List(Of AnalysisChanges)
     Function CheckChanges(ByVal xlUnitBase As SST_Unit_Base, ByVal sqlUnitBase As SST_Unit_Base) As Boolean
         Dim changesMade As Boolean = False
 
-        'changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        'changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        'changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
-        'changeDt.Columns.Add("WO", Type.GetType("System.String"))
-
         'Check Details
-        If Check1Change(xlUnitBase.pier_shape, sqlUnitBase.pier_shape, 1, "Pier_Shape") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_diameter, sqlUnitBase.pier_diameter, 1, "Pier_Diameter") Then changesMade = True
-        If Check1Change(xlUnitBase.extension_above_grade, sqlUnitBase.extension_above_grade, 1, "Extension_Above_Grade") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_rebar_size, sqlUnitBase.pier_rebar_size, 1, "Pier_Rebar_Size") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_tie_size, sqlUnitBase.pier_tie_size, 1, "Pier_Tie_Size") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_tie_quantity, sqlUnitBase.pier_tie_quantity, 1, "Pier_Tie_Quantity") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_reinforcement_type, sqlUnitBase.pier_reinforcement_type, 1, "Pier_Reinforcement_Type") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_clear_cover, sqlUnitBase.pier_clear_cover, 1, "Pier_Clear_Cover") Then changesMade = True
-        If Check1Change(xlUnitBase.foundation_depth, sqlUnitBase.foundation_depth, 1, "Foundation_Depth") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_width_1, sqlUnitBase.pad_width_1, 1, "Pad_Width_1") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_width_2, sqlUnitBase.pad_width_2, 1, "Pad_Width_2") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_thickness, sqlUnitBase.pad_thickness, 1, "Pad_Thickness") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_size_top_dir1, sqlUnitBase.pad_rebar_size_top_dir1, 1, "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir1, sqlUnitBase.pad_rebar_size_bottom_dir1, 1, "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_size_top_dir2, sqlUnitBase.pad_rebar_size_top_dir2, 1, "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir2, sqlUnitBase.pad_rebar_size_bottom_dir2, 1, "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir1, sqlUnitBase.pad_rebar_quantity_top_dir1, 1, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir1, sqlUnitBase.pad_rebar_quantity_bottom_dir1, 1, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir2, sqlUnitBase.pad_rebar_quantity_top_dir2, 1, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir2, sqlUnitBase.pad_rebar_quantity_bottom_dir2, 1, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
-        If Check1Change(xlUnitBase.pad_clear_cover, sqlUnitBase.pad_clear_cover, 1, "Pad_Clear_Cover") Then changesMade = True
-        If Check1Change(xlUnitBase.rebar_grade, sqlUnitBase.rebar_grade, 1, "Rebar_Grade") Then changesMade = True
-        If Check1Change(xlUnitBase.concrete_compressive_strength, sqlUnitBase.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
-        If Check1Change(xlUnitBase.dry_concrete_density, sqlUnitBase.dry_concrete_density, 1, "Dry_Concrete_Density") Then changesMade = True
-        If Check1Change(xlUnitBase.total_soil_unit_weight, sqlUnitBase.total_soil_unit_weight, 1, "Total_Soil_Unit_Weight") Then changesMade = True
-        If Check1Change(xlUnitBase.bearing_type, sqlUnitBase.bearing_type, 1, "Bearing_Type") Then changesMade = True
-        If Check1Change(xlUnitBase.nominal_bearing_capacity, sqlUnitBase.nominal_bearing_capacity, 1, "Nominal_Bearing_Capacity") Then changesMade = True
-        If Check1Change(xlUnitBase.cohesion, sqlUnitBase.cohesion, 1, "Cohesion") Then changesMade = True
-        If Check1Change(xlUnitBase.friction_angle, sqlUnitBase.friction_angle, 1, "Friction_Angle") Then changesMade = True
-        If Check1Change(xlUnitBase.spt_blow_count, sqlUnitBase.spt_blow_count, 1, "Spt_Blow_Count") Then changesMade = True
-        If Check1Change(xlUnitBase.base_friction_factor, sqlUnitBase.base_friction_factor, 1, "Base_Friction_Factor") Then changesMade = True
-        If Check1Change(xlUnitBase.neglect_depth, sqlUnitBase.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
-        If Check1Change(xlUnitBase.bearing_distribution_type, sqlUnitBase.bearing_distribution_type, 1, "Bearing_Distribution_Type") Then changesMade = True
-        If Check1Change(xlUnitBase.groundwater_depth, sqlUnitBase.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
-        If Check1Change(xlUnitBase.top_and_bottom_rebar_different, sqlUnitBase.top_and_bottom_rebar_different, 1, "Top_And_Bottom_Rebar_Different") Then changesMade = True
-        If Check1Change(xlUnitBase.block_foundation, sqlUnitBase.block_foundation, 1, "Block_Foundation") Then changesMade = True
-        If Check1Change(xlUnitBase.rectangular_foundation, sqlUnitBase.rectangular_foundation, 1, "Rectangular_Foundation") Then changesMade = True
-        If Check1Change(xlUnitBase.base_plate_distance_above_foundation, sqlUnitBase.base_plate_distance_above_foundation, 1, "Base_Plate_Distance_Above_Foundation") Then changesMade = True
-        If Check1Change(xlUnitBase.bolt_circle_bearing_plate_width, sqlUnitBase.bolt_circle_bearing_plate_width, 1, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
-        If Check1Change(xlUnitBase.tower_centroid_offset, sqlUnitBase.tower_centroid_offset, 1, "Tower_Centroid_Offset") Then changesMade = True
-        If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
-        If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
-        If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, 1, "Structural_Check") Then changesMade = True
-        If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
-        'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_shape, sqlUnitBase.pier_shape, "SST Unit Base", "Pier_Shape") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_diameter, sqlUnitBase.pier_diameter, "SST Unit Base", "Pier_Diameter") Then changesMade = True
+        If Check1Change(xlUnitBase.extension_above_grade, sqlUnitBase.extension_above_grade, "SST Unit Base", "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_rebar_size, sqlUnitBase.pier_rebar_size, "SST Unit Base", "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_tie_size, sqlUnitBase.pier_tie_size, "SST Unit Base", "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_tie_quantity, sqlUnitBase.pier_tie_quantity, "SST Unit Base", "Pier_Tie_Quantity") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_reinforcement_type, sqlUnitBase.pier_reinforcement_type, "SST Unit Base", "Pier_Reinforcement_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_clear_cover, sqlUnitBase.pier_clear_cover, "SST Unit Base", "Pier_Clear_Cover") Then changesMade = True
+        If Check1Change(xlUnitBase.foundation_depth, sqlUnitBase.foundation_depth, "SST Unit Base", "Foundation_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_width_1, sqlUnitBase.pad_width_1, "SST Unit Base", "Pad_Width_1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_width_2, sqlUnitBase.pad_width_2, "SST Unit Base", "Pad_Width_2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_thickness, sqlUnitBase.pad_thickness, "SST Unit Base", "Pad_Thickness") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_top_dir1, sqlUnitBase.pad_rebar_size_top_dir1, "SST Unit Base", "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir1, sqlUnitBase.pad_rebar_size_bottom_dir1, "SST Unit Base", "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_top_dir2, sqlUnitBase.pad_rebar_size_top_dir2, "SST Unit Base", "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_size_bottom_dir2, sqlUnitBase.pad_rebar_size_bottom_dir2, "SST Unit Base", "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir1, sqlUnitBase.pad_rebar_quantity_top_dir1, "SST Unit Base", "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir1, sqlUnitBase.pad_rebar_quantity_bottom_dir1, "SST Unit Base", "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_top_dir2, sqlUnitBase.pad_rebar_quantity_top_dir2, "SST Unit Base", "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_rebar_quantity_bottom_dir2, sqlUnitBase.pad_rebar_quantity_bottom_dir2, "SST Unit Base", "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(xlUnitBase.pad_clear_cover, sqlUnitBase.pad_clear_cover, "SST Unit Base", "Pad_Clear_Cover") Then changesMade = True
+        If Check1Change(xlUnitBase.rebar_grade, sqlUnitBase.rebar_grade, "SST Unit Base", "Rebar_Grade") Then changesMade = True
+        If Check1Change(xlUnitBase.concrete_compressive_strength, sqlUnitBase.concrete_compressive_strength, "SST Unit Base", "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlUnitBase.dry_concrete_density, sqlUnitBase.dry_concrete_density, "SST Unit Base", "Dry_Concrete_Density") Then changesMade = True
+        If Check1Change(xlUnitBase.total_soil_unit_weight, sqlUnitBase.total_soil_unit_weight, "SST Unit Base", "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(xlUnitBase.bearing_type, sqlUnitBase.bearing_type, "SST Unit Base", "Bearing_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.nominal_bearing_capacity, sqlUnitBase.nominal_bearing_capacity, "SST Unit Base", "Nominal_Bearing_Capacity") Then changesMade = True
+        If Check1Change(xlUnitBase.cohesion, sqlUnitBase.cohesion, "SST Unit Base", "Cohesion") Then changesMade = True
+        If Check1Change(xlUnitBase.friction_angle, sqlUnitBase.friction_angle, "SST Unit Base", "Friction_Angle") Then changesMade = True
+        If Check1Change(xlUnitBase.spt_blow_count, sqlUnitBase.spt_blow_count, "SST Unit Base", "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(xlUnitBase.base_friction_factor, sqlUnitBase.base_friction_factor, "SST Unit Base", "Base_Friction_Factor") Then changesMade = True
+        If Check1Change(xlUnitBase.neglect_depth, sqlUnitBase.neglect_depth, "SST Unit Base", "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.bearing_distribution_type, sqlUnitBase.bearing_distribution_type, "SST Unit Base", "Bearing_Distribution_Type") Then changesMade = True
+        If Check1Change(xlUnitBase.groundwater_depth, sqlUnitBase.groundwater_depth, "SST Unit Base", "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlUnitBase.top_and_bottom_rebar_different, sqlUnitBase.top_and_bottom_rebar_different, "SST Unit Base", "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(xlUnitBase.block_foundation, sqlUnitBase.block_foundation, "SST Unit Base", "Block_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.rectangular_foundation, sqlUnitBase.rectangular_foundation, "SST Unit Base", "Rectangular_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.base_plate_distance_above_foundation, sqlUnitBase.base_plate_distance_above_foundation, "SST Unit Base", "Base_Plate_Distance_Above_Foundation") Then changesMade = True
+        If Check1Change(xlUnitBase.bolt_circle_bearing_plate_width, sqlUnitBase.bolt_circle_bearing_plate_width, "SST Unit Base", "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(xlUnitBase.tower_centroid_offset, sqlUnitBase.tower_centroid_offset, "SST Unit Base", "Tower_Centroid_Offset") Then changesMade = True
+        If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, "SST Unit Base", "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, "SST Unit Base", "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, "SST Unit Base", "Structural_Check") Then changesMade = True
+        If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, "SST Unit Base", "Tool_Version") Then changesMade = True
+        If Check1Change(xlUnitBase.modified, sqlUnitBase.modified, "SST Unit Base", "Modified") Then changesMade = True
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary
         Return changesMade
     End Function
 
-    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
-        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
-        'Create your string based on data in the datatable
-        Dim summary As String
-        Dim counter As Integer = 0
+    'Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+    '    'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+    '    'Create your string based on data in the datatable
+    '    Dim summary As String
+    '    Dim counter As Integer = 0
 
-        For Each chng As AnalysisChanges In changeList
-            If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            End If
+    '    For Each chng As AnalysisChanges In changeList
+    '        If counter = 0 Then
+    '            summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        Else
+    '            summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        End If
 
-            counter += 1
-        Next
+    '        counter += 1
+    '    Next
 
-        'write to text file
-        'End Sub
-    End Function
+    '    'write to text file
+    '    'End Sub
+    'End Function
 
-    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
-        If newValue <> oldvalue Then
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
-            Return True
-        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
-            Return True
-        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Unit Base Foundations"))
-            Return True
-        End If
-    End Function
+    'Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal toolName As String, ByVal variable As String) As Boolean
+    '    If newValue <> oldvalue Then
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
+    '        Return True
+    '    ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
+    '        Return True
+    '    ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
+    '        Return True
+    '    End If
+    'End Function
 
 #End Region
 End Class
