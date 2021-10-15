@@ -61,16 +61,18 @@ DECLARE @UnitBaseNeeded BIT --NEW
 IF EXISTS(SELECT * FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID) 
 	BEGIN
 		--If exists, select model_id from structure_model_xref
-		INSERT INTO @Model (ModelID) SELECT model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID ORDER BY model_id
+		INSERT INTO @Model (ModelID) SELECT model_id FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID AND isActive='True' --ORDER BY model_id
 		SELECT @ModelID=ModelID FROM @Model
 		--If changes occurred with any field in structure_model table, create new model ID for reference
 		IF @ModelNeeded = 1 --TRUE (Reference ismodelneeded)
 			BEGIN
+				--Update IsActive status to FALSE for existing model_id
+				UPDATE gen.structure_model_xref SET isActive='False' WHERE model_id=@ModelID
 				--Create new Model ID by copying previous data and pasting new row into Structure_model
 				INSERT INTO gen.structure_model (connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id) OUTPUT Inserted.id INTO @Model SELECT connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id FROM gen.structure_model WHERE id=@ModelID
 				SELECT @ModelID=ModelID FROM @Model
 				--Create new row in structure_model_xref, associating BU to newly created Model ID
-				INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id) VALUES (@ModelID,@BU,@STR_ID)
+				INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 			END
 	END
 ELSE
@@ -79,7 +81,7 @@ ELSE
 		INSERT INTO gen.structure_model OUTPUT Inserted.ID INTO @Model DEFAULT VALUES
 		SELECT @ModelID=ModelID FROM @Model
 		--Create new row in structure_model_xref, associating BU to newly created Model ID
-		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id) VALUES (@ModelID,@BU,@STR_ID)
+		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 	END--Select existing model ID or insert new
 
 
@@ -155,7 +157,8 @@ IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 					,pier_rebar_quantity
 					,basic_soil_check
 					,structural_check
-					,tool_version) 
+					,tool_version
+					,modified) 
 					OUTPUT INSERTED.ID INTO @UnitBase VALUES ('[INSERT ALL UNIT BASE DETAILS]')
 				SELECT @UB_ID=UB_ID FROM @UnitBase 
 
