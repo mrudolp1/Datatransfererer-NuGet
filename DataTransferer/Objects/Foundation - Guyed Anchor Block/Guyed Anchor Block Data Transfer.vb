@@ -102,7 +102,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
             'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
             If fnd.anchor_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
-                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks 'MRP - turned off for testing. Need to update Check Changes Logic
+                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks 'MRP - UPDATES NEEDED!!! Chackchanges needs updated to apply to multiple objects within the same tool. Only want one foundation group per tool
                     'If fnd.ID = sqlfnd.ID Then
                     If fnd.anchor_id = sqlfnd.ID Then
                         If CheckChanges(fnd, sqlfnd) Then

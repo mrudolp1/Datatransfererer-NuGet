@@ -16,7 +16,8 @@ DECLARE @FndType VARCHAR(255)
 DECLARE @FndGroupNeeded BIT 
 --Drilled Pier Declarations
 DECLARE @DpID INT
-DECLARE @DrilledPier TABLE(DpID INT, IsEmbed BIT, IsBelled BIT)
+--DECLARE @DrilledPier TABLE(DpID INT, IsEmbed BIT, IsBelled BIT)
+DECLARE @DrilledPier TABLE(DpID INT)
 DECLARE @IsEmbed BIT
 DECLARE @IsBelled BIT
 DECLARE @EmbeddedPole TABLE(EmbedID INT)
@@ -98,7 +99,7 @@ BEGIN
 	IF @DPNeeded = 1 --TRUE  
 		BEGIN
 			--INSERT Details
-			INSERT INTO fnd.drilled_pier_details (foundation_depth, extension_above_grade, groundwater_depth, assume_min_steel, check_shear_along_depth, utilize_skin_friction_methodology, embedded_pole, belled_pier, soil_layer_quantity, concrete_compressive_strength, local_drilled_pier_id, longitudinal_rebar_yield_strength, rebar_cage_2_fy_override, rebar_cage_3_fy_override, rebar_effective_depths, shear_crit_depth_override_comp, shear_crit_depth_override_uplift, shear_override_crit_depth, tie_yield_strength, tool_version, modified, local_drilled_pier_profile) OUTPUT INSERTED.ID INTO @DrilledPier VALUES ([INSERT ALL DRILLED PIER DETAILS])
+			INSERT INTO fnd.drilled_pier_details (local_drilled_pier_id,local_drilled_pier_profile,foundation_depth,extension_above_grade,groundwater_depth,assume_min_steel,check_shear_along_depth,utilize_shear_friction_methodology,embedded_pole,belled_pier,soil_layer_quantity,concrete_compressive_strength,tie_yield_strength,longitudinal_rebar_yield_strength,rebar_effective_depths,rebar_cage_2_fy_override,rebar_cage_3_fy_override,shear_override_crit_depth,shear_crit_depth_override_comp,shear_crit_depth_override_uplift,bearing_toggle_type,tool_version,modified) OUTPUT INSERTED.ID INTO @DrilledPier VALUES ([INSERT ALL DRILLED PIER DETAILS])
 			SELECT @DpID=DpID FROM @DrilledPier
 
 			--INSERT Soil Layers 
@@ -133,7 +134,7 @@ IF @FndGroupNeeded = 0 --FALSE --if Foundation Group is not Needed
 	IF @DPNeeded = 1 --TRUE  
 		BEGIN
 			--INSERT Details
-			INSERT INTO fnd.drilled_pier_details (foundation_depth, extension_above_grade, groundwater_depth, assume_min_steel, check_shear_along_depth, utilize_skin_friction_methodology, embedded_pole, belled_pier, soil_layer_quantity, concrete_compressive_strength, local_drilled_pier_id, longitudinal_rebar_yield_strength, rebar_cage_2_fy_override, rebar_cage_3_fy_override, rebar_effective_depths, shear_crit_depth_override_comp, shear_crit_depth_override_uplift, shear_override_crit_depth, tie_yield_strength, tool_version, modified, local_drilled_pier_profile) OUTPUT INSERTED.ID INTO @DrilledPier VALUES ([INSERT ALL DRILLED PIER DETAILS])
+			INSERT INTO fnd.drilled_pier_details (local_drilled_pier_id,local_drilled_pier_profile,foundation_depth,extension_above_grade,groundwater_depth,assume_min_steel,check_shear_along_depth,utilize_shear_friction_methodology,embedded_pole,belled_pier,soil_layer_quantity,concrete_compressive_strength,tie_yield_strength,longitudinal_rebar_yield_strength,rebar_effective_depths,rebar_cage_2_fy_override,rebar_cage_3_fy_override,shear_override_crit_depth,shear_crit_depth_override_comp,shear_crit_depth_override_uplift,bearing_toggle_type,tool_version,modified) OUTPUT INSERTED.ID INTO @DrilledPier VALUES ([INSERT ALL DRILLED PIER DETAILS])
 			SELECT @DpID=DpID FROM @DrilledPier
 
 			--INSERT Soil Layers 

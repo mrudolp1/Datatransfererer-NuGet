@@ -30,6 +30,7 @@ Partial Public Class DrilledPier
     Private prop_foundation_id As Integer
     Private prop_modified As Boolean
     Private prop_local_drilled_pier_profile As Integer?
+    Private prop_tool_version As String
     Public Property soil_layers As New List(Of DrilledPierSoilLayer)
     Public Property sections As New List(Of DrilledPierSection)
     Public Property belled_details As DrilledPierBelledPier
@@ -254,6 +255,15 @@ Partial Public Class DrilledPier
             Me.prop_local_drilled_pier_profile = Value
         End Set
     End Property
+    <Category("Drilled Pier Details"), Description(""), DisplayName("Tool Version")>
+    Public Property tool_version() As String
+        Get
+            Return Me.prop_tool_version
+        End Get
+        Set
+            Me.prop_tool_version = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -264,7 +274,7 @@ Partial Public Class DrilledPier
     Public Sub New(ByVal DrilledPierDataRow As DataRow, refID As Integer)
         'General Drilled Pier Details
         Try
-            Me.pier_id = CType(DrilledPierDataRow.Item("drilled_pier_id"), Integer)
+            Me.pier_id = CType(DrilledPierDataRow.Item("ID"), Integer)
         Catch
             Me.pier_id = 0
         End Try 'Drilled Pier ID
@@ -441,6 +451,11 @@ Partial Public Class DrilledPier
         Catch
             Me.local_drilled_pier_profile = Nothing
         End Try 'local_drilled_pier_profile
+        Try
+            Me.tool_version = CType(DrilledPierDataRow.Item("tool_version"), String)
+        Catch
+            Me.tool_version = ""
+        End Try 'tool_version
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil SQL").Rows
             Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("drilled_pier_id"), Integer)
@@ -452,7 +467,7 @@ Partial Public Class DrilledPier
 
         For Each SectionDataRow As DataRow In ds.Tables("Drilled Pier Section SQL").Rows
             Dim secRefID As Integer = CType(SectionDataRow.Item("drilled_pier_id"), Integer)
-            Dim secID As Integer = CType(SectionDataRow.Item("section_id"), Integer)
+            Dim secID As Integer = CType(SectionDataRow.Item("ID"), Integer)
 
             If secRefID = refID Then
                 Dim newSec As DrilledPierSection
@@ -630,6 +645,11 @@ Partial Public Class DrilledPier
         Catch
             Me.local_drilled_pier_profile = Nothing
         End Try 'local_drilled_pier_profile
+        Try
+            Me.tool_version = CType(DrilledPierDataRow.Item("tool_version"), String)
+        Catch
+            Me.tool_version = ""
+        End Try 'tool_version
 
         For Each SoilLayerDataRow As DataRow In ds.Tables("Drilled Pier Soil EXCEL").Rows
             Dim soilRefID As Integer?
@@ -749,6 +769,9 @@ Partial Public Class DrilledPier
                 End If
             Next
         End If 'Add Embedded Pole Details to Drilled Pier Object
+
+
+        'Dim ProfileRefCol As String = "drilled_pier_profile"
 
         For Each DrilledPierProfileDataRow As DataRow In ds.Tables("Drilled Pier Profiles EXCEL").Rows
             'Dim soilRefID As Integer = CType(SoilLayerDataRow.Item(refcol), Integer)
