@@ -63,24 +63,6 @@ Partial Public Class DataTransfererUnitBase
     End Sub
 
     Public Function LoadFromEDS() As Boolean
-        'Dim refid As Integer
-        'Dim UnitBaseLoader As String
-
-        ''Load data to get Unit Base details for the existing structure model
-        'For Each item As SQLParameter In UnitBaseSQLDataTables()
-        '    UnitBaseLoader = QueryBuilderFromFile(queryPath & "Unit Base\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
-        '    'DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ubDS, ubDB, ubID, "0")
-        '    DoDaSQL.sqlLoader(UnitBaseLoader, item.sqlDatatable, ds, ubDB, ubID, "0")
-        '    'If ubDS.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False
-        'Next
-
-        ''Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        ''For Each UnitBaseDataRow As DataRow In ubDS.Tables("Unit Base General Details SQL").Rows
-        'For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details SQL").Rows
-        '    refid = CType(UnitBaseDataRow.Item("unit_base_id"), Integer)
-
-        '    UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refid))
-        'Next
         CreateSQLUnitBase(UnitBases)
         Return True
     End Function 'Create Unit Base objects based on what is saved in EDS
@@ -92,11 +74,13 @@ Partial Public Class DataTransfererUnitBase
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
-        UnitBases.Add(New SST_Unit_Base(ExcelFilePath)) 'Option 1: Connect to excel and pull values from cells
+        'Option 1: Connect to excel and pull values from cells
+        UnitBases.Add(New SST_Unit_Base(ExcelFilePath))
 
+        ''Option 2: Connect to excel and pull datarow from SAPI tab
         'Dim refID As Integer
         'Dim refCol As String
-        'For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details EXCEL").Rows 'Option 2: Connect to excel and pull datarow from SAPI tab
+        'For Each UnitBaseDataRow As DataRow In ds.Tables("Unit Base General Details EXCEL").Rows 
         '    refCol = "unit_base_id"
         '    refID = CType(UnitBaseDataRow.Item(refCol), Integer)
         '    UnitBases.Add(New SST_Unit_Base(UnitBaseDataRow, refID, refCol))
@@ -174,20 +158,6 @@ Partial Public Class DataTransfererUnitBase
     Public Sub SaveToEDS()
         For Each ub As SST_Unit_Base In UnitBases
             Save1UnitBase(ub)
-            'Dim UnitBaseSaver As String = Common.QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (IN_UP).sql")
-
-            'UnitBaseSaver = UnitBaseSaver.Replace("[BU NUMBER]", BUNumber)
-            'UnitBaseSaver = UnitBaseSaver.Replace("[STRUCTURE ID]", STR_ID)
-            'UnitBaseSaver = UnitBaseSaver.Replace("[FOUNDATION TYPE]", "Unit Base")
-            'If ub.unit_base_id = 0 Or IsDBNull(ub.unit_base_id) Then
-            '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID]'", "NULL")
-            'Else
-            '    UnitBaseSaver = UnitBaseSaver.Replace("[UNIT BASE ID]", ub.unit_base_id.ToString)
-            '    UnitBaseSaver = UnitBaseSaver.Replace("(SELECT * FROM TEMPORARY)", UpdateUnitBaseDetail(ub))
-            'End If
-            'UnitBaseSaver = UnitBaseSaver.Replace("[INSERT ALL UNIT BASE DETAILS]", InsertUnitBaseDetail(ub))
-
-            'sqlSender(UnitBaseSaver, ubDB, ubID, "0")
         Next
     End Sub
 
@@ -503,8 +473,6 @@ Partial Public Class DataTransfererUnitBase
 
 
 #Region "Check Changes"
-    'Private changeDt As New DataTable
-    'Private changeList As New List(Of AnalysisChanges)
     Function CheckChanges(ByVal xlUnitBase As SST_Unit_Base, ByVal sqlUnitBase As SST_Unit_Base) As Boolean
         Dim changesMade As Boolean = False
 
@@ -558,42 +526,6 @@ Partial Public Class DataTransfererUnitBase
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary
         Return changesMade
     End Function
-
-    'Function CreateChangeSummary(ByVal changeDt As DataTable) As String
-    '    'Sub CreateChangeSummary(ByVal changeDt As DataTable)
-    '    'Create your string based on data in the datatable
-    '    Dim summary As String
-    '    Dim counter As Integer = 0
-
-    '    For Each chng As AnalysisChanges In changeList
-    '        If counter = 0 Then
-    '            summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-    '        Else
-    '            summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-    '        End If
-
-    '        counter += 1
-    '    Next
-
-    '    'write to text file
-    '    'End Sub
-    'End Function
-
-    'Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal toolName As String, ByVal variable As String) As Boolean
-    '    If newValue <> oldvalue Then
-    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
-    '        Return True
-    '    ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
-    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
-    '        Return True
-    '    ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
-    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, toolName))
-    '        Return True
-    '    End If
-    'End Function
 
 #End Region
 End Class

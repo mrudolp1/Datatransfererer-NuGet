@@ -33,30 +33,6 @@ DECLARE @UnitBaseNeeded BIT --NEW
 	Set @FndGroupNeeded = '[Fnd GRP ID Needed]' --NEW
 	Set @UnitBaseNeeded = '[UNIT BASE ID Needed]' --NEW
 
----------
---	BEGIN
---		IF EXISTS(SELECT * FROM structure_model WHERE bus_unit=@BU AND structure_id=@STR_ID AND existing_geometry='True') 
---			INSERT INTO @Model (ModelID) SELECT ID FROM structure_model WHERE bus_unit=@BU AND structure_id=@STR_ID AND existing_geometry='True'
---		ELSE
---			INSERT INTO structure_model (bus_unit,structure_id,existing_geometry) OUTPUT INSERTED.ID INTO @Model VALUES (@BU,@STR_ID,'True')
---	END --Select existing model ID or insert new
-
---	SELECT @ModelID=ModelID FROM @Model
-		
---	BEGIN
---		IF @UB_ID IS NULL 
---			BEGIN
---				INSERT INTO foundation_details (model_id,foundation_type) OUTPUT INSERTED.ID INTO @Foundation VALUES(@ModelID,@FndType)
---				SELECT @FndID=FndID FROM @Foundation
---				INSERT INTO unit_base_details VALUES ([INSERT ALL UNIT BASE DETAILS])
---			END
---		ELSE
---			BEGIN
---				(SELECT * FROM TEMPORARY)
---			END
---	END --If foundation ID is NULL, insert a foundation based on the type provided and output the new foundation ID
----------
-
 --Determine model_id (Table Impacts: gen.structure_model_xref & gen.structure_model)
 IF EXISTS(SELECT * FROM gen.structure_model_xref WHERE bus_unit=@BU AND structure_id=@STR_ID) 
 	BEGIN

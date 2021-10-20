@@ -7,7 +7,7 @@ Imports System.IO
 
 Partial Public Class frmMain
 #Region "Object Declarations"
-    'Public myUnitBases As New DataTransfererUnitBase
+    Public myUnitBases As New DataTransfererUnitBase
     Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
@@ -17,11 +17,21 @@ Partial Public Class frmMain
     Public StrcID As String = ""
 
     'Import to Excel
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 871191 - Guyed Anchor Block Foundation (4.1.0) - 10-14-21.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 879480 - Pier and Pad Foundation (4.1.2).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - Pier and Pad Foundation (4.1.2).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDStest - Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800010 - Pile Foundation (2.2.1.5).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\857704\SST Unit Base Foundation (4.0.4)_5_EDS.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
     'Import to EDS
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\871191 - Guyed Anchor Block Foundation (4.1.0) - 10-13-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\879480 - Pier and Pad Foundation (4.1.2).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\874286\874286 Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\874286\EDS4 - Pier and Pad Foundation (4.1.2) - Change 1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\870074\ASYM Test\8\EDStest - Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\857704\SST Unit Base Foundation (4.0.4)_4.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-9-2021.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -91,9 +101,9 @@ Partial Public Class frmMain
 
         For Each item As String In ListOfFilesCopied
             If item.Contains("SST Unit Base Foundation") Then
-                'myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                'myUnitBases.ExcelFilePath = item
-                'If myUnitBases.LoadFromEDS() Then myUnitBases.SaveToExcel()
+                myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myUnitBases.ExcelFilePath = item
+                If myUnitBases.LoadFromEDS() Then myUnitBases.SaveToExcel()
             ElseIf item.Contains("Pier and Pad Foundation") Then
                 myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPierandPads.ExcelFilePath = item
@@ -120,10 +130,10 @@ Partial Public Class frmMain
 
         For Each item As String In ListOfExcelFiles
             If item.Contains("SST Unit Base Foundation") Then
-                'myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                'myUnitBases.ExcelFilePath = item
-                'myUnitBases.LoadFromExcel()
-                'myUnitBases.SaveToEDS()
+                myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                myUnitBases.ExcelFilePath = item
+                myUnitBases.LoadFromExcel()
+                myUnitBases.SaveToEDS()
             ElseIf item.Contains("Pier and Pad Foundation") Then
                 myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPierandPads.ExcelFilePath = item
@@ -150,7 +160,7 @@ Partial Public Class frmMain
     End Sub
 
     Sub ClearAllTools()
-        'myUnitBases.Clear()
+        myUnitBases.Clear()
         myPierandPads.Clear()
         myDrilledPiers.Clear()
     End Sub
