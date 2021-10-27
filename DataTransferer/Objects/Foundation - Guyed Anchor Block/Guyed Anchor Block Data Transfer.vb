@@ -13,7 +13,8 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 
     Public Property GuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property sqlGuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
-    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-12-2021.xlsm"
+    'Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-12-2021.xlsm"
+    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\Template\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-26-2021.xlsm"
     Private Property GuyedAnchorBlockFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property gabDB As String
@@ -275,6 +276,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         Dim gabRow As Integer = 3
         Dim soilRow As Integer = 3
         Dim profileRow As Integer = 3
+        Dim summaryRowStart As Integer = 11
 
         LoadNewGuyedAnchorBlock()
 
@@ -417,7 +419,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                 'End If
 
                 'GUYED ANCHOR BLOCK PROFILES
-                Dim summaryRowStart As Integer = 10
+                'Dim summaryRowStart As Integer = 10 'commented out per updating summary below. previously required when local id varied
 
                 For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
                     'Profile Return
@@ -448,26 +450,59 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                     End If
 
                     'SUMMARY
+                    'If Not IsNothing(gabp.local_anchor_id) Then
+                    '    .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.anchor_profile, Integer)
+                    '    If gabp.anchor_profile = gabp.local_anchor_id Then
+                    '        .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = True
+                    '    Else
+                    '        .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = False
+                    '    End If
+                    'End If
+                    'If Not IsNothing(gabp.local_anchor_id) Then
+                    '    .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.soil_profile, Integer)
+                    '    If gabp.soil_profile = gabp.local_anchor_id Then
+                    '        .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = True
+                    '    Else
+                    '        .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = False
+                    '    End If
+                    'End If
+                    ''        .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
+                    '.Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.ID, Integer)
+
+                    'SUMMARY
                     If Not IsNothing(gabp.local_anchor_id) Then
-                        .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.anchor_profile, Integer)
-                        If gabp.anchor_profile = gabp.local_anchor_id Then
-                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = False
+                        .Worksheets("SUMMARY").Range("D" & summaryRowStart).Value = CType(gabp.anchor_profile, Integer)
+                        If summaryRowStart - 10 = gabp.local_anchor_id Then
+                            If gabp.anchor_profile = gabp.local_anchor_id Then
+                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
+                            Else
+                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
+                            End If
+                            .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
+                            If gabp.soil_profile = gabp.local_anchor_id Then
+                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
+                            Else
+                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
+                            End If
                         Else
-                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = True
-                        End If
-                    End If
-                    If Not IsNothing(gabp.local_anchor_id) Then
-                        .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.soil_profile, Integer)
-                        If gabp.soil_profile = gabp.local_anchor_id Then
-                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = False
-                        Else
-                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = True
+                            If gabp.anchor_profile = gabp.local_anchor_id Then
+                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
+                                'Else
+                                '    .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
+                            End If
+                            .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
+                            If gabp.soil_profile = gabp.local_anchor_id Then
+                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
+                                'Else
+                                '    .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
+                            End If
                         End If
                     End If
                     '        .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
-                    .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(gabp.local_anchor_id, Integer)).Value = CType(gabp.ID, Integer)
+                    .Worksheets("SUMMARY").Range("I" & summaryRowStart).Value = CType(gabp.ID, Integer)
 
                     profileRow += 1
+                    summaryRowStart += 1
 
                 Next
 
@@ -573,23 +608,23 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                 'MATERIAL PROPERTIES
                 If GuyedAnchorBlocks(0).anchor_rebar_grade.HasValue Then
                     .Worksheets("Input").Range("Fy").Value = CType(GuyedAnchorBlocks(0).anchor_rebar_grade, Double)
-                Else .Worksheets("Inpit").Range("Fy").ClearContents
+                Else .Worksheets("Input").Range("Fy").ClearContents
                 End If
                 If GuyedAnchorBlocks(0).concrete_compressive_strength.HasValue Then
                     .Worksheets("Input").Range("F\c").Value = CType(GuyedAnchorBlocks(0).concrete_compressive_strength, Double)
-                Else .Worksheets("Inpit").Range("F\c").ClearContents
+                Else .Worksheets("Input").Range("F\c").ClearContents
                 End If
                 If GuyedAnchorBlocks(0).clear_cover.HasValue Then
                     .Worksheets("Input").Range("cc").Value = CType(GuyedAnchorBlocks(0).clear_cover, Double)
-                Else .Worksheets("Inpit").Range("cc").ClearContents
+                Else .Worksheets("Input").Range("cc").ClearContents
                 End If
                 If GuyedAnchorBlocks(0).anchor_shaft_yield_strength.HasValue Then
                     .Worksheets("Input").Range("Fy\").Value = CType(GuyedAnchorBlocks(0).anchor_shaft_yield_strength, Double)
-                Else .Worksheets("Inpit").Range("Fy\").ClearContents
+                Else .Worksheets("Input").Range("Fy\").ClearContents
                 End If
                 If GuyedAnchorBlocks(0).anchor_shaft_ultimate_strength.HasValue Then
                     .Worksheets("Input").Range("Fu\").Value = CType(GuyedAnchorBlocks(0).anchor_shaft_ultimate_strength, Double)
-                Else .Worksheets("Inpit").Range("Fu\").ClearContents
+                Else .Worksheets("Input").Range("Fu\").ClearContents
                 End If
 
                 'GUY ANCHOR PROPERTIES
@@ -649,68 +684,69 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                     .Worksheets("Input").Range("u").Value = CType(GuyedAnchorBlocks(0).anchor_shaft_shear_lag_factor, Double)
                 Else .Worksheets("Input").Range("u").ClearContents
                 End If
+                If Not IsNothing(GuyedAnchorBlocks(0).anchor_shaft_section) Then .Worksheets("Input").Range("C35").Value = GuyedAnchorBlocks(0).anchor_shaft_section
                 If GuyedAnchorBlocks(0).neglect_depth.HasValue Then
-                    .Worksheets("Input").Range("Fd").Value = CType(GuyedAnchorBlocks(0).neglect_depth, Double)
-                Else .Worksheets("Input").Range("Fd").ClearContents
+                        .Worksheets("Input").Range("Fd").Value = CType(GuyedAnchorBlocks(0).neglect_depth, Double)
+                    Else .Worksheets("Input").Range("Fd").ClearContents
+                    End If
+                    If GuyedAnchorBlocks(0).groundwater_depth.HasValue Then
+                        If CType(GuyedAnchorBlocks(0).groundwater_depth, Double) = -1 Then
+                            .Worksheets("Input").Range("gw").Value = "N/A"
+                        Else
+                            .Worksheets("Input").Range("gw").Value = CType(GuyedAnchorBlocks(0).groundwater_depth, Double)
+                        End If
+                    Else .Worksheets("Input").Range("gw").ClearContents
+                    End If
+                    If GuyedAnchorBlocks(0).soil_layer_quantity.HasValue Then
+                        .Worksheets("Input").Range("Layer_Qty").Value = CType(GuyedAnchorBlocks(0).soil_layer_quantity, Integer)
+                    Else .Worksheets("Input").Range("Layer_Qty").ClearContents
+                    End If
+
+                    'OPTIONS
+                    .Worksheets("Input").Range("S12").Value = CType(GuyedAnchorBlocks(0).rebar_known, Boolean)
+                    .Worksheets("Input").Range("S13").Value = CType(GuyedAnchorBlocks(0).anchor_shaft_known, Boolean)
+                    .Worksheets("Input").Range("S14").Value = CType(GuyedAnchorBlocks(0).basic_soil_check, Boolean)
+                    .Worksheets("Input").Range("S15").Value = CType(GuyedAnchorBlocks(0).structural_check, Boolean)
+
+                    'SOIL
+                    Dim soilRowStart As Integer = 28
+                    Dim soilCount As Integer = 1
+
+                    For Each gabSL As GuyedAnchorBlockSoilLayer In GuyedAnchorBlocks(0).soil_layers
+
+                        If gabSL.friction_angle.HasValue Then
+                            .Worksheets("Input").Range("G" & soilRowStart + soilCount).Value = CType(gabSL.friction_angle, Double)
+                        Else .Worksheets("Input").Range("G" & soilRowStart + soilCount).ClearContents
+                        End If
+                        If gabSL.cohesion.HasValue Then
+                            .Worksheets("Input").Range("H" & soilRowStart + soilCount).Value = CType(gabSL.cohesion, Double)
+                        Else .Worksheets("Input").Range("H" & soilRowStart + soilCount).ClearContents
+                        End If
+                        If gabSL.effective_soil_density.HasValue Then
+                            .Worksheets("Input").Range("I" & soilRowStart + soilCount).Value = CType(gabSL.effective_soil_density, Double)
+                        Else .Worksheets("Input").Range("I" & soilRowStart + soilCount).ClearContents
+                        End If
+                        If gabSL.bottom_depth.HasValue Then
+                            .Worksheets("Input").Range("J" & soilRowStart + soilCount).Value = CType(gabSL.bottom_depth, Double)
+                        Else .Worksheets("Input").Range("J" & soilRowStart + soilCount).ClearContents
+                        End If
+                        If gabSL.skin_friction_override_uplift.HasValue Then
+                            .Worksheets("Input").Range("K" & soilRowStart + soilCount).Value = CType(gabSL.skin_friction_override_uplift, Double)
+                        Else .Worksheets("Input").Range("K" & soilRowStart + soilCount).ClearContents
+                        End If
+                        If gabSL.spt_blow_count.HasValue Then
+                            .Worksheets("Input").Range("L" & soilRowStart + soilCount).Value = CType(gabSL.spt_blow_count, Integer)
+                        Else .Worksheets("Input").Range("L" & soilRowStart + soilCount).ClearContents
+                        End If
+
+                        soilCount += 1
+
+                    Next
+
+                    'LOCATION
+                    .Worksheets("Input").Range("Location").Value = firstReaction
+
                 End If
-                If GuyedAnchorBlocks(0).groundwater_depth.HasValue Then
-                    If CType(GuyedAnchorBlocks(0).groundwater_depth, Double) = -1 Then
-                        .Worksheets("Input").Range("gw").Value = "N/A"
-                    Else
-                        .Worksheets("Input").Range("gw").Value = CType(GuyedAnchorBlocks(0).groundwater_depth, Double)
-                    End If
-                Else .Worksheets("Input").Range("gw").ClearContents
-                End If
-                If GuyedAnchorBlocks(0).soil_layer_quantity.HasValue Then
-                    .Worksheets("Input").Range("Layer_Qty").Value = CType(GuyedAnchorBlocks(0).soil_layer_quantity, Integer)
-                Else .Worksheets("Input").Range("Layer_Qty").ClearContents
-                End If
-
-                'OPTIONS
-                .Worksheets("Input").Range("S12").Value = CType(GuyedAnchorBlocks(0).rebar_known, Boolean)
-                .Worksheets("Input").Range("S13").Value = CType(GuyedAnchorBlocks(0).anchor_shaft_known, Boolean)
-                .Worksheets("Input").Range("S14").Value = CType(GuyedAnchorBlocks(0).basic_soil_check, Boolean)
-                .Worksheets("Input").Range("S15").Value = CType(GuyedAnchorBlocks(0).structural_check, Boolean)
-
-                'SOIL
-                Dim soilRowStart As Integer = 28
-                Dim soilCount As Integer = 1
-
-                For Each gabSL As GuyedAnchorBlockSoilLayer In GuyedAnchorBlocks(0).soil_layers
-
-                    If gabSL.friction_angle.HasValue Then
-                        .Worksheets("Input").Range("G" & soilRowStart + soilCount).Value = CType(gabSL.friction_angle, Double)
-                    Else .Worksheets("Input").Range("G" & soilRowStart + soilCount).ClearContents
-                    End If
-                    If gabSL.cohesion.HasValue Then
-                        .Worksheets("Input").Range("H" & soilRowStart + soilCount).Value = CType(gabSL.cohesion, Double)
-                    Else .Worksheets("Input").Range("H" & soilRowStart + soilCount).ClearContents
-                    End If
-                    If gabSL.effective_soil_density.HasValue Then
-                        .Worksheets("Input").Range("I" & soilRowStart + soilCount).Value = CType(gabSL.effective_soil_density, Double)
-                    Else .Worksheets("Input").Range("I" & soilRowStart + soilCount).ClearContents
-                    End If
-                    If gabSL.bottom_depth.HasValue Then
-                        .Worksheets("Input").Range("J" & soilRowStart + soilCount).Value = CType(gabSL.bottom_depth, Double)
-                    Else .Worksheets("Input").Range("J" & soilRowStart + soilCount).ClearContents
-                    End If
-                    If gabSL.skin_friction_override_uplift.HasValue Then
-                        .Worksheets("Input").Range("K" & soilRowStart + soilCount).Value = CType(gabSL.skin_friction_override_uplift, Double)
-                    Else .Worksheets("Input").Range("K" & soilRowStart + soilCount).ClearContents
-                    End If
-                    If gabSL.spt_blow_count.HasValue Then
-                        .Worksheets("Input").Range("L" & soilRowStart + soilCount).Value = CType(gabSL.spt_blow_count, Integer)
-                    Else .Worksheets("Input").Range("L" & soilRowStart + soilCount).ClearContents
-                    End If
-
-                    soilCount += 1
-
-                Next
-
-                'LOCATION
-                .Worksheets("Input").Range("Location").Value = firstReaction
-
-            End If
 
 
         End With

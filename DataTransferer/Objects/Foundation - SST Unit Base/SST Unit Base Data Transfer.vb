@@ -113,7 +113,7 @@ Partial Public Class DataTransfererUnitBase
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
-                            isUnitBaseNeeded = True
+                            'isUnitBaseNeeded = True
                         End If
                         Exit For
                     End If
@@ -122,7 +122,7 @@ Partial Public Class DataTransfererUnitBase
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
                 isfndGroupNeeded = True
-                isUnitBaseNeeded = True
+                'isUnitBaseNeeded = True
             End If
         Next
 
@@ -162,11 +162,11 @@ Partial Public Class DataTransfererUnitBase
         End If
 
         'Determine if new ID needs created
-        If isUnitBaseNeeded Then
-            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 1)
-        Else
-            UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 0)
-        End If
+        'If isUnitBaseNeeded Then
+        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 1)
+        'Else
+        '    UnitBaseSaver = UnitBaseSaver.Replace("'[UNIT BASE ID Needed]'", 0)
+        'End If
 
         UnitBaseSaver = UnitBaseSaver.Replace("'[INSERT ALL UNIT BASE DETAILS]'", InsertUnitBaseDetail(ub))
 
@@ -362,7 +362,7 @@ Partial Public Class DataTransfererUnitBase
         insertString += "," & IIf(IsNothing(ub.pier_rebar_quantity), "Null", ub.pier_rebar_quantity.ToString)
         insertString += "," & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         insertString += "," & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
-        insertString += "," & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
+        'insertString += "," & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
 
         Return insertString
     End Function
@@ -416,7 +416,7 @@ Partial Public Class DataTransfererUnitBase
         updateString += ", groundwater_depth=" & IIf(IsNothing(ub.groundwater_depth), "Null", ub.groundwater_depth.ToString)
         updateString += ", basic_soil_check=" & IIf(IsNothing(ub.basic_soil_check), "Null", "'" & ub.basic_soil_check.ToString & "'")
         updateString += ", structural_check=" & IIf(IsNothing(ub.structural_check), "Null", "'" & ub.structural_check.ToString & "'")
-        updateString += ", tool_version=" & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
+        'updateString += ", tool_version=" & IIf(IsNothing(ub.tool_version), "Null", "'" & ub.tool_version.ToString & "'")
         updateString += " WHERE ID=" & ub.unit_base_id & vbNewLine
 
         Return updateString
@@ -554,7 +554,7 @@ Partial Public Class DataTransfererUnitBase
         If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, 1, "Pier_Rebar_Quantity") Then changesMade = True
         If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
         If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, 1, "Structural_Check") Then changesMade = True
-        If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
+        'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
         'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, 1, "Tool_Version") Then changesMade = True
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary

@@ -564,7 +564,7 @@ Partial Public Class GuyedAnchorBlock
         End Try 'Guyed Anchor Block Anchor Shear Lag Factor
         Try
             If Not IsDBNull(Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_section"), String)) Then
-                Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_sectione"), String)
+                Me.anchor_shaft_section = CType(GuyedAnchorBlockDataRow.Item("anchor_shaft_section"), String)
             Else
                 Me.anchor_shaft_section = ""
             End If
