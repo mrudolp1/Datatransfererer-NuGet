@@ -13,7 +13,7 @@ Partial Public Class DataTransfererDrilledPier
 
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property sqlDrilledPiers As New List(Of DrilledPier)
-    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Drilled Pier Foundation (5.1.0) - TEMPLATE - 10-13-2021.xlsm"
+    Private Property DrilledPierTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\WIP - Drilled Pier Foundation (5.1.0) - 10-14-21 - EDIT.xlsm"
     Private Property DrilledPierFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property dpDB As String
@@ -61,7 +61,7 @@ Partial Public Class DataTransfererDrilledPier
 
         'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
         For Each DrilledPierDataRow As DataRow In ds.Tables("Drilled Pier General Details SQL").Rows
-            refid = CType(DrilledPierDataRow.Item("drilled_pier_id"), Integer)
+            refid = CType(DrilledPierDataRow.Item("ID"), Integer)
             DrilledPiers.Add(New DrilledPier(DrilledPierDataRow, refid))
         Next
 
@@ -98,7 +98,7 @@ Partial Public Class DataTransfererDrilledPier
         For Each fnd As DrilledPier In DrilledPiers
             'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
             If fnd.pier_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
-                For Each sqlfnd As DrilledPier In sqlDrilledPiers 'MRP - turned off for testing. Need to update Check Changes Logic
+                For Each sqlfnd As DrilledPier In sqlDrilledPiers 'MRP - UPDATES NEEDED!!! Chackchanges needs updated to apply to multiple objects within the same tool. Only want one foundation group per tool
                     'If fnd.ID = sqlfnd.ID Then
                     If fnd.pier_id = sqlfnd.pier_id Then
                         If CheckChanges(fnd, sqlfnd) Then
@@ -327,7 +327,7 @@ Partial Public Class DataTransfererDrilledPier
             '    DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
         End If
 
-        DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
+        DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL DRILLED PIER DETAILS]", InsertDrilledPierDetail(dp))
 
         sqlSender(DrilledPierSaver, dpDB, dpID, "0")
 
@@ -746,7 +746,7 @@ Partial Public Class DataTransfererDrilledPier
 
             '~~~~~~~~POPULATE TOOL INPUTS WITH THE FIRST INSTANCE IN TOOL'S LOCAL DATABASE
 
-            Dim firstReaction As String = DrilledPiers(0).drilled_pier_profiles(0).reaction_location
+            Dim firstReaction As String = DrilledPiers(0).drilled_pier_profiles(0).reaction_location 'MRP - error here due to change in profiles. Must reassociate profile with pier. Same with sections
 
             If firstReaction = "Monopole" Then
                 .Worksheets("Foundation Input").Range("TowerType").Value = "Monopole"
@@ -1091,7 +1091,9 @@ Partial Public Class DataTransfererDrilledPier
     Private Function InsertDrilledPierDetail(ByVal dp As DrilledPier) As String
         Dim insertString As String = ""
 
-        insertString += "@FndID"
+        'insertString += "@FndID"
+        insertString += IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.local_drilled_pier_profile), "Null", "'" & dp.local_drilled_pier_profile.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.foundation_depth), "Null", "'" & dp.foundation_depth.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.extension_above_grade), "Null", "'" & dp.extension_above_grade.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.groundwater_depth), "Null", "'" & dp.groundwater_depth.ToString & "'")
@@ -1110,8 +1112,9 @@ Partial Public Class DataTransfererDrilledPier
         insertString += "," & IIf(IsNothing(dp.shear_override_crit_depth), "Null", "'" & dp.shear_override_crit_depth.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_comp), "Null", "'" & dp.shear_crit_depth_override_comp.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.shear_crit_depth_override_uplift), "Null", "'" & dp.shear_crit_depth_override_uplift.ToString & "'")
-        insertString += "," & IIf(IsNothing(dp.local_drilled_pier_id), "Null", "'" & dp.local_drilled_pier_id.ToString & "'")
         insertString += "," & IIf(IsNothing(dp.bearing_type_toggle), "Null", "'" & dp.bearing_type_toggle.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.tool_version), "Null", "'" & dp.tool_version.ToString & "'")
+        insertString += "," & IIf(IsNothing(dp.modified), "Null", "'" & dp.modified.ToString & "'")
 
         Return insertString
     End Function

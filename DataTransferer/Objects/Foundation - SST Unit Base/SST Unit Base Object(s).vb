@@ -24,9 +24,9 @@ Public Class SST_Unit_Base
 
     Private prop_pier_shape As String '
     Private prop_pier_diameter As Double? '
-    Private prop_pier_rebar_quantity As Integer?
+    Private prop_pier_rebar_quantity As Double?
     Private prop_pier_rebar_size As Integer? '
-    Private prop_pier_tie_quantity As Integer?
+    Private prop_pier_tie_quantity As Double?
     Private prop_pier_tie_size As Integer? '
     Private prop_pier_reinforcement_type As String '
     Private prop_pier_clear_cover As Double? '
@@ -38,10 +38,10 @@ Public Class SST_Unit_Base
     Private prop_pad_rebar_size_bottom_dir1 As Integer? '
     Private prop_pad_rebar_size_top_dir2 As Integer? '
     Private prop_pad_rebar_size_bottom_dir2 As Integer? '
-    Private prop_pad_rebar_quantity_top_dir1 As Integer? '
-    Private prop_pad_rebar_quantity_bottom_dir1 As Integer? '
-    Private prop_pad_rebar_quantity_top_dir2 As Integer? '
-    Private prop_pad_rebar_quantity_bottom_dir2 As Integer? '
+    Private prop_pad_rebar_quantity_top_dir1 As Double? '
+    Private prop_pad_rebar_quantity_bottom_dir1 As Double? '
+    Private prop_pad_rebar_quantity_top_dir2 As Double? '
+    Private prop_pad_rebar_quantity_bottom_dir2 As Double? '
     Private prop_pad_clear_cover As Double? '
 
     Private prop_total_soil_unit_weight As Double? '
@@ -49,14 +49,14 @@ Public Class SST_Unit_Base
     Private prop_nominal_bearing_capacity As Double? '
     Private prop_cohesion As Double? '
     Private prop_friction_angle As Double? '
-    Private prop_spt_blow_count As Integer? '
+    Private prop_spt_blow_count As Double? '
     Private prop_base_friction_factor As Double? '
     Private prop_neglect_depth As Double? '
     Private prop_bearing_distribution_type As Boolean '
     Private prop_groundwater_depth As Double? '
 
     Private prop_tool_version As String '
-    'Private prop_modified As Boolean
+    Private prop_modified As Boolean
 
     'Public Property ModifiedRanges As New List(Of ModifiedRange)
 
@@ -188,7 +188,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pier Rebar Quantity")>
-    Public Property pier_rebar_quantity() As Integer?
+    Public Property pier_rebar_quantity() As Double?
         Get
             Return Me.prop_pier_rebar_quantity
         End Get
@@ -206,7 +206,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pier Tie Quantity")>
-    Public Property pier_tie_quantity() As Integer?
+    Public Property pier_tie_quantity() As Double?
         Get
             Return Me.prop_pier_tie_quantity
         End Get
@@ -306,7 +306,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pad Rebar Quantity Top Direction 1")>
-    Public Property pad_rebar_quantity_top_dir1() As Integer?
+    Public Property pad_rebar_quantity_top_dir1() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_top_dir1
         End Get
@@ -315,7 +315,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pad Rebar Quantity Bottom Direction 1")>
-    Public Property pad_rebar_quantity_bottom_dir1() As Integer?
+    Public Property pad_rebar_quantity_bottom_dir1() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_bottom_dir1
         End Get
@@ -324,7 +324,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pad Rebar Quantity Top Direction 2")>
-    Public Property pad_rebar_quantity_top_dir2() As Integer?
+    Public Property pad_rebar_quantity_top_dir2() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_top_dir2
         End Get
@@ -333,7 +333,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("Pad Rebar Quantity Bottom Direction 2")>
-    Public Property pad_rebar_quantity_bottom_dir2() As Integer?
+    Public Property pad_rebar_quantity_bottom_dir2() As Double?
         Get
             Return Me.prop_pad_rebar_quantity_bottom_dir2
         End Get
@@ -397,7 +397,7 @@ Public Class SST_Unit_Base
         End Set
     End Property
     <Category("Unit Base Details"), Description(""), DisplayName("SPT Blow Count")>
-    Public Property spt_blow_count() As Integer?
+    Public Property spt_blow_count() As Double?
         Get
             Return Me.prop_spt_blow_count
         End Get
@@ -468,15 +468,15 @@ Public Class SST_Unit_Base
             Me.prop_tool_version = Value
         End Set
     End Property
-    '<Category("Unit Base Details"), Description(""), DisplayName("Modified")>
-    'Public Property modified() As Boolean
-    '    Get
-    '        Return Me.prop_modified
-    '    End Get
-    '    Set
-    '        Me.prop_modified = Value
-    '    End Set
-    'End Property
+    <Category("Unit Base Details"), Description(""), DisplayName("Modified")>
+    Public Property modified() As Boolean
+        Get
+            Return Me.prop_modified
+        End Get
+        Set
+            Me.prop_modified = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -589,8 +589,8 @@ Public Class SST_Unit_Base
             Me.pier_diameter = Nothing
         End Try 'Pier Diameter
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pier_rebar_quantity"), Integer)) Then
-                Me.pier_rebar_quantity = CType(UnitBaseDataRow.Item("pier_rebar_quantity"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pier_rebar_quantity"), Double)) Then
+                Me.pier_rebar_quantity = CType(UnitBaseDataRow.Item("pier_rebar_quantity"), Double)
             Else
                 Me.pier_rebar_quantity = Nothing
             End If
@@ -607,8 +607,8 @@ Public Class SST_Unit_Base
             Me.pier_rebar_size = Nothing
         End Try 'Pier Rebar Size
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pier_tie_quantity"), Integer)) Then
-                Me.pier_tie_quantity = CType(UnitBaseDataRow.Item("pier_tie_quantity"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pier_tie_quantity"), Double)) Then
+                Me.pier_tie_quantity = CType(UnitBaseDataRow.Item("pier_tie_quantity"), Double)
             Else
                 Me.pier_tie_quantity = Nothing
             End If
@@ -703,8 +703,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_size_bottom_dir2 = Nothing
         End Try 'Pad Rebar Size (Bottom Direction 2)
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir1 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir1"), Double)) Then
+                Me.pad_rebar_quantity_top_dir1 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir1"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir1 = Nothing
             End If
@@ -712,8 +712,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_top_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 1)
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir1"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir1 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir1"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir1 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir1 = Nothing
             End If
@@ -721,8 +721,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_bottom_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Bottom Direction 1)
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir2"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir2 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir2"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir2"), Double)) Then
+                Me.pad_rebar_quantity_top_dir2 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_top_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir2 = Nothing
             End If
@@ -730,8 +730,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_top_dir2 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 2)
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir2"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir2 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir2"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir2 = CType(UnitBaseDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir2 = Nothing
             End If
@@ -790,8 +790,8 @@ Public Class SST_Unit_Base
             Me.friction_angle = Nothing
         End Try 'Friction Angle
         Try
-            If Not IsDBNull(CType(UnitBaseDataRow.Item("spt_blow_count"), Integer)) Then
-                Me.spt_blow_count = CType(UnitBaseDataRow.Item("spt_blow_count"), Integer)
+            If Not IsDBNull(CType(UnitBaseDataRow.Item("spt_blow_count"), Double)) Then
+                Me.spt_blow_count = CType(UnitBaseDataRow.Item("spt_blow_count"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If
@@ -845,6 +845,11 @@ Public Class SST_Unit_Base
         Catch
             Me.tool_version = ""
         End Try 'Tool Version
+        Try
+            Me.modified = CType(UnitBaseDataRow.Item("modified"), Boolean)
+        Catch
+            Me.modified = False
+        End Try 'Modified
 
         'If Me.modified = True Then
         '    For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges SQL").Rows
@@ -962,8 +967,8 @@ Public Class SST_Unit_Base
             Me.pier_diameter = Nothing
         End Try 'Pier Diameter
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mc"), Integer)) Then
-                Me.pier_rebar_quantity = CType(GetOneExcelRange(path, "mc"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mc"), Double)) Then
+                Me.pier_rebar_quantity = CType(GetOneExcelRange(path, "mc"), Double)
             Else
                 Me.pier_rebar_quantity = Nothing
             End If
@@ -980,8 +985,8 @@ Public Class SST_Unit_Base
             Me.pier_rebar_size = Nothing
         End Try 'Pier Rebar Size
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mt"), Integer)) Then
-                Me.pier_tie_quantity = CType(GetOneExcelRange(path, "mt"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mt"), Double)) Then
+                Me.pier_tie_quantity = CType(GetOneExcelRange(path, "mt"), Double)
             Else
                 Me.pier_tie_quantity = Nothing
             End If
@@ -1076,8 +1081,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_size_bottom_dir2 = Nothing
         End Try 'Pad Rebar Size (Bottom Direction 2)
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mptop"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir1 = CType(GetOneExcelRange(path, "mptop"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mptop"), Double)) Then
+                Me.pad_rebar_quantity_top_dir1 = CType(GetOneExcelRange(path, "mptop"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir1 = Nothing
             End If
@@ -1085,8 +1090,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_top_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 1)
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mp"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir1 = CType(GetOneExcelRange(path, "mp"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mp"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir1 = CType(GetOneExcelRange(path, "mp"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir1 = Nothing
             End If
@@ -1094,8 +1099,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_bottom_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Bottom Direction 1)
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mptop2"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir2 = CType(GetOneExcelRange(path, "mptop2"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mptop2"), Double)) Then
+                Me.pad_rebar_quantity_top_dir2 = CType(GetOneExcelRange(path, "mptop2"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir2 = Nothing
             End If
@@ -1103,8 +1108,8 @@ Public Class SST_Unit_Base
             Me.pad_rebar_quantity_top_dir2 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 2)
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "mp_2"), Integer)) Then
-                Me.pad_rebar_quantity_bottom_dir2 = CType(GetOneExcelRange(path, "mp_2"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "mp_2"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir2 = CType(GetOneExcelRange(path, "mp_2"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir2 = Nothing
             End If
@@ -1163,8 +1168,8 @@ Public Class SST_Unit_Base
             Me.friction_angle = Nothing
         End Try 'Friction Angle
         Try
-            If Not IsNothing(CType(GetOneExcelRange(path, "N_blows"), Integer)) Then
-                Me.spt_blow_count = CType(GetOneExcelRange(path, "N_blows"), Integer)
+            If Not IsNothing(CType(GetOneExcelRange(path, "N_blows"), Double)) Then
+                Me.spt_blow_count = CType(GetOneExcelRange(path, "N_blows"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If
@@ -1218,6 +1223,11 @@ Public Class SST_Unit_Base
         Catch
             Me.tool_version = Nothing
         End Try 'Tool Version
+        Try
+            Me.modified = CType(GetOneExcelRange(path, "modified"), Boolean)
+        Catch
+            Me.modified = False
+        End Try 'Modified
 
     End Sub 'Generate a Unit Base object from Excel
 
