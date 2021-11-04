@@ -12,6 +12,7 @@ Partial Public Class frmMain
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     Public myPiles As New DataTransfererPile
+    Public MyCCIpoles As New DataTransfererCCIpole
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
@@ -35,6 +36,7 @@ Partial Public Class frmMain
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\878770\878770 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"}
     Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\878770\EDS - 878770 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -123,6 +125,10 @@ Partial Public Class frmMain
                 myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 myPiles.ExcelFilePath = item
                 If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
+            ElseIf item.Contains("CCIpole") Then
+                MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIpoles.ExcelFilePath = item
+                If MyCCIpoles.LoadFromEDS() Then MyCCIpoles.SaveToExcel()
             End If
         Next
 
@@ -157,6 +163,11 @@ Partial Public Class frmMain
                 myPiles.ExcelFilePath = item
                 myPiles.LoadFromExcel()
                 myPiles.SaveToEDS()
+            ElseIf item.Contains("CCIpole") Then
+                MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIpoles.ExcelFilePath = item
+                MyCCIpoles.LoadFromExcel()
+                MyCCIpoles.SaveToEDS()
             End If
         Next
 
@@ -166,6 +177,9 @@ Partial Public Class frmMain
         myUnitBases.Clear()
         myPierandPads.Clear()
         myDrilledPiers.Clear()
+        myGuyedAnchorBlocks.Clear()
+        myPiles.Clear()
+        MyCCIpoles.Clear()
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click

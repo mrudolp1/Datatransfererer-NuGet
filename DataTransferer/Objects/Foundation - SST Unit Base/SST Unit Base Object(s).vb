@@ -841,7 +841,7 @@ Public Class SST_Unit_Base
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?
         Try
-            Me.tool_version = CType(UnitBaseDataRow.Item("vnum"), String)
+            Me.tool_version = CType(UnitBaseDataRow.Item("tool_version"), String)
         Catch
             Me.tool_version = ""
         End Try 'Tool Version

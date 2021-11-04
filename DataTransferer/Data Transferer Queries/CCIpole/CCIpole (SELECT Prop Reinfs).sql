@@ -6,6 +6,7 @@ SELECT
     ,sm.ID model_id
     ,ps.ID pole_structure_id
     ,pr.ID reinf_db_id
+    ,pr.ID reinf_id
     ,pr.pole_structure_id
     ,pr.name
     ,pr.type
@@ -33,7 +34,7 @@ SELECT
     ,pr.connection_cap_revF_bot
     ,pr.connection_cap_revG_bot
     ,pr.connection_cap_revH_bot
-    ,pr.bolt_type_id_bot
+    ,pr.bolt_id_bot
     ,pr.bolt_N_or_X_bot
     ,pr.bolt_num_bot
     ,pr.bolt_spacing_bot
@@ -55,7 +56,7 @@ SELECT
     ,pr.connection_cap_revF_top
     ,pr.connection_cap_revG_top
     ,pr.connection_cap_revH_top
-    ,pr.bolt_type_id_top
+    ,pr.bolt_id_top
     ,pr.bolt_N_or_X_top
     ,pr.bolt_num_top
     ,pr.bolt_spacing_top

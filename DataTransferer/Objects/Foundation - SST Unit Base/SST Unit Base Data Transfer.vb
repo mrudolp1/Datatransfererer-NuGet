@@ -222,6 +222,37 @@ Partial Public Class DataTransfererUnitBase
                 'tower height
                 'base face width
                 'reactions (From tnx)
+
+                'Worksheet Change Events
+                If ub.top_and_bottom_rebar_different = True Then
+                    .Worksheets("Input").Rows(42).Visible = True
+                    .Worksheets("Input").Rows(43).Visible = True
+                Else
+                    .Worksheets("Input").Rows(42).Visible = False
+                    .Worksheets("Input").Rows(43).Visible = False
+                End If
+                If ub.rectangular_foundation = True Then
+                    .Worksheets("Input").Rows(38).Visible = True
+                    .Worksheets("Input").Rows(44).Visible = True
+                    .Worksheets("Input").Rows(45).Visible = True
+                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
+                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
+                Else
+                    .Worksheets("Input").Rows(38).Visible = False
+                    .Worksheets("Input").Rows(42).Visible = False
+                    .Worksheets("Input").Rows(43).Visible = False
+                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = False
+                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = False
+                End If
+                If ub.top_and_bottom_rebar_different = True And ub.rectangular_foundation = True Then
+                    .Worksheets("Input").Rows(40).Visible = True
+                    .Worksheets("Input").Rows(41).Visible = True
+                Else
+                    .Worksheets("Input").Rows(40).Visible = False
+                    .Worksheets("Input").Rows(41).Visible = False
+                End If
+
+
 #Region "Alterate method of saving to excel"
                 ''''.Worksheets("Details (SAPI)").Range("A" & ubRow).Value = ub.unit_base_id
                 ''''.Worksheets("Details (SAPI)").Range("B" & ubRow).Value = ub.extension_above_grade

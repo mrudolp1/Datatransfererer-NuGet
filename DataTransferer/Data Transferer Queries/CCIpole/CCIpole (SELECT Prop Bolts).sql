@@ -6,6 +6,7 @@ SELECT
     ,sm.ID model_id
     ,ps.ID pole_structure_id
     ,pb.ID bolt_db_id
+    ,pb.ID bolt_id
     ,pb.pole_structure_id
     ,pb.name
     ,pb.description
