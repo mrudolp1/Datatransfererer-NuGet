@@ -2310,7 +2310,7 @@ Partial Public Class memb_prop_flat_plate
     Private prop_connection_cap_revF_bot As Double
     Private prop_connection_cap_revG_bot As Double
     Private prop_connection_cap_revH_bot As Double
-    Private prop_bolt_type_id_bot As Integer
+    Private prop_bolt_id_bot As Integer
     Private prop_bolt_N_or_X_bot As String
     Private prop_bolt_num_bot As Integer
     Private prop_bolt_spacing_bot As Double
@@ -2332,7 +2332,7 @@ Partial Public Class memb_prop_flat_plate
     Private prop_connection_cap_revF_top As Double
     Private prop_connection_cap_revG_top As Double
     Private prop_connection_cap_revH_top As Double
-    Private prop_bolt_type_id_top As Integer
+    Private prop_bolt_id_top As Integer
     Private prop_bolt_N_or_X_top As String
     Private prop_bolt_num_top As Integer
     Private prop_bolt_spacing_top As Double
@@ -2595,13 +2595,13 @@ Partial Public Class memb_prop_flat_plate
             Me.prop_connection_cap_revH_bot = Value
         End Set
     End Property
-    <Category("Member Property Flat Plate"), Description(""), DisplayName("Bolt_Type_Id_Bot")>
-    Public Property bolt_type_id_bot() As Integer
+    <Category("Member Property Flat Plate"), Description(""), DisplayName("bolt_id_Bot")>
+    Public Property bolt_id_bot() As Integer
         Get
-            Return Me.prop_bolt_type_id_bot
+            Return Me.prop_bolt_id_bot
         End Get
         Set
-            Me.prop_bolt_type_id_bot = Value
+            Me.prop_bolt_id_bot = Value
         End Set
     End Property
     <Category("Member Property Flat Plate"), Description(""), DisplayName("Bolt_N_Or_X_Bot")>
@@ -2793,13 +2793,13 @@ Partial Public Class memb_prop_flat_plate
             Me.prop_connection_cap_revH_top = Value
         End Set
     End Property
-    <Category("Member Property Flat Plate"), Description(""), DisplayName("Bolt_Type_Id_Top")>
-    Public Property bolt_type_id_top() As Integer
+    <Category("Member Property Flat Plate"), Description(""), DisplayName("bolt_id_Top")>
+    Public Property bolt_id_top() As Integer
         Get
-            Return Me.prop_bolt_type_id_top
+            Return Me.prop_bolt_id_top
         End Get
         Set
-            Me.prop_bolt_type_id_top = Value
+            Me.prop_bolt_id_top = Value
         End Set
     End Property
     <Category("Member Property Flat Plate"), Description(""), DisplayName("Bolt_N_Or_X_Top")>

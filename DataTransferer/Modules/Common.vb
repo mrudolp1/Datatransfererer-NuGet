@@ -5,15 +5,17 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "857704"
+    Public BUNumber As String = "800476"
     Public STR_ID As String = "A"
-    Public CurWO As String = "3333333"
+    Public CurWO As String = "123456"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
     Public isPierAndPadNeeded As Boolean = False 'Update pier and pad details & foundation details
     Public isUnitBaseNeeded As Boolean = False 'Update Unit Base details & foundation details
+    Public isDrilledPierNeeded As Boolean = False 'Update Drilled Pier details & foundation details
     Public isGuyedAnchorBlockNeeded As Boolean = False 'Update guyed anchor block details & foundation details
+    Public isPoleNeeded As Boolean = False 'Update CCIpole structure, criteria, pole section, reinf pole section, reinf group, reinf details, int group, int details, reinf results, reinforcement prop, bolt prop, matl prop
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
@@ -30,6 +32,21 @@ Module IDoDeclare
 End Module
 
 Public Module Common
+
+
+
+
+    'IEM 11/4/2021 Sometimes you need a little something
+    Public Function IsSomething(ByVal sender As Object) As Boolean
+        If Not IsNothing(sender) Then Return True
+
+        Return False
+    End Function
+
+
+
+
+
 
     Function GetExistingModelQuery() As String
         Return QueryBuilderFromFile(queryPath & "Existing Model (SELECT).sql").Replace("[BU NUMBER]", BUNumber).Replace("[STRUCTURE_ID]", STR_ID)

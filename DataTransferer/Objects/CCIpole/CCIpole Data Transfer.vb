@@ -10,6 +10,7 @@ Partial Public Class DataTransfererCCIpole
     Private prop_ExcelFilePath As String
 
     Public Property Poles As New List(Of CCIpole)
+    Public Property sqlPoles As New List(Of CCIpole)
     Private Property CCIpoleTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\CCIpole (4.6.0) - TEMPLATE.xlsm"
     Private Property CCIpoleFileType As DocumentFormat = DocumentFormat.Xlsm
 
@@ -44,27 +45,33 @@ Partial Public Class DataTransfererCCIpole
 #End Region
 
 #Region "Load Data"
-    Public Function LoadFromEDS() As Boolean
+    Sub CreateSQLPoles(ByRef poleList As List(Of CCIpole))
         Dim refid As Integer
-
         Dim CCIpoleLoader As String
 
-        'Load data to get pier and pad details data for the existing structure model
+        'Load data to get CCIpole details for the existing structure model
         For Each item As SQLParameter In CCIpoleSQLDataTables()
             CCIpoleLoader = QueryBuilderFromFile(queryPath & "CCIpole\" & item.sqlQuery).Replace("[EXISTING MODEL]", GetExistingModelQuery())
             DoDaSQL.sqlLoader(CCIpoleLoader, item.sqlDatatable, ds, poleDB, poleID, "0")
             'If ds.Tables(item.sqlDatatable).Rows.Count = 0 Then Return False 'This may need adjusted since some tables can be empty
         Next
 
-        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details SQL").Rows
-            refid = CType(CCIpoleDataRow.Item("pole_structure_id"), Integer)
+        'Custom Section to transfer data for the CCIpole tool. Needs to be adjusted for each tool.
+        If IsSomething(ds.Tables("CCIpole Generale SQL")) Then
+            For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General SQL").Rows 'Help...No Details Table, main object is just the pole_structure_id and criteria_id
+                refid = CType(CCIpoleDataRow.Item("pole_structure_id"), Integer)
+                poleList.Add(New CCIpole(CCIpoleDataRow, refid))
+            Next
+        End If
+    End Sub
 
-            Poles.Add(New CCIpole(CCIpoleDataRow, refid))
-        Next
+
+
+    Public Function LoadFromEDS() As Boolean
+        CreateSQLPoles(Poles)
 
         Return True
-    End Function 'Create Drilled Pier objects based on what is saved in EDS
+    End Function 'Create CCIpole objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
         Dim refID As Integer
@@ -75,937 +82,936 @@ Partial Public Class DataTransfererCCIpole
             ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
         Next
 
-        'Custom Section to transfer data for the drilled pier tool. Needs to be adjusted for each tool.
-        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General Details EXCEL").Rows
-            'If DrilledPierDataRow.Item("foudation_id").ToString = "" Then
-            '    refCol = "local_drilled_pier_id"
-            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            'Else
-            '    refCol = "drilled_pier_id"
-            '    refID = CType(DrilledPierDataRow.Item(refCol), Integer)
-            'End If
-            ''commented out in case drilled pier id and local drilled pier id matched, prevents possible overriding of data
+        'Custom Section to transfer data for the CCIpole tool. Needs to be adjusted for each tool.
+        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General EXCEL").Rows
             refCol = "pole_structure_id"
             refID = CType(CCIpoleDataRow.Item(refCol), Integer)
 
             Poles.Add(New CCIpole(CCIpoleDataRow, refID))
         Next
-    End Sub 'Create Drilled Pier objects based on what is coming from the excel file
+
+        'Pull SQL data, if applicable, to compare with excel data
+        CreateSQLPoles(sqlPoles)
+
+        'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        For Each pole As CCIpole In Poles
+            If pole.pole_structure_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+                For Each sqlpole As CCIpole In sqlPoles
+                    If pole.pole_structure_id = sqlpole.pole_structure_id Then
+                        If CheckChanges(pole, sqlpole) Then
+                            isModelNeeded = True
+                            isPoleNeeded = True
+                        End If
+                        Exit For
+                    End If
+                Next
+            Else
+                'Save the data because nothing exists in sql
+                isModelNeeded = True
+                isPoleNeeded = True
+            End If
+        Next
+
+    End Sub 'Create CCIpole objects based on what is coming from the excel file
 #End Region
 
-    '#Region "Save Data"
-    '    Public Sub SaveToEDS()
-    '        Dim firstOne As Boolean = True
-    '        Dim mySoils As String = ""
-    '        Dim mySections As String = ""
-    '        Dim myRebar As String = ""
-    '        Dim myProfiles As String = ""
-
-    '        For Each pole As CCIpole In Poles
-    '            Dim DrilledPierSaver As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers (IN_UP).sql")
-    '            Dim dpSectionQuery As String = QueryBuilderFromFile(queryPath & "Drilled Pier\Drilled Piers Section (IN_UP).txt")
-
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[BU NUMBER]", BUNumber)
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[STRUCTURE ID]", STR_ID)
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[FOUNDATION TYPE]", "Drilled Pier")
-    '            If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-    '                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", "NULL")
-    '            Else
-    '                DrilledPierSaver = DrilledPierSaver.Replace("'[DRILLED PIER ID]'", dp.pier_id.ToString)
-    '            End If
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[EMBED BOOLEAN]", dp.embedded_pole.ToString)
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[BELL BOOLEAN]", dp.belled_pier.ToString)
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS]", InsertDrilledPierDetail(dp))
-
-    '            If dp.pier_id = 0 Or IsDBNull(dp.pier_id) Then
-    '                For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
-    '                    Dim tempSoilLayer As String = InsertDrilledPierSoilLayer(dpsl)
-
-    '                    If Not firstOne Then
-    '                        mySoils += ",(" & tempSoilLayer & ")"
-    '                    Else
-    '                        mySoils += "(" & tempSoilLayer & ")"
-    '                    End If
-
-    '                    firstOne = False
-    '                Next 'Add Soil Layer INSERT statments
-    '                DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-    '                firstOne = True
-
-    '                For Each dpsec As DrilledPierSection In dp.sections
-    '                    Dim tempSection As String = dpSectionQuery.Replace("[DRILLED PIER SECTION]", InsertDrilledPierSection(dpsec))
-
-    '                    For Each dpreb In dpsec.rebar
-    '                        Dim temprebar As String = InsertDrilledPierRebar(dpreb)
-
-    '                        If Not firstOne Then
-    '                            myRebar += ",(" & temprebar & ")"
-    '                        Else
-    '                            myRebar += "(" & temprebar & ")"
-    '                        End If
-
-    '                        firstOne = False
-    '                    Next 'Add Rebar INSERT Statements
-
-    '                    tempSection = tempSection.Replace("([DRILLED PIER SECTION REBAR])", myRebar)
-    '                    firstOne = True
-    '                    myRebar = ""
-    '                    mySections += tempSection + vbNewLine
-    '                Next 'Add Section INSERT Statements
-    '                DrilledPierSaver = DrilledPierSaver.Replace("--*[DRILLED PIER SECTIONS]*--", mySections)
-
-    '                If dp.belled_pier Then
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL BELLED PIER DETAILS]", InsertDrilledPierBell(dp.belled_details))
-    '                Else
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
-    '                End If 'Add Belled Pier INSERT Statment
-
-    '                If dp.embedded_pole Then
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL EMBEDDED POLE DETAILS]", InsertDrilledPierEmbed(dp.embed_details))
-    '                Else
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
-    '                End If 'Add Embedded Pole INSERT Statment
-
-    '                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-    '                    Dim tempDrilledPierProfile As String = InsertDrilledPierProfile(dpp)
-
-    '                    If Not firstOne Then
-    '                        myProfiles += ",(" & tempDrilledPierProfile & ")"
-    '                    Else
-    '                        myProfiles += "(" & tempDrilledPierProfile & ")"
-    '                    End If
-
-    '                    firstOne = False
-    '                Next 'Add Pier Profile INSERT statements
-    '                DrilledPierSaver = DrilledPierSaver.Replace("([INSERT ALL PIER PROFILES])", myProfiles)
-    '                firstOne = True
-
-    '                mySoils = ""
-    '                mySections = ""
-    '                myProfiles = ""
-    '            Else
-    '                Dim tempUpdater As String = ""
-    '                tempUpdater += UpdateDrilledPierDetail(dp)
-
-    '                'comment out soil layer insertion. Added in next step if a layer does not have an ID
-    '                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO drilled_pier_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-
-    '                For Each dpsl As DrilledPierSoilLayer In dp.soil_layers
-    '                    If dpsl.soil_layer_id = 0 Or IsDBNull(dpsl.soil_layer_id) Then
-    '                        tempUpdater += "INSERT INTO drilled_pier_soil_layers VALUES (" & InsertDrilledPierSoilLayer(dpsl) & ") " & vbNewLine
-    '                    Else
-    '                        tempUpdater += UpdateDrilledPierSoilLayer(dpsl)
-    '                    End If
-    '                Next
-
-    '                If dp.belled_pier Then
-    '                    If dp.belled_details.belled_pier_id = 0 Or IsDBNull(dp.belled_details.belled_pier_id) Then
-    '                        tempUpdater += "INSERT INTO belled_pier_details VALUES (" & InsertDrilledPierBell(dp.belled_details) & ") " & vbNewLine
-    '                    Else
-    '                        tempUpdater += UpdateDrilledPierBell(dp.belled_details)
-    '                    End If
-    '                Else
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Belled Pier", "--BEGIN --Belled Pier")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsBelled = 'True'", "--IF @IsBelled = 'True'")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO belled_pier_details VALUES ([INSERT ALL BELLED PIER DETAILS])", "")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Belled Pier information if required", "--END --INSERT Belled Pier information if required")
-    '                End If
-
-    '                If dp.embedded_pole Then
-    '                    If dp.embed_details.embedded_id = 0 Or IsDBNull(dp.embed_details.embedded_id) Then
-    '                        tempUpdater += "BEGIN INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES (" & InsertDrilledPierEmbed(dp.embed_details) & ") " & vbNewLine & " SELECT @EmbedID=EmbedID FROM @EmbeddedPole"
-    '                        tempUpdater += " END " & vbNewLine
-    '                    Else
-    '                        tempUpdater += UpdateDrilledPierEmbed(dp.embed_details)
-    '                    End If
-    '                Else
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("BEGIN --Embedded Pole", "--BEGIN --Embedded Pole")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("IF @IsEmbed = 'True'", "--IF @IsEmbed = 'True'")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO embedded_pole_details OUTPUT INSERTED.ID INTO @EmbeddedPole VALUES ([INSERT ALL EMBEDDED POLE DETAILS])", "")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("SELECT @EmbedID=EmbedID FROM @EmbeddedPole", "--SELECT @EmbedID=EmbedID FROM @EmbeddedPole")
-    '                    DrilledPierSaver = DrilledPierSaver.Replace("END --INSERT Embedded Pole information if required", "--END --INSERT Embedded Pole information if required")
-    '                End If
-
-    '                For Each dpSec As DrilledPierSection In dp.sections
-    '                    If dpSec.section_id = 0 Or IsDBNull(dpSec.section_id) Then
-    '                        tempUpdater += "BEGIN INSERT INTO drilled_pier_section OUTPUT INSERTED.ID INTO @DrilledPierSection VALUES (" & InsertDrilledPierSection(dpSec) & ") " & vbNewLine & " SELECT @SecID=SecID FROM @DrilledPierSection"
-    '                        For Each dpreb As DrilledPierRebar In dpSec.rebar
-    '                            tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb) & ") " & vbNewLine
-    '                        Next
-    '                        tempUpdater += " END " & vbNewLine
-    '                    Else
-    '                        tempUpdater += UpdateDrilledPierSection(dpSec)
-    '                        For Each dpreb As DrilledPierRebar In dpSec.rebar
-    '                            If dpreb.rebar_id = 0 Or IsDBNull(dpreb.rebar_id) Then
-    '                                tempUpdater += "INSERT INTO drilled_pier_rebar VALUES (" & InsertDrilledPierRebar(dpreb).Replace("@SecID", dpSec.section_id.ToString) & ") " & vbNewLine
-    '                            Else
-    '                                tempUpdater += UpdateDrilledPierRebar(dpreb)
-    '                            End If
-    '                        Next
-    '                    End If
-    '                Next
-
-    '                DrilledPierSaver = DrilledPierSaver.Replace("INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])", "--INSERT INTO drilled_pier_profile VALUES ([INSERT ALL PIER PROFILES])")
-    '                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-    '                    If dpp.profile_id = 0 Or IsDBNull(dpp.profile_id) Then
-    '                        tempUpdater += "INSERT INTO drilled_pier_profile VALUES (" & InsertDrilledPierProfile(dpp) & ") " & vbNewLine
-    '                    Else
-    '                        tempUpdater += UpdateDrilledPierProfile(dpp)
-    '                    End If
-    '                Next
-
-    '                DrilledPierSaver = DrilledPierSaver.Replace("SELECT * FROM TEMPORARY", tempUpdater)
-    '            End If
-
-    '            DrilledPierSaver = DrilledPierSaver.Replace("[INSERT ALL PIER DETAILS DETAILS]", InsertDrilledPierDetail(dp))
-
-    '            sqlSender(DrilledPierSaver, dpDB, dpID, "0")
-    '        Next
-
-
-    '    End Sub
-
-    '    Public Sub SaveToExcel()
-    '        Dim dpRow As Integer = 3
-    '        Dim secRow As Integer = 3
-    '        Dim rebRow As Integer = 3
-    '        Dim soilRow As Integer = 3
-    '        Dim profileRow As Integer = 3
-
-    '        LoadNewDrilledPier()
-
-    '        With NewDrilledPierWb
-
-    '            Dim colCounter As Integer = 6
-    '            Dim myCol As String
-    '            Dim rowStart As Integer = 56
-
-    '            For Each dp As DrilledPier In DrilledPiers
-
-    '                colCounter = 6 + dp.local_drilled_pier_id
-    '                myCol = GetExcelColumnName(colCounter)
-
-    '                'DRILLED PIER DETAILS
-    '                If Not IsNothing(dp.pier_id) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart - 54).Value = CType(dp.pier_id, Integer)
-    '                Else .Worksheets("Database").Range(myCol & rowStart - 54).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.concrete_compressive_strength) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 7).Value = CType(dp.concrete_compressive_strength, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 7).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.longitudinal_rebar_yield_strength) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 8).Value = CType(dp.longitudinal_rebar_yield_strength, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 8).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.tie_yield_strength) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 9).Value = CType(dp.tie_yield_strength, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 9).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.foundation_depth) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 10).Value = CType(dp.foundation_depth, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 10).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.extension_above_grade) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 11).Value = CType(dp.extension_above_grade, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 11).ClearContents
-    '                End If
-    '                If CType(dp.groundwater_depth, Double) = -1 Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 17).Value = "N/A"
-    '                ElseIf Not IsNothing(dp.groundwater_depth) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 17).Value = CType(dp.groundwater_depth, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 17).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.soil_layer_quantity) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 18).Value = CType(dp.soil_layer_quantity, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 18).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.bearing_type_toggle) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 19).Value = CType(dp.bearing_type_toggle, String)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 19).ClearContents
-    '                End If
-    '                .Worksheets("Database").Range(myCol & rowStart + 97).Value = CType(dp.check_shear_along_depth, Boolean)
-    '                .Worksheets("Database").Range(myCol & rowStart + 98).Value = CType(dp.utilize_shear_friction_methodology, Boolean)
-    '                .Worksheets("Database").Range(myCol & rowStart + 100).Value = CType(dp.embedded_pole, Boolean)
-    '                .Worksheets("Database").Range(myCol & rowStart + 112).Value = CType(dp.belled_pier, Boolean)
-    '                .Worksheets("Database").Range(myCol & rowStart + 4389).Value = CType(dp.assume_min_steel, String)
-    '                .Worksheets("Database").Range(myCol & rowStart + 4390).Value = CType(dp.rebar_effective_depths, Boolean)
-    '                If Not IsNothing(dp.rebar_cage_2_fy_override) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 4391).Value = CType(dp.rebar_cage_2_fy_override, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 4391).ClearContents
-    '                End If
-    '                If Not IsNothing(dp.rebar_cage_3_fy_override) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 4392).Value = CType(dp.rebar_cage_3_fy_override, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 4392).ClearContents
-    '                End If
-    '                .Worksheets("Database").Range(myCol & rowStart + 99).Value = CType(dp.shear_override_crit_depth, Boolean)
-    '                If Not IsNothing(dp.shear_crit_depth_override_comp) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 374).Value = CType(dp.shear_crit_depth_override_comp, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 374).Formula = .Worksheets("Database").Range(GetExcelColumnName(colCounter + 51) & rowStart + 374).Formula
-    '                End If
-    '                If Not IsNothing(dp.shear_crit_depth_override_uplift) Then
-    '                    .Worksheets("Database").Range(myCol & rowStart + 376).Value = CType(dp.shear_crit_depth_override_uplift, Double)
-    '                Else .Worksheets("Database").Range(myCol & rowStart + 376).Formula = .Worksheets("Database").Range(GetExcelColumnName(colCounter + 51) & rowStart + 376).Formula
-    '                End If
-
-    '                Dim depth As Integer = 0
-    '                Dim secBump As Integer = 0
-    '                Dim secStart As Integer = 20
-    '                Dim secCount As Integer = 1
-
-    '                'DRILLED PIER SECTION
-    '                For Each dpSec As DrilledPierSection In dp.sections
-
-    '                    If Not IsNothing(dpSec.section_id) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart - 54 + secCount).Value = CType(dpSec.section_id, Integer)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart - 54 + secCount).ClearContents
-    '                    End If
-
-    '                    If Not IsNothing(dpSec.pier_diameter) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + secStart + 0).Value = CType(dpSec.pier_diameter, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 0).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpSec.clear_cover) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + secStart + 3).Value = CType(dpSec.clear_cover, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 3).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpSec.tie_size) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + secStart + 4).Value = CType(dpSec.tie_size, Integer)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 4).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpSec.tie_spacing) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + secStart + 5).Value = CType(dpSec.tie_spacing, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 5).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpSec.clear_cover_rebar_cage_option) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + secStart + 14).Value = CType(dpSec.clear_cover_rebar_cage_option, String)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + secStart + 14).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpSec.rho_override) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 4392 + secCount).Value = CType(dpSec.rho_override, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 4392 + secCount).ClearContents
-    '                    End If
-
-    '                    If secCount > 1 Then depth += 1
-    '                    If Not IsNothing(dpSec.bottom_elevation) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 12 + depth).Value = CType(dpSec.bottom_elevation, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 12 + depth).ClearContents
-    '                    End If
-
-    '                    'DRILLED PIER REBAR
-    '                    Dim rebCount As Integer = 1
-
-    '                    For Each dpReb As DrilledPierRebar In dpSec.rebar
-
-    '                        If Not IsNothing(dpReb.rebar_id) Then
-    '                            .Worksheets("Database").Range(myCol & rowStart - 48 + 3 * (secCount - 1) + (rebCount - 1)).Value = CType(dpReb.rebar_id, Integer)
-    '                        Else .Worksheets("Database").Range(myCol & rowStart - 48 + 3 * (secCount - 1) + (rebCount - 1)).ClearContents
-    '                        End If
-
-    '                        If rebCount = 1 Then
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 1).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 1).ClearContents
-    '                            End If
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 2).Value = CType(dpReb.longitudinal_rebar_size, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 2).ClearContents
-    '                            End If
-    '                        ElseIf rebCount = 2 Then
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 6).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 6).ClearContents
-    '                            End If
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 7).Value = CType(dpReb.longitudinal_rebar_size, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 7).ClearContents
-    '                            End If
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_cage_diameter) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 8).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 8).ClearContents
-    '                            End If
-    '                        ElseIf rebCount = 3 Then
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_quantity) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 10).Value = CType(dpReb.longitudinal_rebar_quantity, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 10).ClearContents
-    '                            End If
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_size) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 11).Value = CType(dpReb.longitudinal_rebar_size, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 11).ClearContents
-    '                            End If
-    '                            If Not IsNothing(dpReb.longitudinal_rebar_cage_diameter) Then
-    '                                .Worksheets("Database").Range(myCol & rowStart + secStart + 12).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Double)
-    '                            Else .Worksheets("Database").Range(myCol & rowStart + secStart + 12).ClearContents
-    '                            End If
-    '                        End If
-
-    '                        rebCount += 1
-    '                    Next
-
-    '                    secCount += 1
-    '                    secBump += 15
-    '                    'secStart += secBump
-    '                    secStart += 15
-
-    '                Next
-
-    '                'BELLED PIER
-    '                If dp.belled_pier = True Then
-
-    '                    If Not IsNothing(dp.belled_details.belled_pier_id) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart - 3).Value = CType(dp.belled_details.belled_pier_id, Integer)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart - 3).ClearContents
-    '                    End If
-
-    '                    .Worksheets("Database").Range(myCol & rowStart + 112).Value = CType(dp.belled_pier, Boolean)
-    '                    If Not IsNothing(dp.belled_details.bottom_diameter_of_bell) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 113).Value = CType(dp.belled_details.bottom_diameter_of_bell, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 113).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.belled_details.bell_angle) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 114).Value = CType(dp.belled_details.bell_angle, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 114).ClearContents
-    '                    End If
-    '                    .Worksheets("Database").Range(myCol & rowStart + 115).Value = CType(dp.belled_details.bell_input_type, String)
-    '                    If Not IsNothing(dp.belled_details.bell_height) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 116).Value = CType(dp.belled_details.bell_height, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 116).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.belled_details.bell_toe_height) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 120).Value = CType(dp.belled_details.bell_toe_height, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 120).ClearContents
-    '                    End If
-    '                    .Worksheets("Database").Range(myCol & rowStart + 122).Value = CType(dp.belled_details.neglect_top_soil_layer, Boolean)
-    '                    .Worksheets("Database").Range(myCol & rowStart + 123).Value = CType(dp.belled_details.swelling_expansive_soil, Boolean)
-    '                    If Not IsNothing(dp.belled_details.depth_of_expansive_soil) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 124).Value = CType(dp.belled_details.depth_of_expansive_soil, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 124).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.belled_details.expansive_soil_force) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 125).Value = CType(dp.belled_details.expansive_soil_force, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 125).ClearContents
-    '                    End If
-
-    '                End If
-
-    '                'EMBEDDED PIER
-    '                If dp.embedded_pole = True Then
-
-    '                    If Not IsNothing(dp.embed_details.embedded_id) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart - 2).Value = CType(dp.embed_details.embedded_id, Integer)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart - 2).ClearContents
-    '                    End If
-
-    '                    .Worksheets("Database").Range(myCol & rowStart + 100).Value = CType(dp.embedded_pole, Boolean)
-    '                    .Worksheets("Database").Range(myCol & rowStart + 101).Value = CType(dp.embed_details.encased_in_concrete, Boolean)
-    '                    If Not IsNothing(dp.embed_details.pole_side_quantity) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 102).Value = CType(dp.embed_details.pole_side_quantity, Integer)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 102).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_yield_strength) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 103).Value = CType(dp.embed_details.pole_yield_strength, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 103).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_thickness) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 104).Value = CType(dp.embed_details.pole_thickness, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 104).ClearContents
-    '                    End If
-    '                    .Worksheets("Database").Range(myCol & rowStart + 105).Value = CType(dp.embed_details.embedded_pole_input_type, String)
-    '                    If Not IsNothing(dp.embed_details.pole_diameter_toc) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 106).Value = CType(dp.embed_details.pole_diameter_toc, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 106).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_top_diameter) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 107).Value = CType(dp.embed_details.pole_top_diameter, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 107).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_bottom_diameter) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 108).Value = CType(dp.embed_details.pole_bottom_diameter, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 108).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_section_length) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 109).Value = CType(dp.embed_details.pole_section_length, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 109).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_taper_factor) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 110).Value = CType(dp.embed_details.pole_taper_factor, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 110).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dp.embed_details.pole_bend_radius_override) Then
-    '                        .Worksheets("Database").Range(myCol & rowStart + 111).Value = CType(dp.embed_details.pole_bend_radius_override, Double)
-    '                    Else .Worksheets("Database").Range(myCol & rowStart + 111).ClearContents
-    '                    End If
-
-    '                End If
-
-    '                'DRILLED PIER PROFILES
-    '                Dim summaryRowStart As Integer = 10
-
-    '                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-    '                    'Profile Return
-    '                    If Not IsNothing(dp.local_drilled_pier_id) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("A" & profileRow).Value = CType(dp.local_drilled_pier_id, Integer)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("A" & profileRow).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpp.reaction_position) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("B" & profileRow).Value = CType(dpp.reaction_position, Integer)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("B" & profileRow).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpp.drilled_pier_id) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("C" & profileRow).Value = CType(dpp.drilled_pier_id, Integer)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("C" & profileRow).ClearContents
-    '                    End If
-    '                    .Worksheets("Profiles (RETURN)").Range("D" & profileRow).Value = CType(dpp.profile_id, Integer)
-    '                    If Not IsNothing(dpp.reaction_location) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("E" & profileRow).Value = CType(dpp.reaction_location, String)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("E" & profileRow).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpp.drilled_pier_profile) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("F" & profileRow).Value = CType(dpp.drilled_pier_profile, String)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("F" & profileRow).ClearContents
-    '                    End If
-    '                    If Not IsNothing(dpp.soil_profile) Then
-    '                        .Worksheets("Profiles (RETURN)").Range("G" & profileRow).Value = CType(dpp.soil_profile, String)
-    '                    Else .Worksheets("Profiles (RETURN)").Range("G" & profileRow).ClearContents
-    '                    End If
-
-    '                    'SUMMARY
-    '                    If Not IsNothing(dpp.reaction_position) Then
-    '                        .Worksheets("SUMMARY").Range("D" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.drilled_pier_profile, Integer)
-    '                        If dpp.drilled_pier_profile = dpp.reaction_position Then
-    '                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
-    '                        Else
-    '                            .Worksheets("SUMMARY").Range("G" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = True
-    '                        End If
-    '                    End If
-    '                    If Not IsNothing(dpp.reaction_position) Then
-    '                        .Worksheets("SUMMARY").Range("E" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.soil_profile, Integer)
-    '                        If dpp.soil_profile = dpp.reaction_position Then
-    '                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
-    '                        Else
-    '                            .Worksheets("SUMMARY").Range("H" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = True
-    '                        End If
-    '                    End If
-    '                    .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
-    '                    .Worksheets("SUMMARY").Range("J" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = CType(dpp.profile_id, Integer)
-
-    '                    profileRow += 1
-
-    '                Next
-
-    '                .Worksheets("SUMMARY").Range("EDSReactions").Value = True
-
-    '                'DRILLED PIER SOIL LAYER
-    '                Dim soilCount As Integer
-    '                Dim soilStart As Integer = 127
-    '                Dim soilColCounter As Integer
-    '                Dim mySoilCol As String
-
-    '                For Each dpp As DrilledPierProfile In dp.drilled_pier_profiles
-
-    '                    soilCount = 1
-
-    '                    soilColCounter = 6 + dpp.soil_profile
-    '                    mySoilCol = GetExcelColumnName(soilColCounter)
-
-    '                    For Each dpSL As DrilledPierSoilLayer In dp.soil_layers
-
-    '                        If Not IsNothing(dpSL.soil_layer_id) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart - 33 + (soilCount - 1)).Value = CType(dpSL.soil_layer_id, Integer)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart - 33 + (soilCount - 1)).ClearContents
-    '                        End If
-
-    '                        If Not IsNothing(dpSL.bottom_depth) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 0 + (soilCount - 1)).Value = CType(dpSL.bottom_depth, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 0 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.effective_soil_density) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 1 + (soilCount - 1)).Value = CType(dpSL.effective_soil_density, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 1 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.cohesion) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 2 + (soilCount - 1)).Value = CType(dpSL.cohesion, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 2 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.friction_angle) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 3 + (soilCount - 1)).Value = CType(dpSL.friction_angle, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 3 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.skin_friction_override_comp) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 4 + (soilCount - 1)).Value = CType(dpSL.skin_friction_override_comp, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 4 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.skin_friction_override_uplift) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 5 + (soilCount - 1)).Value = CType(dpSL.skin_friction_override_uplift, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 5 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.nominal_bearing_capacity) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 6 + (soilCount - 1)).Value = CType(dpSL.nominal_bearing_capacity, Double)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 6 + (soilCount - 1)).ClearContents
-    '                        End If
-    '                        If Not IsNothing(dpSL.spt_blow_count) Then
-    '                            .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 7 + (soilCount - 1)).Value = CType(dpSL.spt_blow_count, Integer)
-    '                        Else .Worksheets("Database").Range(mySoilCol & rowStart + soilStart + 31 * 7 + (soilCount - 1)).ClearContents
-    '                        End If
-
-    '                        soilCount += 1
-    '                    Next
-
-    '                Next
-
-    '                dpRow += 1
-    '                colCounter += 1
-
-    '            Next
-
-
-
-
-    '            '~~~~~~~~POPULATE TOOL INPUTS WITH THE FIRST INSTANCE IN TOOL'S LOCAL DATABASE
-
-    '            Dim firstReaction As String = DrilledPiers(0).drilled_pier_profiles(0).reaction_location
-
-    '            If firstReaction = "Monopole" Then
-    '                .Worksheets("Foundation Input").Range("TowerType").Value = "Monopole"
-    '            ElseIf firstReaction = "Self Support" Then
-    '                .Worksheets("Foundation Input").Range("TowerType").Value = "Self Support"
-    '            ElseIf firstReaction = "Base" Then
-    '                .Worksheets("Foundation Input").Range("TowerType").Value = "Guyed (Base)"
-    '                .Worksheets("Foundation Input").Range("Location").Value = "Base"
-    '            End If
-
-    '            Dim firstPierProfile As Integer = DrilledPiers(0).drilled_pier_profiles(0).drilled_pier_profile
-    '            Dim firstSoilProfile As Integer = DrilledPiers(0).drilled_pier_profiles(0).soil_profile
-
-    '            colCounter = 7
-
-    '            myCol = GetExcelColumnName(colCounter)
-
-    '            If firstReaction <> "" Then
-
-    '                'MATERIAL PROPERTIES
-    '                If DrilledPiers(0).concrete_compressive_strength.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("f\c").Value = CType(DrilledPiers(0).concrete_compressive_strength, Double)
-    '                Else .Worksheets("Foundation Input").Range("f\c").ClearContents
-    '                End If
-    '                If DrilledPiers(0).longitudinal_rebar_yield_strength.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("Fy_rebar").Value = CType(DrilledPiers(0).longitudinal_rebar_yield_strength, Double)
-    '                Else .Worksheets("Foundation Input").Range("Fy_rebar").ClearContents
-    '                End If
-    '                If DrilledPiers(0).tie_yield_strength.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("yield_tie").Value = CType(DrilledPiers(0).tie_yield_strength, Double)
-    '                Else .Worksheets("Foundation Input").Range("yield_tie").ClearContents
-    '                End If
-    '                If DrilledPiers(0).rebar_cage_2_fy_override.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("RebarCage2FyOverride").Value = CType(DrilledPiers(0).rebar_cage_2_fy_override, Double)
-    '                Else .Worksheets("Foundation Input").Range("RebarCage2FyOverride").ClearContents
-    '                End If
-    '                If DrilledPiers(0).rebar_cage_3_fy_override.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("RebarCage3FyOverride").Value = CType(DrilledPiers(0).rebar_cage_3_fy_override, Double)
-    '                Else .Worksheets("Foundation Input").Range("RebarCage3FyOverride").ClearContents
-    '                End If
-
-    '                'PIER DESIGN DATA (GENERAL)
-    '                If DrilledPiers(0).foundation_depth.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("depth").Value = CType(DrilledPiers(0).foundation_depth, Double)
-    '                Else .Worksheets("Foundation Input").Range("depth").ClearContents
-    '                End If
-    '                If DrilledPiers(0).extension_above_grade.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("ConcreteAboveGrade").Value = CType(DrilledPiers(0).extension_above_grade, Double)
-    '                Else .Worksheets("Foundation Input").Range("ConcreteAboveGrade").ClearContents
-    '                End If
-    '                'groundwater
-    '                If CType(DrilledPiers(0).groundwater_depth, Double) = -1 Then
-    '                    .Worksheets("Foundation Input").Range("GW").Value = "N/A"
-    '                Else .Worksheets("Foundation Input").Range("GW").Value = CType(DrilledPiers(0).groundwater_depth, Double)
-    '                End If
-    '                'soil layers
-    '                If DrilledPiers(0).soil_layer_quantity.HasValue Then
-    '                    .Worksheets("Foundation Input").Range("SoilLayerQty").Value = CType(DrilledPiers(0).soil_layer_quantity, Integer)
-    '                Else .Worksheets("Foundation Input").Range("SoilLayerQty").ClearContents
-    '                End If
-    '                'min steel
-    '                If Not IsNothing(CType(DrilledPiers(0).assume_min_steel, String)) Then
-    '                    .Worksheets("Foundation Input").Range("AssumeMinSteel").Value = CType(DrilledPiers(0).assume_min_steel, String)
-    '                Else .Worksheets("Foundation Input").Range("AssumeMinSteel").ClearContents
-    '                End If
-
-    '                'PIER DESIGN DATA (SECTIONS)
-    '                Dim secCount As Integer = 1
-    '                Dim secRowStart As Integer = 26
-
-    '                For Each dpSec As DrilledPierSection In DrilledPiers(0).sections
-
-    '                    If dpSec.pier_diameter.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("D" & secRowStart).Value = CType(dpSec.pier_diameter, Double)
-    '                    Else .Worksheets("Foundation Input").Range("D" & secRowStart).ClearContents
-    '                    End If
-    '                    If dpSec.clear_cover.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("D" & secRowStart + 3).Value = CType(dpSec.clear_cover, Double)
-    '                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 3).ClearContents
-    '                    End If
-    '                    If Not IsNothing(CType(dpSec.clear_cover_rebar_cage_option, String)) Then
-    '                        .Worksheets("Foundation Input").Range("B" & secRowStart + 3).Value = CType(dpSec.clear_cover_rebar_cage_option, String)
-    '                    Else .Worksheets("Foundation Input").Range("B" & secRowStart + 3).ClearContents
-    '                    End If
-    '                    If dpSec.tie_size.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("D" & secRowStart + 4).Value = CType(dpSec.tie_size, Integer)
-    '                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 4).ClearContents
-    '                    End If
-    '                    If dpSec.tie_spacing.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("D" & secRowStart + 5).Value = CType(dpSec.tie_spacing, Double)
-    '                    Else .Worksheets("Foundation Input").Range("D" & secRowStart + 5).ClearContents
-    '                    End If
-    '                    If dpSec.bottom_elevation.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("Depth" & secCount).Value = CType(dpSec.bottom_elevation, Double)
-    '                    Else .Worksheets("Foundation Input").Range("Depth" & secCount).ClearContents
-    '                    End If
-    '                    If dpSec.rho_override.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("rhoOverride" & secCount).Value = CType(dpSec.rho_override, Double)
-    '                    Else .Worksheets("Foundation Input").Range("rhoOverride" & secCount).ClearContents
-    '                    End If
-
-    '                    'PIER DESIGN DATA (REBAR)
-    '                    Dim rebCount As Integer = 1
-
-    '                    For Each dpReb As DrilledPierRebar In dpSec.rebar
-
-    '                        If rebCount = 1 Then
-    '                            If dpReb.longitudinal_rebar_quantity.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 1).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 1).ClearContents
-    '                            End If
-    '                            If dpReb.longitudinal_rebar_size.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 2).Value = CType(dpReb.longitudinal_rebar_size, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 2).ClearContents
-    '                            End If
-    '                        End If
-
-    '                        If rebCount = 2 Then
-    '                            If dpReb.longitudinal_rebar_quantity.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 6).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 6).ClearContents
-    '                            End If
-    '                            If dpReb.longitudinal_rebar_size.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 7).Value = CType(dpReb.longitudinal_rebar_size, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 7).ClearContents
-    '                            End If
-    '                            If dpReb.longitudinal_rebar_cage_diameter.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 8).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 8).ClearContents
-    '                            End If
-    '                        End If
-
-    '                        If rebCount = 3 Then
-    '                            If dpReb.longitudinal_rebar_quantity.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 10).Value = CType(dpReb.longitudinal_rebar_quantity, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 10).ClearContents
-    '                            End If
-    '                            If dpReb.longitudinal_rebar_size.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 11).Value = CType(dpReb.longitudinal_rebar_size, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 11).ClearContents
-    '                            End If
-    '                            If dpReb.longitudinal_rebar_cage_diameter.HasValue Then
-    '                                .Worksheets("Foundation Input").Range("D" & secRowStart + 12).Value = CType(dpReb.longitudinal_rebar_cage_diameter, Integer)
-    '                            Else .Worksheets("Foundation Input").Range("D" & secRowStart + 12).ClearContents
-    '                            End If
-    '                        End If
-
-    '                        rebCount += 1
-
-    '                    Next
-
-    '                    'populate rebar cage qty (hidden input in tool, typically populated by the Pier Options)
-    '                    .Worksheets("Foundation Input").Range("Rebar" & secCount).Value = rebCount - 1
-
-    '                    secCount += 1
-
-    '                    secRowStart += 16
-
-    '                Next
-
-
-    '                'SOIL
-    '                Dim soilRowStart As Integer = 121
-    '                Dim soilCount As Integer = 1
-
-    '                For Each dpSL As DrilledPierSoilLayer In DrilledPiers(0).soil_layers
-
-    '                    If dpSL.bottom_depth.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("D" & soilRowStart + soilCount).Value = CType(dpSL.bottom_depth, Double)
-    '                    Else .Worksheets("Foundation Input").Range("D" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.effective_soil_density.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("F" & soilRowStart + soilCount).Value = CType(dpSL.effective_soil_density, Double)
-    '                    Else .Worksheets("Foundation Input").Range("F" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.cohesion.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("H" & soilRowStart + soilCount).Value = CType(dpSL.cohesion, Double)
-    '                    Else .Worksheets("Foundation Input").Range("H" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.friction_angle.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("I" & soilRowStart + soilCount).Value = CType(dpSL.friction_angle, Double)
-    '                    Else .Worksheets("Foundation Input").Range("I" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.skin_friction_override_comp.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("M" & soilRowStart + soilCount).Value = CType(dpSL.skin_friction_override_comp, Double)
-    '                    Else .Worksheets("Foundation Input").Range("M" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.skin_friction_override_uplift.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("N" & soilRowStart + soilCount).Value = CType(dpSL.skin_friction_override_uplift, Double)
-    '                    Else .Worksheets("Foundation Input").Range("N" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.nominal_bearing_capacity.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("O" & soilRowStart + soilCount).Value = CType(dpSL.nominal_bearing_capacity, Double)
-    '                    Else .Worksheets("Foundation Input").Range("O" & soilRowStart + soilCount).ClearContents
-    '                    End If
-    '                    If dpSL.spt_blow_count.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("P" & soilRowStart + soilCount).Value = CType(dpSL.spt_blow_count, Integer)
-    '                    Else .Worksheets("Foundation Input").Range("P" & soilRowStart + soilCount).ClearContents
-    '                    End If
-
-    '                    soilCount += 1
-
-    '                Next
-
-
-    '                'OPTIONS
-    '                .Worksheets("Foundation Input").Range("EffectiveDepthInput").Value = CType(DrilledPiers(0).rebar_effective_depths, Boolean)
-    '                .Worksheets("Foundation Input").Range("ShearAlongDepth").Value = CType(DrilledPiers(0).check_shear_along_depth, Boolean)
-    '                .Worksheets("Foundation Input").Range("ShearFriction").Value = CType(DrilledPiers(0).utilize_shear_friction_methodology, Boolean)
-    '                .Worksheets("Foundation Input").Range("ShearInputOverride").Value = CType(DrilledPiers(0).shear_override_crit_depth, Boolean)
-    '                If .Worksheets("Foundation Input").Range("ShearInputOverride").Value = CType(DrilledPiers(0).shear_override_crit_depth, Boolean) = True Then
-    '                    If DrilledPiers(0).shear_crit_depth_override_comp.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("ShearCritDepthComp").Value = CType(DrilledPiers(0).shear_crit_depth_override_comp, Double)
-    '                    End If
-    '                    If DrilledPiers(0).shear_crit_depth_override_uplift.HasValue Then
-    '                        .Worksheets("Foundation Input").Range("ShearCritDepthUplift").Value = CType(DrilledPiers(0).shear_crit_depth_override_uplift, Double)
-    '                    End If
-    '                End If
-
-
-    '                'BELLED PIER
-    '                .Worksheets("Belled Pier").Range("Belled").Value = CType(DrilledPiers(0).belled_pier, Boolean)
-    '                If DrilledPiers(0).belled_pier = True Then
-    '                    If DrilledPiers(0).belled_details.bottom_diameter_of_bell.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("Dia_Bell").Value = CType(DrilledPiers(0).belled_details.bottom_diameter_of_bell, Double)
-    '                    Else .Worksheets("Belled Pier").Range("Dia_Bell").ClearContents
-    '                    End If
-    '                    If Not IsNothing(CType(DrilledPiers(0).belled_details.bell_input_type, String)) Then
-    '                        .Worksheets("Belled Pier").Range("BellInputType").Value = CType(DrilledPiers(0).belled_details.bell_input_type, String)
-    '                    Else .Worksheets("Belled Pier").Range("BellInputType").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).belled_details.bell_angle.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("BellAngle").Value = CType(DrilledPiers(0).belled_details.bell_angle, Double)
-    '                    Else .Worksheets("Belled Pier").Range("BellAngle").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).belled_details.bell_height.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("hbell").Value = CType(DrilledPiers(0).belled_details.bell_height, Double)
-    '                    Else .Worksheets("Belled Pier").Range("hbell").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).belled_details.bell_toe_height.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("t_bell").Value = CType(DrilledPiers(0).belled_details.bell_toe_height, Double)
-    '                    Else .Worksheets("Belled Pier").Range("t_bell").ClearContents
-    '                    End If
-    '                    .Worksheets("Belled Pier").Range("Neglect_Top").Value = CType(DrilledPiers(0).belled_details.neglect_top_soil_layer, Boolean)
-    '                    .Worksheets("Belled Pier").Range("expansive").Value = CType(DrilledPiers(0).belled_details.expansive_soil_force, Boolean)
-    '                    If DrilledPiers(0).belled_details.depth_of_expansive_soil.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("D_expansive").Value = CType(DrilledPiers(0).belled_details.depth_of_expansive_soil, Double)
-    '                    Else .Worksheets("Belled Pier").Range("D_expansive").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).belled_details.expansive_soil_force.HasValue Then
-    '                        .Worksheets("Belled Pier").Range("Force_Expansive").Value = CType(DrilledPiers(0).belled_details.expansive_soil_force, Double)
-    '                    Else .Worksheets("Belled Pier").Range("Force_Expansive").ClearContents
-    '                    End If
-    '                End If
-
-
-    '                'EMBEDDED POLE
-    '                .Worksheets("Soil Calculations").Range("Embedded").Value = CType(DrilledPiers(0).embedded_pole, Boolean)
-    '                If DrilledPiers(0).embedded_pole = True Then
-    '                    .Worksheets("Soil Calculations").Range("Encased").Value = CType(DrilledPiers(0).embed_details.encased_in_concrete, Boolean)
-    '                    If DrilledPiers(0).embed_details.pole_side_quantity.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("Sides").Value = CType(DrilledPiers(0).embed_details.pole_side_quantity, Integer)
-    '                    Else .Worksheets("Soil Calculations").Range("Sides").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_yield_strength.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("Fy").Value = CType(DrilledPiers(0).embed_details.pole_yield_strength, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("Fy").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_thickness.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("t").Value = CType(DrilledPiers(0).embed_details.pole_thickness, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("t").ClearContents
-    '                    End If
-    '                    If Not IsNothing(CType(DrilledPiers(0).embed_details.embedded_pole_input_type, String)) Then
-    '                        .Worksheets("Soil Calculations").Range("EmbeddedPoleInputType").Value = CType(DrilledPiers(0).embed_details.embedded_pole_input_type, String)
-    '                    Else .Worksheets("Soil Calculations").Range("EmbeddedPoleInputType").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_diameter_toc.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("dia_grade").Value = CType(DrilledPiers(0).embed_details.pole_diameter_toc, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("dia_grade").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_top_diameter.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("TopDiameter").Value = CType(DrilledPiers(0).embed_details.pole_top_diameter, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("TopDiameter").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_bottom_diameter.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("BottomDiameter").Value = CType(DrilledPiers(0).embed_details.pole_bottom_diameter, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("BottomDiameter").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_section_length.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("LengthOfSection").Value = CType(DrilledPiers(0).embed_details.pole_section_length, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("LengthOfSection").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_taper_factor.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("taper").Value = CType(DrilledPiers(0).embed_details.pole_taper_factor, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("taper").ClearContents
-    '                    End If
-    '                    If DrilledPiers(0).embed_details.pole_bend_radius_override.HasValue Then
-    '                        .Worksheets("Soil Calculations").Range("bend_user").Value = CType(DrilledPiers(0).embed_details.pole_bend_radius_override, Double)
-    '                    Else .Worksheets("Soil Calculations").Range("bend_user").ClearContents
-    '                    End If
-    '                End If
-
-    '            End If
-
-
-    '        End With
-
-
-    '        SaveAndCloseDrilledPier()
-    '    End Sub
-
-    '    Private Function GetExcelColumnName(columnNumber As Integer) As String
-    '        Dim dividend As Integer = columnNumber
-    '        Dim columnName As String = String.Empty
-    '        Dim modulo As Integer
-
-    '        While dividend > 0
-    '            modulo = (dividend - 1) Mod 26
-    '            columnName = Convert.ToChar(65 + modulo).ToString() & columnName
-    '            dividend = CInt((dividend - modulo) / 26)
-    '        End While
-
-    '        Return columnName
-    '    End Function
-
-    '    Private Sub LoadNewDrilledPier()
-    '        NewDrilledPierWb.LoadDocument(DrilledPierTemplatePath, DrilledPierFileType)
-    '        NewDrilledPierWb.BeginUpdate()
-    '    End Sub
-
-    '    Private Sub SaveAndCloseDrilledPier()
-    '        NewDrilledPierWb.EndUpdate()
-    '        NewDrilledPierWb.SaveDocument(ExcelFilePath, DrilledPierFileType)
-    '    End Sub
-    '#End Region
+#Region "Save Data"
+
+    Sub Save1Pole(ByVal cp As CCIpole)
+
+        Dim firstOne As Boolean = True
+        Dim myCriteria As String = ""
+        Dim myPoleSection As String = ""
+        Dim myPoleReinfSection As String = ""
+        Dim myReinfGroup As String = ""
+        Dim myReinfDetail As String = ""
+        Dim myIntGroup As String = ""
+        Dim myIntDetail As String = ""
+        Dim myReinfResults As String = ""
+        Dim myReinfProp As String = ""
+        Dim myBoltProp As String = ""
+        Dim myMatlProp As String = ""
+
+        Dim CCIpoleSaver As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (IN_UP).sql")
+        CCIpoleSaver = CCIpoleSaver.Replace("[BU NUMBER]", BUNumber)
+        CCIpoleSaver = CCIpoleSaver.Replace("[STRUCTURE ID]", STR_ID)
+        'CCIpoleSaver = CCIpoleSaver.Replace("[FOUNDATION TYPE]", "Pile")
+
+        If cp.pole_structure_id = 0 Or IsDBNull(cp.pole_structure_id) Then
+            CCIpoleSaver = CCIpoleSaver.Replace("'[CCIPOLE ID]'", "NULL")
+        Else
+            CCIpoleSaver = CCIpoleSaver.Replace("[CCIPOLE ID]", cp.pole_structure_id.ToString)
+        End If
+
+        'Determine if new model ID needs created. Shouldn't be added to all individual tools (only needs to be referenced once)
+        If isModelNeeded Then
+            CCIpoleSaver = CCIpoleSaver.Replace("'[Model ID Needed]'", 1)
+        Else
+            CCIpoleSaver = CCIpoleSaver.Replace("'[Model ID Needed]'", 0)
+        End If
+
+        'Determine if new Pole ID needs created
+        If isPoleNeeded Then
+            CCIpoleSaver = CCIpoleSaver.Replace("'[Pole ID Needed]'", 1)
+        Else
+            CCIpoleSaver = CCIpoleSaver.Replace("'[Pole ID Needed]'", 0)
+        End If
+
+        'CCIpoleSaver = CCIpoleSaver.Replace("[INSERT ALL CCIPOLE DETAILS]", InsertPoleDetail(cp))
+        'CCIpoleSaver = CCIpoleSaver.Replace("[INSERT ANALYSIS CRITERIA]", InsertPoleCriteria(cp.criteria))
+
+        For Each cppc As PoleCriteria In cp.criteria
+            If Not IsNothing(cppc.upper_structure_type) Or Not IsNothing(cppc.analysis_deg) Or Not IsNothing(cppc.geom_increment_length) Or Not IsNothing(cppc.vnum) Or Not IsNothing(cppc.check_connections) Or Not IsNothing(cppc.hole_deformation) Or Not IsNothing(cppc.ineff_mod_check) Or Not IsNothing(cppc.modified) Then
+                Dim tempPoleCriteria As String = InsertPoleCriteria(cppc)
+                If Not firstOne Then
+                    myCriteria += ",(" & tempPoleCriteria & ")"
+                Else
+                    myCriteria += "(" & tempPoleCriteria & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ANALYSIS CRITERIA])", myCriteria)
+
+        For Each cpps As PoleSection In cp.unreinf_sections
+            If Not IsNothing(cpps.analysis_section_id) Or Not IsNothing(cpps.elev_bot) Or Not IsNothing(cpps.elev_top) Or Not IsNothing(cpps.length_section) Or Not IsNothing(cpps.length_splice) Or Not IsNothing(cpps.num_sides) Or Not IsNothing(cpps.diam_bot) Or Not IsNothing(cpps.diam_top) Or Not IsNothing(cpps.wall_thickness) Or Not IsNothing(cpps.bend_radius) Or Not IsNothing(cpps.steel_grade_id) Or Not IsNothing(cpps.pole_type) Or Not IsNothing(cpps.section_name) Or Not IsNothing(cpps.socket_length) Or Not IsNothing(cpps.weight_mult) Or Not IsNothing(cpps.wp_mult) Or Not IsNothing(cpps.af_factor) Or Not IsNothing(cpps.ar_factor) Or Not IsNothing(cpps.round_area_ratio) Or Not IsNothing(cpps.flat_area_ratio) Then
+                Dim tempPoleSection As String = InsertPoleSection(cpps)
+                If Not firstOne Then
+                    myPoleSection += ",(" & tempPoleSection & ")"
+                Else
+                    myPoleSection += "(" & tempPoleSection & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT UNREINF SECTIONS])", myPoleSection)
+
+        For Each cprs As PoleReinfSection In cp.reinf_sections
+            If Not IsNothing(cprs.analysis_section_ID) Or Not IsNothing(cprs.elev_bot) Or Not IsNothing(cprs.elev_top) Or Not IsNothing(cprs.length_section) Or Not IsNothing(cprs.length_splice) Or Not IsNothing(cprs.num_sides) Or Not IsNothing(cprs.diam_bot) Or Not IsNothing(cprs.diam_top) Or Not IsNothing(cprs.wall_thickness) Or Not IsNothing(cprs.bend_radius) Or Not IsNothing(cprs.steel_grade_id) Or Not IsNothing(cprs.pole_type) Or Not IsNothing(cprs.weight_mult) Or Not IsNothing(cprs.section_name) Or Not IsNothing(cprs.socket_length) Or Not IsNothing(cprs.wp_mult) Or Not IsNothing(cprs.af_factor) Or Not IsNothing(cprs.ar_factor) Or Not IsNothing(cprs.round_area_ratio) Or Not IsNothing(cprs.flat_area_ratio) Then
+                Dim tempPoleReinfSection As String = InsertPoleReinfSection(cprs)
+                If Not firstOne Then
+                    myPoleReinfSection += ",(" & tempPoleReinfSection & ")"
+                Else
+                    myPoleReinfSection += "(" & tempPoleReinfSection & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF SECTIONS])", myPoleReinfSection)
+
+        For Each cprg As PoleReinfGroup In cp.reinf_groups
+            If Not IsNothing(cprg.elev_bot_actual) Or Not IsNothing(cprg.elev_bot_eff) Or Not IsNothing(cprg.elev_top_actual) Or Not IsNothing(cprg.elev_top_eff) Or Not IsNothing(cprg.reinf_db_id) Then
+                Dim tempPoleReinfGroup As String = InsertPoleReinfGroup(cprg)
+                If Not firstOne Then
+                    myReinfGroup += ",(" & tempPoleReinfGroup & ")"
+                Else
+                    myReinfGroup += "(" & tempPoleReinfGroup & ")"
+                End If
+            End If
+
+            For Each cprd As PoleReinfDetail In cprg.reinf_ids
+                If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
+                    Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+                    If Not firstOne Then
+                        myReinfDetail += ",(" & tempPoleReinfDetail & ")"
+                    Else
+                        myReinfDetail += "(" & tempPoleReinfDetail & ")"
+                    End If
+                End If
+                firstOne = False
+            Next
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF GROUPS])", myReinfGroup)
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF DETAILS])", myReinfDetail)
+
+        'For Each cprd As PoleReinfDetail In cp.reinf_ids
+        '    If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
+        '        Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+        '        If Not firstOne Then
+        '            myReinfDetail += ",(" & tempPoleReinfDetail & ")"
+        '        Else
+        '            myReinfDetail += "(" & tempPoleReinfDetail & ")"
+        '        End If
+        '    End If
+        '    firstOne = False
+        'Next
+        'firstOne = True
+        'CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF DETAILS])", myReinfDetail)
+
+        For Each cpig As PoleIntGroup In cp.int_groups
+            If Not IsNothing(cpig.elev_bot) Or Not IsNothing(cpig.elev_top) Or Not IsNothing(cpig.width) Or Not IsNothing(cpig.description) Then
+                Dim tempPoleIntGroup As String = InsertPoleIntGroup(cpig)
+                If Not firstOne Then
+                    myIntGroup += ",(" & tempPoleIntGroup & ")"
+                Else
+                    myIntGroup += "(" & tempPoleIntGroup & ")"
+                End If
+
+                For Each cpid As PoleIntDetail In cpig.int_ids
+                    If Not IsNothing(cpid.pole_flat) Or Not IsNothing(cpid.horizontal_offset) Or Not IsNothing(cpid.rotation) Or Not IsNothing(cpid.note) Then
+                        Dim tempPoleIntDetail As String = InsertPoleIntDetail(cpid)
+                        If Not firstOne Then
+                            myIntDetail += ",(" & tempPoleIntDetail & ")"
+                        Else
+                            myIntDetail += "(" & tempPoleIntDetail & ")"
+                        End If
+                    End If
+                    firstOne = False
+                Next
+            End If
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT INT GROUPS])", myIntGroup)
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT INT DETAILS])", myIntDetail)
+
+        'For Each cpid As PoleIntDetail In cp.int_ids
+        '    If Not IsNothing(cpid.pole_flat) Or Not IsNothing(cpid.horizontal_offset) Or Not IsNothing(cpid.rotation) Or Not IsNothing(cpid.note) Then
+        '        Dim tempPoleIntDetail As String = InsertPoleIntDetail(cpid)
+        '        If Not firstOne Then
+        '            myIntDetail += ",(" & tempPoleIntDetail & ")"
+        '        Else
+        '            myIntDetail += "(" & tempPoleIntDetail & ")"
+        '        End If
+        '    End If
+        '    firstOne = False
+        'Next
+        'firstOne = True
+        'CCIpoleSaver = CCIpoleSaver.Replace("([INSERT INT DETAILS])", myIntDetail)
+
+        For Each cprr As PoleReinfResults In cp.reinf_section_results
+            If Not IsNothing(cprr.work_order_seq_num) Or Not IsNothing(cprr.reinf_group_id) Or Not IsNothing(cprr.result_lkup_value) Or Not IsNothing(cprr.rating) Then
+                Dim tempPoleReinfResults As String = InsertPoleReinfResults(cprr)
+                If Not firstOne Then
+                    myReinfResults += ",(" & tempPoleReinfResults & ")"
+                Else
+                    myReinfResults += "(" & tempPoleReinfResults & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF RESULTS])", myReinfResults)
+
+        For Each cpr As PropReinf In cp.reinfs
+            If Not IsNothing(cpr.name) Or Not IsNothing(cpr.type) Or Not IsNothing(cpr.b) Or Not IsNothing(cpr.h) Or Not IsNothing(cpr.sr_diam) Or Not IsNothing(cpr.channel_thkns_web) Or Not IsNothing(cpr.channel_thkns_flange) Or Not IsNothing(cpr.channel_eo) Or Not IsNothing(cpr.channel_J) Or Not IsNothing(cpr.channel_Cw) Or Not IsNothing(cpr.area_gross) Or Not IsNothing(cpr.centroid) Or Not IsNothing(cpr.istension) Or Not IsNothing(cpr.matl_id) Or Not IsNothing(cpr.Ix) Or Not IsNothing(cpr.Iy) Or Not IsNothing(cpr.Lu) Or Not IsNothing(cpr.Kx) Or Not IsNothing(cpr.Ky) Or Not IsNothing(cpr.bolt_hole_size) Or Not IsNothing(cpr.area_net) Or Not IsNothing(cpr.shear_lag) Or Not IsNothing(cpr.connection_type_bot) Or Not IsNothing(cpr.connection_cap_revF_bot) Or Not IsNothing(cpr.connection_cap_revG_bot) Or Not IsNothing(cpr.connection_cap_revH_bot) Or Not IsNothing(cpr.bolt_id_bot) Or Not IsNothing(cpr.bolt_N_or_X_bot) Or Not IsNothing(cpr.bolt_num_bot) Or Not IsNothing(cpr.bolt_spacing_bot) Or Not IsNothing(cpr.bolt_edge_dist_bot) Or Not IsNothing(cpr.FlangeOrBP_connected_bot) Or Not IsNothing(cpr.weld_grade_bot) Or Not IsNothing(cpr.weld_trans_type_bot) Or Not IsNothing(cpr.weld_trans_length_bot) Or Not IsNothing(cpr.weld_groove_depth_bot) Or Not IsNothing(cpr.weld_groove_angle_bot) Or Not IsNothing(cpr.weld_trans_fillet_size_bot) Or Not IsNothing(cpr.weld_trans_eff_throat_bot) Or Not IsNothing(cpr.weld_long_type_bot) Or Not IsNothing(cpr.weld_long_length_bot) Or Not IsNothing(cpr.weld_long_fillet_size_bot) Or Not IsNothing(cpr.weld_long_eff_throat_bot) Or Not IsNothing(cpr.top_bot_connections_symmetrical) Or Not IsNothing(cpr.connection_type_top) Or Not IsNothing(cpr.connection_cap_revF_top) Or Not IsNothing(cpr.connection_cap_revG_top) Or Not IsNothing(cpr.connection_cap_revH_top) Or Not IsNothing(cpr.bolt_id_top) Or Not IsNothing(cpr.bolt_N_or_X_top) Or Not IsNothing(cpr.bolt_num_top) Or Not IsNothing(cpr.bolt_spacing_top) Or Not IsNothing(cpr.bolt_edge_dist_top) Or Not IsNothing(cpr.FlangeOrBP_connected_top) Or Not IsNothing(cpr.weld_grade_top) Or Not IsNothing(cpr.weld_trans_type_top) Or Not IsNothing(cpr.weld_trans_length_top) Or Not IsNothing(cpr.weld_groove_depth_top) Or Not IsNothing(cpr.weld_groove_angle_top) Or Not IsNothing(cpr.weld_trans_fillet_size_top) Or Not IsNothing(cpr.weld_trans_eff_throat_top) Or Not IsNothing(cpr.weld_long_type_top) Or Not IsNothing(cpr.weld_long_length_top) Or Not IsNothing(cpr.weld_long_fillet_size_top) Or Not IsNothing(cpr.weld_long_eff_throat_top) Or Not IsNothing(cpr.conn_length_bot) Or Not IsNothing(cpr.conn_length_top) Or Not IsNothing(cpr.cap_comp_xx_f) Or Not IsNothing(cpr.cap_comp_yy_f) Or Not IsNothing(cpr.cap_tens_yield_f) Or Not IsNothing(cpr.cap_tens_rupture_f) Or Not IsNothing(cpr.cap_shear_f) Or Not IsNothing(cpr.cap_bolt_shear_bot_f) Or Not IsNothing(cpr.cap_bolt_shear_top_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_bot_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_f) Or Not IsNothing(cpr.cap_weld_trans_bot_f) Or Not IsNothing(cpr.cap_weld_long_bot_f) Or Not IsNothing(cpr.cap_weld_trans_top_f) Or Not IsNothing(cpr.cap_weld_long_top_f) Or Not IsNothing(cpr.cap_comp_xx_g) Or Not IsNothing(cpr.cap_comp_yy_g) Or Not IsNothing(cpr.cap_tens_yield_g) Or Not IsNothing(cpr.cap_tens_rupture_g) Or Not IsNothing(cpr.cap_shear_g) Or Not IsNothing(cpr.cap_bolt_shear_bot_g) Or Not IsNothing(cpr.cap_bolt_shear_top_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_g) Or Not IsNothing(cpr.cap_weld_trans_bot_g) Or Not IsNothing(cpr.cap_weld_long_bot_g) Or Not IsNothing(cpr.cap_weld_trans_top_g) Or Not IsNothing(cpr.cap_weld_long_top_g) Or Not IsNothing(cpr.cap_comp_xx_h) Or Not IsNothing(cpr.cap_comp_yy_h) Or Not IsNothing(cpr.cap_tens_yield_h) Or Not IsNothing(cpr.cap_tens_rupture_h) Or Not IsNothing(cpr.cap_shear_h) Or Not IsNothing(cpr.cap_bolt_shear_bot_h) Or Not IsNothing(cpr.cap_bolt_shear_top_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_bot_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_h) Or Not IsNothing(cpr.cap_weld_trans_bot_h) Or Not IsNothing(cpr.cap_weld_long_bot_h) Or Not IsNothing(cpr.cap_weld_trans_top_h) Or Not IsNothing(cpr.cap_weld_long_top_h) Then
+                Dim tempPropReinf As String = InsertPropReinf(cpr)
+                If Not firstOne Then
+                    myReinfProp += ",(" & tempPropReinf & ")"
+                Else
+                    myReinfProp += "(" & tempPropReinf & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL REINF PROP])", myReinfProp)
+
+        For Each cpb As PropBolt In cp.bolts
+            If Not IsNothing(cpb.name) Or Not IsNothing(cpb.description) Or Not IsNothing(cpb.diam) Or Not IsNothing(cpb.area) Or Not IsNothing(cpb.fu_bolt) Or Not IsNothing(cpb.sleeve_diam_out) Or Not IsNothing(cpb.sleeve_diam_in) Or Not IsNothing(cpb.fu_sleeve) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revF) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revF) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revG) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revG) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revH) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revH) Or Not IsNothing(cpb.rb_applied_revH) Then
+                Dim tempPropBolt As String = InsertPropBolt(cpb)
+                If Not firstOne Then
+                    myBoltProp += ",(" & tempPropBolt & ")"
+                Else
+                    myBoltProp += "(" & tempPropBolt & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL BOLT PROP])", myBoltProp)
+
+        For Each cpm As PropMatl In cp.matls
+            If Not IsNothing(cpm.name) Or Not IsNothing(cpm.fy) Or Not IsNothing(cpm.fu) Then
+                Dim tempPropMatl As String = InsertPropMatl(cpm)
+                If Not firstOne Then
+                    myMatlProp += ",(" & tempPropMatl & ")"
+                Else
+                    myMatlProp += "(" & tempPropMatl & ")"
+                End If
+            End If
+            firstOne = False
+        Next
+        firstOne = True
+        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL MATL PROP])", myMatlProp)
+
+        myCriteria = ""
+        myPoleSection = ""
+        myPoleReinfSection = ""
+        myReinfGroup = ""
+        myReinfDetail = ""
+        myIntGroup = ""
+        myIntDetail = ""
+        myReinfResults = ""
+        myReinfProp = ""
+        myBoltProp = ""
+        myMatlProp = ""
+
+        sqlSender(CCIPoleSaver, poleDB, poleID, "0")
+    End Sub
+
+    Public Sub SaveToEDS()
+        For Each cp As CCIpole In Poles
+            Save1Pole(cp)
+        Next
+    End Sub
+
+    Public Sub SaveToExcel()
+
+        For Each cp As CCIpole In Poles
+            Dim row As Integer
+            Dim col As Integer
+            Dim drow, dcol As Integer
+
+            LoadNewPole()
+            With NewCCIpoleWb
+
+                'pole_structure_id
+                If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Analysis Criteria (SAPI)").Range("A3").Value = CType(cp.pole_structure_id, Integer)
+
+                'Analysis Criteria
+                For Each pc As PoleCriteria In cp.criteria
+
+                    col = 2
+
+                    If Not IsNothing(pc.criteria_id) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = CType(pc.criteria_id, Integer)
+                    col += 1
+                    If Not IsNothing(pc.upper_structure_type) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.upper_structure_type
+                    col += 1
+                    If Not IsNothing(pc.analysis_deg) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = CType(pc.analysis_deg, Double)
+                    col += 1
+                    If Not IsNothing(pc.geom_increment_length) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = CType(pc.geom_increment_length, Double)
+                    col += 1
+                    If Not IsNothing(pc.vnum) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.vnum
+                    col += 1
+                    If Not IsNothing(pc.check_connections) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.check_connections
+                    col += 1
+                    If Not IsNothing(pc.hole_deformation) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.hole_deformation
+                    col += 1
+                    If Not IsNothing(pc.ineff_mod_check) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.ineff_mod_check
+                    col += 1
+                    If Not IsNothing(pc.modified) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = pc.modified
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Unreinforced Pole Sections
+                For Each ps As PoleSection In cp.unreinf_sections
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(ps.section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.section_id, Integer)
+                    col += 1
+                    If Not IsNothing(ps.analysis_section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.analysis_section_id, Integer)
+                    col += 1
+                    If Not IsNothing(ps.elev_bot) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.elev_bot, Double)
+                    col += 1
+                    If Not IsNothing(ps.elev_top) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.elev_top, Double)
+                    col += 1
+                    If Not IsNothing(ps.length_section) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.length_section, Double)
+                    col += 1
+                    If Not IsNothing(ps.length_splice) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.length_splice, Double)
+                    col += 1
+                    If Not IsNothing(ps.num_sides) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.num_sides, Integer)
+                    col += 1
+                    If Not IsNothing(ps.diam_bot) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.diam_bot, Double)
+                    col += 1
+                    If Not IsNothing(ps.diam_top) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.diam_top, Double)
+                    col += 1
+                    If Not IsNothing(ps.wall_thickness) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.wall_thickness, Double)
+                    col += 1
+                    If Not IsNothing(ps.bend_radius) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.bend_radius, Double)
+                    col += 1
+                    If Not IsNothing(ps.steel_grade_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.steel_grade_id, Integer)
+                    col += 1
+                    'If Not IsNothing(ps.pole_type) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = ps.pole_type
+                    col += 1
+                    If Not IsNothing(ps.section_name) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = ps.section_name
+                    col += 1
+                    'If Not IsNothing(ps.socket_length) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.socket_length, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.weight_mult) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.weight_mult, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.wp_mult) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.wp_mult, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.af_factor) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.af_factor, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.ar_factor) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.ar_factor, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.round_area_ratio) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.round_area_ratio, Double)
+                    'col += 1
+                    'If Not IsNothing(ps.flat_area_ratio) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.flat_area_ratio, Double)
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Reinforced Pole Sections
+                For Each prs As PoleReinfSection In cp.reinf_sections
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(prs.section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.section_id, Integer)
+                    col += 1
+                    If Not IsNothing(prs.analysis_section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.analysis_section_id, Integer)
+                    col += 1
+                    If Not IsNothing(prs.elev_bot) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.elev_bot, Double)
+                    col += 1
+                    If Not IsNothing(prs.elev_top) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.elev_top, Double)
+                    col += 1
+                    If Not IsNothing(prs.length_section) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.length_section, Double)
+                    col += 1
+                    If Not IsNothing(prs.length_splice) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.length_splice, Double)
+                    col += 1
+                    If Not IsNothing(prs.num_sides) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.num_sides, Integer)
+                    col += 1
+                    If Not IsNothing(prs.diam_bot) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.diam_bot, Double)
+                    col += 1
+                    If Not IsNothing(prs.diam_top) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.diam_top, Double)
+                    col += 1
+                    If Not IsNothing(prs.wall_thickness) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.wall_thickness, Double)
+                    col += 1
+                    If Not IsNothing(prs.bend_radius) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.bend_radius, Double)
+                    col += 1
+                    If Not IsNothing(prs.steel_grade_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.steel_grade_id, Integer)
+                    col += 1
+                    'If Not IsNothing(prs.pole_type) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = prs.pole_type
+                    col += 1
+                    If Not IsNothing(prs.weight_mult) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.weight_mult, Double)
+                    col += 1
+                    If Not IsNothing(prs.section_name) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = prs.section_name
+                    col += 1
+                    'If Not IsNothing(prs.socket_length) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.socket_length, Double)
+                    'col += 1
+                    'If Not IsNothing(prs.wp_mult) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.wp_mult, Double)
+                    'col += 1
+                    'If Not IsNothing(prs.af_factor) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.af_factor, Double)
+                    'col += 1
+                    'If Not IsNothing(prs.ar_factor) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.ar_factor, Double)
+                    'col += 1
+                    'If Not IsNothing(prs.round_area_ratio) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.round_area_ratio, Double)
+                    'col += 1
+                    'If Not IsNothing(prs.flat_area_ratio) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.flat_area_ratio, Double)
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Reinforcement Groups
+                For Each prg As PoleReinfGroup In cp.reinf_groups
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(prg.reinf_group_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.reinf_group_id, Integer)
+                    col += 1
+                    If Not IsNothing(prg.elev_bot_actual) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.elev_bot_actual, Double)
+                    col += 1
+                    If Not IsNothing(prg.elev_bot_eff) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.elev_bot_eff, Double)
+                    col += 1
+                    If Not IsNothing(prg.elev_top_actual) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.elev_top_actual, Double)
+                    col += 1
+                    If Not IsNothing(prg.elev_top_eff) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.elev_top_eff, Double)
+                    col += 1
+                    If Not IsNothing(prg.reinf_db_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.reinf_db_id, Integer)
+                    col += 1
+                    If Not IsNothing(prg.qty) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.qty, Integer)
+
+
+                    'Individual Reinforcement Details 
+                    drow = 3
+                    For Each prd As PoleReinfDetail In prg.reinf_ids
+
+                        'If prd.reinf_group_id = prg.reinf_group_id Then '--Need help setting up subtable. reinf_group_id is not a field within PoleReinfDetail
+
+                        dcol = 1
+
+                            If Not IsNothing(prg.reinf_group_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prg.reinf_group_id, Integer)
+                            dcol += 1
+                            If Not IsNothing(prd.reinf_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.reinf_id, Integer)
+                            dcol += 1
+                            If Not IsNothing(prd.pole_flat) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.pole_flat, Integer)
+                            dcol += 1
+                            If Not IsNothing(prd.horizontal_offset) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.horizontal_offset, Double)
+                            dcol += 1
+                            If Not IsNothing(prd.rotation) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.rotation, Double)
+                            dcol += 1
+                            If Not IsNothing(prd.note) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = prd.note
+
+                            drow += 1
+
+                        'End If
+
+                    Next
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Interference Groups
+                For Each pig As PoleIntGroup In cp.int_groups
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(pig.interference_group_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.interference_group_id, Integer)
+                    col += 1
+                    If Not IsNothing(pig.elev_bot) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.elev_bot, Double)
+                    col += 1
+                    If Not IsNothing(pig.elev_top) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.elev_top, Double)
+                    col += 1
+                    If Not IsNothing(pig.width) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.width, Double)
+                    col += 1
+                    If Not IsNothing(pig.description) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = pig.description
+
+                    'Individual Interference Details
+                    drow = 3
+                    For Each pid As PoleIntDetail In pig.int_ids
+
+                        'If pid.interference_id = pig.interference_group_id Then '--Need help setting up subtable. reinf_group_id is not a field within PoleReinfDetail
+
+                        dcol = 1
+
+                            If Not IsNothing(pig.interference_group_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pig.interference_group_id, Integer)
+                            dcol += 1
+                            If Not IsNothing(pid.interference_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pid.interference_id, Integer)
+                            dcol += 1
+                            If Not IsNothing(pid.pole_flat) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pid.pole_flat, Integer)
+                            dcol += 1
+                            If Not IsNothing(pid.horizontal_offset) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pid.horizontal_offset, Double)
+                            dcol += 1
+                            If Not IsNothing(pid.rotation) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pid.rotation, Double)
+                            dcol += 1
+                            If Not IsNothing(pid.note) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = pid.note
+
+                            drow += 1
+
+                        'End If
+
+                    Next
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Reinforced Pole Section Results
+                For Each prr As PoleReinfResults In cp.reinf_section_results
+
+                    col = 1
+
+                    If Not IsNothing(prr.work_order_seq_num) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.work_order_seq_num, Double)
+                    col += 1
+                    If Not IsNothing(prr.section_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.section_id, Integer)
+                    col += 1
+                    If Not IsNothing(prr.analysis_section_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.analysis_section_id, Integer)
+                    col += 1
+                    If Not IsNothing(prr.reinf_group_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.reinf_group_id, Integer)
+                    col += 1
+                    If Not IsNothing(prr.result_lkup_value) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.result_lkup_value, Integer)
+                    col += 1
+                    If Not IsNothing(prr.rating) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.rating, Double)
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Custom Reinforcement Properties
+                For Each pr As PropReinf In cp.reinfs
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(pr.reinf_db_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.reinf_db_id, Integer)
+                    col += 1
+                    If Not IsNothing(pr.reinf_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.reinf_id, Integer)
+                    col += 1
+                    If Not IsNothing(pr.name) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.name
+                    col += 1
+                    If Not IsNothing(pr.type) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.type
+                    col += 1
+                    If Not IsNothing(pr.b) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.b, Double)
+                    col += 1
+                    If Not IsNothing(pr.h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.h, Double)
+                    col += 1
+                    If Not IsNothing(pr.sr_diam) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.sr_diam, Double)
+                    col += 1
+                    If Not IsNothing(pr.channel_thkns_web) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.channel_thkns_web, Double)
+                    col += 1
+                    If Not IsNothing(pr.channel_thkns_flange) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.channel_thkns_flange, Double)
+                    col += 1
+                    If Not IsNothing(pr.channel_eo) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.channel_eo, Double)
+                    col += 1
+                    If Not IsNothing(pr.channel_J) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.channel_J, Double)
+                    col += 1
+                    If Not IsNothing(pr.channel_Cw) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.channel_Cw, Double)
+                    col += 1
+                    If Not IsNothing(pr.area_gross) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.area_gross, Double)
+                    col += 1
+                    If Not IsNothing(pr.centroid) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.centroid, Double)
+                    col += 1
+                    If Not IsNothing(pr.istension) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.istension
+                    col += 1
+                    If Not IsNothing(pr.matl_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.matl_id, Integer)
+                    col += 1
+                    If Not IsNothing(pr.Ix) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.Ix, Double)
+                    col += 1
+                    If Not IsNothing(pr.Iy) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.Iy, Double)
+                    col += 1
+                    If Not IsNothing(pr.Lu) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.Lu, Double)
+                    col += 1
+                    If Not IsNothing(pr.Kx) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.Kx, Double)
+                    col += 1
+                    If Not IsNothing(pr.Ky) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.Ky, Double)
+                    col += 1
+                    If Not IsNothing(pr.bolt_hole_size) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_hole_size, Double)
+                    col += 1
+                    If Not IsNothing(pr.area_net) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.area_net, Double)
+                    col += 1
+                    If Not IsNothing(pr.shear_lag) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.shear_lag, Double)
+                    col += 1
+                    If Not IsNothing(pr.connection_type_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.connection_type_bot
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revF_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revF_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revG_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revG_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revH_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revH_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.bolt_id_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_id_bot, Integer)
+                    col += 1
+                    If Not IsNothing(pr.bolt_N_or_X_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.bolt_N_or_X_bot
+                    col += 1
+                    If Not IsNothing(pr.bolt_num_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_num_bot, Integer)
+                    col += 1
+                    If Not IsNothing(pr.bolt_spacing_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_spacing_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.bolt_edge_dist_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_edge_dist_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.FlangeOrBP_connected_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.FlangeOrBP_connected_bot
+                    col += 1
+                    If Not IsNothing(pr.weld_grade_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_grade_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_type_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.weld_trans_type_bot
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_length_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_length_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_groove_depth_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_groove_depth_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_groove_angle_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_groove_angle_bot, Integer)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_fillet_size_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_fillet_size_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_eff_throat_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_eff_throat_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_type_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.weld_long_type_bot
+                    col += 1
+                    If Not IsNothing(pr.weld_long_length_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_length_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_fillet_size_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_fillet_size_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_eff_throat_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_eff_throat_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.top_bot_connections_symmetrical) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.top_bot_connections_symmetrical
+                    col += 1
+                    If Not IsNothing(pr.connection_type_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.connection_type_top
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revF_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revF_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revG_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revG_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.connection_cap_revH_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.connection_cap_revH_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.bolt_id_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_id_top, Integer)
+                    col += 1
+                    If Not IsNothing(pr.bolt_N_or_X_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.bolt_N_or_X_top
+                    col += 1
+                    If Not IsNothing(pr.bolt_num_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_num_top, Integer)
+                    col += 1
+                    If Not IsNothing(pr.bolt_spacing_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_spacing_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.bolt_edge_dist_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.bolt_edge_dist_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.FlangeOrBP_connected_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.FlangeOrBP_connected_top
+                    col += 1
+                    If Not IsNothing(pr.weld_grade_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_grade_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_type_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.weld_trans_type_top
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_length_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_length_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_groove_depth_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_groove_depth_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_groove_angle_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_groove_angle_top, Integer)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_fillet_size_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_fillet_size_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_trans_eff_throat_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_trans_eff_throat_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_type_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pr.weld_long_type_top
+                    col += 1
+                    If Not IsNothing(pr.weld_long_length_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_length_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_fillet_size_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_fillet_size_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.weld_long_eff_throat_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.weld_long_eff_throat_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.conn_length_bot) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.conn_length_bot, Double)
+                    col += 1
+                    If Not IsNothing(pr.conn_length_top) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.conn_length_top, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_xx_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_xx_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_yy_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_yy_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_yield_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_yield_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_rupture_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_rupture_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_shear_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_shear_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_bot_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_bot_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_top_f) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_top_f, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_xx_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_xx_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_yy_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_yy_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_yield_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_yield_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_rupture_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_rupture_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_shear_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_shear_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_bot_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_bot_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_top_g) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_top_g, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_xx_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_xx_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_comp_yy_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_comp_yy_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_yield_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_yield_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_tens_rupture_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_tens_rupture_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_shear_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_shear_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_bolt_shear_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_bolt_shear_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_nodeform_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_nodeform_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltshaft_bearing_deform_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltshaft_bearing_deform_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_nodeform_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_nodeform_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_boltreinf_bearing_deform_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_boltreinf_bearing_deform_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_bot_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_bot_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_trans_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_trans_top_h, Double)
+                    col += 1
+                    If Not IsNothing(pr.cap_weld_long_top_h) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pr.cap_weld_long_top_h, Double)
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Custom Bolt Properties
+                For Each pb As PropBolt In cp.bolts
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(pb.bolt_db_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_db_id, Integer)
+                    col += 1
+                    If Not IsNothing(pb.bolt_id) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_id, Integer)
+                    col += 1
+                    If Not IsNothing(pb.name) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pb.name
+                    col += 1
+                    If Not IsNothing(pb.description) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pb.description
+                    col += 1
+                    If Not IsNothing(pb.diam) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.diam, Double)
+                    col += 1
+                    If Not IsNothing(pb.area) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.area, Double)
+                    col += 1
+                    If Not IsNothing(pb.fu_bolt) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.fu_bolt, Double)
+                    col += 1
+                    If Not IsNothing(pb.sleeve_diam_out) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.sleeve_diam_out, Double)
+                    col += 1
+                    If Not IsNothing(pb.sleeve_diam_in) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.sleeve_diam_in, Double)
+                    col += 1
+                    If Not IsNothing(pb.fu_sleeve) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.fu_sleeve, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_n_sleeve_shear_revF) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_n_sleeve_shear_revF, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_x_sleeve_shear_revF) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_x_sleeve_shear_revF, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_n_sleeve_shear_revG) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_n_sleeve_shear_revG, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_x_sleeve_shear_revG) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_x_sleeve_shear_revG, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_n_sleeve_shear_revH) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_n_sleeve_shear_revH, Double)
+                    col += 1
+                    If Not IsNothing(pb.bolt_x_sleeve_shear_revH) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = CType(pb.bolt_x_sleeve_shear_revH, Double)
+                    col += 1
+                    If Not IsNothing(pb.rb_applied_revH) Then .Worksheets("Reinforcements (SAPI)").Cells(row, col).Value = pb.rb_applied_revH
+
+                    row += 1
+
+                Next
+
+                row = 3
+
+                'Custom Material Properties
+                For Each pm As PropMatl In cp.matls
+
+                    col = 1
+
+                    If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Materials (SAPI)").Range("").Value = CType(cp.pole_structure_id, Integer)
+                    col += 1
+                    If Not IsNothing(pm.matl_db_id) Then .Worksheets("Materials (SAPI)").Range("").Value = CType(pm.matl_db_id, Integer)
+                    col += 1
+                    If Not IsNothing(pm.matl_id) Then .Worksheets("Materials (SAPI)").Range("").Value = CType(pm.matl_id, Integer)
+                    col += 1
+                    If Not IsNothing(pm.name) Then .Worksheets("Materials (SAPI)").Range("").Value = pm.name
+                    col += 1
+                    If Not IsNothing(pm.fy) Then .Worksheets("Materials (SAPI)").Range("").Value = CType(pm.fy, Double)
+                    col += 1
+                    If Not IsNothing(pm.fu) Then .Worksheets("Materials (SAPI)").Range("").Value = CType(pm.fu, Double)
+
+                    row += 1
+
+                Next
+
+            End With
+
+            SaveAndCloseCCIpole()
+
+        Next
+
+        'Worksheet Change Events
+        'If pf.pile_group_config = "Circular" Then
+        '    .Worksheets("Moment of Inertia").Visible = False
+        '    .Worksheets("Moment of Inertia (Circle)").Visible = True
+        'Else
+        '    .Worksheets("Moment of Inertia").Visible = True
+        '    .Worksheets("Moment of Inertia (Circle)").Visible = False
+        'End If
+
+    End Sub
+
+    Private Function GetExcelColumnName(columnNumber As Integer) As String
+        Dim dividend As Integer = columnNumber
+        Dim columnName As String = String.Empty
+        Dim modulo As Integer
+
+        While dividend > 0
+            modulo = (dividend - 1) Mod 26
+            columnName = Convert.ToChar(65 + modulo).ToString() & columnName
+            dividend = CInt((dividend - modulo) / 26)
+        End While
+
+        Return columnName
+    End Function
+
+    Private Sub LoadNewPole()
+        NewCCIpoleWb.LoadDocument(CCIpoleTemplatePath, CCIpoleFileType)
+        NewCCIpoleWb.BeginUpdate()
+    End Sub
+
+    Private Sub SaveAndCloseCCIpole()
+        NewCCIpoleWb.Calculate()
+        NewCCIpoleWb.EndUpdate()
+        NewCCIpoleWb.SaveDocument(ExcelFilePath, CCIpoleFileType)
+    End Sub
+#End Region
 
 #Region "SQL Insert Statements"
     Private Function InsertPoleCriteria(ByVal pc As PoleCriteria) As String
@@ -1180,7 +1186,7 @@ Partial Public Class DataTransfererCCIpole
         insertString += "," & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
         insertString += "," & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
         insertString += "," & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
-        insertString += "," & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_id_bot), "Null", pr.bolt_id_bot.ToString)
         insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
         insertString += "," & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
         insertString += "," & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
@@ -1202,7 +1208,7 @@ Partial Public Class DataTransfererCCIpole
         insertString += "," & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
         insertString += "," & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
         insertString += "," & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
-        insertString += "," & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
+        insertString += "," & IIf(IsNothing(pr.bolt_id_top), "Null", pr.bolt_id_top.ToString)
         insertString += "," & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
         insertString += "," & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
         insertString += "," & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
@@ -1501,7 +1507,7 @@ Partial Public Class DataTransfererCCIpole
         updateString += ", connection_cap_revF_bot=" & IIf(IsNothing(pr.connection_cap_revF_bot), "Null", pr.connection_cap_revF_bot.ToString)
         updateString += ", connection_cap_revG_bot=" & IIf(IsNothing(pr.connection_cap_revG_bot), "Null", pr.connection_cap_revG_bot.ToString)
         updateString += ", connection_cap_revH_bot=" & IIf(IsNothing(pr.connection_cap_revH_bot), "Null", pr.connection_cap_revH_bot.ToString)
-        updateString += ", bolt_type_id_bot=" & IIf(IsNothing(pr.bolt_type_id_bot), "Null", pr.bolt_type_id_bot.ToString)
+        updateString += ", bolt_id_bot=" & IIf(IsNothing(pr.bolt_id_bot), "Null", pr.bolt_id_bot.ToString)
         updateString += ", bolt_N_or_X_bot=" & IIf(IsNothing(pr.bolt_N_or_X_bot), "Null", "'" & pr.bolt_N_or_X_bot.ToString & "'")
         updateString += ", bolt_num_bot=" & IIf(IsNothing(pr.bolt_num_bot), "Null", pr.bolt_num_bot.ToString)
         updateString += ", bolt_spacing_bot=" & IIf(IsNothing(pr.bolt_spacing_bot), "Null", pr.bolt_spacing_bot.ToString)
@@ -1523,7 +1529,7 @@ Partial Public Class DataTransfererCCIpole
         updateString += ", connection_cap_revF_top=" & IIf(IsNothing(pr.connection_cap_revF_top), "Null", pr.connection_cap_revF_top.ToString)
         updateString += ", connection_cap_revG_top=" & IIf(IsNothing(pr.connection_cap_revG_top), "Null", pr.connection_cap_revG_top.ToString)
         updateString += ", connection_cap_revH_top=" & IIf(IsNothing(pr.connection_cap_revH_top), "Null", pr.connection_cap_revH_top.ToString)
-        updateString += ", bolt_type_id_top=" & IIf(IsNothing(pr.bolt_type_id_top), "Null", pr.bolt_type_id_top.ToString)
+        updateString += ", bolt_id_top=" & IIf(IsNothing(pr.bolt_id_top), "Null", pr.bolt_id_top.ToString)
         updateString += ", bolt_N_or_X_top=" & IIf(IsNothing(pr.bolt_N_or_X_top), "Null", "'" & pr.bolt_N_or_X_top.ToString & "'")
         updateString += ", bolt_num_top=" & IIf(IsNothing(pr.bolt_num_top), "Null", pr.bolt_num_top.ToString)
         updateString += ", bolt_spacing_top=" & IIf(IsNothing(pr.bolt_spacing_top), "Null", pr.bolt_spacing_top.ToString)
@@ -1653,6 +1659,7 @@ Partial Public Class DataTransfererCCIpole
     Private Function CCIpoleSQLDataTables() As List(Of SQLParameter)
         Dim MyParameters As New List(Of SQLParameter)
 
+        MyParameters.Add(New SQLParameter("CCIpole General SQL", "CCIpole (SELECT General).sql"))
         MyParameters.Add(New SQLParameter("CCIpole Criteria SQL", "CCIpole (SELECT Criteria).sql"))
         MyParameters.Add(New SQLParameter("CCIpole Pole Sections SQL", "CCIpole (SELECT Pole Sections).sql"))
         MyParameters.Add(New SQLParameter("CCIpole Pole Reinf Sections SQL", "CCIpole (SELECT Pole Reinf Sections).sql"))
@@ -1671,20 +1678,585 @@ Partial Public Class DataTransfererCCIpole
     Private Function CCIpoleExcelDTParameters() As List(Of EXCELDTParameter)
         Dim MyParameters As New List(Of EXCELDTParameter)
 
-        MyParameters.Add(New EXCELDTParameter("CCIpole Criteria EXCEL", "A2:L3", "Analysis Criteria (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:U20", "Unreinf Pole (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Sections EXCEL", "A2:S200", "Reinf Pole (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Groups EXCEL", "A2:F50", "Reinf Groups (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole General EXCEL", "A2:B3", "Analysis Criteria (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Criteria EXCEL", "B2:J3", "Analysis Criteria (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:V20", "Unreinf Pole (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Sections EXCEL", "A2:V200", "Reinf Pole (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Groups EXCEL", "A2:H50", "Reinf Groups (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Details EXCEL", "A2:F200", "Reinf ID (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:E50", "Interference Groups (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:G50", "Interference Groups (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Int Details EXCEL", "A2:F200", "Interference ID (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:E200", "Reinf Results (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:DV50", "Reinforcements (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:P10", "Bolts (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:D10", "Materials (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:F200", "Reinf Results (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:DX50", "Reinforcements (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:R20", "Bolts (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:F20", "Materials (SAPI)"))
 
         Return MyParameters
     End Function
+#End Region
+
+#Region "Check Changes"
+
+    Function CheckChanges(ByVal xlPole As CCIpole, ByVal sqlPole As CCIpole) As Boolean
+        Dim changesMade As Boolean = False
+
+        'Check Pole Analysis Criteria
+        For Each pac As PoleCriteria In xlPole.criteria
+            For Each sqlpac As PoleCriteria In sqlPole.criteria
+                If pac.criteria_id = sqlpac.criteria_id Then
+                    If Check1Change(pac.upper_structure_type, sqlpac.upper_structure_type, "CCIpole", "Upper_Structure_Type") Then changesMade = True
+                    If Check1Change(pac.analysis_deg, sqlpac.analysis_deg, "CCIpole", "Analysis_Deg") Then changesMade = True
+                    If Check1Change(pac.geom_increment_length, sqlpac.geom_increment_length, "CCIpole", "Geom_Increment_Length") Then changesMade = True
+                    If Check1Change(pac.vnum, sqlpac.vnum, "CCIpole", "Vnum") Then changesMade = True
+                    If Check1Change(pac.check_connections, sqlpac.check_connections, "CCIpole", "Check_Connections") Then changesMade = True
+                    If Check1Change(pac.hole_deformation, sqlpac.hole_deformation, "CCIpole", "Hole_Deformation") Then changesMade = True
+                    If Check1Change(pac.ineff_mod_check, sqlpac.ineff_mod_check, "CCIpole", "Ineff_Mod_Check") Then changesMade = True
+                    If Check1Change(pac.modified, sqlpac.modified, "CCIpole", "Modified") Then changesMade = True
+                    Exit For
+                ElseIf pac.criteria_id = 0 Then
+                    If Check1Change(pac.upper_structure_type, Nothing, "CCIpole", "Upper_Structure_Type") Then changesMade = True
+                    If Check1Change(pac.analysis_deg, Nothing, "CCIpole", "Analysis_Deg") Then changesMade = True
+                    If Check1Change(pac.geom_increment_length, Nothing, "CCIpole", "Geom_Increment_Length") Then changesMade = True
+                    If Check1Change(pac.vnum, Nothing, "CCIpole", "Vnum") Then changesMade = True
+                    If Check1Change(pac.check_connections, Nothing, "CCIpole", "Check_Connections") Then changesMade = True
+                    If Check1Change(pac.hole_deformation, Nothing, "CCIpole", "Hole_Deformation") Then changesMade = True
+                    If Check1Change(pac.ineff_mod_check, Nothing, "CCIpole", "Ineff_Mod_Check") Then changesMade = True
+                    If Check1Change(pac.modified, Nothing, "CCIpole", "Modified") Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+        'Check Unreinf Pole Sections
+        For Each xlps As PoleSection In xlPole.unreinf_sections
+            For Each sqlps As PoleSection In sqlPole.unreinf_sections
+                If xlps.section_id = sqlps.section_id Then
+                    If Check1Change(xlps.analysis_section_id, sqlps.analysis_section_id, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.elev_bot, sqlps.elev_bot, "CCIpole", "Elev_Bot " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.elev_top, sqlps.elev_top, "CCIpole", "Elev_Top " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.length_section, sqlps.length_section, "CCIpole", "Length_Section " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.length_splice, sqlps.length_splice, "CCIpole", "Length_Splice " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.num_sides, sqlps.num_sides, "CCIpole", "Num_Sides " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.diam_bot, sqlps.diam_bot, "CCIpole", "Diam_Bot " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.diam_top, sqlps.diam_top, "CCIpole", "Diam_Top " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.wall_thickness, sqlps.wall_thickness, "CCIpole", "Wall_Thickness " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.bend_radius, sqlps.bend_radius, "CCIpole", "Bend_Radius " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.steel_grade_id, sqlps.steel_grade_id, "CCIpole", "Steel_Grade_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.pole_type, sqlps.pole_type, "CCIpole", "Pole_Type " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.section_name, sqlps.section_name, "CCIpole", "Section_Name " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.socket_length, sqlps.socket_length, "CCIpole", "Socket_Length " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.weight_mult, sqlps.weight_mult, "CCIpole", "Weight_Mult " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.wp_mult, sqlps.wp_mult, "CCIpole", "Wp_Mult " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.af_factor, sqlps.af_factor, "CCIpole", "Af_Factor " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.ar_factor, sqlps.ar_factor, "CCIpole", "Ar_Factor " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.round_area_ratio, sqlps.round_area_ratio, "CCIpole", "Round_Area_Ratio " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.flat_area_ratio, sqlps.flat_area_ratio, "CCIpole", "Flat_Area_Ratio " & xlps.section_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlps.section_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
+                    If Check1Change(xlps.analysis_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.elev_bot, Nothing, "CCIpole", "Elev_Bot " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.elev_top, Nothing, "CCIpole", "Elev_Top " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.length_section, Nothing, "CCIpole", "Length_Section " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.length_splice, Nothing, "CCIpole", "Length_Splice " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.num_sides, Nothing, "CCIpole", "Num_Sides " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.diam_bot, Nothing, "CCIpole", "Diam_Bot " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.diam_top, Nothing, "CCIpole", "Diam_Top " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.wall_thickness, Nothing, "CCIpole", "Wall_Thickness " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.bend_radius, Nothing, "CCIpole", "Bend_Radius " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.steel_grade_id, Nothing, "CCIpole", "Steel_Grade_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.pole_type, Nothing, "CCIpole", "Pole_Type " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.section_name, Nothing, "CCIpole", "Section_Name " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.socket_length, Nothing, "CCIpole", "Socket_Length " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.weight_mult, Nothing, "CCIpole", "Weight_Mult " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.wp_mult, Nothing, "CCIpole", "Wp_Mult " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.af_factor, Nothing, "CCIpole", "Af_Factor " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.ar_factor, Nothing, "CCIpole", "Ar_Factor " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.round_area_ratio, Nothing, "CCIpole", "Round_Area_Ratio " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.flat_area_ratio, Nothing, "CCIpole", "Flat_Area_Ratio " & xlps.section_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+        'Check Reinf Pole Sections
+        For Each xlprs As PoleReinfSection In xlPole.reinf_sections
+            For Each sqlprs As PoleReinfSection In sqlPole.reinf_sections
+                If xlprs.section_id = sqlprs.section_id Then
+                    If Check1Change(xlprs.analysis_section_id, sqlprs.analysis_section_id, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.elev_bot, sqlprs.elev_bot, "CCIpole", "Elev_Bot " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.elev_top, sqlprs.elev_top, "CCIpole", "Elev_Top " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.length_section, sqlprs.length_section, "CCIpole", "Length_Section " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.length_splice, sqlprs.length_splice, "CCIpole", "Length_Splice " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.num_sides, sqlprs.num_sides, "CCIpole", "Num_Sides " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.diam_bot, sqlprs.diam_bot, "CCIpole", "Diam_Bot " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.diam_top, sqlprs.diam_top, "CCIpole", "Diam_Top " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.wall_thickness, sqlprs.wall_thickness, "CCIpole", "Wall_Thickness " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.bend_radius, sqlprs.bend_radius, "CCIpole", "Bend_Radius " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.steel_grade_id, sqlprs.steel_grade_id, "CCIpole", "Steel_Grade_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.pole_type, sqlprs.pole_type, "CCIpole", "Pole_Type " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.weight_mult, sqlprs.weight_mult, "CCIpole", "Weight_Mult " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.section_name, sqlprs.section_name, "CCIpole", "Section_Name " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.socket_length, sqlprs.socket_length, "CCIpole", "Socket_Length " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.wp_mult, sqlprs.wp_mult, "CCIpole", "Wp_Mult " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.af_factor, sqlprs.af_factor, "CCIpole", "Af_Factor " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.ar_factor, sqlprs.ar_factor, "CCIpole", "Ar_Factor " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.round_area_ratio, sqlprs.round_area_ratio, "CCIpole", "Round_Area_Ratio " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.flat_area_ratio, sqlprs.flat_area_ratio, "CCIpole", "Flat_Area_Ratio " & xlprs.section_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlprs.section_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlprs.analysis_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.elev_bot, Nothing, "CCIpole", "Elev_Bot " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.elev_top, Nothing, "CCIpole", "Elev_Top " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.length_section, Nothing, "CCIpole", "Length_Section " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.length_splice, Nothing, "CCIpole", "Length_Splice " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.num_sides, Nothing, "CCIpole", "Num_Sides " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.diam_bot, Nothing, "CCIpole", "Diam_Bot " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.diam_top, Nothing, "CCIpole", "Diam_Top " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.wall_thickness, Nothing, "CCIpole", "Wall_Thickness " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.bend_radius, Nothing, "CCIpole", "Bend_Radius " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.steel_grade_id, Nothing, "CCIpole", "Steel_Grade_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.pole_type, Nothing, "CCIpole", "Pole_Type " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.weight_mult, Nothing, "CCIpole", "Weight_Mult " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.section_name, Nothing, "CCIpole", "Section_Name " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.socket_length, Nothing, "CCIpole", "Socket_Length " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.wp_mult, Nothing, "CCIpole", "Wp_Mult " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.af_factor, Nothing, "CCIpole", "Af_Factor " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.ar_factor, Nothing, "CCIpole", "Ar_Factor " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.round_area_ratio, Nothing, "CCIpole", "Round_Area_Ratio " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.flat_area_ratio, Nothing, "CCIpole", "Flat_Area_Ratio " & xlprs.section_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+
+        'Check Reinf Groups
+        For Each xlprg As PoleReinfGroup In xlPole.reinf_groups
+            For Each sqlprg As PoleReinfGroup In sqlPole.reinf_groups
+                If xlprg.reinf_group_id = sqlprg.reinf_group_id Then
+                    If Check1Change(xlprg.elev_bot_actual, sqlprg.elev_bot_actual, "CCIpole", "Elev_Bot_Actual " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_bot_eff, sqlprg.elev_bot_eff, "CCIpole", "Elev_Bot_Eff " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_top_actual, sqlprg.elev_top_actual, "CCIpole", "Elev_Top_Actual " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_top_eff, sqlprg.elev_top_eff, "CCIpole", "Elev_Top_Eff " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.reinf_db_id, sqlprg.reinf_db_id, "CCIpole", "Reinf_Db_Id " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlprg.reinf_group_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlprg.elev_bot_actual, Nothing, "CCIpole", "Elev_Bot_Actual " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_bot_eff, Nothing, "CCIpole", "Elev_Bot_Eff " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_top_actual, Nothing, "CCIpole", "Elev_Top_Actual " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.elev_top_eff, Nothing, "CCIpole", "Elev_Top_Eff " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlprg.reinf_db_id, Nothing, "CCIpole", "Reinf_Db_Id " & xlprg.reinf_group_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+                'Check Reinf Details
+                For Each xlprd As PoleReinfDetail In xlprg.reinf_ids
+                    For Each sqlprd As PoleReinfDetail In sqlprg.reinf_ids
+                        If xlprd.reinf_id = sqlprd.reinf_id Then
+                            If Check1Change(xlprd.pole_flat, sqlprd.pole_flat, "CCIpole", "Pole_Flat " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.horizontal_offset, sqlprd.horizontal_offset, "CCIpole", "Horizontal_Offset " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.rotation, sqlprd.rotation, "CCIpole", "Rotation " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.note, sqlprd.note, "CCIpole", "Note " & xlprd.reinf_id.ToString) Then changesMade = True
+                            Exit For
+                        ElseIf xlprd.reinf_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                            If Check1Change(xlprd.pole_flat, Nothing, "CCIpole", "Pole_Flat " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.horizontal_offset, Nothing, "CCIpole", "Horizontal_Offset " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.rotation, Nothing, "CCIpole", "Rotation " & xlprd.reinf_id.ToString) Then changesMade = True
+                            If Check1Change(xlprd.note, Nothing, "CCIpole", "Note " & xlprd.reinf_id.ToString) Then changesMade = True
+                            Exit For
+                        End If
+                    Next
+                Next
+            Next
+        Next
+
+        'Check Interference Groups
+        For Each xlpig As PoleIntGroup In xlPole.int_groups
+            For Each sqlpig As PoleIntGroup In sqlPole.int_groups
+                If xlpig.interference_group_id = sqlpig.interference_group_id Then
+                    If Check1Change(xlpig.elev_bot, sqlpig.elev_bot, "CCIpole", "Elev_Bot " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.elev_top, sqlpig.elev_top, "CCIpole", "Elev_Top " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.width, sqlpig.width, "CCIpole", "Width " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.description, sqlpig.description, "CCIpole", "Description " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlpig.interference_group_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlpig.elev_bot, Nothing, "CCIpole", "Elev_Bot " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.elev_top, Nothing, "CCIpole", "Elev_Top " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.width, Nothing, "CCIpole", "Width " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    If Check1Change(xlpig.description, Nothing, "CCIpole", "Description " & xlpig.interference_group_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+
+                'Check Interference Details
+                For Each xlpid As PoleIntDetail In xlpig.int_ids
+                    For Each sqlpid As PoleIntDetail In sqlpig.int_ids
+                        If xlpid.interference_id = sqlpid.interference_id Then
+                            If Check1Change(xlpid.pole_flat, sqlpid.pole_flat, "CCIpole", "Pole_Flat " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.horizontal_offset, sqlpid.horizontal_offset, "CCIpole", "Horizontal_Offset " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.rotation, sqlpid.rotation, "CCIpole", "Rotation " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.note, sqlpid.note, "CCIpole", "Note " & xlpid.interference_id.ToString) Then changesMade = True
+                            Exit For
+                        ElseIf xlpid.interference_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                            If Check1Change(xlpid.pole_flat, Nothing, "CCIpole", "Pole_Flat " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.horizontal_offset, Nothing, "CCIpole", "Horizontal_Offset " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.rotation, Nothing, "CCIpole", "Rotation " & xlpid.interference_id.ToString) Then changesMade = True
+                            If Check1Change(xlpid.note, Nothing, "CCIpole", "Note " & xlpid.interference_id.ToString) Then changesMade = True
+                            Exit For
+                        End If
+                    Next
+                Next
+            Next
+        Next
+
+
+
+
+
+
+        'Check Reinf Results
+        For Each xlprr As PoleReinfResults In xlPole.reinf_section_results
+            For Each sqlprr As PoleReinfResults In sqlPole.reinf_section_results
+                If xlprr.section_id = sqlprr.section_id Then
+                    'If Check1Change(xlprr.work_order_seq_num, sqlprr.work_order_seq_num, "CCIpole", "Work_Order_Seq_Num " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.reinf_group_id, sqlprr.reinf_group_id, "CCIpole", "Reinf_Group_Id " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.result_lkup_value, sqlprr.result_lkup_value, "CCIpole", "Result_Lkup_Value " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.rating, sqlprr.rating, "CCIpole", "Rating " & xlprr.section_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlprr.section_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    'If Check1Change(xlprr.work_order_seq_num, Nothing, "CCIpole", "Work_Order_Seq_Num " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.reinf_group_id, Nothing, "CCIpole", "Reinf_Group_Id " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.result_lkup_value, Nothing, "CCIpole", "Result_Lkup_Value " & xlprr.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprr.rating, Nothing, "CCIpole", "Rating " & xlprr.section_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+
+        'Check Custom Reinforcement Properties
+        For Each xlpr As PropReinf In xlPole.reinfs
+            For Each sqlpr As PropReinf In sqlPole.reinfs
+                If xlpr.reinf_db_id = sqlpr.reinf_db_id Then
+                    If Check1Change(xlpr.name, sqlpr.name, "CCIpole", "Name " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.type, sqlpr.type, "CCIpole", "Type " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.b, sqlpr.b, "CCIpole", "B " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.h, sqlpr.h, "CCIpole", "H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.sr_diam, sqlpr.sr_diam, "CCIpole", "Sr_Diam " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_thkns_web, sqlpr.channel_thkns_web, "CCIpole", "Channel_Thkns_Web " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_thkns_flange, sqlpr.channel_thkns_flange, "CCIpole", "Channel_Thkns_Flange " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_eo, sqlpr.channel_eo, "CCIpole", "Channel_Eo " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_J, sqlpr.channel_J, "CCIpole", "Channel_J " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_Cw, sqlpr.channel_Cw, "CCIpole", "Channel_Cw " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.area_gross, sqlpr.area_gross, "CCIpole", "Area_Gross " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.centroid, sqlpr.centroid, "CCIpole", "Centroid " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.istension, sqlpr.istension, "CCIpole", "Istension " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.matl_id, sqlpr.matl_id, "CCIpole", "Matl_Id " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Ix, sqlpr.Ix, "CCIpole", "Ix " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Iy, sqlpr.Iy, "CCIpole", "Iy " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Lu, sqlpr.Lu, "CCIpole", "Lu " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Kx, sqlpr.Kx, "CCIpole", "Kx " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Ky, sqlpr.Ky, "CCIpole", "Ky " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_hole_size, sqlpr.bolt_hole_size, "CCIpole", "Bolt_Hole_Size " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.area_net, sqlpr.area_net, "CCIpole", "Area_Net " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.shear_lag, sqlpr.shear_lag, "CCIpole", "Shear_Lag " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_type_bot, sqlpr.connection_type_bot, "CCIpole", "Connection_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revF_bot, sqlpr.connection_cap_revF_bot, "CCIpole", "Connection_Cap_Revf_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revG_bot, sqlpr.connection_cap_revG_bot, "CCIpole", "Connection_Cap_Revg_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revH_bot, sqlpr.connection_cap_revH_bot, "CCIpole", "Connection_Cap_Revh_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_id_bot, sqlpr.bolt_id_bot, "CCIpole", "bolt_id_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_N_or_X_bot, sqlpr.bolt_N_or_X_bot, "CCIpole", "Bolt_N_Or_X_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_num_bot, sqlpr.bolt_num_bot, "CCIpole", "Bolt_Num_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_spacing_bot, sqlpr.bolt_spacing_bot, "CCIpole", "Bolt_Spacing_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_edge_dist_bot, sqlpr.bolt_edge_dist_bot, "CCIpole", "Bolt_Edge_Dist_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.FlangeOrBP_connected_bot, sqlpr.FlangeOrBP_connected_bot, "CCIpole", "Flangeorbp_Connected_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_grade_bot, sqlpr.weld_grade_bot, "CCIpole", "Weld_Grade_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_type_bot, sqlpr.weld_trans_type_bot, "CCIpole", "Weld_Trans_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_length_bot, sqlpr.weld_trans_length_bot, "CCIpole", "Weld_Trans_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_depth_bot, sqlpr.weld_groove_depth_bot, "CCIpole", "Weld_Groove_Depth_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_angle_bot, sqlpr.weld_groove_angle_bot, "CCIpole", "Weld_Groove_Angle_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_fillet_size_bot, sqlpr.weld_trans_fillet_size_bot, "CCIpole", "Weld_Trans_Fillet_Size_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_eff_throat_bot, sqlpr.weld_trans_eff_throat_bot, "CCIpole", "Weld_Trans_Eff_Throat_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_type_bot, sqlpr.weld_long_type_bot, "CCIpole", "Weld_Long_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_length_bot, sqlpr.weld_long_length_bot, "CCIpole", "Weld_Long_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_fillet_size_bot, sqlpr.weld_long_fillet_size_bot, "CCIpole", "Weld_Long_Fillet_Size_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_eff_throat_bot, sqlpr.weld_long_eff_throat_bot, "CCIpole", "Weld_Long_Eff_Throat_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.top_bot_connections_symmetrical, sqlpr.top_bot_connections_symmetrical, "CCIpole", "Top_Bot_Connections_Symmetrical " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_type_top, sqlpr.connection_type_top, "CCIpole", "Connection_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revF_top, sqlpr.connection_cap_revF_top, "CCIpole", "Connection_Cap_Revf_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revG_top, sqlpr.connection_cap_revG_top, "CCIpole", "Connection_Cap_Revg_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revH_top, sqlpr.connection_cap_revH_top, "CCIpole", "Connection_Cap_Revh_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_id_top, sqlpr.bolt_id_top, "CCIpole", "bolt_id_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_N_or_X_top, sqlpr.bolt_N_or_X_top, "CCIpole", "Bolt_N_Or_X_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_num_top, sqlpr.bolt_num_top, "CCIpole", "Bolt_Num_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_spacing_top, sqlpr.bolt_spacing_top, "CCIpole", "Bolt_Spacing_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_edge_dist_top, sqlpr.bolt_edge_dist_top, "CCIpole", "Bolt_Edge_Dist_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.FlangeOrBP_connected_top, sqlpr.FlangeOrBP_connected_top, "CCIpole", "Flangeorbp_Connected_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_grade_top, sqlpr.weld_grade_top, "CCIpole", "Weld_Grade_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_type_top, sqlpr.weld_trans_type_top, "CCIpole", "Weld_Trans_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_length_top, sqlpr.weld_trans_length_top, "CCIpole", "Weld_Trans_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_depth_top, sqlpr.weld_groove_depth_top, "CCIpole", "Weld_Groove_Depth_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_angle_top, sqlpr.weld_groove_angle_top, "CCIpole", "Weld_Groove_Angle_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_fillet_size_top, sqlpr.weld_trans_fillet_size_top, "CCIpole", "Weld_Trans_Fillet_Size_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_eff_throat_top, sqlpr.weld_trans_eff_throat_top, "CCIpole", "Weld_Trans_Eff_Throat_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_type_top, sqlpr.weld_long_type_top, "CCIpole", "Weld_Long_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_length_top, sqlpr.weld_long_length_top, "CCIpole", "Weld_Long_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_fillet_size_top, sqlpr.weld_long_fillet_size_top, "CCIpole", "Weld_Long_Fillet_Size_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_eff_throat_top, sqlpr.weld_long_eff_throat_top, "CCIpole", "Weld_Long_Eff_Throat_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.conn_length_bot, sqlpr.conn_length_bot, "CCIpole", "Conn_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.conn_length_top, sqlpr.conn_length_top, "CCIpole", "Conn_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_f, sqlpr.cap_comp_xx_f, "CCIpole", "Cap_Comp_Xx_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_f, sqlpr.cap_comp_yy_f, "CCIpole", "Cap_Comp_Yy_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_f, sqlpr.cap_tens_yield_f, "CCIpole", "Cap_Tens_Yield_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_f, sqlpr.cap_tens_rupture_f, "CCIpole", "Cap_Tens_Rupture_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_f, sqlpr.cap_shear_f, "CCIpole", "Cap_Shear_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_f, sqlpr.cap_bolt_shear_bot_f, "CCIpole", "Cap_Bolt_Shear_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_f, sqlpr.cap_bolt_shear_top_f, "CCIpole", "Cap_Bolt_Shear_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_f, sqlpr.cap_boltshaft_bearing_nodeform_bot_f, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_f, sqlpr.cap_boltshaft_bearing_deform_bot_f, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_f, sqlpr.cap_boltshaft_bearing_nodeform_top_f, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_f, sqlpr.cap_boltshaft_bearing_deform_top_f, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_f, sqlpr.cap_boltreinf_bearing_nodeform_bot_f, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_f, sqlpr.cap_boltreinf_bearing_deform_bot_f, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_f, sqlpr.cap_boltreinf_bearing_nodeform_top_f, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_f, sqlpr.cap_boltreinf_bearing_deform_top_f, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_f, sqlpr.cap_weld_trans_bot_f, "CCIpole", "Cap_Weld_Trans_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_f, sqlpr.cap_weld_long_bot_f, "CCIpole", "Cap_Weld_Long_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_f, sqlpr.cap_weld_trans_top_f, "CCIpole", "Cap_Weld_Trans_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_f, sqlpr.cap_weld_long_top_f, "CCIpole", "Cap_Weld_Long_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_g, sqlpr.cap_comp_xx_g, "CCIpole", "Cap_Comp_Xx_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_g, sqlpr.cap_comp_yy_g, "CCIpole", "Cap_Comp_Yy_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_g, sqlpr.cap_tens_yield_g, "CCIpole", "Cap_Tens_Yield_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_g, sqlpr.cap_tens_rupture_g, "CCIpole", "Cap_Tens_Rupture_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_g, sqlpr.cap_shear_g, "CCIpole", "Cap_Shear_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_g, sqlpr.cap_bolt_shear_bot_g, "CCIpole", "Cap_Bolt_Shear_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_g, sqlpr.cap_bolt_shear_top_g, "CCIpole", "Cap_Bolt_Shear_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_g, sqlpr.cap_boltshaft_bearing_nodeform_bot_g, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_g, sqlpr.cap_boltshaft_bearing_deform_bot_g, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_g, sqlpr.cap_boltshaft_bearing_nodeform_top_g, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_g, sqlpr.cap_boltshaft_bearing_deform_top_g, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_g, sqlpr.cap_boltreinf_bearing_nodeform_bot_g, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_g, sqlpr.cap_boltreinf_bearing_deform_bot_g, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_g, sqlpr.cap_boltreinf_bearing_nodeform_top_g, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_g, sqlpr.cap_boltreinf_bearing_deform_top_g, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_g, sqlpr.cap_weld_trans_bot_g, "CCIpole", "Cap_Weld_Trans_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_g, sqlpr.cap_weld_long_bot_g, "CCIpole", "Cap_Weld_Long_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_g, sqlpr.cap_weld_trans_top_g, "CCIpole", "Cap_Weld_Trans_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_g, sqlpr.cap_weld_long_top_g, "CCIpole", "Cap_Weld_Long_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_h, sqlpr.cap_comp_xx_h, "CCIpole", "Cap_Comp_Xx_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_h, sqlpr.cap_comp_yy_h, "CCIpole", "Cap_Comp_Yy_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_h, sqlpr.cap_tens_yield_h, "CCIpole", "Cap_Tens_Yield_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_h, sqlpr.cap_tens_rupture_h, "CCIpole", "Cap_Tens_Rupture_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_h, sqlpr.cap_shear_h, "CCIpole", "Cap_Shear_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_h, sqlpr.cap_bolt_shear_bot_h, "CCIpole", "Cap_Bolt_Shear_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_h, sqlpr.cap_bolt_shear_top_h, "CCIpole", "Cap_Bolt_Shear_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_h, sqlpr.cap_boltshaft_bearing_nodeform_bot_h, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_h, sqlpr.cap_boltshaft_bearing_deform_bot_h, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_h, sqlpr.cap_boltshaft_bearing_nodeform_top_h, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_h, sqlpr.cap_boltshaft_bearing_deform_top_h, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_h, sqlpr.cap_boltreinf_bearing_nodeform_bot_h, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_h, sqlpr.cap_boltreinf_bearing_deform_bot_h, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_h, sqlpr.cap_boltreinf_bearing_nodeform_top_h, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_h, sqlpr.cap_boltreinf_bearing_deform_top_h, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_h, sqlpr.cap_weld_trans_bot_h, "CCIpole", "Cap_Weld_Trans_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_h, sqlpr.cap_weld_long_bot_h, "CCIpole", "Cap_Weld_Long_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_h, sqlpr.cap_weld_trans_top_h, "CCIpole", "Cap_Weld_Trans_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_h, sqlpr.cap_weld_long_top_h, "CCIpole", "Cap_Weld_Long_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlpr.reinf_db_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlpr.name, Nothing, "CCIpole", "Name " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.type, Nothing, "CCIpole", "Type " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.b, Nothing, "CCIpole", "B " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.h, Nothing, "CCIpole", "H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.sr_diam, Nothing, "CCIpole", "Sr_Diam " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_thkns_web, Nothing, "CCIpole", "Channel_Thkns_Web " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_thkns_flange, Nothing, "CCIpole", "Channel_Thkns_Flange " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_eo, Nothing, "CCIpole", "Channel_Eo " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_J, Nothing, "CCIpole", "Channel_J " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.channel_Cw, Nothing, "CCIpole", "Channel_Cw " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.area_gross, Nothing, "CCIpole", "Area_Gross " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.centroid, Nothing, "CCIpole", "Centroid " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.istension, Nothing, "CCIpole", "Istension " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.matl_id, Nothing, "CCIpole", "Matl_Id " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Ix, Nothing, "CCIpole", "Ix " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Iy, Nothing, "CCIpole", "Iy " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Lu, Nothing, "CCIpole", "Lu " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Kx, Nothing, "CCIpole", "Kx " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.Ky, Nothing, "CCIpole", "Ky " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_hole_size, Nothing, "CCIpole", "Bolt_Hole_Size " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.area_net, Nothing, "CCIpole", "Area_Net " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.shear_lag, Nothing, "CCIpole", "Shear_Lag " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_type_bot, Nothing, "CCIpole", "Connection_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revF_bot, Nothing, "CCIpole", "Connection_Cap_Revf_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revG_bot, Nothing, "CCIpole", "Connection_Cap_Revg_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revH_bot, Nothing, "CCIpole", "Connection_Cap_Revh_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_id_bot, Nothing, "CCIpole", "bolt_id_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_N_or_X_bot, Nothing, "CCIpole", "Bolt_N_Or_X_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_num_bot, Nothing, "CCIpole", "Bolt_Num_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_spacing_bot, Nothing, "CCIpole", "Bolt_Spacing_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_edge_dist_bot, Nothing, "CCIpole", "Bolt_Edge_Dist_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.FlangeOrBP_connected_bot, Nothing, "CCIpole", "Flangeorbp_Connected_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_grade_bot, Nothing, "CCIpole", "Weld_Grade_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_type_bot, Nothing, "CCIpole", "Weld_Trans_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_length_bot, Nothing, "CCIpole", "Weld_Trans_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_depth_bot, Nothing, "CCIpole", "Weld_Groove_Depth_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_angle_bot, Nothing, "CCIpole", "Weld_Groove_Angle_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_fillet_size_bot, Nothing, "CCIpole", "Weld_Trans_Fillet_Size_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_eff_throat_bot, Nothing, "CCIpole", "Weld_Trans_Eff_Throat_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_type_bot, Nothing, "CCIpole", "Weld_Long_Type_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_length_bot, Nothing, "CCIpole", "Weld_Long_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_fillet_size_bot, Nothing, "CCIpole", "Weld_Long_Fillet_Size_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_eff_throat_bot, Nothing, "CCIpole", "Weld_Long_Eff_Throat_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.top_bot_connections_symmetrical, Nothing, "CCIpole", "Top_Bot_Connections_Symmetrical " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_type_top, Nothing, "CCIpole", "Connection_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revF_top, Nothing, "CCIpole", "Connection_Cap_Revf_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revG_top, Nothing, "CCIpole", "Connection_Cap_Revg_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.connection_cap_revH_top, Nothing, "CCIpole", "Connection_Cap_Revh_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_id_top, Nothing, "CCIpole", "bolt_id_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_N_or_X_top, Nothing, "CCIpole", "Bolt_N_Or_X_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_num_top, Nothing, "CCIpole", "Bolt_Num_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_spacing_top, Nothing, "CCIpole", "Bolt_Spacing_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.bolt_edge_dist_top, Nothing, "CCIpole", "Bolt_Edge_Dist_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.FlangeOrBP_connected_top, Nothing, "CCIpole", "Flangeorbp_Connected_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_grade_top, Nothing, "CCIpole", "Weld_Grade_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_type_top, Nothing, "CCIpole", "Weld_Trans_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_length_top, Nothing, "CCIpole", "Weld_Trans_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_depth_top, Nothing, "CCIpole", "Weld_Groove_Depth_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_groove_angle_top, Nothing, "CCIpole", "Weld_Groove_Angle_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_fillet_size_top, Nothing, "CCIpole", "Weld_Trans_Fillet_Size_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_trans_eff_throat_top, Nothing, "CCIpole", "Weld_Trans_Eff_Throat_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_type_top, Nothing, "CCIpole", "Weld_Long_Type_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_length_top, Nothing, "CCIpole", "Weld_Long_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_fillet_size_top, Nothing, "CCIpole", "Weld_Long_Fillet_Size_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.weld_long_eff_throat_top, Nothing, "CCIpole", "Weld_Long_Eff_Throat_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.conn_length_bot, Nothing, "CCIpole", "Conn_Length_Bot " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.conn_length_top, Nothing, "CCIpole", "Conn_Length_Top " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_f, Nothing, "CCIpole", "Cap_Comp_Xx_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_f, Nothing, "CCIpole", "Cap_Comp_Yy_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_f, Nothing, "CCIpole", "Cap_Tens_Yield_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_f, Nothing, "CCIpole", "Cap_Tens_Rupture_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_f, Nothing, "CCIpole", "Cap_Shear_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_f, Nothing, "CCIpole", "Cap_Bolt_Shear_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_f, Nothing, "CCIpole", "Cap_Bolt_Shear_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_f, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_f, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_f, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_f, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_f, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_f, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_f, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_f, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_f, Nothing, "CCIpole", "Cap_Weld_Trans_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_f, Nothing, "CCIpole", "Cap_Weld_Long_Bot_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_f, Nothing, "CCIpole", "Cap_Weld_Trans_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_f, Nothing, "CCIpole", "Cap_Weld_Long_Top_F " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_g, Nothing, "CCIpole", "Cap_Comp_Xx_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_g, Nothing, "CCIpole", "Cap_Comp_Yy_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_g, Nothing, "CCIpole", "Cap_Tens_Yield_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_g, Nothing, "CCIpole", "Cap_Tens_Rupture_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_g, Nothing, "CCIpole", "Cap_Shear_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_g, Nothing, "CCIpole", "Cap_Bolt_Shear_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_g, Nothing, "CCIpole", "Cap_Bolt_Shear_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_g, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_g, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_g, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_g, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_g, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_g, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_g, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_g, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_g, Nothing, "CCIpole", "Cap_Weld_Trans_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_g, Nothing, "CCIpole", "Cap_Weld_Long_Bot_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_g, Nothing, "CCIpole", "Cap_Weld_Trans_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_g, Nothing, "CCIpole", "Cap_Weld_Long_Top_G " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_xx_h, Nothing, "CCIpole", "Cap_Comp_Xx_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_comp_yy_h, Nothing, "CCIpole", "Cap_Comp_Yy_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_yield_h, Nothing, "CCIpole", "Cap_Tens_Yield_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_tens_rupture_h, Nothing, "CCIpole", "Cap_Tens_Rupture_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_shear_h, Nothing, "CCIpole", "Cap_Shear_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_bot_h, Nothing, "CCIpole", "Cap_Bolt_Shear_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_bolt_shear_top_h, Nothing, "CCIpole", "Cap_Bolt_Shear_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_bot_h, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_bot_h, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_nodeform_top_h, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Nodeform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltshaft_bearing_deform_top_h, Nothing, "CCIpole", "Cap_Boltshaft_Bearing_Deform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_bot_h, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_bot_h, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_nodeform_top_h, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Nodeform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_boltreinf_bearing_deform_top_h, Nothing, "CCIpole", "Cap_Boltreinf_Bearing_Deform_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_bot_h, Nothing, "CCIpole", "Cap_Weld_Trans_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_bot_h, Nothing, "CCIpole", "Cap_Weld_Long_Bot_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_trans_top_h, Nothing, "CCIpole", "Cap_Weld_Trans_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpr.cap_weld_long_top_h, Nothing, "CCIpole", "Cap_Weld_Long_Top_H " & xlpr.reinf_db_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+
+        'Check Custom Bolt Properties
+        For Each xlpb As PropBolt In xlPole.bolts
+            For Each sqlpb As PropBolt In sqlPole.bolts
+                If xlpb.bolt_db_id = sqlpb.bolt_db_id Then
+                    If Check1Change(xlpb.name, sqlpb.name, "CCIpole", "Name " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.description, sqlpb.description, "CCIpole", "Description " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.diam, sqlpb.diam, "CCIpole", "Diam " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.area, sqlpb.area, "CCIpole", "Area " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.fu_bolt, sqlpb.fu_bolt, "CCIpole", "Fu_Bolt " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.sleeve_diam_out, sqlpb.sleeve_diam_out, "CCIpole", "Sleeve_Diam_Out " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.sleeve_diam_in, sqlpb.sleeve_diam_in, "CCIpole", "Sleeve_Diam_In " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.fu_sleeve, sqlpb.fu_sleeve, "CCIpole", "Fu_Sleeve " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revF, sqlpb.bolt_n_sleeve_shear_revF, "CCIpole", "Bolt_N_Sleeve_Shear_Revf " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revF, sqlpb.bolt_x_sleeve_shear_revF, "CCIpole", "Bolt_X_Sleeve_Shear_Revf " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revG, sqlpb.bolt_n_sleeve_shear_revG, "CCIpole", "Bolt_N_Sleeve_Shear_Revg " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revG, sqlpb.bolt_x_sleeve_shear_revG, "CCIpole", "Bolt_X_Sleeve_Shear_Revg " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revH, sqlpb.bolt_n_sleeve_shear_revH, "CCIpole", "Bolt_N_Sleeve_Shear_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revH, sqlpb.bolt_x_sleeve_shear_revH, "CCIpole", "Bolt_X_Sleeve_Shear_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.rb_applied_revH, sqlpb.rb_applied_revH, "CCIpole", "Rb_Applied_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlpb.bolt_db_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlpb.name, Nothing, "CCIpole", "Name " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.description, Nothing, "CCIpole", "Description " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.diam, Nothing, "CCIpole", "Diam " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.area, Nothing, "CCIpole", "Area " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.fu_bolt, Nothing, "CCIpole", "Fu_Bolt " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.sleeve_diam_out, Nothing, "CCIpole", "Sleeve_Diam_Out " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.sleeve_diam_in, Nothing, "CCIpole", "Sleeve_Diam_In " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.fu_sleeve, Nothing, "CCIpole", "Fu_Sleeve " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revF, Nothing, "CCIpole", "Bolt_N_Sleeve_Shear_Revf " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revF, Nothing, "CCIpole", "Bolt_X_Sleeve_Shear_Revf " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revG, Nothing, "CCIpole", "Bolt_N_Sleeve_Shear_Revg " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revG, Nothing, "CCIpole", "Bolt_X_Sleeve_Shear_Revg " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_n_sleeve_shear_revH, Nothing, "CCIpole", "Bolt_N_Sleeve_Shear_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.bolt_x_sleeve_shear_revH, Nothing, "CCIpole", "Bolt_X_Sleeve_Shear_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpb.rb_applied_revH, Nothing, "CCIpole", "Rb_Applied_Revh " & xlpb.bolt_db_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+
+        'Check Custom Material Properties
+        For Each xlpm As PropMatl In xlPole.matls
+            For Each sqlpm As PropMatl In sqlPole.matls
+                If xlpm.matl_db_id = sqlpm.matl_db_id Then
+                    If Check1Change(xlpm.name, sqlpm.name, "CCIpole", "Name " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpm.fy, sqlpm.fy, "CCIpole", "Fy " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpm.fu, sqlpm.fu, "CCIpole", "Fu " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    Exit For
+                ElseIf xlpm.matl_db_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(xlpm.name, Nothing, "CCIpole", "Name " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpm.fy, Nothing, "CCIpole", "Fy " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    If Check1Change(xlpm.fu, Nothing, "CCIpole", "Fu " & xlpm.matl_db_id.ToString) Then changesMade = True
+                    Exit For
+                End If
+            Next
+        Next
+
+
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
+    End Function
+
 #End Region
 
 End Class
