@@ -11,7 +11,8 @@ Partial Public Class DataTransfererPile
 
     Public Property Piles As New List(Of Pile)
     Public Property sqlPiles As New List(Of Pile)
-    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Pile Foundation (2.2.1.6).xlsm"
+    'Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Pile Foundation (2.2.1.6).xlsm"
+    Private Property PileTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\Template\Pile Foundation (2.2.1.6).xlsm"
     Private Property PileFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property pileDS As New DataSet
@@ -742,9 +743,9 @@ Partial Public Class DataTransfererPile
         insertString += "," & IIf(IsNothing(pf.pile_spacing_min_asymmetric), "Null", pf.pile_spacing_min_asymmetric.ToString)
         insertString += "," & IIf(IsNothing(pf.quantity_piles_surrounding), "Null", pf.quantity_piles_surrounding.ToString)
         insertString += "," & IIf(IsNothing(pf.pile_cap_reference), "Null", "'" & pf.pile_cap_reference.ToString & "'")
-        'insertString += "," & IIf(IsNothing(pf.tool_version), "Null", "'" & pf.tool_version.ToString & "'")
-        'insertString += "," & IIf(IsNothing(pf.Soil_110), "Null", "'" & pf.Soil_110.ToString & "'")
-        'insertString += "," & IIf(IsNothing(pf.Structural_105), "Null", "'" & pf.Structural_105.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.tool_version), "Null", "'" & pf.tool_version.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.Soil_110), "Null", "'" & pf.Soil_110.ToString & "'")
+        insertString += "," & IIf(IsNothing(pf.Structural_105), "Null", "'" & pf.Structural_105.ToString & "'")
 
         Return insertString
     End Function

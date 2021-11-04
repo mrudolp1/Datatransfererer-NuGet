@@ -831,12 +831,12 @@ Public Class SST_Unit_Base
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
         Try
-            Me.basic_soil_check = CType(UnitBaseDataRow.Item("SoilInteractionBoolean"), Boolean)
+            Me.basic_soil_check = CType(UnitBaseDataRow.Item("basic_soil_check"), Boolean)
         Catch
             Me.basic_soil_check = False
         End Try 'Basic Soil Interaction up to 110% Acceptable?
         Try
-            Me.structural_check = CType(UnitBaseDataRow.Item("StructuralCheckBoolean"), Boolean)
+            Me.structural_check = CType(UnitBaseDataRow.Item("structural_check"), Boolean)
         Catch
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?

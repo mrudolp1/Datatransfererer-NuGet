@@ -14,7 +14,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
     Public Property GuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property sqlGuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
     'Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-12-2021.xlsm"
-    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\Template\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-26-2021.xlsm"
+    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\Template\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"
     Private Property GuyedAnchorBlockFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property gabDB As String
@@ -472,31 +472,35 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                     'SUMMARY
                     If Not IsNothing(gabp.local_anchor_id) Then
                         .Worksheets("SUMMARY").Range("D" & summaryRowStart).Value = CType(gabp.anchor_profile, Integer)
-                        If summaryRowStart - 10 = gabp.local_anchor_id Then
-                            If gabp.anchor_profile = gabp.local_anchor_id Then
-                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
-                            Else
-                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
-                            End If
-                            .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
-                            If gabp.soil_profile = gabp.local_anchor_id Then
-                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
-                            Else
-                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
-                            End If
-                        Else
-                            If gabp.anchor_profile = gabp.local_anchor_id Then
-                                .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
-                                'Else
-                                '    .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
-                            End If
-                            .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
-                            If gabp.soil_profile = gabp.local_anchor_id Then
-                                .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
-                                'Else
-                                '    .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
-                            End If
-                        End If
+                        .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
+                        .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
+                        .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
+
+                        'If summaryRowStart - 10 = gabp.local_anchor_id Then
+                        '    If gabp.anchor_profile = gabp.local_anchor_id Then
+                        '        .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
+                        '    Else
+                        '        .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
+                        '    End If
+                        '    .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
+                        '    If gabp.soil_profile = gabp.local_anchor_id Then
+                        '        .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
+                        '    Else
+                        '        .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
+                        '    End If
+                        'Else
+                        '    If gabp.anchor_profile = gabp.local_anchor_id Then
+                        '        .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = True
+                        '        'Else
+                        '        '    .Worksheets("SUMMARY").Range("G" & summaryRowStart).Value = False
+                        '    End If
+                        '    .Worksheets("SUMMARY").Range("E" & summaryRowStart).Value = CType(gabp.soil_profile, Integer)
+                        '    If gabp.soil_profile = gabp.local_anchor_id Then
+                        '        .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = True
+                        '        'Else
+                        '        '    .Worksheets("SUMMARY").Range("H" & summaryRowStart).Value = False
+                        '    End If
+                        'End If
                     End If
                     '        .Worksheets("SUMMARY").Range("I" & summaryRowStart + CType(dpp.reaction_position, Integer)).Value = False
                     .Worksheets("SUMMARY").Range("I" & summaryRowStart).Value = CType(gabp.ID, Integer)
