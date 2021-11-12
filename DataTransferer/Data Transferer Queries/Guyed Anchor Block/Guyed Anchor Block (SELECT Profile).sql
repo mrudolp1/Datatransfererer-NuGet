@@ -37,11 +37,12 @@ gen.structure_model_xref smx
 ,fnd.anchor_block_details abd 
 ,fnd.anchor_block_profile abp 
 WHERE 
-smx.model_id = sm.id 
+smx.model_id=@ModelID
+AND smx.model_id = sm.id 
 AND sm.foundation_group_id = fg.id 
 AND fd.foundation_group_id = fg.id 
 AND fd.details_id = abd.id 
 AND abp.anchor_id = abd.id 
 --AND fd.foundation_type = @FndType
-AND smx.bus_unit = @BU 
-AND smx.structure_id = @STR_ID
+--AND smx.bus_unit = @BU 
+--AND smx.structure_id = @STR_ID

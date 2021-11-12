@@ -51,6 +51,7 @@ SELECT
     ,ub.basic_soil_check
     ,ub.structural_check
     ,ub.tool_version
+    ,ub.modified
 FROM
     gen.structure_model_xref smx
     ,gen.structure_model sm

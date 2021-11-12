@@ -31,10 +31,10 @@
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.pgSQL = New System.Windows.Forms.TabPage()
         Me.pgTNX = New System.Windows.Forms.TabPage()
-        Me.btnExportTNX = New System.Windows.Forms.Button()
-        Me.btnImportTNX = New System.Windows.Forms.Button()
-        Me.propgridTNXObject = New System.Windows.Forms.PropertyGrid()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.btnImportTNX = New System.Windows.Forms.Button()
+        Me.btnExportTNX = New System.Windows.Forms.Button()
+        Me.propgridTNXObject = New System.Windows.Forms.PropertyGrid()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabControl1.SuspendLayout()
         Me.pgSQL.SuspendLayout()
@@ -110,32 +110,6 @@
         Me.pgTNX.Text = "TNX"
         Me.pgTNX.UseVisualStyleBackColor = True
         '
-        'btnExportTNX
-        '
-        Me.btnExportTNX.Location = New System.Drawing.Point(3, 81)
-        Me.btnExportTNX.Name = "btnExportTNX"
-        Me.btnExportTNX.Size = New System.Drawing.Size(160, 52)
-        Me.btnExportTNX.TabIndex = 2
-        Me.btnExportTNX.Text = "Export TNX"
-        Me.btnExportTNX.UseVisualStyleBackColor = True
-        '
-        'btnImportTNX
-        '
-        Me.btnImportTNX.Location = New System.Drawing.Point(3, 3)
-        Me.btnImportTNX.Name = "btnImportTNX"
-        Me.btnImportTNX.Size = New System.Drawing.Size(160, 52)
-        Me.btnImportTNX.TabIndex = 1
-        Me.btnImportTNX.Text = "Import TNX"
-        Me.btnImportTNX.UseVisualStyleBackColor = True
-        '
-        'propgridTNXObject
-        '
-        Me.propgridTNXObject.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.propgridTNXObject.Location = New System.Drawing.Point(0, 0)
-        Me.propgridTNXObject.Name = "propgridTNXObject"
-        Me.propgridTNXObject.Size = New System.Drawing.Size(325, 201)
-        Me.propgridTNXObject.TabIndex = 3
-        '
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -157,6 +131,32 @@
         Me.SplitContainer1.Size = New System.Drawing.Size(493, 201)
         Me.SplitContainer1.SplitterDistance = 164
         Me.SplitContainer1.TabIndex = 4
+        '
+        'btnImportTNX
+        '
+        Me.btnImportTNX.Location = New System.Drawing.Point(3, 3)
+        Me.btnImportTNX.Name = "btnImportTNX"
+        Me.btnImportTNX.Size = New System.Drawing.Size(160, 52)
+        Me.btnImportTNX.TabIndex = 1
+        Me.btnImportTNX.Text = "Import TNX"
+        Me.btnImportTNX.UseVisualStyleBackColor = True
+        '
+        'btnExportTNX
+        '
+        Me.btnExportTNX.Location = New System.Drawing.Point(3, 81)
+        Me.btnExportTNX.Name = "btnExportTNX"
+        Me.btnExportTNX.Size = New System.Drawing.Size(160, 52)
+        Me.btnExportTNX.TabIndex = 2
+        Me.btnExportTNX.Text = "Export TNX"
+        Me.btnExportTNX.UseVisualStyleBackColor = True
+        '
+        'propgridTNXObject
+        '
+        Me.propgridTNXObject.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.propgridTNXObject.Location = New System.Drawing.Point(0, 0)
+        Me.propgridTNXObject.Name = "propgridTNXObject"
+        Me.propgridTNXObject.Size = New System.Drawing.Size(325, 201)
+        Me.propgridTNXObject.TabIndex = 3
         '
         'frmMain
         '

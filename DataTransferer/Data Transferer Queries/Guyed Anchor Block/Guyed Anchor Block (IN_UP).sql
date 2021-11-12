@@ -92,7 +92,7 @@ BEGIN
 			SELECT @GABID=GABID FROM @GAB
 
 			--INSERT Soil Layers 
-			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+			--INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 
 			--INSERT Profile
 			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
@@ -113,7 +113,7 @@ IF @FndGroupNeeded = 0 --FALSE --if Foundation Group is not Needed
 			SELECT @GABID=GABID FROM @GAB
 
 			--INSERT Soil Layers 
-			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+			--INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 
 			--INSERT Profile
 			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])

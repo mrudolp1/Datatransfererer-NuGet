@@ -517,8 +517,8 @@ Partial Public Class DataTransfererPile
                 End If
                 If Not IsNothing(pf.pile_cap_reference) Then .Worksheets("Input").Range("G47").Value = pf.pile_cap_reference
                 'If Not IsNothing(pf.tool_version) Then .Worksheets("Revision History").Range("Revision").Value = pf.tool_version
-                'If Not IsNothing(pf.Soil_110) Then .Worksheets("Input").Range("Z13").Value = pf.Soil_110
-                'If Not IsNothing(pf.Structural_105) Then .Worksheets("Input").Range("Z14").Value = pf.Structural_105
+                If Not IsNothing(pf.Soil_110) Then .Worksheets("Input").Range("Z13").Value = pf.Soil_110
+                If Not IsNothing(pf.Structural_105) Then .Worksheets("Input").Range("Z14").Value = pf.Structural_105
 
                 If pf.pile_soil_capacity_given = False And pf.pile_shape <> "H-Pile" Then
                     For Each pfSL As PileSoilLayer In pf.soil_layers
@@ -976,8 +976,8 @@ Partial Public Class DataTransfererPile
         If Check1Change(xlPile.quantity_piles_surrounding, sqlPile.quantity_piles_surrounding, "Pile", "Quantity_Piles_Surrounding") Then changesMade = True
         If Check1Change(xlPile.pile_cap_reference, sqlPile.pile_cap_reference, "Pile", "Pile_Cap_Reference") Then changesMade = True
         'If Check1Change(xlPile.tool_version, sqlPile.tool_version, "Pile",  "Tool_Version") Then changesMade = True
-        'If Check1Change(xlPile.Soil_110, sqlPile.Soil_110, "Pile",  "Soil_110") Then changesMade = True
-        'If Check1Change(xlPile.Structural_105, sqlPile.Structural_105, "Pile",  "Structural_105") Then changesMade = True
+        If Check1Change(xlPile.Soil_110, sqlPile.Soil_110, "Pile", "Soil_110") Then changesMade = True
+        If Check1Change(xlPile.Structural_105, sqlPile.Structural_105, "Pile", "Structural_105") Then changesMade = True
 
 
         'Check Soil Layer

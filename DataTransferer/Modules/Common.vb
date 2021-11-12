@@ -5,7 +5,7 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "800476"
+    Public BUNumber As String = "2846182"
     Public STR_ID As String = "A"
     Public CurWO As String = "123456"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref

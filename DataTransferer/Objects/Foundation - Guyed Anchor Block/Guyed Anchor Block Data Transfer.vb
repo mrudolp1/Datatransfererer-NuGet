@@ -100,10 +100,32 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         CreateSQLGuyedAnchorBlocks(sqlGuyedAnchorBlocks)
 
         'If sqlGuyedAnchorBlocks.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+        'For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
+        '    'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+        '    If fnd.anchor_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+        '            For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks 'MRP - UPDATES NEEDED!!! Chackchanges needs updated to apply to multiple objects within the same tool. Only want one foundation group per tool
+        '                'If fnd.ID = sqlfnd.ID Then
+        '                If fnd.anchor_id = sqlfnd.ID Then
+        '                    If CheckChanges(fnd, sqlfnd) Then
+        '                        isModelNeeded = True
+        '                        isfndGroupNeeded = True
+        '                        isGuyedAnchorBlockNeeded = True
+        '                    End If
+        '                    Exit For
+        '                End If
+        '            Next
+
+        '        Else
+        '            'Save the data because nothing exists in sql
+        '            isModelNeeded = True
+        '        isfndGroupNeeded = True
+        '        isGuyedAnchorBlockNeeded = True
+        '    End If
+        'Next
+
         For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
-            'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
-            If fnd.anchor_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
-                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks 'MRP - UPDATES NEEDED!!! Chackchanges needs updated to apply to multiple objects within the same tool. Only want one foundation group per tool
+            If fnd.anchor_id > 0 Then 'can skip loading SQL data if id = 0 (Either first time adding to EDS or guy location has been redefined with new profile ID)
+                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks
                     'If fnd.ID = sqlfnd.ID Then
                     If fnd.anchor_id = sqlfnd.ID Then
                         If CheckChanges(fnd, sqlfnd) Then
@@ -116,13 +138,31 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                 Next
 
             Else
-                'Save the data because nothing exists in sql
-                isModelNeeded = True
-                isfndGroupNeeded = True
-                isGuyedAnchorBlockNeeded = True
+                For Each gabp As GuyedAnchorBlockProfile In fnd.anchor_profiles
+                    If gabp.profile_id > 0 Then
+                        'This portion checks to see if the new guy anchor ID was related to a change based on existing profiles (e.g. updated 1 guy anchor location with new inputs). If so, will report the changes made. 
+                        For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks
+                            For Each sqlgabp As GuyedAnchorBlockProfile In sqlfnd.anchor_profiles
+                                If gabp.profile_id = sqlgabp.ID Then
+                                    If CheckChanges(fnd, sqlfnd) Then
+                                        isModelNeeded = True
+                                        isfndGroupNeeded = True
+                                        isGuyedAnchorBlockNeeded = True
+                                    End If
+                                    Exit For
+                                End If
+                            Next
+                        Next
+                    Else
+                        'Save the data because nothing exists in sql
+                        isModelNeeded = True
+                        isfndGroupNeeded = True
+                        isGuyedAnchorBlockNeeded = True
+                    End If
+                Next
+
             End If
         Next
-
 
         'Dim refID As Integer
         'Dim refCol As String
@@ -192,20 +232,23 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 
         GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("[INSERT ALL GUYED ANCHOR BLOCK DETAILS]", InsertGuyedAnchorBlockDetail(gab))
 
-            If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
-                For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers
-                    Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
+        'If gab.anchor_id = 0 Or IsDBNull(gab.anchor_id) Then
+        For Each gabsl As GuyedAnchorBlockSoilLayer In gab.soil_layers 'Might need to add a line of code similar to Piles
+            Dim tempSoilLayer As String = InsertGuyedAnchorBlockSoilLayer(gabsl)
 
-                    If Not firstOne Then
-                        mySoils += ",(" & tempSoilLayer & ")"
-                    Else
-                        mySoils += "(" & tempSoilLayer & ")"
-                    End If
+            If Not firstOne Then
+                mySoils += ",(" & tempSoilLayer & ")"
+            Else
+                mySoils += "(" & tempSoilLayer & ")"
+            End If
 
-                    firstOne = False
-                Next 'Add Soil Layer INSERT statments
-                GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
-                firstOne = True
+            firstOne = False
+        Next 'Add Soil Layer INSERT statments
+        If firstOne = False Then 'If soil layers exist, store and save soil layers.
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("--INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
+            GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL SOIL LAYERS])", mySoils)
+        End If
+        firstOne = True
 
                 For Each gabp As GuyedAnchorBlockProfile In gab.anchor_profiles
                     Dim tempGuyedAnchorBlockProfile As String = InsertGuyedAnchorBlockProfile(gabp)
@@ -220,7 +263,7 @@ Partial Public Class DataTransfererGuyedAnchorBlock
             Next 'Add Pier Profile INSERT statements
             GuyedAnchorBlockSaver = GuyedAnchorBlockSaver.Replace("([INSERT ALL GUYED ANCHOR BLOCK PROFILES])", myProfiles)
             firstOne = True
-        End If
+        'End If
 
         mySoils = ""
         myProfiles = ""
@@ -747,10 +790,11 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 
                     Next
 
-                    'LOCATION
-                    .Worksheets("Input").Range("Location").Value = firstReaction
+                'LOCATION
+                .Worksheets("Input").Range("Location").Value = firstReaction
+                .Worksheets("Input").Range("CurrentLocation").Value = firstReaction
 
-                End If
+            End If
 
 
         End With
@@ -1070,144 +1114,162 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 #End Region
 
 #Region "Check Changes"
-    Private changeDt As New DataTable
-    Private changeList As New List(Of AnalysisChanges)
+    'Private changeDt As New DataTable
+    'Private changeList As New List(Of AnalysisChanges)
     Function CheckChanges(ByVal xlGuyedAnchorBlock As GuyedAnchorBlock, ByVal sqlGuyedAnchorBlock As GuyedAnchorBlock) As Boolean
         Dim changesMade As Boolean = False
 
-        changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
-        changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        'changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        'changeDt.Columns.Add("WO", Type.GetType("System.String"))
 
-        ''Check Details
-        'If Check1Change(xlGuyedAnchorBlock.anchor_depth, sqlGuyedAnchorBlock.anchor_depth, 1, "Anchor_Depth") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_width, sqlGuyedAnchorBlock.anchor_width, 1, "Anchor_Width") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_thickness, sqlGuyedAnchorBlock.anchor_thickness, 1, "Anchor_Thickness") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_length, sqlGuyedAnchorBlock.anchor_length, 1, "Anchor_Length") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_toe_width, sqlGuyedAnchorBlock.anchor_toe_width, 1, "Anchor_Toe_Width") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_size, sqlGuyedAnchorBlock.anchor_top_rebar_size, 1, "Anchor_Top_Rebar_Size") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_quantity, sqlGuyedAnchorBlock.anchor_top_rebar_quantity, 1, "Anchor_Top_Rebar_Quantity") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_size, sqlGuyedAnchorBlock.anchor_front_rebar_size, 1, "Anchor_Front_Rebar_Size") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_quantity, sqlGuyedAnchorBlock.anchor_front_rebar_quantity, 1, "Anchor_Front_Rebar_Quantity") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_stirrup_size, sqlGuyedAnchorBlock.anchor_stirrup_size, 1, "Anchor_Stirrup_Size") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_diameter, sqlGuyedAnchorBlock.anchor_shaft_diameter, 1, "Anchor_Shaft_Diameter") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_quantity, sqlGuyedAnchorBlock.anchor_shaft_quantity, 1, "Anchor_Shaft_Quantity") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_area_override, sqlGuyedAnchorBlock.anchor_shaft_area_override, 1, "Anchor_Shaft_Area_Override") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, sqlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, 1, "Anchor_Shaft_Shear_Lag_Factor") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.concrete_compressive_strength, sqlGuyedAnchorBlock.concrete_compressive_strength, 1, "Concrete_Compressive_Strength") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.clear_cover, sqlGuyedAnchorBlock.clear_cover, 1, "Clear_Cover") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_yield_strength, sqlGuyedAnchorBlock.anchor_shaft_yield_strength, 1, "Anchor_Shaft_Yield_Strength") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_ultimate_strength, sqlGuyedAnchorBlock.anchor_shaft_ultimate_strength, 1, "Anchor_Shaft_Ultimate_Strength") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.neglect_depth, sqlGuyedAnchorBlock.neglect_depth, 1, "Neglect_Depth") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.groundwater_depth, sqlGuyedAnchorBlock.groundwater_depth, 1, "Groundwater_Depth") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.soil_layer_quantity, sqlGuyedAnchorBlock.soil_layer_quantity, 1, "Soil_Layer_Quantity") Then changesMade = True
+        'Check Details
+        If Check1Change(xlGuyedAnchorBlock.anchor_depth, sqlGuyedAnchorBlock.anchor_depth, "Guyed Anchor Block", "Anchor_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_width, sqlGuyedAnchorBlock.anchor_width, "Guyed Anchor Block", "Anchor_Width") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_thickness, sqlGuyedAnchorBlock.anchor_thickness, "Guyed Anchor Block", "Anchor_Thickness") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_length, sqlGuyedAnchorBlock.anchor_length, "Guyed Anchor Block", "Anchor_Length") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_toe_width, sqlGuyedAnchorBlock.anchor_toe_width, "Guyed Anchor Block", "Anchor_Toe_Width") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_size, sqlGuyedAnchorBlock.anchor_top_rebar_size, "Guyed Anchor Block", "Anchor_Top_Rebar_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_top_rebar_quantity, sqlGuyedAnchorBlock.anchor_top_rebar_quantity, "Guyed Anchor Block", "Anchor_Top_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_size, sqlGuyedAnchorBlock.anchor_front_rebar_size, "Guyed Anchor Block", "Anchor_Front_Rebar_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_front_rebar_quantity, sqlGuyedAnchorBlock.anchor_front_rebar_quantity, "Guyed Anchor Block", "Anchor_Front_Rebar_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_stirrup_size, sqlGuyedAnchorBlock.anchor_stirrup_size, "Guyed Anchor Block", "Anchor_Stirrup_Size") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_diameter, sqlGuyedAnchorBlock.anchor_shaft_diameter, "Guyed Anchor Block", "Anchor_Shaft_Diameter") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_quantity, sqlGuyedAnchorBlock.anchor_shaft_quantity, "Guyed Anchor Block", "Anchor_Shaft_Quantity") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_area_override, sqlGuyedAnchorBlock.anchor_shaft_area_override, "Guyed Anchor Block", "Anchor_Shaft_Area_Override") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, sqlGuyedAnchorBlock.anchor_shaft_shear_lag_factor, "Guyed Anchor Block", "Anchor_Shaft_Shear_Lag_Factor") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.concrete_compressive_strength, sqlGuyedAnchorBlock.concrete_compressive_strength, "Guyed Anchor Block", "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.clear_cover, sqlGuyedAnchorBlock.clear_cover, "Guyed Anchor Block", "Clear_Cover") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_yield_strength, sqlGuyedAnchorBlock.anchor_shaft_yield_strength, "Guyed Anchor Block", "Anchor_Shaft_Yield_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_ultimate_strength, sqlGuyedAnchorBlock.anchor_shaft_ultimate_strength, "Guyed Anchor Block", "Anchor_Shaft_Ultimate_Strength") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.neglect_depth, sqlGuyedAnchorBlock.neglect_depth, "Guyed Anchor Block", "Neglect_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.groundwater_depth, sqlGuyedAnchorBlock.groundwater_depth, "Guyed Anchor Block", "Groundwater_Depth") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.soil_layer_quantity, sqlGuyedAnchorBlock.soil_layer_quantity, "Guyed Anchor Block", "Soil_Layer_Quantity") Then changesMade = True
         'If Check1Change(xlGuyedAnchorBlock.tool_version, sqlGuyedAnchorBlock.tool_version, 1, "Tool_Version") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_section, sqlGuyedAnchorBlock.anchor_shaft_section, 1, "Anchor_Shaft_Section") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_rebar_grade, sqlGuyedAnchorBlock.anchor_rebar_grade, 1, "Anchor_Rebar_Grade") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.anchor_shaft_known, sqlGuyedAnchorBlock.anchor_shaft_known, 1, "Anchor_Shaft_Known") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.basic_soil_check, sqlGuyedAnchorBlock.basic_soil_check, 1, "Basic_Soil_Check") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.structural_check, sqlGuyedAnchorBlock.structural_check, 1, "Structural_Check") Then changesMade = True
-        'If Check1Change(xlGuyedAnchorBlock.rebar_known, sqlGuyedAnchorBlock.rebar_known, 1, "Rebar_Known") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_section, sqlGuyedAnchorBlock.anchor_shaft_section, "Guyed Anchor Block", "Anchor_Shaft_Section") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_rebar_grade, sqlGuyedAnchorBlock.anchor_rebar_grade, "Guyed Anchor Block", "Anchor_Rebar_Grade") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.anchor_shaft_known, sqlGuyedAnchorBlock.anchor_shaft_known, "Guyed Anchor Block", "Anchor_Shaft_Known") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.basic_soil_check, sqlGuyedAnchorBlock.basic_soil_check, "Guyed Anchor Block", "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.structural_check, sqlGuyedAnchorBlock.structural_check, "Guyed Anchor Block", "Structural_Check") Then changesMade = True
+        If Check1Change(xlGuyedAnchorBlock.rebar_known, sqlGuyedAnchorBlock.rebar_known, "Guyed Anchor Block", "Rebar_Known") Then changesMade = True
         'If Check1Change(xlGuyedAnchorBlock.local_anchor_id, sqlGuyedAnchorBlock.local_anchor_id, 1, "Local_Anchor_Id") Then changesMade = True
         'If Check1Change(xlGuyedAnchorBlock.local_anchor_profile, sqlGuyedAnchorBlock.local_anchor_profile, 1, "Local_Anchor_Profile") Then changesMade = True
 
-        ''Check Soil Layer
-        ''If xlGuyedAnchorBlock.soil_layers.Count <> sqlGuyedAnchorBlock.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below
+        'Check Soil Layer
+        'If xlGuyedAnchorBlock.soil_layers.Count <> sqlGuyedAnchorBlock.soil_layers.Count Then changesMade = True 'If want to bypass all the checks below
 
-        'For Each gabsl As GuyedAnchorBlockSoilLayer In xlGuyedAnchorBlock.soil_layers
-        '    For Each sqlgabsl As GuyedAnchorBlockSoilLayer In sqlGuyedAnchorBlock.soil_layers
+        For Each gabsl As GuyedAnchorBlockSoilLayer In xlGuyedAnchorBlock.soil_layers
+            For Each sqlgabsl As GuyedAnchorBlockSoilLayer In sqlGuyedAnchorBlock.soil_layers
 
-        '        If gabsl.soil_layer_id = sqlgabsl.soil_layer_id Then
-        '            If Check1Change(gabsl.bottom_depth, sqlgabsl.bottom_depth, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.effective_soil_density, sqlgabsl.effective_soil_density, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.cohesion, sqlgabsl.cohesion, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.friction_angle, sqlgabsl.friction_angle, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.skin_friction_override_uplift, sqlgabsl.skin_friction_override_uplift, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.spt_blow_count, sqlgabsl.spt_blow_count, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.local_soil_layer_id, sqlgabsl.local_soil_layer_id, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.local_soil_profile, sqlgabsl.local_soil_profile, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            Exit For
-        '        End If
+                If gabsl.soil_layer_id = sqlgabsl.ID Then
+                    If Check1Change(gabsl.bottom_depth, sqlgabsl.bottom_depth, "Guyed Anchor Block", "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.effective_soil_density, sqlgabsl.effective_soil_density, "Guyed Anchor Block", "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.cohesion, sqlgabsl.cohesion, "Guyed Anchor Block", "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.friction_angle, sqlgabsl.friction_angle, "Guyed Anchor Block", "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.skin_friction_override_uplift, sqlgabsl.skin_friction_override_uplift, "Guyed Anchor Block", "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.spt_blow_count, sqlgabsl.spt_blow_count, "Guyed Anchor Block", "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    'If Check1Change(gabsl.local_soil_layer_id, sqlgabsl.local_soil_layer_id, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    'If Check1Change(gabsl.local_soil_profile, sqlgabsl.local_soil_profile, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    Exit For
+                End If
 
-        '        If gabsl.soil_layer_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
-        '            If Check1Change(gabsl.bottom_depth, Nothing, 1, "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.effective_soil_density, Nothing, 1, "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.cohesion, Nothing, 1, "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.friction_angle, Nothing, 1, "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.skin_friction_override_uplift, Nothing, 1, "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.spt_blow_count, Nothing, 1, "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.local_soil_layer_id, Nothing, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            If Check1Change(gabsl.local_soil_profile, Nothing, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
-        '            Exit For
-        '        End If
+                If gabsl.soil_layer_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
+                    If Check1Change(gabsl.bottom_depth, Nothing, "Guyed Anchor Block", "Bottom_Depth" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.effective_soil_density, Nothing, "Guyed Anchor Block", "Effective_Soil_Density" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.cohesion, Nothing, "Guyed Anchor Block", "Cohesion" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.friction_angle, Nothing, "Guyed Anchor Block", "Friction_Angle" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.skin_friction_override_uplift, Nothing, "Guyed Anchor Block", "Ultimate_Skin_Friction_Override_Uplift" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    If Check1Change(gabsl.spt_blow_count, Nothing, "Guyed Anchor Block", "spt_blow_count" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    'If Check1Change(gabsl.local_soil_layer_id, Nothing, 1, "local_soil_layer_id" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    'If Check1Change(gabsl.local_soil_profile, Nothing, 1, "local_soil_profile" & gabsl.soil_layer_id.ToString) Then changesMade = True
+                    Exit For
+                End If
 
-        '    Next
-        'Next
+            Next
+        Next
 
-        ''Guyed Anchor Block Profiles
-        'For Each gabp As GuyedAnchorBlockProfile In xlGuyedAnchorBlock.anchor_profiles
-        '    For Each sqlgabp As GuyedAnchorBlockProfile In sqlGuyedAnchorBlock.anchor_profiles
+        'Guyed Anchor Block Profiles
+        For Each gabp As GuyedAnchorBlockProfile In xlGuyedAnchorBlock.anchor_profiles
+            Dim profilechecked As Boolean = False 'new field added based on different iterations
+            For Each sqlgabp As GuyedAnchorBlockProfile In sqlGuyedAnchorBlock.anchor_profiles
 
-        '        If gabp.ID = sqlgabp.ID Then
-        '            If Check1Change(gabp.reaction_location, sqlgabp.reaction_location, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.anchor_profile, sqlgabp.anchor_profile, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.soil_profile, sqlgabp.soil_profile, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.local_anchor_id, sqlgabp.local_anchor_id, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
-        '            Exit For
-        '        End If
+                If gabp.profile_id = sqlgabp.ID Then
+                    If Check1Change(gabp.reaction_location, sqlgabp.reaction_location, "Guyed Anchor Block", "reaction_location" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.anchor_profile, sqlgabp.anchor_profile, "Guyed Anchor Block", "anchor_profile" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.soil_profile, sqlgabp.soil_profile, "Guyed Anchor Block", "soil_profile" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.local_anchor_id, sqlgabp.local_anchor_id, "Guyed Anchor Block", "local_anchor_id" & gabp.profile_id.ToString) Then changesMade = True
+                    profilechecked = True
+                    Exit For
+                End If
 
-        '        If gabp.ID = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
-        '            If Check1Change(gabp.reaction_location, Nothing, 1, "reaction_location" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.anchor_profile, Nothing, 1, "anchor_profile" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.soil_profile, Nothing, 1, "soil_profile" & gabp.ID.ToString) Then changesMade = True
-        '            If Check1Change(gabp.local_anchor_id, Nothing, 1, "local_anchor_id" & gabp.ID.ToString) Then changesMade = True
-        '            Exit For
-        '        End If
+                If gabp.profile_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
+                    If Check1Change(gabp.reaction_location, Nothing, "Guyed Anchor Block", "reaction_location" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.anchor_profile, Nothing, "Guyed Anchor Block", "anchor_profile" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.soil_profile, Nothing, "Guyed Anchor Block", "soil_profile" & gabp.profile_id.ToString) Then changesMade = True
+                    If Check1Change(gabp.local_anchor_id, Nothing, "Guyed Anchor Block", "local_anchor_id" & gabp.profile_id.ToString) Then changesMade = True
+                    profilechecked = True
+                    Exit For
+                End If
 
-        '    Next
-        'Next
+            Next
+
+            If gabp.profile_id > 0 And profilechecked = False Then 'User copied an existing AR id and overrode another existing location with it. Same logic as if =0 
+                For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks
+                    For Each sqlgabp As GuyedAnchorBlockProfile In sqlfnd.anchor_profiles
+                        If gabp.profile_id = sqlgabp.ID Then
+                            If Check1Change(gabp.reaction_location, sqlgabp.reaction_location, "Guyed Anchor Block", "reaction_location" & gabp.profile_id.ToString) Then changesMade = True
+                            If Check1Change(gabp.anchor_profile, sqlgabp.anchor_profile, "Guyed Anchor Block", "anchor_profile" & gabp.profile_id.ToString) Then changesMade = True
+                            If Check1Change(gabp.soil_profile, sqlgabp.soil_profile, "Guyed Anchor Block", "soil_profile" & gabp.profile_id.ToString) Then changesMade = True
+                            If Check1Change(gabp.local_anchor_id, sqlgabp.local_anchor_id, "Guyed Anchor Block", "local_anchor_id" & gabp.profile_id.ToString) Then changesMade = True
+                            Exit For
+                        End If
+                    Next
+                Next
+            End If
+
+        Next
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary
         Return changesMade
 
     End Function
 
-    Function CreateChangeSummary(ByVal changeDt As DataTable) As String
-        'Sub CreateChangeSummary(ByVal changeDt As DataTable)
-        'Create your string based on data in the datatable
-        Dim summary As String
-        Dim counter As Integer = 0
+    'Function CreateChangeSummary(ByVal changeDt As DataTable) As String
+    '    'Sub CreateChangeSummary(ByVal changeDt As DataTable)
+    '    'Create your string based on data in the datatable
+    '    Dim summary As String
+    '    Dim counter As Integer = 0
 
-        For Each chng As AnalysisChanges In changeList
-            If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
-            End If
+    '    For Each chng As AnalysisChanges In changeList
+    '        If counter = 0 Then
+    '            summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        Else
+    '            summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+    '        End If
 
-            counter += 1
-        Next
+    '        counter += 1
+    '    Next
 
-        'write to text file
-        'End Sub
-    End Function
+    '    'write to text file
+    '    'End Sub
+    'End Function
 
-    Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
-        If newValue <> oldvalue Then
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
-            Return True
-        ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
-            Return True
-        ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
-            changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
-            Return True
-        End If
-    End Function
+    'Function Check1Change(ByVal newValue As Object, ByVal oldvalue As Object, ByVal tolerance As Double, ByVal variable As String) As Boolean
+    '    If newValue <> oldvalue Then
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+    '        Return True
+    '    ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+    '        Return True
+    '    ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+    '        changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+    '        changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, "Guyed Anchor Block Foundations"))
+    '        Return True
+    '    End If
+    'End Function
 #End Region
 
 End Class
