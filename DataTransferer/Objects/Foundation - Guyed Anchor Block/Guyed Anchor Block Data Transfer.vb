@@ -13,8 +13,8 @@ Partial Public Class DataTransfererGuyedAnchorBlock
 
     Public Property GuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property sqlGuyedAnchorBlocks As New List(Of GuyedAnchorBlock)
-    'Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Desktop\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-12-2021.xlsm"
-    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\Template\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"
+    Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Crown Castle USA Inc\ECS - Tools\Tools\Foundations\Guy Anchor Block\SAPI\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"
+    'Private Property GuyedAnchorBlockTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\Template\Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"
     Private Property GuyedAnchorBlockFileType As DocumentFormat = DocumentFormat.Xlsm
 
     Public Property gabDB As String
@@ -1090,6 +1090,21 @@ Partial Public Class DataTransfererGuyedAnchorBlock
     Public Sub Clear()
         ExcelFilePath = ""
         GuyedAnchorBlocks.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In GuyedAnchorBlockExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In GuyedAnchorBlockSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function GuyedAnchorBlockSQLDataTables() As List(Of SQLParameter)

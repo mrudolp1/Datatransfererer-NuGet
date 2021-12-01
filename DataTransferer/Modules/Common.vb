@@ -5,9 +5,9 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "2846182"
+    Public BUNumber As String = "1817123"
     Public STR_ID As String = "A"
-    Public CurWO As String = "123456"
+    Public CurWO As String = "123456789"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
@@ -45,6 +45,15 @@ Public Module Common
 
 
 
+    <DebuggerStepThrough()>
+    Sub dtClearer(ByVal sqlsrc As String)
+        Try
+            If ds.Tables.Contains(sqlsrc) Then
+                ds.Tables(sqlsrc).Clear()
+            End If
+        Catch
+        End Try
+    End Sub
 
 
 
