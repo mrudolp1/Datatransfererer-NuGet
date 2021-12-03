@@ -204,6 +204,11 @@ Partial Public Class frmMain
 
         If eriFd.ShowDialog = DialogResult.OK Then
             tnxObject = New tnxModel(eriFd.FileName)
+            'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
+            'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
+            'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
+            'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
+
             propgridTNXObject.SelectedObject = tnxObject
         End If
     End Sub
@@ -222,7 +227,18 @@ Partial Public Class frmMain
         End If
     End Sub
 
-    Private Sub pgSQL_Click(sender As Object, e As EventArgs) Handles pgSQL.Click
+    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
+        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+
+    End Sub
+
+    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+
+        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+        propgridTNXObject.SelectedObject = tnxObject
     End Sub
 End Class

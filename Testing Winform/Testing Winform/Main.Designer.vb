@@ -32,6 +32,12 @@
         Me.pgSQL = New System.Windows.Forms.TabPage()
         Me.pgTNX = New System.Windows.Forms.TabPage()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.txtStrc = New System.Windows.Forms.TextBox()
+        Me.lblStrc = New System.Windows.Forms.Label()
+        Me.txtBU = New System.Windows.Forms.TextBox()
+        Me.lblBU = New System.Windows.Forms.Label()
+        Me.btnLoadfromEDS = New System.Windows.Forms.Button()
+        Me.btnSavetoEDS = New System.Windows.Forms.Button()
         Me.btnImportTNX = New System.Windows.Forms.Button()
         Me.btnExportTNX = New System.Windows.Forms.Button()
         Me.propgridTNXObject = New System.Windows.Forms.PropertyGrid()
@@ -119,6 +125,12 @@
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.txtStrc)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.lblStrc)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.txtBU)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.lblBU)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.btnLoadfromEDS)
+        Me.SplitContainer1.Panel1.Controls.Add(Me.btnSavetoEDS)
         Me.SplitContainer1.Panel1.Controls.Add(Me.btnImportTNX)
         Me.SplitContainer1.Panel1.Controls.Add(Me.btnExportTNX)
         Me.SplitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -132,20 +144,72 @@
         Me.SplitContainer1.SplitterDistance = 164
         Me.SplitContainer1.TabIndex = 4
         '
+        'txtStrc
+        '
+        Me.txtStrc.Location = New System.Drawing.Point(51, 39)
+        Me.txtStrc.Name = "txtStrc"
+        Me.txtStrc.Size = New System.Drawing.Size(100, 21)
+        Me.txtStrc.TabIndex = 8
+        Me.txtStrc.Text = "A"
+        '
+        'lblStrc
+        '
+        Me.lblStrc.AutoSize = True
+        Me.lblStrc.Location = New System.Drawing.Point(10, 43)
+        Me.lblStrc.Name = "lblStrc"
+        Me.lblStrc.Size = New System.Drawing.Size(30, 13)
+        Me.lblStrc.TabIndex = 7
+        Me.lblStrc.Text = "Strc:"
+        '
+        'txtBU
+        '
+        Me.txtBU.Location = New System.Drawing.Point(51, 12)
+        Me.txtBU.Name = "txtBU"
+        Me.txtBU.Size = New System.Drawing.Size(100, 21)
+        Me.txtBU.TabIndex = 6
+        Me.txtBU.Text = "800000"
+        '
+        'lblBU
+        '
+        Me.lblBU.AutoSize = True
+        Me.lblBU.Location = New System.Drawing.Point(10, 16)
+        Me.lblBU.Name = "lblBU"
+        Me.lblBU.Size = New System.Drawing.Size(24, 13)
+        Me.lblBU.TabIndex = 5
+        Me.lblBU.Text = "BU:"
+        '
+        'btnLoadfromEDS
+        '
+        Me.btnLoadfromEDS.Location = New System.Drawing.Point(3, 128)
+        Me.btnLoadfromEDS.Name = "btnLoadfromEDS"
+        Me.btnLoadfromEDS.Size = New System.Drawing.Size(160, 21)
+        Me.btnLoadfromEDS.TabIndex = 4
+        Me.btnLoadfromEDS.Text = "Load From EDS"
+        Me.btnLoadfromEDS.UseVisualStyleBackColor = True
+        '
+        'btnSavetoEDS
+        '
+        Me.btnSavetoEDS.Location = New System.Drawing.Point(3, 100)
+        Me.btnSavetoEDS.Name = "btnSavetoEDS"
+        Me.btnSavetoEDS.Size = New System.Drawing.Size(160, 21)
+        Me.btnSavetoEDS.TabIndex = 3
+        Me.btnSavetoEDS.Text = "Save to EDS"
+        Me.btnSavetoEDS.UseVisualStyleBackColor = True
+        '
         'btnImportTNX
         '
-        Me.btnImportTNX.Location = New System.Drawing.Point(3, 3)
+        Me.btnImportTNX.Location = New System.Drawing.Point(3, 72)
         Me.btnImportTNX.Name = "btnImportTNX"
-        Me.btnImportTNX.Size = New System.Drawing.Size(160, 52)
+        Me.btnImportTNX.Size = New System.Drawing.Size(160, 21)
         Me.btnImportTNX.TabIndex = 1
         Me.btnImportTNX.Text = "Import TNX"
         Me.btnImportTNX.UseVisualStyleBackColor = True
         '
         'btnExportTNX
         '
-        Me.btnExportTNX.Location = New System.Drawing.Point(3, 81)
+        Me.btnExportTNX.Location = New System.Drawing.Point(3, 156)
         Me.btnExportTNX.Name = "btnExportTNX"
-        Me.btnExportTNX.Size = New System.Drawing.Size(160, 52)
+        Me.btnExportTNX.Size = New System.Drawing.Size(160, 21)
         Me.btnExportTNX.TabIndex = 2
         Me.btnExportTNX.Text = "Export TNX"
         Me.btnExportTNX.UseVisualStyleBackColor = True
@@ -174,6 +238,7 @@
         Me.pgSQL.ResumeLayout(False)
         Me.pgTNX.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel1.PerformLayout()
         Me.SplitContainer1.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
@@ -191,6 +256,12 @@
     Friend WithEvents btnImportTNX As Button
     Friend WithEvents propgridTNXObject As PropertyGrid
     Friend WithEvents SplitContainer1 As SplitContainer
+    Friend WithEvents txtStrc As TextBox
+    Friend WithEvents lblStrc As Label
+    Friend WithEvents txtBU As TextBox
+    Friend WithEvents lblBU As Label
+    Friend WithEvents btnLoadfromEDS As Button
+    Friend WithEvents btnSavetoEDS As Button
 
 #End Region
 

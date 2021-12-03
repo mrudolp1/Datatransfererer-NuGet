@@ -4,146 +4,646 @@ Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary T
 Imports System.ComponentModel
 Imports System.Data
 Imports System.IO
+Imports System.Security.Principal
+
+Imports System.Runtime.CompilerServices
+
+Public Module Extensions
+
+    <Extension()>
+    Public Function ToDBString(aString As String, Optional isValue As Boolean = True) As String
+        If aString = String.Empty Or aString Is Nothing Then
+            Return "NULL"
+        Else
+            If isValue Then aString = "'" & aString & "'"
+            Return aString
+        End If
+    End Function
+
+    <Extension()>
+    Public Function AddtoDBString(astring As String, ByRef newString As String, Optional isValue As Boolean = True) As String
+        'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+        If astring = String.Empty Or astring Is Nothing Then
+            astring = newString.ToDBString(isValue)
+        Else
+            astring += ", " & newString.ToDBString(isValue)
+        End If
+        Return astring
+    End Function
+
+End Module
+
+Partial Public Class tnxDatabaseEntry
+    Private _ID As Integer?
+
+    <Category("TNX Structure Section"), Description(""), DisplayName("Id")>
+    Public Property ID() As Integer?
+        Get
+            Return Me._ID
+        End Get
+        Set
+            Me._ID = Value
+        End Set
+    End Property
+
+    Public Function CompareMe(compare As tnxDatabaseEntry, Optional SetUpdateNeeded As Boolean = False) As Boolean
+        Dim newMe As tnxDatabaseEntry = Me
+        Dim result As Boolean
+        newMe.ID = compare.ID
+        result = Me Is compare
+        'If SetUpdateNeeded Then Me._UpdateNeeded = result
+        If SetUpdateNeeded Then Me._ID = compare.ID
+        Return result
+    End Function
+
+#Region "Helper Functions"
+    Public Function trueFalseYesNo(input As String) As Boolean?
+        If input.ToLower = "yes" Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    Public Function trueFalseYesNo(input As Boolean?) As String
+        If input Then
+            Return "Yes"
+        Else
+            Return "No"
+        End If
+    End Function
+    Public Function BooltoBitString(input As Boolean?) As String
+        If input Then
+            Return "1"
+        Else
+            Return "0"
+        End If
+    End Function
+
+    Function CNullInt(ByVal item As Object) As Integer?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return CInt(item)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Function CNullDbl(ByVal item As Object) As Double?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return CDbl(item)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Function CNullBool(ByVal item As Object) As Boolean?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return CBool(item)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Function CNullStr(ByVal item As Object) As String
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return CStr(item)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+#End Region
+
+End Class
 
 Partial Public Class tnxModel
+    Inherits tnxDatabaseEntry
 
-    Private prop_settings As New tnxSettings()
-    Private prop_solutionSettings As New tnxSolutionSettings()
-    Private prop_MTOSettings As New tnxMTOSettings()
-    Private prop_reportSettings As New tnxReportSettings()
-    Private prop_CCIReport As New tnxCCIReport()
-    Private prop_code As New tnxCode()
-    Private prop_options As New tnxOptions()
-    Private prop_geometry As New tnxGeometry()
-    Private prop_feedLines As New List(Of tnxFeedLine)
-    Private prop_discreteLoads As New List(Of tnxDiscreteLoad)
-    Private prop_dishes As New List(Of tnxDish)
-    Private prop_userForces As New List(Of tnxUserForce)
-    Private prop_otherLines As New List(Of String())
+#Region "Define"
+    Private _filePath As String
+    Private _database As New tnxDatabase()
+    Private _settings As New tnxSettings()
+    Private _solutionSettings As New tnxSolutionSettings()
+    Private _MTOSettings As New tnxMTOSettings()
+    Private _reportSettings As New tnxReportSettings()
+    Private _CCIReport As New tnxCCIReport()
+    Private _code As New tnxCode()
+    Private _options As New tnxOptions()
+    Private _geometry As New tnxGeometry()
+    Private _feedLines As New List(Of tnxFeedLine)
+    Private _discreteLoads As New List(Of tnxDiscreteLoad)
+    Private _dishes As New List(Of tnxDish)
+    Private _userForces As New List(Of tnxUserForce)
+    Private _otherLines As New List(Of String())
 
-
-
-
+    <Category("TNX"), Description(""), DisplayName("filePath")>
+    Public Property filePath() As String
+        Get
+            Return Me._filePath
+        End Get
+        Set
+            Me._filePath = Value
+        End Set
+    End Property
+    <Category("TNX"), Description(""), DisplayName("tnxDatabase")>
+    Public Property database() As tnxDatabase
+        Get
+            Return Me._database
+        End Get
+        Set
+            Me._database = Value
+        End Set
+    End Property
     <Category("TNX"), Description(""), DisplayName("Settings")>
     Public Property settings() As tnxSettings
         Get
-            Return Me.prop_settings
+            Return Me._settings
         End Get
         Set
-            Me.prop_settings = Value
+            Me._settings = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Solution Settings")>
     Public Property solutionSettings() As tnxSolutionSettings
         Get
-            Return Me.prop_solutionSettings
+            Return Me._solutionSettings
         End Get
         Set
-            Me.prop_solutionSettings = Value
+            Me._solutionSettings = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("MTO Settings")>
     Public Property MTOSettings() As tnxMTOSettings
         Get
-            Return Me.prop_MTOSettings
+            Return Me._MTOSettings
         End Get
         Set
-            Me.prop_MTOSettings = Value
+            Me._MTOSettings = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Report Settings")>
     Public Property reportSettings() As tnxReportSettings
         Get
-            Return Me.prop_reportSettings
+            Return Me._reportSettings
         End Get
         Set
-            Me.prop_reportSettings = Value
+            Me._reportSettings = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("CCI Report")>
     Public Property CCIReport() As tnxCCIReport
         Get
-            Return Me.prop_CCIReport
+            Return Me._CCIReport
         End Get
         Set
-            Me.prop_CCIReport = Value
+            Me._CCIReport = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Code")>
     Public Property code() As tnxCode
         Get
-            Return Me.prop_code
+            Return Me._code
         End Get
         Set
-            Me.prop_code = Value
+            Me._code = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Options")>
     Public Property options() As tnxOptions
         Get
-            Return Me.prop_options
+            Return Me._options
         End Get
         Set
-            Me.prop_options = Value
+            Me._options = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Geometry")>
     Public Property geometry() As tnxGeometry
         Get
-            Return Me.prop_geometry
+            Return Me._geometry
         End Get
         Set
-            Me.prop_geometry = Value
+            Me._geometry = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Feed Lines")>
     Public Property feedLines() As List(Of tnxFeedLine)
         Get
-            Return Me.prop_feedLines
+            Return Me._feedLines
         End Get
         Set
-            Me.prop_feedLines = Value
+            Me._feedLines = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Discrete Loads")>
     Public Property discreteLoads() As List(Of tnxDiscreteLoad)
         Get
-            Return Me.prop_discreteLoads
+            Return Me._discreteLoads
         End Get
         Set
-            Me.prop_discreteLoads = Value
+            Me._discreteLoads = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Dishes")>
     Public Property dishes() As List(Of tnxDish)
         Get
-            Return Me.prop_dishes
+            Return Me._dishes
         End Get
         Set
-            Me.prop_dishes = Value
+            Me._dishes = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("User Forces")>
     Public Property userForces() As List(Of tnxUserForce)
         Get
-            Return Me.prop_userForces
+            Return Me._userForces
         End Get
         Set
-            Me.prop_userForces = Value
+            Me._userForces = Value
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("All the other stuff")>
     Public Property otherLines() As List(Of String())
         Get
-            Return Me.prop_otherLines
+            Return Me._otherLines
         End Get
         Set
-            Me.prop_otherLines = Value
+            Me._otherLines = Value
         End Set
     End Property
+#End Region
+
+#Region "Constructors"
 
     Public Sub New()
         'Leave method empty
+    End Sub
+    <Category("Constructor"), Description("Create TNX object from SQL.")>
+    Public Sub New(ByVal BUNumber As String, ByVal strID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        Dim tnxDS As New DataSet
+        Dim tableNames As New List(Of String)({"tnxDetails", "tnxBaseStructure", "tnxUpperStructure", "tnxGuys", "tnxMaterials", "tnxMembers"})
+        Dim queries As New List(Of String)
+
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Details).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Base Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Upper Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Guys).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Materials).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Members).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+
+        sqlLoader(queries, tableNames, tnxDS, ActiveDatabase, LogOnUser, 500)
+
+        setIndInputs(tnxDS.Tables("tnxDetails").Rows(0))
+
+        If tnxDS.Tables.Contains("tnxBaseStructure") Then
+            For Each baseSection As DataRow In tnxDS.Tables("tnxBaseStructure").Rows
+                Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxUpperStructure") Then
+            For Each upperSection As DataRow In tnxDS.Tables("tnxUpperStructure").Rows
+                Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxGuys") Then
+            For Each guyLevel As DataRow In tnxDS.Tables("tnxGuys").Rows
+                Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxMaterials") Then
+            For Each material As DataRow In tnxDS.Tables("tnxMaterials").Rows
+                Me.database.materials.Add(New tnxMaterial(material))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxMembers") Then
+            For Each member As DataRow In tnxDS.Tables("tnxMembers").Rows
+                Me.database.members.Add(New tnxMember(member))
+            Next
+        End If
+
+    End Sub
+
+    Public Sub setIndInputs(Data As DataRow)
+
+        Me.ID = CNullInt(Data.Item("tnx_id"))
+        Me.settings.projectInfo.DesignStandardSeries = CNullStr(Data.Item("DesignStandardSeries"))
+        Me.settings.projectInfo.UnitsSystem = CNullStr(Data.Item("UnitsSystem"))
+        Me.settings.projectInfo.ClientName = CNullStr(Data.Item("ClientName"))
+        Me.settings.projectInfo.ProjectName = CNullStr(Data.Item("ProjectName"))
+        Me.settings.projectInfo.ProjectNumber = CNullStr(Data.Item("ProjectNumber"))
+        Me.settings.projectInfo.CreatedBy = CNullStr(Data.Item("CreatedBy"))
+        Me.settings.projectInfo.CreatedOn = CNullStr(Data.Item("CreatedOn"))
+        Me.settings.projectInfo.LastUsedBy = CNullStr(Data.Item("LastUsedBy"))
+        Me.settings.projectInfo.LastUsedOn = CNullStr(Data.Item("LastUsedOn"))
+        Me.settings.projectInfo.VersionUsed = CNullStr(Data.Item("VersionUsed"))
+        Me.settings.userInfo.ViewerUserName = CNullStr(Data.Item("ViewerUserName"))
+        Me.settings.userInfo.ViewerCompanyName = CNullStr(Data.Item("ViewerCompanyName"))
+        Me.settings.userInfo.ViewerStreetAddress = CNullStr(Data.Item("ViewerStreetAddress"))
+        Me.settings.userInfo.ViewerCityState = CNullStr(Data.Item("ViewerCityState"))
+        Me.settings.userInfo.ViewerPhone = CNullStr(Data.Item("ViewerPhone"))
+        Me.settings.userInfo.ViewerFAX = CNullStr(Data.Item("ViewerFAX"))
+        Me.settings.userInfo.ViewerLogo = CNullStr(Data.Item("ViewerLogo"))
+        Me.settings.userInfo.ViewerCompanyBitmap = CNullStr(Data.Item("ViewerCompanyBitmap"))
+        Me.CCIReport.sReportProjectNumber = CNullStr(Data.Item("sReportProjectNumber"))
+        Me.CCIReport.sReportJobType = CNullStr(Data.Item("sReportJobType"))
+        Me.CCIReport.sReportCarrierName = CNullStr(Data.Item("sReportCarrierName"))
+        Me.CCIReport.sReportCarrierSiteNumber = CNullStr(Data.Item("sReportCarrierSiteNumber"))
+        Me.CCIReport.sReportCarrierSiteName = CNullStr(Data.Item("sReportCarrierSiteName"))
+        Me.CCIReport.sReportSiteAddress = CNullStr(Data.Item("sReportSiteAddress"))
+        Me.CCIReport.sReportLatitudeDegree = CNullDbl(Data.Item("sReportLatitudeDegree"))
+        Me.CCIReport.sReportLatitudeMinute = CNullDbl(Data.Item("sReportLatitudeMinute"))
+        Me.CCIReport.sReportLatitudeSecond = CNullDbl(Data.Item("sReportLatitudeSecond"))
+        Me.CCIReport.sReportLongitudeDegree = CNullDbl(Data.Item("sReportLongitudeDegree"))
+        Me.CCIReport.sReportLongitudeMinute = CNullDbl(Data.Item("sReportLongitudeMinute"))
+        Me.CCIReport.sReportLongitudeSecond = CNullDbl(Data.Item("sReportLongitudeSecond"))
+        Me.CCIReport.sReportLocalCodeRequirement = CNullStr(Data.Item("sReportLocalCodeRequirement"))
+        Me.CCIReport.sReportSiteHistory = CNullStr(Data.Item("sReportSiteHistory"))
+        Me.CCIReport.sReportTowerManufacturer = CNullStr(Data.Item("sReportTowerManufacturer"))
+        Me.CCIReport.sReportMonthManufactured = CNullStr(Data.Item("sReportMonthManufactured"))
+        Me.CCIReport.sReportYearManufactured = CNullInt(Data.Item("sReportYearManufactured"))
+        Me.CCIReport.sReportOriginalSpeed = CNullDbl(Data.Item("sReportOriginalSpeed"))
+        Me.CCIReport.sReportOriginalCode = CNullStr(Data.Item("sReportOriginalCode"))
+        Me.CCIReport.sReportTowerType = CNullStr(Data.Item("sReportTowerType"))
+        Me.CCIReport.sReportEngrName = CNullStr(Data.Item("sReportEngrName"))
+        Me.CCIReport.sReportEngrTitle = CNullStr(Data.Item("sReportEngrTitle"))
+        Me.CCIReport.sReportHQPhoneNumber = CNullStr(Data.Item("sReportHQPhoneNumber"))
+        Me.CCIReport.sReportEmailAddress = CNullStr(Data.Item("sReportEmailAddress"))
+        Me.CCIReport.sReportLogoPath = CNullStr(Data.Item("sReportLogoPath"))
+        Me.CCIReport.sReportCCiContactName = CNullStr(Data.Item("sReportCCiContactName"))
+        Me.CCIReport.sReportCCiAddress1 = CNullStr(Data.Item("sReportCCiAddress1"))
+        Me.CCIReport.sReportCCiAddress2 = CNullStr(Data.Item("sReportCCiAddress2"))
+        Me.CCIReport.sReportCCiBUNumber = CNullStr(Data.Item("sReportCCiBUNumber"))
+        Me.CCIReport.sReportCCiSiteName = CNullStr(Data.Item("sReportCCiSiteName"))
+        Me.CCIReport.sReportCCiJDENumber = CNullStr(Data.Item("sReportCCiJDENumber"))
+        Me.CCIReport.sReportCCiWONumber = CNullStr(Data.Item("sReportCCiWONumber"))
+        Me.CCIReport.sReportCCiPONumber = CNullStr(Data.Item("sReportCCiPONumber"))
+        Me.CCIReport.sReportCCiAppNumber = CNullStr(Data.Item("sReportCCiAppNumber"))
+        Me.CCIReport.sReportCCiRevNumber = CNullStr(Data.Item("sReportCCiRevNumber"))
+        Me.CCIReport.sReportRecommendations = CNullStr(Data.Item("sReportRecommendations"))
+        Me.CCIReport.sReportAppurt1Note1 = CNullStr(Data.Item("sReportAppurt1Note1"))
+        Me.CCIReport.sReportAppurt1Note2 = CNullStr(Data.Item("sReportAppurt1Note2"))
+        Me.CCIReport.sReportAppurt1Note3 = CNullStr(Data.Item("sReportAppurt1Note3"))
+        Me.CCIReport.sReportAppurt1Note4 = CNullStr(Data.Item("sReportAppurt1Note4"))
+        Me.CCIReport.sReportAppurt1Note5 = CNullStr(Data.Item("sReportAppurt1Note5"))
+        Me.CCIReport.sReportAppurt1Note6 = CNullStr(Data.Item("sReportAppurt1Note6"))
+        Me.CCIReport.sReportAppurt1Note7 = CNullStr(Data.Item("sReportAppurt1Note7"))
+        Me.CCIReport.sReportAppurt2Note1 = CNullStr(Data.Item("sReportAppurt2Note1"))
+        Me.CCIReport.sReportAppurt2Note2 = CNullStr(Data.Item("sReportAppurt2Note2"))
+        Me.CCIReport.sReportAppurt2Note3 = CNullStr(Data.Item("sReportAppurt2Note3"))
+        Me.CCIReport.sReportAppurt2Note4 = CNullStr(Data.Item("sReportAppurt2Note4"))
+        Me.CCIReport.sReportAppurt2Note5 = CNullStr(Data.Item("sReportAppurt2Note5"))
+        Me.CCIReport.sReportAppurt2Note6 = CNullStr(Data.Item("sReportAppurt2Note6"))
+        Me.CCIReport.sReportAppurt2Note7 = CNullStr(Data.Item("sReportAppurt2Note7"))
+        Me.CCIReport.sReportAddlCapacityNote1 = CNullStr(Data.Item("sReportAddlCapacityNote1"))
+        Me.CCIReport.sReportAddlCapacityNote2 = CNullStr(Data.Item("sReportAddlCapacityNote2"))
+        Me.CCIReport.sReportAddlCapacityNote3 = CNullStr(Data.Item("sReportAddlCapacityNote3"))
+        Me.CCIReport.sReportAddlCapacityNote4 = CNullStr(Data.Item("sReportAddlCapacityNote4"))
+        Me.code.design.DesignCode = CNullStr(Data.Item("DesignCode"))
+        Me.geometry.TowerType = CNullStr(Data.Item("TowerType"))
+        Me.geometry.AntennaType = CNullStr(Data.Item("AntennaType"))
+        Me.geometry.OverallHeight = CNullDbl(Data.Item("OverallHeight"))
+        Me.geometry.BaseElevation = CNullDbl(Data.Item("BaseElevation"))
+        Me.geometry.Lambda = CNullDbl(Data.Item("Lambda"))
+        Me.geometry.TowerTopFaceWidth = CNullDbl(Data.Item("TowerTopFaceWidth"))
+        Me.geometry.TowerBaseFaceWidth = CNullDbl(Data.Item("TowerBaseFaceWidth"))
+        Me.code.wind.WindSpeed = CNullDbl(Data.Item("WindSpeed"))
+        Me.code.wind.WindSpeedIce = CNullDbl(Data.Item("WindSpeedIce"))
+        Me.code.wind.WindSpeedService = CNullDbl(Data.Item("WindSpeedService"))
+        Me.code.ice.IceThickness = CNullDbl(Data.Item("IceThickness"))
+        Me.code.wind.CSA_S37_RefVelPress = CNullDbl(Data.Item("CSA_S37_RefVelPress"))
+        Me.code.wind.CSA_S37_ReliabilityClass = CNullInt(Data.Item("CSA_S37_ReliabilityClass"))
+        Me.code.wind.CSA_S37_ServiceabilityFactor = CNullDbl(Data.Item("CSA_S37_ServiceabilityFactor"))
+        Me.code.ice.UseModified_TIA_222_IceParameters = CNullBool(Data.Item("UseModified_TIA_222_IceParameters"))
+        Me.code.ice.TIA_222_IceThicknessMultiplier = CNullDbl(Data.Item("TIA_222_IceThicknessMultiplier"))
+        Me.code.ice.DoNotUse_TIA_222_IceEscalation = CNullBool(Data.Item("DoNotUse_TIA_222_IceEscalation"))
+        Me.code.ice.IceDensity = CNullDbl(Data.Item("IceDensity"))
+        Me.code.seismic.SeismicSiteClass = CNullInt(Data.Item("SeismicSiteClass"))
+        Me.code.seismic.SeismicSs = CNullDbl(Data.Item("SeismicSs"))
+        Me.code.seismic.SeismicS1 = CNullDbl(Data.Item("SeismicS1"))
+        Me.code.thermal.TempDrop = CNullDbl(Data.Item("TempDrop"))
+        Me.code.misclCode.GroutFc = CNullDbl(Data.Item("GroutFc"))
+        Me.options.defaultGirtOffsets.GirtOffset = CNullDbl(Data.Item("GirtOffset"))
+        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = CNullDbl(Data.Item("GirtOffsetLatticedPole"))
+        Me.options.foundationStiffness.MastVert = CNullDbl(Data.Item("MastVert"))
+        Me.options.foundationStiffness.MastHorz = CNullDbl(Data.Item("MastHorz"))
+        Me.options.foundationStiffness.GuyVert = CNullDbl(Data.Item("GuyVert"))
+        Me.options.foundationStiffness.GuyHorz = CNullDbl(Data.Item("GuyHorz"))
+        Me.options.misclOptions.HogRodTakeup = CNullDbl(Data.Item("HogRodTakeup"))
+        Me.geometry.TowerTaper = CNullStr(Data.Item("TowerTaper"))
+        Me.geometry.GuyedMonopoleBaseType = CNullStr(Data.Item("GuyedMonopoleBaseType"))
+        Me.geometry.TaperHeight = CNullDbl(Data.Item("TaperHeight"))
+        Me.geometry.PivotHeight = CNullDbl(Data.Item("PivotHeight"))
+        Me.geometry.AutoCalcGH = CNullBool(Data.Item("AutoCalcGH"))
+        Me.MTOSettings.IncludeCapacityNote = CNullBool(Data.Item("IncludeCapacityNote"))
+        Me.MTOSettings.IncludeAppurtGraphics = CNullBool(Data.Item("IncludeAppurtGraphics"))
+        Me.MTOSettings.DisplayNotes = CNullBool(Data.Item("DisplayNotes"))
+        Me.MTOSettings.DisplayReactions = CNullBool(Data.Item("DisplayReactions"))
+        Me.MTOSettings.DisplaySchedule = CNullBool(Data.Item("DisplaySchedule"))
+        Me.MTOSettings.DisplayAppurtenanceTable = CNullBool(Data.Item("DisplayAppurtenanceTable"))
+        Me.MTOSettings.DisplayMaterialStrengthTable = CNullBool(Data.Item("DisplayMaterialStrengthTable"))
+        Me.code.wind.AutoCalc_ASCE_GH = CNullBool(Data.Item("AutoCalc_ASCE_GH"))
+        Me.code.wind.ASCE_ExposureCat = CNullInt(Data.Item("ASCE_ExposureCat"))
+        Me.code.wind.ASCE_Year = CNullInt(Data.Item("ASCE_Year"))
+        Me.code.wind.ASCEGh = CNullDbl(Data.Item("ASCEGh"))
+        Me.code.wind.ASCEI = CNullDbl(Data.Item("ASCEI"))
+        Me.code.wind.UseASCEWind = CNullBool(Data.Item("UseASCEWind"))
+        Me.geometry.UserGHElev = CNullDbl(Data.Item("UserGHElev"))
+        Me.code.design.UseCodeGuySF = CNullBool(Data.Item("UseCodeGuySF"))
+        Me.code.design.GuySF = CNullDbl(Data.Item("GuySF"))
+        Me.code.wind.CalcWindAt = CNullInt(Data.Item("CalcWindAt"))
+        Me.code.misclCode.TowerBoltGrade = CNullStr(Data.Item("TowerBoltGrade"))
+        Me.code.misclCode.TowerBoltMinEdgeDist = CNullDbl(Data.Item("TowerBoltMinEdgeDist"))
+        Me.code.design.AllowStressRatio = CNullDbl(Data.Item("AllowStressRatio"))
+        Me.code.design.AllowAntStressRatio = CNullDbl(Data.Item("AllowAntStressRatio"))
+        Me.code.wind.WindCalcPoints = CNullDbl(Data.Item("WindCalcPoints"))
+        Me.geometry.UseIndexPlate = CNullBool(Data.Item("UseIndexPlate"))
+        Me.geometry.EnterUserDefinedGhValues = CNullBool(Data.Item("EnterUserDefinedGhValues"))
+        Me.geometry.BaseTowerGhInput = CNullDbl(Data.Item("BaseTowerGhInput"))
+        Me.geometry.UpperStructureGhInput = CNullDbl(Data.Item("UpperStructureGhInput"))
+        Me.geometry.EnterUserDefinedCgValues = CNullBool(Data.Item("EnterUserDefinedCgValues"))
+        Me.geometry.BaseTowerCgInput = CNullDbl(Data.Item("BaseTowerCgInput"))
+        Me.geometry.UpperStructureCgInput = CNullDbl(Data.Item("UpperStructureCgInput"))
+        Me.options.cantileverPoles.CheckVonMises = CNullBool(Data.Item("CheckVonMises"))
+        Me.options.UseClearSpans = CNullBool(Data.Item("UseClearSpans"))
+        Me.options.UseClearSpansKlr = CNullBool(Data.Item("UseClearSpansKlr"))
+        Me.geometry.AntennaFaceWidth = CNullDbl(Data.Item("AntennaFaceWidth"))
+        Me.code.design.DoInteraction = CNullBool(Data.Item("DoInteraction"))
+        Me.code.design.DoHorzInteraction = CNullBool(Data.Item("DoHorzInteraction"))
+        Me.code.design.DoDiagInteraction = CNullBool(Data.Item("DoDiagInteraction"))
+        Me.code.design.UseMomentMagnification = CNullBool(Data.Item("UseMomentMagnification"))
+        Me.options.UseFeedlineAsCylinder = CNullBool(Data.Item("UseFeedlineAsCylinder"))
+        Me.options.defaultGirtOffsets.OffsetBotGirt = CNullBool(Data.Item("OffsetBotGirt"))
+        Me.code.design.PrintBitmaps = CNullBool(Data.Item("PrintBitmaps"))
+        Me.geometry.UseTopTakeup = CNullBool(Data.Item("UseTopTakeup"))
+        Me.geometry.ConstantSlope = CNullBool(Data.Item("ConstantSlope"))
+        Me.code.design.UseCodeStressRatio = CNullBool(Data.Item("UseCodeStressRatio"))
+        Me.options.UseLegLoads = CNullBool(Data.Item("UseLegLoads"))
+        Me.code.design.ERIDesignMode = CNullStr(Data.Item("ERIDesignMode"))
+        Me.code.wind.WindExposure = CNullInt(Data.Item("WindExposure"))
+        Me.code.wind.WindZone = CNullInt(Data.Item("WindZone"))
+        Me.code.wind.StructureCategory = CNullInt(Data.Item("StructureCategory"))
+        Me.code.wind.RiskCategory = CNullInt(Data.Item("RiskCategory"))
+        Me.code.wind.TopoCategory = CNullInt(Data.Item("TopoCategory"))
+        Me.code.wind.RSMTopographicFeature = CNullInt(Data.Item("RSMTopographicFeature"))
+        Me.code.wind.RSM_L = CNullDbl(Data.Item("RSM_L"))
+        Me.code.wind.RSM_X = CNullDbl(Data.Item("RSM_X"))
+        Me.code.wind.CrestHeight = CNullDbl(Data.Item("CrestHeight"))
+        Me.code.wind.TIA_222_H_TopoFeatureDownwind = CNullBool(Data.Item("TIA_222_H_TopoFeatureDownwind"))
+        Me.code.wind.BaseElevAboveSeaLevel = CNullDbl(Data.Item("BaseElevAboveSeaLevel"))
+        Me.code.wind.ConsiderRooftopSpeedUp = CNullBool(Data.Item("ConsiderRooftopSpeedUp"))
+        Me.code.wind.RooftopWS = CNullDbl(Data.Item("RooftopWS"))
+        Me.code.wind.RooftopHS = CNullDbl(Data.Item("RooftopHS"))
+        Me.code.wind.RooftopParapetHt = CNullDbl(Data.Item("RooftopParapetHt"))
+        Me.code.wind.RooftopXB = CNullDbl(Data.Item("RooftopXB"))
+        Me.code.design.UseTIA222H_AnnexS = CNullBool(Data.Item("UseTIA222H_AnnexS"))
+        Me.code.design.TIA_222_H_AnnexS_Ratio = CNullDbl(Data.Item("TIA_222_H_AnnexS_Ratio"))
+        Me.code.wind.EIACWindMult = CNullDbl(Data.Item("EIACWindMult"))
+        Me.code.wind.EIACWindMultIce = CNullDbl(Data.Item("EIACWindMultIce"))
+        Me.code.wind.EIACIgnoreCableDrag = CNullBool(Data.Item("EIACIgnoreCableDrag"))
+        'Me.MTOSettings.Notes = CNullStr(Data.Item("Notes"))
+        Me.reportSettings.ReportInputCosts = CNullBool(Data.Item("ReportInputCosts"))
+        Me.reportSettings.ReportInputGeometry = CNullBool(Data.Item("ReportInputGeometry"))
+        Me.reportSettings.ReportInputOptions = CNullBool(Data.Item("ReportInputOptions"))
+        Me.reportSettings.ReportMaxForces = CNullBool(Data.Item("ReportMaxForces"))
+        Me.reportSettings.ReportInputMap = CNullBool(Data.Item("ReportInputMap"))
+        Me.reportSettings.CostReportOutputType = CNullStr(Data.Item("CostReportOutputType"))
+        Me.reportSettings.CapacityReportOutputType = CNullStr(Data.Item("CapacityReportOutputType"))
+        Me.reportSettings.ReportPrintForceTotals = CNullBool(Data.Item("ReportPrintForceTotals"))
+        Me.reportSettings.ReportPrintForceDetails = CNullBool(Data.Item("ReportPrintForceDetails"))
+        Me.reportSettings.ReportPrintMastVectors = CNullBool(Data.Item("ReportPrintMastVectors"))
+        Me.reportSettings.ReportPrintAntPoleVectors = CNullBool(Data.Item("ReportPrintAntPoleVectors"))
+        Me.reportSettings.ReportPrintDiscreteVectors = CNullBool(Data.Item("ReportPrintDiscreteVectors"))
+        Me.reportSettings.ReportPrintDishVectors = CNullBool(Data.Item("ReportPrintDishVectors"))
+        Me.reportSettings.ReportPrintFeedTowerVectors = CNullBool(Data.Item("ReportPrintFeedTowerVectors"))
+        Me.reportSettings.ReportPrintUserLoadVectors = CNullBool(Data.Item("ReportPrintUserLoadVectors"))
+        Me.reportSettings.ReportPrintPressures = CNullBool(Data.Item("ReportPrintPressures"))
+        Me.reportSettings.ReportPrintAppurtForces = CNullBool(Data.Item("ReportPrintAppurtForces"))
+        Me.reportSettings.ReportPrintGuyForces = CNullBool(Data.Item("ReportPrintGuyForces"))
+        Me.reportSettings.ReportPrintGuyStressing = CNullBool(Data.Item("ReportPrintGuyStressing"))
+        Me.reportSettings.ReportPrintDeflections = CNullBool(Data.Item("ReportPrintDeflections"))
+        Me.reportSettings.ReportPrintReactions = CNullBool(Data.Item("ReportPrintReactions"))
+        Me.reportSettings.ReportPrintStressChecks = CNullBool(Data.Item("ReportPrintStressChecks"))
+        Me.reportSettings.ReportPrintBoltChecks = CNullBool(Data.Item("ReportPrintBoltChecks"))
+        Me.reportSettings.ReportPrintInputGVerificationTables = CNullBool(Data.Item("ReportPrintInputGVerificationTables"))
+        Me.reportSettings.ReportPrintOutputGVerificationTables = CNullBool(Data.Item("ReportPrintOutputGVerificationTables"))
+        Me.options.cantileverPoles.SocketTopMount = CNullBool(Data.Item("SocketTopMount"))
+        Me.options.SRTakeCompression = CNullBool(Data.Item("SRTakeCompression"))
+        Me.options.AllLegPanelsSame = CNullBool(Data.Item("AllLegPanelsSame"))
+        Me.options.UseCombinedBoltCapacity = CNullBool(Data.Item("UseCombinedBoltCapacity"))
+        Me.options.SecHorzBracesLeg = CNullBool(Data.Item("SecHorzBracesLeg"))
+        Me.options.SortByComponent = CNullBool(Data.Item("SortByComponent"))
+        Me.options.SRCutEnds = CNullBool(Data.Item("SRCutEnds"))
+        Me.options.SRConcentric = CNullBool(Data.Item("SRConcentric"))
+        Me.options.CalcBlockShear = CNullBool(Data.Item("CalcBlockShear"))
+        Me.options.Use4SidedDiamondBracing = CNullBool(Data.Item("Use4SidedDiamondBracing"))
+        Me.options.TriangulateInnerBracing = CNullBool(Data.Item("TriangulateInnerBracing"))
+        Me.options.PrintCarrierNotes = CNullBool(Data.Item("PrintCarrierNotes"))
+        Me.options.AddIBCWindCase = CNullBool(Data.Item("AddIBCWindCase"))
+        Me.code.wind.UseStateCountyLookup = CNullBool(Data.Item("UseStateCountyLookup"))
+        Me.code.wind.State = CNullStr(Data.Item("State"))
+        Me.code.wind.County = CNullStr(Data.Item("County"))
+        Me.options.LegBoltsAtTop = CNullBool(Data.Item("LegBoltsAtTop"))
+        Me.options.cantileverPoles.PrintMonopoleAtIncrements = CNullBool(Data.Item("PrintMonopoleAtIncrements"))
+        Me.options.UseTIA222Exemptions_MinBracingResistance = CNullBool(Data.Item("UseTIA222Exemptions_MinBracingResistance"))
+        Me.options.UseTIA222Exemptions_TensionSplice = CNullBool(Data.Item("UseTIA222Exemptions_TensionSplice"))
+        Me.options.IgnoreKLryFor60DegAngleLegs = CNullBool(Data.Item("IgnoreKLryFor60DegAngleLegs"))
+        Me.code.wind.ASCE_7_10_WindData = CNullBool(Data.Item("ASCE_7_10_WindData"))
+        Me.code.wind.ASCE_7_10_ConvertWindToASD = CNullBool(Data.Item("ASCE_7_10_ConvertWindToASD"))
+        Me.solutionSettings.SolutionUsePDelta = CNullBool(Data.Item("SolutionUsePDelta"))
+        Me.options.UseFeedlineTorque = CNullBool(Data.Item("UseFeedlineTorque"))
+        Me.options.UsePinnedElements = CNullBool(Data.Item("UsePinnedElements"))
+        Me.code.wind.UseMaxKz = CNullBool(Data.Item("UseMaxKz"))
+        Me.options.UseRigidIndex = CNullBool(Data.Item("UseRigidIndex"))
+        Me.options.UseTrueCable = CNullBool(Data.Item("UseTrueCable"))
+        Me.options.UseASCELy = CNullBool(Data.Item("UseASCELy"))
+        Me.options.CalcBracingForces = CNullBool(Data.Item("CalcBracingForces"))
+        Me.options.IgnoreBracingFEA = CNullBool(Data.Item("IgnoreBracingFEA"))
+        Me.options.cantileverPoles.UseSubCriticalFlow = CNullBool(Data.Item("UseSubCriticalFlow"))
+        Me.options.cantileverPoles.AssumePoleWithNoAttachments = CNullBool(Data.Item("AssumePoleWithNoAttachments"))
+        Me.options.cantileverPoles.AssumePoleWithShroud = CNullBool(Data.Item("AssumePoleWithShroud"))
+        Me.options.cantileverPoles.PoleCornerRadiusKnown = CNullBool(Data.Item("PoleCornerRadiusKnown"))
+        Me.solutionSettings.SolutionMinStiffness = CNullDbl(Data.Item("SolutionMinStiffness"))
+        Me.solutionSettings.SolutionMaxStiffness = CNullDbl(Data.Item("SolutionMaxStiffness"))
+        Me.solutionSettings.SolutionMaxCycles = CNullInt(Data.Item("SolutionMaxCycles"))
+        Me.solutionSettings.SolutionPower = CNullDbl(Data.Item("SolutionPower"))
+        Me.solutionSettings.SolutionTolerance = CNullDbl(Data.Item("SolutionTolerance"))
+        Me.options.cantileverPoles.CantKFactor = CNullDbl(Data.Item("CantKFactor"))
+        Me.options.misclOptions.RadiusSampleDist = CNullDbl(Data.Item("RadiusSampleDist"))
+        Me.options.BypassStabilityChecks = CNullBool(Data.Item("BypassStabilityChecks"))
+        Me.options.UseWindProjection = CNullBool(Data.Item("UseWindProjection"))
+        Me.code.ice.UseIceEscalation = CNullBool(Data.Item("UseIceEscalation"))
+        Me.options.UseDishCoeff = CNullBool(Data.Item("UseDishCoeff"))
+        Me.options.AutoCalcTorqArmArea = CNullBool(Data.Item("AutoCalcTorqArmArea"))
+        Me.options.windDirections.WindDirOption = CNullInt(Data.Item("WindDirOption"))
+        Me.options.windDirections.WindDir0_0 = CNullBool(Data.Item("WindDir0_0"))
+        Me.options.windDirections.WindDir0_1 = CNullBool(Data.Item("WindDir0_1"))
+        Me.options.windDirections.WindDir0_2 = CNullBool(Data.Item("WindDir0_2"))
+        Me.options.windDirections.WindDir0_3 = CNullBool(Data.Item("WindDir0_3"))
+        Me.options.windDirections.WindDir0_4 = CNullBool(Data.Item("WindDir0_4"))
+        Me.options.windDirections.WindDir0_5 = CNullBool(Data.Item("WindDir0_5"))
+        Me.options.windDirections.WindDir0_6 = CNullBool(Data.Item("WindDir0_6"))
+        Me.options.windDirections.WindDir0_7 = CNullBool(Data.Item("WindDir0_7"))
+        Me.options.windDirections.WindDir0_8 = CNullBool(Data.Item("WindDir0_8"))
+        Me.options.windDirections.WindDir0_9 = CNullBool(Data.Item("WindDir0_9"))
+        Me.options.windDirections.WindDir0_10 = CNullBool(Data.Item("WindDir0_10"))
+        Me.options.windDirections.WindDir0_11 = CNullBool(Data.Item("WindDir0_11"))
+        Me.options.windDirections.WindDir0_12 = CNullBool(Data.Item("WindDir0_12"))
+        Me.options.windDirections.WindDir0_13 = CNullBool(Data.Item("WindDir0_13"))
+        Me.options.windDirections.WindDir0_14 = CNullBool(Data.Item("WindDir0_14"))
+        Me.options.windDirections.WindDir0_15 = CNullBool(Data.Item("WindDir0_15"))
+        Me.options.windDirections.WindDir1_0 = CNullBool(Data.Item("WindDir1_0"))
+        Me.options.windDirections.WindDir1_1 = CNullBool(Data.Item("WindDir1_1"))
+        Me.options.windDirections.WindDir1_2 = CNullBool(Data.Item("WindDir1_2"))
+        Me.options.windDirections.WindDir1_3 = CNullBool(Data.Item("WindDir1_3"))
+        Me.options.windDirections.WindDir1_4 = CNullBool(Data.Item("WindDir1_4"))
+        Me.options.windDirections.WindDir1_5 = CNullBool(Data.Item("WindDir1_5"))
+        Me.options.windDirections.WindDir1_6 = CNullBool(Data.Item("WindDir1_6"))
+        Me.options.windDirections.WindDir1_7 = CNullBool(Data.Item("WindDir1_7"))
+        Me.options.windDirections.WindDir1_8 = CNullBool(Data.Item("WindDir1_8"))
+        Me.options.windDirections.WindDir1_9 = CNullBool(Data.Item("WindDir1_9"))
+        Me.options.windDirections.WindDir1_10 = CNullBool(Data.Item("WindDir1_10"))
+        Me.options.windDirections.WindDir1_11 = CNullBool(Data.Item("WindDir1_11"))
+        Me.options.windDirections.WindDir1_12 = CNullBool(Data.Item("WindDir1_12"))
+        Me.options.windDirections.WindDir1_13 = CNullBool(Data.Item("WindDir1_13"))
+        Me.options.windDirections.WindDir1_14 = CNullBool(Data.Item("WindDir1_14"))
+        Me.options.windDirections.WindDir1_15 = CNullBool(Data.Item("WindDir1_15"))
+        Me.options.windDirections.WindDir2_0 = CNullBool(Data.Item("WindDir2_0"))
+        Me.options.windDirections.WindDir2_1 = CNullBool(Data.Item("WindDir2_1"))
+        Me.options.windDirections.WindDir2_2 = CNullBool(Data.Item("WindDir2_2"))
+        Me.options.windDirections.WindDir2_3 = CNullBool(Data.Item("WindDir2_3"))
+        Me.options.windDirections.WindDir2_4 = CNullBool(Data.Item("WindDir2_4"))
+        Me.options.windDirections.WindDir2_5 = CNullBool(Data.Item("WindDir2_5"))
+        Me.options.windDirections.WindDir2_6 = CNullBool(Data.Item("WindDir2_6"))
+        Me.options.windDirections.WindDir2_7 = CNullBool(Data.Item("WindDir2_7"))
+        Me.options.windDirections.WindDir2_8 = CNullBool(Data.Item("WindDir2_8"))
+        Me.options.windDirections.WindDir2_9 = CNullBool(Data.Item("WindDir2_9"))
+        Me.options.windDirections.WindDir2_10 = CNullBool(Data.Item("WindDir2_10"))
+        Me.options.windDirections.WindDir2_11 = CNullBool(Data.Item("WindDir2_11"))
+        Me.options.windDirections.WindDir2_12 = CNullBool(Data.Item("WindDir2_12"))
+        Me.options.windDirections.WindDir2_13 = CNullBool(Data.Item("WindDir2_13"))
+        Me.options.windDirections.WindDir2_14 = CNullBool(Data.Item("WindDir2_14"))
+        Me.options.windDirections.WindDir2_15 = CNullBool(Data.Item("WindDir2_15"))
+        Me.options.windDirections.SuppressWindPatternLoading = CNullBool(Data.Item("SuppressWindPatternLoading"))
     End Sub
 
     <Category("Constructor"), Description("Create TNX object from TNX file.")>
@@ -152,9 +652,10 @@ Partial Public Class tnxModel
         Dim tnxVar As String
         Dim tnxValue As String
         Dim recIndex As Integer
-        Dim recordUSUnits As Boolean = False
+        Dim recordUSUnits As Boolean? = False
         Dim sectionFilter As String = ""
         Dim caseFilter As String = ""
+        Dim dbFileFilter As String = ""
 
         For Each line In File.ReadLines(tnxPath)
 
@@ -168,6 +669,14 @@ Partial Public Class tnxModel
 
             'Set caseFilter
             Select Case sectionFilter
+                Case "db"
+                    caseFilter = sectionFilter
+                    'This if statement isn't needed because the [Structure] line can be used to deactivate the database filter
+                    'If tnxVar = "File" Or tnxVar = "MemberMatFile" Or tnxVar = "USName" Or tnxVar = "SIName" Or tnxVar = "Values" Then
+                    '    caseFilter = sectionFilter
+                    'Else
+                    '    caseFilter = ""
+                    'End If
                 Case "Antenna"
                     If Left(tnxVar, 7) = "Antenna" Then
                         caseFilter = sectionFilter
@@ -219,7 +728,19 @@ Partial Public Class tnxModel
                 Case caseFilter = ""
                     ''''These are all the individual options for the eri file. They are not part of a record which there may be multiple of.'''
                     Select Case True
-                            ''''Main Section Filters''''
+                        ''''Main Section Filters''''
+                        Case tnxVar.Equals("[Databases]")
+                            Try
+                                sectionFilter = "db"
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
+                        Case tnxVar.Equals("[Structure]")
+                            Try
+                                sectionFilter = ""
+                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                            Catch ex As Exception
+                            End Try
                         Case tnxVar.Equals("NumAntennaRecs")
                             Try
                                 sectionFilter = "Antenna"
@@ -262,7 +783,7 @@ Partial Public Class tnxModel
                                 Me.otherLines.Add(New String() {tnxVar, tnxValue})
                             Catch ex As Exception
                             End Try
-                        ''''Units''''
+                    ''''Units''''
                         Case tnxVar.Equals("UnitsSystem")
                             If tnxValue <> "US" Then
                                 Throw New System.Exception("TNX file is not in US units.")
@@ -634,7 +1155,7 @@ Partial Public Class tnxModel
                                 End If
                             Catch ex As Exception
                             End Try
-                    ''''Project Info Settings
+                ''''Project Info Settings
                         Case tnxVar.Equals("DesignStandardSeries")
                             Try
                                 Me.settings.projectInfo.DesignStandardSeries = tnxValue
@@ -726,7 +1247,7 @@ Partial Public Class tnxModel
                                 Me.settings.userInfo.ViewerCompanyBitmap = tnxValue
                             Catch ex As Exception
                             End Try
-                    ''''Code''''
+                ''''Code''''
                         Case tnxVar.Equals("DesignCode")
                             Try
                                 Me.code.design.DesignCode = tnxValue
@@ -1062,7 +1583,7 @@ Partial Public Class tnxModel
                                 Me.code.seismic.SeismicS1 = CDbl(tnxValue)
                             Catch ex As Exception
                             End Try
-                    ''''Options''''
+                ''''Options''''
                         Case tnxVar.Equals("UseClearSpans")
                             Try
                                 Me.options.UseClearSpans = trueFalseYesNo(tnxValue)
@@ -1562,7 +2083,7 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                             End Try
 
-                    ''''General Geometry''''
+                ''''General Geometry''''
                         Case tnxVar.Equals("TowerType")
                             Try
                                 Me.geometry.TowerType = tnxValue
@@ -1681,7 +2202,7 @@ Partial Public Class tnxModel
                         Case tnxVar.Equals("[End Application]")
                             Me.otherLines.Add(New String() {tnxVar})
                             Exit For
-                        ''''Solution Options''''
+                    ''''Solution Options''''
                         Case tnxVar.Equals("SolutionUsePDelta")
                             Try
                                 Me.solutionSettings.SolutionUsePDelta = trueFalseYesNo(tnxValue)
@@ -1712,48 +2233,48 @@ Partial Public Class tnxModel
                                 Me.solutionSettings.SolutionTolerance = CDbl(tnxValue)
                             Catch ex As Exception
                             End Try
-                            '''''MTO Settings''''
+                        '''''MTO Settings''''
                         Case tnxVar.Equals("IncludeCapacityNote")
                             Try
-                                Me.mtoSettings.IncludeCapacityNote = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.IncludeCapacityNote = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("IncludeAppurtGraphics")
                             Try
-                                Me.mtoSettings.IncludeAppurtGraphics = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.IncludeAppurtGraphics = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("DisplayNotes")
                             Try
-                                Me.mtoSettings.DisplayNotes = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.DisplayNotes = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("DisplayReactions")
                             Try
-                                Me.mtoSettings.DisplayReactions = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.DisplayReactions = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("DisplaySchedule")
                             Try
-                                Me.mtoSettings.DisplaySchedule = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.DisplaySchedule = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("DisplayAppurtenanceTable")
                             Try
-                                Me.mtoSettings.DisplayAppurtenanceTable = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.DisplayAppurtenanceTable = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("DisplayMaterialStrengthTable")
                             Try
-                                Me.mtoSettings.DisplayMaterialStrengthTable = trueFalseYesNo(tnxValue)
+                                Me.MTOSettings.DisplayMaterialStrengthTable = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
                         Case tnxVar.Equals("Notes")
                             Try
-                                Me.MTOSettings.Notes.Add(tnxValue)
+                                Me.MTOSettings.Notes.Add(New tnxNote With {.Note = tnxValue})
                             Catch ex As Exception
                             End Try
-                        ''''Report Settings''''
+                    ''''Report Settings''''
                         Case tnxVar.Equals("ReportInputCosts")
                             Try
                                 Me.reportSettings.ReportInputCosts = trueFalseYesNo(tnxValue)
@@ -1879,7 +2400,7 @@ Partial Public Class tnxModel
                                 Me.reportSettings.ReportPrintOutputGVerificationTables = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                             End Try
-                        ''''CCI Report''''
+                    ''''CCI Report''''
                         Case tnxVar.Equals("sReportProjectNumber")
                             Try
                                 Me.CCIReport.sReportProjectNumber = tnxValue
@@ -2186,6 +2707,38 @@ Partial Public Class tnxModel
                             Else
                                 Me.otherLines.Add(New String() {tnxVar})
                             End If
+                    End Select
+                Case caseFilter = "db"
+                    Select Case True
+                        Case tnxVar.Equals("File")
+                            dbFileFilter = "member"
+                            Me.database.members.Add(New tnxMember With {.File = tnxValue})
+                        Case tnxVar.Equals("MemberMatFile")
+                            dbFileFilter = "material"
+                            Me.database.materials.Add(New tnxMaterial With {.MemberMatFile = tnxValue})
+                        Case tnxVar.Equals("BoltMatFile")
+                            dbFileFilter = "bolt"
+                            Me.database.bolts.Add(New tnxBolt With {.BoltMatFile = tnxValue})
+                        Case tnxVar.Equals("USName")
+                            If dbFileFilter = "member" Then Me.database.members.Last.USName = tnxValue
+                        Case tnxVar.Equals("SIName")
+                            If dbFileFilter = "member" Then Me.database.members.Last.SIName = tnxValue
+                        Case tnxVar.Equals("Values")
+                            If dbFileFilter = "member" Then Me.database.members.Last.values = tnxValue
+                        Case tnxVar.Equals("MatName")
+                            Select Case dbFileFilter
+                                Case "material"
+                                    Me.database.materials.Last.MatName = tnxValue
+                                Case "bolt"
+                                    Me.database.bolts.Last.MatName = tnxValue
+                            End Select
+                        Case tnxVar.Equals("MatValues")
+                            Select Case dbFileFilter
+                                Case "material"
+                                    Me.database.materials.Last.MatValues = tnxValue
+                                Case "bolt"
+                                    Me.database.bolts.Last.MatValues = tnxValue
+                            End Select
                     End Select
                 Case caseFilter = "Antenna"
                     ''''Antenna Rec (Upper Structure)''''
@@ -5784,6 +6337,677 @@ Partial Public Class tnxModel
 
     End Sub
 
+#End Region
+
+#Region "Save Data"
+    Sub SaveToEDS(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BUNumber As String, ByVal STR_ID As String)
+
+        Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP).sql")
+
+        tnxUpQuery = tnxUpQuery.Replace("[BU NUMBER]", BUNumber.ToDBString)
+        tnxUpQuery = tnxUpQuery.Replace("[STRUCTURE ID]", STR_ID.ToDBString)
+        tnxUpQuery = tnxUpQuery.Replace("[TNX ID]", Me.ID.ToString.ToDBString)
+
+        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT ID]", "Null")
+        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT COLUMNS]", Me.GenerateIndInputSqlColumns)
+        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT VALUES]", Me.GenerateIndInputSqlValues)
+
+        tnxUpQuery = tnxUpQuery.Replace("[TNX FILE PATH]", Me.filePath.ToDBString)
+
+        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Base Structure (IN_UP).sql")
+        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
+        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+
+        Dim tnxAllBaseSectionQuery As String = ""
+        Dim tnxAllUpperSectionQuery As String = ""
+        Dim tnxAllGuyQuery As String = ""
+
+        For Each base In Me.geometry.baseStructure
+            Dim baseString As String = tnxBaseSectionSubQuery
+
+            baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
+            baseString = baseString.Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL)
+
+            tnxAllBaseSectionQuery += baseString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[BASE Structure]", tnxAllBaseSectionQuery)
+
+        For Each upper In Me.geometry.upperStructure
+            Dim upperString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
+
+            upperString = upperString.Replace("[UPPER SECTION ID]", upper.ID.ToString.ToDBString)
+            upperString = upperString.Replace("[ALL UPPER SECTION VALUES]", upper.GenerateSQL)
+
+            tnxAllUpperSectionQuery += upperString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[UPPER Structure]", tnxAllUpperSectionQuery)
+
+        For Each guy In Me.geometry.guyWires
+            Dim guyString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+
+            guyString = guyString.Replace("[GUY ID]", guy.ID.ToString.ToDBString)
+            guyString = guyString.Replace("[ALL GUY VALUES]", guy.GenerateSQL)
+
+            tnxAllGuyQuery += guyString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[GUY LEVELS]", tnxAllGuyQuery)
+
+        sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
+
+    End Sub
+
+    Function GenerateIndInputSqlColumns() As String
+        Dim insertString As String = ""
+
+        If Me.settings.projectInfo.DesignStandardSeries IsNot Nothing Then insertString = insertString.AddtoDBString("DesignStandardSeries", False)
+        If Me.settings.projectInfo.UnitsSystem IsNot Nothing Then insertString = insertString.AddtoDBString("UnitsSystem", False)
+        If Me.settings.projectInfo.ClientName IsNot Nothing Then insertString = insertString.AddtoDBString("ClientName", False)
+        If Me.settings.projectInfo.ProjectName IsNot Nothing Then insertString = insertString.AddtoDBString("ProjectName", False)
+        If Me.settings.projectInfo.ProjectNumber IsNot Nothing Then insertString = insertString.AddtoDBString("ProjectNumber", False)
+        If Me.settings.projectInfo.CreatedBy IsNot Nothing Then insertString = insertString.AddtoDBString("CreatedBy", False)
+        If Me.settings.projectInfo.CreatedOn IsNot Nothing Then insertString = insertString.AddtoDBString("CreatedOn", False)
+        If Me.settings.projectInfo.LastUsedBy IsNot Nothing Then insertString = insertString.AddtoDBString("LastUsedBy", False)
+        If Me.settings.projectInfo.LastUsedOn IsNot Nothing Then insertString = insertString.AddtoDBString("LastUsedOn", False)
+        If Me.settings.projectInfo.VersionUsed IsNot Nothing Then insertString = insertString.AddtoDBString("VersionUsed", False)
+        If Me.settings.userInfo.ViewerUserName IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerUserName", False)
+        If Me.settings.userInfo.ViewerCompanyName IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerCompanyName", False)
+        If Me.settings.userInfo.ViewerStreetAddress IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerStreetAddress", False)
+        If Me.settings.userInfo.ViewerCityState IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerCityState", False)
+        If Me.settings.userInfo.ViewerPhone IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerPhone", False)
+        If Me.settings.userInfo.ViewerFAX IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerFAX", False)
+        If Me.settings.userInfo.ViewerLogo IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerLogo", False)
+        If Me.settings.userInfo.ViewerCompanyBitmap IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerCompanyBitmap", False)
+        If Me.CCIReport.sReportProjectNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportProjectNumber", False)
+        If Me.CCIReport.sReportJobType IsNot Nothing Then insertString = insertString.AddtoDBString("sReportJobType", False)
+        If Me.CCIReport.sReportCarrierName IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCarrierName", False)
+        If Me.CCIReport.sReportCarrierSiteNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCarrierSiteNumber", False)
+        If Me.CCIReport.sReportCarrierSiteName IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCarrierSiteName", False)
+        If Me.CCIReport.sReportSiteAddress IsNot Nothing Then insertString = insertString.AddtoDBString("sReportSiteAddress", False)
+        If Me.CCIReport.sReportLatitudeDegree IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLatitudeDegree", False)
+        If Me.CCIReport.sReportLatitudeMinute IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLatitudeMinute", False)
+        If Me.CCIReport.sReportLatitudeSecond IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLatitudeSecond", False)
+        If Me.CCIReport.sReportLongitudeDegree IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLongitudeDegree", False)
+        If Me.CCIReport.sReportLongitudeMinute IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLongitudeMinute", False)
+        If Me.CCIReport.sReportLongitudeSecond IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLongitudeSecond", False)
+        If Me.CCIReport.sReportLocalCodeRequirement IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLocalCodeRequirement", False)
+        If Me.CCIReport.sReportSiteHistory IsNot Nothing Then insertString = insertString.AddtoDBString("sReportSiteHistory", False)
+        If Me.CCIReport.sReportTowerManufacturer IsNot Nothing Then insertString = insertString.AddtoDBString("sReportTowerManufacturer", False)
+        If Me.CCIReport.sReportMonthManufactured IsNot Nothing Then insertString = insertString.AddtoDBString("sReportMonthManufactured", False)
+        If Me.CCIReport.sReportYearManufactured IsNot Nothing Then insertString = insertString.AddtoDBString("sReportYearManufactured", False)
+        If Me.CCIReport.sReportOriginalSpeed IsNot Nothing Then insertString = insertString.AddtoDBString("sReportOriginalSpeed", False)
+        If Me.CCIReport.sReportOriginalCode IsNot Nothing Then insertString = insertString.AddtoDBString("sReportOriginalCode", False)
+        If Me.CCIReport.sReportTowerType IsNot Nothing Then insertString = insertString.AddtoDBString("sReportTowerType", False)
+        If Me.CCIReport.sReportEngrName IsNot Nothing Then insertString = insertString.AddtoDBString("sReportEngrName", False)
+        If Me.CCIReport.sReportEngrTitle IsNot Nothing Then insertString = insertString.AddtoDBString("sReportEngrTitle", False)
+        If Me.CCIReport.sReportHQPhoneNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportHQPhoneNumber", False)
+        If Me.CCIReport.sReportEmailAddress IsNot Nothing Then insertString = insertString.AddtoDBString("sReportEmailAddress", False)
+        If Me.CCIReport.sReportLogoPath IsNot Nothing Then insertString = insertString.AddtoDBString("sReportLogoPath", False)
+        If Me.CCIReport.sReportCCiContactName IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiContactName", False)
+        If Me.CCIReport.sReportCCiAddress1 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiAddress1", False)
+        If Me.CCIReport.sReportCCiAddress2 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiAddress2", False)
+        If Me.CCIReport.sReportCCiBUNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiBUNumber", False)
+        If Me.CCIReport.sReportCCiSiteName IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiSiteName", False)
+        If Me.CCIReport.sReportCCiJDENumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiJDENumber", False)
+        If Me.CCIReport.sReportCCiWONumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiWONumber", False)
+        If Me.CCIReport.sReportCCiPONumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiPONumber", False)
+        If Me.CCIReport.sReportCCiAppNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiAppNumber", False)
+        If Me.CCIReport.sReportCCiRevNumber IsNot Nothing Then insertString = insertString.AddtoDBString("sReportCCiRevNumber", False)
+        If Me.CCIReport.sReportRecommendations IsNot Nothing Then insertString = insertString.AddtoDBString("sReportRecommendations", False)
+        If Me.CCIReport.sReportAppurt1Note1 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note1", False)
+        If Me.CCIReport.sReportAppurt1Note2 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note2", False)
+        If Me.CCIReport.sReportAppurt1Note3 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note3", False)
+        If Me.CCIReport.sReportAppurt1Note4 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note4", False)
+        If Me.CCIReport.sReportAppurt1Note5 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note5", False)
+        If Me.CCIReport.sReportAppurt1Note6 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note6", False)
+        If Me.CCIReport.sReportAppurt1Note7 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt1Note7", False)
+        If Me.CCIReport.sReportAppurt2Note1 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note1", False)
+        If Me.CCIReport.sReportAppurt2Note2 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note2", False)
+        If Me.CCIReport.sReportAppurt2Note3 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note3", False)
+        If Me.CCIReport.sReportAppurt2Note4 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note4", False)
+        If Me.CCIReport.sReportAppurt2Note5 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note5", False)
+        If Me.CCIReport.sReportAppurt2Note6 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note6", False)
+        If Me.CCIReport.sReportAppurt2Note7 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAppurt2Note7", False)
+        If Me.CCIReport.sReportAddlCapacityNote1 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAddlCapacityNote1", False)
+        If Me.CCIReport.sReportAddlCapacityNote2 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAddlCapacityNote2", False)
+        If Me.CCIReport.sReportAddlCapacityNote3 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAddlCapacityNote3", False)
+        If Me.CCIReport.sReportAddlCapacityNote4 IsNot Nothing Then insertString = insertString.AddtoDBString("sReportAddlCapacityNote4", False)
+        If Me.code.design.DesignCode IsNot Nothing Then insertString = insertString.AddtoDBString("DesignCode", False)
+        If Me.geometry.TowerType IsNot Nothing Then insertString = insertString.AddtoDBString("TowerType", False)
+        If Me.geometry.AntennaType IsNot Nothing Then insertString = insertString.AddtoDBString("AntennaType", False)
+        If Me.geometry.OverallHeight IsNot Nothing Then insertString = insertString.AddtoDBString("OverallHeight", False)
+        If Me.geometry.BaseElevation IsNot Nothing Then insertString = insertString.AddtoDBString("BaseElevation", False)
+        If Me.geometry.Lambda IsNot Nothing Then insertString = insertString.AddtoDBString("Lambda", False)
+        If Me.geometry.TowerTopFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString("TowerTopFaceWidth", False)
+        If Me.geometry.TowerBaseFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString("TowerBaseFaceWidth", False)
+        If Me.code.wind.WindSpeed IsNot Nothing Then insertString = insertString.AddtoDBString("WindSpeed", False)
+        If Me.code.wind.WindSpeedIce IsNot Nothing Then insertString = insertString.AddtoDBString("WindSpeedIce", False)
+        If Me.code.wind.WindSpeedService IsNot Nothing Then insertString = insertString.AddtoDBString("WindSpeedService", False)
+        If Me.code.ice.IceThickness IsNot Nothing Then insertString = insertString.AddtoDBString("IceThickness", False)
+        If Me.code.wind.CSA_S37_RefVelPress IsNot Nothing Then insertString = insertString.AddtoDBString("CSA_S37_RefVelPress", False)
+        If Me.code.wind.CSA_S37_ReliabilityClass IsNot Nothing Then insertString = insertString.AddtoDBString("CSA_S37_ReliabilityClass", False)
+        If Me.code.wind.CSA_S37_ServiceabilityFactor IsNot Nothing Then insertString = insertString.AddtoDBString("CSA_S37_ServiceabilityFactor", False)
+        If Me.code.ice.UseModified_TIA_222_IceParameters IsNot Nothing Then insertString = insertString.AddtoDBString("UseModified_TIA_222_IceParameters", False)
+        If Me.code.ice.TIA_222_IceThicknessMultiplier IsNot Nothing Then insertString = insertString.AddtoDBString("TIA_222_IceThicknessMultiplier", False)
+        If Me.code.ice.DoNotUse_TIA_222_IceEscalation IsNot Nothing Then insertString = insertString.AddtoDBString("DoNotUse_TIA_222_IceEscalation", False)
+        If Me.code.ice.IceDensity IsNot Nothing Then insertString = insertString.AddtoDBString("IceDensity", False)
+        If Me.code.seismic.SeismicSiteClass IsNot Nothing Then insertString = insertString.AddtoDBString("SeismicSiteClass", False)
+        If Me.code.seismic.SeismicSs IsNot Nothing Then insertString = insertString.AddtoDBString("SeismicSs", False)
+        If Me.code.seismic.SeismicS1 IsNot Nothing Then insertString = insertString.AddtoDBString("SeismicS1", False)
+        If Me.code.thermal.TempDrop IsNot Nothing Then insertString = insertString.AddtoDBString("TempDrop", False)
+        If Me.code.misclCode.GroutFc IsNot Nothing Then insertString = insertString.AddtoDBString("GroutFc", False)
+        If Me.options.defaultGirtOffsets.GirtOffset IsNot Nothing Then insertString = insertString.AddtoDBString("GirtOffset", False)
+        If Me.options.defaultGirtOffsets.GirtOffsetLatticedPole IsNot Nothing Then insertString = insertString.AddtoDBString("GirtOffsetLatticedPole", False)
+        If Me.options.foundationStiffness.MastVert IsNot Nothing Then insertString = insertString.AddtoDBString("MastVert", False)
+        If Me.options.foundationStiffness.MastHorz IsNot Nothing Then insertString = insertString.AddtoDBString("MastHorz", False)
+        If Me.options.foundationStiffness.GuyVert IsNot Nothing Then insertString = insertString.AddtoDBString("GuyVert", False)
+        If Me.options.foundationStiffness.GuyHorz IsNot Nothing Then insertString = insertString.AddtoDBString("GuyHorz", False)
+        If Me.options.misclOptions.HogRodTakeup IsNot Nothing Then insertString = insertString.AddtoDBString("HogRodTakeup", False)
+        If Me.geometry.TowerTaper IsNot Nothing Then insertString = insertString.AddtoDBString("TowerTaper", False)
+        If Me.geometry.GuyedMonopoleBaseType IsNot Nothing Then insertString = insertString.AddtoDBString("GuyedMonopoleBaseType", False)
+        If Me.geometry.TaperHeight IsNot Nothing Then insertString = insertString.AddtoDBString("TaperHeight", False)
+        If Me.geometry.PivotHeight IsNot Nothing Then insertString = insertString.AddtoDBString("PivotHeight", False)
+        If Me.geometry.AutoCalcGH IsNot Nothing Then insertString = insertString.AddtoDBString("AutoCalcGH", False)
+        If Me.MTOSettings.IncludeCapacityNote IsNot Nothing Then insertString = insertString.AddtoDBString("IncludeCapacityNote", False)
+        If Me.MTOSettings.IncludeAppurtGraphics IsNot Nothing Then insertString = insertString.AddtoDBString("IncludeAppurtGraphics", False)
+        If Me.MTOSettings.DisplayNotes IsNot Nothing Then insertString = insertString.AddtoDBString("DisplayNotes", False)
+        If Me.MTOSettings.DisplayReactions IsNot Nothing Then insertString = insertString.AddtoDBString("DisplayReactions", False)
+        If Me.MTOSettings.DisplaySchedule IsNot Nothing Then insertString = insertString.AddtoDBString("DisplaySchedule", False)
+        If Me.MTOSettings.DisplayAppurtenanceTable IsNot Nothing Then insertString = insertString.AddtoDBString("DisplayAppurtenanceTable", False)
+        If Me.MTOSettings.DisplayMaterialStrengthTable IsNot Nothing Then insertString = insertString.AddtoDBString("DisplayMaterialStrengthTable", False)
+        If Me.code.wind.AutoCalc_ASCE_GH IsNot Nothing Then insertString = insertString.AddtoDBString("AutoCalc_ASCE_GH", False)
+        If Me.code.wind.ASCE_ExposureCat IsNot Nothing Then insertString = insertString.AddtoDBString("ASCE_ExposureCat", False)
+        If Me.code.wind.ASCE_Year IsNot Nothing Then insertString = insertString.AddtoDBString("ASCE_Year", False)
+        If Me.code.wind.ASCEGh IsNot Nothing Then insertString = insertString.AddtoDBString("ASCEGh", False)
+        If Me.code.wind.ASCEI IsNot Nothing Then insertString = insertString.AddtoDBString("ASCEI", False)
+        If Me.code.wind.UseASCEWind IsNot Nothing Then insertString = insertString.AddtoDBString("UseASCEWind", False)
+        If Me.geometry.UserGHElev IsNot Nothing Then insertString = insertString.AddtoDBString("UserGHElev", False)
+        If Me.code.design.UseCodeGuySF IsNot Nothing Then insertString = insertString.AddtoDBString("UseCodeGuySF", False)
+        If Me.code.design.GuySF IsNot Nothing Then insertString = insertString.AddtoDBString("GuySF", False)
+        If Me.code.wind.CalcWindAt IsNot Nothing Then insertString = insertString.AddtoDBString("CalcWindAt", False)
+        If Me.code.misclCode.TowerBoltGrade IsNot Nothing Then insertString = insertString.AddtoDBString("TowerBoltGrade", False)
+        If Me.code.misclCode.TowerBoltMinEdgeDist IsNot Nothing Then insertString = insertString.AddtoDBString("TowerBoltMinEdgeDist", False)
+        If Me.code.design.AllowStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString("AllowStressRatio", False)
+        If Me.code.design.AllowAntStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString("AllowAntStressRatio", False)
+        If Me.code.wind.WindCalcPoints IsNot Nothing Then insertString = insertString.AddtoDBString("WindCalcPoints", False)
+        If Me.geometry.UseIndexPlate IsNot Nothing Then insertString = insertString.AddtoDBString("UseIndexPlate", False)
+        If Me.geometry.EnterUserDefinedGhValues IsNot Nothing Then insertString = insertString.AddtoDBString("EnterUserDefinedGhValues", False)
+        If Me.geometry.BaseTowerGhInput IsNot Nothing Then insertString = insertString.AddtoDBString("BaseTowerGhInput", False)
+        If Me.geometry.UpperStructureGhInput IsNot Nothing Then insertString = insertString.AddtoDBString("UpperStructureGhInput", False)
+        If Me.geometry.EnterUserDefinedCgValues IsNot Nothing Then insertString = insertString.AddtoDBString("EnterUserDefinedCgValues", False)
+        If Me.geometry.BaseTowerCgInput IsNot Nothing Then insertString = insertString.AddtoDBString("BaseTowerCgInput", False)
+        If Me.geometry.UpperStructureCgInput IsNot Nothing Then insertString = insertString.AddtoDBString("UpperStructureCgInput", False)
+        If Me.options.cantileverPoles.CheckVonMises IsNot Nothing Then insertString = insertString.AddtoDBString("CheckVonMises", False)
+        If Me.options.UseClearSpans IsNot Nothing Then insertString = insertString.AddtoDBString("UseClearSpans", False)
+        If Me.options.UseClearSpansKlr IsNot Nothing Then insertString = insertString.AddtoDBString("UseClearSpansKlr", False)
+        If Me.geometry.AntennaFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString("AntennaFaceWidth", False)
+        If Me.code.design.DoInteraction IsNot Nothing Then insertString = insertString.AddtoDBString("DoInteraction", False)
+        If Me.code.design.DoHorzInteraction IsNot Nothing Then insertString = insertString.AddtoDBString("DoHorzInteraction", False)
+        If Me.code.design.DoDiagInteraction IsNot Nothing Then insertString = insertString.AddtoDBString("DoDiagInteraction", False)
+        If Me.code.design.UseMomentMagnification IsNot Nothing Then insertString = insertString.AddtoDBString("UseMomentMagnification", False)
+        If Me.options.UseFeedlineAsCylinder IsNot Nothing Then insertString = insertString.AddtoDBString("UseFeedlineAsCylinder", False)
+        If Me.options.defaultGirtOffsets.OffsetBotGirt IsNot Nothing Then insertString = insertString.AddtoDBString("OffsetBotGirt", False)
+        If Me.code.design.PrintBitmaps IsNot Nothing Then insertString = insertString.AddtoDBString("PrintBitmaps", False)
+        If Me.geometry.UseTopTakeup IsNot Nothing Then insertString = insertString.AddtoDBString("UseTopTakeup", False)
+        If Me.geometry.ConstantSlope IsNot Nothing Then insertString = insertString.AddtoDBString("ConstantSlope", False)
+        If Me.code.design.UseCodeStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString("UseCodeStressRatio", False)
+        If Me.options.UseLegLoads IsNot Nothing Then insertString = insertString.AddtoDBString("UseLegLoads", False)
+        If Me.code.design.ERIDesignMode IsNot Nothing Then insertString = insertString.AddtoDBString("ERIDesignMode", False)
+        If Me.code.wind.WindExposure IsNot Nothing Then insertString = insertString.AddtoDBString("WindExposure", False)
+        If Me.code.wind.WindZone IsNot Nothing Then insertString = insertString.AddtoDBString("WindZone", False)
+        If Me.code.wind.StructureCategory IsNot Nothing Then insertString = insertString.AddtoDBString("StructureCategory", False)
+        If Me.code.wind.RiskCategory IsNot Nothing Then insertString = insertString.AddtoDBString("RiskCategory", False)
+        If Me.code.wind.TopoCategory IsNot Nothing Then insertString = insertString.AddtoDBString("TopoCategory", False)
+        If Me.code.wind.RSMTopographicFeature IsNot Nothing Then insertString = insertString.AddtoDBString("RSMTopographicFeature", False)
+        If Me.code.wind.RSM_L IsNot Nothing Then insertString = insertString.AddtoDBString("RSM_L", False)
+        If Me.code.wind.RSM_X IsNot Nothing Then insertString = insertString.AddtoDBString("RSM_X", False)
+        If Me.code.wind.CrestHeight IsNot Nothing Then insertString = insertString.AddtoDBString("CrestHeight", False)
+        If Me.code.wind.TIA_222_H_TopoFeatureDownwind IsNot Nothing Then insertString = insertString.AddtoDBString("TIA_222_H_TopoFeatureDownwind", False)
+        If Me.code.wind.BaseElevAboveSeaLevel IsNot Nothing Then insertString = insertString.AddtoDBString("BaseElevAboveSeaLevel", False)
+        If Me.code.wind.ConsiderRooftopSpeedUp IsNot Nothing Then insertString = insertString.AddtoDBString("ConsiderRooftopSpeedUp", False)
+        If Me.code.wind.RooftopWS IsNot Nothing Then insertString = insertString.AddtoDBString("RooftopWS", False)
+        If Me.code.wind.RooftopHS IsNot Nothing Then insertString = insertString.AddtoDBString("RooftopHS", False)
+        If Me.code.wind.RooftopParapetHt IsNot Nothing Then insertString = insertString.AddtoDBString("RooftopParapetHt", False)
+        If Me.code.wind.RooftopXB IsNot Nothing Then insertString = insertString.AddtoDBString("RooftopXB", False)
+        If Me.code.design.UseTIA222H_AnnexS IsNot Nothing Then insertString = insertString.AddtoDBString("UseTIA222H_AnnexS", False)
+        If Me.code.design.TIA_222_H_AnnexS_Ratio IsNot Nothing Then insertString = insertString.AddtoDBString("TIA_222_H_AnnexS_Ratio", False)
+        If Me.code.wind.EIACWindMult IsNot Nothing Then insertString = insertString.AddtoDBString("EIACWindMult", False)
+        If Me.code.wind.EIACWindMultIce IsNot Nothing Then insertString = insertString.AddtoDBString("EIACWindMultIce", False)
+        If Me.code.wind.EIACIgnoreCableDrag IsNot Nothing Then insertString = insertString.AddtoDBString("EIACIgnoreCableDrag", False)
+        If Me.MTOSettings.Notes IsNot Nothing Then insertString = insertString.AddtoDBString("Notes", False)
+        If Me.reportSettings.ReportInputCosts IsNot Nothing Then insertString = insertString.AddtoDBString("ReportInputCosts", False)
+        If Me.reportSettings.ReportInputGeometry IsNot Nothing Then insertString = insertString.AddtoDBString("ReportInputGeometry", False)
+        If Me.reportSettings.ReportInputOptions IsNot Nothing Then insertString = insertString.AddtoDBString("ReportInputOptions", False)
+        If Me.reportSettings.ReportMaxForces IsNot Nothing Then insertString = insertString.AddtoDBString("ReportMaxForces", False)
+        If Me.reportSettings.ReportInputMap IsNot Nothing Then insertString = insertString.AddtoDBString("ReportInputMap", False)
+        If Me.reportSettings.CostReportOutputType IsNot Nothing Then insertString = insertString.AddtoDBString("CostReportOutputType", False)
+        If Me.reportSettings.CapacityReportOutputType IsNot Nothing Then insertString = insertString.AddtoDBString("CapacityReportOutputType", False)
+        If Me.reportSettings.ReportPrintForceTotals IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintForceTotals", False)
+        If Me.reportSettings.ReportPrintForceDetails IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintForceDetails", False)
+        If Me.reportSettings.ReportPrintMastVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintMastVectors", False)
+        If Me.reportSettings.ReportPrintAntPoleVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintAntPoleVectors", False)
+        If Me.reportSettings.ReportPrintDiscreteVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintDiscreteVectors", False)
+        If Me.reportSettings.ReportPrintDishVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintDishVectors", False)
+        If Me.reportSettings.ReportPrintFeedTowerVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintFeedTowerVectors", False)
+        If Me.reportSettings.ReportPrintUserLoadVectors IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintUserLoadVectors", False)
+        If Me.reportSettings.ReportPrintPressures IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintPressures", False)
+        If Me.reportSettings.ReportPrintAppurtForces IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintAppurtForces", False)
+        If Me.reportSettings.ReportPrintGuyForces IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintGuyForces", False)
+        If Me.reportSettings.ReportPrintGuyStressing IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintGuyStressing", False)
+        If Me.reportSettings.ReportPrintDeflections IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintDeflections", False)
+        If Me.reportSettings.ReportPrintReactions IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintReactions", False)
+        If Me.reportSettings.ReportPrintStressChecks IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintStressChecks", False)
+        If Me.reportSettings.ReportPrintBoltChecks IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintBoltChecks", False)
+        If Me.reportSettings.ReportPrintInputGVerificationTables IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintInputGVerificationTables", False)
+        If Me.reportSettings.ReportPrintOutputGVerificationTables IsNot Nothing Then insertString = insertString.AddtoDBString("ReportPrintOutputGVerificationTables", False)
+        If Me.options.cantileverPoles.SocketTopMount IsNot Nothing Then insertString = insertString.AddtoDBString("SocketTopMount", False)
+        If Me.options.SRTakeCompression IsNot Nothing Then insertString = insertString.AddtoDBString("SRTakeCompression", False)
+        If Me.options.AllLegPanelsSame IsNot Nothing Then insertString = insertString.AddtoDBString("AllLegPanelsSame", False)
+        If Me.options.UseCombinedBoltCapacity IsNot Nothing Then insertString = insertString.AddtoDBString("UseCombinedBoltCapacity", False)
+        If Me.options.SecHorzBracesLeg IsNot Nothing Then insertString = insertString.AddtoDBString("SecHorzBracesLeg", False)
+        If Me.options.SortByComponent IsNot Nothing Then insertString = insertString.AddtoDBString("SortByComponent", False)
+        If Me.options.SRCutEnds IsNot Nothing Then insertString = insertString.AddtoDBString("SRCutEnds", False)
+        If Me.options.SRConcentric IsNot Nothing Then insertString = insertString.AddtoDBString("SRConcentric", False)
+        If Me.options.CalcBlockShear IsNot Nothing Then insertString = insertString.AddtoDBString("CalcBlockShear", False)
+        If Me.options.Use4SidedDiamondBracing IsNot Nothing Then insertString = insertString.AddtoDBString("Use4SidedDiamondBracing", False)
+        If Me.options.TriangulateInnerBracing IsNot Nothing Then insertString = insertString.AddtoDBString("TriangulateInnerBracing", False)
+        If Me.options.PrintCarrierNotes IsNot Nothing Then insertString = insertString.AddtoDBString("PrintCarrierNotes", False)
+        If Me.options.AddIBCWindCase IsNot Nothing Then insertString = insertString.AddtoDBString("AddIBCWindCase", False)
+        If Me.code.wind.UseStateCountyLookup IsNot Nothing Then insertString = insertString.AddtoDBString("UseStateCountyLookup", False)
+        If Me.code.wind.State IsNot Nothing Then insertString = insertString.AddtoDBString("State", False)
+        If Me.code.wind.County IsNot Nothing Then insertString = insertString.AddtoDBString("County", False)
+        If Me.options.LegBoltsAtTop IsNot Nothing Then insertString = insertString.AddtoDBString("LegBoltsAtTop", False)
+        If Me.options.cantileverPoles.PrintMonopoleAtIncrements IsNot Nothing Then insertString = insertString.AddtoDBString("PrintMonopoleAtIncrements", False)
+        If Me.options.UseTIA222Exemptions_MinBracingResistance IsNot Nothing Then insertString = insertString.AddtoDBString("UseTIA222Exemptions_MinBracingResistance", False)
+        If Me.options.UseTIA222Exemptions_TensionSplice IsNot Nothing Then insertString = insertString.AddtoDBString("UseTIA222Exemptions_TensionSplice", False)
+        If Me.options.IgnoreKLryFor60DegAngleLegs IsNot Nothing Then insertString = insertString.AddtoDBString("IgnoreKLryFor60DegAngleLegs", False)
+        If Me.code.wind.ASCE_7_10_WindData IsNot Nothing Then insertString = insertString.AddtoDBString("ASCE_7_10_WindData", False)
+        If Me.code.wind.ASCE_7_10_ConvertWindToASD IsNot Nothing Then insertString = insertString.AddtoDBString("ASCE_7_10_ConvertWindToASD", False)
+        If Me.solutionSettings.SolutionUsePDelta IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionUsePDelta", False)
+        If Me.options.UseFeedlineTorque IsNot Nothing Then insertString = insertString.AddtoDBString("UseFeedlineTorque", False)
+        If Me.options.UsePinnedElements IsNot Nothing Then insertString = insertString.AddtoDBString("UsePinnedElements", False)
+        If Me.code.wind.UseMaxKz IsNot Nothing Then insertString = insertString.AddtoDBString("UseMaxKz", False)
+        If Me.options.UseRigidIndex IsNot Nothing Then insertString = insertString.AddtoDBString("UseRigidIndex", False)
+        If Me.options.UseTrueCable IsNot Nothing Then insertString = insertString.AddtoDBString("UseTrueCable", False)
+        If Me.options.UseASCELy IsNot Nothing Then insertString = insertString.AddtoDBString("UseASCELy", False)
+        If Me.options.CalcBracingForces IsNot Nothing Then insertString = insertString.AddtoDBString("CalcBracingForces", False)
+        If Me.options.IgnoreBracingFEA IsNot Nothing Then insertString = insertString.AddtoDBString("IgnoreBracingFEA", False)
+        If Me.options.cantileverPoles.UseSubCriticalFlow IsNot Nothing Then insertString = insertString.AddtoDBString("UseSubCriticalFlow", False)
+        If Me.options.cantileverPoles.AssumePoleWithNoAttachments IsNot Nothing Then insertString = insertString.AddtoDBString("AssumePoleWithNoAttachments", False)
+        If Me.options.cantileverPoles.AssumePoleWithShroud IsNot Nothing Then insertString = insertString.AddtoDBString("AssumePoleWithShroud", False)
+        If Me.options.cantileverPoles.PoleCornerRadiusKnown IsNot Nothing Then insertString = insertString.AddtoDBString("PoleCornerRadiusKnown", False)
+        If Me.solutionSettings.SolutionMinStiffness IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionMinStiffness", False)
+        If Me.solutionSettings.SolutionMaxStiffness IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionMaxStiffness", False)
+        If Me.solutionSettings.SolutionMaxCycles IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionMaxCycles", False)
+        If Me.solutionSettings.SolutionPower IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionPower", False)
+        If Me.solutionSettings.SolutionTolerance IsNot Nothing Then insertString = insertString.AddtoDBString("SolutionTolerance", False)
+        If Me.options.cantileverPoles.CantKFactor IsNot Nothing Then insertString = insertString.AddtoDBString("CantKFactor", False)
+        If Me.options.misclOptions.RadiusSampleDist IsNot Nothing Then insertString = insertString.AddtoDBString("RadiusSampleDist", False)
+        If Me.options.BypassStabilityChecks IsNot Nothing Then insertString = insertString.AddtoDBString("BypassStabilityChecks", False)
+        If Me.options.UseWindProjection IsNot Nothing Then insertString = insertString.AddtoDBString("UseWindProjection", False)
+        If Me.code.ice.UseIceEscalation IsNot Nothing Then insertString = insertString.AddtoDBString("UseIceEscalation", False)
+        If Me.options.UseDishCoeff IsNot Nothing Then insertString = insertString.AddtoDBString("UseDishCoeff", False)
+        If Me.options.AutoCalcTorqArmArea IsNot Nothing Then insertString = insertString.AddtoDBString("AutoCalcTorqArmArea", False)
+        If Me.options.windDirections.WindDirOption IsNot Nothing Then insertString = insertString.AddtoDBString("WindDirOption", False)
+        If Me.options.windDirections.WindDir0_0 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_0", False)
+        If Me.options.windDirections.WindDir0_1 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_1", False)
+        If Me.options.windDirections.WindDir0_2 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_2", False)
+        If Me.options.windDirections.WindDir0_3 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_3", False)
+        If Me.options.windDirections.WindDir0_4 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_4", False)
+        If Me.options.windDirections.WindDir0_5 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_5", False)
+        If Me.options.windDirections.WindDir0_6 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_6", False)
+        If Me.options.windDirections.WindDir0_7 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_7", False)
+        If Me.options.windDirections.WindDir0_8 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_8", False)
+        If Me.options.windDirections.WindDir0_9 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_9", False)
+        If Me.options.windDirections.WindDir0_10 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_10", False)
+        If Me.options.windDirections.WindDir0_11 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_11", False)
+        If Me.options.windDirections.WindDir0_12 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_12", False)
+        If Me.options.windDirections.WindDir0_13 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_13", False)
+        If Me.options.windDirections.WindDir0_14 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_14", False)
+        If Me.options.windDirections.WindDir0_15 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir0_15", False)
+        If Me.options.windDirections.WindDir1_0 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_0", False)
+        If Me.options.windDirections.WindDir1_1 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_1", False)
+        If Me.options.windDirections.WindDir1_2 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_2", False)
+        If Me.options.windDirections.WindDir1_3 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_3", False)
+        If Me.options.windDirections.WindDir1_4 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_4", False)
+        If Me.options.windDirections.WindDir1_5 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_5", False)
+        If Me.options.windDirections.WindDir1_6 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_6", False)
+        If Me.options.windDirections.WindDir1_7 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_7", False)
+        If Me.options.windDirections.WindDir1_8 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_8", False)
+        If Me.options.windDirections.WindDir1_9 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_9", False)
+        If Me.options.windDirections.WindDir1_10 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_10", False)
+        If Me.options.windDirections.WindDir1_11 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_11", False)
+        If Me.options.windDirections.WindDir1_12 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_12", False)
+        If Me.options.windDirections.WindDir1_13 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_13", False)
+        If Me.options.windDirections.WindDir1_14 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_14", False)
+        If Me.options.windDirections.WindDir1_15 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir1_15", False)
+        If Me.options.windDirections.WindDir2_0 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_0", False)
+        If Me.options.windDirections.WindDir2_1 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_1", False)
+        If Me.options.windDirections.WindDir2_2 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_2", False)
+        If Me.options.windDirections.WindDir2_3 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_3", False)
+        If Me.options.windDirections.WindDir2_4 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_4", False)
+        If Me.options.windDirections.WindDir2_5 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_5", False)
+        If Me.options.windDirections.WindDir2_6 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_6", False)
+        If Me.options.windDirections.WindDir2_7 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_7", False)
+        If Me.options.windDirections.WindDir2_8 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_8", False)
+        If Me.options.windDirections.WindDir2_9 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_9", False)
+        If Me.options.windDirections.WindDir2_10 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_10", False)
+        If Me.options.windDirections.WindDir2_11 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_11", False)
+        If Me.options.windDirections.WindDir2_12 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_12", False)
+        If Me.options.windDirections.WindDir2_13 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_13", False)
+        If Me.options.windDirections.WindDir2_14 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_14", False)
+        If Me.options.windDirections.WindDir2_15 IsNot Nothing Then insertString = insertString.AddtoDBString("WindDir2_15", False)
+        If Me.options.windDirections.SuppressWindPatternLoading IsNot Nothing Then insertString = insertString.AddtoDBString("SuppressWindPatternLoading", False)
+
+        Return insertString
+    End Function
+    Function GenerateIndInputSqlValues() As String
+        Dim insertString As String = ""
+
+        If Me.settings.projectInfo.DesignStandardSeries IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.DesignStandardSeries.ToString)
+        If Me.settings.projectInfo.UnitsSystem IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.UnitsSystem.ToString)
+        If Me.settings.projectInfo.ClientName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.ClientName.ToString)
+        If Me.settings.projectInfo.ProjectName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.ProjectName.ToString)
+        If Me.settings.projectInfo.ProjectNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.ProjectNumber.ToString)
+        If Me.settings.projectInfo.CreatedBy IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.CreatedBy.ToString)
+        If Me.settings.projectInfo.CreatedOn IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.CreatedOn.ToString)
+        If Me.settings.projectInfo.LastUsedBy IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.LastUsedBy.ToString)
+        If Me.settings.projectInfo.LastUsedOn IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.LastUsedOn.ToString)
+        If Me.settings.projectInfo.VersionUsed IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.VersionUsed.ToString)
+        If Me.settings.userInfo.ViewerUserName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerUserName.ToString)
+        If Me.settings.userInfo.ViewerCompanyName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerCompanyName.ToString)
+        If Me.settings.userInfo.ViewerStreetAddress IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerStreetAddress.ToString)
+        If Me.settings.userInfo.ViewerCityState IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerCityState.ToString)
+        If Me.settings.userInfo.ViewerPhone IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerPhone.ToString)
+        If Me.settings.userInfo.ViewerFAX IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerFAX.ToString)
+        If Me.settings.userInfo.ViewerLogo IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerLogo.ToString)
+        If Me.settings.userInfo.ViewerCompanyBitmap IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerCompanyBitmap.ToString)
+        If Me.CCIReport.sReportProjectNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportProjectNumber.ToString)
+        If Me.CCIReport.sReportJobType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportJobType.ToString)
+        If Me.CCIReport.sReportCarrierName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCarrierName.ToString)
+        If Me.CCIReport.sReportCarrierSiteNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCarrierSiteNumber.ToString)
+        If Me.CCIReport.sReportCarrierSiteName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCarrierSiteName.ToString)
+        If Me.CCIReport.sReportSiteAddress IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportSiteAddress.ToString)
+        If Me.CCIReport.sReportLatitudeDegree IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLatitudeDegree.ToString)
+        If Me.CCIReport.sReportLatitudeMinute IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLatitudeMinute.ToString)
+        If Me.CCIReport.sReportLatitudeSecond IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLatitudeSecond.ToString)
+        If Me.CCIReport.sReportLongitudeDegree IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLongitudeDegree.ToString)
+        If Me.CCIReport.sReportLongitudeMinute IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLongitudeMinute.ToString)
+        If Me.CCIReport.sReportLongitudeSecond IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLongitudeSecond.ToString)
+        If Me.CCIReport.sReportLocalCodeRequirement IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLocalCodeRequirement.ToString)
+        If Me.CCIReport.sReportSiteHistory IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportSiteHistory.ToString)
+        If Me.CCIReport.sReportTowerManufacturer IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportTowerManufacturer.ToString)
+        If Me.CCIReport.sReportMonthManufactured IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportMonthManufactured.ToString)
+        If Me.CCIReport.sReportYearManufactured IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportYearManufactured.ToString)
+        If Me.CCIReport.sReportOriginalSpeed IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportOriginalSpeed.ToString)
+        If Me.CCIReport.sReportOriginalCode IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportOriginalCode.ToString)
+        If Me.CCIReport.sReportTowerType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportTowerType.ToString)
+        If Me.CCIReport.sReportEngrName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportEngrName.ToString)
+        If Me.CCIReport.sReportEngrTitle IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportEngrTitle.ToString)
+        If Me.CCIReport.sReportHQPhoneNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportHQPhoneNumber.ToString)
+        If Me.CCIReport.sReportEmailAddress IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportEmailAddress.ToString)
+        If Me.CCIReport.sReportLogoPath IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportLogoPath.ToString)
+        If Me.CCIReport.sReportCCiContactName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiContactName.ToString)
+        If Me.CCIReport.sReportCCiAddress1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiAddress1.ToString)
+        If Me.CCIReport.sReportCCiAddress2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiAddress2.ToString)
+        If Me.CCIReport.sReportCCiBUNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiBUNumber.ToString)
+        If Me.CCIReport.sReportCCiSiteName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiSiteName.ToString)
+        If Me.CCIReport.sReportCCiJDENumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiJDENumber.ToString)
+        If Me.CCIReport.sReportCCiWONumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiWONumber.ToString)
+        If Me.CCIReport.sReportCCiPONumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiPONumber.ToString)
+        If Me.CCIReport.sReportCCiAppNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiAppNumber.ToString)
+        If Me.CCIReport.sReportCCiRevNumber IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportCCiRevNumber.ToString)
+        If Me.CCIReport.sReportRecommendations IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportRecommendations.ToString)
+        If Me.CCIReport.sReportAppurt1Note1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note1.ToString)
+        If Me.CCIReport.sReportAppurt1Note2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note2.ToString)
+        If Me.CCIReport.sReportAppurt1Note3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note3.ToString)
+        If Me.CCIReport.sReportAppurt1Note4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note4.ToString)
+        If Me.CCIReport.sReportAppurt1Note5 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note5.ToString)
+        If Me.CCIReport.sReportAppurt1Note6 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note6.ToString)
+        If Me.CCIReport.sReportAppurt1Note7 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt1Note7.ToString)
+        If Me.CCIReport.sReportAppurt2Note1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note1.ToString)
+        If Me.CCIReport.sReportAppurt2Note2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note2.ToString)
+        If Me.CCIReport.sReportAppurt2Note3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note3.ToString)
+        If Me.CCIReport.sReportAppurt2Note4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note4.ToString)
+        If Me.CCIReport.sReportAppurt2Note5 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note5.ToString)
+        If Me.CCIReport.sReportAppurt2Note6 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note6.ToString)
+        If Me.CCIReport.sReportAppurt2Note7 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAppurt2Note7.ToString)
+        If Me.CCIReport.sReportAddlCapacityNote1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAddlCapacityNote1.ToString)
+        If Me.CCIReport.sReportAddlCapacityNote2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAddlCapacityNote2.ToString)
+        If Me.CCIReport.sReportAddlCapacityNote3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAddlCapacityNote3.ToString)
+        If Me.CCIReport.sReportAddlCapacityNote4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.CCIReport.sReportAddlCapacityNote4.ToString)
+        If Me.code.design.DesignCode IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.DesignCode.ToString)
+        If Me.geometry.TowerType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.TowerType.ToString)
+        If Me.geometry.AntennaType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.AntennaType.ToString)
+        If Me.geometry.OverallHeight IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.OverallHeight.ToString)
+        If Me.geometry.BaseElevation IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.BaseElevation.ToString)
+        If Me.geometry.Lambda IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.Lambda.ToString)
+        If Me.geometry.TowerTopFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.TowerTopFaceWidth.ToString)
+        If Me.geometry.TowerBaseFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.TowerBaseFaceWidth.ToString)
+        If Me.code.wind.WindSpeed IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindSpeed.ToString)
+        If Me.code.wind.WindSpeedIce IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindSpeedIce.ToString)
+        If Me.code.wind.WindSpeedService IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindSpeedService.ToString)
+        If Me.code.ice.IceThickness IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.IceThickness.ToString)
+        If Me.code.wind.CSA_S37_RefVelPress IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.CSA_S37_RefVelPress.ToString)
+        If Me.code.wind.CSA_S37_ReliabilityClass IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.CSA_S37_ReliabilityClass.ToString)
+        If Me.code.wind.CSA_S37_ServiceabilityFactor IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.CSA_S37_ServiceabilityFactor.ToString)
+        If Me.code.ice.UseModified_TIA_222_IceParameters IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.UseModified_TIA_222_IceParameters.ToString)
+        If Me.code.ice.TIA_222_IceThicknessMultiplier IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.TIA_222_IceThicknessMultiplier.ToString)
+        If Me.code.ice.DoNotUse_TIA_222_IceEscalation IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.DoNotUse_TIA_222_IceEscalation.ToString)
+        If Me.code.ice.IceDensity IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.IceDensity.ToString)
+        If Me.code.seismic.SeismicSiteClass IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.seismic.SeismicSiteClass.ToString)
+        If Me.code.seismic.SeismicSs IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.seismic.SeismicSs.ToString)
+        If Me.code.seismic.SeismicS1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.seismic.SeismicS1.ToString)
+        If Me.code.thermal.TempDrop IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.thermal.TempDrop.ToString)
+        If Me.code.misclCode.GroutFc IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.misclCode.GroutFc.ToString)
+        If Me.options.defaultGirtOffsets.GirtOffset IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.defaultGirtOffsets.GirtOffset.ToString)
+        If Me.options.defaultGirtOffsets.GirtOffsetLatticedPole IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.defaultGirtOffsets.GirtOffsetLatticedPole.ToString)
+        If Me.options.foundationStiffness.MastVert IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.foundationStiffness.MastVert.ToString)
+        If Me.options.foundationStiffness.MastHorz IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.foundationStiffness.MastHorz.ToString)
+        If Me.options.foundationStiffness.GuyVert IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.foundationStiffness.GuyVert.ToString)
+        If Me.options.foundationStiffness.GuyHorz IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.foundationStiffness.GuyHorz.ToString)
+        If Me.options.misclOptions.HogRodTakeup IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.misclOptions.HogRodTakeup.ToString)
+        If Me.geometry.TowerTaper IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.TowerTaper.ToString)
+        If Me.geometry.GuyedMonopoleBaseType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.GuyedMonopoleBaseType.ToString)
+        If Me.geometry.TaperHeight IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.TaperHeight.ToString)
+        If Me.geometry.PivotHeight IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.PivotHeight.ToString)
+        If Me.geometry.AutoCalcGH IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.AutoCalcGH.ToString)
+        If Me.MTOSettings.IncludeCapacityNote IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.IncludeCapacityNote.ToString)
+        If Me.MTOSettings.IncludeAppurtGraphics IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.IncludeAppurtGraphics.ToString)
+        If Me.MTOSettings.DisplayNotes IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.DisplayNotes.ToString)
+        If Me.MTOSettings.DisplayReactions IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.DisplayReactions.ToString)
+        If Me.MTOSettings.DisplaySchedule IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.DisplaySchedule.ToString)
+        If Me.MTOSettings.DisplayAppurtenanceTable IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.DisplayAppurtenanceTable.ToString)
+        If Me.MTOSettings.DisplayMaterialStrengthTable IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.DisplayMaterialStrengthTable.ToString)
+        If Me.code.wind.AutoCalc_ASCE_GH IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.AutoCalc_ASCE_GH.ToString)
+        If Me.code.wind.ASCE_ExposureCat IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCE_ExposureCat.ToString)
+        If Me.code.wind.ASCE_Year IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCE_Year.ToString)
+        If Me.code.wind.ASCEGh IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCEGh.ToString)
+        If Me.code.wind.ASCEI IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCEI.ToString)
+        If Me.code.wind.UseASCEWind IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.UseASCEWind.ToString)
+        If Me.geometry.UserGHElev IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.UserGHElev.ToString)
+        If Me.code.design.UseCodeGuySF IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.UseCodeGuySF.ToString)
+        If Me.code.design.GuySF IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.GuySF.ToString)
+        If Me.code.wind.CalcWindAt IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.CalcWindAt.ToString)
+        If Me.code.misclCode.TowerBoltGrade IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.misclCode.TowerBoltGrade.ToString)
+        If Me.code.misclCode.TowerBoltMinEdgeDist IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.misclCode.TowerBoltMinEdgeDist.ToString)
+        If Me.code.design.AllowStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.AllowStressRatio.ToString)
+        If Me.code.design.AllowAntStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.AllowAntStressRatio.ToString)
+        If Me.code.wind.WindCalcPoints IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindCalcPoints.ToString)
+        If Me.geometry.UseIndexPlate IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.UseIndexPlate.ToString)
+        If Me.geometry.EnterUserDefinedGhValues IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.EnterUserDefinedGhValues.ToString)
+        If Me.geometry.BaseTowerGhInput IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.BaseTowerGhInput.ToString)
+        If Me.geometry.UpperStructureGhInput IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.UpperStructureGhInput.ToString)
+        If Me.geometry.EnterUserDefinedCgValues IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.EnterUserDefinedCgValues.ToString)
+        If Me.geometry.BaseTowerCgInput IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.BaseTowerCgInput.ToString)
+        If Me.geometry.UpperStructureCgInput IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.UpperStructureCgInput.ToString)
+        If Me.options.cantileverPoles.CheckVonMises IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.CheckVonMises.ToString)
+        If Me.options.UseClearSpans IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseClearSpans.ToString)
+        If Me.options.UseClearSpansKlr IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseClearSpansKlr.ToString)
+        If Me.geometry.AntennaFaceWidth IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.AntennaFaceWidth.ToString)
+        If Me.code.design.DoInteraction IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.DoInteraction.ToString)
+        If Me.code.design.DoHorzInteraction IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.DoHorzInteraction.ToString)
+        If Me.code.design.DoDiagInteraction IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.DoDiagInteraction.ToString)
+        If Me.code.design.UseMomentMagnification IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.UseMomentMagnification.ToString)
+        If Me.options.UseFeedlineAsCylinder IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseFeedlineAsCylinder.ToString)
+        If Me.options.defaultGirtOffsets.OffsetBotGirt IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.defaultGirtOffsets.OffsetBotGirt.ToString)
+        If Me.code.design.PrintBitmaps IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.PrintBitmaps.ToString)
+        If Me.geometry.UseTopTakeup IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.UseTopTakeup.ToString)
+        If Me.geometry.ConstantSlope IsNot Nothing Then insertString = insertString.AddtoDBString(Me.geometry.ConstantSlope.ToString)
+        If Me.code.design.UseCodeStressRatio IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.UseCodeStressRatio.ToString)
+        If Me.options.UseLegLoads IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseLegLoads.ToString)
+        If Me.code.design.ERIDesignMode IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.ERIDesignMode.ToString)
+        If Me.code.wind.WindExposure IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindExposure.ToString)
+        If Me.code.wind.WindZone IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.WindZone.ToString)
+        If Me.code.wind.StructureCategory IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.StructureCategory.ToString)
+        If Me.code.wind.RiskCategory IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RiskCategory.ToString)
+        If Me.code.wind.TopoCategory IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.TopoCategory.ToString)
+        If Me.code.wind.RSMTopographicFeature IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RSMTopographicFeature.ToString)
+        If Me.code.wind.RSM_L IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RSM_L.ToString)
+        If Me.code.wind.RSM_X IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RSM_X.ToString)
+        If Me.code.wind.CrestHeight IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.CrestHeight.ToString)
+        If Me.code.wind.TIA_222_H_TopoFeatureDownwind IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.TIA_222_H_TopoFeatureDownwind.ToString)
+        If Me.code.wind.BaseElevAboveSeaLevel IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.BaseElevAboveSeaLevel.ToString)
+        If Me.code.wind.ConsiderRooftopSpeedUp IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ConsiderRooftopSpeedUp.ToString)
+        If Me.code.wind.RooftopWS IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RooftopWS.ToString)
+        If Me.code.wind.RooftopHS IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RooftopHS.ToString)
+        If Me.code.wind.RooftopParapetHt IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RooftopParapetHt.ToString)
+        If Me.code.wind.RooftopXB IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.RooftopXB.ToString)
+        If Me.code.design.UseTIA222H_AnnexS IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.UseTIA222H_AnnexS.ToString)
+        If Me.code.design.TIA_222_H_AnnexS_Ratio IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.design.TIA_222_H_AnnexS_Ratio.ToString)
+        If Me.code.wind.EIACWindMult IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.EIACWindMult.ToString)
+        If Me.code.wind.EIACWindMultIce IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.EIACWindMultIce.ToString)
+        If Me.code.wind.EIACIgnoreCableDrag IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.EIACIgnoreCableDrag.ToString)
+        If Me.MTOSettings.Notes IsNot Nothing Then insertString = insertString.AddtoDBString(Me.MTOSettings.Notes.ToString)
+        If Me.reportSettings.ReportInputCosts IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportInputCosts.ToString)
+        If Me.reportSettings.ReportInputGeometry IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportInputGeometry.ToString)
+        If Me.reportSettings.ReportInputOptions IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportInputOptions.ToString)
+        If Me.reportSettings.ReportMaxForces IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportMaxForces.ToString)
+        If Me.reportSettings.ReportInputMap IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportInputMap.ToString)
+        If Me.reportSettings.CostReportOutputType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.CostReportOutputType.ToString)
+        If Me.reportSettings.CapacityReportOutputType IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.CapacityReportOutputType.ToString)
+        If Me.reportSettings.ReportPrintForceTotals IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintForceTotals.ToString)
+        If Me.reportSettings.ReportPrintForceDetails IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintForceDetails.ToString)
+        If Me.reportSettings.ReportPrintMastVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintMastVectors.ToString)
+        If Me.reportSettings.ReportPrintAntPoleVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintAntPoleVectors.ToString)
+        If Me.reportSettings.ReportPrintDiscreteVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintDiscreteVectors.ToString)
+        If Me.reportSettings.ReportPrintDishVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintDishVectors.ToString)
+        If Me.reportSettings.ReportPrintFeedTowerVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintFeedTowerVectors.ToString)
+        If Me.reportSettings.ReportPrintUserLoadVectors IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintUserLoadVectors.ToString)
+        If Me.reportSettings.ReportPrintPressures IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintPressures.ToString)
+        If Me.reportSettings.ReportPrintAppurtForces IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintAppurtForces.ToString)
+        If Me.reportSettings.ReportPrintGuyForces IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintGuyForces.ToString)
+        If Me.reportSettings.ReportPrintGuyStressing IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintGuyStressing.ToString)
+        If Me.reportSettings.ReportPrintDeflections IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintDeflections.ToString)
+        If Me.reportSettings.ReportPrintReactions IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintReactions.ToString)
+        If Me.reportSettings.ReportPrintStressChecks IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintStressChecks.ToString)
+        If Me.reportSettings.ReportPrintBoltChecks IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintBoltChecks.ToString)
+        If Me.reportSettings.ReportPrintInputGVerificationTables IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintInputGVerificationTables.ToString)
+        If Me.reportSettings.ReportPrintOutputGVerificationTables IsNot Nothing Then insertString = insertString.AddtoDBString(Me.reportSettings.ReportPrintOutputGVerificationTables.ToString)
+        If Me.options.cantileverPoles.SocketTopMount IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.SocketTopMount.ToString)
+        If Me.options.SRTakeCompression IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.SRTakeCompression.ToString)
+        If Me.options.AllLegPanelsSame IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.AllLegPanelsSame.ToString)
+        If Me.options.UseCombinedBoltCapacity IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseCombinedBoltCapacity.ToString)
+        If Me.options.SecHorzBracesLeg IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.SecHorzBracesLeg.ToString)
+        If Me.options.SortByComponent IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.SortByComponent.ToString)
+        If Me.options.SRCutEnds IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.SRCutEnds.ToString)
+        If Me.options.SRConcentric IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.SRConcentric.ToString)
+        If Me.options.CalcBlockShear IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.CalcBlockShear.ToString)
+        If Me.options.Use4SidedDiamondBracing IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.Use4SidedDiamondBracing.ToString)
+        If Me.options.TriangulateInnerBracing IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.TriangulateInnerBracing.ToString)
+        If Me.options.PrintCarrierNotes IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.PrintCarrierNotes.ToString)
+        If Me.options.AddIBCWindCase IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.AddIBCWindCase.ToString)
+        If Me.code.wind.UseStateCountyLookup IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.UseStateCountyLookup.ToString)
+        If Me.code.wind.State IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.State.ToString)
+        If Me.code.wind.County IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.County.ToString)
+        If Me.options.LegBoltsAtTop IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.LegBoltsAtTop.ToString)
+        If Me.options.cantileverPoles.PrintMonopoleAtIncrements IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.PrintMonopoleAtIncrements.ToString)
+        If Me.options.UseTIA222Exemptions_MinBracingResistance IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseTIA222Exemptions_MinBracingResistance.ToString)
+        If Me.options.UseTIA222Exemptions_TensionSplice IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseTIA222Exemptions_TensionSplice.ToString)
+        If Me.options.IgnoreKLryFor60DegAngleLegs IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.IgnoreKLryFor60DegAngleLegs.ToString)
+        If Me.code.wind.ASCE_7_10_WindData IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCE_7_10_WindData.ToString)
+        If Me.code.wind.ASCE_7_10_ConvertWindToASD IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.ASCE_7_10_ConvertWindToASD.ToString)
+        If Me.solutionSettings.SolutionUsePDelta IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionUsePDelta.ToString)
+        If Me.options.UseFeedlineTorque IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseFeedlineTorque.ToString)
+        If Me.options.UsePinnedElements IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UsePinnedElements.ToString)
+        If Me.code.wind.UseMaxKz IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.wind.UseMaxKz.ToString)
+        If Me.options.UseRigidIndex IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseRigidIndex.ToString)
+        If Me.options.UseTrueCable IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseTrueCable.ToString)
+        If Me.options.UseASCELy IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseASCELy.ToString)
+        If Me.options.CalcBracingForces IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.CalcBracingForces.ToString)
+        If Me.options.IgnoreBracingFEA IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.IgnoreBracingFEA.ToString)
+        If Me.options.cantileverPoles.UseSubCriticalFlow IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.UseSubCriticalFlow.ToString)
+        If Me.options.cantileverPoles.AssumePoleWithNoAttachments IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.AssumePoleWithNoAttachments.ToString)
+        If Me.options.cantileverPoles.AssumePoleWithShroud IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.AssumePoleWithShroud.ToString)
+        If Me.options.cantileverPoles.PoleCornerRadiusKnown IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.PoleCornerRadiusKnown.ToString)
+        If Me.solutionSettings.SolutionMinStiffness IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionMinStiffness.ToString)
+        If Me.solutionSettings.SolutionMaxStiffness IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionMaxStiffness.ToString)
+        If Me.solutionSettings.SolutionMaxCycles IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionMaxCycles.ToString)
+        If Me.solutionSettings.SolutionPower IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionPower.ToString)
+        If Me.solutionSettings.SolutionTolerance IsNot Nothing Then insertString = insertString.AddtoDBString(Me.solutionSettings.SolutionTolerance.ToString)
+        If Me.options.cantileverPoles.CantKFactor IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.cantileverPoles.CantKFactor.ToString)
+        If Me.options.misclOptions.RadiusSampleDist IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.misclOptions.RadiusSampleDist.ToString)
+        If Me.options.BypassStabilityChecks IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.BypassStabilityChecks.ToString)
+        If Me.options.UseWindProjection IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseWindProjection.ToString)
+        If Me.code.ice.UseIceEscalation IsNot Nothing Then insertString = insertString.AddtoDBString(Me.code.ice.UseIceEscalation.ToString)
+        If Me.options.UseDishCoeff IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.UseDishCoeff.ToString)
+        If Me.options.AutoCalcTorqArmArea IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.AutoCalcTorqArmArea.ToString)
+        If Me.options.windDirections.WindDirOption IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDirOption.ToString)
+        If Me.options.windDirections.WindDir0_0 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_0.ToString)
+        If Me.options.windDirections.WindDir0_1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_1.ToString)
+        If Me.options.windDirections.WindDir0_2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_2.ToString)
+        If Me.options.windDirections.WindDir0_3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_3.ToString)
+        If Me.options.windDirections.WindDir0_4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_4.ToString)
+        If Me.options.windDirections.WindDir0_5 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_5.ToString)
+        If Me.options.windDirections.WindDir0_6 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_6.ToString)
+        If Me.options.windDirections.WindDir0_7 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_7.ToString)
+        If Me.options.windDirections.WindDir0_8 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_8.ToString)
+        If Me.options.windDirections.WindDir0_9 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_9.ToString)
+        If Me.options.windDirections.WindDir0_10 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_10.ToString)
+        If Me.options.windDirections.WindDir0_11 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_11.ToString)
+        If Me.options.windDirections.WindDir0_12 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_12.ToString)
+        If Me.options.windDirections.WindDir0_13 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_13.ToString)
+        If Me.options.windDirections.WindDir0_14 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_14.ToString)
+        If Me.options.windDirections.WindDir0_15 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir0_15.ToString)
+        If Me.options.windDirections.WindDir1_0 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_0.ToString)
+        If Me.options.windDirections.WindDir1_1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_1.ToString)
+        If Me.options.windDirections.WindDir1_2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_2.ToString)
+        If Me.options.windDirections.WindDir1_3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_3.ToString)
+        If Me.options.windDirections.WindDir1_4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_4.ToString)
+        If Me.options.windDirections.WindDir1_5 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_5.ToString)
+        If Me.options.windDirections.WindDir1_6 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_6.ToString)
+        If Me.options.windDirections.WindDir1_7 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_7.ToString)
+        If Me.options.windDirections.WindDir1_8 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_8.ToString)
+        If Me.options.windDirections.WindDir1_9 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_9.ToString)
+        If Me.options.windDirections.WindDir1_10 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_10.ToString)
+        If Me.options.windDirections.WindDir1_11 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_11.ToString)
+        If Me.options.windDirections.WindDir1_12 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_12.ToString)
+        If Me.options.windDirections.WindDir1_13 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_13.ToString)
+        If Me.options.windDirections.WindDir1_14 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_14.ToString)
+        If Me.options.windDirections.WindDir1_15 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir1_15.ToString)
+        If Me.options.windDirections.WindDir2_0 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_0.ToString)
+        If Me.options.windDirections.WindDir2_1 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_1.ToString)
+        If Me.options.windDirections.WindDir2_2 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_2.ToString)
+        If Me.options.windDirections.WindDir2_3 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_3.ToString)
+        If Me.options.windDirections.WindDir2_4 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_4.ToString)
+        If Me.options.windDirections.WindDir2_5 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_5.ToString)
+        If Me.options.windDirections.WindDir2_6 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_6.ToString)
+        If Me.options.windDirections.WindDir2_7 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_7.ToString)
+        If Me.options.windDirections.WindDir2_8 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_8.ToString)
+        If Me.options.windDirections.WindDir2_9 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_9.ToString)
+        If Me.options.windDirections.WindDir2_10 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_10.ToString)
+        If Me.options.windDirections.WindDir2_11 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_11.ToString)
+        If Me.options.windDirections.WindDir2_12 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_12.ToString)
+        If Me.options.windDirections.WindDir2_13 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_13.ToString)
+        If Me.options.windDirections.WindDir2_14 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_14.ToString)
+        If Me.options.windDirections.WindDir2_15 IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.WindDir2_15.ToString)
+        If Me.options.windDirections.SuppressWindPatternLoading IsNot Nothing Then insertString = insertString.AddtoDBString(Me.options.windDirections.SuppressWindPatternLoading.ToString)
+
+        Return insertString
+    End Function
+
     Public Sub GenerateERI(FilePath As String)
 
         Dim newERIList As New List(Of String)
@@ -5874,7 +7098,7 @@ Partial Public Class tnxModel
                     newERIList.Add("DisplayAppurtenanceTable=" & trueFalseYesNo(Me.MTOSettings.DisplayAppurtenanceTable))
                     newERIList.Add("DisplayMaterialStrengthTable=" & trueFalseYesNo(Me.MTOSettings.DisplayMaterialStrengthTable))
                     For Each note In Me.MTOSettings.Notes
-                        newERIList.Add("Notes=" & note)
+                        newERIList.Add("Notes=" & note.Note)
                     Next
                     'Report Settings
                     newERIList.Add("ReportInputCosts=" & trueFalseYesNo(Me.reportSettings.ReportInputCosts))
@@ -6929,6199 +8153,7583 @@ Partial Public Class tnxModel
         File.WriteAllLines(FilePath, newERIList, Text.Encoding.ASCII)
 
     End Sub
-
-    Public Function trueFalseYesNo(input As String) As Boolean
-
-        If input.ToLower = "yes" Then
-            Return True
-        Else
-            Return False
-        End If
-
-    End Function
-
-    Public Function trueFalseYesNo(input As Boolean) As String
-
-        If input Then
-            Return "Yes"
-        Else
-            Return "No"
-        End If
-
-    End Function
+#End Region
 
 End Class
 
+#Region "Database"
+Partial Public Class tnxDatabase
+    Private _members As New List(Of tnxMember)
+    Private _materials As New List(Of tnxMaterial)
+    Private _bolts As New List(Of tnxBolt)
+
+    <Category("TNX Geometry"), Description("Upper Structure Type"), DisplayName("AntennaType")>
+    Public Property members() As List(Of tnxMember)
+        Get
+            Return Me._members
+        End Get
+        Set
+            Me._members = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
+    Public Property materials() As List(Of tnxMaterial)
+        Get
+            Return Me._materials
+        End Get
+        Set
+            Me._materials = Value
+        End Set
+    End Property
+    <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
+    Public Property bolts() As List(Of tnxBolt)
+        Get
+            Return Me._bolts
+        End Get
+        Set
+            Me._bolts = Value
+        End Set
+    End Property
+End Class
+
+Partial Public Class tnxDatabaseFile
+    Inherits tnxDatabaseEntry
+
+    Private _USName As String
+    Private _SIName As String
+    Private _values As String
+
+    <Category("TNX Material Properties"), Description(""), DisplayName("USName")>
+    Public Property USName() As String
+        Get
+            Return Me._USName
+        End Get
+        Set
+            Me._USName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("SIName")>
+    Public Property SIName() As String
+        Get
+            Return Me._SIName
+        End Get
+        Set
+            Me._SIName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Values")>
+    Public Property values() As String
+        Get
+            Return Me._values
+        End Get
+        Set
+            Me._values = Value
+        End Set
+    End Property
+End Class
+
+Partial Public Class tnxMember
+    Inherits tnxDatabaseEntry
+
+    Private _File As String
+    Private _USName As String
+    Private _SIName As String
+    Private _values As String
+
+    <Category("TNX Member Properties"), Description(""), DisplayName("File")>
+    Public Property File() As String
+        Get
+            Return Me._File
+        End Get
+        Set
+            Me._File = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("USName")>
+    Public Property USName() As String
+        Get
+            Return Me._USName
+        End Get
+        Set
+            Me._USName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("SIName")>
+    Public Property SIName() As String
+        Get
+            Return Me._SIName
+        End Get
+        Set
+            Me._SIName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Values")>
+    Public Property values() As String
+        Get
+            Return Me._values
+        End Get
+        Set
+            Me._values = Value
+        End Set
+    End Property
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+        'Do things
+    End Sub
+#End Region
+
+End Class
+
+Partial Public Class tnxMaterial
+    Inherits tnxDatabaseEntry
+
+    Private _MemberMatFile As String
+    Private _MatName As String
+    Private _MatValues As String
+
+    <Category("TNX Material Properties"), Description(""), DisplayName("MemberMatFile")>
+    Public Property MemberMatFile() As String
+        Get
+            Return Me._MemberMatFile
+        End Get
+        Set
+            Me._MemberMatFile = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Material Name")>
+    Public Property MatName() As String
+        Get
+            Return Me._MatName
+        End Get
+        Set
+            Me._MatName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Material Values")>
+    Public Property MatValues() As String
+        Get
+            Return Me._MatValues
+        End Get
+        Set
+            Me._MatValues = Value
+        End Set
+    End Property
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+        'Do things
+    End Sub
+#End Region
+
+End Class
+
+Partial Public Class tnxBolt
+    Inherits tnxDatabaseEntry
+
+    Private _BoltMatFile As String
+    Private _MatName As String
+    Private _MatValues As String
+
+    <Category("TNX Material Properties"), Description(""), DisplayName("MemberMatFile")>
+    Public Property BoltMatFile() As String
+        Get
+            Return Me._BoltMatFile
+        End Get
+        Set
+            Me._BoltMatFile = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Material Name")>
+    Public Property MatName() As String
+        Get
+            Return Me._MatName
+        End Get
+        Set
+            Me._MatName = Value
+        End Set
+    End Property
+    <Category("TNX Material Properties"), Description(""), DisplayName("Material Values")>
+    Public Property MatValues() As String
+        Get
+            Return Me._MatValues
+        End Get
+        Set
+            Me._MatValues = Value
+        End Set
+    End Property
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+        'Do things
+    End Sub
+#End Region
+
+End Class
+
+#End Region
+
 #Region "Geometry"
 Partial Public Class tnxGeometry
-    Private prop_TowerType As String
-    Private prop_AntennaType As String
-    Private prop_OverallHeight As Double
-    Private prop_BaseElevation As Double
-    Private prop_Lambda As Double
-    Private prop_TowerTopFaceWidth As Double
-    Private prop_TowerBaseFaceWidth As Double
-    Private prop_TowerTaper As String
-    Private prop_GuyedMonopoleBaseType As String
-    Private prop_TaperHeight As Double
-    Private prop_PivotHeight As Double
-    Private prop_AutoCalcGH As Boolean
-    Private prop_UserGHElev As Double
-    Private prop_UseIndexPlate As Boolean
-    Private prop_EnterUserDefinedGhValues As Boolean
-    Private prop_BaseTowerGhInput As Double
-    Private prop_UpperStructureGhInput As Double
-    Private prop_EnterUserDefinedCgValues As Boolean
-    Private prop_BaseTowerCgInput As Double
-    Private prop_UpperStructureCgInput As Double
-    Private prop_AntennaFaceWidth As Double
-    Private prop_UseTopTakeup As Boolean
-    Private prop_ConstantSlope As Boolean
-    Private prop_upperStructure As New List(Of tnxAntennaRecord)
-    Private prop_baseStructure As New List(Of tnxTowerRecord)
-    Private prop_guyWires As New List(Of tnxGuyRecord)
+#Region "Define"
+    Private _TowerType As String
+    Private _AntennaType As String
+    Private _OverallHeight As Double?
+    Private _BaseElevation As Double?
+    Private _Lambda As Double?
+    Private _TowerTopFaceWidth As Double?
+    Private _TowerBaseFaceWidth As Double?
+    Private _TowerTaper As String
+    Private _GuyedMonopoleBaseType As String
+    Private _TaperHeight As Double?
+    Private _PivotHeight As Double?
+    Private _AutoCalcGH As Boolean?
+    Private _UserGHElev As Double?
+    Private _UseIndexPlate As Boolean?
+    Private _EnterUserDefinedGhValues As Boolean?
+    Private _BaseTowerGhInput As Double?
+    Private _UpperStructureGhInput As Double?
+    Private _EnterUserDefinedCgValues As Boolean?
+    Private _BaseTowerCgInput As Double?
+    Private _UpperStructureCgInput As Double?
+    Private _AntennaFaceWidth As Double?
+    Private _UseTopTakeup As Boolean?
+    Private _ConstantSlope As Boolean?
+    Private _upperStructure As New List(Of tnxAntennaRecord)
+    Private _baseStructure As New List(Of tnxTowerRecord)
+    Private _guyWires As New List(Of tnxGuyRecord)
+
 
     <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
     Public Property TowerType() As String
         Get
-            Return Me.prop_TowerType
+            Return Me._TowerType
         End Get
         Set
-            Me.prop_TowerType = Value
+            Me._TowerType = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Upper Structure Type"), DisplayName("AntennaType")>
     Public Property AntennaType() As String
         Get
-            Return Me.prop_AntennaType
+            Return Me._AntennaType
         End Get
         Set
-            Me.prop_AntennaType = Value
+            Me._AntennaType = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("OverallHeight")>
-    Public Property OverallHeight() As Double
+    Public Property OverallHeight() As Double?
         Get
-            Return Me.prop_OverallHeight
+            Return Me._OverallHeight
         End Get
         Set
-            Me.prop_OverallHeight = Value
+            Me._OverallHeight = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("BaseElevation")>
-    Public Property BaseElevation() As Double
+    Public Property BaseElevation() As Double?
         Get
-            Return Me.prop_BaseElevation
+            Return Me._BaseElevation
         End Get
         Set
-            Me.prop_BaseElevation = Value
+            Me._BaseElevation = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Lambda")>
-    Public Property Lambda() As Double
+    Public Property Lambda() As Double?
         Get
-            Return Me.prop_Lambda
+            Return Me._Lambda
         End Get
         Set
-            Me.prop_Lambda = Value
+            Me._Lambda = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("TowerTopFaceWidth")>
-    Public Property TowerTopFaceWidth() As Double
+    Public Property TowerTopFaceWidth() As Double?
         Get
-            Return Me.prop_TowerTopFaceWidth
+            Return Me._TowerTopFaceWidth
         End Get
         Set
-            Me.prop_TowerTopFaceWidth = Value
+            Me._TowerTopFaceWidth = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("TowerBaseFaceWidth")>
-    Public Property TowerBaseFaceWidth() As Double
+    Public Property TowerBaseFaceWidth() As Double?
         Get
-            Return Me.prop_TowerBaseFaceWidth
+            Return Me._TowerBaseFaceWidth
         End Get
         Set
-            Me.prop_TowerBaseFaceWidth = Value
+            Me._TowerBaseFaceWidth = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Type - None, I-Beam, I-Beam Free, Taper, Taper-Free"), DisplayName("TowerTaper")>
     Public Property TowerTaper() As String
         Get
-            Return Me.prop_TowerTaper
+            Return Me._TowerTaper
         End Get
         Set
-            Me.prop_TowerTaper = Value
+            Me._TowerTaper = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("Base Type - Fixed Base, Pinned Base (Only active when base tower type is guyed and there are no base tower section in the model)"), DisplayName("GuyedMonopoleBaseType")>
+    <Category("TNX Geometry"), Description("Base Type - Fixed Base, Pinned Base (Only active When base tower type Is guyed And there are no base tower section In the model)"), DisplayName("GuyedMonopoleBaseType")>
     Public Property GuyedMonopoleBaseType() As String
         Get
-            Return Me.prop_GuyedMonopoleBaseType
+            Return Me._GuyedMonopoleBaseType
         End Get
         Set
-            Me.prop_GuyedMonopoleBaseType = Value
+            Me._GuyedMonopoleBaseType = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Taper Height"), DisplayName("TaperHeight")>
-    Public Property TaperHeight() As Double
+    Public Property TaperHeight() As Double?
         Get
-            Return Me.prop_TaperHeight
+            Return Me._TaperHeight
         End Get
         Set
-            Me.prop_TaperHeight = Value
+            Me._TaperHeight = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("I-Beam Pivot Dist (replaces base taper height when base type is I-Beam or I-Beam Free)"), DisplayName("PivotHeight")>
-    Public Property PivotHeight() As Double
+    <Category("TNX Geometry"), Description("I-Beam Pivot Dist (replaces base taper height When base type Is I-Beam Or I-Beam Free)"), DisplayName("PivotHeight")>
+    Public Property PivotHeight() As Double?
         Get
-            Return Me.prop_PivotHeight
+            Return Me._PivotHeight
         End Get
         Set
-            Me.prop_PivotHeight = Value
+            Me._PivotHeight = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("AutoCalcGH")>
-    Public Property AutoCalcGH() As Boolean
+    Public Property AutoCalcGH() As Boolean?
         Get
-            Return Me.prop_AutoCalcGH
+            Return Me._AutoCalcGH
         End Get
         Set
-            Me.prop_AutoCalcGH = Value
+            Me._AutoCalcGH = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("UserGHElev")>
-    Public Property UserGHElev() As Double
+    Public Property UserGHElev() As Double?
         Get
-            Return Me.prop_UserGHElev
+            Return Me._UserGHElev
         End Get
         Set
-            Me.prop_UserGHElev = Value
+            Me._UserGHElev = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Has Index Plate"), DisplayName("UseIndexPlate")>
-    Public Property UseIndexPlate() As Boolean
+    Public Property UseIndexPlate() As Boolean?
         Get
-            Return Me.prop_UseIndexPlate
+            Return Me._UseIndexPlate
         End Get
         Set
-            Me.prop_UseIndexPlate = Value
+            Me._UseIndexPlate = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Enter Pre-defined Gh values"), DisplayName("EnterUserDefinedGhValues")>
-    Public Property EnterUserDefinedGhValues() As Boolean
+    Public Property EnterUserDefinedGhValues() As Boolean?
         Get
-            Return Me.prop_EnterUserDefinedGhValues
+            Return Me._EnterUserDefinedGhValues
         End Get
         Set
-            Me.prop_EnterUserDefinedGhValues = Value
+            Me._EnterUserDefinedGhValues = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("Base Tower - Active when EnterUserDefinedGhValues = Yes"), DisplayName("BaseTowerGhInput")>
-    Public Property BaseTowerGhInput() As Double
+    <Category("TNX Geometry"), Description("Base Tower - Active When EnterUserDefinedGhValues = Yes"), DisplayName("BaseTowerGhInput")>
+    Public Property BaseTowerGhInput() As Double?
         Get
-            Return Me.prop_BaseTowerGhInput
+            Return Me._BaseTowerGhInput
         End Get
         Set
-            Me.prop_BaseTowerGhInput = Value
+            Me._BaseTowerGhInput = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("Upper Structure - Active when EnterUserDefinedGhValues = Yes"), DisplayName("UpperStructureGhInput")>
-    Public Property UpperStructureGhInput() As Double
+    <Category("TNX Geometry"), Description("Upper Structure - Active When EnterUserDefinedGhValues = Yes"), DisplayName("UpperStructureGhInput")>
+    Public Property UpperStructureGhInput() As Double?
         Get
-            Return Me.prop_UpperStructureGhInput
+            Return Me._UpperStructureGhInput
         End Get
         Set
-            Me.prop_UpperStructureGhInput = Value
+            Me._UpperStructureGhInput = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("CSA code only (This controls two inputs in the UI 'Use Default Cg Values' and 'Enter pre-defined Cg Values'. The checked status of the two inputs are always opposite and 'Use Default Cg Values' is opposite of the ERI value."), DisplayName("EnterUserDefinedCgValues")>
-    Public Property EnterUserDefinedCgValues() As Boolean
+    <Category("TNX Geometry"), Description("CSA code only (This controls two inputs In the UI 'Use Default Cg Values' and 'Enter pre-defined Cg Values'. The checked status of the two inputs are always opposite and 'Use Default Cg Values' is opposite of the ERI value."), DisplayName("EnterUserDefinedCgValues")>
+    Public Property EnterUserDefinedCgValues() As Boolean?
         Get
-            Return Me.prop_EnterUserDefinedCgValues
+            Return Me._EnterUserDefinedCgValues
         End Get
         Set
-            Me.prop_EnterUserDefinedCgValues = Value
+            Me._EnterUserDefinedCgValues = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("CSA code only"), DisplayName("BaseTowerCgInput")>
-    Public Property BaseTowerCgInput() As Double
+    Public Property BaseTowerCgInput() As Double?
         Get
-            Return Me.prop_BaseTowerCgInput
+            Return Me._BaseTowerCgInput
         End Get
         Set
-            Me.prop_BaseTowerCgInput = Value
+            Me._BaseTowerCgInput = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("CSA code only"), DisplayName("UpperStructureCgInput")>
-    Public Property UpperStructureCgInput() As Double
+    Public Property UpperStructureCgInput() As Double?
         Get
-            Return Me.prop_UpperStructureCgInput
+            Return Me._UpperStructureCgInput
         End Get
         Set
-            Me.prop_UpperStructureCgInput = Value
+            Me._UpperStructureCgInput = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Lattice Pole Width - Only applies to lattice upper structures"), DisplayName("AntennaFaceWidth")>
-    Public Property AntennaFaceWidth() As Double
+    Public Property AntennaFaceWidth() As Double?
         Get
-            Return Me.prop_AntennaFaceWidth
+            Return Me._AntennaFaceWidth
         End Get
         Set
-            Me.prop_AntennaFaceWidth = Value
+            Me._AntennaFaceWidth = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Top takeup on lambda"), DisplayName("UseTopTakeup")>
-    Public Property UseTopTakeup() As Boolean
+    Public Property UseTopTakeup() As Boolean?
         Get
-            Return Me.prop_UseTopTakeup
+            Return Me._UseTopTakeup
         End Get
         Set
-            Me.prop_UseTopTakeup = Value
+            Me._UseTopTakeup = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description("Constant Slope"), DisplayName("ConstantSlope")>
-    Public Property ConstantSlope() As Boolean
+    Public Property ConstantSlope() As Boolean?
         Get
-            Return Me.prop_ConstantSlope
+            Return Me._ConstantSlope
         End Get
         Set
-            Me.prop_ConstantSlope = Value
+            Me._ConstantSlope = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Upper Structure")>
     Public Property upperStructure() As List(Of tnxAntennaRecord)
         Get
-            Return Me.prop_upperStructure
+            Return Me._upperStructure
         End Get
         Set
-            Me.prop_upperStructure = Value
+            Me._upperStructure = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Base Structure")>
     Public Property baseStructure() As List(Of tnxTowerRecord)
         Get
-            Return Me.prop_baseStructure
+            Return Me._baseStructure
         End Get
         Set
-            Me.prop_baseStructure = Value
+            Me._baseStructure = Value
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Guy Wires")>
     Public Property guyWires() As List(Of tnxGuyRecord)
         Get
-            Return Me.prop_guyWires
+            Return Me._guyWires
         End Get
         Set
-            Me.prop_guyWires = Value
+            Me._guyWires = Value
         End Set
     End Property
+#End Region
 
 End Class
 
-Partial Public Class tnxAntennaRecord
-    'upper structure
-    Private prop_ID As Integer
-    Private prop_tnxID As Integer
-    Private prop_AntennaRec As Integer
-    Private prop_AntennaBraceType As String
-    Private prop_AntennaHeight As Double
-    Private prop_AntennaDiagonalSpacing As Double
-    Private prop_AntennaDiagonalSpacingEx As Double
-    Private prop_AntennaNumSections As Integer
-    Private prop_AntennaNumSesctions As Integer
-    Private prop_AntennaSectionLength As Double
-    Private prop_AntennaLegType As String
-    Private prop_AntennaLegSize As String
-    Private prop_AntennaLegGrade As Double
-    Private prop_AntennaLegMatlGrade As String
-    Private prop_AntennaDiagonalGrade As Double
-    Private prop_AntennaDiagonalMatlGrade As String
-    Private prop_AntennaInnerBracingGrade As Double
-    Private prop_AntennaInnerBracingMatlGrade As String
-    Private prop_AntennaTopGirtGrade As Double
-    Private prop_AntennaTopGirtMatlGrade As String
-    Private prop_AntennaBotGirtGrade As Double
-    Private prop_AntennaBotGirtMatlGrade As String
-    Private prop_AntennaInnerGirtGrade As Double
-    Private prop_AntennaInnerGirtMatlGrade As String
-    Private prop_AntennaLongHorizontalGrade As Double
-    Private prop_AntennaLongHorizontalMatlGrade As String
-    Private prop_AntennaShortHorizontalGrade As Double
-    Private prop_AntennaShortHorizontalMatlGrade As String
-    Private prop_AntennaDiagonalType As String
-    Private prop_AntennaDiagonalSize As String
-    Private prop_AntennaInnerBracingType As String
-    Private prop_AntennaInnerBracingSize As String
-    Private prop_AntennaTopGirtType As String
-    Private prop_AntennaTopGirtSize As String
-    Private prop_AntennaBotGirtType As String
-    Private prop_AntennaBotGirtSize As String
-    Private prop_AntennaTopGirtOffset As Double
-    Private prop_AntennaBotGirtOffset As Double
-    Private prop_AntennaHasKBraceEndPanels As Boolean
-    Private prop_AntennaHasHorizontals As Boolean
-    Private prop_AntennaLongHorizontalType As String
-    Private prop_AntennaLongHorizontalSize As String
-    Private prop_AntennaShortHorizontalType As String
-    Private prop_AntennaShortHorizontalSize As String
-    Private prop_AntennaRedundantGrade As Double
-    Private prop_AntennaRedundantMatlGrade As String
-    Private prop_AntennaRedundantType As String
-    Private prop_AntennaRedundantDiagType As String
-    Private prop_AntennaRedundantSubDiagonalType As String
-    Private prop_AntennaRedundantSubHorizontalType As String
-    Private prop_AntennaRedundantVerticalType As String
-    Private prop_AntennaRedundantHipType As String
-    Private prop_AntennaRedundantHipDiagonalType As String
-    Private prop_AntennaRedundantHorizontalSize As String
-    Private prop_AntennaRedundantHorizontalSize2 As String
-    Private prop_AntennaRedundantHorizontalSize3 As String
-    Private prop_AntennaRedundantHorizontalSize4 As String
-    Private prop_AntennaRedundantDiagonalSize As String
-    Private prop_AntennaRedundantDiagonalSize2 As String
-    Private prop_AntennaRedundantDiagonalSize3 As String
-    Private prop_AntennaRedundantDiagonalSize4 As String
-    Private prop_AntennaRedundantSubHorizontalSize As String
-    Private prop_AntennaRedundantSubDiagonalSize As String
-    Private prop_AntennaSubDiagLocation As Double
-    Private prop_AntennaRedundantVerticalSize As String
-    Private prop_AntennaRedundantHipDiagonalSize As String
-    Private prop_AntennaRedundantHipDiagonalSize2 As String
-    Private prop_AntennaRedundantHipDiagonalSize3 As String
-    Private prop_AntennaRedundantHipDiagonalSize4 As String
-    Private prop_AntennaRedundantHipSize As String
-    Private prop_AntennaRedundantHipSize2 As String
-    Private prop_AntennaRedundantHipSize3 As String
-    Private prop_AntennaRedundantHipSize4 As String
-    Private prop_AntennaNumInnerGirts As Integer
-    Private prop_AntennaInnerGirtType As String
-    Private prop_AntennaInnerGirtSize As String
-    Private prop_AntennaPoleShapeType As String
-    Private prop_AntennaPoleSize As String
-    Private prop_AntennaPoleGrade As Double
-    Private prop_AntennaPoleMatlGrade As String
-    Private prop_AntennaPoleSpliceLength As Double
-    Private prop_AntennaTaperPoleNumSides As Integer
-    Private prop_AntennaTaperPoleTopDiameter As Double
-    Private prop_AntennaTaperPoleBotDiameter As Double
-    Private prop_AntennaTaperPoleWallThickness As Double
-    Private prop_AntennaTaperPoleBendRadius As Double
-    Private prop_AntennaTaperPoleGrade As Double
-    Private prop_AntennaTaperPoleMatlGrade As String
-    Private prop_AntennaSWMult As Double
-    Private prop_AntennaWPMult As Double
-    Private prop_AntennaAutoCalcKSingleAngle As Double
-    Private prop_AntennaAutoCalcKSolidRound As Double
-    Private prop_AntennaAfGusset As Double
-    Private prop_AntennaTfGusset As Double
-    Private prop_AntennaGussetBoltEdgeDistance As Double
-    Private prop_AntennaGussetGrade As Double
-    Private prop_AntennaGussetMatlGrade As String
-    Private prop_AntennaAfMult As Double
-    Private prop_AntennaArMult As Double
-    Private prop_AntennaFlatIPAPole As Double
-    Private prop_AntennaRoundIPAPole As Double
-    Private prop_AntennaFlatIPALeg As Double
-    Private prop_AntennaRoundIPALeg As Double
-    Private prop_AntennaFlatIPAHorizontal As Double
-    Private prop_AntennaRoundIPAHorizontal As Double
-    Private prop_AntennaFlatIPADiagonal As Double
-    Private prop_AntennaRoundIPADiagonal As Double
-    Private prop_AntennaCSA_S37_SpeedUpFactor As Double
-    Private prop_AntennaKLegs As Double
-    Private prop_AntennaKXBracedDiags As Double
-    Private prop_AntennaKKBracedDiags As Double
-    Private prop_AntennaKZBracedDiags As Double
-    Private prop_AntennaKHorzs As Double
-    Private prop_AntennaKSecHorzs As Double
-    Private prop_AntennaKGirts As Double
-    Private prop_AntennaKInners As Double
-    Private prop_AntennaKXBracedDiagsY As Double
-    Private prop_AntennaKKBracedDiagsY As Double
-    Private prop_AntennaKZBracedDiagsY As Double
-    Private prop_AntennaKHorzsY As Double
-    Private prop_AntennaKSecHorzsY As Double
-    Private prop_AntennaKGirtsY As Double
-    Private prop_AntennaKInnersY As Double
-    Private prop_AntennaKRedHorz As Double
-    Private prop_AntennaKRedDiag As Double
-    Private prop_AntennaKRedSubDiag As Double
-    Private prop_AntennaKRedSubHorz As Double
-    Private prop_AntennaKRedVert As Double
-    Private prop_AntennaKRedHip As Double
-    Private prop_AntennaKRedHipDiag As Double
-    Private prop_AntennaKTLX As Double
-    Private prop_AntennaKTLZ As Double
-    Private prop_AntennaKTLLeg As Double
-    Private prop_AntennaInnerKTLX As Double
-    Private prop_AntennaInnerKTLZ As Double
-    Private prop_AntennaInnerKTLLeg As Double
-    Private prop_AntennaStitchBoltLocationHoriz As String
-    Private prop_AntennaStitchBoltLocationDiag As String
-    Private prop_AntennaStitchSpacing As Double
-    Private prop_AntennaStitchSpacingHorz As Double
-    Private prop_AntennaStitchSpacingDiag As Double
-    Private prop_AntennaStitchSpacingRed As Double
-    Private prop_AntennaLegNetWidthDeduct As Double
-    Private prop_AntennaLegUFactor As Double
-    Private prop_AntennaDiagonalNetWidthDeduct As Double
-    Private prop_AntennaTopGirtNetWidthDeduct As Double
-    Private prop_AntennaBotGirtNetWidthDeduct As Double
-    Private prop_AntennaInnerGirtNetWidthDeduct As Double
-    Private prop_AntennaHorizontalNetWidthDeduct As Double
-    Private prop_AntennaShortHorizontalNetWidthDeduct As Double
-    Private prop_AntennaDiagonalUFactor As Double
-    Private prop_AntennaTopGirtUFactor As Double
-    Private prop_AntennaBotGirtUFactor As Double
-    Private prop_AntennaInnerGirtUFactor As Double
-    Private prop_AntennaHorizontalUFactor As Double
-    Private prop_AntennaShortHorizontalUFactor As Double
-    Private prop_AntennaLegConnType As String
-    Private prop_AntennaLegNumBolts As Integer
-    Private prop_AntennaDiagonalNumBolts As Integer
-    Private prop_AntennaTopGirtNumBolts As Integer
-    Private prop_AntennaBotGirtNumBolts As Integer
-    Private prop_AntennaInnerGirtNumBolts As Integer
-    Private prop_AntennaHorizontalNumBolts As Integer
-    Private prop_AntennaShortHorizontalNumBolts As Integer
-    Private prop_AntennaLegBoltGrade As String
-    Private prop_AntennaLegBoltSize As Double
-    Private prop_AntennaDiagonalBoltGrade As String
-    Private prop_AntennaDiagonalBoltSize As Double
-    Private prop_AntennaTopGirtBoltGrade As String
-    Private prop_AntennaTopGirtBoltSize As Double
-    Private prop_AntennaBotGirtBoltGrade As String
-    Private prop_AntennaBotGirtBoltSize As Double
-    Private prop_AntennaInnerGirtBoltGrade As String
-    Private prop_AntennaInnerGirtBoltSize As Double
-    Private prop_AntennaHorizontalBoltGrade As String
-    Private prop_AntennaHorizontalBoltSize As Double
-    Private prop_AntennaShortHorizontalBoltGrade As String
-    Private prop_AntennaShortHorizontalBoltSize As Double
-    Private prop_AntennaLegBoltEdgeDistance As Double
-    Private prop_AntennaDiagonalBoltEdgeDistance As Double
-    Private prop_AntennaTopGirtBoltEdgeDistance As Double
-    Private prop_AntennaBotGirtBoltEdgeDistance As Double
-    Private prop_AntennaInnerGirtBoltEdgeDistance As Double
-    Private prop_AntennaHorizontalBoltEdgeDistance As Double
-    Private prop_AntennaShortHorizontalBoltEdgeDistance As Double
-    Private prop_AntennaDiagonalGageG1Distance As Double
-    Private prop_AntennaTopGirtGageG1Distance As Double
-    Private prop_AntennaBotGirtGageG1Distance As Double
-    Private prop_AntennaInnerGirtGageG1Distance As Double
-    Private prop_AntennaHorizontalGageG1Distance As Double
-    Private prop_AntennaShortHorizontalGageG1Distance As Double
-    Private prop_AntennaRedundantHorizontalBoltGrade As String
-    Private prop_AntennaRedundantHorizontalBoltSize As Double
-    Private prop_AntennaRedundantHorizontalNumBolts As Integer
-    Private prop_AntennaRedundantHorizontalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantHorizontalGageG1Distance As Double
-    Private prop_AntennaRedundantHorizontalNetWidthDeduct As Double
-    Private prop_AntennaRedundantHorizontalUFactor As Double
-    Private prop_AntennaRedundantDiagonalBoltGrade As String
-    Private prop_AntennaRedundantDiagonalBoltSize As Double
-    Private prop_AntennaRedundantDiagonalNumBolts As Integer
-    Private prop_AntennaRedundantDiagonalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantDiagonalGageG1Distance As Double
-    Private prop_AntennaRedundantDiagonalNetWidthDeduct As Double
-    Private prop_AntennaRedundantDiagonalUFactor As Double
-    Private prop_AntennaRedundantSubDiagonalBoltGrade As String
-    Private prop_AntennaRedundantSubDiagonalBoltSize As Double
-    Private prop_AntennaRedundantSubDiagonalNumBolts As Integer
-    Private prop_AntennaRedundantSubDiagonalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantSubDiagonalGageG1Distance As Double
-    Private prop_AntennaRedundantSubDiagonalNetWidthDeduct As Double
-    Private prop_AntennaRedundantSubDiagonalUFactor As Double
-    Private prop_AntennaRedundantSubHorizontalBoltGrade As String
-    Private prop_AntennaRedundantSubHorizontalBoltSize As Double
-    Private prop_AntennaRedundantSubHorizontalNumBolts As Integer
-    Private prop_AntennaRedundantSubHorizontalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantSubHorizontalGageG1Distance As Double
-    Private prop_AntennaRedundantSubHorizontalNetWidthDeduct As Double
-    Private prop_AntennaRedundantSubHorizontalUFactor As Double
-    Private prop_AntennaRedundantVerticalBoltGrade As String
-    Private prop_AntennaRedundantVerticalBoltSize As Double
-    Private prop_AntennaRedundantVerticalNumBolts As Integer
-    Private prop_AntennaRedundantVerticalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantVerticalGageG1Distance As Double
-    Private prop_AntennaRedundantVerticalNetWidthDeduct As Double
-    Private prop_AntennaRedundantVerticalUFactor As Double
-    Private prop_AntennaRedundantHipBoltGrade As String
-    Private prop_AntennaRedundantHipBoltSize As Double
-    Private prop_AntennaRedundantHipNumBolts As Integer
-    Private prop_AntennaRedundantHipBoltEdgeDistance As Double
-    Private prop_AntennaRedundantHipGageG1Distance As Double
-    Private prop_AntennaRedundantHipNetWidthDeduct As Double
-    Private prop_AntennaRedundantHipUFactor As Double
-    Private prop_AntennaRedundantHipDiagonalBoltGrade As String
-    Private prop_AntennaRedundantHipDiagonalBoltSize As Double
-    Private prop_AntennaRedundantHipDiagonalNumBolts As Integer
-    Private prop_AntennaRedundantHipDiagonalBoltEdgeDistance As Double
-    Private prop_AntennaRedundantHipDiagonalGageG1Distance As Double
-    Private prop_AntennaRedundantHipDiagonalNetWidthDeduct As Double
-    Private prop_AntennaRedundantHipDiagonalUFactor As Double
-    Private prop_AntennaDiagonalOutOfPlaneRestraint As Boolean
-    Private prop_AntennaTopGirtOutOfPlaneRestraint As Boolean
-    Private prop_AntennaBottomGirtOutOfPlaneRestraint As Boolean
-    Private prop_AntennaMidGirtOutOfPlaneRestraint As Boolean
-    Private prop_AntennaHorizontalOutOfPlaneRestraint As Boolean
-    Private prop_AntennaSecondaryHorizontalOutOfPlaneRestraint As Boolean
-    Private prop_AntennaDiagOffsetNEY As Double
-    Private prop_AntennaDiagOffsetNEX As Double
-    Private prop_AntennaDiagOffsetPEY As Double
-    Private prop_AntennaDiagOffsetPEX As Double
-    Private prop_AntennaKbraceOffsetNEY As Double
-    Private prop_AntennaKbraceOffsetNEX As Double
-    Private prop_AntennaKbraceOffsetPEY As Double
-    Private prop_AntennaKbraceOffsetPEX As Double
 
-    <Category("TNX Antenna Record"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer
-        Get
-            Return Me.prop_ID
-        End Get
-        Set
-            Me.prop_ID = Value
-        End Set
-    End Property
-    <Category("TNX Antenna Record"), Description(""), DisplayName("Tnxid")>
-    Public Property tnxID() As Integer
-        Get
-            Return Me.prop_tnxID
-        End Get
-        Set
-            Me.prop_tnxID = Value
-        End Set
-    End Property
+Partial Public Class tnxAntennaRecord
+    Inherits tnxDatabaseEntry
+    'upper structure
+#Region "Define"
+    Private _AntennaRec As Integer?
+    Private _AntennaBraceType As String
+    Private _AntennaHeight As Double?
+    Private _AntennaDiagonalSpacing As Double?
+    Private _AntennaDiagonalSpacingEx As Double?
+    Private _AntennaNumSections As Integer?
+    Private _AntennaNumSesctions As Integer?
+    Private _AntennaSectionLength As Double?
+    Private _AntennaLegType As String
+    Private _AntennaLegSize As String
+    Private _AntennaLegGrade As Double?
+    Private _AntennaLegMatlGrade As String
+    Private _AntennaDiagonalGrade As Double?
+    Private _AntennaDiagonalMatlGrade As String
+    Private _AntennaInnerBracingGrade As Double?
+    Private _AntennaInnerBracingMatlGrade As String
+    Private _AntennaTopGirtGrade As Double?
+    Private _AntennaTopGirtMatlGrade As String
+    Private _AntennaBotGirtGrade As Double?
+    Private _AntennaBotGirtMatlGrade As String
+    Private _AntennaInnerGirtGrade As Double?
+    Private _AntennaInnerGirtMatlGrade As String
+    Private _AntennaLongHorizontalGrade As Double?
+    Private _AntennaLongHorizontalMatlGrade As String
+    Private _AntennaShortHorizontalGrade As Double?
+    Private _AntennaShortHorizontalMatlGrade As String
+    Private _AntennaDiagonalType As String
+    Private _AntennaDiagonalSize As String
+    Private _AntennaInnerBracingType As String
+    Private _AntennaInnerBracingSize As String
+    Private _AntennaTopGirtType As String
+    Private _AntennaTopGirtSize As String
+    Private _AntennaBotGirtType As String
+    Private _AntennaBotGirtSize As String
+    Private _AntennaTopGirtOffset As Double?
+    Private _AntennaBotGirtOffset As Double?
+    Private _AntennaHasKBraceEndPanels As Boolean?
+    Private _AntennaHasHorizontals As Boolean?
+    Private _AntennaLongHorizontalType As String
+    Private _AntennaLongHorizontalSize As String
+    Private _AntennaShortHorizontalType As String
+    Private _AntennaShortHorizontalSize As String
+    Private _AntennaRedundantGrade As Double?
+    Private _AntennaRedundantMatlGrade As String
+    Private _AntennaRedundantType As String
+    Private _AntennaRedundantDiagType As String
+    Private _AntennaRedundantSubDiagonalType As String
+    Private _AntennaRedundantSubHorizontalType As String
+    Private _AntennaRedundantVerticalType As String
+    Private _AntennaRedundantHipType As String
+    Private _AntennaRedundantHipDiagonalType As String
+    Private _AntennaRedundantHorizontalSize As String
+    Private _AntennaRedundantHorizontalSize2 As String
+    Private _AntennaRedundantHorizontalSize3 As String
+    Private _AntennaRedundantHorizontalSize4 As String
+    Private _AntennaRedundantDiagonalSize As String
+    Private _AntennaRedundantDiagonalSize2 As String
+    Private _AntennaRedundantDiagonalSize3 As String
+    Private _AntennaRedundantDiagonalSize4 As String
+    Private _AntennaRedundantSubHorizontalSize As String
+    Private _AntennaRedundantSubDiagonalSize As String
+    Private _AntennaSubDiagLocation As Double?
+    Private _AntennaRedundantVerticalSize As String
+    Private _AntennaRedundantHipDiagonalSize As String
+    Private _AntennaRedundantHipDiagonalSize2 As String
+    Private _AntennaRedundantHipDiagonalSize3 As String
+    Private _AntennaRedundantHipDiagonalSize4 As String
+    Private _AntennaRedundantHipSize As String
+    Private _AntennaRedundantHipSize2 As String
+    Private _AntennaRedundantHipSize3 As String
+    Private _AntennaRedundantHipSize4 As String
+    Private _AntennaNumInnerGirts As Integer?
+    Private _AntennaInnerGirtType As String
+    Private _AntennaInnerGirtSize As String
+    Private _AntennaPoleShapeType As String
+    Private _AntennaPoleSize As String
+    Private _AntennaPoleGrade As Double?
+    Private _AntennaPoleMatlGrade As String
+    Private _AntennaPoleSpliceLength As Double?
+    Private _AntennaTaperPoleNumSides As Integer?
+    Private _AntennaTaperPoleTopDiameter As Double?
+    Private _AntennaTaperPoleBotDiameter As Double?
+    Private _AntennaTaperPoleWallThickness As Double?
+    Private _AntennaTaperPoleBendRadius As Double?
+    Private _AntennaTaperPoleGrade As Double?
+    Private _AntennaTaperPoleMatlGrade As String
+    Private _AntennaSWMult As Double?
+    Private _AntennaWPMult As Double?
+    Private _AntennaAutoCalcKSingleAngle As Double?
+    Private _AntennaAutoCalcKSolidRound As Double?
+    Private _AntennaAfGusset As Double?
+    Private _AntennaTfGusset As Double?
+    Private _AntennaGussetBoltEdgeDistance As Double?
+    Private _AntennaGussetGrade As Double?
+    Private _AntennaGussetMatlGrade As String
+    Private _AntennaAfMult As Double?
+    Private _AntennaArMult As Double?
+    Private _AntennaFlatIPAPole As Double?
+    Private _AntennaRoundIPAPole As Double?
+    Private _AntennaFlatIPALeg As Double?
+    Private _AntennaRoundIPALeg As Double?
+    Private _AntennaFlatIPAHorizontal As Double?
+    Private _AntennaRoundIPAHorizontal As Double?
+    Private _AntennaFlatIPADiagonal As Double?
+    Private _AntennaRoundIPADiagonal As Double?
+    Private _AntennaCSA_S37_SpeedUpFactor As Double?
+    Private _AntennaKLegs As Double?
+    Private _AntennaKXBracedDiags As Double?
+    Private _AntennaKKBracedDiags As Double?
+    Private _AntennaKZBracedDiags As Double?
+    Private _AntennaKHorzs As Double?
+    Private _AntennaKSecHorzs As Double?
+    Private _AntennaKGirts As Double?
+    Private _AntennaKInners As Double?
+    Private _AntennaKXBracedDiagsY As Double?
+    Private _AntennaKKBracedDiagsY As Double?
+    Private _AntennaKZBracedDiagsY As Double?
+    Private _AntennaKHorzsY As Double?
+    Private _AntennaKSecHorzsY As Double?
+    Private _AntennaKGirtsY As Double?
+    Private _AntennaKInnersY As Double?
+    Private _AntennaKRedHorz As Double?
+    Private _AntennaKRedDiag As Double?
+    Private _AntennaKRedSubDiag As Double?
+    Private _AntennaKRedSubHorz As Double?
+    Private _AntennaKRedVert As Double?
+    Private _AntennaKRedHip As Double?
+    Private _AntennaKRedHipDiag As Double?
+    Private _AntennaKTLX As Double?
+    Private _AntennaKTLZ As Double?
+    Private _AntennaKTLLeg As Double?
+    Private _AntennaInnerKTLX As Double?
+    Private _AntennaInnerKTLZ As Double?
+    Private _AntennaInnerKTLLeg As Double?
+    Private _AntennaStitchBoltLocationHoriz As String
+    Private _AntennaStitchBoltLocationDiag As String
+    Private _AntennaStitchSpacing As Double?
+    Private _AntennaStitchSpacingHorz As Double?
+    Private _AntennaStitchSpacingDiag As Double?
+    Private _AntennaStitchSpacingRed As Double?
+    Private _AntennaLegNetWidthDeduct As Double?
+    Private _AntennaLegUFactor As Double?
+    Private _AntennaDiagonalNetWidthDeduct As Double?
+    Private _AntennaTopGirtNetWidthDeduct As Double?
+    Private _AntennaBotGirtNetWidthDeduct As Double?
+    Private _AntennaInnerGirtNetWidthDeduct As Double?
+    Private _AntennaHorizontalNetWidthDeduct As Double?
+    Private _AntennaShortHorizontalNetWidthDeduct As Double?
+    Private _AntennaDiagonalUFactor As Double?
+    Private _AntennaTopGirtUFactor As Double?
+    Private _AntennaBotGirtUFactor As Double?
+    Private _AntennaInnerGirtUFactor As Double?
+    Private _AntennaHorizontalUFactor As Double?
+    Private _AntennaShortHorizontalUFactor As Double?
+    Private _AntennaLegConnType As String
+    Private _AntennaLegNumBolts As Integer?
+    Private _AntennaDiagonalNumBolts As Integer?
+    Private _AntennaTopGirtNumBolts As Integer?
+    Private _AntennaBotGirtNumBolts As Integer?
+    Private _AntennaInnerGirtNumBolts As Integer?
+    Private _AntennaHorizontalNumBolts As Integer?
+    Private _AntennaShortHorizontalNumBolts As Integer?
+    Private _AntennaLegBoltGrade As String
+    Private _AntennaLegBoltSize As Double?
+    Private _AntennaDiagonalBoltGrade As String
+    Private _AntennaDiagonalBoltSize As Double?
+    Private _AntennaTopGirtBoltGrade As String
+    Private _AntennaTopGirtBoltSize As Double?
+    Private _AntennaBotGirtBoltGrade As String
+    Private _AntennaBotGirtBoltSize As Double?
+    Private _AntennaInnerGirtBoltGrade As String
+    Private _AntennaInnerGirtBoltSize As Double?
+    Private _AntennaHorizontalBoltGrade As String
+    Private _AntennaHorizontalBoltSize As Double?
+    Private _AntennaShortHorizontalBoltGrade As String
+    Private _AntennaShortHorizontalBoltSize As Double?
+    Private _AntennaLegBoltEdgeDistance As Double?
+    Private _AntennaDiagonalBoltEdgeDistance As Double?
+    Private _AntennaTopGirtBoltEdgeDistance As Double?
+    Private _AntennaBotGirtBoltEdgeDistance As Double?
+    Private _AntennaInnerGirtBoltEdgeDistance As Double?
+    Private _AntennaHorizontalBoltEdgeDistance As Double?
+    Private _AntennaShortHorizontalBoltEdgeDistance As Double?
+    Private _AntennaDiagonalGageG1Distance As Double?
+    Private _AntennaTopGirtGageG1Distance As Double?
+    Private _AntennaBotGirtGageG1Distance As Double?
+    Private _AntennaInnerGirtGageG1Distance As Double?
+    Private _AntennaHorizontalGageG1Distance As Double?
+    Private _AntennaShortHorizontalGageG1Distance As Double?
+    Private _AntennaRedundantHorizontalBoltGrade As String
+    Private _AntennaRedundantHorizontalBoltSize As Double?
+    Private _AntennaRedundantHorizontalNumBolts As Integer?
+    Private _AntennaRedundantHorizontalBoltEdgeDistance As Double?
+    Private _AntennaRedundantHorizontalGageG1Distance As Double?
+    Private _AntennaRedundantHorizontalNetWidthDeduct As Double?
+    Private _AntennaRedundantHorizontalUFactor As Double?
+    Private _AntennaRedundantDiagonalBoltGrade As String
+    Private _AntennaRedundantDiagonalBoltSize As Double?
+    Private _AntennaRedundantDiagonalNumBolts As Integer?
+    Private _AntennaRedundantDiagonalBoltEdgeDistance As Double?
+    Private _AntennaRedundantDiagonalGageG1Distance As Double?
+    Private _AntennaRedundantDiagonalNetWidthDeduct As Double?
+    Private _AntennaRedundantDiagonalUFactor As Double?
+    Private _AntennaRedundantSubDiagonalBoltGrade As String
+    Private _AntennaRedundantSubDiagonalBoltSize As Double?
+    Private _AntennaRedundantSubDiagonalNumBolts As Integer?
+    Private _AntennaRedundantSubDiagonalBoltEdgeDistance As Double?
+    Private _AntennaRedundantSubDiagonalGageG1Distance As Double?
+    Private _AntennaRedundantSubDiagonalNetWidthDeduct As Double?
+    Private _AntennaRedundantSubDiagonalUFactor As Double?
+    Private _AntennaRedundantSubHorizontalBoltGrade As String
+    Private _AntennaRedundantSubHorizontalBoltSize As Double?
+    Private _AntennaRedundantSubHorizontalNumBolts As Integer?
+    Private _AntennaRedundantSubHorizontalBoltEdgeDistance As Double?
+    Private _AntennaRedundantSubHorizontalGageG1Distance As Double?
+    Private _AntennaRedundantSubHorizontalNetWidthDeduct As Double?
+    Private _AntennaRedundantSubHorizontalUFactor As Double?
+    Private _AntennaRedundantVerticalBoltGrade As String
+    Private _AntennaRedundantVerticalBoltSize As Double?
+    Private _AntennaRedundantVerticalNumBolts As Integer?
+    Private _AntennaRedundantVerticalBoltEdgeDistance As Double?
+    Private _AntennaRedundantVerticalGageG1Distance As Double?
+    Private _AntennaRedundantVerticalNetWidthDeduct As Double?
+    Private _AntennaRedundantVerticalUFactor As Double?
+    Private _AntennaRedundantHipBoltGrade As String
+    Private _AntennaRedundantHipBoltSize As Double?
+    Private _AntennaRedundantHipNumBolts As Integer?
+    Private _AntennaRedundantHipBoltEdgeDistance As Double?
+    Private _AntennaRedundantHipGageG1Distance As Double?
+    Private _AntennaRedundantHipNetWidthDeduct As Double?
+    Private _AntennaRedundantHipUFactor As Double?
+    Private _AntennaRedundantHipDiagonalBoltGrade As String
+    Private _AntennaRedundantHipDiagonalBoltSize As Double?
+    Private _AntennaRedundantHipDiagonalNumBolts As Integer?
+    Private _AntennaRedundantHipDiagonalBoltEdgeDistance As Double?
+    Private _AntennaRedundantHipDiagonalGageG1Distance As Double?
+    Private _AntennaRedundantHipDiagonalNetWidthDeduct As Double?
+    Private _AntennaRedundantHipDiagonalUFactor As Double?
+    Private _AntennaDiagonalOutOfPlaneRestraint As Boolean?
+    Private _AntennaTopGirtOutOfPlaneRestraint As Boolean?
+    Private _AntennaBottomGirtOutOfPlaneRestraint As Boolean?
+    Private _AntennaMidGirtOutOfPlaneRestraint As Boolean?
+    Private _AntennaHorizontalOutOfPlaneRestraint As Boolean?
+    Private _AntennaSecondaryHorizontalOutOfPlaneRestraint As Boolean?
+    Private _AntennaDiagOffsetNEY As Double?
+    Private _AntennaDiagOffsetNEX As Double?
+    Private _AntennaDiagOffsetPEY As Double?
+    Private _AntennaDiagOffsetPEX As Double?
+    Private _AntennaKbraceOffsetNEY As Double?
+    Private _AntennaKbraceOffsetNEX As Double?
+    Private _AntennaKbraceOffsetPEY As Double?
+    Private _AntennaKbraceOffsetPEX As Double?
+
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennarec")>
-    Public Property AntennaRec() As Integer
+    Public Property AntennaRec() As Integer?
         Get
-            Return Me.prop_AntennaRec
+            Return Me._AntennaRec
         End Get
         Set
-            Me.prop_AntennaRec = Value
+            Me._AntennaRec = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabracetype")>
     Public Property AntennaBraceType() As String
         Get
-            Return Me.prop_AntennaBraceType
+            Return Me._AntennaBraceType
         End Get
         Set
-            Me.prop_AntennaBraceType = Value
+            Me._AntennaBraceType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaheight")>
-    Public Property AntennaHeight() As Double
+    Public Property AntennaHeight() As Double?
         Get
-            Return Me.prop_AntennaHeight
+            Return Me._AntennaHeight
         End Get
         Set
-            Me.prop_AntennaHeight = Value
+            Me._AntennaHeight = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalspacing")>
-    Public Property AntennaDiagonalSpacing() As Double
+    Public Property AntennaDiagonalSpacing() As Double?
         Get
-            Return Me.prop_AntennaDiagonalSpacing
+            Return Me._AntennaDiagonalSpacing
         End Get
         Set
-            Me.prop_AntennaDiagonalSpacing = Value
+            Me._AntennaDiagonalSpacing = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalspacingex")>
-    Public Property AntennaDiagonalSpacingEx() As Double
+    Public Property AntennaDiagonalSpacingEx() As Double?
         Get
-            Return Me.prop_AntennaDiagonalSpacingEx
+            Return Me._AntennaDiagonalSpacingEx
         End Get
         Set
-            Me.prop_AntennaDiagonalSpacingEx = Value
+            Me._AntennaDiagonalSpacingEx = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanumsections")>
-    Public Property AntennaNumSections() As Integer
+    Public Property AntennaNumSections() As Integer?
         Get
-            Return Me.prop_AntennaNumSections
+            Return Me._AntennaNumSections
         End Get
         Set
-            Me.prop_AntennaNumSections = Value
+            Me._AntennaNumSections = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanumsesctions")>
-    Public Property AntennaNumSesctions() As Integer
+    Public Property AntennaNumSesctions() As Integer?
         Get
-            Return Me.prop_AntennaNumSesctions
+            Return Me._AntennaNumSesctions
         End Get
         Set
-            Me.prop_AntennaNumSesctions = Value
+            Me._AntennaNumSesctions = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasectionlength")>
-    Public Property AntennaSectionLength() As Double
+    Public Property AntennaSectionLength() As Double?
         Get
-            Return Me.prop_AntennaSectionLength
+            Return Me._AntennaSectionLength
         End Get
         Set
-            Me.prop_AntennaSectionLength = Value
+            Me._AntennaSectionLength = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegtype")>
     Public Property AntennaLegType() As String
         Get
-            Return Me.prop_AntennaLegType
+            Return Me._AntennaLegType
         End Get
         Set
-            Me.prop_AntennaLegType = Value
+            Me._AntennaLegType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegsize")>
     Public Property AntennaLegSize() As String
         Get
-            Return Me.prop_AntennaLegSize
+            Return Me._AntennaLegSize
         End Get
         Set
-            Me.prop_AntennaLegSize = Value
+            Me._AntennaLegSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaleggrade")>
-    Public Property AntennaLegGrade() As Double
+    Public Property AntennaLegGrade() As Double?
         Get
-            Return Me.prop_AntennaLegGrade
+            Return Me._AntennaLegGrade
         End Get
         Set
-            Me.prop_AntennaLegGrade = Value
+            Me._AntennaLegGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegmatlgrade")>
     Public Property AntennaLegMatlGrade() As String
         Get
-            Return Me.prop_AntennaLegMatlGrade
+            Return Me._AntennaLegMatlGrade
         End Get
         Set
-            Me.prop_AntennaLegMatlGrade = Value
+            Me._AntennaLegMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalgrade")>
-    Public Property AntennaDiagonalGrade() As Double
+    Public Property AntennaDiagonalGrade() As Double?
         Get
-            Return Me.prop_AntennaDiagonalGrade
+            Return Me._AntennaDiagonalGrade
         End Get
         Set
-            Me.prop_AntennaDiagonalGrade = Value
+            Me._AntennaDiagonalGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalmatlgrade")>
     Public Property AntennaDiagonalMatlGrade() As String
         Get
-            Return Me.prop_AntennaDiagonalMatlGrade
+            Return Me._AntennaDiagonalMatlGrade
         End Get
         Set
-            Me.prop_AntennaDiagonalMatlGrade = Value
+            Me._AntennaDiagonalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracinggrade")>
-    Public Property AntennaInnerBracingGrade() As Double
+    Public Property AntennaInnerBracingGrade() As Double?
         Get
-            Return Me.prop_AntennaInnerBracingGrade
+            Return Me._AntennaInnerBracingGrade
         End Get
         Set
-            Me.prop_AntennaInnerBracingGrade = Value
+            Me._AntennaInnerBracingGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingmatlgrade")>
     Public Property AntennaInnerBracingMatlGrade() As String
         Get
-            Return Me.prop_AntennaInnerBracingMatlGrade
+            Return Me._AntennaInnerBracingMatlGrade
         End Get
         Set
-            Me.prop_AntennaInnerBracingMatlGrade = Value
+            Me._AntennaInnerBracingMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtgrade")>
-    Public Property AntennaTopGirtGrade() As Double
+    Public Property AntennaTopGirtGrade() As Double?
         Get
-            Return Me.prop_AntennaTopGirtGrade
+            Return Me._AntennaTopGirtGrade
         End Get
         Set
-            Me.prop_AntennaTopGirtGrade = Value
+            Me._AntennaTopGirtGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtmatlgrade")>
     Public Property AntennaTopGirtMatlGrade() As String
         Get
-            Return Me.prop_AntennaTopGirtMatlGrade
+            Return Me._AntennaTopGirtMatlGrade
         End Get
         Set
-            Me.prop_AntennaTopGirtMatlGrade = Value
+            Me._AntennaTopGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtgrade")>
-    Public Property AntennaBotGirtGrade() As Double
+    Public Property AntennaBotGirtGrade() As Double?
         Get
-            Return Me.prop_AntennaBotGirtGrade
+            Return Me._AntennaBotGirtGrade
         End Get
         Set
-            Me.prop_AntennaBotGirtGrade = Value
+            Me._AntennaBotGirtGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtmatlgrade")>
     Public Property AntennaBotGirtMatlGrade() As String
         Get
-            Return Me.prop_AntennaBotGirtMatlGrade
+            Return Me._AntennaBotGirtMatlGrade
         End Get
         Set
-            Me.prop_AntennaBotGirtMatlGrade = Value
+            Me._AntennaBotGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtgrade")>
-    Public Property AntennaInnerGirtGrade() As Double
+    Public Property AntennaInnerGirtGrade() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtGrade
+            Return Me._AntennaInnerGirtGrade
         End Get
         Set
-            Me.prop_AntennaInnerGirtGrade = Value
+            Me._AntennaInnerGirtGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtmatlgrade")>
     Public Property AntennaInnerGirtMatlGrade() As String
         Get
-            Return Me.prop_AntennaInnerGirtMatlGrade
+            Return Me._AntennaInnerGirtMatlGrade
         End Get
         Set
-            Me.prop_AntennaInnerGirtMatlGrade = Value
+            Me._AntennaInnerGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalgrade")>
-    Public Property AntennaLongHorizontalGrade() As Double
+    Public Property AntennaLongHorizontalGrade() As Double?
         Get
-            Return Me.prop_AntennaLongHorizontalGrade
+            Return Me._AntennaLongHorizontalGrade
         End Get
         Set
-            Me.prop_AntennaLongHorizontalGrade = Value
+            Me._AntennaLongHorizontalGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalmatlgrade")>
     Public Property AntennaLongHorizontalMatlGrade() As String
         Get
-            Return Me.prop_AntennaLongHorizontalMatlGrade
+            Return Me._AntennaLongHorizontalMatlGrade
         End Get
         Set
-            Me.prop_AntennaLongHorizontalMatlGrade = Value
+            Me._AntennaLongHorizontalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalgrade")>
-    Public Property AntennaShortHorizontalGrade() As Double
+    Public Property AntennaShortHorizontalGrade() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalGrade
+            Return Me._AntennaShortHorizontalGrade
         End Get
         Set
-            Me.prop_AntennaShortHorizontalGrade = Value
+            Me._AntennaShortHorizontalGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalmatlgrade")>
     Public Property AntennaShortHorizontalMatlGrade() As String
         Get
-            Return Me.prop_AntennaShortHorizontalMatlGrade
+            Return Me._AntennaShortHorizontalMatlGrade
         End Get
         Set
-            Me.prop_AntennaShortHorizontalMatlGrade = Value
+            Me._AntennaShortHorizontalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonaltype")>
     Public Property AntennaDiagonalType() As String
         Get
-            Return Me.prop_AntennaDiagonalType
+            Return Me._AntennaDiagonalType
         End Get
         Set
-            Me.prop_AntennaDiagonalType = Value
+            Me._AntennaDiagonalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalsize")>
     Public Property AntennaDiagonalSize() As String
         Get
-            Return Me.prop_AntennaDiagonalSize
+            Return Me._AntennaDiagonalSize
         End Get
         Set
-            Me.prop_AntennaDiagonalSize = Value
+            Me._AntennaDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingtype")>
     Public Property AntennaInnerBracingType() As String
         Get
-            Return Me.prop_AntennaInnerBracingType
+            Return Me._AntennaInnerBracingType
         End Get
         Set
-            Me.prop_AntennaInnerBracingType = Value
+            Me._AntennaInnerBracingType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingsize")>
     Public Property AntennaInnerBracingSize() As String
         Get
-            Return Me.prop_AntennaInnerBracingSize
+            Return Me._AntennaInnerBracingSize
         End Get
         Set
-            Me.prop_AntennaInnerBracingSize = Value
+            Me._AntennaInnerBracingSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirttype")>
     Public Property AntennaTopGirtType() As String
         Get
-            Return Me.prop_AntennaTopGirtType
+            Return Me._AntennaTopGirtType
         End Get
         Set
-            Me.prop_AntennaTopGirtType = Value
+            Me._AntennaTopGirtType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtsize")>
     Public Property AntennaTopGirtSize() As String
         Get
-            Return Me.prop_AntennaTopGirtSize
+            Return Me._AntennaTopGirtSize
         End Get
         Set
-            Me.prop_AntennaTopGirtSize = Value
+            Me._AntennaTopGirtSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirttype")>
     Public Property AntennaBotGirtType() As String
         Get
-            Return Me.prop_AntennaBotGirtType
+            Return Me._AntennaBotGirtType
         End Get
         Set
-            Me.prop_AntennaBotGirtType = Value
+            Me._AntennaBotGirtType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtsize")>
     Public Property AntennaBotGirtSize() As String
         Get
-            Return Me.prop_AntennaBotGirtSize
+            Return Me._AntennaBotGirtSize
         End Get
         Set
-            Me.prop_AntennaBotGirtSize = Value
+            Me._AntennaBotGirtSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtoffset")>
-    Public Property AntennaTopGirtOffset() As Double
+    Public Property AntennaTopGirtOffset() As Double?
         Get
-            Return Me.prop_AntennaTopGirtOffset
+            Return Me._AntennaTopGirtOffset
         End Get
         Set
-            Me.prop_AntennaTopGirtOffset = Value
+            Me._AntennaTopGirtOffset = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtoffset")>
-    Public Property AntennaBotGirtOffset() As Double
+    Public Property AntennaBotGirtOffset() As Double?
         Get
-            Return Me.prop_AntennaBotGirtOffset
+            Return Me._AntennaBotGirtOffset
         End Get
         Set
-            Me.prop_AntennaBotGirtOffset = Value
+            Me._AntennaBotGirtOffset = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahaskbraceendpanels")>
-    Public Property AntennaHasKBraceEndPanels() As Boolean
+    Public Property AntennaHasKBraceEndPanels() As Boolean?
         Get
-            Return Me.prop_AntennaHasKBraceEndPanels
+            Return Me._AntennaHasKBraceEndPanels
         End Get
         Set
-            Me.prop_AntennaHasKBraceEndPanels = Value
+            Me._AntennaHasKBraceEndPanels = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahashorizontals")>
-    Public Property AntennaHasHorizontals() As Boolean
+    Public Property AntennaHasHorizontals() As Boolean?
         Get
-            Return Me.prop_AntennaHasHorizontals
+            Return Me._AntennaHasHorizontals
         End Get
         Set
-            Me.prop_AntennaHasHorizontals = Value
+            Me._AntennaHasHorizontals = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontaltype")>
     Public Property AntennaLongHorizontalType() As String
         Get
-            Return Me.prop_AntennaLongHorizontalType
+            Return Me._AntennaLongHorizontalType
         End Get
         Set
-            Me.prop_AntennaLongHorizontalType = Value
+            Me._AntennaLongHorizontalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalsize")>
     Public Property AntennaLongHorizontalSize() As String
         Get
-            Return Me.prop_AntennaLongHorizontalSize
+            Return Me._AntennaLongHorizontalSize
         End Get
         Set
-            Me.prop_AntennaLongHorizontalSize = Value
+            Me._AntennaLongHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontaltype")>
     Public Property AntennaShortHorizontalType() As String
         Get
-            Return Me.prop_AntennaShortHorizontalType
+            Return Me._AntennaShortHorizontalType
         End Get
         Set
-            Me.prop_AntennaShortHorizontalType = Value
+            Me._AntennaShortHorizontalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalsize")>
     Public Property AntennaShortHorizontalSize() As String
         Get
-            Return Me.prop_AntennaShortHorizontalSize
+            Return Me._AntennaShortHorizontalSize
         End Get
         Set
-            Me.prop_AntennaShortHorizontalSize = Value
+            Me._AntennaShortHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantgrade")>
-    Public Property AntennaRedundantGrade() As Double
+    Public Property AntennaRedundantGrade() As Double?
         Get
-            Return Me.prop_AntennaRedundantGrade
+            Return Me._AntennaRedundantGrade
         End Get
         Set
-            Me.prop_AntennaRedundantGrade = Value
+            Me._AntennaRedundantGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantmatlgrade")>
     Public Property AntennaRedundantMatlGrade() As String
         Get
-            Return Me.prop_AntennaRedundantMatlGrade
+            Return Me._AntennaRedundantMatlGrade
         End Get
         Set
-            Me.prop_AntennaRedundantMatlGrade = Value
+            Me._AntennaRedundantMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanttype")>
     Public Property AntennaRedundantType() As String
         Get
-            Return Me.prop_AntennaRedundantType
+            Return Me._AntennaRedundantType
         End Get
         Set
-            Me.prop_AntennaRedundantType = Value
+            Me._AntennaRedundantType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagtype")>
     Public Property AntennaRedundantDiagType() As String
         Get
-            Return Me.prop_AntennaRedundantDiagType
+            Return Me._AntennaRedundantDiagType
         End Get
         Set
-            Me.prop_AntennaRedundantDiagType = Value
+            Me._AntennaRedundantDiagType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonaltype")>
     Public Property AntennaRedundantSubDiagonalType() As String
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalType
+            Return Me._AntennaRedundantSubDiagonalType
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalType = Value
+            Me._AntennaRedundantSubDiagonalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontaltype")>
     Public Property AntennaRedundantSubHorizontalType() As String
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalType
+            Return Me._AntennaRedundantSubHorizontalType
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalType = Value
+            Me._AntennaRedundantSubHorizontalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticaltype")>
     Public Property AntennaRedundantVerticalType() As String
         Get
-            Return Me.prop_AntennaRedundantVerticalType
+            Return Me._AntennaRedundantVerticalType
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalType = Value
+            Me._AntennaRedundantVerticalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthiptype")>
     Public Property AntennaRedundantHipType() As String
         Get
-            Return Me.prop_AntennaRedundantHipType
+            Return Me._AntennaRedundantHipType
         End Get
         Set
-            Me.prop_AntennaRedundantHipType = Value
+            Me._AntennaRedundantHipType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonaltype")>
     Public Property AntennaRedundantHipDiagonalType() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalType
+            Return Me._AntennaRedundantHipDiagonalType
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalType = Value
+            Me._AntennaRedundantHipDiagonalType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize")>
     Public Property AntennaRedundantHorizontalSize() As String
         Get
-            Return Me.prop_AntennaRedundantHorizontalSize
+            Return Me._AntennaRedundantHorizontalSize
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalSize = Value
+            Me._AntennaRedundantHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize2")>
     Public Property AntennaRedundantHorizontalSize2() As String
         Get
-            Return Me.prop_AntennaRedundantHorizontalSize2
+            Return Me._AntennaRedundantHorizontalSize2
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalSize2 = Value
+            Me._AntennaRedundantHorizontalSize2 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize3")>
     Public Property AntennaRedundantHorizontalSize3() As String
         Get
-            Return Me.prop_AntennaRedundantHorizontalSize3
+            Return Me._AntennaRedundantHorizontalSize3
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalSize3 = Value
+            Me._AntennaRedundantHorizontalSize3 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize4")>
     Public Property AntennaRedundantHorizontalSize4() As String
         Get
-            Return Me.prop_AntennaRedundantHorizontalSize4
+            Return Me._AntennaRedundantHorizontalSize4
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalSize4 = Value
+            Me._AntennaRedundantHorizontalSize4 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize")>
     Public Property AntennaRedundantDiagonalSize() As String
         Get
-            Return Me.prop_AntennaRedundantDiagonalSize
+            Return Me._AntennaRedundantDiagonalSize
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalSize = Value
+            Me._AntennaRedundantDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize2")>
     Public Property AntennaRedundantDiagonalSize2() As String
         Get
-            Return Me.prop_AntennaRedundantDiagonalSize2
+            Return Me._AntennaRedundantDiagonalSize2
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalSize2 = Value
+            Me._AntennaRedundantDiagonalSize2 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize3")>
     Public Property AntennaRedundantDiagonalSize3() As String
         Get
-            Return Me.prop_AntennaRedundantDiagonalSize3
+            Return Me._AntennaRedundantDiagonalSize3
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalSize3 = Value
+            Me._AntennaRedundantDiagonalSize3 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize4")>
     Public Property AntennaRedundantDiagonalSize4() As String
         Get
-            Return Me.prop_AntennaRedundantDiagonalSize4
+            Return Me._AntennaRedundantDiagonalSize4
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalSize4 = Value
+            Me._AntennaRedundantDiagonalSize4 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalsize")>
     Public Property AntennaRedundantSubHorizontalSize() As String
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalSize
+            Return Me._AntennaRedundantSubHorizontalSize
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalSize = Value
+            Me._AntennaRedundantSubHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalsize")>
     Public Property AntennaRedundantSubDiagonalSize() As String
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalSize
+            Return Me._AntennaRedundantSubDiagonalSize
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalSize = Value
+            Me._AntennaRedundantSubDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasubdiaglocation")>
-    Public Property AntennaSubDiagLocation() As Double
+    Public Property AntennaSubDiagLocation() As Double?
         Get
-            Return Me.prop_AntennaSubDiagLocation
+            Return Me._AntennaSubDiagLocation
         End Get
         Set
-            Me.prop_AntennaSubDiagLocation = Value
+            Me._AntennaSubDiagLocation = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalsize")>
     Public Property AntennaRedundantVerticalSize() As String
         Get
-            Return Me.prop_AntennaRedundantVerticalSize
+            Return Me._AntennaRedundantVerticalSize
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalSize = Value
+            Me._AntennaRedundantVerticalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize")>
     Public Property AntennaRedundantHipDiagonalSize() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalSize
+            Return Me._AntennaRedundantHipDiagonalSize
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalSize = Value
+            Me._AntennaRedundantHipDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize2")>
     Public Property AntennaRedundantHipDiagonalSize2() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalSize2
+            Return Me._AntennaRedundantHipDiagonalSize2
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalSize2 = Value
+            Me._AntennaRedundantHipDiagonalSize2 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize3")>
     Public Property AntennaRedundantHipDiagonalSize3() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalSize3
+            Return Me._AntennaRedundantHipDiagonalSize3
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalSize3 = Value
+            Me._AntennaRedundantHipDiagonalSize3 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize4")>
     Public Property AntennaRedundantHipDiagonalSize4() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalSize4
+            Return Me._AntennaRedundantHipDiagonalSize4
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalSize4 = Value
+            Me._AntennaRedundantHipDiagonalSize4 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize")>
     Public Property AntennaRedundantHipSize() As String
         Get
-            Return Me.prop_AntennaRedundantHipSize
+            Return Me._AntennaRedundantHipSize
         End Get
         Set
-            Me.prop_AntennaRedundantHipSize = Value
+            Me._AntennaRedundantHipSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize2")>
     Public Property AntennaRedundantHipSize2() As String
         Get
-            Return Me.prop_AntennaRedundantHipSize2
+            Return Me._AntennaRedundantHipSize2
         End Get
         Set
-            Me.prop_AntennaRedundantHipSize2 = Value
+            Me._AntennaRedundantHipSize2 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize3")>
     Public Property AntennaRedundantHipSize3() As String
         Get
-            Return Me.prop_AntennaRedundantHipSize3
+            Return Me._AntennaRedundantHipSize3
         End Get
         Set
-            Me.prop_AntennaRedundantHipSize3 = Value
+            Me._AntennaRedundantHipSize3 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize4")>
     Public Property AntennaRedundantHipSize4() As String
         Get
-            Return Me.prop_AntennaRedundantHipSize4
+            Return Me._AntennaRedundantHipSize4
         End Get
         Set
-            Me.prop_AntennaRedundantHipSize4 = Value
+            Me._AntennaRedundantHipSize4 = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanuminnergirts")>
-    Public Property AntennaNumInnerGirts() As Integer
+    Public Property AntennaNumInnerGirts() As Integer?
         Get
-            Return Me.prop_AntennaNumInnerGirts
+            Return Me._AntennaNumInnerGirts
         End Get
         Set
-            Me.prop_AntennaNumInnerGirts = Value
+            Me._AntennaNumInnerGirts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirttype")>
     Public Property AntennaInnerGirtType() As String
         Get
-            Return Me.prop_AntennaInnerGirtType
+            Return Me._AntennaInnerGirtType
         End Get
         Set
-            Me.prop_AntennaInnerGirtType = Value
+            Me._AntennaInnerGirtType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtsize")>
     Public Property AntennaInnerGirtSize() As String
         Get
-            Return Me.prop_AntennaInnerGirtSize
+            Return Me._AntennaInnerGirtSize
         End Get
         Set
-            Me.prop_AntennaInnerGirtSize = Value
+            Me._AntennaInnerGirtSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapoleshapetype")>
     Public Property AntennaPoleShapeType() As String
         Get
-            Return Me.prop_AntennaPoleShapeType
+            Return Me._AntennaPoleShapeType
         End Get
         Set
-            Me.prop_AntennaPoleShapeType = Value
+            Me._AntennaPoleShapeType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolesize")>
     Public Property AntennaPoleSize() As String
         Get
-            Return Me.prop_AntennaPoleSize
+            Return Me._AntennaPoleSize
         End Get
         Set
-            Me.prop_AntennaPoleSize = Value
+            Me._AntennaPoleSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolegrade")>
-    Public Property AntennaPoleGrade() As Double
+    Public Property AntennaPoleGrade() As Double?
         Get
-            Return Me.prop_AntennaPoleGrade
+            Return Me._AntennaPoleGrade
         End Get
         Set
-            Me.prop_AntennaPoleGrade = Value
+            Me._AntennaPoleGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolematlgrade")>
     Public Property AntennaPoleMatlGrade() As String
         Get
-            Return Me.prop_AntennaPoleMatlGrade
+            Return Me._AntennaPoleMatlGrade
         End Get
         Set
-            Me.prop_AntennaPoleMatlGrade = Value
+            Me._AntennaPoleMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolesplicelength")>
-    Public Property AntennaPoleSpliceLength() As Double
+    Public Property AntennaPoleSpliceLength() As Double?
         Get
-            Return Me.prop_AntennaPoleSpliceLength
+            Return Me._AntennaPoleSpliceLength
         End Get
         Set
-            Me.prop_AntennaPoleSpliceLength = Value
+            Me._AntennaPoleSpliceLength = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolenumsides")>
-    Public Property AntennaTaperPoleNumSides() As Integer
+    Public Property AntennaTaperPoleNumSides() As Integer?
         Get
-            Return Me.prop_AntennaTaperPoleNumSides
+            Return Me._AntennaTaperPoleNumSides
         End Get
         Set
-            Me.prop_AntennaTaperPoleNumSides = Value
+            Me._AntennaTaperPoleNumSides = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpoletopdiameter")>
-    Public Property AntennaTaperPoleTopDiameter() As Double
+    Public Property AntennaTaperPoleTopDiameter() As Double?
         Get
-            Return Me.prop_AntennaTaperPoleTopDiameter
+            Return Me._AntennaTaperPoleTopDiameter
         End Get
         Set
-            Me.prop_AntennaTaperPoleTopDiameter = Value
+            Me._AntennaTaperPoleTopDiameter = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolebotdiameter")>
-    Public Property AntennaTaperPoleBotDiameter() As Double
+    Public Property AntennaTaperPoleBotDiameter() As Double?
         Get
-            Return Me.prop_AntennaTaperPoleBotDiameter
+            Return Me._AntennaTaperPoleBotDiameter
         End Get
         Set
-            Me.prop_AntennaTaperPoleBotDiameter = Value
+            Me._AntennaTaperPoleBotDiameter = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolewallthickness")>
-    Public Property AntennaTaperPoleWallThickness() As Double
+    Public Property AntennaTaperPoleWallThickness() As Double?
         Get
-            Return Me.prop_AntennaTaperPoleWallThickness
+            Return Me._AntennaTaperPoleWallThickness
         End Get
         Set
-            Me.prop_AntennaTaperPoleWallThickness = Value
+            Me._AntennaTaperPoleWallThickness = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolebendradius")>
-    Public Property AntennaTaperPoleBendRadius() As Double
+    Public Property AntennaTaperPoleBendRadius() As Double?
         Get
-            Return Me.prop_AntennaTaperPoleBendRadius
+            Return Me._AntennaTaperPoleBendRadius
         End Get
         Set
-            Me.prop_AntennaTaperPoleBendRadius = Value
+            Me._AntennaTaperPoleBendRadius = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolegrade")>
-    Public Property AntennaTaperPoleGrade() As Double
+    Public Property AntennaTaperPoleGrade() As Double?
         Get
-            Return Me.prop_AntennaTaperPoleGrade
+            Return Me._AntennaTaperPoleGrade
         End Get
         Set
-            Me.prop_AntennaTaperPoleGrade = Value
+            Me._AntennaTaperPoleGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolematlgrade")>
     Public Property AntennaTaperPoleMatlGrade() As String
         Get
-            Return Me.prop_AntennaTaperPoleMatlGrade
+            Return Me._AntennaTaperPoleMatlGrade
         End Get
         Set
-            Me.prop_AntennaTaperPoleMatlGrade = Value
+            Me._AntennaTaperPoleMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaswmult")>
-    Public Property AntennaSWMult() As Double
+    Public Property AntennaSWMult() As Double?
         Get
-            Return Me.prop_AntennaSWMult
+            Return Me._AntennaSWMult
         End Get
         Set
-            Me.prop_AntennaSWMult = Value
+            Me._AntennaSWMult = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennawpmult")>
-    Public Property AntennaWPMult() As Double
+    Public Property AntennaWPMult() As Double?
         Get
-            Return Me.prop_AntennaWPMult
+            Return Me._AntennaWPMult
         End Get
         Set
-            Me.prop_AntennaWPMult = Value
+            Me._AntennaWPMult = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaautocalcksingleangle")>
-    Public Property AntennaAutoCalcKSingleAngle() As Double
+    Public Property AntennaAutoCalcKSingleAngle() As Double?
         Get
-            Return Me.prop_AntennaAutoCalcKSingleAngle
+            Return Me._AntennaAutoCalcKSingleAngle
         End Get
         Set
-            Me.prop_AntennaAutoCalcKSingleAngle = Value
+            Me._AntennaAutoCalcKSingleAngle = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaautocalcksolidround")>
-    Public Property AntennaAutoCalcKSolidRound() As Double
+    Public Property AntennaAutoCalcKSolidRound() As Double?
         Get
-            Return Me.prop_AntennaAutoCalcKSolidRound
+            Return Me._AntennaAutoCalcKSolidRound
         End Get
         Set
-            Me.prop_AntennaAutoCalcKSolidRound = Value
+            Me._AntennaAutoCalcKSolidRound = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaafgusset")>
-    Public Property AntennaAfGusset() As Double
+    Public Property AntennaAfGusset() As Double?
         Get
-            Return Me.prop_AntennaAfGusset
+            Return Me._AntennaAfGusset
         End Get
         Set
-            Me.prop_AntennaAfGusset = Value
+            Me._AntennaAfGusset = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatfgusset")>
-    Public Property AntennaTfGusset() As Double
+    Public Property AntennaTfGusset() As Double?
         Get
-            Return Me.prop_AntennaTfGusset
+            Return Me._AntennaTfGusset
         End Get
         Set
-            Me.prop_AntennaTfGusset = Value
+            Me._AntennaTfGusset = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetboltedgedistance")>
-    Public Property AntennaGussetBoltEdgeDistance() As Double
+    Public Property AntennaGussetBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaGussetBoltEdgeDistance
+            Return Me._AntennaGussetBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaGussetBoltEdgeDistance = Value
+            Me._AntennaGussetBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetgrade")>
-    Public Property AntennaGussetGrade() As Double
+    Public Property AntennaGussetGrade() As Double?
         Get
-            Return Me.prop_AntennaGussetGrade
+            Return Me._AntennaGussetGrade
         End Get
         Set
-            Me.prop_AntennaGussetGrade = Value
+            Me._AntennaGussetGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetmatlgrade")>
     Public Property AntennaGussetMatlGrade() As String
         Get
-            Return Me.prop_AntennaGussetMatlGrade
+            Return Me._AntennaGussetMatlGrade
         End Get
         Set
-            Me.prop_AntennaGussetMatlGrade = Value
+            Me._AntennaGussetMatlGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaafmult")>
-    Public Property AntennaAfMult() As Double
+    Public Property AntennaAfMult() As Double?
         Get
-            Return Me.prop_AntennaAfMult
+            Return Me._AntennaAfMult
         End Get
         Set
-            Me.prop_AntennaAfMult = Value
+            Me._AntennaAfMult = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaarmult")>
-    Public Property AntennaArMult() As Double
+    Public Property AntennaArMult() As Double?
         Get
-            Return Me.prop_AntennaArMult
+            Return Me._AntennaArMult
         End Get
         Set
-            Me.prop_AntennaArMult = Value
+            Me._AntennaArMult = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipapole")>
-    Public Property AntennaFlatIPAPole() As Double
+    Public Property AntennaFlatIPAPole() As Double?
         Get
-            Return Me.prop_AntennaFlatIPAPole
+            Return Me._AntennaFlatIPAPole
         End Get
         Set
-            Me.prop_AntennaFlatIPAPole = Value
+            Me._AntennaFlatIPAPole = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipapole")>
-    Public Property AntennaRoundIPAPole() As Double
+    Public Property AntennaRoundIPAPole() As Double?
         Get
-            Return Me.prop_AntennaRoundIPAPole
+            Return Me._AntennaRoundIPAPole
         End Get
         Set
-            Me.prop_AntennaRoundIPAPole = Value
+            Me._AntennaRoundIPAPole = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipaleg")>
-    Public Property AntennaFlatIPALeg() As Double
+    Public Property AntennaFlatIPALeg() As Double?
         Get
-            Return Me.prop_AntennaFlatIPALeg
+            Return Me._AntennaFlatIPALeg
         End Get
         Set
-            Me.prop_AntennaFlatIPALeg = Value
+            Me._AntennaFlatIPALeg = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipaleg")>
-    Public Property AntennaRoundIPALeg() As Double
+    Public Property AntennaRoundIPALeg() As Double?
         Get
-            Return Me.prop_AntennaRoundIPALeg
+            Return Me._AntennaRoundIPALeg
         End Get
         Set
-            Me.prop_AntennaRoundIPALeg = Value
+            Me._AntennaRoundIPALeg = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipahorizontal")>
-    Public Property AntennaFlatIPAHorizontal() As Double
+    Public Property AntennaFlatIPAHorizontal() As Double?
         Get
-            Return Me.prop_AntennaFlatIPAHorizontal
+            Return Me._AntennaFlatIPAHorizontal
         End Get
         Set
-            Me.prop_AntennaFlatIPAHorizontal = Value
+            Me._AntennaFlatIPAHorizontal = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipahorizontal")>
-    Public Property AntennaRoundIPAHorizontal() As Double
+    Public Property AntennaRoundIPAHorizontal() As Double?
         Get
-            Return Me.prop_AntennaRoundIPAHorizontal
+            Return Me._AntennaRoundIPAHorizontal
         End Get
         Set
-            Me.prop_AntennaRoundIPAHorizontal = Value
+            Me._AntennaRoundIPAHorizontal = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipadiagonal")>
-    Public Property AntennaFlatIPADiagonal() As Double
+    Public Property AntennaFlatIPADiagonal() As Double?
         Get
-            Return Me.prop_AntennaFlatIPADiagonal
+            Return Me._AntennaFlatIPADiagonal
         End Get
         Set
-            Me.prop_AntennaFlatIPADiagonal = Value
+            Me._AntennaFlatIPADiagonal = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipadiagonal")>
-    Public Property AntennaRoundIPADiagonal() As Double
+    Public Property AntennaRoundIPADiagonal() As Double?
         Get
-            Return Me.prop_AntennaRoundIPADiagonal
+            Return Me._AntennaRoundIPADiagonal
         End Get
         Set
-            Me.prop_AntennaRoundIPADiagonal = Value
+            Me._AntennaRoundIPADiagonal = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennacsa_S37_Speedupfactor")>
-    Public Property AntennaCSA_S37_SpeedUpFactor() As Double
+    Public Property AntennaCSA_S37_SpeedUpFactor() As Double?
         Get
-            Return Me.prop_AntennaCSA_S37_SpeedUpFactor
+            Return Me._AntennaCSA_S37_SpeedUpFactor
         End Get
         Set
-            Me.prop_AntennaCSA_S37_SpeedUpFactor = Value
+            Me._AntennaCSA_S37_SpeedUpFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaklegs")>
-    Public Property AntennaKLegs() As Double
+    Public Property AntennaKLegs() As Double?
         Get
-            Return Me.prop_AntennaKLegs
+            Return Me._AntennaKLegs
         End Get
         Set
-            Me.prop_AntennaKLegs = Value
+            Me._AntennaKLegs = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakxbraceddiags")>
-    Public Property AntennaKXBracedDiags() As Double
+    Public Property AntennaKXBracedDiags() As Double?
         Get
-            Return Me.prop_AntennaKXBracedDiags
+            Return Me._AntennaKXBracedDiags
         End Get
         Set
-            Me.prop_AntennaKXBracedDiags = Value
+            Me._AntennaKXBracedDiags = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakkbraceddiags")>
-    Public Property AntennaKKBracedDiags() As Double
+    Public Property AntennaKKBracedDiags() As Double?
         Get
-            Return Me.prop_AntennaKKBracedDiags
+            Return Me._AntennaKKBracedDiags
         End Get
         Set
-            Me.prop_AntennaKKBracedDiags = Value
+            Me._AntennaKKBracedDiags = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakzbraceddiags")>
-    Public Property AntennaKZBracedDiags() As Double
+    Public Property AntennaKZBracedDiags() As Double?
         Get
-            Return Me.prop_AntennaKZBracedDiags
+            Return Me._AntennaKZBracedDiags
         End Get
         Set
-            Me.prop_AntennaKZBracedDiags = Value
+            Me._AntennaKZBracedDiags = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakhorzs")>
-    Public Property AntennaKHorzs() As Double
+    Public Property AntennaKHorzs() As Double?
         Get
-            Return Me.prop_AntennaKHorzs
+            Return Me._AntennaKHorzs
         End Get
         Set
-            Me.prop_AntennaKHorzs = Value
+            Me._AntennaKHorzs = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaksechorzs")>
-    Public Property AntennaKSecHorzs() As Double
+    Public Property AntennaKSecHorzs() As Double?
         Get
-            Return Me.prop_AntennaKSecHorzs
+            Return Me._AntennaKSecHorzs
         End Get
         Set
-            Me.prop_AntennaKSecHorzs = Value
+            Me._AntennaKSecHorzs = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakgirts")>
-    Public Property AntennaKGirts() As Double
+    Public Property AntennaKGirts() As Double?
         Get
-            Return Me.prop_AntennaKGirts
+            Return Me._AntennaKGirts
         End Get
         Set
-            Me.prop_AntennaKGirts = Value
+            Me._AntennaKGirts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakinners")>
-    Public Property AntennaKInners() As Double
+    Public Property AntennaKInners() As Double?
         Get
-            Return Me.prop_AntennaKInners
+            Return Me._AntennaKInners
         End Get
         Set
-            Me.prop_AntennaKInners = Value
+            Me._AntennaKInners = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakxbraceddiagsy")>
-    Public Property AntennaKXBracedDiagsY() As Double
+    Public Property AntennaKXBracedDiagsY() As Double?
         Get
-            Return Me.prop_AntennaKXBracedDiagsY
+            Return Me._AntennaKXBracedDiagsY
         End Get
         Set
-            Me.prop_AntennaKXBracedDiagsY = Value
+            Me._AntennaKXBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakkbraceddiagsy")>
-    Public Property AntennaKKBracedDiagsY() As Double
+    Public Property AntennaKKBracedDiagsY() As Double?
         Get
-            Return Me.prop_AntennaKKBracedDiagsY
+            Return Me._AntennaKKBracedDiagsY
         End Get
         Set
-            Me.prop_AntennaKKBracedDiagsY = Value
+            Me._AntennaKKBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakzbraceddiagsy")>
-    Public Property AntennaKZBracedDiagsY() As Double
+    Public Property AntennaKZBracedDiagsY() As Double?
         Get
-            Return Me.prop_AntennaKZBracedDiagsY
+            Return Me._AntennaKZBracedDiagsY
         End Get
         Set
-            Me.prop_AntennaKZBracedDiagsY = Value
+            Me._AntennaKZBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakhorzsy")>
-    Public Property AntennaKHorzsY() As Double
+    Public Property AntennaKHorzsY() As Double?
         Get
-            Return Me.prop_AntennaKHorzsY
+            Return Me._AntennaKHorzsY
         End Get
         Set
-            Me.prop_AntennaKHorzsY = Value
+            Me._AntennaKHorzsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaksechorzsy")>
-    Public Property AntennaKSecHorzsY() As Double
+    Public Property AntennaKSecHorzsY() As Double?
         Get
-            Return Me.prop_AntennaKSecHorzsY
+            Return Me._AntennaKSecHorzsY
         End Get
         Set
-            Me.prop_AntennaKSecHorzsY = Value
+            Me._AntennaKSecHorzsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakgirtsy")>
-    Public Property AntennaKGirtsY() As Double
+    Public Property AntennaKGirtsY() As Double?
         Get
-            Return Me.prop_AntennaKGirtsY
+            Return Me._AntennaKGirtsY
         End Get
         Set
-            Me.prop_AntennaKGirtsY = Value
+            Me._AntennaKGirtsY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakinnersy")>
-    Public Property AntennaKInnersY() As Double
+    Public Property AntennaKInnersY() As Double?
         Get
-            Return Me.prop_AntennaKInnersY
+            Return Me._AntennaKInnersY
         End Get
         Set
-            Me.prop_AntennaKInnersY = Value
+            Me._AntennaKInnersY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhorz")>
-    Public Property AntennaKRedHorz() As Double
+    Public Property AntennaKRedHorz() As Double?
         Get
-            Return Me.prop_AntennaKRedHorz
+            Return Me._AntennaKRedHorz
         End Get
         Set
-            Me.prop_AntennaKRedHorz = Value
+            Me._AntennaKRedHorz = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakreddiag")>
-    Public Property AntennaKRedDiag() As Double
+    Public Property AntennaKRedDiag() As Double?
         Get
-            Return Me.prop_AntennaKRedDiag
+            Return Me._AntennaKRedDiag
         End Get
         Set
-            Me.prop_AntennaKRedDiag = Value
+            Me._AntennaKRedDiag = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredsubdiag")>
-    Public Property AntennaKRedSubDiag() As Double
+    Public Property AntennaKRedSubDiag() As Double?
         Get
-            Return Me.prop_AntennaKRedSubDiag
+            Return Me._AntennaKRedSubDiag
         End Get
         Set
-            Me.prop_AntennaKRedSubDiag = Value
+            Me._AntennaKRedSubDiag = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredsubhorz")>
-    Public Property AntennaKRedSubHorz() As Double
+    Public Property AntennaKRedSubHorz() As Double?
         Get
-            Return Me.prop_AntennaKRedSubHorz
+            Return Me._AntennaKRedSubHorz
         End Get
         Set
-            Me.prop_AntennaKRedSubHorz = Value
+            Me._AntennaKRedSubHorz = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredvert")>
-    Public Property AntennaKRedVert() As Double
+    Public Property AntennaKRedVert() As Double?
         Get
-            Return Me.prop_AntennaKRedVert
+            Return Me._AntennaKRedVert
         End Get
         Set
-            Me.prop_AntennaKRedVert = Value
+            Me._AntennaKRedVert = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhip")>
-    Public Property AntennaKRedHip() As Double
+    Public Property AntennaKRedHip() As Double?
         Get
-            Return Me.prop_AntennaKRedHip
+            Return Me._AntennaKRedHip
         End Get
         Set
-            Me.prop_AntennaKRedHip = Value
+            Me._AntennaKRedHip = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhipdiag")>
-    Public Property AntennaKRedHipDiag() As Double
+    Public Property AntennaKRedHipDiag() As Double?
         Get
-            Return Me.prop_AntennaKRedHipDiag
+            Return Me._AntennaKRedHipDiag
         End Get
         Set
-            Me.prop_AntennaKRedHipDiag = Value
+            Me._AntennaKRedHipDiag = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlx")>
-    Public Property AntennaKTLX() As Double
+    Public Property AntennaKTLX() As Double?
         Get
-            Return Me.prop_AntennaKTLX
+            Return Me._AntennaKTLX
         End Get
         Set
-            Me.prop_AntennaKTLX = Value
+            Me._AntennaKTLX = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlz")>
-    Public Property AntennaKTLZ() As Double
+    Public Property AntennaKTLZ() As Double?
         Get
-            Return Me.prop_AntennaKTLZ
+            Return Me._AntennaKTLZ
         End Get
         Set
-            Me.prop_AntennaKTLZ = Value
+            Me._AntennaKTLZ = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlleg")>
-    Public Property AntennaKTLLeg() As Double
+    Public Property AntennaKTLLeg() As Double?
         Get
-            Return Me.prop_AntennaKTLLeg
+            Return Me._AntennaKTLLeg
         End Get
         Set
-            Me.prop_AntennaKTLLeg = Value
+            Me._AntennaKTLLeg = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlx")>
-    Public Property AntennaInnerKTLX() As Double
+    Public Property AntennaInnerKTLX() As Double?
         Get
-            Return Me.prop_AntennaInnerKTLX
+            Return Me._AntennaInnerKTLX
         End Get
         Set
-            Me.prop_AntennaInnerKTLX = Value
+            Me._AntennaInnerKTLX = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlz")>
-    Public Property AntennaInnerKTLZ() As Double
+    Public Property AntennaInnerKTLZ() As Double?
         Get
-            Return Me.prop_AntennaInnerKTLZ
+            Return Me._AntennaInnerKTLZ
         End Get
         Set
-            Me.prop_AntennaInnerKTLZ = Value
+            Me._AntennaInnerKTLZ = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlleg")>
-    Public Property AntennaInnerKTLLeg() As Double
+    Public Property AntennaInnerKTLLeg() As Double?
         Get
-            Return Me.prop_AntennaInnerKTLLeg
+            Return Me._AntennaInnerKTLLeg
         End Get
         Set
-            Me.prop_AntennaInnerKTLLeg = Value
+            Me._AntennaInnerKTLLeg = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchboltlocationhoriz")>
     Public Property AntennaStitchBoltLocationHoriz() As String
         Get
-            Return Me.prop_AntennaStitchBoltLocationHoriz
+            Return Me._AntennaStitchBoltLocationHoriz
         End Get
         Set
-            Me.prop_AntennaStitchBoltLocationHoriz = Value
+            Me._AntennaStitchBoltLocationHoriz = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchboltlocationdiag")>
     Public Property AntennaStitchBoltLocationDiag() As String
         Get
-            Return Me.prop_AntennaStitchBoltLocationDiag
+            Return Me._AntennaStitchBoltLocationDiag
         End Get
         Set
-            Me.prop_AntennaStitchBoltLocationDiag = Value
+            Me._AntennaStitchBoltLocationDiag = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacing")>
-    Public Property AntennaStitchSpacing() As Double
+    Public Property AntennaStitchSpacing() As Double?
         Get
-            Return Me.prop_AntennaStitchSpacing
+            Return Me._AntennaStitchSpacing
         End Get
         Set
-            Me.prop_AntennaStitchSpacing = Value
+            Me._AntennaStitchSpacing = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacinghorz")>
-    Public Property AntennaStitchSpacingHorz() As Double
+    Public Property AntennaStitchSpacingHorz() As Double?
         Get
-            Return Me.prop_AntennaStitchSpacingHorz
+            Return Me._AntennaStitchSpacingHorz
         End Get
         Set
-            Me.prop_AntennaStitchSpacingHorz = Value
+            Me._AntennaStitchSpacingHorz = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacingdiag")>
-    Public Property AntennaStitchSpacingDiag() As Double
+    Public Property AntennaStitchSpacingDiag() As Double?
         Get
-            Return Me.prop_AntennaStitchSpacingDiag
+            Return Me._AntennaStitchSpacingDiag
         End Get
         Set
-            Me.prop_AntennaStitchSpacingDiag = Value
+            Me._AntennaStitchSpacingDiag = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacingred")>
-    Public Property AntennaStitchSpacingRed() As Double
+    Public Property AntennaStitchSpacingRed() As Double?
         Get
-            Return Me.prop_AntennaStitchSpacingRed
+            Return Me._AntennaStitchSpacingRed
         End Get
         Set
-            Me.prop_AntennaStitchSpacingRed = Value
+            Me._AntennaStitchSpacingRed = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegnetwidthdeduct")>
-    Public Property AntennaLegNetWidthDeduct() As Double
+    Public Property AntennaLegNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaLegNetWidthDeduct
+            Return Me._AntennaLegNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaLegNetWidthDeduct = Value
+            Me._AntennaLegNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegufactor")>
-    Public Property AntennaLegUFactor() As Double
+    Public Property AntennaLegUFactor() As Double?
         Get
-            Return Me.prop_AntennaLegUFactor
+            Return Me._AntennaLegUFactor
         End Get
         Set
-            Me.prop_AntennaLegUFactor = Value
+            Me._AntennaLegUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalnetwidthdeduct")>
-    Public Property AntennaDiagonalNetWidthDeduct() As Double
+    Public Property AntennaDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaDiagonalNetWidthDeduct
+            Return Me._AntennaDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaDiagonalNetWidthDeduct = Value
+            Me._AntennaDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtnetwidthdeduct")>
-    Public Property AntennaTopGirtNetWidthDeduct() As Double
+    Public Property AntennaTopGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaTopGirtNetWidthDeduct
+            Return Me._AntennaTopGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaTopGirtNetWidthDeduct = Value
+            Me._AntennaTopGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtnetwidthdeduct")>
-    Public Property AntennaBotGirtNetWidthDeduct() As Double
+    Public Property AntennaBotGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaBotGirtNetWidthDeduct
+            Return Me._AntennaBotGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaBotGirtNetWidthDeduct = Value
+            Me._AntennaBotGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtnetwidthdeduct")>
-    Public Property AntennaInnerGirtNetWidthDeduct() As Double
+    Public Property AntennaInnerGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtNetWidthDeduct
+            Return Me._AntennaInnerGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaInnerGirtNetWidthDeduct = Value
+            Me._AntennaInnerGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalnetwidthdeduct")>
-    Public Property AntennaHorizontalNetWidthDeduct() As Double
+    Public Property AntennaHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaHorizontalNetWidthDeduct
+            Return Me._AntennaHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaHorizontalNetWidthDeduct = Value
+            Me._AntennaHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalnetwidthdeduct")>
-    Public Property AntennaShortHorizontalNetWidthDeduct() As Double
+    Public Property AntennaShortHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalNetWidthDeduct
+            Return Me._AntennaShortHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaShortHorizontalNetWidthDeduct = Value
+            Me._AntennaShortHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalufactor")>
-    Public Property AntennaDiagonalUFactor() As Double
+    Public Property AntennaDiagonalUFactor() As Double?
         Get
-            Return Me.prop_AntennaDiagonalUFactor
+            Return Me._AntennaDiagonalUFactor
         End Get
         Set
-            Me.prop_AntennaDiagonalUFactor = Value
+            Me._AntennaDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtufactor")>
-    Public Property AntennaTopGirtUFactor() As Double
+    Public Property AntennaTopGirtUFactor() As Double?
         Get
-            Return Me.prop_AntennaTopGirtUFactor
+            Return Me._AntennaTopGirtUFactor
         End Get
         Set
-            Me.prop_AntennaTopGirtUFactor = Value
+            Me._AntennaTopGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtufactor")>
-    Public Property AntennaBotGirtUFactor() As Double
+    Public Property AntennaBotGirtUFactor() As Double?
         Get
-            Return Me.prop_AntennaBotGirtUFactor
+            Return Me._AntennaBotGirtUFactor
         End Get
         Set
-            Me.prop_AntennaBotGirtUFactor = Value
+            Me._AntennaBotGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtufactor")>
-    Public Property AntennaInnerGirtUFactor() As Double
+    Public Property AntennaInnerGirtUFactor() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtUFactor
+            Return Me._AntennaInnerGirtUFactor
         End Get
         Set
-            Me.prop_AntennaInnerGirtUFactor = Value
+            Me._AntennaInnerGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalufactor")>
-    Public Property AntennaHorizontalUFactor() As Double
+    Public Property AntennaHorizontalUFactor() As Double?
         Get
-            Return Me.prop_AntennaHorizontalUFactor
+            Return Me._AntennaHorizontalUFactor
         End Get
         Set
-            Me.prop_AntennaHorizontalUFactor = Value
+            Me._AntennaHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalufactor")>
-    Public Property AntennaShortHorizontalUFactor() As Double
+    Public Property AntennaShortHorizontalUFactor() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalUFactor
+            Return Me._AntennaShortHorizontalUFactor
         End Get
         Set
-            Me.prop_AntennaShortHorizontalUFactor = Value
+            Me._AntennaShortHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegconntype")>
     Public Property AntennaLegConnType() As String
         Get
-            Return Me.prop_AntennaLegConnType
+            Return Me._AntennaLegConnType
         End Get
         Set
-            Me.prop_AntennaLegConnType = Value
+            Me._AntennaLegConnType = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegnumbolts")>
-    Public Property AntennaLegNumBolts() As Integer
+    Public Property AntennaLegNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaLegNumBolts
+            Return Me._AntennaLegNumBolts
         End Get
         Set
-            Me.prop_AntennaLegNumBolts = Value
+            Me._AntennaLegNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalnumbolts")>
-    Public Property AntennaDiagonalNumBolts() As Integer
+    Public Property AntennaDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaDiagonalNumBolts
+            Return Me._AntennaDiagonalNumBolts
         End Get
         Set
-            Me.prop_AntennaDiagonalNumBolts = Value
+            Me._AntennaDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtnumbolts")>
-    Public Property AntennaTopGirtNumBolts() As Integer
+    Public Property AntennaTopGirtNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaTopGirtNumBolts
+            Return Me._AntennaTopGirtNumBolts
         End Get
         Set
-            Me.prop_AntennaTopGirtNumBolts = Value
+            Me._AntennaTopGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtnumbolts")>
-    Public Property AntennaBotGirtNumBolts() As Integer
+    Public Property AntennaBotGirtNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaBotGirtNumBolts
+            Return Me._AntennaBotGirtNumBolts
         End Get
         Set
-            Me.prop_AntennaBotGirtNumBolts = Value
+            Me._AntennaBotGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtnumbolts")>
-    Public Property AntennaInnerGirtNumBolts() As Integer
+    Public Property AntennaInnerGirtNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaInnerGirtNumBolts
+            Return Me._AntennaInnerGirtNumBolts
         End Get
         Set
-            Me.prop_AntennaInnerGirtNumBolts = Value
+            Me._AntennaInnerGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalnumbolts")>
-    Public Property AntennaHorizontalNumBolts() As Integer
+    Public Property AntennaHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaHorizontalNumBolts
+            Return Me._AntennaHorizontalNumBolts
         End Get
         Set
-            Me.prop_AntennaHorizontalNumBolts = Value
+            Me._AntennaHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalnumbolts")>
-    Public Property AntennaShortHorizontalNumBolts() As Integer
+    Public Property AntennaShortHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaShortHorizontalNumBolts
+            Return Me._AntennaShortHorizontalNumBolts
         End Get
         Set
-            Me.prop_AntennaShortHorizontalNumBolts = Value
+            Me._AntennaShortHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltgrade")>
     Public Property AntennaLegBoltGrade() As String
         Get
-            Return Me.prop_AntennaLegBoltGrade
+            Return Me._AntennaLegBoltGrade
         End Get
         Set
-            Me.prop_AntennaLegBoltGrade = Value
+            Me._AntennaLegBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltsize")>
-    Public Property AntennaLegBoltSize() As Double
+    Public Property AntennaLegBoltSize() As Double?
         Get
-            Return Me.prop_AntennaLegBoltSize
+            Return Me._AntennaLegBoltSize
         End Get
         Set
-            Me.prop_AntennaLegBoltSize = Value
+            Me._AntennaLegBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltgrade")>
     Public Property AntennaDiagonalBoltGrade() As String
         Get
-            Return Me.prop_AntennaDiagonalBoltGrade
+            Return Me._AntennaDiagonalBoltGrade
         End Get
         Set
-            Me.prop_AntennaDiagonalBoltGrade = Value
+            Me._AntennaDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltsize")>
-    Public Property AntennaDiagonalBoltSize() As Double
+    Public Property AntennaDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaDiagonalBoltSize
+            Return Me._AntennaDiagonalBoltSize
         End Get
         Set
-            Me.prop_AntennaDiagonalBoltSize = Value
+            Me._AntennaDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltgrade")>
     Public Property AntennaTopGirtBoltGrade() As String
         Get
-            Return Me.prop_AntennaTopGirtBoltGrade
+            Return Me._AntennaTopGirtBoltGrade
         End Get
         Set
-            Me.prop_AntennaTopGirtBoltGrade = Value
+            Me._AntennaTopGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltsize")>
-    Public Property AntennaTopGirtBoltSize() As Double
+    Public Property AntennaTopGirtBoltSize() As Double?
         Get
-            Return Me.prop_AntennaTopGirtBoltSize
+            Return Me._AntennaTopGirtBoltSize
         End Get
         Set
-            Me.prop_AntennaTopGirtBoltSize = Value
+            Me._AntennaTopGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltgrade")>
     Public Property AntennaBotGirtBoltGrade() As String
         Get
-            Return Me.prop_AntennaBotGirtBoltGrade
+            Return Me._AntennaBotGirtBoltGrade
         End Get
         Set
-            Me.prop_AntennaBotGirtBoltGrade = Value
+            Me._AntennaBotGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltsize")>
-    Public Property AntennaBotGirtBoltSize() As Double
+    Public Property AntennaBotGirtBoltSize() As Double?
         Get
-            Return Me.prop_AntennaBotGirtBoltSize
+            Return Me._AntennaBotGirtBoltSize
         End Get
         Set
-            Me.prop_AntennaBotGirtBoltSize = Value
+            Me._AntennaBotGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltgrade")>
     Public Property AntennaInnerGirtBoltGrade() As String
         Get
-            Return Me.prop_AntennaInnerGirtBoltGrade
+            Return Me._AntennaInnerGirtBoltGrade
         End Get
         Set
-            Me.prop_AntennaInnerGirtBoltGrade = Value
+            Me._AntennaInnerGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltsize")>
-    Public Property AntennaInnerGirtBoltSize() As Double
+    Public Property AntennaInnerGirtBoltSize() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtBoltSize
+            Return Me._AntennaInnerGirtBoltSize
         End Get
         Set
-            Me.prop_AntennaInnerGirtBoltSize = Value
+            Me._AntennaInnerGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltgrade")>
     Public Property AntennaHorizontalBoltGrade() As String
         Get
-            Return Me.prop_AntennaHorizontalBoltGrade
+            Return Me._AntennaHorizontalBoltGrade
         End Get
         Set
-            Me.prop_AntennaHorizontalBoltGrade = Value
+            Me._AntennaHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltsize")>
-    Public Property AntennaHorizontalBoltSize() As Double
+    Public Property AntennaHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaHorizontalBoltSize
+            Return Me._AntennaHorizontalBoltSize
         End Get
         Set
-            Me.prop_AntennaHorizontalBoltSize = Value
+            Me._AntennaHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltgrade")>
     Public Property AntennaShortHorizontalBoltGrade() As String
         Get
-            Return Me.prop_AntennaShortHorizontalBoltGrade
+            Return Me._AntennaShortHorizontalBoltGrade
         End Get
         Set
-            Me.prop_AntennaShortHorizontalBoltGrade = Value
+            Me._AntennaShortHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltsize")>
-    Public Property AntennaShortHorizontalBoltSize() As Double
+    Public Property AntennaShortHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalBoltSize
+            Return Me._AntennaShortHorizontalBoltSize
         End Get
         Set
-            Me.prop_AntennaShortHorizontalBoltSize = Value
+            Me._AntennaShortHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltedgedistance")>
-    Public Property AntennaLegBoltEdgeDistance() As Double
+    Public Property AntennaLegBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaLegBoltEdgeDistance
+            Return Me._AntennaLegBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaLegBoltEdgeDistance = Value
+            Me._AntennaLegBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltedgedistance")>
-    Public Property AntennaDiagonalBoltEdgeDistance() As Double
+    Public Property AntennaDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaDiagonalBoltEdgeDistance
+            Return Me._AntennaDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaDiagonalBoltEdgeDistance = Value
+            Me._AntennaDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltedgedistance")>
-    Public Property AntennaTopGirtBoltEdgeDistance() As Double
+    Public Property AntennaTopGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaTopGirtBoltEdgeDistance
+            Return Me._AntennaTopGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaTopGirtBoltEdgeDistance = Value
+            Me._AntennaTopGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltedgedistance")>
-    Public Property AntennaBotGirtBoltEdgeDistance() As Double
+    Public Property AntennaBotGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaBotGirtBoltEdgeDistance
+            Return Me._AntennaBotGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaBotGirtBoltEdgeDistance = Value
+            Me._AntennaBotGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltedgedistance")>
-    Public Property AntennaInnerGirtBoltEdgeDistance() As Double
+    Public Property AntennaInnerGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtBoltEdgeDistance
+            Return Me._AntennaInnerGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaInnerGirtBoltEdgeDistance = Value
+            Me._AntennaInnerGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltedgedistance")>
-    Public Property AntennaHorizontalBoltEdgeDistance() As Double
+    Public Property AntennaHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaHorizontalBoltEdgeDistance
+            Return Me._AntennaHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaHorizontalBoltEdgeDistance = Value
+            Me._AntennaHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltedgedistance")>
-    Public Property AntennaShortHorizontalBoltEdgeDistance() As Double
+    Public Property AntennaShortHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalBoltEdgeDistance
+            Return Me._AntennaShortHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaShortHorizontalBoltEdgeDistance = Value
+            Me._AntennaShortHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalgageg1Distance")>
-    Public Property AntennaDiagonalGageG1Distance() As Double
+    Public Property AntennaDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaDiagonalGageG1Distance
+            Return Me._AntennaDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaDiagonalGageG1Distance = Value
+            Me._AntennaDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtgageg1Distance")>
-    Public Property AntennaTopGirtGageG1Distance() As Double
+    Public Property AntennaTopGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaTopGirtGageG1Distance
+            Return Me._AntennaTopGirtGageG1Distance
         End Get
         Set
-            Me.prop_AntennaTopGirtGageG1Distance = Value
+            Me._AntennaTopGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtgageg1Distance")>
-    Public Property AntennaBotGirtGageG1Distance() As Double
+    Public Property AntennaBotGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaBotGirtGageG1Distance
+            Return Me._AntennaBotGirtGageG1Distance
         End Get
         Set
-            Me.prop_AntennaBotGirtGageG1Distance = Value
+            Me._AntennaBotGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtgageg1Distance")>
-    Public Property AntennaInnerGirtGageG1Distance() As Double
+    Public Property AntennaInnerGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaInnerGirtGageG1Distance
+            Return Me._AntennaInnerGirtGageG1Distance
         End Get
         Set
-            Me.prop_AntennaInnerGirtGageG1Distance = Value
+            Me._AntennaInnerGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalgageg1Distance")>
-    Public Property AntennaHorizontalGageG1Distance() As Double
+    Public Property AntennaHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaHorizontalGageG1Distance
+            Return Me._AntennaHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaHorizontalGageG1Distance = Value
+            Me._AntennaHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalgageg1Distance")>
-    Public Property AntennaShortHorizontalGageG1Distance() As Double
+    Public Property AntennaShortHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaShortHorizontalGageG1Distance
+            Return Me._AntennaShortHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaShortHorizontalGageG1Distance = Value
+            Me._AntennaShortHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltgrade")>
     Public Property AntennaRedundantHorizontalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantHorizontalBoltGrade
+            Return Me._AntennaRedundantHorizontalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalBoltGrade = Value
+            Me._AntennaRedundantHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltsize")>
-    Public Property AntennaRedundantHorizontalBoltSize() As Double
+    Public Property AntennaRedundantHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantHorizontalBoltSize
+            Return Me._AntennaRedundantHorizontalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalBoltSize = Value
+            Me._AntennaRedundantHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalnumbolts")>
-    Public Property AntennaRedundantHorizontalNumBolts() As Integer
+    Public Property AntennaRedundantHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantHorizontalNumBolts
+            Return Me._AntennaRedundantHorizontalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalNumBolts = Value
+            Me._AntennaRedundantHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltedgedistance")>
-    Public Property AntennaRedundantHorizontalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHorizontalBoltEdgeDistance
+            Return Me._AntennaRedundantHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalBoltEdgeDistance = Value
+            Me._AntennaRedundantHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalgageg1Distance")>
-    Public Property AntennaRedundantHorizontalGageG1Distance() As Double
+    Public Property AntennaRedundantHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHorizontalGageG1Distance
+            Return Me._AntennaRedundantHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalGageG1Distance = Value
+            Me._AntennaRedundantHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalnetwidthdeduct")>
-    Public Property AntennaRedundantHorizontalNetWidthDeduct() As Double
+    Public Property AntennaRedundantHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantHorizontalNetWidthDeduct
+            Return Me._AntennaRedundantHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalNetWidthDeduct = Value
+            Me._AntennaRedundantHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalufactor")>
-    Public Property AntennaRedundantHorizontalUFactor() As Double
+    Public Property AntennaRedundantHorizontalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantHorizontalUFactor
+            Return Me._AntennaRedundantHorizontalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantHorizontalUFactor = Value
+            Me._AntennaRedundantHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltgrade")>
     Public Property AntennaRedundantDiagonalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantDiagonalBoltGrade
+            Return Me._AntennaRedundantDiagonalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalBoltGrade = Value
+            Me._AntennaRedundantDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltsize")>
-    Public Property AntennaRedundantDiagonalBoltSize() As Double
+    Public Property AntennaRedundantDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantDiagonalBoltSize
+            Return Me._AntennaRedundantDiagonalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalBoltSize = Value
+            Me._AntennaRedundantDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalnumbolts")>
-    Public Property AntennaRedundantDiagonalNumBolts() As Integer
+    Public Property AntennaRedundantDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantDiagonalNumBolts
+            Return Me._AntennaRedundantDiagonalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalNumBolts = Value
+            Me._AntennaRedundantDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltedgedistance")>
-    Public Property AntennaRedundantDiagonalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantDiagonalBoltEdgeDistance
+            Return Me._AntennaRedundantDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalBoltEdgeDistance = Value
+            Me._AntennaRedundantDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalgageg1Distance")>
-    Public Property AntennaRedundantDiagonalGageG1Distance() As Double
+    Public Property AntennaRedundantDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantDiagonalGageG1Distance
+            Return Me._AntennaRedundantDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalGageG1Distance = Value
+            Me._AntennaRedundantDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantDiagonalNetWidthDeduct() As Double
+    Public Property AntennaRedundantDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantDiagonalNetWidthDeduct
+            Return Me._AntennaRedundantDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalNetWidthDeduct = Value
+            Me._AntennaRedundantDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalufactor")>
-    Public Property AntennaRedundantDiagonalUFactor() As Double
+    Public Property AntennaRedundantDiagonalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantDiagonalUFactor
+            Return Me._AntennaRedundantDiagonalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantDiagonalUFactor = Value
+            Me._AntennaRedundantDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltgrade")>
     Public Property AntennaRedundantSubDiagonalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalBoltGrade
+            Return Me._AntennaRedundantSubDiagonalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalBoltGrade = Value
+            Me._AntennaRedundantSubDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltsize")>
-    Public Property AntennaRedundantSubDiagonalBoltSize() As Double
+    Public Property AntennaRedundantSubDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalBoltSize
+            Return Me._AntennaRedundantSubDiagonalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalBoltSize = Value
+            Me._AntennaRedundantSubDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalnumbolts")>
-    Public Property AntennaRedundantSubDiagonalNumBolts() As Integer
+    Public Property AntennaRedundantSubDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalNumBolts
+            Return Me._AntennaRedundantSubDiagonalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalNumBolts = Value
+            Me._AntennaRedundantSubDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltedgedistance")>
-    Public Property AntennaRedundantSubDiagonalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantSubDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalBoltEdgeDistance
+            Return Me._AntennaRedundantSubDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalBoltEdgeDistance = Value
+            Me._AntennaRedundantSubDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalgageg1Distance")>
-    Public Property AntennaRedundantSubDiagonalGageG1Distance() As Double
+    Public Property AntennaRedundantSubDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalGageG1Distance
+            Return Me._AntennaRedundantSubDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalGageG1Distance = Value
+            Me._AntennaRedundantSubDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantSubDiagonalNetWidthDeduct() As Double
+    Public Property AntennaRedundantSubDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalNetWidthDeduct
+            Return Me._AntennaRedundantSubDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalNetWidthDeduct = Value
+            Me._AntennaRedundantSubDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalufactor")>
-    Public Property AntennaRedundantSubDiagonalUFactor() As Double
+    Public Property AntennaRedundantSubDiagonalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubDiagonalUFactor
+            Return Me._AntennaRedundantSubDiagonalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantSubDiagonalUFactor = Value
+            Me._AntennaRedundantSubDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltgrade")>
     Public Property AntennaRedundantSubHorizontalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalBoltGrade
+            Return Me._AntennaRedundantSubHorizontalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalBoltGrade = Value
+            Me._AntennaRedundantSubHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltsize")>
-    Public Property AntennaRedundantSubHorizontalBoltSize() As Double
+    Public Property AntennaRedundantSubHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalBoltSize
+            Return Me._AntennaRedundantSubHorizontalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalBoltSize = Value
+            Me._AntennaRedundantSubHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalnumbolts")>
-    Public Property AntennaRedundantSubHorizontalNumBolts() As Integer
+    Public Property AntennaRedundantSubHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalNumBolts
+            Return Me._AntennaRedundantSubHorizontalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalNumBolts = Value
+            Me._AntennaRedundantSubHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltedgedistance")>
-    Public Property AntennaRedundantSubHorizontalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantSubHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalBoltEdgeDistance
+            Return Me._AntennaRedundantSubHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalBoltEdgeDistance = Value
+            Me._AntennaRedundantSubHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalgageg1Distance")>
-    Public Property AntennaRedundantSubHorizontalGageG1Distance() As Double
+    Public Property AntennaRedundantSubHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalGageG1Distance
+            Return Me._AntennaRedundantSubHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalGageG1Distance = Value
+            Me._AntennaRedundantSubHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalnetwidthdeduct")>
-    Public Property AntennaRedundantSubHorizontalNetWidthDeduct() As Double
+    Public Property AntennaRedundantSubHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalNetWidthDeduct
+            Return Me._AntennaRedundantSubHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalNetWidthDeduct = Value
+            Me._AntennaRedundantSubHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalufactor")>
-    Public Property AntennaRedundantSubHorizontalUFactor() As Double
+    Public Property AntennaRedundantSubHorizontalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantSubHorizontalUFactor
+            Return Me._AntennaRedundantSubHorizontalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantSubHorizontalUFactor = Value
+            Me._AntennaRedundantSubHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltgrade")>
     Public Property AntennaRedundantVerticalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantVerticalBoltGrade
+            Return Me._AntennaRedundantVerticalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalBoltGrade = Value
+            Me._AntennaRedundantVerticalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltsize")>
-    Public Property AntennaRedundantVerticalBoltSize() As Double
+    Public Property AntennaRedundantVerticalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantVerticalBoltSize
+            Return Me._AntennaRedundantVerticalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalBoltSize = Value
+            Me._AntennaRedundantVerticalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalnumbolts")>
-    Public Property AntennaRedundantVerticalNumBolts() As Integer
+    Public Property AntennaRedundantVerticalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantVerticalNumBolts
+            Return Me._AntennaRedundantVerticalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalNumBolts = Value
+            Me._AntennaRedundantVerticalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltedgedistance")>
-    Public Property AntennaRedundantVerticalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantVerticalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantVerticalBoltEdgeDistance
+            Return Me._AntennaRedundantVerticalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalBoltEdgeDistance = Value
+            Me._AntennaRedundantVerticalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalgageg1Distance")>
-    Public Property AntennaRedundantVerticalGageG1Distance() As Double
+    Public Property AntennaRedundantVerticalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantVerticalGageG1Distance
+            Return Me._AntennaRedundantVerticalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalGageG1Distance = Value
+            Me._AntennaRedundantVerticalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalnetwidthdeduct")>
-    Public Property AntennaRedundantVerticalNetWidthDeduct() As Double
+    Public Property AntennaRedundantVerticalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantVerticalNetWidthDeduct
+            Return Me._AntennaRedundantVerticalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalNetWidthDeduct = Value
+            Me._AntennaRedundantVerticalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalufactor")>
-    Public Property AntennaRedundantVerticalUFactor() As Double
+    Public Property AntennaRedundantVerticalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantVerticalUFactor
+            Return Me._AntennaRedundantVerticalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantVerticalUFactor = Value
+            Me._AntennaRedundantVerticalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltgrade")>
     Public Property AntennaRedundantHipBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantHipBoltGrade
+            Return Me._AntennaRedundantHipBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantHipBoltGrade = Value
+            Me._AntennaRedundantHipBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltsize")>
-    Public Property AntennaRedundantHipBoltSize() As Double
+    Public Property AntennaRedundantHipBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipBoltSize
+            Return Me._AntennaRedundantHipBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantHipBoltSize = Value
+            Me._AntennaRedundantHipBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipnumbolts")>
-    Public Property AntennaRedundantHipNumBolts() As Integer
+    Public Property AntennaRedundantHipNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantHipNumBolts
+            Return Me._AntennaRedundantHipNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantHipNumBolts = Value
+            Me._AntennaRedundantHipNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltedgedistance")>
-    Public Property AntennaRedundantHipBoltEdgeDistance() As Double
+    Public Property AntennaRedundantHipBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipBoltEdgeDistance
+            Return Me._AntennaRedundantHipBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantHipBoltEdgeDistance = Value
+            Me._AntennaRedundantHipBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipgageg1Distance")>
-    Public Property AntennaRedundantHipGageG1Distance() As Double
+    Public Property AntennaRedundantHipGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipGageG1Distance
+            Return Me._AntennaRedundantHipGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantHipGageG1Distance = Value
+            Me._AntennaRedundantHipGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipnetwidthdeduct")>
-    Public Property AntennaRedundantHipNetWidthDeduct() As Double
+    Public Property AntennaRedundantHipNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipNetWidthDeduct
+            Return Me._AntennaRedundantHipNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantHipNetWidthDeduct = Value
+            Me._AntennaRedundantHipNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipufactor")>
-    Public Property AntennaRedundantHipUFactor() As Double
+    Public Property AntennaRedundantHipUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipUFactor
+            Return Me._AntennaRedundantHipUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantHipUFactor = Value
+            Me._AntennaRedundantHipUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltgrade")>
     Public Property AntennaRedundantHipDiagonalBoltGrade() As String
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalBoltGrade
+            Return Me._AntennaRedundantHipDiagonalBoltGrade
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalBoltGrade = Value
+            Me._AntennaRedundantHipDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltsize")>
-    Public Property AntennaRedundantHipDiagonalBoltSize() As Double
+    Public Property AntennaRedundantHipDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalBoltSize
+            Return Me._AntennaRedundantHipDiagonalBoltSize
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalBoltSize = Value
+            Me._AntennaRedundantHipDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalnumbolts")>
-    Public Property AntennaRedundantHipDiagonalNumBolts() As Integer
+    Public Property AntennaRedundantHipDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalNumBolts
+            Return Me._AntennaRedundantHipDiagonalNumBolts
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalNumBolts = Value
+            Me._AntennaRedundantHipDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltedgedistance")>
-    Public Property AntennaRedundantHipDiagonalBoltEdgeDistance() As Double
+    Public Property AntennaRedundantHipDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalBoltEdgeDistance
+            Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalBoltEdgeDistance = Value
+            Me._AntennaRedundantHipDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalgageg1Distance")>
-    Public Property AntennaRedundantHipDiagonalGageG1Distance() As Double
+    Public Property AntennaRedundantHipDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalGageG1Distance
+            Return Me._AntennaRedundantHipDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalGageG1Distance = Value
+            Me._AntennaRedundantHipDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantHipDiagonalNetWidthDeduct() As Double
+    Public Property AntennaRedundantHipDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalNetWidthDeduct
+            Return Me._AntennaRedundantHipDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalNetWidthDeduct = Value
+            Me._AntennaRedundantHipDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalufactor")>
-    Public Property AntennaRedundantHipDiagonalUFactor() As Double
+    Public Property AntennaRedundantHipDiagonalUFactor() As Double?
         Get
-            Return Me.prop_AntennaRedundantHipDiagonalUFactor
+            Return Me._AntennaRedundantHipDiagonalUFactor
         End Get
         Set
-            Me.prop_AntennaRedundantHipDiagonalUFactor = Value
+            Me._AntennaRedundantHipDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonaloutofplanerestraint")>
-    Public Property AntennaDiagonalOutOfPlaneRestraint() As Boolean
+    Public Property AntennaDiagonalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaDiagonalOutOfPlaneRestraint
+            Return Me._AntennaDiagonalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaDiagonalOutOfPlaneRestraint = Value
+            Me._AntennaDiagonalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtoutofplanerestraint")>
-    Public Property AntennaTopGirtOutOfPlaneRestraint() As Boolean
+    Public Property AntennaTopGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaTopGirtOutOfPlaneRestraint
+            Return Me._AntennaTopGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaTopGirtOutOfPlaneRestraint = Value
+            Me._AntennaTopGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabottomgirtoutofplanerestraint")>
-    Public Property AntennaBottomGirtOutOfPlaneRestraint() As Boolean
+    Public Property AntennaBottomGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaBottomGirtOutOfPlaneRestraint
+            Return Me._AntennaBottomGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaBottomGirtOutOfPlaneRestraint = Value
+            Me._AntennaBottomGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennamidgirtoutofplanerestraint")>
-    Public Property AntennaMidGirtOutOfPlaneRestraint() As Boolean
+    Public Property AntennaMidGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaMidGirtOutOfPlaneRestraint
+            Return Me._AntennaMidGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaMidGirtOutOfPlaneRestraint = Value
+            Me._AntennaMidGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontaloutofplanerestraint")>
-    Public Property AntennaHorizontalOutOfPlaneRestraint() As Boolean
+    Public Property AntennaHorizontalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaHorizontalOutOfPlaneRestraint
+            Return Me._AntennaHorizontalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaHorizontalOutOfPlaneRestraint = Value
+            Me._AntennaHorizontalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasecondaryhorizontaloutofplanerestraint")>
-    Public Property AntennaSecondaryHorizontalOutOfPlaneRestraint() As Boolean
+    Public Property AntennaSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_AntennaSecondaryHorizontalOutOfPlaneRestraint
+            Return Me._AntennaSecondaryHorizontalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_AntennaSecondaryHorizontalOutOfPlaneRestraint = Value
+            Me._AntennaSecondaryHorizontalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetney")>
-    Public Property AntennaDiagOffsetNEY() As Double
+    Public Property AntennaDiagOffsetNEY() As Double?
         Get
-            Return Me.prop_AntennaDiagOffsetNEY
+            Return Me._AntennaDiagOffsetNEY
         End Get
         Set
-            Me.prop_AntennaDiagOffsetNEY = Value
+            Me._AntennaDiagOffsetNEY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetnex")>
-    Public Property AntennaDiagOffsetNEX() As Double
+    Public Property AntennaDiagOffsetNEX() As Double?
         Get
-            Return Me.prop_AntennaDiagOffsetNEX
+            Return Me._AntennaDiagOffsetNEX
         End Get
         Set
-            Me.prop_AntennaDiagOffsetNEX = Value
+            Me._AntennaDiagOffsetNEX = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetpey")>
-    Public Property AntennaDiagOffsetPEY() As Double
+    Public Property AntennaDiagOffsetPEY() As Double?
         Get
-            Return Me.prop_AntennaDiagOffsetPEY
+            Return Me._AntennaDiagOffsetPEY
         End Get
         Set
-            Me.prop_AntennaDiagOffsetPEY = Value
+            Me._AntennaDiagOffsetPEY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetpex")>
-    Public Property AntennaDiagOffsetPEX() As Double
+    Public Property AntennaDiagOffsetPEX() As Double?
         Get
-            Return Me.prop_AntennaDiagOffsetPEX
+            Return Me._AntennaDiagOffsetPEX
         End Get
         Set
-            Me.prop_AntennaDiagOffsetPEX = Value
+            Me._AntennaDiagOffsetPEX = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetney")>
-    Public Property AntennaKbraceOffsetNEY() As Double
+    Public Property AntennaKbraceOffsetNEY() As Double?
         Get
-            Return Me.prop_AntennaKbraceOffsetNEY
+            Return Me._AntennaKbraceOffsetNEY
         End Get
         Set
-            Me.prop_AntennaKbraceOffsetNEY = Value
+            Me._AntennaKbraceOffsetNEY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetnex")>
-    Public Property AntennaKbraceOffsetNEX() As Double
+    Public Property AntennaKbraceOffsetNEX() As Double?
         Get
-            Return Me.prop_AntennaKbraceOffsetNEX
+            Return Me._AntennaKbraceOffsetNEX
         End Get
         Set
-            Me.prop_AntennaKbraceOffsetNEX = Value
+            Me._AntennaKbraceOffsetNEX = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetpey")>
-    Public Property AntennaKbraceOffsetPEY() As Double
+    Public Property AntennaKbraceOffsetPEY() As Double?
         Get
-            Return Me.prop_AntennaKbraceOffsetPEY
+            Return Me._AntennaKbraceOffsetPEY
         End Get
         Set
-            Me.prop_AntennaKbraceOffsetPEY = Value
+            Me._AntennaKbraceOffsetPEY = Value
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetpex")>
-    Public Property AntennaKbraceOffsetPEX() As Double
+    Public Property AntennaKbraceOffsetPEX() As Double?
         Get
-            Return Me.prop_AntennaKbraceOffsetPEX
+            Return Me._AntennaKbraceOffsetPEX
         End Get
         Set
-            Me.prop_AntennaKbraceOffsetPEX = Value
+            Me._AntennaKbraceOffsetPEX = Value
         End Set
     End Property
+#End Region
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.AntennaRec = CNullInt(data.Item("AntennaRec"))
+        Me.AntennaBraceType = CNullStr(data.Item("AntennaBraceType"))
+        Me.AntennaHeight = CNullDbl(data.Item("AntennaHeight"))
+        Me.AntennaDiagonalSpacing = CNullDbl(data.Item("AntennaDiagonalSpacing"))
+        Me.AntennaDiagonalSpacingEx = CNullDbl(data.Item("AntennaDiagonalSpacingEx"))
+        Me.AntennaNumSections = CNullInt(data.Item("AntennaNumSections"))
+        Me.AntennaNumSesctions = CNullInt(data.Item("AntennaNumSesctions"))
+        Me.AntennaSectionLength = CNullDbl(data.Item("AntennaSectionLength"))
+        Me.AntennaLegType = CNullStr(data.Item("AntennaLegType"))
+        Me.AntennaLegSize = CNullStr(data.Item("AntennaLegSize"))
+        Me.AntennaLegGrade = CNullDbl(data.Item("AntennaLegGrade"))
+        Me.AntennaLegMatlGrade = CNullStr(data.Item("AntennaLegMatlGrade"))
+        Me.AntennaDiagonalGrade = CNullDbl(data.Item("AntennaDiagonalGrade"))
+        Me.AntennaDiagonalMatlGrade = CNullStr(data.Item("AntennaDiagonalMatlGrade"))
+        Me.AntennaInnerBracingGrade = CNullDbl(data.Item("AntennaInnerBracingGrade"))
+        Me.AntennaInnerBracingMatlGrade = CNullStr(data.Item("AntennaInnerBracingMatlGrade"))
+        Me.AntennaTopGirtGrade = CNullDbl(data.Item("AntennaTopGirtGrade"))
+        Me.AntennaTopGirtMatlGrade = CNullStr(data.Item("AntennaTopGirtMatlGrade"))
+        Me.AntennaBotGirtGrade = CNullDbl(data.Item("AntennaBotGirtGrade"))
+        Me.AntennaBotGirtMatlGrade = CNullStr(data.Item("AntennaBotGirtMatlGrade"))
+        Me.AntennaInnerGirtGrade = CNullDbl(data.Item("AntennaInnerGirtGrade"))
+        Me.AntennaInnerGirtMatlGrade = CNullStr(data.Item("AntennaInnerGirtMatlGrade"))
+        Me.AntennaLongHorizontalGrade = CNullDbl(data.Item("AntennaLongHorizontalGrade"))
+        Me.AntennaLongHorizontalMatlGrade = CNullStr(data.Item("AntennaLongHorizontalMatlGrade"))
+        Me.AntennaShortHorizontalGrade = CNullDbl(data.Item("AntennaShortHorizontalGrade"))
+        Me.AntennaShortHorizontalMatlGrade = CNullStr(data.Item("AntennaShortHorizontalMatlGrade"))
+        Me.AntennaDiagonalType = CNullStr(data.Item("AntennaDiagonalType"))
+        Me.AntennaDiagonalSize = CNullStr(data.Item("AntennaDiagonalSize"))
+        Me.AntennaInnerBracingType = CNullStr(data.Item("AntennaInnerBracingType"))
+        Me.AntennaInnerBracingSize = CNullStr(data.Item("AntennaInnerBracingSize"))
+        Me.AntennaTopGirtType = CNullStr(data.Item("AntennaTopGirtType"))
+        Me.AntennaTopGirtSize = CNullStr(data.Item("AntennaTopGirtSize"))
+        Me.AntennaBotGirtType = CNullStr(data.Item("AntennaBotGirtType"))
+        Me.AntennaBotGirtSize = CNullStr(data.Item("AntennaBotGirtSize"))
+        Me.AntennaTopGirtOffset = CNullDbl(data.Item("AntennaTopGirtOffset"))
+        Me.AntennaBotGirtOffset = CNullDbl(data.Item("AntennaBotGirtOffset"))
+        Me.AntennaHasKBraceEndPanels = CNullBool(data.Item("AntennaHasKBraceEndPanels"))
+        Me.AntennaHasHorizontals = CNullBool(data.Item("AntennaHasHorizontals"))
+        Me.AntennaLongHorizontalType = CNullStr(data.Item("AntennaLongHorizontalType"))
+        Me.AntennaLongHorizontalSize = CNullStr(data.Item("AntennaLongHorizontalSize"))
+        Me.AntennaShortHorizontalType = CNullStr(data.Item("AntennaShortHorizontalType"))
+        Me.AntennaShortHorizontalSize = CNullStr(data.Item("AntennaShortHorizontalSize"))
+        Me.AntennaRedundantGrade = CNullDbl(data.Item("AntennaRedundantGrade"))
+        Me.AntennaRedundantMatlGrade = CNullStr(data.Item("AntennaRedundantMatlGrade"))
+        Me.AntennaRedundantType = CNullStr(data.Item("AntennaRedundantType"))
+        Me.AntennaRedundantDiagType = CNullStr(data.Item("AntennaRedundantDiagType"))
+        Me.AntennaRedundantSubDiagonalType = CNullStr(data.Item("AntennaRedundantSubDiagonalType"))
+        Me.AntennaRedundantSubHorizontalType = CNullStr(data.Item("AntennaRedundantSubHorizontalType"))
+        Me.AntennaRedundantVerticalType = CNullStr(data.Item("AntennaRedundantVerticalType"))
+        Me.AntennaRedundantHipType = CNullStr(data.Item("AntennaRedundantHipType"))
+        Me.AntennaRedundantHipDiagonalType = CNullStr(data.Item("AntennaRedundantHipDiagonalType"))
+        Me.AntennaRedundantHorizontalSize = CNullStr(data.Item("AntennaRedundantHorizontalSize"))
+        Me.AntennaRedundantHorizontalSize2 = CNullStr(data.Item("AntennaRedundantHorizontalSize2"))
+        Me.AntennaRedundantHorizontalSize3 = CNullStr(data.Item("AntennaRedundantHorizontalSize3"))
+        Me.AntennaRedundantHorizontalSize4 = CNullStr(data.Item("AntennaRedundantHorizontalSize4"))
+        Me.AntennaRedundantDiagonalSize = CNullStr(data.Item("AntennaRedundantDiagonalSize"))
+        Me.AntennaRedundantDiagonalSize2 = CNullStr(data.Item("AntennaRedundantDiagonalSize2"))
+        Me.AntennaRedundantDiagonalSize3 = CNullStr(data.Item("AntennaRedundantDiagonalSize3"))
+        Me.AntennaRedundantDiagonalSize4 = CNullStr(data.Item("AntennaRedundantDiagonalSize4"))
+        Me.AntennaRedundantSubHorizontalSize = CNullStr(data.Item("AntennaRedundantSubHorizontalSize"))
+        Me.AntennaRedundantSubDiagonalSize = CNullStr(data.Item("AntennaRedundantSubDiagonalSize"))
+        Me.AntennaSubDiagLocation = CNullDbl(data.Item("AntennaSubDiagLocation"))
+        Me.AntennaRedundantVerticalSize = CNullStr(data.Item("AntennaRedundantVerticalSize"))
+        Me.AntennaRedundantHipDiagonalSize = CNullStr(data.Item("AntennaRedundantHipDiagonalSize"))
+        Me.AntennaRedundantHipDiagonalSize2 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize2"))
+        Me.AntennaRedundantHipDiagonalSize3 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize3"))
+        Me.AntennaRedundantHipDiagonalSize4 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize4"))
+        Me.AntennaRedundantHipSize = CNullStr(data.Item("AntennaRedundantHipSize"))
+        Me.AntennaRedundantHipSize2 = CNullStr(data.Item("AntennaRedundantHipSize2"))
+        Me.AntennaRedundantHipSize3 = CNullStr(data.Item("AntennaRedundantHipSize3"))
+        Me.AntennaRedundantHipSize4 = CNullStr(data.Item("AntennaRedundantHipSize4"))
+        Me.AntennaNumInnerGirts = CNullInt(data.Item("AntennaNumInnerGirts"))
+        Me.AntennaInnerGirtType = CNullStr(data.Item("AntennaInnerGirtType"))
+        Me.AntennaInnerGirtSize = CNullStr(data.Item("AntennaInnerGirtSize"))
+        Me.AntennaPoleShapeType = CNullStr(data.Item("AntennaPoleShapeType"))
+        Me.AntennaPoleSize = CNullStr(data.Item("AntennaPoleSize"))
+        Me.AntennaPoleGrade = CNullDbl(data.Item("AntennaPoleGrade"))
+        Me.AntennaPoleMatlGrade = CNullStr(data.Item("AntennaPoleMatlGrade"))
+        Me.AntennaPoleSpliceLength = CNullDbl(data.Item("AntennaPoleSpliceLength"))
+        Me.AntennaTaperPoleNumSides = CNullInt(data.Item("AntennaTaperPoleNumSides"))
+        Me.AntennaTaperPoleTopDiameter = CNullDbl(data.Item("AntennaTaperPoleTopDiameter"))
+        Me.AntennaTaperPoleBotDiameter = CNullDbl(data.Item("AntennaTaperPoleBotDiameter"))
+        Me.AntennaTaperPoleWallThickness = CNullDbl(data.Item("AntennaTaperPoleWallThickness"))
+        Me.AntennaTaperPoleBendRadius = CNullDbl(data.Item("AntennaTaperPoleBendRadius"))
+        Me.AntennaTaperPoleGrade = CNullDbl(data.Item("AntennaTaperPoleGrade"))
+        Me.AntennaTaperPoleMatlGrade = CNullStr(data.Item("AntennaTaperPoleMatlGrade"))
+        Me.AntennaSWMult = CNullDbl(data.Item("AntennaSWMult"))
+        Me.AntennaWPMult = CNullDbl(data.Item("AntennaWPMult"))
+        Me.AntennaAutoCalcKSingleAngle = CNullDbl(data.Item("AntennaAutoCalcKSingleAngle"))
+        Me.AntennaAutoCalcKSolidRound = CNullDbl(data.Item("AntennaAutoCalcKSolidRound"))
+        Me.AntennaAfGusset = CNullDbl(data.Item("AntennaAfGusset"))
+        Me.AntennaTfGusset = CNullDbl(data.Item("AntennaTfGusset"))
+        Me.AntennaGussetBoltEdgeDistance = CNullDbl(data.Item("AntennaGussetBoltEdgeDistance"))
+        Me.AntennaGussetGrade = CNullDbl(data.Item("AntennaGussetGrade"))
+        Me.AntennaGussetMatlGrade = CNullStr(data.Item("AntennaGussetMatlGrade"))
+        Me.AntennaAfMult = CNullDbl(data.Item("AntennaAfMult"))
+        Me.AntennaArMult = CNullDbl(data.Item("AntennaArMult"))
+        Me.AntennaFlatIPAPole = CNullDbl(data.Item("AntennaFlatIPAPole"))
+        Me.AntennaRoundIPAPole = CNullDbl(data.Item("AntennaRoundIPAPole"))
+        Me.AntennaFlatIPALeg = CNullDbl(data.Item("AntennaFlatIPALeg"))
+        Me.AntennaRoundIPALeg = CNullDbl(data.Item("AntennaRoundIPALeg"))
+        Me.AntennaFlatIPAHorizontal = CNullDbl(data.Item("AntennaFlatIPAHorizontal"))
+        Me.AntennaRoundIPAHorizontal = CNullDbl(data.Item("AntennaRoundIPAHorizontal"))
+        Me.AntennaFlatIPADiagonal = CNullDbl(data.Item("AntennaFlatIPADiagonal"))
+        Me.AntennaRoundIPADiagonal = CNullDbl(data.Item("AntennaRoundIPADiagonal"))
+        Me.AntennaCSA_S37_SpeedUpFactor = CNullDbl(data.Item("AntennaCSA_S37_SpeedUpFactor"))
+        Me.AntennaKLegs = CNullDbl(data.Item("AntennaKLegs"))
+        Me.AntennaKXBracedDiags = CNullDbl(data.Item("AntennaKXBracedDiags"))
+        Me.AntennaKKBracedDiags = CNullDbl(data.Item("AntennaKKBracedDiags"))
+        Me.AntennaKZBracedDiags = CNullDbl(data.Item("AntennaKZBracedDiags"))
+        Me.AntennaKHorzs = CNullDbl(data.Item("AntennaKHorzs"))
+        Me.AntennaKSecHorzs = CNullDbl(data.Item("AntennaKSecHorzs"))
+        Me.AntennaKGirts = CNullDbl(data.Item("AntennaKGirts"))
+        Me.AntennaKInners = CNullDbl(data.Item("AntennaKInners"))
+        Me.AntennaKXBracedDiagsY = CNullDbl(data.Item("AntennaKXBracedDiagsY"))
+        Me.AntennaKKBracedDiagsY = CNullDbl(data.Item("AntennaKKBracedDiagsY"))
+        Me.AntennaKZBracedDiagsY = CNullDbl(data.Item("AntennaKZBracedDiagsY"))
+        Me.AntennaKHorzsY = CNullDbl(data.Item("AntennaKHorzsY"))
+        Me.AntennaKSecHorzsY = CNullDbl(data.Item("AntennaKSecHorzsY"))
+        Me.AntennaKGirtsY = CNullDbl(data.Item("AntennaKGirtsY"))
+        Me.AntennaKInnersY = CNullDbl(data.Item("AntennaKInnersY"))
+        Me.AntennaKRedHorz = CNullDbl(data.Item("AntennaKRedHorz"))
+        Me.AntennaKRedDiag = CNullDbl(data.Item("AntennaKRedDiag"))
+        Me.AntennaKRedSubDiag = CNullDbl(data.Item("AntennaKRedSubDiag"))
+        Me.AntennaKRedSubHorz = CNullDbl(data.Item("AntennaKRedSubHorz"))
+        Me.AntennaKRedVert = CNullDbl(data.Item("AntennaKRedVert"))
+        Me.AntennaKRedHip = CNullDbl(data.Item("AntennaKRedHip"))
+        Me.AntennaKRedHipDiag = CNullDbl(data.Item("AntennaKRedHipDiag"))
+        Me.AntennaKTLX = CNullDbl(data.Item("AntennaKTLX"))
+        Me.AntennaKTLZ = CNullDbl(data.Item("AntennaKTLZ"))
+        Me.AntennaKTLLeg = CNullDbl(data.Item("AntennaKTLLeg"))
+        Me.AntennaInnerKTLX = CNullDbl(data.Item("AntennaInnerKTLX"))
+        Me.AntennaInnerKTLZ = CNullDbl(data.Item("AntennaInnerKTLZ"))
+        Me.AntennaInnerKTLLeg = CNullDbl(data.Item("AntennaInnerKTLLeg"))
+        Me.AntennaStitchBoltLocationHoriz = CNullStr(data.Item("AntennaStitchBoltLocationHoriz"))
+        Me.AntennaStitchBoltLocationDiag = CNullStr(data.Item("AntennaStitchBoltLocationDiag"))
+        Me.AntennaStitchSpacing = CNullDbl(data.Item("AntennaStitchSpacing"))
+        Me.AntennaStitchSpacingHorz = CNullDbl(data.Item("AntennaStitchSpacingHorz"))
+        Me.AntennaStitchSpacingDiag = CNullDbl(data.Item("AntennaStitchSpacingDiag"))
+        Me.AntennaStitchSpacingRed = CNullDbl(data.Item("AntennaStitchSpacingRed"))
+        Me.AntennaLegNetWidthDeduct = CNullDbl(data.Item("AntennaLegNetWidthDeduct"))
+        Me.AntennaLegUFactor = CNullDbl(data.Item("AntennaLegUFactor"))
+        Me.AntennaDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaDiagonalNetWidthDeduct"))
+        Me.AntennaTopGirtNetWidthDeduct = CNullDbl(data.Item("AntennaTopGirtNetWidthDeduct"))
+        Me.AntennaBotGirtNetWidthDeduct = CNullDbl(data.Item("AntennaBotGirtNetWidthDeduct"))
+        Me.AntennaInnerGirtNetWidthDeduct = CNullDbl(data.Item("AntennaInnerGirtNetWidthDeduct"))
+        Me.AntennaHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaHorizontalNetWidthDeduct"))
+        Me.AntennaShortHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaShortHorizontalNetWidthDeduct"))
+        Me.AntennaDiagonalUFactor = CNullDbl(data.Item("AntennaDiagonalUFactor"))
+        Me.AntennaTopGirtUFactor = CNullDbl(data.Item("AntennaTopGirtUFactor"))
+        Me.AntennaBotGirtUFactor = CNullDbl(data.Item("AntennaBotGirtUFactor"))
+        Me.AntennaInnerGirtUFactor = CNullDbl(data.Item("AntennaInnerGirtUFactor"))
+        Me.AntennaHorizontalUFactor = CNullDbl(data.Item("AntennaHorizontalUFactor"))
+        Me.AntennaShortHorizontalUFactor = CNullDbl(data.Item("AntennaShortHorizontalUFactor"))
+        Me.AntennaLegConnType = CNullStr(data.Item("AntennaLegConnType"))
+        Me.AntennaLegNumBolts = CNullInt(data.Item("AntennaLegNumBolts"))
+        Me.AntennaDiagonalNumBolts = CNullInt(data.Item("AntennaDiagonalNumBolts"))
+        Me.AntennaTopGirtNumBolts = CNullInt(data.Item("AntennaTopGirtNumBolts"))
+        Me.AntennaBotGirtNumBolts = CNullInt(data.Item("AntennaBotGirtNumBolts"))
+        Me.AntennaInnerGirtNumBolts = CNullInt(data.Item("AntennaInnerGirtNumBolts"))
+        Me.AntennaHorizontalNumBolts = CNullInt(data.Item("AntennaHorizontalNumBolts"))
+        Me.AntennaShortHorizontalNumBolts = CNullInt(data.Item("AntennaShortHorizontalNumBolts"))
+        Me.AntennaLegBoltGrade = CNullStr(data.Item("AntennaLegBoltGrade"))
+        Me.AntennaLegBoltSize = CNullDbl(data.Item("AntennaLegBoltSize"))
+        Me.AntennaDiagonalBoltGrade = CNullStr(data.Item("AntennaDiagonalBoltGrade"))
+        Me.AntennaDiagonalBoltSize = CNullDbl(data.Item("AntennaDiagonalBoltSize"))
+        Me.AntennaTopGirtBoltGrade = CNullStr(data.Item("AntennaTopGirtBoltGrade"))
+        Me.AntennaTopGirtBoltSize = CNullDbl(data.Item("AntennaTopGirtBoltSize"))
+        Me.AntennaBotGirtBoltGrade = CNullStr(data.Item("AntennaBotGirtBoltGrade"))
+        Me.AntennaBotGirtBoltSize = CNullDbl(data.Item("AntennaBotGirtBoltSize"))
+        Me.AntennaInnerGirtBoltGrade = CNullStr(data.Item("AntennaInnerGirtBoltGrade"))
+        Me.AntennaInnerGirtBoltSize = CNullDbl(data.Item("AntennaInnerGirtBoltSize"))
+        Me.AntennaHorizontalBoltGrade = CNullStr(data.Item("AntennaHorizontalBoltGrade"))
+        Me.AntennaHorizontalBoltSize = CNullDbl(data.Item("AntennaHorizontalBoltSize"))
+        Me.AntennaShortHorizontalBoltGrade = CNullStr(data.Item("AntennaShortHorizontalBoltGrade"))
+        Me.AntennaShortHorizontalBoltSize = CNullDbl(data.Item("AntennaShortHorizontalBoltSize"))
+        Me.AntennaLegBoltEdgeDistance = CNullDbl(data.Item("AntennaLegBoltEdgeDistance"))
+        Me.AntennaDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaDiagonalBoltEdgeDistance"))
+        Me.AntennaTopGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaTopGirtBoltEdgeDistance"))
+        Me.AntennaBotGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaBotGirtBoltEdgeDistance"))
+        Me.AntennaInnerGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaInnerGirtBoltEdgeDistance"))
+        Me.AntennaHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaHorizontalBoltEdgeDistance"))
+        Me.AntennaShortHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaShortHorizontalBoltEdgeDistance"))
+        Me.AntennaDiagonalGageG1Distance = CNullDbl(data.Item("AntennaDiagonalGageG1Distance"))
+        Me.AntennaTopGirtGageG1Distance = CNullDbl(data.Item("AntennaTopGirtGageG1Distance"))
+        Me.AntennaBotGirtGageG1Distance = CNullDbl(data.Item("AntennaBotGirtGageG1Distance"))
+        Me.AntennaInnerGirtGageG1Distance = CNullDbl(data.Item("AntennaInnerGirtGageG1Distance"))
+        Me.AntennaHorizontalGageG1Distance = CNullDbl(data.Item("AntennaHorizontalGageG1Distance"))
+        Me.AntennaShortHorizontalGageG1Distance = CNullDbl(data.Item("AntennaShortHorizontalGageG1Distance"))
+        Me.AntennaRedundantHorizontalBoltGrade = CNullStr(data.Item("AntennaRedundantHorizontalBoltGrade"))
+        Me.AntennaRedundantHorizontalBoltSize = CNullDbl(data.Item("AntennaRedundantHorizontalBoltSize"))
+        Me.AntennaRedundantHorizontalNumBolts = CNullInt(data.Item("AntennaRedundantHorizontalNumBolts"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance"))
+        Me.AntennaRedundantHorizontalGageG1Distance = CNullDbl(data.Item("AntennaRedundantHorizontalGageG1Distance"))
+        Me.AntennaRedundantHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct"))
+        Me.AntennaRedundantHorizontalUFactor = CNullDbl(data.Item("AntennaRedundantHorizontalUFactor"))
+        Me.AntennaRedundantDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantDiagonalBoltGrade"))
+        Me.AntennaRedundantDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantDiagonalBoltSize"))
+        Me.AntennaRedundantDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantDiagonalNumBolts"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantDiagonalGageG1Distance"))
+        Me.AntennaRedundantDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantDiagonalUFactor"))
+        Me.AntennaRedundantSubDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantSubDiagonalBoltGrade"))
+        Me.AntennaRedundantSubDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantSubDiagonalBoltSize"))
+        Me.AntennaRedundantSubDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantSubDiagonalNumBolts"))
+        Me.AntennaRedundantSubDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantSubDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantSubDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantSubDiagonalGageG1Distance"))
+        Me.AntennaRedundantSubDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantSubDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantSubDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantSubDiagonalUFactor"))
+        Me.AntennaRedundantSubHorizontalBoltGrade = CNullStr(data.Item("AntennaRedundantSubHorizontalBoltGrade"))
+        Me.AntennaRedundantSubHorizontalBoltSize = CNullDbl(data.Item("AntennaRedundantSubHorizontalBoltSize"))
+        Me.AntennaRedundantSubHorizontalNumBolts = CNullInt(data.Item("AntennaRedundantSubHorizontalNumBolts"))
+        Me.AntennaRedundantSubHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantSubHorizontalBoltEdgeDistance"))
+        Me.AntennaRedundantSubHorizontalGageG1Distance = CNullDbl(data.Item("AntennaRedundantSubHorizontalGageG1Distance"))
+        Me.AntennaRedundantSubHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantSubHorizontalNetWidthDeduct"))
+        Me.AntennaRedundantSubHorizontalUFactor = CNullDbl(data.Item("AntennaRedundantSubHorizontalUFactor"))
+        Me.AntennaRedundantVerticalBoltGrade = CNullStr(data.Item("AntennaRedundantVerticalBoltGrade"))
+        Me.AntennaRedundantVerticalBoltSize = CNullDbl(data.Item("AntennaRedundantVerticalBoltSize"))
+        Me.AntennaRedundantVerticalNumBolts = CNullInt(data.Item("AntennaRedundantVerticalNumBolts"))
+        Me.AntennaRedundantVerticalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantVerticalBoltEdgeDistance"))
+        Me.AntennaRedundantVerticalGageG1Distance = CNullDbl(data.Item("AntennaRedundantVerticalGageG1Distance"))
+        Me.AntennaRedundantVerticalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantVerticalNetWidthDeduct"))
+        Me.AntennaRedundantVerticalUFactor = CNullDbl(data.Item("AntennaRedundantVerticalUFactor"))
+        Me.AntennaRedundantHipBoltGrade = CNullStr(data.Item("AntennaRedundantHipBoltGrade"))
+        Me.AntennaRedundantHipBoltSize = CNullDbl(data.Item("AntennaRedundantHipBoltSize"))
+        Me.AntennaRedundantHipNumBolts = CNullInt(data.Item("AntennaRedundantHipNumBolts"))
+        Me.AntennaRedundantHipBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHipBoltEdgeDistance"))
+        Me.AntennaRedundantHipGageG1Distance = CNullDbl(data.Item("AntennaRedundantHipGageG1Distance"))
+        Me.AntennaRedundantHipNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHipNetWidthDeduct"))
+        Me.AntennaRedundantHipUFactor = CNullDbl(data.Item("AntennaRedundantHipUFactor"))
+        Me.AntennaRedundantHipDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantHipDiagonalBoltGrade"))
+        Me.AntennaRedundantHipDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantHipDiagonalBoltSize"))
+        Me.AntennaRedundantHipDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantHipDiagonalNumBolts"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantHipDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance"))
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantHipDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantHipDiagonalUFactor"))
+        Me.AntennaDiagonalOutOfPlaneRestraint = CNullBool(data.Item("AntennaDiagonalOutOfPlaneRestraint"))
+        Me.AntennaTopGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaTopGirtOutOfPlaneRestraint"))
+        Me.AntennaBottomGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaBottomGirtOutOfPlaneRestraint"))
+        Me.AntennaMidGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaMidGirtOutOfPlaneRestraint"))
+        Me.AntennaHorizontalOutOfPlaneRestraint = CNullBool(data.Item("AntennaHorizontalOutOfPlaneRestraint"))
+        Me.AntennaSecondaryHorizontalOutOfPlaneRestraint = CNullBool(data.Item("AntennaSecondaryHorizontalOutOfPlaneRestraint"))
+        Me.AntennaDiagOffsetNEY = CNullDbl(data.Item("AntennaDiagOffsetNEY"))
+        Me.AntennaDiagOffsetNEX = CNullDbl(data.Item("AntennaDiagOffsetNEX"))
+        Me.AntennaDiagOffsetPEY = CNullDbl(data.Item("AntennaDiagOffsetPEY"))
+        Me.AntennaDiagOffsetPEX = CNullDbl(data.Item("AntennaDiagOffsetPEX"))
+        Me.AntennaKbraceOffsetNEY = CNullDbl(data.Item("AntennaKbraceOffsetNEY"))
+        Me.AntennaKbraceOffsetNEX = CNullDbl(data.Item("AntennaKbraceOffsetNEX"))
+        Me.AntennaKbraceOffsetPEY = CNullDbl(data.Item("AntennaKbraceOffsetPEY"))
+        Me.AntennaKbraceOffsetPEX = CNullDbl(data.Item("AntennaKbraceOffsetPEX"))
+
+    End Sub
+#End Region
+
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString(Me.AntennaRec.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBraceType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHeight.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalSpacing.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalSpacingEx.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaNumSections.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaNumSesctions.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaSectionLength.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerBracingGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerBracingMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLongHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLongHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerBracingType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerBracingSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtOffset.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtOffset.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHasKBraceEndPanels.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHasHorizontals.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLongHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLongHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaSubDiagLocation.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaNumInnerGirts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaPoleShapeType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaPoleSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaPoleGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaPoleMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaPoleSpliceLength.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleNumSides.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleTopDiameter.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleBotDiameter.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleWallThickness.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleBendRadius.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTaperPoleMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaSWMult.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaWPMult.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaAutoCalcKSingleAngle.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaAutoCalcKSolidRound.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaAfGusset.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTfGusset.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaGussetBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaGussetGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaGussetMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaAfMult.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaArMult.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaFlatIPAPole.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRoundIPAPole.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaFlatIPALeg.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRoundIPALeg.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaFlatIPAHorizontal.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRoundIPAHorizontal.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaFlatIPADiagonal.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRoundIPADiagonal.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaCSA_S37_SpeedUpFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKLegs.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKXBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKKBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKZBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKHorzs.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKSecHorzs.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKGirts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKInners.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKXBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKKBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKZBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKHorzsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKSecHorzsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKGirtsY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKInnersY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedSubDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedSubHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedVert.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedHip.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKRedHipDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKTLX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKTLZ.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKTLLeg.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerKTLX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerKTLZ.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerKTLLeg.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchBoltLocationHoriz.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchBoltLocationDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchSpacing.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchSpacingHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchSpacingDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaStitchSpacingRed.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegConnType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaLegBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBotGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaInnerGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaShortHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagonalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaTopGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaBottomGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaMidGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaHorizontalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaSecondaryHorizontalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagOffsetNEY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagOffsetNEX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagOffsetPEY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaDiagOffsetPEX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetNEY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetNEX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEY.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEX.ToString)
+
+
+        Return insertString
+    End Function
 
 End Class
 
 Partial Public Class tnxTowerRecord
+    Inherits tnxDatabaseEntry
     'base structure
-    Private prop_ID As Integer
-    Private prop_tnxID As Integer
-    Private prop_TowerRec As Integer
-    Private prop_TowerDatabase As String
-    Private prop_TowerName As String
-    Private prop_TowerHeight As Double
-    Private prop_TowerFaceWidth As Double
-    Private prop_TowerNumSections As Integer
-    Private prop_TowerSectionLength As Double
-    Private prop_TowerDiagonalSpacing As Double
-    Private prop_TowerDiagonalSpacingEx As Double
-    Private prop_TowerBraceType As String
-    Private prop_TowerFaceBevel As Double
-    Private prop_TowerTopGirtOffset As Double
-    Private prop_TowerBotGirtOffset As Double
-    Private prop_TowerHasKBraceEndPanels As Boolean
-    Private prop_TowerHasHorizontals As Boolean
-    Private prop_TowerLegType As String
-    Private prop_TowerLegSize As String
-    Private prop_TowerLegGrade As Double
-    Private prop_TowerLegMatlGrade As String
-    Private prop_TowerDiagonalGrade As Double
-    Private prop_TowerDiagonalMatlGrade As String
-    Private prop_TowerInnerBracingGrade As Double
-    Private prop_TowerInnerBracingMatlGrade As String
-    Private prop_TowerTopGirtGrade As Double
-    Private prop_TowerTopGirtMatlGrade As String
-    Private prop_TowerBotGirtGrade As Double
-    Private prop_TowerBotGirtMatlGrade As String
-    Private prop_TowerInnerGirtGrade As Double
-    Private prop_TowerInnerGirtMatlGrade As String
-    Private prop_TowerLongHorizontalGrade As Double
-    Private prop_TowerLongHorizontalMatlGrade As String
-    Private prop_TowerShortHorizontalGrade As Double
-    Private prop_TowerShortHorizontalMatlGrade As String
-    Private prop_TowerDiagonalType As String
-    Private prop_TowerDiagonalSize As String
-    Private prop_TowerInnerBracingType As String
-    Private prop_TowerInnerBracingSize As String
-    Private prop_TowerTopGirtType As String
-    Private prop_TowerTopGirtSize As String
-    Private prop_TowerBotGirtType As String
-    Private prop_TowerBotGirtSize As String
-    Private prop_TowerNumInnerGirts As Integer
-    Private prop_TowerInnerGirtType As String
-    Private prop_TowerInnerGirtSize As String
-    Private prop_TowerLongHorizontalType As String
-    Private prop_TowerLongHorizontalSize As String
-    Private prop_TowerShortHorizontalType As String
-    Private prop_TowerShortHorizontalSize As String
-    Private prop_TowerRedundantGrade As Double
-    Private prop_TowerRedundantMatlGrade As String
-    Private prop_TowerRedundantType As String
-    Private prop_TowerRedundantDiagType As String
-    Private prop_TowerRedundantSubDiagonalType As String
-    Private prop_TowerRedundantSubHorizontalType As String
-    Private prop_TowerRedundantVerticalType As String
-    Private prop_TowerRedundantHipType As String
-    Private prop_TowerRedundantHipDiagonalType As String
-    Private prop_TowerRedundantHorizontalSize As String
-    Private prop_TowerRedundantHorizontalSize2 As String
-    Private prop_TowerRedundantHorizontalSize3 As String
-    Private prop_TowerRedundantHorizontalSize4 As String
-    Private prop_TowerRedundantDiagonalSize As String
-    Private prop_TowerRedundantDiagonalSize2 As String
-    Private prop_TowerRedundantDiagonalSize3 As String
-    Private prop_TowerRedundantDiagonalSize4 As String
-    Private prop_TowerRedundantSubHorizontalSize As String
-    Private prop_TowerRedundantSubDiagonalSize As String
-    Private prop_TowerSubDiagLocation As Double
-    Private prop_TowerRedundantVerticalSize As String
-    Private prop_TowerRedundantHipSize As String
-    Private prop_TowerRedundantHipSize2 As String
-    Private prop_TowerRedundantHipSize3 As String
-    Private prop_TowerRedundantHipSize4 As String
-    Private prop_TowerRedundantHipDiagonalSize As String
-    Private prop_TowerRedundantHipDiagonalSize2 As String
-    Private prop_TowerRedundantHipDiagonalSize3 As String
-    Private prop_TowerRedundantHipDiagonalSize4 As String
-    Private prop_TowerSWMult As Double
-    Private prop_TowerWPMult As Double
-    Private prop_TowerAutoCalcKSingleAngle As Boolean
-    Private prop_TowerAutoCalcKSolidRound As Boolean
-    Private prop_TowerAfGusset As Double
-    Private prop_TowerTfGusset As Double
-    Private prop_TowerGussetBoltEdgeDistance As Double
-    Private prop_TowerGussetGrade As Double
-    Private prop_TowerGussetMatlGrade As String
-    Private prop_TowerAfMult As Double
-    Private prop_TowerArMult As Double
-    Private prop_TowerFlatIPAPole As Double
-    Private prop_TowerRoundIPAPole As Double
-    Private prop_TowerFlatIPALeg As Double
-    Private prop_TowerRoundIPALeg As Double
-    Private prop_TowerFlatIPAHorizontal As Double
-    Private prop_TowerRoundIPAHorizontal As Double
-    Private prop_TowerFlatIPADiagonal As Double
-    Private prop_TowerRoundIPADiagonal As Double
-    Private prop_TowerCSA_S37_SpeedUpFactor As Double
-    Private prop_TowerKLegs As Double
-    Private prop_TowerKXBracedDiags As Double
-    Private prop_TowerKKBracedDiags As Double
-    Private prop_TowerKZBracedDiags As Double
-    Private prop_TowerKHorzs As Double
-    Private prop_TowerKSecHorzs As Double
-    Private prop_TowerKGirts As Double
-    Private prop_TowerKInners As Double
-    Private prop_TowerKXBracedDiagsY As Double
-    Private prop_TowerKKBracedDiagsY As Double
-    Private prop_TowerKZBracedDiagsY As Double
-    Private prop_TowerKHorzsY As Double
-    Private prop_TowerKSecHorzsY As Double
-    Private prop_TowerKGirtsY As Double
-    Private prop_TowerKInnersY As Double
-    Private prop_TowerKRedHorz As Double
-    Private prop_TowerKRedDiag As Double
-    Private prop_TowerKRedSubDiag As Double
-    Private prop_TowerKRedSubHorz As Double
-    Private prop_TowerKRedVert As Double
-    Private prop_TowerKRedHip As Double
-    Private prop_TowerKRedHipDiag As Double
-    Private prop_TowerKTLX As Double
-    Private prop_TowerKTLZ As Double
-    Private prop_TowerKTLLeg As Double
-    Private prop_TowerInnerKTLX As Double
-    Private prop_TowerInnerKTLZ As Double
-    Private prop_TowerInnerKTLLeg As Double
-    Private prop_TowerStitchBoltLocationHoriz As String
-    Private prop_TowerStitchBoltLocationDiag As String
-    Private prop_TowerStitchBoltLocationRed As String
-    Private prop_TowerStitchSpacing As Double
-    Private prop_TowerStitchSpacingDiag As Double
-    Private prop_TowerStitchSpacingHorz As Double
-    Private prop_TowerStitchSpacingRed As Double
-    Private prop_TowerLegNetWidthDeduct As Double
-    Private prop_TowerLegUFactor As Double
-    Private prop_TowerDiagonalNetWidthDeduct As Double
-    Private prop_TowerTopGirtNetWidthDeduct As Double
-    Private prop_TowerBotGirtNetWidthDeduct As Double
-    Private prop_TowerInnerGirtNetWidthDeduct As Double
-    Private prop_TowerHorizontalNetWidthDeduct As Double
-    Private prop_TowerShortHorizontalNetWidthDeduct As Double
-    Private prop_TowerDiagonalUFactor As Double
-    Private prop_TowerTopGirtUFactor As Double
-    Private prop_TowerBotGirtUFactor As Double
-    Private prop_TowerInnerGirtUFactor As Double
-    Private prop_TowerHorizontalUFactor As Double
-    Private prop_TowerShortHorizontalUFactor As Double
-    Private prop_TowerLegConnType As String
-    Private prop_TowerLegNumBolts As Integer
-    Private prop_TowerDiagonalNumBolts As Integer
-    Private prop_TowerTopGirtNumBolts As Integer
-    Private prop_TowerBotGirtNumBolts As Integer
-    Private prop_TowerInnerGirtNumBolts As Integer
-    Private prop_TowerHorizontalNumBolts As Integer
-    Private prop_TowerShortHorizontalNumBolts As Integer
-    Private prop_TowerLegBoltGrade As String
-    Private prop_TowerLegBoltSize As Double
-    Private prop_TowerDiagonalBoltGrade As String
-    Private prop_TowerDiagonalBoltSize As Double
-    Private prop_TowerTopGirtBoltGrade As String
-    Private prop_TowerTopGirtBoltSize As Double
-    Private prop_TowerBotGirtBoltGrade As String
-    Private prop_TowerBotGirtBoltSize As Double
-    Private prop_TowerInnerGirtBoltGrade As String
-    Private prop_TowerInnerGirtBoltSize As Double
-    Private prop_TowerHorizontalBoltGrade As String
-    Private prop_TowerHorizontalBoltSize As Double
-    Private prop_TowerShortHorizontalBoltGrade As String
-    Private prop_TowerShortHorizontalBoltSize As Double
-    Private prop_TowerLegBoltEdgeDistance As Double
-    Private prop_TowerDiagonalBoltEdgeDistance As Double
-    Private prop_TowerTopGirtBoltEdgeDistance As Double
-    Private prop_TowerBotGirtBoltEdgeDistance As Double
-    Private prop_TowerInnerGirtBoltEdgeDistance As Double
-    Private prop_TowerHorizontalBoltEdgeDistance As Double
-    Private prop_TowerShortHorizontalBoltEdgeDistance As Double
-    Private prop_TowerDiagonalGageG1Distance As Double
-    Private prop_TowerTopGirtGageG1Distance As Double
-    Private prop_TowerBotGirtGageG1Distance As Double
-    Private prop_TowerInnerGirtGageG1Distance As Double
-    Private prop_TowerHorizontalGageG1Distance As Double
-    Private prop_TowerShortHorizontalGageG1Distance As Double
-    Private prop_TowerRedundantHorizontalBoltGrade As String
-    Private prop_TowerRedundantHorizontalBoltSize As Double
-    Private prop_TowerRedundantHorizontalNumBolts As Integer
-    Private prop_TowerRedundantHorizontalBoltEdgeDistance As Double
-    Private prop_TowerRedundantHorizontalGageG1Distance As Double
-    Private prop_TowerRedundantHorizontalNetWidthDeduct As Double
-    Private prop_TowerRedundantHorizontalUFactor As Double
-    Private prop_TowerRedundantDiagonalBoltGrade As String
-    Private prop_TowerRedundantDiagonalBoltSize As Double
-    Private prop_TowerRedundantDiagonalNumBolts As Integer
-    Private prop_TowerRedundantDiagonalBoltEdgeDistance As Double
-    Private prop_TowerRedundantDiagonalGageG1Distance As Double
-    Private prop_TowerRedundantDiagonalNetWidthDeduct As Double
-    Private prop_TowerRedundantDiagonalUFactor As Double
-    Private prop_TowerRedundantSubDiagonalBoltGrade As String
-    Private prop_TowerRedundantSubDiagonalBoltSize As Double
-    Private prop_TowerRedundantSubDiagonalNumBolts As Integer
-    Private prop_TowerRedundantSubDiagonalBoltEdgeDistance As Double
-    Private prop_TowerRedundantSubDiagonalGageG1Distance As Double
-    Private prop_TowerRedundantSubDiagonalNetWidthDeduct As Double
-    Private prop_TowerRedundantSubDiagonalUFactor As Double
-    Private prop_TowerRedundantSubHorizontalBoltGrade As String
-    Private prop_TowerRedundantSubHorizontalBoltSize As Double
-    Private prop_TowerRedundantSubHorizontalNumBolts As Integer
-    Private prop_TowerRedundantSubHorizontalBoltEdgeDistance As Double
-    Private prop_TowerRedundantSubHorizontalGageG1Distance As Double
-    Private prop_TowerRedundantSubHorizontalNetWidthDeduct As Double
-    Private prop_TowerRedundantSubHorizontalUFactor As Double
-    Private prop_TowerRedundantVerticalBoltGrade As String
-    Private prop_TowerRedundantVerticalBoltSize As Double
-    Private prop_TowerRedundantVerticalNumBolts As Integer
-    Private prop_TowerRedundantVerticalBoltEdgeDistance As Double
-    Private prop_TowerRedundantVerticalGageG1Distance As Double
-    Private prop_TowerRedundantVerticalNetWidthDeduct As Double
-    Private prop_TowerRedundantVerticalUFactor As Double
-    Private prop_TowerRedundantHipBoltGrade As String
-    Private prop_TowerRedundantHipBoltSize As Double
-    Private prop_TowerRedundantHipNumBolts As Integer
-    Private prop_TowerRedundantHipBoltEdgeDistance As Double
-    Private prop_TowerRedundantHipGageG1Distance As Double
-    Private prop_TowerRedundantHipNetWidthDeduct As Double
-    Private prop_TowerRedundantHipUFactor As Double
-    Private prop_TowerRedundantHipDiagonalBoltGrade As String
-    Private prop_TowerRedundantHipDiagonalBoltSize As Double
-    Private prop_TowerRedundantHipDiagonalNumBolts As Integer
-    Private prop_TowerRedundantHipDiagonalBoltEdgeDistance As Double
-    Private prop_TowerRedundantHipDiagonalGageG1Distance As Double
-    Private prop_TowerRedundantHipDiagonalNetWidthDeduct As Double
-    Private prop_TowerRedundantHipDiagonalUFactor As Double
-    Private prop_TowerDiagonalOutOfPlaneRestraint As Boolean
-    Private prop_TowerTopGirtOutOfPlaneRestraint As Boolean
-    Private prop_TowerBottomGirtOutOfPlaneRestraint As Boolean
-    Private prop_TowerMidGirtOutOfPlaneRestraint As Boolean
-    Private prop_TowerHorizontalOutOfPlaneRestraint As Boolean
-    Private prop_TowerSecondaryHorizontalOutOfPlaneRestraint As Boolean
-    Private prop_TowerUniqueFlag As Integer
-    Private prop_TowerDiagOffsetNEY As Double
-    Private prop_TowerDiagOffsetNEX As Double
-    Private prop_TowerDiagOffsetPEY As Double
-    Private prop_TowerDiagOffsetPEX As Double
-    Private prop_TowerKbraceOffsetNEY As Double
-    Private prop_TowerKbraceOffsetNEX As Double
-    Private prop_TowerKbraceOffsetPEY As Double
-    Private prop_TowerKbraceOffsetPEX As Double
+#Region "Define"
+    Private _TowerRec As Integer?
+    Private _TowerDatabase As String
+    Private _TowerName As String
+    Private _TowerHeight As Double?
+    Private _TowerFaceWidth As Double?
+    Private _TowerNumSections As Integer?
+    Private _TowerSectionLength As Double?
+    Private _TowerDiagonalSpacing As Double?
+    Private _TowerDiagonalSpacingEx As Double?
+    Private _TowerBraceType As String
+    Private _TowerFaceBevel As Double?
+    Private _TowerTopGirtOffset As Double?
+    Private _TowerBotGirtOffset As Double?
+    Private _TowerHasKBraceEndPanels As Boolean?
+    Private _TowerHasHorizontals As Boolean?
+    Private _TowerLegType As String
+    Private _TowerLegSize As String
+    Private _TowerLegGrade As Double?
+    Private _TowerLegMatlGrade As String
+    Private _TowerDiagonalGrade As Double?
+    Private _TowerDiagonalMatlGrade As String
+    Private _TowerInnerBracingGrade As Double?
+    Private _TowerInnerBracingMatlGrade As String
+    Private _TowerTopGirtGrade As Double?
+    Private _TowerTopGirtMatlGrade As String
+    Private _TowerBotGirtGrade As Double?
+    Private _TowerBotGirtMatlGrade As String
+    Private _TowerInnerGirtGrade As Double?
+    Private _TowerInnerGirtMatlGrade As String
+    Private _TowerLongHorizontalGrade As Double?
+    Private _TowerLongHorizontalMatlGrade As String
+    Private _TowerShortHorizontalGrade As Double?
+    Private _TowerShortHorizontalMatlGrade As String
+    Private _TowerDiagonalType As String
+    Private _TowerDiagonalSize As String
+    Private _TowerInnerBracingType As String
+    Private _TowerInnerBracingSize As String
+    Private _TowerTopGirtType As String
+    Private _TowerTopGirtSize As String
+    Private _TowerBotGirtType As String
+    Private _TowerBotGirtSize As String
+    Private _TowerNumInnerGirts As Integer?
+    Private _TowerInnerGirtType As String
+    Private _TowerInnerGirtSize As String
+    Private _TowerLongHorizontalType As String
+    Private _TowerLongHorizontalSize As String
+    Private _TowerShortHorizontalType As String
+    Private _TowerShortHorizontalSize As String
+    Private _TowerRedundantGrade As Double?
+    Private _TowerRedundantMatlGrade As String
+    Private _TowerRedundantType As String
+    Private _TowerRedundantDiagType As String
+    Private _TowerRedundantSubDiagonalType As String
+    Private _TowerRedundantSubHorizontalType As String
+    Private _TowerRedundantVerticalType As String
+    Private _TowerRedundantHipType As String
+    Private _TowerRedundantHipDiagonalType As String
+    Private _TowerRedundantHorizontalSize As String
+    Private _TowerRedundantHorizontalSize2 As String
+    Private _TowerRedundantHorizontalSize3 As String
+    Private _TowerRedundantHorizontalSize4 As String
+    Private _TowerRedundantDiagonalSize As String
+    Private _TowerRedundantDiagonalSize2 As String
+    Private _TowerRedundantDiagonalSize3 As String
+    Private _TowerRedundantDiagonalSize4 As String
+    Private _TowerRedundantSubHorizontalSize As String
+    Private _TowerRedundantSubDiagonalSize As String
+    Private _TowerSubDiagLocation As Double?
+    Private _TowerRedundantVerticalSize As String
+    Private _TowerRedundantHipSize As String
+    Private _TowerRedundantHipSize2 As String
+    Private _TowerRedundantHipSize3 As String
+    Private _TowerRedundantHipSize4 As String
+    Private _TowerRedundantHipDiagonalSize As String
+    Private _TowerRedundantHipDiagonalSize2 As String
+    Private _TowerRedundantHipDiagonalSize3 As String
+    Private _TowerRedundantHipDiagonalSize4 As String
+    Private _TowerSWMult As Double?
+    Private _TowerWPMult As Double?
+    Private _TowerAutoCalcKSingleAngle As Boolean?
+    Private _TowerAutoCalcKSolidRound As Boolean?
+    Private _TowerAfGusset As Double?
+    Private _TowerTfGusset As Double?
+    Private _TowerGussetBoltEdgeDistance As Double?
+    Private _TowerGussetGrade As Double?
+    Private _TowerGussetMatlGrade As String
+    Private _TowerAfMult As Double?
+    Private _TowerArMult As Double?
+    Private _TowerFlatIPAPole As Double?
+    Private _TowerRoundIPAPole As Double?
+    Private _TowerFlatIPALeg As Double?
+    Private _TowerRoundIPALeg As Double?
+    Private _TowerFlatIPAHorizontal As Double?
+    Private _TowerRoundIPAHorizontal As Double?
+    Private _TowerFlatIPADiagonal As Double?
+    Private _TowerRoundIPADiagonal As Double?
+    Private _TowerCSA_S37_SpeedUpFactor As Double?
+    Private _TowerKLegs As Double?
+    Private _TowerKXBracedDiags As Double?
+    Private _TowerKKBracedDiags As Double?
+    Private _TowerKZBracedDiags As Double?
+    Private _TowerKHorzs As Double?
+    Private _TowerKSecHorzs As Double?
+    Private _TowerKGirts As Double?
+    Private _TowerKInners As Double?
+    Private _TowerKXBracedDiagsY As Double?
+    Private _TowerKKBracedDiagsY As Double?
+    Private _TowerKZBracedDiagsY As Double?
+    Private _TowerKHorzsY As Double?
+    Private _TowerKSecHorzsY As Double?
+    Private _TowerKGirtsY As Double?
+    Private _TowerKInnersY As Double?
+    Private _TowerKRedHorz As Double?
+    Private _TowerKRedDiag As Double?
+    Private _TowerKRedSubDiag As Double?
+    Private _TowerKRedSubHorz As Double?
+    Private _TowerKRedVert As Double?
+    Private _TowerKRedHip As Double?
+    Private _TowerKRedHipDiag As Double?
+    Private _TowerKTLX As Double?
+    Private _TowerKTLZ As Double?
+    Private _TowerKTLLeg As Double?
+    Private _TowerInnerKTLX As Double?
+    Private _TowerInnerKTLZ As Double?
+    Private _TowerInnerKTLLeg As Double?
+    Private _TowerStitchBoltLocationHoriz As String
+    Private _TowerStitchBoltLocationDiag As String
+    Private _TowerStitchBoltLocationRed As String
+    Private _TowerStitchSpacing As Double?
+    Private _TowerStitchSpacingDiag As Double?
+    Private _TowerStitchSpacingHorz As Double?
+    Private _TowerStitchSpacingRed As Double?
+    Private _TowerLegNetWidthDeduct As Double?
+    Private _TowerLegUFactor As Double?
+    Private _TowerDiagonalNetWidthDeduct As Double?
+    Private _TowerTopGirtNetWidthDeduct As Double?
+    Private _TowerBotGirtNetWidthDeduct As Double?
+    Private _TowerInnerGirtNetWidthDeduct As Double?
+    Private _TowerHorizontalNetWidthDeduct As Double?
+    Private _TowerShortHorizontalNetWidthDeduct As Double?
+    Private _TowerDiagonalUFactor As Double?
+    Private _TowerTopGirtUFactor As Double?
+    Private _TowerBotGirtUFactor As Double?
+    Private _TowerInnerGirtUFactor As Double?
+    Private _TowerHorizontalUFactor As Double?
+    Private _TowerShortHorizontalUFactor As Double?
+    Private _TowerLegConnType As String
+    Private _TowerLegNumBolts As Integer?
+    Private _TowerDiagonalNumBolts As Integer?
+    Private _TowerTopGirtNumBolts As Integer?
+    Private _TowerBotGirtNumBolts As Integer?
+    Private _TowerInnerGirtNumBolts As Integer?
+    Private _TowerHorizontalNumBolts As Integer?
+    Private _TowerShortHorizontalNumBolts As Integer?
+    Private _TowerLegBoltGrade As String
+    Private _TowerLegBoltSize As Double?
+    Private _TowerDiagonalBoltGrade As String
+    Private _TowerDiagonalBoltSize As Double?
+    Private _TowerTopGirtBoltGrade As String
+    Private _TowerTopGirtBoltSize As Double?
+    Private _TowerBotGirtBoltGrade As String
+    Private _TowerBotGirtBoltSize As Double?
+    Private _TowerInnerGirtBoltGrade As String
+    Private _TowerInnerGirtBoltSize As Double?
+    Private _TowerHorizontalBoltGrade As String
+    Private _TowerHorizontalBoltSize As Double?
+    Private _TowerShortHorizontalBoltGrade As String
+    Private _TowerShortHorizontalBoltSize As Double?
+    Private _TowerLegBoltEdgeDistance As Double?
+    Private _TowerDiagonalBoltEdgeDistance As Double?
+    Private _TowerTopGirtBoltEdgeDistance As Double?
+    Private _TowerBotGirtBoltEdgeDistance As Double?
+    Private _TowerInnerGirtBoltEdgeDistance As Double?
+    Private _TowerHorizontalBoltEdgeDistance As Double?
+    Private _TowerShortHorizontalBoltEdgeDistance As Double?
+    Private _TowerDiagonalGageG1Distance As Double?
+    Private _TowerTopGirtGageG1Distance As Double?
+    Private _TowerBotGirtGageG1Distance As Double?
+    Private _TowerInnerGirtGageG1Distance As Double?
+    Private _TowerHorizontalGageG1Distance As Double?
+    Private _TowerShortHorizontalGageG1Distance As Double?
+    Private _TowerRedundantHorizontalBoltGrade As String
+    Private _TowerRedundantHorizontalBoltSize As Double?
+    Private _TowerRedundantHorizontalNumBolts As Integer?
+    Private _TowerRedundantHorizontalBoltEdgeDistance As Double?
+    Private _TowerRedundantHorizontalGageG1Distance As Double?
+    Private _TowerRedundantHorizontalNetWidthDeduct As Double?
+    Private _TowerRedundantHorizontalUFactor As Double?
+    Private _TowerRedundantDiagonalBoltGrade As String
+    Private _TowerRedundantDiagonalBoltSize As Double?
+    Private _TowerRedundantDiagonalNumBolts As Integer?
+    Private _TowerRedundantDiagonalBoltEdgeDistance As Double?
+    Private _TowerRedundantDiagonalGageG1Distance As Double?
+    Private _TowerRedundantDiagonalNetWidthDeduct As Double?
+    Private _TowerRedundantDiagonalUFactor As Double?
+    Private _TowerRedundantSubDiagonalBoltGrade As String
+    Private _TowerRedundantSubDiagonalBoltSize As Double?
+    Private _TowerRedundantSubDiagonalNumBolts As Integer?
+    Private _TowerRedundantSubDiagonalBoltEdgeDistance As Double?
+    Private _TowerRedundantSubDiagonalGageG1Distance As Double?
+    Private _TowerRedundantSubDiagonalNetWidthDeduct As Double?
+    Private _TowerRedundantSubDiagonalUFactor As Double?
+    Private _TowerRedundantSubHorizontalBoltGrade As String
+    Private _TowerRedundantSubHorizontalBoltSize As Double?
+    Private _TowerRedundantSubHorizontalNumBolts As Integer?
+    Private _TowerRedundantSubHorizontalBoltEdgeDistance As Double?
+    Private _TowerRedundantSubHorizontalGageG1Distance As Double?
+    Private _TowerRedundantSubHorizontalNetWidthDeduct As Double?
+    Private _TowerRedundantSubHorizontalUFactor As Double?
+    Private _TowerRedundantVerticalBoltGrade As String
+    Private _TowerRedundantVerticalBoltSize As Double?
+    Private _TowerRedundantVerticalNumBolts As Integer?
+    Private _TowerRedundantVerticalBoltEdgeDistance As Double?
+    Private _TowerRedundantVerticalGageG1Distance As Double?
+    Private _TowerRedundantVerticalNetWidthDeduct As Double?
+    Private _TowerRedundantVerticalUFactor As Double?
+    Private _TowerRedundantHipBoltGrade As String
+    Private _TowerRedundantHipBoltSize As Double?
+    Private _TowerRedundantHipNumBolts As Integer?
+    Private _TowerRedundantHipBoltEdgeDistance As Double?
+    Private _TowerRedundantHipGageG1Distance As Double?
+    Private _TowerRedundantHipNetWidthDeduct As Double?
+    Private _TowerRedundantHipUFactor As Double?
+    Private _TowerRedundantHipDiagonalBoltGrade As String
+    Private _TowerRedundantHipDiagonalBoltSize As Double?
+    Private _TowerRedundantHipDiagonalNumBolts As Integer?
+    Private _TowerRedundantHipDiagonalBoltEdgeDistance As Double?
+    Private _TowerRedundantHipDiagonalGageG1Distance As Double?
+    Private _TowerRedundantHipDiagonalNetWidthDeduct As Double?
+    Private _TowerRedundantHipDiagonalUFactor As Double?
+    Private _TowerDiagonalOutOfPlaneRestraint As Boolean?
+    Private _TowerTopGirtOutOfPlaneRestraint As Boolean?
+    Private _TowerBottomGirtOutOfPlaneRestraint As Boolean?
+    Private _TowerMidGirtOutOfPlaneRestraint As Boolean?
+    Private _TowerHorizontalOutOfPlaneRestraint As Boolean?
+    Private _TowerSecondaryHorizontalOutOfPlaneRestraint As Boolean?
+    Private _TowerUniqueFlag As Integer?
+    Private _TowerDiagOffsetNEY As Double?
+    Private _TowerDiagOffsetNEX As Double?
+    Private _TowerDiagOffsetPEY As Double?
+    Private _TowerDiagOffsetPEX As Double?
+    Private _TowerKbraceOffsetNEY As Double?
+    Private _TowerKbraceOffsetNEX As Double?
+    Private _TowerKbraceOffsetPEY As Double?
+    Private _TowerKbraceOffsetPEX As Double?
 
-    <Category("TNX Tower Record"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer
-        Get
-            Return Me.prop_ID
-        End Get
-        Set
-            Me.prop_ID = Value
-        End Set
-    End Property
-    <Category("TNX Tower Record"), Description(""), DisplayName("Tnxid")>
-    Public Property tnxID() As Integer
-        Get
-            Return Me.prop_tnxID
-        End Get
-        Set
-            Me.prop_tnxID = Value
-        End Set
-    End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerrec")>
-    Public Property TowerRec() As Integer
+    Public Property TowerRec() As Integer?
         Get
-            Return Me.prop_TowerRec
+            Return Me._TowerRec
         End Get
         Set
-            Me.prop_TowerRec = Value
+            Me._TowerRec = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdatabase")>
     Public Property TowerDatabase() As String
         Get
-            Return Me.prop_TowerDatabase
+            Return Me._TowerDatabase
         End Get
         Set
-            Me.prop_TowerDatabase = Value
+            Me._TowerDatabase = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towername")>
     Public Property TowerName() As String
         Get
-            Return Me.prop_TowerName
+            Return Me._TowerName
         End Get
         Set
-            Me.prop_TowerName = Value
+            Me._TowerName = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerheight")>
-    Public Property TowerHeight() As Double
+    Public Property TowerHeight() As Double?
         Get
-            Return Me.prop_TowerHeight
+            Return Me._TowerHeight
         End Get
         Set
-            Me.prop_TowerHeight = Value
+            Me._TowerHeight = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerfacewidth")>
-    Public Property TowerFaceWidth() As Double
+    Public Property TowerFaceWidth() As Double?
         Get
-            Return Me.prop_TowerFaceWidth
+            Return Me._TowerFaceWidth
         End Get
         Set
-            Me.prop_TowerFaceWidth = Value
+            Me._TowerFaceWidth = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towernumsections")>
-    Public Property TowerNumSections() As Integer
+    Public Property TowerNumSections() As Integer?
         Get
-            Return Me.prop_TowerNumSections
+            Return Me._TowerNumSections
         End Get
         Set
-            Me.prop_TowerNumSections = Value
+            Me._TowerNumSections = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersectionlength")>
-    Public Property TowerSectionLength() As Double
+    Public Property TowerSectionLength() As Double?
         Get
-            Return Me.prop_TowerSectionLength
+            Return Me._TowerSectionLength
         End Get
         Set
-            Me.prop_TowerSectionLength = Value
+            Me._TowerSectionLength = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalspacing")>
-    Public Property TowerDiagonalSpacing() As Double
+    Public Property TowerDiagonalSpacing() As Double?
         Get
-            Return Me.prop_TowerDiagonalSpacing
+            Return Me._TowerDiagonalSpacing
         End Get
         Set
-            Me.prop_TowerDiagonalSpacing = Value
+            Me._TowerDiagonalSpacing = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalspacingex")>
-    Public Property TowerDiagonalSpacingEx() As Double
+    Public Property TowerDiagonalSpacingEx() As Double?
         Get
-            Return Me.prop_TowerDiagonalSpacingEx
+            Return Me._TowerDiagonalSpacingEx
         End Get
         Set
-            Me.prop_TowerDiagonalSpacingEx = Value
+            Me._TowerDiagonalSpacingEx = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbracetype")>
     Public Property TowerBraceType() As String
         Get
-            Return Me.prop_TowerBraceType
+            Return Me._TowerBraceType
         End Get
         Set
-            Me.prop_TowerBraceType = Value
+            Me._TowerBraceType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerfacebevel")>
-    Public Property TowerFaceBevel() As Double
+    Public Property TowerFaceBevel() As Double?
         Get
-            Return Me.prop_TowerFaceBevel
+            Return Me._TowerFaceBevel
         End Get
         Set
-            Me.prop_TowerFaceBevel = Value
+            Me._TowerFaceBevel = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtoffset")>
-    Public Property TowerTopGirtOffset() As Double
+    Public Property TowerTopGirtOffset() As Double?
         Get
-            Return Me.prop_TowerTopGirtOffset
+            Return Me._TowerTopGirtOffset
         End Get
         Set
-            Me.prop_TowerTopGirtOffset = Value
+            Me._TowerTopGirtOffset = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtoffset")>
-    Public Property TowerBotGirtOffset() As Double
+    Public Property TowerBotGirtOffset() As Double?
         Get
-            Return Me.prop_TowerBotGirtOffset
+            Return Me._TowerBotGirtOffset
         End Get
         Set
-            Me.prop_TowerBotGirtOffset = Value
+            Me._TowerBotGirtOffset = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhaskbraceendpanels")>
-    Public Property TowerHasKBraceEndPanels() As Boolean
+    Public Property TowerHasKBraceEndPanels() As Boolean?
         Get
-            Return Me.prop_TowerHasKBraceEndPanels
+            Return Me._TowerHasKBraceEndPanels
         End Get
         Set
-            Me.prop_TowerHasKBraceEndPanels = Value
+            Me._TowerHasKBraceEndPanels = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhashorizontals")>
-    Public Property TowerHasHorizontals() As Boolean
+    Public Property TowerHasHorizontals() As Boolean?
         Get
-            Return Me.prop_TowerHasHorizontals
+            Return Me._TowerHasHorizontals
         End Get
         Set
-            Me.prop_TowerHasHorizontals = Value
+            Me._TowerHasHorizontals = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegtype")>
     Public Property TowerLegType() As String
         Get
-            Return Me.prop_TowerLegType
+            Return Me._TowerLegType
         End Get
         Set
-            Me.prop_TowerLegType = Value
+            Me._TowerLegType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegsize")>
     Public Property TowerLegSize() As String
         Get
-            Return Me.prop_TowerLegSize
+            Return Me._TowerLegSize
         End Get
         Set
-            Me.prop_TowerLegSize = Value
+            Me._TowerLegSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerleggrade")>
-    Public Property TowerLegGrade() As Double
+    Public Property TowerLegGrade() As Double?
         Get
-            Return Me.prop_TowerLegGrade
+            Return Me._TowerLegGrade
         End Get
         Set
-            Me.prop_TowerLegGrade = Value
+            Me._TowerLegGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegmatlgrade")>
     Public Property TowerLegMatlGrade() As String
         Get
-            Return Me.prop_TowerLegMatlGrade
+            Return Me._TowerLegMatlGrade
         End Get
         Set
-            Me.prop_TowerLegMatlGrade = Value
+            Me._TowerLegMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalgrade")>
-    Public Property TowerDiagonalGrade() As Double
+    Public Property TowerDiagonalGrade() As Double?
         Get
-            Return Me.prop_TowerDiagonalGrade
+            Return Me._TowerDiagonalGrade
         End Get
         Set
-            Me.prop_TowerDiagonalGrade = Value
+            Me._TowerDiagonalGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalmatlgrade")>
     Public Property TowerDiagonalMatlGrade() As String
         Get
-            Return Me.prop_TowerDiagonalMatlGrade
+            Return Me._TowerDiagonalMatlGrade
         End Get
         Set
-            Me.prop_TowerDiagonalMatlGrade = Value
+            Me._TowerDiagonalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracinggrade")>
-    Public Property TowerInnerBracingGrade() As Double
+    Public Property TowerInnerBracingGrade() As Double?
         Get
-            Return Me.prop_TowerInnerBracingGrade
+            Return Me._TowerInnerBracingGrade
         End Get
         Set
-            Me.prop_TowerInnerBracingGrade = Value
+            Me._TowerInnerBracingGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingmatlgrade")>
     Public Property TowerInnerBracingMatlGrade() As String
         Get
-            Return Me.prop_TowerInnerBracingMatlGrade
+            Return Me._TowerInnerBracingMatlGrade
         End Get
         Set
-            Me.prop_TowerInnerBracingMatlGrade = Value
+            Me._TowerInnerBracingMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtgrade")>
-    Public Property TowerTopGirtGrade() As Double
+    Public Property TowerTopGirtGrade() As Double?
         Get
-            Return Me.prop_TowerTopGirtGrade
+            Return Me._TowerTopGirtGrade
         End Get
         Set
-            Me.prop_TowerTopGirtGrade = Value
+            Me._TowerTopGirtGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtmatlgrade")>
     Public Property TowerTopGirtMatlGrade() As String
         Get
-            Return Me.prop_TowerTopGirtMatlGrade
+            Return Me._TowerTopGirtMatlGrade
         End Get
         Set
-            Me.prop_TowerTopGirtMatlGrade = Value
+            Me._TowerTopGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtgrade")>
-    Public Property TowerBotGirtGrade() As Double
+    Public Property TowerBotGirtGrade() As Double?
         Get
-            Return Me.prop_TowerBotGirtGrade
+            Return Me._TowerBotGirtGrade
         End Get
         Set
-            Me.prop_TowerBotGirtGrade = Value
+            Me._TowerBotGirtGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtmatlgrade")>
     Public Property TowerBotGirtMatlGrade() As String
         Get
-            Return Me.prop_TowerBotGirtMatlGrade
+            Return Me._TowerBotGirtMatlGrade
         End Get
         Set
-            Me.prop_TowerBotGirtMatlGrade = Value
+            Me._TowerBotGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtgrade")>
-    Public Property TowerInnerGirtGrade() As Double
+    Public Property TowerInnerGirtGrade() As Double?
         Get
-            Return Me.prop_TowerInnerGirtGrade
+            Return Me._TowerInnerGirtGrade
         End Get
         Set
-            Me.prop_TowerInnerGirtGrade = Value
+            Me._TowerInnerGirtGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtmatlgrade")>
     Public Property TowerInnerGirtMatlGrade() As String
         Get
-            Return Me.prop_TowerInnerGirtMatlGrade
+            Return Me._TowerInnerGirtMatlGrade
         End Get
         Set
-            Me.prop_TowerInnerGirtMatlGrade = Value
+            Me._TowerInnerGirtMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalgrade")>
-    Public Property TowerLongHorizontalGrade() As Double
+    Public Property TowerLongHorizontalGrade() As Double?
         Get
-            Return Me.prop_TowerLongHorizontalGrade
+            Return Me._TowerLongHorizontalGrade
         End Get
         Set
-            Me.prop_TowerLongHorizontalGrade = Value
+            Me._TowerLongHorizontalGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalmatlgrade")>
     Public Property TowerLongHorizontalMatlGrade() As String
         Get
-            Return Me.prop_TowerLongHorizontalMatlGrade
+            Return Me._TowerLongHorizontalMatlGrade
         End Get
         Set
-            Me.prop_TowerLongHorizontalMatlGrade = Value
+            Me._TowerLongHorizontalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalgrade")>
-    Public Property TowerShortHorizontalGrade() As Double
+    Public Property TowerShortHorizontalGrade() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalGrade
+            Return Me._TowerShortHorizontalGrade
         End Get
         Set
-            Me.prop_TowerShortHorizontalGrade = Value
+            Me._TowerShortHorizontalGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalmatlgrade")>
     Public Property TowerShortHorizontalMatlGrade() As String
         Get
-            Return Me.prop_TowerShortHorizontalMatlGrade
+            Return Me._TowerShortHorizontalMatlGrade
         End Get
         Set
-            Me.prop_TowerShortHorizontalMatlGrade = Value
+            Me._TowerShortHorizontalMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonaltype")>
     Public Property TowerDiagonalType() As String
         Get
-            Return Me.prop_TowerDiagonalType
+            Return Me._TowerDiagonalType
         End Get
         Set
-            Me.prop_TowerDiagonalType = Value
+            Me._TowerDiagonalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalsize")>
     Public Property TowerDiagonalSize() As String
         Get
-            Return Me.prop_TowerDiagonalSize
+            Return Me._TowerDiagonalSize
         End Get
         Set
-            Me.prop_TowerDiagonalSize = Value
+            Me._TowerDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingtype")>
     Public Property TowerInnerBracingType() As String
         Get
-            Return Me.prop_TowerInnerBracingType
+            Return Me._TowerInnerBracingType
         End Get
         Set
-            Me.prop_TowerInnerBracingType = Value
+            Me._TowerInnerBracingType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingsize")>
     Public Property TowerInnerBracingSize() As String
         Get
-            Return Me.prop_TowerInnerBracingSize
+            Return Me._TowerInnerBracingSize
         End Get
         Set
-            Me.prop_TowerInnerBracingSize = Value
+            Me._TowerInnerBracingSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirttype")>
     Public Property TowerTopGirtType() As String
         Get
-            Return Me.prop_TowerTopGirtType
+            Return Me._TowerTopGirtType
         End Get
         Set
-            Me.prop_TowerTopGirtType = Value
+            Me._TowerTopGirtType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtsize")>
     Public Property TowerTopGirtSize() As String
         Get
-            Return Me.prop_TowerTopGirtSize
+            Return Me._TowerTopGirtSize
         End Get
         Set
-            Me.prop_TowerTopGirtSize = Value
+            Me._TowerTopGirtSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirttype")>
     Public Property TowerBotGirtType() As String
         Get
-            Return Me.prop_TowerBotGirtType
+            Return Me._TowerBotGirtType
         End Get
         Set
-            Me.prop_TowerBotGirtType = Value
+            Me._TowerBotGirtType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtsize")>
     Public Property TowerBotGirtSize() As String
         Get
-            Return Me.prop_TowerBotGirtSize
+            Return Me._TowerBotGirtSize
         End Get
         Set
-            Me.prop_TowerBotGirtSize = Value
+            Me._TowerBotGirtSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towernuminnergirts")>
-    Public Property TowerNumInnerGirts() As Integer
+    Public Property TowerNumInnerGirts() As Integer?
         Get
-            Return Me.prop_TowerNumInnerGirts
+            Return Me._TowerNumInnerGirts
         End Get
         Set
-            Me.prop_TowerNumInnerGirts = Value
+            Me._TowerNumInnerGirts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirttype")>
     Public Property TowerInnerGirtType() As String
         Get
-            Return Me.prop_TowerInnerGirtType
+            Return Me._TowerInnerGirtType
         End Get
         Set
-            Me.prop_TowerInnerGirtType = Value
+            Me._TowerInnerGirtType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtsize")>
     Public Property TowerInnerGirtSize() As String
         Get
-            Return Me.prop_TowerInnerGirtSize
+            Return Me._TowerInnerGirtSize
         End Get
         Set
-            Me.prop_TowerInnerGirtSize = Value
+            Me._TowerInnerGirtSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontaltype")>
     Public Property TowerLongHorizontalType() As String
         Get
-            Return Me.prop_TowerLongHorizontalType
+            Return Me._TowerLongHorizontalType
         End Get
         Set
-            Me.prop_TowerLongHorizontalType = Value
+            Me._TowerLongHorizontalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalsize")>
     Public Property TowerLongHorizontalSize() As String
         Get
-            Return Me.prop_TowerLongHorizontalSize
+            Return Me._TowerLongHorizontalSize
         End Get
         Set
-            Me.prop_TowerLongHorizontalSize = Value
+            Me._TowerLongHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontaltype")>
     Public Property TowerShortHorizontalType() As String
         Get
-            Return Me.prop_TowerShortHorizontalType
+            Return Me._TowerShortHorizontalType
         End Get
         Set
-            Me.prop_TowerShortHorizontalType = Value
+            Me._TowerShortHorizontalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalsize")>
     Public Property TowerShortHorizontalSize() As String
         Get
-            Return Me.prop_TowerShortHorizontalSize
+            Return Me._TowerShortHorizontalSize
         End Get
         Set
-            Me.prop_TowerShortHorizontalSize = Value
+            Me._TowerShortHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantgrade")>
-    Public Property TowerRedundantGrade() As Double
+    Public Property TowerRedundantGrade() As Double?
         Get
-            Return Me.prop_TowerRedundantGrade
+            Return Me._TowerRedundantGrade
         End Get
         Set
-            Me.prop_TowerRedundantGrade = Value
+            Me._TowerRedundantGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantmatlgrade")>
     Public Property TowerRedundantMatlGrade() As String
         Get
-            Return Me.prop_TowerRedundantMatlGrade
+            Return Me._TowerRedundantMatlGrade
         End Get
         Set
-            Me.prop_TowerRedundantMatlGrade = Value
+            Me._TowerRedundantMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanttype")>
     Public Property TowerRedundantType() As String
         Get
-            Return Me.prop_TowerRedundantType
+            Return Me._TowerRedundantType
         End Get
         Set
-            Me.prop_TowerRedundantType = Value
+            Me._TowerRedundantType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagtype")>
     Public Property TowerRedundantDiagType() As String
         Get
-            Return Me.prop_TowerRedundantDiagType
+            Return Me._TowerRedundantDiagType
         End Get
         Set
-            Me.prop_TowerRedundantDiagType = Value
+            Me._TowerRedundantDiagType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonaltype")>
     Public Property TowerRedundantSubDiagonalType() As String
         Get
-            Return Me.prop_TowerRedundantSubDiagonalType
+            Return Me._TowerRedundantSubDiagonalType
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalType = Value
+            Me._TowerRedundantSubDiagonalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontaltype")>
     Public Property TowerRedundantSubHorizontalType() As String
         Get
-            Return Me.prop_TowerRedundantSubHorizontalType
+            Return Me._TowerRedundantSubHorizontalType
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalType = Value
+            Me._TowerRedundantSubHorizontalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticaltype")>
     Public Property TowerRedundantVerticalType() As String
         Get
-            Return Me.prop_TowerRedundantVerticalType
+            Return Me._TowerRedundantVerticalType
         End Get
         Set
-            Me.prop_TowerRedundantVerticalType = Value
+            Me._TowerRedundantVerticalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthiptype")>
     Public Property TowerRedundantHipType() As String
         Get
-            Return Me.prop_TowerRedundantHipType
+            Return Me._TowerRedundantHipType
         End Get
         Set
-            Me.prop_TowerRedundantHipType = Value
+            Me._TowerRedundantHipType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonaltype")>
     Public Property TowerRedundantHipDiagonalType() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalType
+            Return Me._TowerRedundantHipDiagonalType
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalType = Value
+            Me._TowerRedundantHipDiagonalType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize")>
     Public Property TowerRedundantHorizontalSize() As String
         Get
-            Return Me.prop_TowerRedundantHorizontalSize
+            Return Me._TowerRedundantHorizontalSize
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalSize = Value
+            Me._TowerRedundantHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize2")>
     Public Property TowerRedundantHorizontalSize2() As String
         Get
-            Return Me.prop_TowerRedundantHorizontalSize2
+            Return Me._TowerRedundantHorizontalSize2
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalSize2 = Value
+            Me._TowerRedundantHorizontalSize2 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize3")>
     Public Property TowerRedundantHorizontalSize3() As String
         Get
-            Return Me.prop_TowerRedundantHorizontalSize3
+            Return Me._TowerRedundantHorizontalSize3
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalSize3 = Value
+            Me._TowerRedundantHorizontalSize3 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize4")>
     Public Property TowerRedundantHorizontalSize4() As String
         Get
-            Return Me.prop_TowerRedundantHorizontalSize4
+            Return Me._TowerRedundantHorizontalSize4
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalSize4 = Value
+            Me._TowerRedundantHorizontalSize4 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize")>
     Public Property TowerRedundantDiagonalSize() As String
         Get
-            Return Me.prop_TowerRedundantDiagonalSize
+            Return Me._TowerRedundantDiagonalSize
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalSize = Value
+            Me._TowerRedundantDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize2")>
     Public Property TowerRedundantDiagonalSize2() As String
         Get
-            Return Me.prop_TowerRedundantDiagonalSize2
+            Return Me._TowerRedundantDiagonalSize2
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalSize2 = Value
+            Me._TowerRedundantDiagonalSize2 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize3")>
     Public Property TowerRedundantDiagonalSize3() As String
         Get
-            Return Me.prop_TowerRedundantDiagonalSize3
+            Return Me._TowerRedundantDiagonalSize3
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalSize3 = Value
+            Me._TowerRedundantDiagonalSize3 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize4")>
     Public Property TowerRedundantDiagonalSize4() As String
         Get
-            Return Me.prop_TowerRedundantDiagonalSize4
+            Return Me._TowerRedundantDiagonalSize4
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalSize4 = Value
+            Me._TowerRedundantDiagonalSize4 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalsize")>
     Public Property TowerRedundantSubHorizontalSize() As String
         Get
-            Return Me.prop_TowerRedundantSubHorizontalSize
+            Return Me._TowerRedundantSubHorizontalSize
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalSize = Value
+            Me._TowerRedundantSubHorizontalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalsize")>
     Public Property TowerRedundantSubDiagonalSize() As String
         Get
-            Return Me.prop_TowerRedundantSubDiagonalSize
+            Return Me._TowerRedundantSubDiagonalSize
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalSize = Value
+            Me._TowerRedundantSubDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersubdiaglocation")>
-    Public Property TowerSubDiagLocation() As Double
+    Public Property TowerSubDiagLocation() As Double?
         Get
-            Return Me.prop_TowerSubDiagLocation
+            Return Me._TowerSubDiagLocation
         End Get
         Set
-            Me.prop_TowerSubDiagLocation = Value
+            Me._TowerSubDiagLocation = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalsize")>
     Public Property TowerRedundantVerticalSize() As String
         Get
-            Return Me.prop_TowerRedundantVerticalSize
+            Return Me._TowerRedundantVerticalSize
         End Get
         Set
-            Me.prop_TowerRedundantVerticalSize = Value
+            Me._TowerRedundantVerticalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize")>
     Public Property TowerRedundantHipSize() As String
         Get
-            Return Me.prop_TowerRedundantHipSize
+            Return Me._TowerRedundantHipSize
         End Get
         Set
-            Me.prop_TowerRedundantHipSize = Value
+            Me._TowerRedundantHipSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize2")>
     Public Property TowerRedundantHipSize2() As String
         Get
-            Return Me.prop_TowerRedundantHipSize2
+            Return Me._TowerRedundantHipSize2
         End Get
         Set
-            Me.prop_TowerRedundantHipSize2 = Value
+            Me._TowerRedundantHipSize2 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize3")>
     Public Property TowerRedundantHipSize3() As String
         Get
-            Return Me.prop_TowerRedundantHipSize3
+            Return Me._TowerRedundantHipSize3
         End Get
         Set
-            Me.prop_TowerRedundantHipSize3 = Value
+            Me._TowerRedundantHipSize3 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize4")>
     Public Property TowerRedundantHipSize4() As String
         Get
-            Return Me.prop_TowerRedundantHipSize4
+            Return Me._TowerRedundantHipSize4
         End Get
         Set
-            Me.prop_TowerRedundantHipSize4 = Value
+            Me._TowerRedundantHipSize4 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize")>
     Public Property TowerRedundantHipDiagonalSize() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalSize
+            Return Me._TowerRedundantHipDiagonalSize
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalSize = Value
+            Me._TowerRedundantHipDiagonalSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize2")>
     Public Property TowerRedundantHipDiagonalSize2() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalSize2
+            Return Me._TowerRedundantHipDiagonalSize2
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalSize2 = Value
+            Me._TowerRedundantHipDiagonalSize2 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize3")>
     Public Property TowerRedundantHipDiagonalSize3() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalSize3
+            Return Me._TowerRedundantHipDiagonalSize3
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalSize3 = Value
+            Me._TowerRedundantHipDiagonalSize3 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize4")>
     Public Property TowerRedundantHipDiagonalSize4() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalSize4
+            Return Me._TowerRedundantHipDiagonalSize4
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalSize4 = Value
+            Me._TowerRedundantHipDiagonalSize4 = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerswmult")>
-    Public Property TowerSWMult() As Double
+    Public Property TowerSWMult() As Double?
         Get
-            Return Me.prop_TowerSWMult
+            Return Me._TowerSWMult
         End Get
         Set
-            Me.prop_TowerSWMult = Value
+            Me._TowerSWMult = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerwpmult")>
-    Public Property TowerWPMult() As Double
+    Public Property TowerWPMult() As Double?
         Get
-            Return Me.prop_TowerWPMult
+            Return Me._TowerWPMult
         End Get
         Set
-            Me.prop_TowerWPMult = Value
+            Me._TowerWPMult = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerautocalcksingleangle")>
-    Public Property TowerAutoCalcKSingleAngle() As Boolean
+    Public Property TowerAutoCalcKSingleAngle() As Boolean?
         Get
-            Return Me.prop_TowerAutoCalcKSingleAngle
+            Return Me._TowerAutoCalcKSingleAngle
         End Get
         Set
-            Me.prop_TowerAutoCalcKSingleAngle = Value
+            Me._TowerAutoCalcKSingleAngle = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerautocalcksolidround")>
-    Public Property TowerAutoCalcKSolidRound() As Boolean
+    Public Property TowerAutoCalcKSolidRound() As Boolean?
         Get
-            Return Me.prop_TowerAutoCalcKSolidRound
+            Return Me._TowerAutoCalcKSolidRound
         End Get
         Set
-            Me.prop_TowerAutoCalcKSolidRound = Value
+            Me._TowerAutoCalcKSolidRound = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerafgusset")>
-    Public Property TowerAfGusset() As Double
+    Public Property TowerAfGusset() As Double?
         Get
-            Return Me.prop_TowerAfGusset
+            Return Me._TowerAfGusset
         End Get
         Set
-            Me.prop_TowerAfGusset = Value
+            Me._TowerAfGusset = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertfgusset")>
-    Public Property TowerTfGusset() As Double
+    Public Property TowerTfGusset() As Double?
         Get
-            Return Me.prop_TowerTfGusset
+            Return Me._TowerTfGusset
         End Get
         Set
-            Me.prop_TowerTfGusset = Value
+            Me._TowerTfGusset = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetboltedgedistance")>
-    Public Property TowerGussetBoltEdgeDistance() As Double
+    Public Property TowerGussetBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerGussetBoltEdgeDistance
+            Return Me._TowerGussetBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerGussetBoltEdgeDistance = Value
+            Me._TowerGussetBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetgrade")>
-    Public Property TowerGussetGrade() As Double
+    Public Property TowerGussetGrade() As Double?
         Get
-            Return Me.prop_TowerGussetGrade
+            Return Me._TowerGussetGrade
         End Get
         Set
-            Me.prop_TowerGussetGrade = Value
+            Me._TowerGussetGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetmatlgrade")>
     Public Property TowerGussetMatlGrade() As String
         Get
-            Return Me.prop_TowerGussetMatlGrade
+            Return Me._TowerGussetMatlGrade
         End Get
         Set
-            Me.prop_TowerGussetMatlGrade = Value
+            Me._TowerGussetMatlGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerafmult")>
-    Public Property TowerAfMult() As Double
+    Public Property TowerAfMult() As Double?
         Get
-            Return Me.prop_TowerAfMult
+            Return Me._TowerAfMult
         End Get
         Set
-            Me.prop_TowerAfMult = Value
+            Me._TowerAfMult = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerarmult")>
-    Public Property TowerArMult() As Double
+    Public Property TowerArMult() As Double?
         Get
-            Return Me.prop_TowerArMult
+            Return Me._TowerArMult
         End Get
         Set
-            Me.prop_TowerArMult = Value
+            Me._TowerArMult = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipapole")>
-    Public Property TowerFlatIPAPole() As Double
+    Public Property TowerFlatIPAPole() As Double?
         Get
-            Return Me.prop_TowerFlatIPAPole
+            Return Me._TowerFlatIPAPole
         End Get
         Set
-            Me.prop_TowerFlatIPAPole = Value
+            Me._TowerFlatIPAPole = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipapole")>
-    Public Property TowerRoundIPAPole() As Double
+    Public Property TowerRoundIPAPole() As Double?
         Get
-            Return Me.prop_TowerRoundIPAPole
+            Return Me._TowerRoundIPAPole
         End Get
         Set
-            Me.prop_TowerRoundIPAPole = Value
+            Me._TowerRoundIPAPole = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipaleg")>
-    Public Property TowerFlatIPALeg() As Double
+    Public Property TowerFlatIPALeg() As Double?
         Get
-            Return Me.prop_TowerFlatIPALeg
+            Return Me._TowerFlatIPALeg
         End Get
         Set
-            Me.prop_TowerFlatIPALeg = Value
+            Me._TowerFlatIPALeg = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipaleg")>
-    Public Property TowerRoundIPALeg() As Double
+    Public Property TowerRoundIPALeg() As Double?
         Get
-            Return Me.prop_TowerRoundIPALeg
+            Return Me._TowerRoundIPALeg
         End Get
         Set
-            Me.prop_TowerRoundIPALeg = Value
+            Me._TowerRoundIPALeg = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipahorizontal")>
-    Public Property TowerFlatIPAHorizontal() As Double
+    Public Property TowerFlatIPAHorizontal() As Double?
         Get
-            Return Me.prop_TowerFlatIPAHorizontal
+            Return Me._TowerFlatIPAHorizontal
         End Get
         Set
-            Me.prop_TowerFlatIPAHorizontal = Value
+            Me._TowerFlatIPAHorizontal = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipahorizontal")>
-    Public Property TowerRoundIPAHorizontal() As Double
+    Public Property TowerRoundIPAHorizontal() As Double?
         Get
-            Return Me.prop_TowerRoundIPAHorizontal
+            Return Me._TowerRoundIPAHorizontal
         End Get
         Set
-            Me.prop_TowerRoundIPAHorizontal = Value
+            Me._TowerRoundIPAHorizontal = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipadiagonal")>
-    Public Property TowerFlatIPADiagonal() As Double
+    Public Property TowerFlatIPADiagonal() As Double?
         Get
-            Return Me.prop_TowerFlatIPADiagonal
+            Return Me._TowerFlatIPADiagonal
         End Get
         Set
-            Me.prop_TowerFlatIPADiagonal = Value
+            Me._TowerFlatIPADiagonal = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipadiagonal")>
-    Public Property TowerRoundIPADiagonal() As Double
+    Public Property TowerRoundIPADiagonal() As Double?
         Get
-            Return Me.prop_TowerRoundIPADiagonal
+            Return Me._TowerRoundIPADiagonal
         End Get
         Set
-            Me.prop_TowerRoundIPADiagonal = Value
+            Me._TowerRoundIPADiagonal = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towercsa_S37_Speedupfactor")>
-    Public Property TowerCSA_S37_SpeedUpFactor() As Double
+    Public Property TowerCSA_S37_SpeedUpFactor() As Double?
         Get
-            Return Me.prop_TowerCSA_S37_SpeedUpFactor
+            Return Me._TowerCSA_S37_SpeedUpFactor
         End Get
         Set
-            Me.prop_TowerCSA_S37_SpeedUpFactor = Value
+            Me._TowerCSA_S37_SpeedUpFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerklegs")>
-    Public Property TowerKLegs() As Double
+    Public Property TowerKLegs() As Double?
         Get
-            Return Me.prop_TowerKLegs
+            Return Me._TowerKLegs
         End Get
         Set
-            Me.prop_TowerKLegs = Value
+            Me._TowerKLegs = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkxbraceddiags")>
-    Public Property TowerKXBracedDiags() As Double
+    Public Property TowerKXBracedDiags() As Double?
         Get
-            Return Me.prop_TowerKXBracedDiags
+            Return Me._TowerKXBracedDiags
         End Get
         Set
-            Me.prop_TowerKXBracedDiags = Value
+            Me._TowerKXBracedDiags = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkkbraceddiags")>
-    Public Property TowerKKBracedDiags() As Double
+    Public Property TowerKKBracedDiags() As Double?
         Get
-            Return Me.prop_TowerKKBracedDiags
+            Return Me._TowerKKBracedDiags
         End Get
         Set
-            Me.prop_TowerKKBracedDiags = Value
+            Me._TowerKKBracedDiags = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkzbraceddiags")>
-    Public Property TowerKZBracedDiags() As Double
+    Public Property TowerKZBracedDiags() As Double?
         Get
-            Return Me.prop_TowerKZBracedDiags
+            Return Me._TowerKZBracedDiags
         End Get
         Set
-            Me.prop_TowerKZBracedDiags = Value
+            Me._TowerKZBracedDiags = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkhorzs")>
-    Public Property TowerKHorzs() As Double
+    Public Property TowerKHorzs() As Double?
         Get
-            Return Me.prop_TowerKHorzs
+            Return Me._TowerKHorzs
         End Get
         Set
-            Me.prop_TowerKHorzs = Value
+            Me._TowerKHorzs = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerksechorzs")>
-    Public Property TowerKSecHorzs() As Double
+    Public Property TowerKSecHorzs() As Double?
         Get
-            Return Me.prop_TowerKSecHorzs
+            Return Me._TowerKSecHorzs
         End Get
         Set
-            Me.prop_TowerKSecHorzs = Value
+            Me._TowerKSecHorzs = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkgirts")>
-    Public Property TowerKGirts() As Double
+    Public Property TowerKGirts() As Double?
         Get
-            Return Me.prop_TowerKGirts
+            Return Me._TowerKGirts
         End Get
         Set
-            Me.prop_TowerKGirts = Value
+            Me._TowerKGirts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkinners")>
-    Public Property TowerKInners() As Double
+    Public Property TowerKInners() As Double?
         Get
-            Return Me.prop_TowerKInners
+            Return Me._TowerKInners
         End Get
         Set
-            Me.prop_TowerKInners = Value
+            Me._TowerKInners = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkxbraceddiagsy")>
-    Public Property TowerKXBracedDiagsY() As Double
+    Public Property TowerKXBracedDiagsY() As Double?
         Get
-            Return Me.prop_TowerKXBracedDiagsY
+            Return Me._TowerKXBracedDiagsY
         End Get
         Set
-            Me.prop_TowerKXBracedDiagsY = Value
+            Me._TowerKXBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkkbraceddiagsy")>
-    Public Property TowerKKBracedDiagsY() As Double
+    Public Property TowerKKBracedDiagsY() As Double?
         Get
-            Return Me.prop_TowerKKBracedDiagsY
+            Return Me._TowerKKBracedDiagsY
         End Get
         Set
-            Me.prop_TowerKKBracedDiagsY = Value
+            Me._TowerKKBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkzbraceddiagsy")>
-    Public Property TowerKZBracedDiagsY() As Double
+    Public Property TowerKZBracedDiagsY() As Double?
         Get
-            Return Me.prop_TowerKZBracedDiagsY
+            Return Me._TowerKZBracedDiagsY
         End Get
         Set
-            Me.prop_TowerKZBracedDiagsY = Value
+            Me._TowerKZBracedDiagsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkhorzsy")>
-    Public Property TowerKHorzsY() As Double
+    Public Property TowerKHorzsY() As Double?
         Get
-            Return Me.prop_TowerKHorzsY
+            Return Me._TowerKHorzsY
         End Get
         Set
-            Me.prop_TowerKHorzsY = Value
+            Me._TowerKHorzsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerksechorzsy")>
-    Public Property TowerKSecHorzsY() As Double
+    Public Property TowerKSecHorzsY() As Double?
         Get
-            Return Me.prop_TowerKSecHorzsY
+            Return Me._TowerKSecHorzsY
         End Get
         Set
-            Me.prop_TowerKSecHorzsY = Value
+            Me._TowerKSecHorzsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkgirtsy")>
-    Public Property TowerKGirtsY() As Double
+    Public Property TowerKGirtsY() As Double?
         Get
-            Return Me.prop_TowerKGirtsY
+            Return Me._TowerKGirtsY
         End Get
         Set
-            Me.prop_TowerKGirtsY = Value
+            Me._TowerKGirtsY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkinnersy")>
-    Public Property TowerKInnersY() As Double
+    Public Property TowerKInnersY() As Double?
         Get
-            Return Me.prop_TowerKInnersY
+            Return Me._TowerKInnersY
         End Get
         Set
-            Me.prop_TowerKInnersY = Value
+            Me._TowerKInnersY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhorz")>
-    Public Property TowerKRedHorz() As Double
+    Public Property TowerKRedHorz() As Double?
         Get
-            Return Me.prop_TowerKRedHorz
+            Return Me._TowerKRedHorz
         End Get
         Set
-            Me.prop_TowerKRedHorz = Value
+            Me._TowerKRedHorz = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkreddiag")>
-    Public Property TowerKRedDiag() As Double
+    Public Property TowerKRedDiag() As Double?
         Get
-            Return Me.prop_TowerKRedDiag
+            Return Me._TowerKRedDiag
         End Get
         Set
-            Me.prop_TowerKRedDiag = Value
+            Me._TowerKRedDiag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredsubdiag")>
-    Public Property TowerKRedSubDiag() As Double
+    Public Property TowerKRedSubDiag() As Double?
         Get
-            Return Me.prop_TowerKRedSubDiag
+            Return Me._TowerKRedSubDiag
         End Get
         Set
-            Me.prop_TowerKRedSubDiag = Value
+            Me._TowerKRedSubDiag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredsubhorz")>
-    Public Property TowerKRedSubHorz() As Double
+    Public Property TowerKRedSubHorz() As Double?
         Get
-            Return Me.prop_TowerKRedSubHorz
+            Return Me._TowerKRedSubHorz
         End Get
         Set
-            Me.prop_TowerKRedSubHorz = Value
+            Me._TowerKRedSubHorz = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredvert")>
-    Public Property TowerKRedVert() As Double
+    Public Property TowerKRedVert() As Double?
         Get
-            Return Me.prop_TowerKRedVert
+            Return Me._TowerKRedVert
         End Get
         Set
-            Me.prop_TowerKRedVert = Value
+            Me._TowerKRedVert = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhip")>
-    Public Property TowerKRedHip() As Double
+    Public Property TowerKRedHip() As Double?
         Get
-            Return Me.prop_TowerKRedHip
+            Return Me._TowerKRedHip
         End Get
         Set
-            Me.prop_TowerKRedHip = Value
+            Me._TowerKRedHip = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhipdiag")>
-    Public Property TowerKRedHipDiag() As Double
+    Public Property TowerKRedHipDiag() As Double?
         Get
-            Return Me.prop_TowerKRedHipDiag
+            Return Me._TowerKRedHipDiag
         End Get
         Set
-            Me.prop_TowerKRedHipDiag = Value
+            Me._TowerKRedHipDiag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlx")>
-    Public Property TowerKTLX() As Double
+    Public Property TowerKTLX() As Double?
         Get
-            Return Me.prop_TowerKTLX
+            Return Me._TowerKTLX
         End Get
         Set
-            Me.prop_TowerKTLX = Value
+            Me._TowerKTLX = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlz")>
-    Public Property TowerKTLZ() As Double
+    Public Property TowerKTLZ() As Double?
         Get
-            Return Me.prop_TowerKTLZ
+            Return Me._TowerKTLZ
         End Get
         Set
-            Me.prop_TowerKTLZ = Value
+            Me._TowerKTLZ = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlleg")>
-    Public Property TowerKTLLeg() As Double
+    Public Property TowerKTLLeg() As Double?
         Get
-            Return Me.prop_TowerKTLLeg
+            Return Me._TowerKTLLeg
         End Get
         Set
-            Me.prop_TowerKTLLeg = Value
+            Me._TowerKTLLeg = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlx")>
-    Public Property TowerInnerKTLX() As Double
+    Public Property TowerInnerKTLX() As Double?
         Get
-            Return Me.prop_TowerInnerKTLX
+            Return Me._TowerInnerKTLX
         End Get
         Set
-            Me.prop_TowerInnerKTLX = Value
+            Me._TowerInnerKTLX = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlz")>
-    Public Property TowerInnerKTLZ() As Double
+    Public Property TowerInnerKTLZ() As Double?
         Get
-            Return Me.prop_TowerInnerKTLZ
+            Return Me._TowerInnerKTLZ
         End Get
         Set
-            Me.prop_TowerInnerKTLZ = Value
+            Me._TowerInnerKTLZ = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlleg")>
-    Public Property TowerInnerKTLLeg() As Double
+    Public Property TowerInnerKTLLeg() As Double?
         Get
-            Return Me.prop_TowerInnerKTLLeg
+            Return Me._TowerInnerKTLLeg
         End Get
         Set
-            Me.prop_TowerInnerKTLLeg = Value
+            Me._TowerInnerKTLLeg = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationhoriz")>
     Public Property TowerStitchBoltLocationHoriz() As String
         Get
-            Return Me.prop_TowerStitchBoltLocationHoriz
+            Return Me._TowerStitchBoltLocationHoriz
         End Get
         Set
-            Me.prop_TowerStitchBoltLocationHoriz = Value
+            Me._TowerStitchBoltLocationHoriz = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationdiag")>
     Public Property TowerStitchBoltLocationDiag() As String
         Get
-            Return Me.prop_TowerStitchBoltLocationDiag
+            Return Me._TowerStitchBoltLocationDiag
         End Get
         Set
-            Me.prop_TowerStitchBoltLocationDiag = Value
+            Me._TowerStitchBoltLocationDiag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationred")>
     Public Property TowerStitchBoltLocationRed() As String
         Get
-            Return Me.prop_TowerStitchBoltLocationRed
+            Return Me._TowerStitchBoltLocationRed
         End Get
         Set
-            Me.prop_TowerStitchBoltLocationRed = Value
+            Me._TowerStitchBoltLocationRed = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacing")>
-    Public Property TowerStitchSpacing() As Double
+    Public Property TowerStitchSpacing() As Double?
         Get
-            Return Me.prop_TowerStitchSpacing
+            Return Me._TowerStitchSpacing
         End Get
         Set
-            Me.prop_TowerStitchSpacing = Value
+            Me._TowerStitchSpacing = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacingdiag")>
-    Public Property TowerStitchSpacingDiag() As Double
+    Public Property TowerStitchSpacingDiag() As Double?
         Get
-            Return Me.prop_TowerStitchSpacingDiag
+            Return Me._TowerStitchSpacingDiag
         End Get
         Set
-            Me.prop_TowerStitchSpacingDiag = Value
+            Me._TowerStitchSpacingDiag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacinghorz")>
-    Public Property TowerStitchSpacingHorz() As Double
+    Public Property TowerStitchSpacingHorz() As Double?
         Get
-            Return Me.prop_TowerStitchSpacingHorz
+            Return Me._TowerStitchSpacingHorz
         End Get
         Set
-            Me.prop_TowerStitchSpacingHorz = Value
+            Me._TowerStitchSpacingHorz = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacingred")>
-    Public Property TowerStitchSpacingRed() As Double
+    Public Property TowerStitchSpacingRed() As Double?
         Get
-            Return Me.prop_TowerStitchSpacingRed
+            Return Me._TowerStitchSpacingRed
         End Get
         Set
-            Me.prop_TowerStitchSpacingRed = Value
+            Me._TowerStitchSpacingRed = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegnetwidthdeduct")>
-    Public Property TowerLegNetWidthDeduct() As Double
+    Public Property TowerLegNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerLegNetWidthDeduct
+            Return Me._TowerLegNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerLegNetWidthDeduct = Value
+            Me._TowerLegNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegufactor")>
-    Public Property TowerLegUFactor() As Double
+    Public Property TowerLegUFactor() As Double?
         Get
-            Return Me.prop_TowerLegUFactor
+            Return Me._TowerLegUFactor
         End Get
         Set
-            Me.prop_TowerLegUFactor = Value
+            Me._TowerLegUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalnetwidthdeduct")>
-    Public Property TowerDiagonalNetWidthDeduct() As Double
+    Public Property TowerDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerDiagonalNetWidthDeduct
+            Return Me._TowerDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerDiagonalNetWidthDeduct = Value
+            Me._TowerDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtnetwidthdeduct")>
-    Public Property TowerTopGirtNetWidthDeduct() As Double
+    Public Property TowerTopGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerTopGirtNetWidthDeduct
+            Return Me._TowerTopGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerTopGirtNetWidthDeduct = Value
+            Me._TowerTopGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtnetwidthdeduct")>
-    Public Property TowerBotGirtNetWidthDeduct() As Double
+    Public Property TowerBotGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerBotGirtNetWidthDeduct
+            Return Me._TowerBotGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerBotGirtNetWidthDeduct = Value
+            Me._TowerBotGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtnetwidthdeduct")>
-    Public Property TowerInnerGirtNetWidthDeduct() As Double
+    Public Property TowerInnerGirtNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerInnerGirtNetWidthDeduct
+            Return Me._TowerInnerGirtNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerInnerGirtNetWidthDeduct = Value
+            Me._TowerInnerGirtNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalnetwidthdeduct")>
-    Public Property TowerHorizontalNetWidthDeduct() As Double
+    Public Property TowerHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerHorizontalNetWidthDeduct
+            Return Me._TowerHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerHorizontalNetWidthDeduct = Value
+            Me._TowerHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalnetwidthdeduct")>
-    Public Property TowerShortHorizontalNetWidthDeduct() As Double
+    Public Property TowerShortHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalNetWidthDeduct
+            Return Me._TowerShortHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerShortHorizontalNetWidthDeduct = Value
+            Me._TowerShortHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalufactor")>
-    Public Property TowerDiagonalUFactor() As Double
+    Public Property TowerDiagonalUFactor() As Double?
         Get
-            Return Me.prop_TowerDiagonalUFactor
+            Return Me._TowerDiagonalUFactor
         End Get
         Set
-            Me.prop_TowerDiagonalUFactor = Value
+            Me._TowerDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtufactor")>
-    Public Property TowerTopGirtUFactor() As Double
+    Public Property TowerTopGirtUFactor() As Double?
         Get
-            Return Me.prop_TowerTopGirtUFactor
+            Return Me._TowerTopGirtUFactor
         End Get
         Set
-            Me.prop_TowerTopGirtUFactor = Value
+            Me._TowerTopGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtufactor")>
-    Public Property TowerBotGirtUFactor() As Double
+    Public Property TowerBotGirtUFactor() As Double?
         Get
-            Return Me.prop_TowerBotGirtUFactor
+            Return Me._TowerBotGirtUFactor
         End Get
         Set
-            Me.prop_TowerBotGirtUFactor = Value
+            Me._TowerBotGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtufactor")>
-    Public Property TowerInnerGirtUFactor() As Double
+    Public Property TowerInnerGirtUFactor() As Double?
         Get
-            Return Me.prop_TowerInnerGirtUFactor
+            Return Me._TowerInnerGirtUFactor
         End Get
         Set
-            Me.prop_TowerInnerGirtUFactor = Value
+            Me._TowerInnerGirtUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalufactor")>
-    Public Property TowerHorizontalUFactor() As Double
+    Public Property TowerHorizontalUFactor() As Double?
         Get
-            Return Me.prop_TowerHorizontalUFactor
+            Return Me._TowerHorizontalUFactor
         End Get
         Set
-            Me.prop_TowerHorizontalUFactor = Value
+            Me._TowerHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalufactor")>
-    Public Property TowerShortHorizontalUFactor() As Double
+    Public Property TowerShortHorizontalUFactor() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalUFactor
+            Return Me._TowerShortHorizontalUFactor
         End Get
         Set
-            Me.prop_TowerShortHorizontalUFactor = Value
+            Me._TowerShortHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegconntype")>
     Public Property TowerLegConnType() As String
         Get
-            Return Me.prop_TowerLegConnType
+            Return Me._TowerLegConnType
         End Get
         Set
-            Me.prop_TowerLegConnType = Value
+            Me._TowerLegConnType = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegnumbolts")>
-    Public Property TowerLegNumBolts() As Integer
+    Public Property TowerLegNumBolts() As Integer?
         Get
-            Return Me.prop_TowerLegNumBolts
+            Return Me._TowerLegNumBolts
         End Get
         Set
-            Me.prop_TowerLegNumBolts = Value
+            Me._TowerLegNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalnumbolts")>
-    Public Property TowerDiagonalNumBolts() As Integer
+    Public Property TowerDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerDiagonalNumBolts
+            Return Me._TowerDiagonalNumBolts
         End Get
         Set
-            Me.prop_TowerDiagonalNumBolts = Value
+            Me._TowerDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtnumbolts")>
-    Public Property TowerTopGirtNumBolts() As Integer
+    Public Property TowerTopGirtNumBolts() As Integer?
         Get
-            Return Me.prop_TowerTopGirtNumBolts
+            Return Me._TowerTopGirtNumBolts
         End Get
         Set
-            Me.prop_TowerTopGirtNumBolts = Value
+            Me._TowerTopGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtnumbolts")>
-    Public Property TowerBotGirtNumBolts() As Integer
+    Public Property TowerBotGirtNumBolts() As Integer?
         Get
-            Return Me.prop_TowerBotGirtNumBolts
+            Return Me._TowerBotGirtNumBolts
         End Get
         Set
-            Me.prop_TowerBotGirtNumBolts = Value
+            Me._TowerBotGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtnumbolts")>
-    Public Property TowerInnerGirtNumBolts() As Integer
+    Public Property TowerInnerGirtNumBolts() As Integer?
         Get
-            Return Me.prop_TowerInnerGirtNumBolts
+            Return Me._TowerInnerGirtNumBolts
         End Get
         Set
-            Me.prop_TowerInnerGirtNumBolts = Value
+            Me._TowerInnerGirtNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalnumbolts")>
-    Public Property TowerHorizontalNumBolts() As Integer
+    Public Property TowerHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerHorizontalNumBolts
+            Return Me._TowerHorizontalNumBolts
         End Get
         Set
-            Me.prop_TowerHorizontalNumBolts = Value
+            Me._TowerHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalnumbolts")>
-    Public Property TowerShortHorizontalNumBolts() As Integer
+    Public Property TowerShortHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerShortHorizontalNumBolts
+            Return Me._TowerShortHorizontalNumBolts
         End Get
         Set
-            Me.prop_TowerShortHorizontalNumBolts = Value
+            Me._TowerShortHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltgrade")>
     Public Property TowerLegBoltGrade() As String
         Get
-            Return Me.prop_TowerLegBoltGrade
+            Return Me._TowerLegBoltGrade
         End Get
         Set
-            Me.prop_TowerLegBoltGrade = Value
+            Me._TowerLegBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltsize")>
-    Public Property TowerLegBoltSize() As Double
+    Public Property TowerLegBoltSize() As Double?
         Get
-            Return Me.prop_TowerLegBoltSize
+            Return Me._TowerLegBoltSize
         End Get
         Set
-            Me.prop_TowerLegBoltSize = Value
+            Me._TowerLegBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltgrade")>
     Public Property TowerDiagonalBoltGrade() As String
         Get
-            Return Me.prop_TowerDiagonalBoltGrade
+            Return Me._TowerDiagonalBoltGrade
         End Get
         Set
-            Me.prop_TowerDiagonalBoltGrade = Value
+            Me._TowerDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltsize")>
-    Public Property TowerDiagonalBoltSize() As Double
+    Public Property TowerDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_TowerDiagonalBoltSize
+            Return Me._TowerDiagonalBoltSize
         End Get
         Set
-            Me.prop_TowerDiagonalBoltSize = Value
+            Me._TowerDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltgrade")>
     Public Property TowerTopGirtBoltGrade() As String
         Get
-            Return Me.prop_TowerTopGirtBoltGrade
+            Return Me._TowerTopGirtBoltGrade
         End Get
         Set
-            Me.prop_TowerTopGirtBoltGrade = Value
+            Me._TowerTopGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltsize")>
-    Public Property TowerTopGirtBoltSize() As Double
+    Public Property TowerTopGirtBoltSize() As Double?
         Get
-            Return Me.prop_TowerTopGirtBoltSize
+            Return Me._TowerTopGirtBoltSize
         End Get
         Set
-            Me.prop_TowerTopGirtBoltSize = Value
+            Me._TowerTopGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltgrade")>
     Public Property TowerBotGirtBoltGrade() As String
         Get
-            Return Me.prop_TowerBotGirtBoltGrade
+            Return Me._TowerBotGirtBoltGrade
         End Get
         Set
-            Me.prop_TowerBotGirtBoltGrade = Value
+            Me._TowerBotGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltsize")>
-    Public Property TowerBotGirtBoltSize() As Double
+    Public Property TowerBotGirtBoltSize() As Double?
         Get
-            Return Me.prop_TowerBotGirtBoltSize
+            Return Me._TowerBotGirtBoltSize
         End Get
         Set
-            Me.prop_TowerBotGirtBoltSize = Value
+            Me._TowerBotGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltgrade")>
     Public Property TowerInnerGirtBoltGrade() As String
         Get
-            Return Me.prop_TowerInnerGirtBoltGrade
+            Return Me._TowerInnerGirtBoltGrade
         End Get
         Set
-            Me.prop_TowerInnerGirtBoltGrade = Value
+            Me._TowerInnerGirtBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltsize")>
-    Public Property TowerInnerGirtBoltSize() As Double
+    Public Property TowerInnerGirtBoltSize() As Double?
         Get
-            Return Me.prop_TowerInnerGirtBoltSize
+            Return Me._TowerInnerGirtBoltSize
         End Get
         Set
-            Me.prop_TowerInnerGirtBoltSize = Value
+            Me._TowerInnerGirtBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltgrade")>
     Public Property TowerHorizontalBoltGrade() As String
         Get
-            Return Me.prop_TowerHorizontalBoltGrade
+            Return Me._TowerHorizontalBoltGrade
         End Get
         Set
-            Me.prop_TowerHorizontalBoltGrade = Value
+            Me._TowerHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltsize")>
-    Public Property TowerHorizontalBoltSize() As Double
+    Public Property TowerHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_TowerHorizontalBoltSize
+            Return Me._TowerHorizontalBoltSize
         End Get
         Set
-            Me.prop_TowerHorizontalBoltSize = Value
+            Me._TowerHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltgrade")>
     Public Property TowerShortHorizontalBoltGrade() As String
         Get
-            Return Me.prop_TowerShortHorizontalBoltGrade
+            Return Me._TowerShortHorizontalBoltGrade
         End Get
         Set
-            Me.prop_TowerShortHorizontalBoltGrade = Value
+            Me._TowerShortHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltsize")>
-    Public Property TowerShortHorizontalBoltSize() As Double
+    Public Property TowerShortHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalBoltSize
+            Return Me._TowerShortHorizontalBoltSize
         End Get
         Set
-            Me.prop_TowerShortHorizontalBoltSize = Value
+            Me._TowerShortHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltedgedistance")>
-    Public Property TowerLegBoltEdgeDistance() As Double
+    Public Property TowerLegBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerLegBoltEdgeDistance
+            Return Me._TowerLegBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerLegBoltEdgeDistance = Value
+            Me._TowerLegBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltedgedistance")>
-    Public Property TowerDiagonalBoltEdgeDistance() As Double
+    Public Property TowerDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerDiagonalBoltEdgeDistance
+            Return Me._TowerDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerDiagonalBoltEdgeDistance = Value
+            Me._TowerDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltedgedistance")>
-    Public Property TowerTopGirtBoltEdgeDistance() As Double
+    Public Property TowerTopGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerTopGirtBoltEdgeDistance
+            Return Me._TowerTopGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerTopGirtBoltEdgeDistance = Value
+            Me._TowerTopGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltedgedistance")>
-    Public Property TowerBotGirtBoltEdgeDistance() As Double
+    Public Property TowerBotGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerBotGirtBoltEdgeDistance
+            Return Me._TowerBotGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerBotGirtBoltEdgeDistance = Value
+            Me._TowerBotGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltedgedistance")>
-    Public Property TowerInnerGirtBoltEdgeDistance() As Double
+    Public Property TowerInnerGirtBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerInnerGirtBoltEdgeDistance
+            Return Me._TowerInnerGirtBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerInnerGirtBoltEdgeDistance = Value
+            Me._TowerInnerGirtBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltedgedistance")>
-    Public Property TowerHorizontalBoltEdgeDistance() As Double
+    Public Property TowerHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerHorizontalBoltEdgeDistance
+            Return Me._TowerHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerHorizontalBoltEdgeDistance = Value
+            Me._TowerHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltedgedistance")>
-    Public Property TowerShortHorizontalBoltEdgeDistance() As Double
+    Public Property TowerShortHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalBoltEdgeDistance
+            Return Me._TowerShortHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerShortHorizontalBoltEdgeDistance = Value
+            Me._TowerShortHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalgageg1Distance")>
-    Public Property TowerDiagonalGageG1Distance() As Double
+    Public Property TowerDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerDiagonalGageG1Distance
+            Return Me._TowerDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_TowerDiagonalGageG1Distance = Value
+            Me._TowerDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtgageg1Distance")>
-    Public Property TowerTopGirtGageG1Distance() As Double
+    Public Property TowerTopGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerTopGirtGageG1Distance
+            Return Me._TowerTopGirtGageG1Distance
         End Get
         Set
-            Me.prop_TowerTopGirtGageG1Distance = Value
+            Me._TowerTopGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtgageg1Distance")>
-    Public Property TowerBotGirtGageG1Distance() As Double
+    Public Property TowerBotGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerBotGirtGageG1Distance
+            Return Me._TowerBotGirtGageG1Distance
         End Get
         Set
-            Me.prop_TowerBotGirtGageG1Distance = Value
+            Me._TowerBotGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtgageg1Distance")>
-    Public Property TowerInnerGirtGageG1Distance() As Double
+    Public Property TowerInnerGirtGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerInnerGirtGageG1Distance
+            Return Me._TowerInnerGirtGageG1Distance
         End Get
         Set
-            Me.prop_TowerInnerGirtGageG1Distance = Value
+            Me._TowerInnerGirtGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalgageg1Distance")>
-    Public Property TowerHorizontalGageG1Distance() As Double
+    Public Property TowerHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerHorizontalGageG1Distance
+            Return Me._TowerHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_TowerHorizontalGageG1Distance = Value
+            Me._TowerHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalgageg1Distance")>
-    Public Property TowerShortHorizontalGageG1Distance() As Double
+    Public Property TowerShortHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerShortHorizontalGageG1Distance
+            Return Me._TowerShortHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_TowerShortHorizontalGageG1Distance = Value
+            Me._TowerShortHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltgrade")>
     Public Property TowerRedundantHorizontalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantHorizontalBoltGrade
+            Return Me._TowerRedundantHorizontalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalBoltGrade = Value
+            Me._TowerRedundantHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltsize")>
-    Public Property TowerRedundantHorizontalBoltSize() As Double
+    Public Property TowerRedundantHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantHorizontalBoltSize
+            Return Me._TowerRedundantHorizontalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalBoltSize = Value
+            Me._TowerRedundantHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalnumbolts")>
-    Public Property TowerRedundantHorizontalNumBolts() As Integer
+    Public Property TowerRedundantHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantHorizontalNumBolts
+            Return Me._TowerRedundantHorizontalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalNumBolts = Value
+            Me._TowerRedundantHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltedgedistance")>
-    Public Property TowerRedundantHorizontalBoltEdgeDistance() As Double
+    Public Property TowerRedundantHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantHorizontalBoltEdgeDistance
+            Return Me._TowerRedundantHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalBoltEdgeDistance = Value
+            Me._TowerRedundantHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalgageg1Distance")>
-    Public Property TowerRedundantHorizontalGageG1Distance() As Double
+    Public Property TowerRedundantHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantHorizontalGageG1Distance
+            Return Me._TowerRedundantHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalGageG1Distance = Value
+            Me._TowerRedundantHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalnetwidthdeduct")>
-    Public Property TowerRedundantHorizontalNetWidthDeduct() As Double
+    Public Property TowerRedundantHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantHorizontalNetWidthDeduct
+            Return Me._TowerRedundantHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalNetWidthDeduct = Value
+            Me._TowerRedundantHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalufactor")>
-    Public Property TowerRedundantHorizontalUFactor() As Double
+    Public Property TowerRedundantHorizontalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantHorizontalUFactor
+            Return Me._TowerRedundantHorizontalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantHorizontalUFactor = Value
+            Me._TowerRedundantHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltgrade")>
     Public Property TowerRedundantDiagonalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantDiagonalBoltGrade
+            Return Me._TowerRedundantDiagonalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalBoltGrade = Value
+            Me._TowerRedundantDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltsize")>
-    Public Property TowerRedundantDiagonalBoltSize() As Double
+    Public Property TowerRedundantDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantDiagonalBoltSize
+            Return Me._TowerRedundantDiagonalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalBoltSize = Value
+            Me._TowerRedundantDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalnumbolts")>
-    Public Property TowerRedundantDiagonalNumBolts() As Integer
+    Public Property TowerRedundantDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantDiagonalNumBolts
+            Return Me._TowerRedundantDiagonalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalNumBolts = Value
+            Me._TowerRedundantDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltedgedistance")>
-    Public Property TowerRedundantDiagonalBoltEdgeDistance() As Double
+    Public Property TowerRedundantDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantDiagonalBoltEdgeDistance
+            Return Me._TowerRedundantDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalBoltEdgeDistance = Value
+            Me._TowerRedundantDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalgageg1Distance")>
-    Public Property TowerRedundantDiagonalGageG1Distance() As Double
+    Public Property TowerRedundantDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantDiagonalGageG1Distance
+            Return Me._TowerRedundantDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalGageG1Distance = Value
+            Me._TowerRedundantDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantDiagonalNetWidthDeduct() As Double
+    Public Property TowerRedundantDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantDiagonalNetWidthDeduct
+            Return Me._TowerRedundantDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalNetWidthDeduct = Value
+            Me._TowerRedundantDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalufactor")>
-    Public Property TowerRedundantDiagonalUFactor() As Double
+    Public Property TowerRedundantDiagonalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantDiagonalUFactor
+            Return Me._TowerRedundantDiagonalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantDiagonalUFactor = Value
+            Me._TowerRedundantDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltgrade")>
     Public Property TowerRedundantSubDiagonalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantSubDiagonalBoltGrade
+            Return Me._TowerRedundantSubDiagonalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalBoltGrade = Value
+            Me._TowerRedundantSubDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltsize")>
-    Public Property TowerRedundantSubDiagonalBoltSize() As Double
+    Public Property TowerRedundantSubDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalBoltSize
+            Return Me._TowerRedundantSubDiagonalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalBoltSize = Value
+            Me._TowerRedundantSubDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalnumbolts")>
-    Public Property TowerRedundantSubDiagonalNumBolts() As Integer
+    Public Property TowerRedundantSubDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalNumBolts
+            Return Me._TowerRedundantSubDiagonalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalNumBolts = Value
+            Me._TowerRedundantSubDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltedgedistance")>
-    Public Property TowerRedundantSubDiagonalBoltEdgeDistance() As Double
+    Public Property TowerRedundantSubDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalBoltEdgeDistance
+            Return Me._TowerRedundantSubDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalBoltEdgeDistance = Value
+            Me._TowerRedundantSubDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalgageg1Distance")>
-    Public Property TowerRedundantSubDiagonalGageG1Distance() As Double
+    Public Property TowerRedundantSubDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalGageG1Distance
+            Return Me._TowerRedundantSubDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalGageG1Distance = Value
+            Me._TowerRedundantSubDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantSubDiagonalNetWidthDeduct() As Double
+    Public Property TowerRedundantSubDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalNetWidthDeduct
+            Return Me._TowerRedundantSubDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalNetWidthDeduct = Value
+            Me._TowerRedundantSubDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalufactor")>
-    Public Property TowerRedundantSubDiagonalUFactor() As Double
+    Public Property TowerRedundantSubDiagonalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantSubDiagonalUFactor
+            Return Me._TowerRedundantSubDiagonalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantSubDiagonalUFactor = Value
+            Me._TowerRedundantSubDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltgrade")>
     Public Property TowerRedundantSubHorizontalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantSubHorizontalBoltGrade
+            Return Me._TowerRedundantSubHorizontalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalBoltGrade = Value
+            Me._TowerRedundantSubHorizontalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltsize")>
-    Public Property TowerRedundantSubHorizontalBoltSize() As Double
+    Public Property TowerRedundantSubHorizontalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalBoltSize
+            Return Me._TowerRedundantSubHorizontalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalBoltSize = Value
+            Me._TowerRedundantSubHorizontalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalnumbolts")>
-    Public Property TowerRedundantSubHorizontalNumBolts() As Integer
+    Public Property TowerRedundantSubHorizontalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalNumBolts
+            Return Me._TowerRedundantSubHorizontalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalNumBolts = Value
+            Me._TowerRedundantSubHorizontalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltedgedistance")>
-    Public Property TowerRedundantSubHorizontalBoltEdgeDistance() As Double
+    Public Property TowerRedundantSubHorizontalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalBoltEdgeDistance
+            Return Me._TowerRedundantSubHorizontalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalBoltEdgeDistance = Value
+            Me._TowerRedundantSubHorizontalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalgageg1Distance")>
-    Public Property TowerRedundantSubHorizontalGageG1Distance() As Double
+    Public Property TowerRedundantSubHorizontalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalGageG1Distance
+            Return Me._TowerRedundantSubHorizontalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalGageG1Distance = Value
+            Me._TowerRedundantSubHorizontalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalnetwidthdeduct")>
-    Public Property TowerRedundantSubHorizontalNetWidthDeduct() As Double
+    Public Property TowerRedundantSubHorizontalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalNetWidthDeduct
+            Return Me._TowerRedundantSubHorizontalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalNetWidthDeduct = Value
+            Me._TowerRedundantSubHorizontalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalufactor")>
-    Public Property TowerRedundantSubHorizontalUFactor() As Double
+    Public Property TowerRedundantSubHorizontalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantSubHorizontalUFactor
+            Return Me._TowerRedundantSubHorizontalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantSubHorizontalUFactor = Value
+            Me._TowerRedundantSubHorizontalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltgrade")>
     Public Property TowerRedundantVerticalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantVerticalBoltGrade
+            Return Me._TowerRedundantVerticalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantVerticalBoltGrade = Value
+            Me._TowerRedundantVerticalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltsize")>
-    Public Property TowerRedundantVerticalBoltSize() As Double
+    Public Property TowerRedundantVerticalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantVerticalBoltSize
+            Return Me._TowerRedundantVerticalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantVerticalBoltSize = Value
+            Me._TowerRedundantVerticalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalnumbolts")>
-    Public Property TowerRedundantVerticalNumBolts() As Integer
+    Public Property TowerRedundantVerticalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantVerticalNumBolts
+            Return Me._TowerRedundantVerticalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantVerticalNumBolts = Value
+            Me._TowerRedundantVerticalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltedgedistance")>
-    Public Property TowerRedundantVerticalBoltEdgeDistance() As Double
+    Public Property TowerRedundantVerticalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantVerticalBoltEdgeDistance
+            Return Me._TowerRedundantVerticalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantVerticalBoltEdgeDistance = Value
+            Me._TowerRedundantVerticalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalgageg1Distance")>
-    Public Property TowerRedundantVerticalGageG1Distance() As Double
+    Public Property TowerRedundantVerticalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantVerticalGageG1Distance
+            Return Me._TowerRedundantVerticalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantVerticalGageG1Distance = Value
+            Me._TowerRedundantVerticalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalnetwidthdeduct")>
-    Public Property TowerRedundantVerticalNetWidthDeduct() As Double
+    Public Property TowerRedundantVerticalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantVerticalNetWidthDeduct
+            Return Me._TowerRedundantVerticalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantVerticalNetWidthDeduct = Value
+            Me._TowerRedundantVerticalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalufactor")>
-    Public Property TowerRedundantVerticalUFactor() As Double
+    Public Property TowerRedundantVerticalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantVerticalUFactor
+            Return Me._TowerRedundantVerticalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantVerticalUFactor = Value
+            Me._TowerRedundantVerticalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltgrade")>
     Public Property TowerRedundantHipBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantHipBoltGrade
+            Return Me._TowerRedundantHipBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantHipBoltGrade = Value
+            Me._TowerRedundantHipBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltsize")>
-    Public Property TowerRedundantHipBoltSize() As Double
+    Public Property TowerRedundantHipBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantHipBoltSize
+            Return Me._TowerRedundantHipBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantHipBoltSize = Value
+            Me._TowerRedundantHipBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipnumbolts")>
-    Public Property TowerRedundantHipNumBolts() As Integer
+    Public Property TowerRedundantHipNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantHipNumBolts
+            Return Me._TowerRedundantHipNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantHipNumBolts = Value
+            Me._TowerRedundantHipNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltedgedistance")>
-    Public Property TowerRedundantHipBoltEdgeDistance() As Double
+    Public Property TowerRedundantHipBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantHipBoltEdgeDistance
+            Return Me._TowerRedundantHipBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantHipBoltEdgeDistance = Value
+            Me._TowerRedundantHipBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipgageg1Distance")>
-    Public Property TowerRedundantHipGageG1Distance() As Double
+    Public Property TowerRedundantHipGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantHipGageG1Distance
+            Return Me._TowerRedundantHipGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantHipGageG1Distance = Value
+            Me._TowerRedundantHipGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipnetwidthdeduct")>
-    Public Property TowerRedundantHipNetWidthDeduct() As Double
+    Public Property TowerRedundantHipNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantHipNetWidthDeduct
+            Return Me._TowerRedundantHipNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantHipNetWidthDeduct = Value
+            Me._TowerRedundantHipNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipufactor")>
-    Public Property TowerRedundantHipUFactor() As Double
+    Public Property TowerRedundantHipUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantHipUFactor
+            Return Me._TowerRedundantHipUFactor
         End Get
         Set
-            Me.prop_TowerRedundantHipUFactor = Value
+            Me._TowerRedundantHipUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltgrade")>
     Public Property TowerRedundantHipDiagonalBoltGrade() As String
         Get
-            Return Me.prop_TowerRedundantHipDiagonalBoltGrade
+            Return Me._TowerRedundantHipDiagonalBoltGrade
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalBoltGrade = Value
+            Me._TowerRedundantHipDiagonalBoltGrade = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltsize")>
-    Public Property TowerRedundantHipDiagonalBoltSize() As Double
+    Public Property TowerRedundantHipDiagonalBoltSize() As Double?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalBoltSize
+            Return Me._TowerRedundantHipDiagonalBoltSize
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalBoltSize = Value
+            Me._TowerRedundantHipDiagonalBoltSize = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalnumbolts")>
-    Public Property TowerRedundantHipDiagonalNumBolts() As Integer
+    Public Property TowerRedundantHipDiagonalNumBolts() As Integer?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalNumBolts
+            Return Me._TowerRedundantHipDiagonalNumBolts
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalNumBolts = Value
+            Me._TowerRedundantHipDiagonalNumBolts = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltedgedistance")>
-    Public Property TowerRedundantHipDiagonalBoltEdgeDistance() As Double
+    Public Property TowerRedundantHipDiagonalBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalBoltEdgeDistance
+            Return Me._TowerRedundantHipDiagonalBoltEdgeDistance
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalBoltEdgeDistance = Value
+            Me._TowerRedundantHipDiagonalBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalgageg1Distance")>
-    Public Property TowerRedundantHipDiagonalGageG1Distance() As Double
+    Public Property TowerRedundantHipDiagonalGageG1Distance() As Double?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalGageG1Distance
+            Return Me._TowerRedundantHipDiagonalGageG1Distance
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalGageG1Distance = Value
+            Me._TowerRedundantHipDiagonalGageG1Distance = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantHipDiagonalNetWidthDeduct() As Double
+    Public Property TowerRedundantHipDiagonalNetWidthDeduct() As Double?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalNetWidthDeduct
+            Return Me._TowerRedundantHipDiagonalNetWidthDeduct
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalNetWidthDeduct = Value
+            Me._TowerRedundantHipDiagonalNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalufactor")>
-    Public Property TowerRedundantHipDiagonalUFactor() As Double
+    Public Property TowerRedundantHipDiagonalUFactor() As Double?
         Get
-            Return Me.prop_TowerRedundantHipDiagonalUFactor
+            Return Me._TowerRedundantHipDiagonalUFactor
         End Get
         Set
-            Me.prop_TowerRedundantHipDiagonalUFactor = Value
+            Me._TowerRedundantHipDiagonalUFactor = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonaloutofplanerestraint")>
-    Public Property TowerDiagonalOutOfPlaneRestraint() As Boolean
+    Public Property TowerDiagonalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerDiagonalOutOfPlaneRestraint
+            Return Me._TowerDiagonalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerDiagonalOutOfPlaneRestraint = Value
+            Me._TowerDiagonalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtoutofplanerestraint")>
-    Public Property TowerTopGirtOutOfPlaneRestraint() As Boolean
+    Public Property TowerTopGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerTopGirtOutOfPlaneRestraint
+            Return Me._TowerTopGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerTopGirtOutOfPlaneRestraint = Value
+            Me._TowerTopGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbottomgirtoutofplanerestraint")>
-    Public Property TowerBottomGirtOutOfPlaneRestraint() As Boolean
+    Public Property TowerBottomGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerBottomGirtOutOfPlaneRestraint
+            Return Me._TowerBottomGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerBottomGirtOutOfPlaneRestraint = Value
+            Me._TowerBottomGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towermidgirtoutofplanerestraint")>
-    Public Property TowerMidGirtOutOfPlaneRestraint() As Boolean
+    Public Property TowerMidGirtOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerMidGirtOutOfPlaneRestraint
+            Return Me._TowerMidGirtOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerMidGirtOutOfPlaneRestraint = Value
+            Me._TowerMidGirtOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontaloutofplanerestraint")>
-    Public Property TowerHorizontalOutOfPlaneRestraint() As Boolean
+    Public Property TowerHorizontalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerHorizontalOutOfPlaneRestraint
+            Return Me._TowerHorizontalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerHorizontalOutOfPlaneRestraint = Value
+            Me._TowerHorizontalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersecondaryhorizontaloutofplanerestraint")>
-    Public Property TowerSecondaryHorizontalOutOfPlaneRestraint() As Boolean
+    Public Property TowerSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_TowerSecondaryHorizontalOutOfPlaneRestraint
+            Return Me._TowerSecondaryHorizontalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_TowerSecondaryHorizontalOutOfPlaneRestraint = Value
+            Me._TowerSecondaryHorizontalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Toweruniqueflag")>
-    Public Property TowerUniqueFlag() As Integer
+    Public Property TowerUniqueFlag() As Integer?
         Get
-            Return Me.prop_TowerUniqueFlag
+            Return Me._TowerUniqueFlag
         End Get
         Set
-            Me.prop_TowerUniqueFlag = Value
+            Me._TowerUniqueFlag = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetney")>
-    Public Property TowerDiagOffsetNEY() As Double
+    Public Property TowerDiagOffsetNEY() As Double?
         Get
-            Return Me.prop_TowerDiagOffsetNEY
+            Return Me._TowerDiagOffsetNEY
         End Get
         Set
-            Me.prop_TowerDiagOffsetNEY = Value
+            Me._TowerDiagOffsetNEY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetnex")>
-    Public Property TowerDiagOffsetNEX() As Double
+    Public Property TowerDiagOffsetNEX() As Double?
         Get
-            Return Me.prop_TowerDiagOffsetNEX
+            Return Me._TowerDiagOffsetNEX
         End Get
         Set
-            Me.prop_TowerDiagOffsetNEX = Value
+            Me._TowerDiagOffsetNEX = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetpey")>
-    Public Property TowerDiagOffsetPEY() As Double
+    Public Property TowerDiagOffsetPEY() As Double?
         Get
-            Return Me.prop_TowerDiagOffsetPEY
+            Return Me._TowerDiagOffsetPEY
         End Get
         Set
-            Me.prop_TowerDiagOffsetPEY = Value
+            Me._TowerDiagOffsetPEY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetpex")>
-    Public Property TowerDiagOffsetPEX() As Double
+    Public Property TowerDiagOffsetPEX() As Double?
         Get
-            Return Me.prop_TowerDiagOffsetPEX
+            Return Me._TowerDiagOffsetPEX
         End Get
         Set
-            Me.prop_TowerDiagOffsetPEX = Value
+            Me._TowerDiagOffsetPEX = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetney")>
-    Public Property TowerKbraceOffsetNEY() As Double
+    Public Property TowerKbraceOffsetNEY() As Double?
         Get
-            Return Me.prop_TowerKbraceOffsetNEY
+            Return Me._TowerKbraceOffsetNEY
         End Get
         Set
-            Me.prop_TowerKbraceOffsetNEY = Value
+            Me._TowerKbraceOffsetNEY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetnex")>
-    Public Property TowerKbraceOffsetNEX() As Double
+    Public Property TowerKbraceOffsetNEX() As Double?
         Get
-            Return Me.prop_TowerKbraceOffsetNEX
+            Return Me._TowerKbraceOffsetNEX
         End Get
         Set
-            Me.prop_TowerKbraceOffsetNEX = Value
+            Me._TowerKbraceOffsetNEX = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetpey")>
-    Public Property TowerKbraceOffsetPEY() As Double
+    Public Property TowerKbraceOffsetPEY() As Double?
         Get
-            Return Me.prop_TowerKbraceOffsetPEY
+            Return Me._TowerKbraceOffsetPEY
         End Get
         Set
-            Me.prop_TowerKbraceOffsetPEY = Value
+            Me._TowerKbraceOffsetPEY = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetpex")>
-    Public Property TowerKbraceOffsetPEX() As Double
+    Public Property TowerKbraceOffsetPEX() As Double?
         Get
-            Return Me.prop_TowerKbraceOffsetPEX
+            Return Me._TowerKbraceOffsetPEX
         End Get
         Set
-            Me.prop_TowerKbraceOffsetPEX = Value
+            Me._TowerKbraceOffsetPEX = Value
         End Set
     End Property
+#End Region
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.TowerRec = CNullInt(data.Item("TowerRec"))
+        Me.TowerDatabase = CNullStr(data.Item("TowerDatabase"))
+        Me.TowerName = CNullStr(data.Item("TowerName"))
+        Me.TowerHeight = CNullDbl(data.Item("TowerHeight"))
+        Me.TowerFaceWidth = CNullDbl(data.Item("TowerFaceWidth"))
+        Me.TowerNumSections = CNullInt(data.Item("TowerNumSections"))
+        Me.TowerSectionLength = CNullDbl(data.Item("TowerSectionLength"))
+        Me.TowerDiagonalSpacing = CNullDbl(data.Item("TowerDiagonalSpacing"))
+        Me.TowerDiagonalSpacingEx = CNullDbl(data.Item("TowerDiagonalSpacingEx"))
+        Me.TowerBraceType = CNullStr(data.Item("TowerBraceType"))
+        Me.TowerFaceBevel = CNullDbl(data.Item("TowerFaceBevel"))
+        Me.TowerTopGirtOffset = CNullDbl(data.Item("TowerTopGirtOffset"))
+        Me.TowerBotGirtOffset = CNullDbl(data.Item("TowerBotGirtOffset"))
+        Me.TowerHasKBraceEndPanels = CNullBool(data.Item("TowerHasKBraceEndPanels"))
+        Me.TowerHasHorizontals = CNullBool(data.Item("TowerHasHorizontals"))
+        Me.TowerLegType = CNullStr(data.Item("TowerLegType"))
+        Me.TowerLegSize = CNullStr(data.Item("TowerLegSize"))
+        Me.TowerLegGrade = CNullDbl(data.Item("TowerLegGrade"))
+        Me.TowerLegMatlGrade = CNullStr(data.Item("TowerLegMatlGrade"))
+        Me.TowerDiagonalGrade = CNullDbl(data.Item("TowerDiagonalGrade"))
+        Me.TowerDiagonalMatlGrade = CNullStr(data.Item("TowerDiagonalMatlGrade"))
+        Me.TowerInnerBracingGrade = CNullDbl(data.Item("TowerInnerBracingGrade"))
+        Me.TowerInnerBracingMatlGrade = CNullStr(data.Item("TowerInnerBracingMatlGrade"))
+        Me.TowerTopGirtGrade = CNullDbl(data.Item("TowerTopGirtGrade"))
+        Me.TowerTopGirtMatlGrade = CNullStr(data.Item("TowerTopGirtMatlGrade"))
+        Me.TowerBotGirtGrade = CNullDbl(data.Item("TowerBotGirtGrade"))
+        Me.TowerBotGirtMatlGrade = CNullStr(data.Item("TowerBotGirtMatlGrade"))
+        Me.TowerInnerGirtGrade = CNullDbl(data.Item("TowerInnerGirtGrade"))
+        Me.TowerInnerGirtMatlGrade = CNullStr(data.Item("TowerInnerGirtMatlGrade"))
+        Me.TowerLongHorizontalGrade = CNullDbl(data.Item("TowerLongHorizontalGrade"))
+        Me.TowerLongHorizontalMatlGrade = CNullStr(data.Item("TowerLongHorizontalMatlGrade"))
+        Me.TowerShortHorizontalGrade = CNullDbl(data.Item("TowerShortHorizontalGrade"))
+        Me.TowerShortHorizontalMatlGrade = CNullStr(data.Item("TowerShortHorizontalMatlGrade"))
+        Me.TowerDiagonalType = CNullStr(data.Item("TowerDiagonalType"))
+        Me.TowerDiagonalSize = CNullStr(data.Item("TowerDiagonalSize"))
+        Me.TowerInnerBracingType = CNullStr(data.Item("TowerInnerBracingType"))
+        Me.TowerInnerBracingSize = CNullStr(data.Item("TowerInnerBracingSize"))
+        Me.TowerTopGirtType = CNullStr(data.Item("TowerTopGirtType"))
+        Me.TowerTopGirtSize = CNullStr(data.Item("TowerTopGirtSize"))
+        Me.TowerBotGirtType = CNullStr(data.Item("TowerBotGirtType"))
+        Me.TowerBotGirtSize = CNullStr(data.Item("TowerBotGirtSize"))
+        Me.TowerNumInnerGirts = CNullInt(data.Item("TowerNumInnerGirts"))
+        Me.TowerInnerGirtType = CNullStr(data.Item("TowerInnerGirtType"))
+        Me.TowerInnerGirtSize = CNullStr(data.Item("TowerInnerGirtSize"))
+        Me.TowerLongHorizontalType = CNullStr(data.Item("TowerLongHorizontalType"))
+        Me.TowerLongHorizontalSize = CNullStr(data.Item("TowerLongHorizontalSize"))
+        Me.TowerShortHorizontalType = CNullStr(data.Item("TowerShortHorizontalType"))
+        Me.TowerShortHorizontalSize = CNullStr(data.Item("TowerShortHorizontalSize"))
+        Me.TowerRedundantGrade = CNullDbl(data.Item("TowerRedundantGrade"))
+        Me.TowerRedundantMatlGrade = CNullStr(data.Item("TowerRedundantMatlGrade"))
+        Me.TowerRedundantType = CNullStr(data.Item("TowerRedundantType"))
+        Me.TowerRedundantDiagType = CNullStr(data.Item("TowerRedundantDiagType"))
+        Me.TowerRedundantSubDiagonalType = CNullStr(data.Item("TowerRedundantSubDiagonalType"))
+        Me.TowerRedundantSubHorizontalType = CNullStr(data.Item("TowerRedundantSubHorizontalType"))
+        Me.TowerRedundantVerticalType = CNullStr(data.Item("TowerRedundantVerticalType"))
+        Me.TowerRedundantHipType = CNullStr(data.Item("TowerRedundantHipType"))
+        Me.TowerRedundantHipDiagonalType = CNullStr(data.Item("TowerRedundantHipDiagonalType"))
+        Me.TowerRedundantHorizontalSize = CNullStr(data.Item("TowerRedundantHorizontalSize"))
+        Me.TowerRedundantHorizontalSize2 = CNullStr(data.Item("TowerRedundantHorizontalSize2"))
+        Me.TowerRedundantHorizontalSize3 = CNullStr(data.Item("TowerRedundantHorizontalSize3"))
+        Me.TowerRedundantHorizontalSize4 = CNullStr(data.Item("TowerRedundantHorizontalSize4"))
+        Me.TowerRedundantDiagonalSize = CNullStr(data.Item("TowerRedundantDiagonalSize"))
+        Me.TowerRedundantDiagonalSize2 = CNullStr(data.Item("TowerRedundantDiagonalSize2"))
+        Me.TowerRedundantDiagonalSize3 = CNullStr(data.Item("TowerRedundantDiagonalSize3"))
+        Me.TowerRedundantDiagonalSize4 = CNullStr(data.Item("TowerRedundantDiagonalSize4"))
+        Me.TowerRedundantSubHorizontalSize = CNullStr(data.Item("TowerRedundantSubHorizontalSize"))
+        Me.TowerRedundantSubDiagonalSize = CNullStr(data.Item("TowerRedundantSubDiagonalSize"))
+        Me.TowerSubDiagLocation = CNullDbl(data.Item("TowerSubDiagLocation"))
+        Me.TowerRedundantVerticalSize = CNullStr(data.Item("TowerRedundantVerticalSize"))
+        Me.TowerRedundantHipSize = CNullStr(data.Item("TowerRedundantHipSize"))
+        Me.TowerRedundantHipSize2 = CNullStr(data.Item("TowerRedundantHipSize2"))
+        Me.TowerRedundantHipSize3 = CNullStr(data.Item("TowerRedundantHipSize3"))
+        Me.TowerRedundantHipSize4 = CNullStr(data.Item("TowerRedundantHipSize4"))
+        Me.TowerRedundantHipDiagonalSize = CNullStr(data.Item("TowerRedundantHipDiagonalSize"))
+        Me.TowerRedundantHipDiagonalSize2 = CNullStr(data.Item("TowerRedundantHipDiagonalSize2"))
+        Me.TowerRedundantHipDiagonalSize3 = CNullStr(data.Item("TowerRedundantHipDiagonalSize3"))
+        Me.TowerRedundantHipDiagonalSize4 = CNullStr(data.Item("TowerRedundantHipDiagonalSize4"))
+        Me.TowerSWMult = CNullDbl(data.Item("TowerSWMult"))
+        Me.TowerWPMult = CNullDbl(data.Item("TowerWPMult"))
+        Me.TowerAutoCalcKSingleAngle = CNullBool(data.Item("TowerAutoCalcKSingleAngle"))
+        Me.TowerAutoCalcKSolidRound = CNullBool(data.Item("TowerAutoCalcKSolidRound"))
+        Me.TowerAfGusset = CNullDbl(data.Item("TowerAfGusset"))
+        Me.TowerTfGusset = CNullDbl(data.Item("TowerTfGusset"))
+        Me.TowerGussetBoltEdgeDistance = CNullDbl(data.Item("TowerGussetBoltEdgeDistance"))
+        Me.TowerGussetGrade = CNullDbl(data.Item("TowerGussetGrade"))
+        Me.TowerGussetMatlGrade = CNullStr(data.Item("TowerGussetMatlGrade"))
+        Me.TowerAfMult = CNullDbl(data.Item("TowerAfMult"))
+        Me.TowerArMult = CNullDbl(data.Item("TowerArMult"))
+        Me.TowerFlatIPAPole = CNullDbl(data.Item("TowerFlatIPAPole"))
+        Me.TowerRoundIPAPole = CNullDbl(data.Item("TowerRoundIPAPole"))
+        Me.TowerFlatIPALeg = CNullDbl(data.Item("TowerFlatIPALeg"))
+        Me.TowerRoundIPALeg = CNullDbl(data.Item("TowerRoundIPALeg"))
+        Me.TowerFlatIPAHorizontal = CNullDbl(data.Item("TowerFlatIPAHorizontal"))
+        Me.TowerRoundIPAHorizontal = CNullDbl(data.Item("TowerRoundIPAHorizontal"))
+        Me.TowerFlatIPADiagonal = CNullDbl(data.Item("TowerFlatIPADiagonal"))
+        Me.TowerRoundIPADiagonal = CNullDbl(data.Item("TowerRoundIPADiagonal"))
+        Me.TowerCSA_S37_SpeedUpFactor = CNullDbl(data.Item("TowerCSA_S37_SpeedUpFactor"))
+        Me.TowerKLegs = CNullDbl(data.Item("TowerKLegs"))
+        Me.TowerKXBracedDiags = CNullDbl(data.Item("TowerKXBracedDiags"))
+        Me.TowerKKBracedDiags = CNullDbl(data.Item("TowerKKBracedDiags"))
+        Me.TowerKZBracedDiags = CNullDbl(data.Item("TowerKZBracedDiags"))
+        Me.TowerKHorzs = CNullDbl(data.Item("TowerKHorzs"))
+        Me.TowerKSecHorzs = CNullDbl(data.Item("TowerKSecHorzs"))
+        Me.TowerKGirts = CNullDbl(data.Item("TowerKGirts"))
+        Me.TowerKInners = CNullDbl(data.Item("TowerKInners"))
+        Me.TowerKXBracedDiagsY = CNullDbl(data.Item("TowerKXBracedDiagsY"))
+        Me.TowerKKBracedDiagsY = CNullDbl(data.Item("TowerKKBracedDiagsY"))
+        Me.TowerKZBracedDiagsY = CNullDbl(data.Item("TowerKZBracedDiagsY"))
+        Me.TowerKHorzsY = CNullDbl(data.Item("TowerKHorzsY"))
+        Me.TowerKSecHorzsY = CNullDbl(data.Item("TowerKSecHorzsY"))
+        Me.TowerKGirtsY = CNullDbl(data.Item("TowerKGirtsY"))
+        Me.TowerKInnersY = CNullDbl(data.Item("TowerKInnersY"))
+        Me.TowerKRedHorz = CNullDbl(data.Item("TowerKRedHorz"))
+        Me.TowerKRedDiag = CNullDbl(data.Item("TowerKRedDiag"))
+        Me.TowerKRedSubDiag = CNullDbl(data.Item("TowerKRedSubDiag"))
+        Me.TowerKRedSubHorz = CNullDbl(data.Item("TowerKRedSubHorz"))
+        Me.TowerKRedVert = CNullDbl(data.Item("TowerKRedVert"))
+        Me.TowerKRedHip = CNullDbl(data.Item("TowerKRedHip"))
+        Me.TowerKRedHipDiag = CNullDbl(data.Item("TowerKRedHipDiag"))
+        Me.TowerKTLX = CNullDbl(data.Item("TowerKTLX"))
+        Me.TowerKTLZ = CNullDbl(data.Item("TowerKTLZ"))
+        Me.TowerKTLLeg = CNullDbl(data.Item("TowerKTLLeg"))
+        Me.TowerInnerKTLX = CNullDbl(data.Item("TowerInnerKTLX"))
+        Me.TowerInnerKTLZ = CNullDbl(data.Item("TowerInnerKTLZ"))
+        Me.TowerInnerKTLLeg = CNullDbl(data.Item("TowerInnerKTLLeg"))
+        Me.TowerStitchBoltLocationHoriz = CNullStr(data.Item("TowerStitchBoltLocationHoriz"))
+        Me.TowerStitchBoltLocationDiag = CNullStr(data.Item("TowerStitchBoltLocationDiag"))
+        Me.TowerStitchBoltLocationRed = CNullStr(data.Item("TowerStitchBoltLocationRed"))
+        Me.TowerStitchSpacing = CNullDbl(data.Item("TowerStitchSpacing"))
+        Me.TowerStitchSpacingDiag = CNullDbl(data.Item("TowerStitchSpacingDiag"))
+        Me.TowerStitchSpacingHorz = CNullDbl(data.Item("TowerStitchSpacingHorz"))
+        Me.TowerStitchSpacingRed = CNullDbl(data.Item("TowerStitchSpacingRed"))
+        Me.TowerLegNetWidthDeduct = CNullDbl(data.Item("TowerLegNetWidthDeduct"))
+        Me.TowerLegUFactor = CNullDbl(data.Item("TowerLegUFactor"))
+        Me.TowerDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerDiagonalNetWidthDeduct"))
+        Me.TowerTopGirtNetWidthDeduct = CNullDbl(data.Item("TowerTopGirtNetWidthDeduct"))
+        Me.TowerBotGirtNetWidthDeduct = CNullDbl(data.Item("TowerBotGirtNetWidthDeduct"))
+        Me.TowerInnerGirtNetWidthDeduct = CNullDbl(data.Item("TowerInnerGirtNetWidthDeduct"))
+        Me.TowerHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerHorizontalNetWidthDeduct"))
+        Me.TowerShortHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerShortHorizontalNetWidthDeduct"))
+        Me.TowerDiagonalUFactor = CNullDbl(data.Item("TowerDiagonalUFactor"))
+        Me.TowerTopGirtUFactor = CNullDbl(data.Item("TowerTopGirtUFactor"))
+        Me.TowerBotGirtUFactor = CNullDbl(data.Item("TowerBotGirtUFactor"))
+        Me.TowerInnerGirtUFactor = CNullDbl(data.Item("TowerInnerGirtUFactor"))
+        Me.TowerHorizontalUFactor = CNullDbl(data.Item("TowerHorizontalUFactor"))
+        Me.TowerShortHorizontalUFactor = CNullDbl(data.Item("TowerShortHorizontalUFactor"))
+        Me.TowerLegConnType = CNullStr(data.Item("TowerLegConnType"))
+        Me.TowerLegNumBolts = CNullInt(data.Item("TowerLegNumBolts"))
+        Me.TowerDiagonalNumBolts = CNullInt(data.Item("TowerDiagonalNumBolts"))
+        Me.TowerTopGirtNumBolts = CNullInt(data.Item("TowerTopGirtNumBolts"))
+        Me.TowerBotGirtNumBolts = CNullInt(data.Item("TowerBotGirtNumBolts"))
+        Me.TowerInnerGirtNumBolts = CNullInt(data.Item("TowerInnerGirtNumBolts"))
+        Me.TowerHorizontalNumBolts = CNullInt(data.Item("TowerHorizontalNumBolts"))
+        Me.TowerShortHorizontalNumBolts = CNullInt(data.Item("TowerShortHorizontalNumBolts"))
+        Me.TowerLegBoltGrade = CNullStr(data.Item("TowerLegBoltGrade"))
+        Me.TowerLegBoltSize = CNullDbl(data.Item("TowerLegBoltSize"))
+        Me.TowerDiagonalBoltGrade = CNullStr(data.Item("TowerDiagonalBoltGrade"))
+        Me.TowerDiagonalBoltSize = CNullDbl(data.Item("TowerDiagonalBoltSize"))
+        Me.TowerTopGirtBoltGrade = CNullStr(data.Item("TowerTopGirtBoltGrade"))
+        Me.TowerTopGirtBoltSize = CNullDbl(data.Item("TowerTopGirtBoltSize"))
+        Me.TowerBotGirtBoltGrade = CNullStr(data.Item("TowerBotGirtBoltGrade"))
+        Me.TowerBotGirtBoltSize = CNullDbl(data.Item("TowerBotGirtBoltSize"))
+        Me.TowerInnerGirtBoltGrade = CNullStr(data.Item("TowerInnerGirtBoltGrade"))
+        Me.TowerInnerGirtBoltSize = CNullDbl(data.Item("TowerInnerGirtBoltSize"))
+        Me.TowerHorizontalBoltGrade = CNullStr(data.Item("TowerHorizontalBoltGrade"))
+        Me.TowerHorizontalBoltSize = CNullDbl(data.Item("TowerHorizontalBoltSize"))
+        Me.TowerShortHorizontalBoltGrade = CNullStr(data.Item("TowerShortHorizontalBoltGrade"))
+        Me.TowerShortHorizontalBoltSize = CNullDbl(data.Item("TowerShortHorizontalBoltSize"))
+        Me.TowerLegBoltEdgeDistance = CNullDbl(data.Item("TowerLegBoltEdgeDistance"))
+        Me.TowerDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerDiagonalBoltEdgeDistance"))
+        Me.TowerTopGirtBoltEdgeDistance = CNullDbl(data.Item("TowerTopGirtBoltEdgeDistance"))
+        Me.TowerBotGirtBoltEdgeDistance = CNullDbl(data.Item("TowerBotGirtBoltEdgeDistance"))
+        Me.TowerInnerGirtBoltEdgeDistance = CNullDbl(data.Item("TowerInnerGirtBoltEdgeDistance"))
+        Me.TowerHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerHorizontalBoltEdgeDistance"))
+        Me.TowerShortHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerShortHorizontalBoltEdgeDistance"))
+        Me.TowerDiagonalGageG1Distance = CNullDbl(data.Item("TowerDiagonalGageG1Distance"))
+        Me.TowerTopGirtGageG1Distance = CNullDbl(data.Item("TowerTopGirtGageG1Distance"))
+        Me.TowerBotGirtGageG1Distance = CNullDbl(data.Item("TowerBotGirtGageG1Distance"))
+        Me.TowerInnerGirtGageG1Distance = CNullDbl(data.Item("TowerInnerGirtGageG1Distance"))
+        Me.TowerHorizontalGageG1Distance = CNullDbl(data.Item("TowerHorizontalGageG1Distance"))
+        Me.TowerShortHorizontalGageG1Distance = CNullDbl(data.Item("TowerShortHorizontalGageG1Distance"))
+        Me.TowerRedundantHorizontalBoltGrade = CNullStr(data.Item("TowerRedundantHorizontalBoltGrade"))
+        Me.TowerRedundantHorizontalBoltSize = CNullDbl(data.Item("TowerRedundantHorizontalBoltSize"))
+        Me.TowerRedundantHorizontalNumBolts = CNullInt(data.Item("TowerRedundantHorizontalNumBolts"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance"))
+        Me.TowerRedundantHorizontalGageG1Distance = CNullDbl(data.Item("TowerRedundantHorizontalGageG1Distance"))
+        Me.TowerRedundantHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct"))
+        Me.TowerRedundantHorizontalUFactor = CNullDbl(data.Item("TowerRedundantHorizontalUFactor"))
+        Me.TowerRedundantDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantDiagonalBoltGrade"))
+        Me.TowerRedundantDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantDiagonalBoltSize"))
+        Me.TowerRedundantDiagonalNumBolts = CNullInt(data.Item("TowerRedundantDiagonalNumBolts"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantDiagonalGageG1Distance"))
+        Me.TowerRedundantDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct"))
+        Me.TowerRedundantDiagonalUFactor = CNullDbl(data.Item("TowerRedundantDiagonalUFactor"))
+        Me.TowerRedundantSubDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantSubDiagonalBoltGrade"))
+        Me.TowerRedundantSubDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantSubDiagonalBoltSize"))
+        Me.TowerRedundantSubDiagonalNumBolts = CNullInt(data.Item("TowerRedundantSubDiagonalNumBolts"))
+        Me.TowerRedundantSubDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantSubDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantSubDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantSubDiagonalGageG1Distance"))
+        Me.TowerRedundantSubDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantSubDiagonalNetWidthDeduct"))
+        Me.TowerRedundantSubDiagonalUFactor = CNullDbl(data.Item("TowerRedundantSubDiagonalUFactor"))
+        Me.TowerRedundantSubHorizontalBoltGrade = CNullStr(data.Item("TowerRedundantSubHorizontalBoltGrade"))
+        Me.TowerRedundantSubHorizontalBoltSize = CNullDbl(data.Item("TowerRedundantSubHorizontalBoltSize"))
+        Me.TowerRedundantSubHorizontalNumBolts = CNullInt(data.Item("TowerRedundantSubHorizontalNumBolts"))
+        Me.TowerRedundantSubHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantSubHorizontalBoltEdgeDistance"))
+        Me.TowerRedundantSubHorizontalGageG1Distance = CNullDbl(data.Item("TowerRedundantSubHorizontalGageG1Distance"))
+        Me.TowerRedundantSubHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantSubHorizontalNetWidthDeduct"))
+        Me.TowerRedundantSubHorizontalUFactor = CNullDbl(data.Item("TowerRedundantSubHorizontalUFactor"))
+        Me.TowerRedundantVerticalBoltGrade = CNullStr(data.Item("TowerRedundantVerticalBoltGrade"))
+        Me.TowerRedundantVerticalBoltSize = CNullDbl(data.Item("TowerRedundantVerticalBoltSize"))
+        Me.TowerRedundantVerticalNumBolts = CNullInt(data.Item("TowerRedundantVerticalNumBolts"))
+        Me.TowerRedundantVerticalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantVerticalBoltEdgeDistance"))
+        Me.TowerRedundantVerticalGageG1Distance = CNullDbl(data.Item("TowerRedundantVerticalGageG1Distance"))
+        Me.TowerRedundantVerticalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantVerticalNetWidthDeduct"))
+        Me.TowerRedundantVerticalUFactor = CNullDbl(data.Item("TowerRedundantVerticalUFactor"))
+        Me.TowerRedundantHipBoltGrade = CNullStr(data.Item("TowerRedundantHipBoltGrade"))
+        Me.TowerRedundantHipBoltSize = CNullDbl(data.Item("TowerRedundantHipBoltSize"))
+        Me.TowerRedundantHipNumBolts = CNullInt(data.Item("TowerRedundantHipNumBolts"))
+        Me.TowerRedundantHipBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHipBoltEdgeDistance"))
+        Me.TowerRedundantHipGageG1Distance = CNullDbl(data.Item("TowerRedundantHipGageG1Distance"))
+        Me.TowerRedundantHipNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHipNetWidthDeduct"))
+        Me.TowerRedundantHipUFactor = CNullDbl(data.Item("TowerRedundantHipUFactor"))
+        Me.TowerRedundantHipDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantHipDiagonalBoltGrade"))
+        Me.TowerRedundantHipDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantHipDiagonalBoltSize"))
+        Me.TowerRedundantHipDiagonalNumBolts = CNullInt(data.Item("TowerRedundantHipDiagonalNumBolts"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantHipDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance"))
+        Me.TowerRedundantHipDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct"))
+        Me.TowerRedundantHipDiagonalUFactor = CNullDbl(data.Item("TowerRedundantHipDiagonalUFactor"))
+        Me.TowerDiagonalOutOfPlaneRestraint = CNullBool(data.Item("TowerDiagonalOutOfPlaneRestraint"))
+        Me.TowerTopGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerTopGirtOutOfPlaneRestraint"))
+        Me.TowerBottomGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerBottomGirtOutOfPlaneRestraint"))
+        Me.TowerMidGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerMidGirtOutOfPlaneRestraint"))
+        Me.TowerHorizontalOutOfPlaneRestraint = CNullBool(data.Item("TowerHorizontalOutOfPlaneRestraint"))
+        Me.TowerSecondaryHorizontalOutOfPlaneRestraint = CNullBool(data.Item("TowerSecondaryHorizontalOutOfPlaneRestraint"))
+        Me.TowerUniqueFlag = CNullInt(data.Item("TowerUniqueFlag"))
+        Me.TowerDiagOffsetNEY = CNullDbl(data.Item("TowerDiagOffsetNEY"))
+        Me.TowerDiagOffsetNEX = CNullDbl(data.Item("TowerDiagOffsetNEX"))
+        Me.TowerDiagOffsetPEY = CNullDbl(data.Item("TowerDiagOffsetPEY"))
+        Me.TowerDiagOffsetPEX = CNullDbl(data.Item("TowerDiagOffsetPEX"))
+        Me.TowerKbraceOffsetNEY = CNullDbl(data.Item("TowerKbraceOffsetNEY"))
+        Me.TowerKbraceOffsetNEX = CNullDbl(data.Item("TowerKbraceOffsetNEX"))
+        Me.TowerKbraceOffsetPEY = CNullDbl(data.Item("TowerKbraceOffsetPEY"))
+        Me.TowerKbraceOffsetPEX = CNullDbl(data.Item("TowerKbraceOffsetPEX"))
+
+    End Sub
+#End Region
+
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString(Me.TowerRec.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDatabase.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerName.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHeight.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFaceWidth.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerNumSections.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerSectionLength.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalSpacing.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalSpacingEx.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBraceType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFaceBevel.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtOffset.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtOffset.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHasKBraceEndPanels.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHasHorizontals.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerBracingGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerBracingMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLongHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLongHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerBracingType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerBracingSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerNumInnerGirts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLongHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLongHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerSubDiagLocation.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerSWMult.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerWPMult.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerAutoCalcKSingleAngle.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerAutoCalcKSolidRound.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerAfGusset.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTfGusset.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerGussetBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerGussetGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerGussetMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerAfMult.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerArMult.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFlatIPAPole.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRoundIPAPole.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFlatIPALeg.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRoundIPALeg.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFlatIPAHorizontal.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRoundIPAHorizontal.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerFlatIPADiagonal.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRoundIPADiagonal.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerCSA_S37_SpeedUpFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKLegs.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKXBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKKBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKZBracedDiags.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKHorzs.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKSecHorzs.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKGirts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKInners.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKXBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKKBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKZBracedDiagsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKHorzsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKSecHorzsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKGirtsY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKInnersY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedSubDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedSubHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedVert.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedHip.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKRedHipDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKTLX.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKTLZ.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKTLLeg.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerKTLX.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerKTLZ.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerKTLLeg.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchBoltLocationHoriz.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchBoltLocationDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchBoltLocationRed.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchSpacing.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchSpacingDiag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchSpacingHorz.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerStitchSpacingRed.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegConnType.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerLegBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBotGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerInnerGirtGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerShortHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagonalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerTopGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerBottomGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerMidGirtOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerHorizontalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerSecondaryHorizontalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerUniqueFlag.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagOffsetNEY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagOffsetNEX.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagOffsetPEY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerDiagOffsetPEX.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKbraceOffsetNEY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKbraceOffsetNEX.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKbraceOffsetPEY.ToString)
+        insertString = insertString.AddtoDBString(Me.TowerKbraceOffsetPEX.ToString)
+
+        Return insertString
+    End Function
 
 End Class
 
 Partial Public Class tnxGuyRecord
-    Private prop_ID As Integer
-    Private prop_tnxID As Integer
-    Private prop_GuyRec As Integer
-    Private prop_GuyHeight As Double
-    Private prop_GuyAutoCalcKSingleAngle As Boolean
-    Private prop_GuyAutoCalcKSolidRound As Boolean
-    Private prop_GuyMount As String
-    Private prop_TorqueArmStyle As String
-    Private prop_GuyRadius As Double
-    Private prop_GuyRadius120 As Double
-    Private prop_GuyRadius240 As Double
-    Private prop_GuyRadius360 As Double
-    Private prop_TorqueArmRadius As Double
-    Private prop_TorqueArmLegAngle As Double
-    Private prop_Azimuth0Adjustment As Double
-    Private prop_Azimuth120Adjustment As Double
-    Private prop_Azimuth240Adjustment As Double
-    Private prop_Azimuth360Adjustment As Double
-    Private prop_Anchor0Elevation As Double
-    Private prop_Anchor120Elevation As Double
-    Private prop_Anchor240Elevation As Double
-    Private prop_Anchor360Elevation As Double
-    Private prop_GuySize As String
-    Private prop_Guy120Size As String
-    Private prop_Guy240Size As String
-    Private prop_Guy360Size As String
-    Private prop_GuyGrade As String
-    Private prop_TorqueArmSize As String
-    Private prop_TorqueArmSizeBot As String
-    Private prop_TorqueArmType As String
-    Private prop_TorqueArmGrade As Double
-    Private prop_TorqueArmMatlGrade As String
-    Private prop_TorqueArmKFactor As Double
-    Private prop_TorqueArmKFactorY As Double
-    Private prop_GuyPullOffKFactorX As Double
-    Private prop_GuyPullOffKFactorY As Double
-    Private prop_GuyDiagKFactorX As Double
-    Private prop_GuyDiagKFactorY As Double
-    Private prop_GuyAutoCalc As Boolean
-    Private prop_GuyAllGuysSame As Boolean
-    Private prop_GuyAllGuysAnchorSame As Boolean
-    Private prop_GuyIsStrapping As Boolean
-    Private prop_GuyPullOffSize As String
-    Private prop_GuyPullOffSizeBot As String
-    Private prop_GuyPullOffType As String
-    Private prop_GuyPullOffGrade As Double
-    Private prop_GuyPullOffMatlGrade As String
-    Private prop_GuyUpperDiagSize As String
-    Private prop_GuyLowerDiagSize As String
-    Private prop_GuyDiagType As String
-    Private prop_GuyDiagGrade As Double
-    Private prop_GuyDiagMatlGrade As String
-    Private prop_GuyDiagNetWidthDeduct As Double
-    Private prop_GuyDiagUFactor As Double
-    Private prop_GuyDiagNumBolts As Integer
-    Private prop_GuyDiagonalOutOfPlaneRestraint As Boolean
-    Private prop_GuyDiagBoltGrade As String
-    Private prop_GuyDiagBoltSize As Double
-    Private prop_GuyDiagBoltEdgeDistance As Double
-    Private prop_GuyDiagBoltGageDistance As Double
-    Private prop_GuyPullOffNetWidthDeduct As Double
-    Private prop_GuyPullOffUFactor As Double
-    Private prop_GuyPullOffNumBolts As Integer
-    Private prop_GuyPullOffOutOfPlaneRestraint As Boolean
-    Private prop_GuyPullOffBoltGrade As String
-    Private prop_GuyPullOffBoltSize As Double
-    Private prop_GuyPullOffBoltEdgeDistance As Double
-    Private prop_GuyPullOffBoltGageDistance As Double
-    Private prop_GuyTorqueArmNetWidthDeduct As Double
-    Private prop_GuyTorqueArmUFactor As Double
-    Private prop_GuyTorqueArmNumBolts As Integer
-    Private prop_GuyTorqueArmOutOfPlaneRestraint As Boolean
-    Private prop_GuyTorqueArmBoltGrade As String
-    Private prop_GuyTorqueArmBoltSize As Double
-    Private prop_GuyTorqueArmBoltEdgeDistance As Double
-    Private prop_GuyTorqueArmBoltGageDistance As Double
-    Private prop_GuyPerCentTension As Double
-    Private prop_GuyPerCentTension120 As Double
-    Private prop_GuyPerCentTension240 As Double
-    Private prop_GuyPerCentTension360 As Double
-    Private prop_GuyEffFactor As Double
-    Private prop_GuyEffFactor120 As Double
-    Private prop_GuyEffFactor240 As Double
-    Private prop_GuyEffFactor360 As Double
-    Private prop_GuyNumInsulators As Integer
-    Private prop_GuyInsulatorLength As Double
-    Private prop_GuyInsulatorDia As Double
-    Private prop_GuyInsulatorWt As Double
+    Inherits tnxDatabaseEntry
 
-    <Category("TNX Guy Record"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer
-        Get
-            Return Me.prop_ID
-        End Get
-        Set
-            Me.prop_ID = Value
-        End Set
-    End Property
-    <Category("TNX Guy Record"), Description(""), DisplayName("Tnxid")>
-    Public Property tnxID() As Integer
-        Get
-            Return Me.prop_tnxID
-        End Get
-        Set
-            Me.prop_tnxID = Value
-        End Set
-    End Property
+#Region "Define"
+    Private _GuyRec As Integer?
+    Private _GuyHeight As Double?
+    Private _GuyAutoCalcKSingleAngle As Boolean?
+    Private _GuyAutoCalcKSolidRound As Boolean?
+    Private _GuyMount As String
+    Private _TorqueArmStyle As String
+    Private _GuyRadius As Double?
+    Private _GuyRadius120 As Double?
+    Private _GuyRadius240 As Double?
+    Private _GuyRadius360 As Double?
+    Private _TorqueArmRadius As Double?
+    Private _TorqueArmLegAngle As Double?
+    Private _Azimuth0Adjustment As Double?
+    Private _Azimuth120Adjustment As Double?
+    Private _Azimuth240Adjustment As Double?
+    Private _Azimuth360Adjustment As Double?
+    Private _Anchor0Elevation As Double?
+    Private _Anchor120Elevation As Double?
+    Private _Anchor240Elevation As Double?
+    Private _Anchor360Elevation As Double?
+    Private _GuySize As String
+    Private _Guy120Size As String
+    Private _Guy240Size As String
+    Private _Guy360Size As String
+    Private _GuyGrade As String
+    Private _TorqueArmSize As String
+    Private _TorqueArmSizeBot As String
+    Private _TorqueArmType As String
+    Private _TorqueArmGrade As Double?
+    Private _TorqueArmMatlGrade As String
+    Private _TorqueArmKFactor As Double?
+    Private _TorqueArmKFactorY As Double?
+    Private _GuyPullOffKFactorX As Double?
+    Private _GuyPullOffKFactorY As Double?
+    Private _GuyDiagKFactorX As Double?
+    Private _GuyDiagKFactorY As Double?
+    Private _GuyAutoCalc As Boolean?
+    Private _GuyAllGuysSame As Boolean?
+    Private _GuyAllGuysAnchorSame As Boolean?
+    Private _GuyIsStrapping As Boolean?
+    Private _GuyPullOffSize As String
+    Private _GuyPullOffSizeBot As String
+    Private _GuyPullOffType As String
+    Private _GuyPullOffGrade As Double?
+    Private _GuyPullOffMatlGrade As String
+    Private _GuyUpperDiagSize As String
+    Private _GuyLowerDiagSize As String
+    Private _GuyDiagType As String
+    Private _GuyDiagGrade As Double?
+    Private _GuyDiagMatlGrade As String
+    Private _GuyDiagNetWidthDeduct As Double?
+    Private _GuyDiagUFactor As Double?
+    Private _GuyDiagNumBolts As Integer?
+    Private _GuyDiagonalOutOfPlaneRestraint As Boolean?
+    Private _GuyDiagBoltGrade As String
+    Private _GuyDiagBoltSize As Double?
+    Private _GuyDiagBoltEdgeDistance As Double?
+    Private _GuyDiagBoltGageDistance As Double?
+    Private _GuyPullOffNetWidthDeduct As Double?
+    Private _GuyPullOffUFactor As Double?
+    Private _GuyPullOffNumBolts As Integer?
+    Private _GuyPullOffOutOfPlaneRestraint As Boolean?
+    Private _GuyPullOffBoltGrade As String
+    Private _GuyPullOffBoltSize As Double?
+    Private _GuyPullOffBoltEdgeDistance As Double?
+    Private _GuyPullOffBoltGageDistance As Double?
+    Private _GuyTorqueArmNetWidthDeduct As Double?
+    Private _GuyTorqueArmUFactor As Double?
+    Private _GuyTorqueArmNumBolts As Integer?
+    Private _GuyTorqueArmOutOfPlaneRestraint As Boolean?
+    Private _GuyTorqueArmBoltGrade As String
+    Private _GuyTorqueArmBoltSize As Double?
+    Private _GuyTorqueArmBoltEdgeDistance As Double?
+    Private _GuyTorqueArmBoltGageDistance As Double?
+    Private _GuyPerCentTension As Double?
+    Private _GuyPerCentTension120 As Double?
+    Private _GuyPerCentTension240 As Double?
+    Private _GuyPerCentTension360 As Double?
+    Private _GuyEffFactor As Double?
+    Private _GuyEffFactor120 As Double?
+    Private _GuyEffFactor240 As Double?
+    Private _GuyEffFactor360 As Double?
+    Private _GuyNumInsulators As Integer?
+    Private _GuyInsulatorLength As Double?
+    Private _GuyInsulatorDia As Double?
+    Private _GuyInsulatorWt As Double?
+
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyrec")>
-    Public Property GuyRec() As Integer
+    Public Property GuyRec() As Integer?
         Get
-            Return Me.prop_GuyRec
+            Return Me._GuyRec
         End Get
         Set
-            Me.prop_GuyRec = Value
+            Me._GuyRec = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyheight")>
-    Public Property GuyHeight() As Double
+    Public Property GuyHeight() As Double?
         Get
-            Return Me.prop_GuyHeight
+            Return Me._GuyHeight
         End Get
         Set
-            Me.prop_GuyHeight = Value
+            Me._GuyHeight = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalcksingleangle")>
-    Public Property GuyAutoCalcKSingleAngle() As Boolean
+    Public Property GuyAutoCalcKSingleAngle() As Boolean?
         Get
-            Return Me.prop_GuyAutoCalcKSingleAngle
+            Return Me._GuyAutoCalcKSingleAngle
         End Get
         Set
-            Me.prop_GuyAutoCalcKSingleAngle = Value
+            Me._GuyAutoCalcKSingleAngle = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalcksolidround")>
-    Public Property GuyAutoCalcKSolidRound() As Boolean
+    Public Property GuyAutoCalcKSolidRound() As Boolean?
         Get
-            Return Me.prop_GuyAutoCalcKSolidRound
+            Return Me._GuyAutoCalcKSolidRound
         End Get
         Set
-            Me.prop_GuyAutoCalcKSolidRound = Value
+            Me._GuyAutoCalcKSolidRound = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guymount")>
     Public Property GuyMount() As String
         Get
-            Return Me.prop_GuyMount
+            Return Me._GuyMount
         End Get
         Set
-            Me.prop_GuyMount = Value
+            Me._GuyMount = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmstyle")>
     Public Property TorqueArmStyle() As String
         Get
-            Return Me.prop_TorqueArmStyle
+            Return Me._TorqueArmStyle
         End Get
         Set
-            Me.prop_TorqueArmStyle = Value
+            Me._TorqueArmStyle = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius")>
-    Public Property GuyRadius() As Double
+    Public Property GuyRadius() As Double?
         Get
-            Return Me.prop_GuyRadius
+            Return Me._GuyRadius
         End Get
         Set
-            Me.prop_GuyRadius = Value
+            Me._GuyRadius = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius120")>
-    Public Property GuyRadius120() As Double
+    Public Property GuyRadius120() As Double?
         Get
-            Return Me.prop_GuyRadius120
+            Return Me._GuyRadius120
         End Get
         Set
-            Me.prop_GuyRadius120 = Value
+            Me._GuyRadius120 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius240")>
-    Public Property GuyRadius240() As Double
+    Public Property GuyRadius240() As Double?
         Get
-            Return Me.prop_GuyRadius240
+            Return Me._GuyRadius240
         End Get
         Set
-            Me.prop_GuyRadius240 = Value
+            Me._GuyRadius240 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius360")>
-    Public Property GuyRadius360() As Double
+    Public Property GuyRadius360() As Double?
         Get
-            Return Me.prop_GuyRadius360
+            Return Me._GuyRadius360
         End Get
         Set
-            Me.prop_GuyRadius360 = Value
+            Me._GuyRadius360 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmradius")>
-    Public Property TorqueArmRadius() As Double
+    Public Property TorqueArmRadius() As Double?
         Get
-            Return Me.prop_TorqueArmRadius
+            Return Me._TorqueArmRadius
         End Get
         Set
-            Me.prop_TorqueArmRadius = Value
+            Me._TorqueArmRadius = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmlegangle")>
-    Public Property TorqueArmLegAngle() As Double
+    Public Property TorqueArmLegAngle() As Double?
         Get
-            Return Me.prop_TorqueArmLegAngle
+            Return Me._TorqueArmLegAngle
         End Get
         Set
-            Me.prop_TorqueArmLegAngle = Value
+            Me._TorqueArmLegAngle = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth0Adjustment")>
-    Public Property Azimuth0Adjustment() As Double
+    Public Property Azimuth0Adjustment() As Double?
         Get
-            Return Me.prop_Azimuth0Adjustment
+            Return Me._Azimuth0Adjustment
         End Get
         Set
-            Me.prop_Azimuth0Adjustment = Value
+            Me._Azimuth0Adjustment = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth120Adjustment")>
-    Public Property Azimuth120Adjustment() As Double
+    Public Property Azimuth120Adjustment() As Double?
         Get
-            Return Me.prop_Azimuth120Adjustment
+            Return Me._Azimuth120Adjustment
         End Get
         Set
-            Me.prop_Azimuth120Adjustment = Value
+            Me._Azimuth120Adjustment = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth240Adjustment")>
-    Public Property Azimuth240Adjustment() As Double
+    Public Property Azimuth240Adjustment() As Double?
         Get
-            Return Me.prop_Azimuth240Adjustment
+            Return Me._Azimuth240Adjustment
         End Get
         Set
-            Me.prop_Azimuth240Adjustment = Value
+            Me._Azimuth240Adjustment = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth360Adjustment")>
-    Public Property Azimuth360Adjustment() As Double
+    Public Property Azimuth360Adjustment() As Double?
         Get
-            Return Me.prop_Azimuth360Adjustment
+            Return Me._Azimuth360Adjustment
         End Get
         Set
-            Me.prop_Azimuth360Adjustment = Value
+            Me._Azimuth360Adjustment = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor0Elevation")>
-    Public Property Anchor0Elevation() As Double
+    Public Property Anchor0Elevation() As Double?
         Get
-            Return Me.prop_Anchor0Elevation
+            Return Me._Anchor0Elevation
         End Get
         Set
-            Me.prop_Anchor0Elevation = Value
+            Me._Anchor0Elevation = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor120Elevation")>
-    Public Property Anchor120Elevation() As Double
+    Public Property Anchor120Elevation() As Double?
         Get
-            Return Me.prop_Anchor120Elevation
+            Return Me._Anchor120Elevation
         End Get
         Set
-            Me.prop_Anchor120Elevation = Value
+            Me._Anchor120Elevation = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor240Elevation")>
-    Public Property Anchor240Elevation() As Double
+    Public Property Anchor240Elevation() As Double?
         Get
-            Return Me.prop_Anchor240Elevation
+            Return Me._Anchor240Elevation
         End Get
         Set
-            Me.prop_Anchor240Elevation = Value
+            Me._Anchor240Elevation = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor360Elevation")>
-    Public Property Anchor360Elevation() As Double
+    Public Property Anchor360Elevation() As Double?
         Get
-            Return Me.prop_Anchor360Elevation
+            Return Me._Anchor360Elevation
         End Get
         Set
-            Me.prop_Anchor360Elevation = Value
+            Me._Anchor360Elevation = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guysize")>
     Public Property GuySize() As String
         Get
-            Return Me.prop_GuySize
+            Return Me._GuySize
         End Get
         Set
-            Me.prop_GuySize = Value
+            Me._GuySize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy120Size")>
     Public Property Guy120Size() As String
         Get
-            Return Me.prop_Guy120Size
+            Return Me._Guy120Size
         End Get
         Set
-            Me.prop_Guy120Size = Value
+            Me._Guy120Size = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy240Size")>
     Public Property Guy240Size() As String
         Get
-            Return Me.prop_Guy240Size
+            Return Me._Guy240Size
         End Get
         Set
-            Me.prop_Guy240Size = Value
+            Me._Guy240Size = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy360Size")>
     Public Property Guy360Size() As String
         Get
-            Return Me.prop_Guy360Size
+            Return Me._Guy360Size
         End Get
         Set
-            Me.prop_Guy360Size = Value
+            Me._Guy360Size = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guygrade")>
     Public Property GuyGrade() As String
         Get
-            Return Me.prop_GuyGrade
+            Return Me._GuyGrade
         End Get
         Set
-            Me.prop_GuyGrade = Value
+            Me._GuyGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmsize")>
     Public Property TorqueArmSize() As String
         Get
-            Return Me.prop_TorqueArmSize
+            Return Me._TorqueArmSize
         End Get
         Set
-            Me.prop_TorqueArmSize = Value
+            Me._TorqueArmSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmsizebot")>
     Public Property TorqueArmSizeBot() As String
         Get
-            Return Me.prop_TorqueArmSizeBot
+            Return Me._TorqueArmSizeBot
         End Get
         Set
-            Me.prop_TorqueArmSizeBot = Value
+            Me._TorqueArmSizeBot = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmtype")>
     Public Property TorqueArmType() As String
         Get
-            Return Me.prop_TorqueArmType
+            Return Me._TorqueArmType
         End Get
         Set
-            Me.prop_TorqueArmType = Value
+            Me._TorqueArmType = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmgrade")>
-    Public Property TorqueArmGrade() As Double
+    Public Property TorqueArmGrade() As Double?
         Get
-            Return Me.prop_TorqueArmGrade
+            Return Me._TorqueArmGrade
         End Get
         Set
-            Me.prop_TorqueArmGrade = Value
+            Me._TorqueArmGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmmatlgrade")>
     Public Property TorqueArmMatlGrade() As String
         Get
-            Return Me.prop_TorqueArmMatlGrade
+            Return Me._TorqueArmMatlGrade
         End Get
         Set
-            Me.prop_TorqueArmMatlGrade = Value
+            Me._TorqueArmMatlGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmkfactor")>
-    Public Property TorqueArmKFactor() As Double
+    Public Property TorqueArmKFactor() As Double?
         Get
-            Return Me.prop_TorqueArmKFactor
+            Return Me._TorqueArmKFactor
         End Get
         Set
-            Me.prop_TorqueArmKFactor = Value
+            Me._TorqueArmKFactor = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmkfactory")>
-    Public Property TorqueArmKFactorY() As Double
+    Public Property TorqueArmKFactorY() As Double?
         Get
-            Return Me.prop_TorqueArmKFactorY
+            Return Me._TorqueArmKFactorY
         End Get
         Set
-            Me.prop_TorqueArmKFactorY = Value
+            Me._TorqueArmKFactorY = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffkfactorx")>
-    Public Property GuyPullOffKFactorX() As Double
+    Public Property GuyPullOffKFactorX() As Double?
         Get
-            Return Me.prop_GuyPullOffKFactorX
+            Return Me._GuyPullOffKFactorX
         End Get
         Set
-            Me.prop_GuyPullOffKFactorX = Value
+            Me._GuyPullOffKFactorX = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffkfactory")>
-    Public Property GuyPullOffKFactorY() As Double
+    Public Property GuyPullOffKFactorY() As Double?
         Get
-            Return Me.prop_GuyPullOffKFactorY
+            Return Me._GuyPullOffKFactorY
         End Get
         Set
-            Me.prop_GuyPullOffKFactorY = Value
+            Me._GuyPullOffKFactorY = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagkfactorx")>
-    Public Property GuyDiagKFactorX() As Double
+    Public Property GuyDiagKFactorX() As Double?
         Get
-            Return Me.prop_GuyDiagKFactorX
+            Return Me._GuyDiagKFactorX
         End Get
         Set
-            Me.prop_GuyDiagKFactorX = Value
+            Me._GuyDiagKFactorX = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagkfactory")>
-    Public Property GuyDiagKFactorY() As Double
+    Public Property GuyDiagKFactorY() As Double?
         Get
-            Return Me.prop_GuyDiagKFactorY
+            Return Me._GuyDiagKFactorY
         End Get
         Set
-            Me.prop_GuyDiagKFactorY = Value
+            Me._GuyDiagKFactorY = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalc")>
-    Public Property GuyAutoCalc() As Boolean
+    Public Property GuyAutoCalc() As Boolean?
         Get
-            Return Me.prop_GuyAutoCalc
+            Return Me._GuyAutoCalc
         End Get
         Set
-            Me.prop_GuyAutoCalc = Value
+            Me._GuyAutoCalc = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyallguyssame")>
-    Public Property GuyAllGuysSame() As Boolean
+    Public Property GuyAllGuysSame() As Boolean?
         Get
-            Return Me.prop_GuyAllGuysSame
+            Return Me._GuyAllGuysSame
         End Get
         Set
-            Me.prop_GuyAllGuysSame = Value
+            Me._GuyAllGuysSame = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyallguysanchorsame")>
-    Public Property GuyAllGuysAnchorSame() As Boolean
+    Public Property GuyAllGuysAnchorSame() As Boolean?
         Get
-            Return Me.prop_GuyAllGuysAnchorSame
+            Return Me._GuyAllGuysAnchorSame
         End Get
         Set
-            Me.prop_GuyAllGuysAnchorSame = Value
+            Me._GuyAllGuysAnchorSame = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyisstrapping")>
-    Public Property GuyIsStrapping() As Boolean
+    Public Property GuyIsStrapping() As Boolean?
         Get
-            Return Me.prop_GuyIsStrapping
+            Return Me._GuyIsStrapping
         End Get
         Set
-            Me.prop_GuyIsStrapping = Value
+            Me._GuyIsStrapping = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffsize")>
     Public Property GuyPullOffSize() As String
         Get
-            Return Me.prop_GuyPullOffSize
+            Return Me._GuyPullOffSize
         End Get
         Set
-            Me.prop_GuyPullOffSize = Value
+            Me._GuyPullOffSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffsizebot")>
     Public Property GuyPullOffSizeBot() As String
         Get
-            Return Me.prop_GuyPullOffSizeBot
+            Return Me._GuyPullOffSizeBot
         End Get
         Set
-            Me.prop_GuyPullOffSizeBot = Value
+            Me._GuyPullOffSizeBot = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypullofftype")>
     Public Property GuyPullOffType() As String
         Get
-            Return Me.prop_GuyPullOffType
+            Return Me._GuyPullOffType
         End Get
         Set
-            Me.prop_GuyPullOffType = Value
+            Me._GuyPullOffType = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffgrade")>
-    Public Property GuyPullOffGrade() As Double
+    Public Property GuyPullOffGrade() As Double?
         Get
-            Return Me.prop_GuyPullOffGrade
+            Return Me._GuyPullOffGrade
         End Get
         Set
-            Me.prop_GuyPullOffGrade = Value
+            Me._GuyPullOffGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffmatlgrade")>
     Public Property GuyPullOffMatlGrade() As String
         Get
-            Return Me.prop_GuyPullOffMatlGrade
+            Return Me._GuyPullOffMatlGrade
         End Get
         Set
-            Me.prop_GuyPullOffMatlGrade = Value
+            Me._GuyPullOffMatlGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyupperdiagsize")>
     Public Property GuyUpperDiagSize() As String
         Get
-            Return Me.prop_GuyUpperDiagSize
+            Return Me._GuyUpperDiagSize
         End Get
         Set
-            Me.prop_GuyUpperDiagSize = Value
+            Me._GuyUpperDiagSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guylowerdiagsize")>
     Public Property GuyLowerDiagSize() As String
         Get
-            Return Me.prop_GuyLowerDiagSize
+            Return Me._GuyLowerDiagSize
         End Get
         Set
-            Me.prop_GuyLowerDiagSize = Value
+            Me._GuyLowerDiagSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagtype")>
     Public Property GuyDiagType() As String
         Get
-            Return Me.prop_GuyDiagType
+            Return Me._GuyDiagType
         End Get
         Set
-            Me.prop_GuyDiagType = Value
+            Me._GuyDiagType = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiaggrade")>
-    Public Property GuyDiagGrade() As Double
+    Public Property GuyDiagGrade() As Double?
         Get
-            Return Me.prop_GuyDiagGrade
+            Return Me._GuyDiagGrade
         End Get
         Set
-            Me.prop_GuyDiagGrade = Value
+            Me._GuyDiagGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagmatlgrade")>
     Public Property GuyDiagMatlGrade() As String
         Get
-            Return Me.prop_GuyDiagMatlGrade
+            Return Me._GuyDiagMatlGrade
         End Get
         Set
-            Me.prop_GuyDiagMatlGrade = Value
+            Me._GuyDiagMatlGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagnetwidthdeduct")>
-    Public Property GuyDiagNetWidthDeduct() As Double
+    Public Property GuyDiagNetWidthDeduct() As Double?
         Get
-            Return Me.prop_GuyDiagNetWidthDeduct
+            Return Me._GuyDiagNetWidthDeduct
         End Get
         Set
-            Me.prop_GuyDiagNetWidthDeduct = Value
+            Me._GuyDiagNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagufactor")>
-    Public Property GuyDiagUFactor() As Double
+    Public Property GuyDiagUFactor() As Double?
         Get
-            Return Me.prop_GuyDiagUFactor
+            Return Me._GuyDiagUFactor
         End Get
         Set
-            Me.prop_GuyDiagUFactor = Value
+            Me._GuyDiagUFactor = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagnumbolts")>
-    Public Property GuyDiagNumBolts() As Integer
+    Public Property GuyDiagNumBolts() As Integer?
         Get
-            Return Me.prop_GuyDiagNumBolts
+            Return Me._GuyDiagNumBolts
         End Get
         Set
-            Me.prop_GuyDiagNumBolts = Value
+            Me._GuyDiagNumBolts = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagonaloutofplanerestraint")>
-    Public Property GuyDiagonalOutOfPlaneRestraint() As Boolean
+    Public Property GuyDiagonalOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_GuyDiagonalOutOfPlaneRestraint
+            Return Me._GuyDiagonalOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_GuyDiagonalOutOfPlaneRestraint = Value
+            Me._GuyDiagonalOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltgrade")>
     Public Property GuyDiagBoltGrade() As String
         Get
-            Return Me.prop_GuyDiagBoltGrade
+            Return Me._GuyDiagBoltGrade
         End Get
         Set
-            Me.prop_GuyDiagBoltGrade = Value
+            Me._GuyDiagBoltGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltsize")>
-    Public Property GuyDiagBoltSize() As Double
+    Public Property GuyDiagBoltSize() As Double?
         Get
-            Return Me.prop_GuyDiagBoltSize
+            Return Me._GuyDiagBoltSize
         End Get
         Set
-            Me.prop_GuyDiagBoltSize = Value
+            Me._GuyDiagBoltSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltedgedistance")>
-    Public Property GuyDiagBoltEdgeDistance() As Double
+    Public Property GuyDiagBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_GuyDiagBoltEdgeDistance
+            Return Me._GuyDiagBoltEdgeDistance
         End Get
         Set
-            Me.prop_GuyDiagBoltEdgeDistance = Value
+            Me._GuyDiagBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltgagedistance")>
-    Public Property GuyDiagBoltGageDistance() As Double
+    Public Property GuyDiagBoltGageDistance() As Double?
         Get
-            Return Me.prop_GuyDiagBoltGageDistance
+            Return Me._GuyDiagBoltGageDistance
         End Get
         Set
-            Me.prop_GuyDiagBoltGageDistance = Value
+            Me._GuyDiagBoltGageDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffnetwidthdeduct")>
-    Public Property GuyPullOffNetWidthDeduct() As Double
+    Public Property GuyPullOffNetWidthDeduct() As Double?
         Get
-            Return Me.prop_GuyPullOffNetWidthDeduct
+            Return Me._GuyPullOffNetWidthDeduct
         End Get
         Set
-            Me.prop_GuyPullOffNetWidthDeduct = Value
+            Me._GuyPullOffNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffufactor")>
-    Public Property GuyPullOffUFactor() As Double
+    Public Property GuyPullOffUFactor() As Double?
         Get
-            Return Me.prop_GuyPullOffUFactor
+            Return Me._GuyPullOffUFactor
         End Get
         Set
-            Me.prop_GuyPullOffUFactor = Value
+            Me._GuyPullOffUFactor = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffnumbolts")>
-    Public Property GuyPullOffNumBolts() As Integer
+    Public Property GuyPullOffNumBolts() As Integer?
         Get
-            Return Me.prop_GuyPullOffNumBolts
+            Return Me._GuyPullOffNumBolts
         End Get
         Set
-            Me.prop_GuyPullOffNumBolts = Value
+            Me._GuyPullOffNumBolts = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffoutofplanerestraint")>
-    Public Property GuyPullOffOutOfPlaneRestraint() As Boolean
+    Public Property GuyPullOffOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_GuyPullOffOutOfPlaneRestraint
+            Return Me._GuyPullOffOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_GuyPullOffOutOfPlaneRestraint = Value
+            Me._GuyPullOffOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltgrade")>
     Public Property GuyPullOffBoltGrade() As String
         Get
-            Return Me.prop_GuyPullOffBoltGrade
+            Return Me._GuyPullOffBoltGrade
         End Get
         Set
-            Me.prop_GuyPullOffBoltGrade = Value
+            Me._GuyPullOffBoltGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltsize")>
-    Public Property GuyPullOffBoltSize() As Double
+    Public Property GuyPullOffBoltSize() As Double?
         Get
-            Return Me.prop_GuyPullOffBoltSize
+            Return Me._GuyPullOffBoltSize
         End Get
         Set
-            Me.prop_GuyPullOffBoltSize = Value
+            Me._GuyPullOffBoltSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltedgedistance")>
-    Public Property GuyPullOffBoltEdgeDistance() As Double
+    Public Property GuyPullOffBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_GuyPullOffBoltEdgeDistance
+            Return Me._GuyPullOffBoltEdgeDistance
         End Get
         Set
-            Me.prop_GuyPullOffBoltEdgeDistance = Value
+            Me._GuyPullOffBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltgagedistance")>
-    Public Property GuyPullOffBoltGageDistance() As Double
+    Public Property GuyPullOffBoltGageDistance() As Double?
         Get
-            Return Me.prop_GuyPullOffBoltGageDistance
+            Return Me._GuyPullOffBoltGageDistance
         End Get
         Set
-            Me.prop_GuyPullOffBoltGageDistance = Value
+            Me._GuyPullOffBoltGageDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmnetwidthdeduct")>
-    Public Property GuyTorqueArmNetWidthDeduct() As Double
+    Public Property GuyTorqueArmNetWidthDeduct() As Double?
         Get
-            Return Me.prop_GuyTorqueArmNetWidthDeduct
+            Return Me._GuyTorqueArmNetWidthDeduct
         End Get
         Set
-            Me.prop_GuyTorqueArmNetWidthDeduct = Value
+            Me._GuyTorqueArmNetWidthDeduct = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmufactor")>
-    Public Property GuyTorqueArmUFactor() As Double
+    Public Property GuyTorqueArmUFactor() As Double?
         Get
-            Return Me.prop_GuyTorqueArmUFactor
+            Return Me._GuyTorqueArmUFactor
         End Get
         Set
-            Me.prop_GuyTorqueArmUFactor = Value
+            Me._GuyTorqueArmUFactor = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmnumbolts")>
-    Public Property GuyTorqueArmNumBolts() As Integer
+    Public Property GuyTorqueArmNumBolts() As Integer?
         Get
-            Return Me.prop_GuyTorqueArmNumBolts
+            Return Me._GuyTorqueArmNumBolts
         End Get
         Set
-            Me.prop_GuyTorqueArmNumBolts = Value
+            Me._GuyTorqueArmNumBolts = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmoutofplanerestraint")>
-    Public Property GuyTorqueArmOutOfPlaneRestraint() As Boolean
+    Public Property GuyTorqueArmOutOfPlaneRestraint() As Boolean?
         Get
-            Return Me.prop_GuyTorqueArmOutOfPlaneRestraint
+            Return Me._GuyTorqueArmOutOfPlaneRestraint
         End Get
         Set
-            Me.prop_GuyTorqueArmOutOfPlaneRestraint = Value
+            Me._GuyTorqueArmOutOfPlaneRestraint = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltgrade")>
     Public Property GuyTorqueArmBoltGrade() As String
         Get
-            Return Me.prop_GuyTorqueArmBoltGrade
+            Return Me._GuyTorqueArmBoltGrade
         End Get
         Set
-            Me.prop_GuyTorqueArmBoltGrade = Value
+            Me._GuyTorqueArmBoltGrade = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltsize")>
-    Public Property GuyTorqueArmBoltSize() As Double
+    Public Property GuyTorqueArmBoltSize() As Double?
         Get
-            Return Me.prop_GuyTorqueArmBoltSize
+            Return Me._GuyTorqueArmBoltSize
         End Get
         Set
-            Me.prop_GuyTorqueArmBoltSize = Value
+            Me._GuyTorqueArmBoltSize = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltedgedistance")>
-    Public Property GuyTorqueArmBoltEdgeDistance() As Double
+    Public Property GuyTorqueArmBoltEdgeDistance() As Double?
         Get
-            Return Me.prop_GuyTorqueArmBoltEdgeDistance
+            Return Me._GuyTorqueArmBoltEdgeDistance
         End Get
         Set
-            Me.prop_GuyTorqueArmBoltEdgeDistance = Value
+            Me._GuyTorqueArmBoltEdgeDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltgagedistance")>
-    Public Property GuyTorqueArmBoltGageDistance() As Double
+    Public Property GuyTorqueArmBoltGageDistance() As Double?
         Get
-            Return Me.prop_GuyTorqueArmBoltGageDistance
+            Return Me._GuyTorqueArmBoltGageDistance
         End Get
         Set
-            Me.prop_GuyTorqueArmBoltGageDistance = Value
+            Me._GuyTorqueArmBoltGageDistance = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension")>
-    Public Property GuyPerCentTension() As Double
+    Public Property GuyPerCentTension() As Double?
         Get
-            Return Me.prop_GuyPerCentTension
+            Return Me._GuyPerCentTension
         End Get
         Set
-            Me.prop_GuyPerCentTension = Value
+            Me._GuyPerCentTension = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension120")>
-    Public Property GuyPerCentTension120() As Double
+    Public Property GuyPerCentTension120() As Double?
         Get
-            Return Me.prop_GuyPerCentTension120
+            Return Me._GuyPerCentTension120
         End Get
         Set
-            Me.prop_GuyPerCentTension120 = Value
+            Me._GuyPerCentTension120 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension240")>
-    Public Property GuyPerCentTension240() As Double
+    Public Property GuyPerCentTension240() As Double?
         Get
-            Return Me.prop_GuyPerCentTension240
+            Return Me._GuyPerCentTension240
         End Get
         Set
-            Me.prop_GuyPerCentTension240 = Value
+            Me._GuyPerCentTension240 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension360")>
-    Public Property GuyPerCentTension360() As Double
+    Public Property GuyPerCentTension360() As Double?
         Get
-            Return Me.prop_GuyPerCentTension360
+            Return Me._GuyPerCentTension360
         End Get
         Set
-            Me.prop_GuyPerCentTension360 = Value
+            Me._GuyPerCentTension360 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor")>
-    Public Property GuyEffFactor() As Double
+    Public Property GuyEffFactor() As Double?
         Get
-            Return Me.prop_GuyEffFactor
+            Return Me._GuyEffFactor
         End Get
         Set
-            Me.prop_GuyEffFactor = Value
+            Me._GuyEffFactor = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor120")>
-    Public Property GuyEffFactor120() As Double
+    Public Property GuyEffFactor120() As Double?
         Get
-            Return Me.prop_GuyEffFactor120
+            Return Me._GuyEffFactor120
         End Get
         Set
-            Me.prop_GuyEffFactor120 = Value
+            Me._GuyEffFactor120 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor240")>
-    Public Property GuyEffFactor240() As Double
+    Public Property GuyEffFactor240() As Double?
         Get
-            Return Me.prop_GuyEffFactor240
+            Return Me._GuyEffFactor240
         End Get
         Set
-            Me.prop_GuyEffFactor240 = Value
+            Me._GuyEffFactor240 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor360")>
-    Public Property GuyEffFactor360() As Double
+    Public Property GuyEffFactor360() As Double?
         Get
-            Return Me.prop_GuyEffFactor360
+            Return Me._GuyEffFactor360
         End Get
         Set
-            Me.prop_GuyEffFactor360 = Value
+            Me._GuyEffFactor360 = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guynuminsulators")>
-    Public Property GuyNumInsulators() As Integer
+    Public Property GuyNumInsulators() As Integer?
         Get
-            Return Me.prop_GuyNumInsulators
+            Return Me._GuyNumInsulators
         End Get
         Set
-            Me.prop_GuyNumInsulators = Value
+            Me._GuyNumInsulators = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatorlength")>
-    Public Property GuyInsulatorLength() As Double
+    Public Property GuyInsulatorLength() As Double?
         Get
-            Return Me.prop_GuyInsulatorLength
+            Return Me._GuyInsulatorLength
         End Get
         Set
-            Me.prop_GuyInsulatorLength = Value
+            Me._GuyInsulatorLength = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatordia")>
-    Public Property GuyInsulatorDia() As Double
+    Public Property GuyInsulatorDia() As Double?
         Get
-            Return Me.prop_GuyInsulatorDia
+            Return Me._GuyInsulatorDia
         End Get
         Set
-            Me.prop_GuyInsulatorDia = Value
+            Me._GuyInsulatorDia = Value
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatorwt")>
-    Public Property GuyInsulatorWt() As Double
+    Public Property GuyInsulatorWt() As Double?
         Get
-            Return Me.prop_GuyInsulatorWt
+            Return Me._GuyInsulatorWt
         End Get
         Set
-            Me.prop_GuyInsulatorWt = Value
+            Me._GuyInsulatorWt = Value
         End Set
     End Property
+#End Region
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    Public Sub New(data As DataRow)
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.GuyRec = CNullInt(data.Item("GuyRec"))
+        Me.GuyHeight = CNullDbl(data.Item("GuyHeight"))
+        Me.GuyAutoCalcKSingleAngle = CNullBool(data.Item("GuyAutoCalcKSingleAngle"))
+        Me.GuyAutoCalcKSolidRound = CNullBool(data.Item("GuyAutoCalcKSolidRound"))
+        Me.GuyMount = CNullStr(data.Item("GuyMount"))
+        Me.TorqueArmStyle = CNullStr(data.Item("TorqueArmStyle"))
+        Me.GuyRadius = CNullDbl(data.Item("GuyRadius"))
+        Me.GuyRadius120 = CNullDbl(data.Item("GuyRadius120"))
+        Me.GuyRadius240 = CNullDbl(data.Item("GuyRadius240"))
+        Me.GuyRadius360 = CNullDbl(data.Item("GuyRadius360"))
+        Me.TorqueArmRadius = CNullDbl(data.Item("TorqueArmRadius"))
+        Me.TorqueArmLegAngle = CNullDbl(data.Item("TorqueArmLegAngle"))
+        Me.Azimuth0Adjustment = CNullDbl(data.Item("Azimuth0Adjustment"))
+        Me.Azimuth120Adjustment = CNullDbl(data.Item("Azimuth120Adjustment"))
+        Me.Azimuth240Adjustment = CNullDbl(data.Item("Azimuth240Adjustment"))
+        Me.Azimuth360Adjustment = CNullDbl(data.Item("Azimuth360Adjustment"))
+        Me.Anchor0Elevation = CNullDbl(data.Item("Anchor0Elevation"))
+        Me.Anchor120Elevation = CNullDbl(data.Item("Anchor120Elevation"))
+        Me.Anchor240Elevation = CNullDbl(data.Item("Anchor240Elevation"))
+        Me.Anchor360Elevation = CNullDbl(data.Item("Anchor360Elevation"))
+        Me.GuySize = CNullStr(data.Item("GuySize"))
+        Me.Guy120Size = CNullStr(data.Item("Guy120Size"))
+        Me.Guy240Size = CNullStr(data.Item("Guy240Size"))
+        Me.Guy360Size = CNullStr(data.Item("Guy360Size"))
+        Me.GuyGrade = CNullStr(data.Item("GuyGrade"))
+        Me.TorqueArmSize = CNullStr(data.Item("TorqueArmSize"))
+        Me.TorqueArmSizeBot = CNullStr(data.Item("TorqueArmSizeBot"))
+        Me.TorqueArmType = CNullStr(data.Item("TorqueArmType"))
+        Me.TorqueArmGrade = CNullDbl(data.Item("TorqueArmGrade"))
+        Me.TorqueArmMatlGrade = CNullStr(data.Item("TorqueArmMatlGrade"))
+        Me.TorqueArmKFactor = CNullDbl(data.Item("TorqueArmKFactor"))
+        Me.TorqueArmKFactorY = CNullDbl(data.Item("TorqueArmKFactorY"))
+        Me.GuyPullOffKFactorX = CNullDbl(data.Item("GuyPullOffKFactorX"))
+        Me.GuyPullOffKFactorY = CNullDbl(data.Item("GuyPullOffKFactorY"))
+        Me.GuyDiagKFactorX = CNullDbl(data.Item("GuyDiagKFactorX"))
+        Me.GuyDiagKFactorY = CNullDbl(data.Item("GuyDiagKFactorY"))
+        Me.GuyAutoCalc = CNullBool(data.Item("GuyAutoCalc"))
+        Me.GuyAllGuysSame = CNullBool(data.Item("GuyAllGuysSame"))
+        Me.GuyAllGuysAnchorSame = CNullBool(data.Item("GuyAllGuysAnchorSame"))
+        Me.GuyIsStrapping = CNullBool(data.Item("GuyIsStrapping"))
+        Me.GuyPullOffSize = CNullStr(data.Item("GuyPullOffSize"))
+        Me.GuyPullOffSizeBot = CNullStr(data.Item("GuyPullOffSizeBot"))
+        Me.GuyPullOffType = CNullStr(data.Item("GuyPullOffType"))
+        Me.GuyPullOffGrade = CNullDbl(data.Item("GuyPullOffGrade"))
+        Me.GuyPullOffMatlGrade = CNullStr(data.Item("GuyPullOffMatlGrade"))
+        Me.GuyUpperDiagSize = CNullStr(data.Item("GuyUpperDiagSize"))
+        Me.GuyLowerDiagSize = CNullStr(data.Item("GuyLowerDiagSize"))
+        Me.GuyDiagType = CNullStr(data.Item("GuyDiagType"))
+        Me.GuyDiagGrade = CNullDbl(data.Item("GuyDiagGrade"))
+        Me.GuyDiagMatlGrade = CNullStr(data.Item("GuyDiagMatlGrade"))
+        Me.GuyDiagNetWidthDeduct = CNullDbl(data.Item("GuyDiagNetWidthDeduct"))
+        Me.GuyDiagUFactor = CNullDbl(data.Item("GuyDiagUFactor"))
+        Me.GuyDiagNumBolts = CNullInt(data.Item("GuyDiagNumBolts"))
+        Me.GuyDiagonalOutOfPlaneRestraint = CNullBool(data.Item("GuyDiagonalOutOfPlaneRestraint"))
+        Me.GuyDiagBoltGrade = CNullStr(data.Item("GuyDiagBoltGrade"))
+        Me.GuyDiagBoltSize = CNullDbl(data.Item("GuyDiagBoltSize"))
+        Me.GuyDiagBoltEdgeDistance = CNullDbl(data.Item("GuyDiagBoltEdgeDistance"))
+        Me.GuyDiagBoltGageDistance = CNullDbl(data.Item("GuyDiagBoltGageDistance"))
+        Me.GuyPullOffNetWidthDeduct = CNullDbl(data.Item("GuyPullOffNetWidthDeduct"))
+        Me.GuyPullOffUFactor = CNullDbl(data.Item("GuyPullOffUFactor"))
+        Me.GuyPullOffNumBolts = CNullInt(data.Item("GuyPullOffNumBolts"))
+        Me.GuyPullOffOutOfPlaneRestraint = CNullBool(data.Item("GuyPullOffOutOfPlaneRestraint"))
+        Me.GuyPullOffBoltGrade = CNullStr(data.Item("GuyPullOffBoltGrade"))
+        Me.GuyPullOffBoltSize = CNullDbl(data.Item("GuyPullOffBoltSize"))
+        Me.GuyPullOffBoltEdgeDistance = CNullDbl(data.Item("GuyPullOffBoltEdgeDistance"))
+        Me.GuyPullOffBoltGageDistance = CNullDbl(data.Item("GuyPullOffBoltGageDistance"))
+        Me.GuyTorqueArmNetWidthDeduct = CNullDbl(data.Item("GuyTorqueArmNetWidthDeduct"))
+        Me.GuyTorqueArmUFactor = CNullDbl(data.Item("GuyTorqueArmUFactor"))
+        Me.GuyTorqueArmNumBolts = CNullInt(data.Item("GuyTorqueArmNumBolts"))
+        Me.GuyTorqueArmOutOfPlaneRestraint = CNullBool(data.Item("GuyTorqueArmOutOfPlaneRestraint"))
+        Me.GuyTorqueArmBoltGrade = CNullStr(data.Item("GuyTorqueArmBoltGrade"))
+        Me.GuyTorqueArmBoltSize = CNullDbl(data.Item("GuyTorqueArmBoltSize"))
+        Me.GuyTorqueArmBoltEdgeDistance = CNullDbl(data.Item("GuyTorqueArmBoltEdgeDistance"))
+        Me.GuyTorqueArmBoltGageDistance = CNullDbl(data.Item("GuyTorqueArmBoltGageDistance"))
+        Me.GuyPerCentTension = CNullDbl(data.Item("GuyPerCentTension"))
+        Me.GuyPerCentTension120 = CNullDbl(data.Item("GuyPerCentTension120"))
+        Me.GuyPerCentTension240 = CNullDbl(data.Item("GuyPerCentTension240"))
+        Me.GuyPerCentTension360 = CNullDbl(data.Item("GuyPerCentTension360"))
+        Me.GuyEffFactor = CNullDbl(data.Item("GuyEffFactor"))
+        Me.GuyEffFactor120 = CNullDbl(data.Item("GuyEffFactor120"))
+        Me.GuyEffFactor240 = CNullDbl(data.Item("GuyEffFactor240"))
+        Me.GuyEffFactor360 = CNullDbl(data.Item("GuyEffFactor360"))
+        Me.GuyNumInsulators = CNullInt(data.Item("GuyNumInsulators"))
+        Me.GuyInsulatorLength = CNullDbl(data.Item("GuyInsulatorLength"))
+        Me.GuyInsulatorDia = CNullDbl(data.Item("GuyInsulatorDia"))
+        Me.GuyInsulatorWt = CNullDbl(data.Item("GuyInsulatorWt"))
+
+    End Sub
+#End Region
+
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString(Me.GuyRec.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyHeight.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyAutoCalcKSingleAngle.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyAutoCalcKSolidRound.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyMount.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmStyle.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyRadius.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyRadius120.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyRadius240.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyRadius360.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmRadius.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmLegAngle.ToString)
+        insertString = insertString.AddtoDBString(Me.Azimuth0Adjustment.ToString)
+        insertString = insertString.AddtoDBString(Me.Azimuth120Adjustment.ToString)
+        insertString = insertString.AddtoDBString(Me.Azimuth240Adjustment.ToString)
+        insertString = insertString.AddtoDBString(Me.Azimuth360Adjustment.ToString)
+        insertString = insertString.AddtoDBString(Me.Anchor0Elevation.ToString)
+        insertString = insertString.AddtoDBString(Me.Anchor120Elevation.ToString)
+        insertString = insertString.AddtoDBString(Me.Anchor240Elevation.ToString)
+        insertString = insertString.AddtoDBString(Me.Anchor360Elevation.ToString)
+        insertString = insertString.AddtoDBString(Me.GuySize.ToString)
+        insertString = insertString.AddtoDBString(Me.Guy120Size.ToString)
+        insertString = insertString.AddtoDBString(Me.Guy240Size.ToString)
+        insertString = insertString.AddtoDBString(Me.Guy360Size.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmSize.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmSizeBot.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmType.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmKFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.TorqueArmKFactorY.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffKFactorX.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffKFactorY.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagKFactorX.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagKFactorY.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyAutoCalc.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyAllGuysSame.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyAllGuysAnchorSame.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyIsStrapping.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffSizeBot.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffType.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyUpperDiagSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyLowerDiagSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagType.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagonalOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyDiagBoltGageDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPullOffBoltGageDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmNetWidthDeduct.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmUFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmNumBolts.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmOutOfPlaneRestraint.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmBoltGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmBoltSize.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmBoltEdgeDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyTorqueArmBoltGageDistance.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPerCentTension.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPerCentTension120.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPerCentTension240.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyPerCentTension360.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyEffFactor.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyEffFactor120.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyEffFactor240.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyEffFactor360.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyNumInsulators.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyInsulatorLength.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyInsulatorDia.ToString)
+        insertString = insertString.AddtoDBString(Me.GuyInsulatorWt.ToString)
+
+
+        Return insertString
+    End Function
 
 End Class
 #End Region
@@ -13129,2047 +15737,2049 @@ End Class
 #Region "Loading"
 
 Partial Public Class tnxFeedLine
-    Private prop_FeedLineRec As Integer
-    Private prop_FeedLineEnabled As Boolean
-    Private prop_FeedLineDatabase As String
-    Private prop_FeedLineDescription As String
-    Private prop_FeedLineClassificationCategory As String
-    Private prop_FeedLineNote As String
-    Private prop_FeedLineNum As Integer
-    Private prop_FeedLineUseShielding As Boolean
-    Private prop_ExcludeFeedLineFromTorque As Boolean
-    Private prop_FeedLineNumPerRow As Integer
-    Private prop_FeedLineFace As Integer
-    Private prop_FeedLineComponentType As String
-    Private prop_FeedLineGroupTreatmentType As String
-    Private prop_FeedLineRoundClusterDia As Double
-    Private prop_FeedLineWidth As Double
-    Private prop_FeedLinePerimeter As Double
-    Private prop_FlatAttachmentEffectiveWidthRatio As Double
-    Private prop_AutoCalcFlatAttachmentEffectiveWidthRatio As Boolean
-    Private prop_FeedLineShieldingFactorKaNoIce As Double
-    Private prop_FeedLineShieldingFactorKaIce As Double
-    Private prop_FeedLineAutoCalcKa As Boolean
-    Private prop_FeedLineCaAaNoIce As Double
-    Private prop_FeedLineCaAaIce As Double
-    Private prop_FeedLineCaAaIce_1 As Double
-    Private prop_FeedLineCaAaIce_2 As Double
-    Private prop_FeedLineCaAaIce_4 As Double
-    Private prop_FeedLineWtNoIce As Double
-    Private prop_FeedLineWtIce As Double
-    Private prop_FeedLineWtIce_1 As Double
-    Private prop_FeedLineWtIce_2 As Double
-    Private prop_FeedLineWtIce_4 As Double
-    Private prop_FeedLineFaceOffset As Double
-    Private prop_FeedLineOffsetFrac As Double
-    Private prop_FeedLinePerimeterOffsetStartFrac As Double
-    Private prop_FeedLinePerimeterOffsetEndFrac As Double
-    Private prop_FeedLineStartHt As Double
-    Private prop_FeedLineEndHt As Double
-    Private prop_FeedLineClearSpacing As Double
-    Private prop_FeedLineRowClearSpacing As Double
+    Private _FeedLineRec As Integer?
+    Private _FeedLineEnabled As Boolean?
+    Private _FeedLineDatabase As String
+    Private _FeedLineDescription As String
+    Private _FeedLineClassificationCategory As String
+    Private _FeedLineNote As String
+    Private _FeedLineNum As Integer?
+    Private _FeedLineUseShielding As Boolean?
+    Private _ExcludeFeedLineFromTorque As Boolean?
+    Private _FeedLineNumPerRow As Integer?
+    Private _FeedLineFace As Integer?
+    Private _FeedLineComponentType As String
+    Private _FeedLineGroupTreatmentType As String
+    Private _FeedLineRoundClusterDia As Double?
+    Private _FeedLineWidth As Double?
+    Private _FeedLinePerimeter As Double?
+    Private _FlatAttachmentEffectiveWidthRatio As Double?
+    Private _AutoCalcFlatAttachmentEffectiveWidthRatio As Boolean?
+    Private _FeedLineShieldingFactorKaNoIce As Double?
+    Private _FeedLineShieldingFactorKaIce As Double?
+    Private _FeedLineAutoCalcKa As Boolean?
+    Private _FeedLineCaAaNoIce As Double?
+    Private _FeedLineCaAaIce As Double?
+    Private _FeedLineCaAaIce_1 As Double?
+    Private _FeedLineCaAaIce_2 As Double?
+    Private _FeedLineCaAaIce_4 As Double?
+    Private _FeedLineWtNoIce As Double?
+    Private _FeedLineWtIce As Double?
+    Private _FeedLineWtIce_1 As Double?
+    Private _FeedLineWtIce_2 As Double?
+    Private _FeedLineWtIce_4 As Double?
+    Private _FeedLineFaceOffset As Double?
+    Private _FeedLineOffsetFrac As Double?
+    Private _FeedLinePerimeterOffsetStartFrac As Double?
+    Private _FeedLinePerimeterOffsetEndFrac As Double?
+    Private _FeedLineStartHt As Double?
+    Private _FeedLineEndHt As Double?
+    Private _FeedLineClearSpacing As Double?
+    Private _FeedLineRowClearSpacing As Double?
 
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRec")>
-    Public Property FeedLineRec() As Integer
+    Public Property FeedLineRec() As Integer?
         Get
-            Return Me.prop_FeedLineRec
+            Return Me._FeedLineRec
         End Get
         Set
-            Me.prop_FeedLineRec = Value
+            Me._FeedLineRec = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEnabled")>
-    Public Property FeedLineEnabled() As Boolean
+    Public Property FeedLineEnabled() As Boolean?
         Get
-            Return Me.prop_FeedLineEnabled
+            Return Me._FeedLineEnabled
         End Get
         Set
-            Me.prop_FeedLineEnabled = Value
+            Me._FeedLineEnabled = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDatabase")>
     Public Property FeedLineDatabase() As String
         Get
-            Return Me.prop_FeedLineDatabase
+            Return Me._FeedLineDatabase
         End Get
         Set
-            Me.prop_FeedLineDatabase = Value
+            Me._FeedLineDatabase = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDescription")>
     Public Property FeedLineDescription() As String
         Get
-            Return Me.prop_FeedLineDescription
+            Return Me._FeedLineDescription
         End Get
         Set
-            Me.prop_FeedLineDescription = Value
+            Me._FeedLineDescription = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClassificationCategory")>
     Public Property FeedLineClassificationCategory() As String
         Get
-            Return Me.prop_FeedLineClassificationCategory
+            Return Me._FeedLineClassificationCategory
         End Get
         Set
-            Me.prop_FeedLineClassificationCategory = Value
+            Me._FeedLineClassificationCategory = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNote")>
     Public Property FeedLineNote() As String
         Get
-            Return Me.prop_FeedLineNote
+            Return Me._FeedLineNote
         End Get
         Set
-            Me.prop_FeedLineNote = Value
+            Me._FeedLineNote = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNum")>
-    Public Property FeedLineNum() As Integer
+    Public Property FeedLineNum() As Integer?
         Get
-            Return Me.prop_FeedLineNum
+            Return Me._FeedLineNum
         End Get
         Set
-            Me.prop_FeedLineNum = Value
+            Me._FeedLineNum = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineUseShielding")>
-    Public Property FeedLineUseShielding() As Boolean
+    Public Property FeedLineUseShielding() As Boolean?
         Get
-            Return Me.prop_FeedLineUseShielding
+            Return Me._FeedLineUseShielding
         End Get
         Set
-            Me.prop_FeedLineUseShielding = Value
+            Me._FeedLineUseShielding = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("ExcludeFeedLineFromTorque")>
-    Public Property ExcludeFeedLineFromTorque() As Boolean
+    Public Property ExcludeFeedLineFromTorque() As Boolean?
         Get
-            Return Me.prop_ExcludeFeedLineFromTorque
+            Return Me._ExcludeFeedLineFromTorque
         End Get
         Set
-            Me.prop_ExcludeFeedLineFromTorque = Value
+            Me._ExcludeFeedLineFromTorque = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNumPerRow")>
-    Public Property FeedLineNumPerRow() As Integer
+    Public Property FeedLineNumPerRow() As Integer?
         Get
-            Return Me.prop_FeedLineNumPerRow
+            Return Me._FeedLineNumPerRow
         End Get
         Set
-            Me.prop_FeedLineNumPerRow = Value
+            Me._FeedLineNumPerRow = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("FeedLineFace")>
-    Public Property FeedLineFace() As Integer
+    Public Property FeedLineFace() As Integer?
         Get
-            Return Me.prop_FeedLineFace
+            Return Me._FeedLineFace
         End Get
         Set
-            Me.prop_FeedLineFace = Value
+            Me._FeedLineFace = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineComponentType")>
     Public Property FeedLineComponentType() As String
         Get
-            Return Me.prop_FeedLineComponentType
+            Return Me._FeedLineComponentType
         End Get
         Set
-            Me.prop_FeedLineComponentType = Value
+            Me._FeedLineComponentType = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineGroupTreatmentType")>
     Public Property FeedLineGroupTreatmentType() As String
         Get
-            Return Me.prop_FeedLineGroupTreatmentType
+            Return Me._FeedLineGroupTreatmentType
         End Get
         Set
-            Me.prop_FeedLineGroupTreatmentType = Value
+            Me._FeedLineGroupTreatmentType = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRoundClusterDia")>
-    Public Property FeedLineRoundClusterDia() As Double
+    Public Property FeedLineRoundClusterDia() As Double?
         Get
-            Return Me.prop_FeedLineRoundClusterDia
+            Return Me._FeedLineRoundClusterDia
         End Get
         Set
-            Me.prop_FeedLineRoundClusterDia = Value
+            Me._FeedLineRoundClusterDia = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWidth")>
-    Public Property FeedLineWidth() As Double
+    Public Property FeedLineWidth() As Double?
         Get
-            Return Me.prop_FeedLineWidth
+            Return Me._FeedLineWidth
         End Get
         Set
-            Me.prop_FeedLineWidth = Value
+            Me._FeedLineWidth = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeter")>
-    Public Property FeedLinePerimeter() As Double
+    Public Property FeedLinePerimeter() As Double?
         Get
-            Return Me.prop_FeedLinePerimeter
+            Return Me._FeedLinePerimeter
         End Get
         Set
-            Me.prop_FeedLinePerimeter = Value
+            Me._FeedLinePerimeter = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FlatAttachmentEffectiveWidthRatio")>
-    Public Property FlatAttachmentEffectiveWidthRatio() As Double
+    Public Property FlatAttachmentEffectiveWidthRatio() As Double?
         Get
-            Return Me.prop_FlatAttachmentEffectiveWidthRatio
+            Return Me._FlatAttachmentEffectiveWidthRatio
         End Get
         Set
-            Me.prop_FlatAttachmentEffectiveWidthRatio = Value
+            Me._FlatAttachmentEffectiveWidthRatio = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("AutoCalcFlatAttachmentEffectiveWidthRatio")>
-    Public Property AutoCalcFlatAttachmentEffectiveWidthRatio() As Boolean
+    Public Property AutoCalcFlatAttachmentEffectiveWidthRatio() As Boolean?
         Get
-            Return Me.prop_AutoCalcFlatAttachmentEffectiveWidthRatio
+            Return Me._AutoCalcFlatAttachmentEffectiveWidthRatio
         End Get
         Set
-            Me.prop_AutoCalcFlatAttachmentEffectiveWidthRatio = Value
+            Me._AutoCalcFlatAttachmentEffectiveWidthRatio = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaNoIce")>
-    Public Property FeedLineShieldingFactorKaNoIce() As Double
+    Public Property FeedLineShieldingFactorKaNoIce() As Double?
         Get
-            Return Me.prop_FeedLineShieldingFactorKaNoIce
+            Return Me._FeedLineShieldingFactorKaNoIce
         End Get
         Set
-            Me.prop_FeedLineShieldingFactorKaNoIce = Value
+            Me._FeedLineShieldingFactorKaNoIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaIce")>
-    Public Property FeedLineShieldingFactorKaIce() As Double
+    Public Property FeedLineShieldingFactorKaIce() As Double?
         Get
-            Return Me.prop_FeedLineShieldingFactorKaIce
+            Return Me._FeedLineShieldingFactorKaIce
         End Get
         Set
-            Me.prop_FeedLineShieldingFactorKaIce = Value
+            Me._FeedLineShieldingFactorKaIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineAutoCalcKa")>
-    Public Property FeedLineAutoCalcKa() As Boolean
+    Public Property FeedLineAutoCalcKa() As Boolean?
         Get
-            Return Me.prop_FeedLineAutoCalcKa
+            Return Me._FeedLineAutoCalcKa
         End Get
         Set
-            Me.prop_FeedLineAutoCalcKa = Value
+            Me._FeedLineAutoCalcKa = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaNoIce")>
-    Public Property FeedLineCaAaNoIce() As Double
+    Public Property FeedLineCaAaNoIce() As Double?
         Get
-            Return Me.prop_FeedLineCaAaNoIce
+            Return Me._FeedLineCaAaNoIce
         End Get
         Set
-            Me.prop_FeedLineCaAaNoIce = Value
+            Me._FeedLineCaAaNoIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce")>
-    Public Property FeedLineCaAaIce() As Double
+    Public Property FeedLineCaAaIce() As Double?
         Get
-            Return Me.prop_FeedLineCaAaIce
+            Return Me._FeedLineCaAaIce
         End Get
         Set
-            Me.prop_FeedLineCaAaIce = Value
+            Me._FeedLineCaAaIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_1")>
-    Public Property FeedLineCaAaIce_1() As Double
+    Public Property FeedLineCaAaIce_1() As Double?
         Get
-            Return Me.prop_FeedLineCaAaIce_1
+            Return Me._FeedLineCaAaIce_1
         End Get
         Set
-            Me.prop_FeedLineCaAaIce_1 = Value
+            Me._FeedLineCaAaIce_1 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_2")>
-    Public Property FeedLineCaAaIce_2() As Double
+    Public Property FeedLineCaAaIce_2() As Double?
         Get
-            Return Me.prop_FeedLineCaAaIce_2
+            Return Me._FeedLineCaAaIce_2
         End Get
         Set
-            Me.prop_FeedLineCaAaIce_2 = Value
+            Me._FeedLineCaAaIce_2 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_4")>
-    Public Property FeedLineCaAaIce_4() As Double
+    Public Property FeedLineCaAaIce_4() As Double?
         Get
-            Return Me.prop_FeedLineCaAaIce_4
+            Return Me._FeedLineCaAaIce_4
         End Get
         Set
-            Me.prop_FeedLineCaAaIce_4 = Value
+            Me._FeedLineCaAaIce_4 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtNoIce")>
-    Public Property FeedLineWtNoIce() As Double
+    Public Property FeedLineWtNoIce() As Double?
         Get
-            Return Me.prop_FeedLineWtNoIce
+            Return Me._FeedLineWtNoIce
         End Get
         Set
-            Me.prop_FeedLineWtNoIce = Value
+            Me._FeedLineWtNoIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce")>
-    Public Property FeedLineWtIce() As Double
+    Public Property FeedLineWtIce() As Double?
         Get
-            Return Me.prop_FeedLineWtIce
+            Return Me._FeedLineWtIce
         End Get
         Set
-            Me.prop_FeedLineWtIce = Value
+            Me._FeedLineWtIce = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_1")>
-    Public Property FeedLineWtIce_1() As Double
+    Public Property FeedLineWtIce_1() As Double?
         Get
-            Return Me.prop_FeedLineWtIce_1
+            Return Me._FeedLineWtIce_1
         End Get
         Set
-            Me.prop_FeedLineWtIce_1 = Value
+            Me._FeedLineWtIce_1 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_2")>
-    Public Property FeedLineWtIce_2() As Double
+    Public Property FeedLineWtIce_2() As Double?
         Get
-            Return Me.prop_FeedLineWtIce_2
+            Return Me._FeedLineWtIce_2
         End Get
         Set
-            Me.prop_FeedLineWtIce_2 = Value
+            Me._FeedLineWtIce_2 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_4")>
-    Public Property FeedLineWtIce_4() As Double
+    Public Property FeedLineWtIce_4() As Double?
         Get
-            Return Me.prop_FeedLineWtIce_4
+            Return Me._FeedLineWtIce_4
         End Get
         Set
-            Me.prop_FeedLineWtIce_4 = Value
+            Me._FeedLineWtIce_4 = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineFaceOffset")>
-    Public Property FeedLineFaceOffset() As Double
+    Public Property FeedLineFaceOffset() As Double?
         Get
-            Return Me.prop_FeedLineFaceOffset
+            Return Me._FeedLineFaceOffset
         End Get
         Set
-            Me.prop_FeedLineFaceOffset = Value
+            Me._FeedLineFaceOffset = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineOffsetFrac")>
-    Public Property FeedLineOffsetFrac() As Double
+    Public Property FeedLineOffsetFrac() As Double?
         Get
-            Return Me.prop_FeedLineOffsetFrac
+            Return Me._FeedLineOffsetFrac
         End Get
         Set
-            Me.prop_FeedLineOffsetFrac = Value
+            Me._FeedLineOffsetFrac = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetStartFrac")>
-    Public Property FeedLinePerimeterOffsetStartFrac() As Double
+    Public Property FeedLinePerimeterOffsetStartFrac() As Double?
         Get
-            Return Me.prop_FeedLinePerimeterOffsetStartFrac
+            Return Me._FeedLinePerimeterOffsetStartFrac
         End Get
         Set
-            Me.prop_FeedLinePerimeterOffsetStartFrac = Value
+            Me._FeedLinePerimeterOffsetStartFrac = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetEndFrac")>
-    Public Property FeedLinePerimeterOffsetEndFrac() As Double
+    Public Property FeedLinePerimeterOffsetEndFrac() As Double?
         Get
-            Return Me.prop_FeedLinePerimeterOffsetEndFrac
+            Return Me._FeedLinePerimeterOffsetEndFrac
         End Get
         Set
-            Me.prop_FeedLinePerimeterOffsetEndFrac = Value
+            Me._FeedLinePerimeterOffsetEndFrac = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineStartHt")>
-    Public Property FeedLineStartHt() As Double
+    Public Property FeedLineStartHt() As Double?
         Get
-            Return Me.prop_FeedLineStartHt
+            Return Me._FeedLineStartHt
         End Get
         Set
-            Me.prop_FeedLineStartHt = Value
+            Me._FeedLineStartHt = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEndHt")>
-    Public Property FeedLineEndHt() As Double
+    Public Property FeedLineEndHt() As Double?
         Get
-            Return Me.prop_FeedLineEndHt
+            Return Me._FeedLineEndHt
         End Get
         Set
-            Me.prop_FeedLineEndHt = Value
+            Me._FeedLineEndHt = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClearSpacing")>
-    Public Property FeedLineClearSpacing() As Double
+    Public Property FeedLineClearSpacing() As Double?
         Get
-            Return Me.prop_FeedLineClearSpacing
+            Return Me._FeedLineClearSpacing
         End Get
         Set
-            Me.prop_FeedLineClearSpacing = Value
+            Me._FeedLineClearSpacing = Value
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRowClearSpacing")>
-    Public Property FeedLineRowClearSpacing() As Double
+    Public Property FeedLineRowClearSpacing() As Double?
         Get
-            Return Me.prop_FeedLineRowClearSpacing
+            Return Me._FeedLineRowClearSpacing
         End Get
         Set
-            Me.prop_FeedLineRowClearSpacing = Value
+            Me._FeedLineRowClearSpacing = Value
         End Set
     End Property
 
 
 End Class
 Partial Public Class tnxDiscreteLoad
-    Private prop_TowerLoadRec As Integer
-    Private prop_TowerLoadEnabled As Boolean
-    Private prop_TowerLoadDatabase As String
-    Private prop_TowerLoadDescription As String
-    Private prop_TowerLoadType As String
-    Private prop_TowerLoadClassificationCategory As String
-    Private prop_TowerLoadNote As String
-    Private prop_TowerLoadNum As Integer
-    Private prop_TowerLoadFace As Integer
-    Private prop_TowerOffsetType As String
-    Private prop_TowerOffsetDist As Double
-    Private prop_TowerVertOffset As Double
-    Private prop_TowerLateralOffset As Double
-    Private prop_TowerAzimuthAdjustment As Double
-    Private prop_TowerAppurtSymbol As String
-    Private prop_TowerLoadShieldingFactorKaNoIce As Double
-    Private prop_TowerLoadShieldingFactorKaIce As Double
-    Private prop_TowerLoadAutoCalcKa As Boolean
-    Private prop_TowerLoadCaAaNoIce As Double
-    Private prop_TowerLoadCaAaIce As Double
-    Private prop_TowerLoadCaAaIce_1 As Double
-    Private prop_TowerLoadCaAaIce_2 As Double
-    Private prop_TowerLoadCaAaIce_4 As Double
-    Private prop_TowerLoadCaAaNoIce_Side As Double
-    Private prop_TowerLoadCaAaIce_Side As Double
-    Private prop_TowerLoadCaAaIce_Side_1 As Double
-    Private prop_TowerLoadCaAaIce_Side_2 As Double
-    Private prop_TowerLoadCaAaIce_Side_4 As Double
-    Private prop_TowerLoadWtNoIce As Double
-    Private prop_TowerLoadWtIce As Double
-    Private prop_TowerLoadWtIce_1 As Double
-    Private prop_TowerLoadWtIce_2 As Double
-    Private prop_TowerLoadWtIce_4 As Double
-    Private prop_TowerLoadStartHt As Double
-    Private prop_TowerLoadEndHt As Double
+    Private _TowerLoadRec As Integer?
+    Private _TowerLoadEnabled As Boolean?
+    Private _TowerLoadDatabase As String
+    Private _TowerLoadDescription As String
+    Private _TowerLoadType As String
+    Private _TowerLoadClassificationCategory As String
+    Private _TowerLoadNote As String
+    Private _TowerLoadNum As Integer?
+    Private _TowerLoadFace As Integer?
+    Private _TowerOffsetType As String
+    Private _TowerOffsetDist As Double?
+    Private _TowerVertOffset As Double?
+    Private _TowerLateralOffset As Double?
+    Private _TowerAzimuthAdjustment As Double?
+    Private _TowerAppurtSymbol As String
+    Private _TowerLoadShieldingFactorKaNoIce As Double?
+    Private _TowerLoadShieldingFactorKaIce As Double?
+    Private _TowerLoadAutoCalcKa As Boolean?
+    Private _TowerLoadCaAaNoIce As Double?
+    Private _TowerLoadCaAaIce As Double?
+    Private _TowerLoadCaAaIce_1 As Double?
+    Private _TowerLoadCaAaIce_2 As Double?
+    Private _TowerLoadCaAaIce_4 As Double?
+    Private _TowerLoadCaAaNoIce_Side As Double?
+    Private _TowerLoadCaAaIce_Side As Double?
+    Private _TowerLoadCaAaIce_Side_1 As Double?
+    Private _TowerLoadCaAaIce_Side_2 As Double?
+    Private _TowerLoadCaAaIce_Side_4 As Double?
+    Private _TowerLoadWtNoIce As Double?
+    Private _TowerLoadWtIce As Double?
+    Private _TowerLoadWtIce_1 As Double?
+    Private _TowerLoadWtIce_2 As Double?
+    Private _TowerLoadWtIce_4 As Double?
+    Private _TowerLoadStartHt As Double?
+    Private _TowerLoadEndHt As Double?
 
 
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadRec")>
-    Public Property TowerLoadRec() As Integer
+    Public Property TowerLoadRec() As Integer?
         Get
-            Return Me.prop_TowerLoadRec
+            Return Me._TowerLoadRec
         End Get
         Set
-            Me.prop_TowerLoadRec = Value
+            Me._TowerLoadRec = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEnabled")>
-    Public Property TowerLoadEnabled() As Boolean
+    Public Property TowerLoadEnabled() As Boolean?
         Get
-            Return Me.prop_TowerLoadEnabled
+            Return Me._TowerLoadEnabled
         End Get
         Set
-            Me.prop_TowerLoadEnabled = Value
+            Me._TowerLoadEnabled = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDatabase")>
     Public Property TowerLoadDatabase() As String
         Get
-            Return Me.prop_TowerLoadDatabase
+            Return Me._TowerLoadDatabase
         End Get
         Set
-            Me.prop_TowerLoadDatabase = Value
+            Me._TowerLoadDatabase = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDescription")>
     Public Property TowerLoadDescription() As String
         Get
-            Return Me.prop_TowerLoadDescription
+            Return Me._TowerLoadDescription
         End Get
         Set
-            Me.prop_TowerLoadDescription = Value
+            Me._TowerLoadDescription = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadType")>
     Public Property TowerLoadType() As String
         Get
-            Return Me.prop_TowerLoadType
+            Return Me._TowerLoadType
         End Get
         Set
-            Me.prop_TowerLoadType = Value
+            Me._TowerLoadType = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadClassificationCategory")>
     Public Property TowerLoadClassificationCategory() As String
         Get
-            Return Me.prop_TowerLoadClassificationCategory
+            Return Me._TowerLoadClassificationCategory
         End Get
         Set
-            Me.prop_TowerLoadClassificationCategory = Value
+            Me._TowerLoadClassificationCategory = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNote")>
     Public Property TowerLoadNote() As String
         Get
-            Return Me.prop_TowerLoadNote
+            Return Me._TowerLoadNote
         End Get
         Set
-            Me.prop_TowerLoadNote = Value
+            Me._TowerLoadNote = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNum")>
-    Public Property TowerLoadNum() As Integer
+    Public Property TowerLoadNum() As Integer?
         Get
-            Return Me.prop_TowerLoadNum
+            Return Me._TowerLoadNum
         End Get
         Set
-            Me.prop_TowerLoadNum = Value
+            Me._TowerLoadNum = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("TowerLoadFace")>
-    Public Property TowerLoadFace() As Integer
+    Public Property TowerLoadFace() As Integer?
         Get
-            Return Me.prop_TowerLoadFace
+            Return Me._TowerLoadFace
         End Get
         Set
-            Me.prop_TowerLoadFace = Value
+            Me._TowerLoadFace = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetType")>
     Public Property TowerOffsetType() As String
         Get
-            Return Me.prop_TowerOffsetType
+            Return Me._TowerOffsetType
         End Get
         Set
-            Me.prop_TowerOffsetType = Value
+            Me._TowerOffsetType = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetDist")>
-    Public Property TowerOffsetDist() As Double
+    Public Property TowerOffsetDist() As Double?
         Get
-            Return Me.prop_TowerOffsetDist
+            Return Me._TowerOffsetDist
         End Get
         Set
-            Me.prop_TowerOffsetDist = Value
+            Me._TowerOffsetDist = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerVertOffset")>
-    Public Property TowerVertOffset() As Double
+    Public Property TowerVertOffset() As Double?
         Get
-            Return Me.prop_TowerVertOffset
+            Return Me._TowerVertOffset
         End Get
         Set
-            Me.prop_TowerVertOffset = Value
+            Me._TowerVertOffset = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLateralOffset")>
-    Public Property TowerLateralOffset() As Double
+    Public Property TowerLateralOffset() As Double?
         Get
-            Return Me.prop_TowerLateralOffset
+            Return Me._TowerLateralOffset
         End Get
         Set
-            Me.prop_TowerLateralOffset = Value
+            Me._TowerLateralOffset = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAzimuthAdjustment")>
-    Public Property TowerAzimuthAdjustment() As Double
+    Public Property TowerAzimuthAdjustment() As Double?
         Get
-            Return Me.prop_TowerAzimuthAdjustment
+            Return Me._TowerAzimuthAdjustment
         End Get
         Set
-            Me.prop_TowerAzimuthAdjustment = Value
+            Me._TowerAzimuthAdjustment = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAppurtSymbol")>
     Public Property TowerAppurtSymbol() As String
         Get
-            Return Me.prop_TowerAppurtSymbol
+            Return Me._TowerAppurtSymbol
         End Get
         Set
-            Me.prop_TowerAppurtSymbol = Value
+            Me._TowerAppurtSymbol = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaNoIce")>
-    Public Property TowerLoadShieldingFactorKaNoIce() As Double
+    Public Property TowerLoadShieldingFactorKaNoIce() As Double?
         Get
-            Return Me.prop_TowerLoadShieldingFactorKaNoIce
+            Return Me._TowerLoadShieldingFactorKaNoIce
         End Get
         Set
-            Me.prop_TowerLoadShieldingFactorKaNoIce = Value
+            Me._TowerLoadShieldingFactorKaNoIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaIce")>
-    Public Property TowerLoadShieldingFactorKaIce() As Double
+    Public Property TowerLoadShieldingFactorKaIce() As Double?
         Get
-            Return Me.prop_TowerLoadShieldingFactorKaIce
+            Return Me._TowerLoadShieldingFactorKaIce
         End Get
         Set
-            Me.prop_TowerLoadShieldingFactorKaIce = Value
+            Me._TowerLoadShieldingFactorKaIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadAutoCalcKa")>
-    Public Property TowerLoadAutoCalcKa() As Boolean
+    Public Property TowerLoadAutoCalcKa() As Boolean?
         Get
-            Return Me.prop_TowerLoadAutoCalcKa
+            Return Me._TowerLoadAutoCalcKa
         End Get
         Set
-            Me.prop_TowerLoadAutoCalcKa = Value
+            Me._TowerLoadAutoCalcKa = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce")>
-    Public Property TowerLoadCaAaNoIce() As Double
+    Public Property TowerLoadCaAaNoIce() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaNoIce
+            Return Me._TowerLoadCaAaNoIce
         End Get
         Set
-            Me.prop_TowerLoadCaAaNoIce = Value
+            Me._TowerLoadCaAaNoIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce")>
-    Public Property TowerLoadCaAaIce() As Double
+    Public Property TowerLoadCaAaIce() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce
+            Return Me._TowerLoadCaAaIce
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce = Value
+            Me._TowerLoadCaAaIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_1")>
-    Public Property TowerLoadCaAaIce_1() As Double
+    Public Property TowerLoadCaAaIce_1() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_1
+            Return Me._TowerLoadCaAaIce_1
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_1 = Value
+            Me._TowerLoadCaAaIce_1 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_2")>
-    Public Property TowerLoadCaAaIce_2() As Double
+    Public Property TowerLoadCaAaIce_2() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_2
+            Return Me._TowerLoadCaAaIce_2
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_2 = Value
+            Me._TowerLoadCaAaIce_2 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_4")>
-    Public Property TowerLoadCaAaIce_4() As Double
+    Public Property TowerLoadCaAaIce_4() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_4
+            Return Me._TowerLoadCaAaIce_4
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_4 = Value
+            Me._TowerLoadCaAaIce_4 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce_Side")>
-    Public Property TowerLoadCaAaNoIce_Side() As Double
+    Public Property TowerLoadCaAaNoIce_Side() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaNoIce_Side
+            Return Me._TowerLoadCaAaNoIce_Side
         End Get
         Set
-            Me.prop_TowerLoadCaAaNoIce_Side = Value
+            Me._TowerLoadCaAaNoIce_Side = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side")>
-    Public Property TowerLoadCaAaIce_Side() As Double
+    Public Property TowerLoadCaAaIce_Side() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_Side
+            Return Me._TowerLoadCaAaIce_Side
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_Side = Value
+            Me._TowerLoadCaAaIce_Side = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_1")>
-    Public Property TowerLoadCaAaIce_Side_1() As Double
+    Public Property TowerLoadCaAaIce_Side_1() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_Side_1
+            Return Me._TowerLoadCaAaIce_Side_1
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_Side_1 = Value
+            Me._TowerLoadCaAaIce_Side_1 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_2")>
-    Public Property TowerLoadCaAaIce_Side_2() As Double
+    Public Property TowerLoadCaAaIce_Side_2() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_Side_2
+            Return Me._TowerLoadCaAaIce_Side_2
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_Side_2 = Value
+            Me._TowerLoadCaAaIce_Side_2 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_4")>
-    Public Property TowerLoadCaAaIce_Side_4() As Double
+    Public Property TowerLoadCaAaIce_Side_4() As Double?
         Get
-            Return Me.prop_TowerLoadCaAaIce_Side_4
+            Return Me._TowerLoadCaAaIce_Side_4
         End Get
         Set
-            Me.prop_TowerLoadCaAaIce_Side_4 = Value
+            Me._TowerLoadCaAaIce_Side_4 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtNoIce")>
-    Public Property TowerLoadWtNoIce() As Double
+    Public Property TowerLoadWtNoIce() As Double?
         Get
-            Return Me.prop_TowerLoadWtNoIce
+            Return Me._TowerLoadWtNoIce
         End Get
         Set
-            Me.prop_TowerLoadWtNoIce = Value
+            Me._TowerLoadWtNoIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce")>
-    Public Property TowerLoadWtIce() As Double
+    Public Property TowerLoadWtIce() As Double?
         Get
-            Return Me.prop_TowerLoadWtIce
+            Return Me._TowerLoadWtIce
         End Get
         Set
-            Me.prop_TowerLoadWtIce = Value
+            Me._TowerLoadWtIce = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_1")>
-    Public Property TowerLoadWtIce_1() As Double
+    Public Property TowerLoadWtIce_1() As Double?
         Get
-            Return Me.prop_TowerLoadWtIce_1
+            Return Me._TowerLoadWtIce_1
         End Get
         Set
-            Me.prop_TowerLoadWtIce_1 = Value
+            Me._TowerLoadWtIce_1 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_2")>
-    Public Property TowerLoadWtIce_2() As Double
+    Public Property TowerLoadWtIce_2() As Double?
         Get
-            Return Me.prop_TowerLoadWtIce_2
+            Return Me._TowerLoadWtIce_2
         End Get
         Set
-            Me.prop_TowerLoadWtIce_2 = Value
+            Me._TowerLoadWtIce_2 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_4")>
-    Public Property TowerLoadWtIce_4() As Double
+    Public Property TowerLoadWtIce_4() As Double?
         Get
-            Return Me.prop_TowerLoadWtIce_4
+            Return Me._TowerLoadWtIce_4
         End Get
         Set
-            Me.prop_TowerLoadWtIce_4 = Value
+            Me._TowerLoadWtIce_4 = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadStartHt")>
-    Public Property TowerLoadStartHt() As Double
+    Public Property TowerLoadStartHt() As Double?
         Get
-            Return Me.prop_TowerLoadStartHt
+            Return Me._TowerLoadStartHt
         End Get
         Set
-            Me.prop_TowerLoadStartHt = Value
+            Me._TowerLoadStartHt = Value
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEndHt")>
-    Public Property TowerLoadEndHt() As Double
+    Public Property TowerLoadEndHt() As Double?
         Get
-            Return Me.prop_TowerLoadEndHt
+            Return Me._TowerLoadEndHt
         End Get
         Set
-            Me.prop_TowerLoadEndHt = Value
+            Me._TowerLoadEndHt = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxDish
-    Private prop_DishRec As Integer
-    Private prop_DishEnabled As Boolean
-    Private prop_DishDatabase As String
-    Private prop_DishDescription As String
-    Private prop_DishClassificationCategory As String
-    Private prop_DishNote As String
-    Private prop_DishNum As Integer
-    Private prop_DishFace As Integer
-    Private prop_DishType As String
-    Private prop_DishOffsetType As String
-    Private prop_DishVertOffset As Double
-    Private prop_DishLateralOffset As Double
-    Private prop_DishOffsetDist As Double
-    Private prop_DishArea As Double
-    Private prop_DishAreaIce As Double
-    Private prop_DishAreaIce_1 As Double
-    Private prop_DishAreaIce_2 As Double
-    Private prop_DishAreaIce_4 As Double
-    Private prop_DishDiameter As Double
-    Private prop_DishWtNoIce As Double
-    Private prop_DishWtIce As Double
-    Private prop_DishWtIce_1 As Double
-    Private prop_DishWtIce_2 As Double
-    Private prop_DishWtIce_4 As Double
-    Private prop_DishStartHt As Double
-    Private prop_DishAzimuthAdjustment As Double
-    Private prop_DishBeamWidth As Double
+    Private _DishRec As Integer?
+    Private _DishEnabled As Boolean?
+    Private _DishDatabase As String
+    Private _DishDescription As String
+    Private _DishClassificationCategory As String
+    Private _DishNote As String
+    Private _DishNum As Integer?
+    Private _DishFace As Integer?
+    Private _DishType As String
+    Private _DishOffsetType As String
+    Private _DishVertOffset As Double?
+    Private _DishLateralOffset As Double?
+    Private _DishOffsetDist As Double?
+    Private _DishArea As Double?
+    Private _DishAreaIce As Double?
+    Private _DishAreaIce_1 As Double?
+    Private _DishAreaIce_2 As Double?
+    Private _DishAreaIce_4 As Double?
+    Private _DishDiameter As Double?
+    Private _DishWtNoIce As Double?
+    Private _DishWtIce As Double?
+    Private _DishWtIce_1 As Double?
+    Private _DishWtIce_2 As Double?
+    Private _DishWtIce_4 As Double?
+    Private _DishStartHt As Double?
+    Private _DishAzimuthAdjustment As Double?
+    Private _DishBeamWidth As Double?
 
     <Category("TNX Dish"), Description(""), DisplayName("DishRec")>
-    Public Property DishRec() As Integer
+    Public Property DishRec() As Integer?
         Get
-            Return Me.prop_DishRec
+            Return Me._DishRec
         End Get
         Set
-            Me.prop_DishRec = Value
+            Me._DishRec = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishEnabled")>
-    Public Property DishEnabled() As Boolean
+    Public Property DishEnabled() As Boolean?
         Get
-            Return Me.prop_DishEnabled
+            Return Me._DishEnabled
         End Get
         Set
-            Me.prop_DishEnabled = Value
+            Me._DishEnabled = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDatabase")>
     Public Property DishDatabase() As String
         Get
-            Return Me.prop_DishDatabase
+            Return Me._DishDatabase
         End Get
         Set
-            Me.prop_DishDatabase = Value
+            Me._DishDatabase = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDescription")>
     Public Property DishDescription() As String
         Get
-            Return Me.prop_DishDescription
+            Return Me._DishDescription
         End Get
         Set
-            Me.prop_DishDescription = Value
+            Me._DishDescription = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishClassificationCategory")>
     Public Property DishClassificationCategory() As String
         Get
-            Return Me.prop_DishClassificationCategory
+            Return Me._DishClassificationCategory
         End Get
         Set
-            Me.prop_DishClassificationCategory = Value
+            Me._DishClassificationCategory = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishNote")>
     Public Property DishNote() As String
         Get
-            Return Me.prop_DishNote
+            Return Me._DishNote
         End Get
         Set
-            Me.prop_DishNote = Value
+            Me._DishNote = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishNum")>
-    Public Property DishNum() As Integer
+    Public Property DishNum() As Integer?
         Get
-            Return Me.prop_DishNum
+            Return Me._DishNum
         End Get
         Set
-            Me.prop_DishNum = Value
+            Me._DishNum = Value
         End Set
     End Property
     <Category("TNX Dish"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("DishFace")>
-    Public Property DishFace() As Integer
+    Public Property DishFace() As Integer?
         Get
-            Return Me.prop_DishFace
+            Return Me._DishFace
         End Get
         Set
-            Me.prop_DishFace = Value
+            Me._DishFace = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishType")>
     Public Property DishType() As String
         Get
-            Return Me.prop_DishType
+            Return Me._DishType
         End Get
         Set
-            Me.prop_DishType = Value
+            Me._DishType = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishOffsetType")>
     Public Property DishOffsetType() As String
         Get
-            Return Me.prop_DishOffsetType
+            Return Me._DishOffsetType
         End Get
         Set
-            Me.prop_DishOffsetType = Value
+            Me._DishOffsetType = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishVertOffset")>
-    Public Property DishVertOffset() As Double
+    Public Property DishVertOffset() As Double?
         Get
-            Return Me.prop_DishVertOffset
+            Return Me._DishVertOffset
         End Get
         Set
-            Me.prop_DishVertOffset = Value
+            Me._DishVertOffset = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishLateralOffset")>
-    Public Property DishLateralOffset() As Double
+    Public Property DishLateralOffset() As Double?
         Get
-            Return Me.prop_DishLateralOffset
+            Return Me._DishLateralOffset
         End Get
         Set
-            Me.prop_DishLateralOffset = Value
+            Me._DishLateralOffset = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishOffsetDist")>
-    Public Property DishOffsetDist() As Double
+    Public Property DishOffsetDist() As Double?
         Get
-            Return Me.prop_DishOffsetDist
+            Return Me._DishOffsetDist
         End Get
         Set
-            Me.prop_DishOffsetDist = Value
+            Me._DishOffsetDist = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishArea")>
-    Public Property DishArea() As Double
+    Public Property DishArea() As Double?
         Get
-            Return Me.prop_DishArea
+            Return Me._DishArea
         End Get
         Set
-            Me.prop_DishArea = Value
+            Me._DishArea = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce")>
-    Public Property DishAreaIce() As Double
+    Public Property DishAreaIce() As Double?
         Get
-            Return Me.prop_DishAreaIce
+            Return Me._DishAreaIce
         End Get
         Set
-            Me.prop_DishAreaIce = Value
+            Me._DishAreaIce = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_1")>
-    Public Property DishAreaIce_1() As Double
+    Public Property DishAreaIce_1() As Double?
         Get
-            Return Me.prop_DishAreaIce_1
+            Return Me._DishAreaIce_1
         End Get
         Set
-            Me.prop_DishAreaIce_1 = Value
+            Me._DishAreaIce_1 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_2")>
-    Public Property DishAreaIce_2() As Double
+    Public Property DishAreaIce_2() As Double?
         Get
-            Return Me.prop_DishAreaIce_2
+            Return Me._DishAreaIce_2
         End Get
         Set
-            Me.prop_DishAreaIce_2 = Value
+            Me._DishAreaIce_2 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_4")>
-    Public Property DishAreaIce_4() As Double
+    Public Property DishAreaIce_4() As Double?
         Get
-            Return Me.prop_DishAreaIce_4
+            Return Me._DishAreaIce_4
         End Get
         Set
-            Me.prop_DishAreaIce_4 = Value
+            Me._DishAreaIce_4 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDiameter")>
-    Public Property DishDiameter() As Double
+    Public Property DishDiameter() As Double?
         Get
-            Return Me.prop_DishDiameter
+            Return Me._DishDiameter
         End Get
         Set
-            Me.prop_DishDiameter = Value
+            Me._DishDiameter = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtNoIce")>
-    Public Property DishWtNoIce() As Double
+    Public Property DishWtNoIce() As Double?
         Get
-            Return Me.prop_DishWtNoIce
+            Return Me._DishWtNoIce
         End Get
         Set
-            Me.prop_DishWtNoIce = Value
+            Me._DishWtNoIce = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce")>
-    Public Property DishWtIce() As Double
+    Public Property DishWtIce() As Double?
         Get
-            Return Me.prop_DishWtIce
+            Return Me._DishWtIce
         End Get
         Set
-            Me.prop_DishWtIce = Value
+            Me._DishWtIce = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_1")>
-    Public Property DishWtIce_1() As Double
+    Public Property DishWtIce_1() As Double?
         Get
-            Return Me.prop_DishWtIce_1
+            Return Me._DishWtIce_1
         End Get
         Set
-            Me.prop_DishWtIce_1 = Value
+            Me._DishWtIce_1 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_2")>
-    Public Property DishWtIce_2() As Double
+    Public Property DishWtIce_2() As Double?
         Get
-            Return Me.prop_DishWtIce_2
+            Return Me._DishWtIce_2
         End Get
         Set
-            Me.prop_DishWtIce_2 = Value
+            Me._DishWtIce_2 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_4")>
-    Public Property DishWtIce_4() As Double
+    Public Property DishWtIce_4() As Double?
         Get
-            Return Me.prop_DishWtIce_4
+            Return Me._DishWtIce_4
         End Get
         Set
-            Me.prop_DishWtIce_4 = Value
+            Me._DishWtIce_4 = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishStartHt")>
-    Public Property DishStartHt() As Double
+    Public Property DishStartHt() As Double?
         Get
-            Return Me.prop_DishStartHt
+            Return Me._DishStartHt
         End Get
         Set
-            Me.prop_DishStartHt = Value
+            Me._DishStartHt = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAzimuthAdjustment")>
-    Public Property DishAzimuthAdjustment() As Double
+    Public Property DishAzimuthAdjustment() As Double?
         Get
-            Return Me.prop_DishAzimuthAdjustment
+            Return Me._DishAzimuthAdjustment
         End Get
         Set
-            Me.prop_DishAzimuthAdjustment = Value
+            Me._DishAzimuthAdjustment = Value
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishBeamWidth")>
-    Public Property DishBeamWidth() As Double
+    Public Property DishBeamWidth() As Double?
         Get
-            Return Me.prop_DishBeamWidth
+            Return Me._DishBeamWidth
         End Get
         Set
-            Me.prop_DishBeamWidth = Value
+            Me._DishBeamWidth = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxUserForce
-    Private prop_UserForceRec As Integer
-    Private prop_UserForceEnabled As Boolean
-    Private prop_UserForceDescription As String
-    Private prop_UserForceStartHt As Double
-    Private prop_UserForceOffset As Double
-    Private prop_UserForceAzimuth As Double
-    Private prop_UserForceFxNoIce As Double
-    Private prop_UserForceFzNoIce As Double
-    Private prop_UserForceAxialNoIce As Double
-    Private prop_UserForceShearNoIce As Double
-    Private prop_UserForceCaAcNoIce As Double
-    Private prop_UserForceFxIce As Double
-    Private prop_UserForceFzIce As Double
-    Private prop_UserForceAxialIce As Double
-    Private prop_UserForceShearIce As Double
-    Private prop_UserForceCaAcIce As Double
-    Private prop_UserForceFxService As Double
-    Private prop_UserForceFzService As Double
-    Private prop_UserForceAxialService As Double
-    Private prop_UserForceShearService As Double
-    Private prop_UserForceCaAcService As Double
-    Private prop_UserForceEhx As Double
-    Private prop_UserForceEhz As Double
-    Private prop_UserForceEv As Double
-    Private prop_UserForceEh As Double
+    Private _UserForceRec As Integer?
+    Private _UserForceEnabled As Boolean?
+    Private _UserForceDescription As String
+    Private _UserForceStartHt As Double?
+    Private _UserForceOffset As Double?
+    Private _UserForceAzimuth As Double?
+    Private _UserForceFxNoIce As Double?
+    Private _UserForceFzNoIce As Double?
+    Private _UserForceAxialNoIce As Double?
+    Private _UserForceShearNoIce As Double?
+    Private _UserForceCaAcNoIce As Double?
+    Private _UserForceFxIce As Double?
+    Private _UserForceFzIce As Double?
+    Private _UserForceAxialIce As Double?
+    Private _UserForceShearIce As Double?
+    Private _UserForceCaAcIce As Double?
+    Private _UserForceFxService As Double?
+    Private _UserForceFzService As Double?
+    Private _UserForceAxialService As Double?
+    Private _UserForceShearService As Double?
+    Private _UserForceCaAcService As Double?
+    Private _UserForceEhx As Double?
+    Private _UserForceEhz As Double?
+    Private _UserForceEv As Double?
+    Private _UserForceEh As Double?
 
     <Category("TNX User Force"), Description(""), DisplayName("UserForceRec")>
-    Public Property UserForceRec() As Integer
+    Public Property UserForceRec() As Integer?
         Get
-            Return Me.prop_UserForceRec
+            Return Me._UserForceRec
         End Get
         Set
-            Me.prop_UserForceRec = Value
+            Me._UserForceRec = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEnabled")>
-    Public Property UserForceEnabled() As Boolean
+    Public Property UserForceEnabled() As Boolean?
         Get
-            Return Me.prop_UserForceEnabled
+            Return Me._UserForceEnabled
         End Get
         Set
-            Me.prop_UserForceEnabled = Value
+            Me._UserForceEnabled = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceDescription")>
     Public Property UserForceDescription() As String
         Get
-            Return Me.prop_UserForceDescription
+            Return Me._UserForceDescription
         End Get
         Set
-            Me.prop_UserForceDescription = Value
+            Me._UserForceDescription = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceStartHt")>
-    Public Property UserForceStartHt() As Double
+    Public Property UserForceStartHt() As Double?
         Get
-            Return Me.prop_UserForceStartHt
+            Return Me._UserForceStartHt
         End Get
         Set
-            Me.prop_UserForceStartHt = Value
+            Me._UserForceStartHt = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceOffset")>
-    Public Property UserForceOffset() As Double
+    Public Property UserForceOffset() As Double?
         Get
-            Return Me.prop_UserForceOffset
+            Return Me._UserForceOffset
         End Get
         Set
-            Me.prop_UserForceOffset = Value
+            Me._UserForceOffset = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAzimuth")>
-    Public Property UserForceAzimuth() As Double
+    Public Property UserForceAzimuth() As Double?
         Get
-            Return Me.prop_UserForceAzimuth
+            Return Me._UserForceAzimuth
         End Get
         Set
-            Me.prop_UserForceAzimuth = Value
+            Me._UserForceAzimuth = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxNoIce")>
-    Public Property UserForceFxNoIce() As Double
+    Public Property UserForceFxNoIce() As Double?
         Get
-            Return Me.prop_UserForceFxNoIce
+            Return Me._UserForceFxNoIce
         End Get
         Set
-            Me.prop_UserForceFxNoIce = Value
+            Me._UserForceFxNoIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzNoIce")>
-    Public Property UserForceFzNoIce() As Double
+    Public Property UserForceFzNoIce() As Double?
         Get
-            Return Me.prop_UserForceFzNoIce
+            Return Me._UserForceFzNoIce
         End Get
         Set
-            Me.prop_UserForceFzNoIce = Value
+            Me._UserForceFzNoIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialNoIce")>
-    Public Property UserForceAxialNoIce() As Double
+    Public Property UserForceAxialNoIce() As Double?
         Get
-            Return Me.prop_UserForceAxialNoIce
+            Return Me._UserForceAxialNoIce
         End Get
         Set
-            Me.prop_UserForceAxialNoIce = Value
+            Me._UserForceAxialNoIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearNoIce")>
-    Public Property UserForceShearNoIce() As Double
+    Public Property UserForceShearNoIce() As Double?
         Get
-            Return Me.prop_UserForceShearNoIce
+            Return Me._UserForceShearNoIce
         End Get
         Set
-            Me.prop_UserForceShearNoIce = Value
+            Me._UserForceShearNoIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcNoIce")>
-    Public Property UserForceCaAcNoIce() As Double
+    Public Property UserForceCaAcNoIce() As Double?
         Get
-            Return Me.prop_UserForceCaAcNoIce
+            Return Me._UserForceCaAcNoIce
         End Get
         Set
-            Me.prop_UserForceCaAcNoIce = Value
+            Me._UserForceCaAcNoIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxIce")>
-    Public Property UserForceFxIce() As Double
+    Public Property UserForceFxIce() As Double?
         Get
-            Return Me.prop_UserForceFxIce
+            Return Me._UserForceFxIce
         End Get
         Set
-            Me.prop_UserForceFxIce = Value
+            Me._UserForceFxIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzIce")>
-    Public Property UserForceFzIce() As Double
+    Public Property UserForceFzIce() As Double?
         Get
-            Return Me.prop_UserForceFzIce
+            Return Me._UserForceFzIce
         End Get
         Set
-            Me.prop_UserForceFzIce = Value
+            Me._UserForceFzIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialIce")>
-    Public Property UserForceAxialIce() As Double
+    Public Property UserForceAxialIce() As Double?
         Get
-            Return Me.prop_UserForceAxialIce
+            Return Me._UserForceAxialIce
         End Get
         Set
-            Me.prop_UserForceAxialIce = Value
+            Me._UserForceAxialIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearIce")>
-    Public Property UserForceShearIce() As Double
+    Public Property UserForceShearIce() As Double?
         Get
-            Return Me.prop_UserForceShearIce
+            Return Me._UserForceShearIce
         End Get
         Set
-            Me.prop_UserForceShearIce = Value
+            Me._UserForceShearIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcIce")>
-    Public Property UserForceCaAcIce() As Double
+    Public Property UserForceCaAcIce() As Double?
         Get
-            Return Me.prop_UserForceCaAcIce
+            Return Me._UserForceCaAcIce
         End Get
         Set
-            Me.prop_UserForceCaAcIce = Value
+            Me._UserForceCaAcIce = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxService")>
-    Public Property UserForceFxService() As Double
+    Public Property UserForceFxService() As Double?
         Get
-            Return Me.prop_UserForceFxService
+            Return Me._UserForceFxService
         End Get
         Set
-            Me.prop_UserForceFxService = Value
+            Me._UserForceFxService = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzService")>
-    Public Property UserForceFzService() As Double
+    Public Property UserForceFzService() As Double?
         Get
-            Return Me.prop_UserForceFzService
+            Return Me._UserForceFzService
         End Get
         Set
-            Me.prop_UserForceFzService = Value
+            Me._UserForceFzService = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialService")>
-    Public Property UserForceAxialService() As Double
+    Public Property UserForceAxialService() As Double?
         Get
-            Return Me.prop_UserForceAxialService
+            Return Me._UserForceAxialService
         End Get
         Set
-            Me.prop_UserForceAxialService = Value
+            Me._UserForceAxialService = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearService")>
-    Public Property UserForceShearService() As Double
+    Public Property UserForceShearService() As Double?
         Get
-            Return Me.prop_UserForceShearService
+            Return Me._UserForceShearService
         End Get
         Set
-            Me.prop_UserForceShearService = Value
+            Me._UserForceShearService = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcService")>
-    Public Property UserForceCaAcService() As Double
+    Public Property UserForceCaAcService() As Double?
         Get
-            Return Me.prop_UserForceCaAcService
+            Return Me._UserForceCaAcService
         End Get
         Set
-            Me.prop_UserForceCaAcService = Value
+            Me._UserForceCaAcService = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhx")>
-    Public Property UserForceEhx() As Double
+    Public Property UserForceEhx() As Double?
         Get
-            Return Me.prop_UserForceEhx
+            Return Me._UserForceEhx
         End Get
         Set
-            Me.prop_UserForceEhx = Value
+            Me._UserForceEhx = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhz")>
-    Public Property UserForceEhz() As Double
+    Public Property UserForceEhz() As Double?
         Get
-            Return Me.prop_UserForceEhz
+            Return Me._UserForceEhz
         End Get
         Set
-            Me.prop_UserForceEhz = Value
+            Me._UserForceEhz = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEv")>
-    Public Property UserForceEv() As Double
+    Public Property UserForceEv() As Double?
         Get
-            Return Me.prop_UserForceEv
+            Return Me._UserForceEv
         End Get
         Set
-            Me.prop_UserForceEv = Value
+            Me._UserForceEv = Value
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEh")>
-    Public Property UserForceEh() As Double
+    Public Property UserForceEh() As Double?
         Get
-            Return Me.prop_UserForceEh
+            Return Me._UserForceEh
         End Get
         Set
-            Me.prop_UserForceEh = Value
+            Me._UserForceEh = Value
         End Set
     End Property
 
 End Class
 
+
+
 #End Region
 
 #Region "Code"
 Partial Public Class tnxCode
-    Private prop_design As New tnxDesign()
-    Private prop_ice As New tnxIce()
-    Private prop_thermal As New tnxThermal()
-    Private prop_wind As New tnxWind()
-    Private prop_misclCode As New tnxMisclCode()
-    Private prop_seismic As New tnxSeismic()
+    Private _design As New tnxDesign()
+    Private _ice As New tnxIce()
+    Private _thermal As New tnxThermal()
+    Private _wind As New tnxWind()
+    Private _misclCode As New tnxMisclCode()
+    Private _seismic As New tnxSeismic()
 
     <Category("TNX Code"), Description(""), DisplayName("Design")>
     Public Property design() As tnxDesign
         Get
-            Return Me.prop_design
+            Return Me._design
         End Get
         Set
-            Me.prop_design = Value
+            Me._design = Value
         End Set
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Ice")>
     Public Property ice() As tnxIce
         Get
-            Return Me.prop_ice
+            Return Me._ice
         End Get
         Set
-            Me.prop_ice = Value
+            Me._ice = Value
         End Set
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Thermal")>
     Public Property thermal() As tnxThermal
         Get
-            Return Me.prop_thermal
+            Return Me._thermal
         End Get
         Set
-            Me.prop_thermal = Value
+            Me._thermal = Value
         End Set
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Wind")>
     Public Property wind() As tnxWind
         Get
-            Return Me.prop_wind
+            Return Me._wind
         End Get
         Set
-            Me.prop_wind = Value
+            Me._wind = Value
         End Set
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Miscellaneous Code")>
     Public Property misclCode() As tnxMisclCode
         Get
-            Return Me.prop_misclCode
+            Return Me._misclCode
         End Get
         Set
-            Me.prop_misclCode = Value
+            Me._misclCode = Value
         End Set
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Seismic")>
     Public Property seismic() As tnxSeismic
         Get
-            Return Me.prop_seismic
+            Return Me._seismic
         End Get
         Set
-            Me.prop_seismic = Value
+            Me._seismic = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxDesign
-    Private prop_DesignCode As String
-    Private prop_ERIDesignMode As String
-    Private prop_DoInteraction As Boolean
-    Private prop_DoHorzInteraction As Boolean
-    Private prop_DoDiagInteraction As Boolean
-    Private prop_UseMomentMagnification As Boolean
-    Private prop_UseCodeStressRatio As Boolean
-    Private prop_AllowStressRatio As Double
-    Private prop_AllowAntStressRatio As Double
-    Private prop_UseCodeGuySF As Boolean
-    Private prop_GuySF As Double
-    Private prop_UseTIA222H_AnnexS As Boolean
-    Private prop_TIA_222_H_AnnexS_Ratio As Double
-    Private prop_PrintBitmaps As Boolean
+    Private _DesignCode As String
+    Private _ERIDesignMode As String
+    Private _DoInteraction As Boolean?
+    Private _DoHorzInteraction As Boolean?
+    Private _DoDiagInteraction As Boolean?
+    Private _UseMomentMagnification As Boolean?
+    Private _UseCodeStressRatio As Boolean?
+    Private _AllowStressRatio As Double?
+    Private _AllowAntStressRatio As Double?
+    Private _UseCodeGuySF As Boolean?
+    Private _GuySF As Double?
+    Private _UseTIA222H_AnnexS As Boolean?
+    Private _TIA_222_H_AnnexS_Ratio As Double?
+    Private _PrintBitmaps As Boolean?
 
     <Category("TNX Code Design"), Description(""), DisplayName("DesignCode")>
     Public Property DesignCode() As String
         Get
-            Return Me.prop_DesignCode
+            Return Me._DesignCode
         End Get
         Set
-            Me.prop_DesignCode = Value
+            Me._DesignCode = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("Analysis Only, Check Sections, Cyclic Design"), DisplayName("ERIDesignMode")>
     Public Property ERIDesignMode() As String
         Get
-            Return Me.prop_ERIDesignMode
+            Return Me._ERIDesignMode
         End Get
         Set
-            Me.prop_ERIDesignMode = Value
+            Me._ERIDesignMode = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - legs"), DisplayName("DoInteraction")>
-    Public Property DoInteraction() As Boolean
+    Public Property DoInteraction() As Boolean?
         Get
-            Return Me.prop_DoInteraction
+            Return Me._DoInteraction
         End Get
         Set
-            Me.prop_DoInteraction = Value
+            Me._DoInteraction = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - horizontals"), DisplayName("DoHorzInteraction")>
-    Public Property DoHorzInteraction() As Boolean
+    Public Property DoHorzInteraction() As Boolean?
         Get
-            Return Me.prop_DoHorzInteraction
+            Return Me._DoHorzInteraction
         End Get
         Set
-            Me.prop_DoHorzInteraction = Value
+            Me._DoHorzInteraction = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - diagonals"), DisplayName("DoDiagInteraction")>
-    Public Property DoDiagInteraction() As Boolean
+    Public Property DoDiagInteraction() As Boolean?
         Get
-            Return Me.prop_DoDiagInteraction
+            Return Me._DoDiagInteraction
         End Get
         Set
-            Me.prop_DoDiagInteraction = Value
+            Me._DoDiagInteraction = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseMomentMagnification")>
-    Public Property UseMomentMagnification() As Boolean
+    Public Property UseMomentMagnification() As Boolean?
         Get
-            Return Me.prop_UseMomentMagnification
+            Return Me._UseMomentMagnification
         End Get
         Set
-            Me.prop_UseMomentMagnification = Value
+            Me._UseMomentMagnification = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseCodeStressRatio")>
-    Public Property UseCodeStressRatio() As Boolean
+    Public Property UseCodeStressRatio() As Boolean?
         Get
-            Return Me.prop_UseCodeStressRatio
+            Return Me._UseCodeStressRatio
         End Get
         Set
-            Me.prop_UseCodeStressRatio = Value
+            Me._UseCodeStressRatio = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("base structure allowable stress ratio"), DisplayName("AllowStressRatio")>
-    Public Property AllowStressRatio() As Double
+    Public Property AllowStressRatio() As Double?
         Get
-            Return Me.prop_AllowStressRatio
+            Return Me._AllowStressRatio
         End Get
         Set
-            Me.prop_AllowStressRatio = Value
+            Me._AllowStressRatio = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("upper structure allowable stress ratio"), DisplayName("AllowAntStressRatio")>
-    Public Property AllowAntStressRatio() As Double
+    Public Property AllowAntStressRatio() As Double?
         Get
-            Return Me.prop_AllowAntStressRatio
+            Return Me._AllowAntStressRatio
         End Get
         Set
-            Me.prop_AllowAntStressRatio = Value
+            Me._AllowAntStressRatio = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseCodeGuySF")>
-    Public Property UseCodeGuySF() As Boolean
+    Public Property UseCodeGuySF() As Boolean?
         Get
-            Return Me.prop_UseCodeGuySF
+            Return Me._UseCodeGuySF
         End Get
         Set
-            Me.prop_UseCodeGuySF = Value
+            Me._UseCodeGuySF = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("GuySF")>
-    Public Property GuySF() As Double
+    Public Property GuySF() As Double?
         Get
-            Return Me.prop_GuySF
+            Return Me._GuySF
         End Get
         Set
-            Me.prop_GuySF = Value
+            Me._GuySF = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseTIA222H_AnnexS")>
-    Public Property UseTIA222H_AnnexS() As Boolean
+    Public Property UseTIA222H_AnnexS() As Boolean?
         Get
-            Return Me.prop_UseTIA222H_AnnexS
+            Return Me._UseTIA222H_AnnexS
         End Get
         Set
-            Me.prop_UseTIA222H_AnnexS = Value
+            Me._UseTIA222H_AnnexS = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description("TIA-222-H Annex S allowable ratio"), DisplayName("TIA_222_H_AnnexS_Ratio")>
-    Public Property TIA_222_H_AnnexS_Ratio() As Double
+    Public Property TIA_222_H_AnnexS_Ratio() As Double?
         Get
-            Return Me.prop_TIA_222_H_AnnexS_Ratio
+            Return Me._TIA_222_H_AnnexS_Ratio
         End Get
         Set
-            Me.prop_TIA_222_H_AnnexS_Ratio = Value
+            Me._TIA_222_H_AnnexS_Ratio = Value
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("PrintBitmaps")>
-    Public Property PrintBitmaps() As Boolean
+    Public Property PrintBitmaps() As Boolean?
         Get
-            Return Me.prop_PrintBitmaps
+            Return Me._PrintBitmaps
         End Get
         Set
-            Me.prop_PrintBitmaps = Value
+            Me._PrintBitmaps = Value
         End Set
     End Property
 
 End Class
 Partial Public Class tnxIce
-    Private prop_IceThickness As Double
-    Private prop_IceDensity As Double
-    Private prop_UseModified_TIA_222_IceParameters As Boolean
-    Private prop_TIA_222_IceThicknessMultiplier As Double
-    Private prop_DoNotUse_TIA_222_IceEscalation As Boolean
-    Private prop_UseIceEscalation As Boolean
+    Private _IceThickness As Double?
+    Private _IceDensity As Double?
+    Private _UseModified_TIA_222_IceParameters As Boolean?
+    Private _TIA_222_IceThicknessMultiplier As Double?
+    Private _DoNotUse_TIA_222_IceEscalation As Boolean?
+    Private _UseIceEscalation As Boolean?
 
     <Category("TNX Code Ice"), Description(""), DisplayName("IceThickness")>
-    Public Property IceThickness() As Double
+    Public Property IceThickness() As Double?
         Get
-            Return Me.prop_IceThickness
+            Return Me._IceThickness
         End Get
         Set
-            Me.prop_IceThickness = Value
+            Me._IceThickness = Value
         End Set
     End Property
     <Category("TNX Code Ice"), Description(""), DisplayName("IceDensity")>
-    Public Property IceDensity() As Double
+    Public Property IceDensity() As Double?
         Get
-            Return Me.prop_IceDensity
+            Return Me._IceDensity
         End Get
         Set
-            Me.prop_IceDensity = Value
+            Me._IceDensity = Value
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("UseModified_TIA_222_IceParameters")>
-    Public Property UseModified_TIA_222_IceParameters() As Boolean
+    Public Property UseModified_TIA_222_IceParameters() As Boolean?
         Get
-            Return Me.prop_UseModified_TIA_222_IceParameters
+            Return Me._UseModified_TIA_222_IceParameters
         End Get
         Set
-            Me.prop_UseModified_TIA_222_IceParameters = Value
+            Me._UseModified_TIA_222_IceParameters = Value
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("TIA_222_IceThicknessMultiplier")>
-    Public Property TIA_222_IceThicknessMultiplier() As Double
+    Public Property TIA_222_IceThicknessMultiplier() As Double?
         Get
-            Return Me.prop_TIA_222_IceThicknessMultiplier
+            Return Me._TIA_222_IceThicknessMultiplier
         End Get
         Set
-            Me.prop_TIA_222_IceThicknessMultiplier = Value
+            Me._TIA_222_IceThicknessMultiplier = Value
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("DoNotUse_TIA_222_IceEscalation")>
-    Public Property DoNotUse_TIA_222_IceEscalation() As Boolean
+    Public Property DoNotUse_TIA_222_IceEscalation() As Boolean?
         Get
-            Return Me.prop_DoNotUse_TIA_222_IceEscalation
+            Return Me._DoNotUse_TIA_222_IceEscalation
         End Get
         Set
-            Me.prop_DoNotUse_TIA_222_IceEscalation = Value
+            Me._DoNotUse_TIA_222_IceEscalation = Value
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-F and earlier"), DisplayName("UseIceEscalation")>
-    Public Property UseIceEscalation() As Boolean
+    Public Property UseIceEscalation() As Boolean?
         Get
-            Return Me.prop_UseIceEscalation
+            Return Me._UseIceEscalation
         End Get
         Set
-            Me.prop_UseIceEscalation = Value
+            Me._UseIceEscalation = Value
         End Set
     End Property
 End Class
 Partial Public Class tnxThermal
-    Private prop_TempDrop As Double
+    Private _TempDrop As Double?
 
     <Category("TNX Code Thermal"), Description(""), DisplayName("TempDrop")>
-    Public Property TempDrop() As Double
+    Public Property TempDrop() As Double?
         Get
-            Return Me.prop_TempDrop
+            Return Me._TempDrop
         End Get
         Set
-            Me.prop_TempDrop = Value
+            Me._TempDrop = Value
         End Set
     End Property
 End Class
 Partial Public Class tnxWind
-    Private prop_WindSpeed As Double
-    Private prop_WindSpeedIce As Double
-    Private prop_WindSpeedService As Double
-    Private prop_UseStateCountyLookup As Boolean
-    Private prop_State As String
-    Private prop_County As String
-    Private prop_UseMaxKz As Boolean
-    Private prop_ASCE_7_10_WindData As Boolean
-    Private prop_ASCE_7_10_ConvertWindToASD As Boolean
-    Private prop_UseASCEWind As Boolean
-    Private prop_AutoCalc_ASCE_GH As Boolean
-    Private prop_ASCE_ExposureCat As Integer
-    Private prop_ASCE_Year As Integer
-    Private prop_ASCEGh As Double
-    Private prop_ASCEI As Double
-    Private prop_CalcWindAt As Integer
-    Private prop_WindCalcPoints As Double
-    Private prop_WindExposure As Integer
-    Private prop_StructureCategory As Integer
-    Private prop_RiskCategory As Integer
-    Private prop_TopoCategory As Integer
-    Private prop_RSMTopographicFeature As Integer
-    Private prop_RSM_L As Double
-    Private prop_RSM_X As Double
-    Private prop_CrestHeight As Double
-    Private prop_TIA_222_H_TopoFeatureDownwind As Boolean
-    Private prop_BaseElevAboveSeaLevel As Double
-    Private prop_ConsiderRooftopSpeedUp As Boolean
-    Private prop_RooftopWS As Double
-    Private prop_RooftopHS As Double
-    Private prop_RooftopParapetHt As Double
-    Private prop_RooftopXB As Double
-    Private prop_WindZone As Integer
-    Private prop_EIACWindMult As Double
-    Private prop_EIACWindMultIce As Double
-    Private prop_EIACIgnoreCableDrag As Boolean
-    Private prop_CSA_S37_RefVelPress As Double
-    Private prop_CSA_S37_ReliabilityClass As Integer
-    Private prop_CSA_S37_ServiceabilityFactor As Double
+    Private _WindSpeed As Double?
+    Private _WindSpeedIce As Double?
+    Private _WindSpeedService As Double?
+    Private _UseStateCountyLookup As Boolean?
+    Private _State As String
+    Private _County As String
+    Private _UseMaxKz As Boolean?
+    Private _ASCE_7_10_WindData As Boolean?
+    Private _ASCE_7_10_ConvertWindToASD As Boolean?
+    Private _UseASCEWind As Boolean?
+    Private _AutoCalc_ASCE_GH As Boolean?
+    Private _ASCE_ExposureCat As Integer?
+    Private _ASCE_Year As Integer?
+    Private _ASCEGh As Double?
+    Private _ASCEI As Double?
+    Private _CalcWindAt As Integer?
+    Private _WindCalcPoints As Double?
+    Private _WindExposure As Integer?
+    Private _StructureCategory As Integer?
+    Private _RiskCategory As Integer?
+    Private _TopoCategory As Integer?
+    Private _RSMTopographicFeature As Integer?
+    Private _RSM_L As Double?
+    Private _RSM_X As Double?
+    Private _CrestHeight As Double?
+    Private _TIA_222_H_TopoFeatureDownwind As Boolean?
+    Private _BaseElevAboveSeaLevel As Double?
+    Private _ConsiderRooftopSpeedUp As Boolean?
+    Private _RooftopWS As Double?
+    Private _RooftopHS As Double?
+    Private _RooftopParapetHt As Double?
+    Private _RooftopXB As Double?
+    Private _WindZone As Integer?
+    Private _EIACWindMult As Double?
+    Private _EIACWindMultIce As Double?
+    Private _EIACIgnoreCableDrag As Boolean?
+    Private _CSA_S37_RefVelPress As Double?
+    Private _CSA_S37_ReliabilityClass As Integer?
+    Private _CSA_S37_ServiceabilityFactor As Double?
 
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeed")>
-    Public Property WindSpeed() As Double
+    Public Property WindSpeed() As Double?
         Get
-            Return Me.prop_WindSpeed
+            Return Me._WindSpeed
         End Get
         Set
-            Me.prop_WindSpeed = Value
+            Me._WindSpeed = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedIce")>
-    Public Property WindSpeedIce() As Double
+    Public Property WindSpeedIce() As Double?
         Get
-            Return Me.prop_WindSpeedIce
+            Return Me._WindSpeedIce
         End Get
         Set
-            Me.prop_WindSpeedIce = Value
+            Me._WindSpeedIce = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedService")>
-    Public Property WindSpeedService() As Double
+    Public Property WindSpeedService() As Double?
         Get
-            Return Me.prop_WindSpeedService
+            Return Me._WindSpeedService
         End Get
         Set
-            Me.prop_WindSpeedService = Value
+            Me._WindSpeedService = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("UseStateCountyLookup")>
-    Public Property UseStateCountyLookup() As Boolean
+    Public Property UseStateCountyLookup() As Boolean?
         Get
-            Return Me.prop_UseStateCountyLookup
+            Return Me._UseStateCountyLookup
         End Get
         Set
-            Me.prop_UseStateCountyLookup = Value
+            Me._UseStateCountyLookup = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("State")>
     Public Property State() As String
         Get
-            Return Me.prop_State
+            Return Me._State
         End Get
         Set
-            Me.prop_State = Value
+            Me._State = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("County")>
     Public Property County() As String
         Get
-            Return Me.prop_County
+            Return Me._County
         End Get
         Set
-            Me.prop_County = Value
+            Me._County = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("UseMaxKz")>
-    Public Property UseMaxKz() As Boolean
+    Public Property UseMaxKz() As Boolean?
         Get
-            Return Me.prop_UseMaxKz
+            Return Me._UseMaxKz
         End Get
         Set
-            Me.prop_UseMaxKz = Value
+            Me._UseMaxKz = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_WindData")>
-    Public Property ASCE_7_10_WindData() As Boolean
+    Public Property ASCE_7_10_WindData() As Boolean?
         Get
-            Return Me.prop_ASCE_7_10_WindData
+            Return Me._ASCE_7_10_WindData
         End Get
         Set
-            Me.prop_ASCE_7_10_WindData = Value
+            Me._ASCE_7_10_WindData = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_ConvertWindToASD")>
-    Public Property ASCE_7_10_ConvertWindToASD() As Boolean
+    Public Property ASCE_7_10_ConvertWindToASD() As Boolean?
         Get
-            Return Me.prop_ASCE_7_10_ConvertWindToASD
+            Return Me._ASCE_7_10_ConvertWindToASD
         End Get
         Set
-            Me.prop_ASCE_7_10_ConvertWindToASD = Value
+            Me._ASCE_7_10_ConvertWindToASD = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Use Special Wind Profile"), DisplayName("UseASCEWind")>
-    Public Property UseASCEWind() As Boolean
+    Public Property UseASCEWind() As Boolean?
         Get
-            Return Me.prop_UseASCEWind
+            Return Me._UseASCEWind
         End Get
         Set
-            Me.prop_UseASCEWind = Value
+            Me._UseASCEWind = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Use TIA Gh Value"), DisplayName("AutoCalc_ASCE_GH")>
-    Public Property AutoCalc_ASCE_GH() As Boolean
+    Public Property AutoCalc_ASCE_GH() As Boolean?
         Get
-            Return Me.prop_AutoCalc_ASCE_GH
+            Return Me._AutoCalc_ASCE_GH
         End Get
         Set
-            Me.prop_AutoCalc_ASCE_GH = Value
+            Me._AutoCalc_ASCE_GH = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = B, 1 = C,  2 = D}"), DisplayName("ASCE_ExposureCat")>
-    Public Property ASCE_ExposureCat() As Integer
+    Public Property ASCE_ExposureCat() As Integer?
         Get
-            Return Me.prop_ASCE_ExposureCat
+            Return Me._ASCE_ExposureCat
         End Get
         Set
-            Me.prop_ASCE_ExposureCat = Value
+            Me._ASCE_ExposureCat = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = ASCE 7-88, 1 = ASCE 7-93, 2= ASCE 7-95, 3 = ASCE 7-98, 4 = ASCE 7-02, 5 = Cook Co., IL, 6 = WIS 53, 7 = Chicago}"), DisplayName("ASCE_Year")>
-    Public Property ASCE_Year() As Integer
+    Public Property ASCE_Year() As Integer?
         Get
-            Return Me.prop_ASCE_Year
+            Return Me._ASCE_Year
         End Get
         Set
-            Me.prop_ASCE_Year = Value
+            Me._ASCE_Year = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ASCEGh")>
-    Public Property ASCEGh() As Double
+    Public Property ASCEGh() As Double?
         Get
-            Return Me.prop_ASCEGh
+            Return Me._ASCEGh
         End Get
         Set
-            Me.prop_ASCEGh = Value
+            Me._ASCEGh = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ASCEI")>
-    Public Property ASCEI() As Double
+    Public Property ASCEI() As Double?
         Get
-            Return Me.prop_ASCEI
+            Return Me._ASCEI
         End Get
         Set
-            Me.prop_ASCEI = Value
+            Me._ASCEI = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = Every Section, 1 = between guys, 2 = user specify (WindCalcPoints)}"), DisplayName("CalcWindAt")>
-    Public Property CalcWindAt() As Integer
+    Public Property CalcWindAt() As Integer?
         Get
-            Return Me.prop_CalcWindAt
+            Return Me._CalcWindAt
         End Get
         Set
-            Me.prop_CalcWindAt = Value
+            Me._CalcWindAt = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindCalcPoints")>
-    Public Property WindCalcPoints() As Double
+    Public Property WindCalcPoints() As Double?
         Get
-            Return Me.prop_WindCalcPoints
+            Return Me._WindCalcPoints
         End Get
         Set
-            Me.prop_WindCalcPoints = Value
+            Me._WindCalcPoints = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = B, 1 = C, 2 = D}"), DisplayName("WindExposure")>
-    Public Property WindExposure() As Integer
+    Public Property WindExposure() As Integer?
         Get
-            Return Me.prop_WindExposure
+            Return Me._WindExposure
         End Get
         Set
-            Me.prop_WindExposure = Value
+            Me._WindExposure = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Structure Class - TIA-222-G Only {0 = I, 1 = II, 2 = III}"), DisplayName("StructureCategory")>
-    Public Property StructureCategory() As Integer
+    Public Property StructureCategory() As Integer?
         Get
-            Return Me.prop_StructureCategory
+            Return Me._StructureCategory
         End Get
         Set
-            Me.prop_StructureCategory = Value
+            Me._StructureCategory = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-H Only {0 = I, 1 = II,  2 = III,  3 = IV}"), DisplayName("RiskCategory")>
-    Public Property RiskCategory() As Integer
+    Public Property RiskCategory() As Integer?
         Get
-            Return Me.prop_RiskCategory
+            Return Me._RiskCategory
         End Get
         Set
-            Me.prop_RiskCategory = Value
+            Me._RiskCategory = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = 1, 1 = 2, 2 = 3, 3 = 4, 4 = 5/Rigorous Procedure}"), DisplayName("TopoCategory")>
-    Public Property TopoCategory() As Integer
+    Public Property TopoCategory() As Integer?
         Get
-            Return Me.prop_TopoCategory
+            Return Me._TopoCategory
         End Get
         Set
-            Me.prop_TopoCategory = Value
+            Me._TopoCategory = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = Continuous Ridge, 1 = Flat Topped Ridge, 2 = Hill, 3 = Flat Topped Hill, 4 = Continuous Escarpment}"), DisplayName("RSMTopographicFeature")>
-    Public Property RSMTopographicFeature() As Integer
+    Public Property RSMTopographicFeature() As Integer?
         Get
-            Return Me.prop_RSMTopographicFeature
+            Return Me._RSMTopographicFeature
         End Get
         Set
-            Me.prop_RSMTopographicFeature = Value
+            Me._RSMTopographicFeature = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RSM_L")>
-    Public Property RSM_L() As Double
+    Public Property RSM_L() As Double?
         Get
-            Return Me.prop_RSM_L
+            Return Me._RSM_L
         End Get
         Set
-            Me.prop_RSM_L = Value
+            Me._RSM_L = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RSM_X")>
-    Public Property RSM_X() As Double
+    Public Property RSM_X() As Double?
         Get
-            Return Me.prop_RSM_X
+            Return Me._RSM_X
         End Get
         Set
-            Me.prop_RSM_X = Value
+            Me._RSM_X = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("CrestHeight")>
-    Public Property CrestHeight() As Double
+    Public Property CrestHeight() As Double?
         Get
-            Return Me.prop_CrestHeight
+            Return Me._CrestHeight
         End Get
         Set
-            Me.prop_CrestHeight = Value
+            Me._CrestHeight = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("TIA_222_H_TopoFeatureDownwind")>
-    Public Property TIA_222_H_TopoFeatureDownwind() As Boolean
+    Public Property TIA_222_H_TopoFeatureDownwind() As Boolean?
         Get
-            Return Me.prop_TIA_222_H_TopoFeatureDownwind
+            Return Me._TIA_222_H_TopoFeatureDownwind
         End Get
         Set
-            Me.prop_TIA_222_H_TopoFeatureDownwind = Value
+            Me._TIA_222_H_TopoFeatureDownwind = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("BaseElevAboveSeaLevel")>
-    Public Property BaseElevAboveSeaLevel() As Double
+    Public Property BaseElevAboveSeaLevel() As Double?
         Get
-            Return Me.prop_BaseElevAboveSeaLevel
+            Return Me._BaseElevAboveSeaLevel
         End Get
         Set
-            Me.prop_BaseElevAboveSeaLevel = Value
+            Me._BaseElevAboveSeaLevel = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ConsiderRooftopSpeedUp")>
-    Public Property ConsiderRooftopSpeedUp() As Boolean
+    Public Property ConsiderRooftopSpeedUp() As Boolean?
         Get
-            Return Me.prop_ConsiderRooftopSpeedUp
+            Return Me._ConsiderRooftopSpeedUp
         End Get
         Set
-            Me.prop_ConsiderRooftopSpeedUp = Value
+            Me._ConsiderRooftopSpeedUp = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopWS")>
-    Public Property RooftopWS() As Double
+    Public Property RooftopWS() As Double?
         Get
-            Return Me.prop_RooftopWS
+            Return Me._RooftopWS
         End Get
         Set
-            Me.prop_RooftopWS = Value
+            Me._RooftopWS = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopHS")>
-    Public Property RooftopHS() As Double
+    Public Property RooftopHS() As Double?
         Get
-            Return Me.prop_RooftopHS
+            Return Me._RooftopHS
         End Get
         Set
-            Me.prop_RooftopHS = Value
+            Me._RooftopHS = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopParapetHt")>
-    Public Property RooftopParapetHt() As Double
+    Public Property RooftopParapetHt() As Double?
         Get
-            Return Me.prop_RooftopParapetHt
+            Return Me._RooftopParapetHt
         End Get
         Set
-            Me.prop_RooftopParapetHt = Value
+            Me._RooftopParapetHt = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopXB")>
-    Public Property RooftopXB() As Double
+    Public Property RooftopXB() As Double?
         Get
-            Return Me.prop_RooftopXB
+            Return Me._RooftopXB
         End Get
         Set
-            Me.prop_RooftopXB = Value
+            Me._RooftopXB = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier {0 = A, 1 = B, 2 = C}"), DisplayName("WindZone")>
-    Public Property WindZone() As Integer
+    Public Property WindZone() As Integer?
         Get
-            Return Me.prop_WindZone
+            Return Me._WindZone
         End Get
         Set
-            Me.prop_WindZone = Value
+            Me._WindZone = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMult")>
-    Public Property EIACWindMult() As Double
+    Public Property EIACWindMult() As Double?
         Get
-            Return Me.prop_EIACWindMult
+            Return Me._EIACWindMult
         End Get
         Set
-            Me.prop_EIACWindMult = Value
+            Me._EIACWindMult = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMultIce")>
-    Public Property EIACWindMultIce() As Double
+    Public Property EIACWindMultIce() As Double?
         Get
-            Return Me.prop_EIACWindMultIce
+            Return Me._EIACWindMultIce
         End Get
         Set
-            Me.prop_EIACWindMultIce = Value
+            Me._EIACWindMultIce = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier - Set Cable Drag Factor to 1.0"), DisplayName("EIACIgnoreCableDrag")>
-    Public Property EIACIgnoreCableDrag() As Boolean
+    Public Property EIACIgnoreCableDrag() As Boolean?
         Get
-            Return Me.prop_EIACIgnoreCableDrag
+            Return Me._EIACIgnoreCableDrag
         End Get
         Set
-            Me.prop_EIACIgnoreCableDrag = Value
+            Me._EIACIgnoreCableDrag = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_RefVelPress")>
-    Public Property CSA_S37_RefVelPress() As Double
+    Public Property CSA_S37_RefVelPress() As Double?
         Get
-            Return Me.prop_CSA_S37_RefVelPress
+            Return Me._CSA_S37_RefVelPress
         End Get
         Set
-            Me.prop_CSA_S37_RefVelPress = Value
+            Me._CSA_S37_RefVelPress = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only {0 = I, 1 = II, 2 = III}"), DisplayName("CSA_S37_ReliabilityClass")>
-    Public Property CSA_S37_ReliabilityClass() As Integer
+    Public Property CSA_S37_ReliabilityClass() As Integer?
         Get
-            Return Me.prop_CSA_S37_ReliabilityClass
+            Return Me._CSA_S37_ReliabilityClass
         End Get
         Set
-            Me.prop_CSA_S37_ReliabilityClass = Value
+            Me._CSA_S37_ReliabilityClass = Value
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_ServiceabilityFactor")>
-    Public Property CSA_S37_ServiceabilityFactor() As Double
+    Public Property CSA_S37_ServiceabilityFactor() As Double?
         Get
-            Return Me.prop_CSA_S37_ServiceabilityFactor
+            Return Me._CSA_S37_ServiceabilityFactor
         End Get
         Set
-            Me.prop_CSA_S37_ServiceabilityFactor = Value
+            Me._CSA_S37_ServiceabilityFactor = Value
         End Set
     End Property
 
 End Class
 Partial Public Class tnxMisclCode
-    Private prop_GroutFc As Double
-    Private prop_TowerBoltGrade As String
-    Private prop_TowerBoltMinEdgeDist As Double
+    Private _GroutFc As Double?
+    Private _TowerBoltGrade As String
+    Private _TowerBoltMinEdgeDist As Double?
 
     <Category("TNX Code Miscellaneous"), Description(""), DisplayName("GroutFc")>
-    Public Property GroutFc() As Double
+    Public Property GroutFc() As Double?
         Get
-            Return Me.prop_GroutFc
+            Return Me._GroutFc
         End Get
         Set
-            Me.prop_GroutFc = Value
+            Me._GroutFc = Value
         End Set
     End Property
     <Category("TNX Code Miscellaneous"), Description("Default bolt grade"), DisplayName("TowerBoltGrade")>
     Public Property TowerBoltGrade() As String
         Get
-            Return Me.prop_TowerBoltGrade
+            Return Me._TowerBoltGrade
         End Get
         Set
-            Me.prop_TowerBoltGrade = Value
+            Me._TowerBoltGrade = Value
         End Set
     End Property
     <Category("TNX Code Miscellaneous"), Description("Not in UI"), DisplayName("TowerBoltMinEdgeDist")>
-    Public Property TowerBoltMinEdgeDist() As Double
+    Public Property TowerBoltMinEdgeDist() As Double?
         Get
-            Return Me.prop_TowerBoltMinEdgeDist
+            Return Me._TowerBoltMinEdgeDist
         End Get
         Set
-            Me.prop_TowerBoltMinEdgeDist = Value
+            Me._TowerBoltMinEdgeDist = Value
         End Set
     End Property
 End Class
 
 Partial Public Class tnxSeismic
-    Private prop_UseASCE7_10_Seismic_Lcomb As Boolean
-    Private prop_SeismicSiteClass As Integer
-    Private prop_SeismicSs As Double
-    Private prop_SeismicS1 As Double
+    Private _UseASCE7_10_Seismic_Lcomb As Boolean?
+    Private _SeismicSiteClass As Integer?
+    Private _SeismicSs As Double?
+    Private _SeismicS1 As Double?
 
     <Category("TNX Code seismic"), Description(""), DisplayName("UseASCE7_10_Seismic_Lcomb")>
-    Public Property UseASCE7_10_Seismic_Lcomb() As Boolean
+    Public Property UseASCE7_10_Seismic_Lcomb() As Boolean?
         Get
-            Return Me.prop_UseASCE7_10_Seismic_Lcomb
+            Return Me._UseASCE7_10_Seismic_Lcomb
         End Get
         Set
-            Me.prop_UseASCE7_10_Seismic_Lcomb = Value
+            Me._UseASCE7_10_Seismic_Lcomb = Value
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI {0 = A, 1 = B, 2 = C, 3 = D, 4 = E} "), DisplayName("SeismicSiteClass")>
-    Public Property SeismicSiteClass() As Integer
+    Public Property SeismicSiteClass() As Integer?
         Get
-            Return Me.prop_SeismicSiteClass
+            Return Me._SeismicSiteClass
         End Get
         Set
-            Me.prop_SeismicSiteClass = Value
+            Me._SeismicSiteClass = Value
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicSs")>
-    Public Property SeismicSs() As Double
+    Public Property SeismicSs() As Double?
         Get
-            Return Me.prop_SeismicSs
+            Return Me._SeismicSs
         End Get
         Set
-            Me.prop_SeismicSs = Value
+            Me._SeismicSs = Value
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicS1")>
-    Public Property SeismicS1() As Double
+    Public Property SeismicS1() As Double?
         Get
-            Return Me.prop_SeismicS1
+            Return Me._SeismicS1
         End Get
         Set
-            Me.prop_SeismicS1 = Value
+            Me._SeismicS1 = Value
         End Set
     End Property
 End Class
@@ -15179,1064 +17789,1064 @@ End Class
 
 #Region "Options"
 Partial Public Class tnxOptions
-    Private prop_UseClearSpans As Boolean
-    Private prop_UseClearSpansKlr As Boolean
-    Private prop_UseFeedlineAsCylinder As Boolean
-    Private prop_UseLegLoads As Boolean
-    Private prop_SRTakeCompression As Boolean
-    Private prop_AllLegPanelsSame As Boolean
-    Private prop_UseCombinedBoltCapacity As Boolean
-    Private prop_SecHorzBracesLeg As Boolean
-    Private prop_SortByComponent As Boolean
-    Private prop_SRCutEnds As Boolean
-    Private prop_SRConcentric As Boolean
-    Private prop_CalcBlockShear As Boolean
-    Private prop_Use4SidedDiamondBracing As Boolean
-    Private prop_TriangulateInnerBracing As Boolean
-    Private prop_PrintCarrierNotes As Boolean
-    Private prop_AddIBCWindCase As Boolean
-    Private prop_LegBoltsAtTop As Boolean
-    Private prop_UseTIA222Exemptions_MinBracingResistance As Boolean
-    Private prop_UseTIA222Exemptions_TensionSplice As Boolean
-    Private prop_IgnoreKLryFor60DegAngleLegs As Boolean
-    Private prop_UseFeedlineTorque As Boolean
-    Private prop_UsePinnedElements As Boolean
-    Private prop_UseRigidIndex As Boolean
-    Private prop_UseTrueCable As Boolean
-    Private prop_UseASCELy As Boolean
-    Private prop_CalcBracingForces As Boolean
-    Private prop_IgnoreBracingFEA As Boolean
-    Private prop_BypassStabilityChecks As Boolean
-    Private prop_UseWindProjection As Boolean
-    Private prop_UseDishCoeff As Boolean
-    Private prop_AutoCalcTorqArmArea As Boolean
-    Private prop_foundationStiffness As New tnxFoundaionStiffness()
-    Private prop_defaultGirtOffsets As New tnxDefaultGirtOffsets()
-    Private prop_cantileverPoles As New tnxCantileverPoles()
-    Private prop_windDirections As New tnxWindDirections()
-    Private prop_misclOptions As New tnxMisclOptions()
+    Private _UseClearSpans As Boolean?
+    Private _UseClearSpansKlr As Boolean?
+    Private _UseFeedlineAsCylinder As Boolean?
+    Private _UseLegLoads As Boolean?
+    Private _SRTakeCompression As Boolean?
+    Private _AllLegPanelsSame As Boolean?
+    Private _UseCombinedBoltCapacity As Boolean?
+    Private _SecHorzBracesLeg As Boolean?
+    Private _SortByComponent As Boolean?
+    Private _SRCutEnds As Boolean?
+    Private _SRConcentric As Boolean?
+    Private _CalcBlockShear As Boolean?
+    Private _Use4SidedDiamondBracing As Boolean?
+    Private _TriangulateInnerBracing As Boolean?
+    Private _PrintCarrierNotes As Boolean?
+    Private _AddIBCWindCase As Boolean?
+    Private _LegBoltsAtTop As Boolean?
+    Private _UseTIA222Exemptions_MinBracingResistance As Boolean?
+    Private _UseTIA222Exemptions_TensionSplice As Boolean?
+    Private _IgnoreKLryFor60DegAngleLegs As Boolean?
+    Private _UseFeedlineTorque As Boolean?
+    Private _UsePinnedElements As Boolean?
+    Private _UseRigidIndex As Boolean?
+    Private _UseTrueCable As Boolean?
+    Private _UseASCELy As Boolean?
+    Private _CalcBracingForces As Boolean?
+    Private _IgnoreBracingFEA As Boolean?
+    Private _BypassStabilityChecks As Boolean?
+    Private _UseWindProjection As Boolean?
+    Private _UseDishCoeff As Boolean?
+    Private _AutoCalcTorqArmArea As Boolean?
+    Private _foundationStiffness As New tnxFoundaionStiffness()
+    Private _defaultGirtOffsets As New tnxDefaultGirtOffsets()
+    Private _cantileverPoles As New tnxCantileverPoles()
+    Private _windDirections As New tnxWindDirections()
+    Private _misclOptions As New tnxMisclOptions()
 
     <Category("TNX Options"), Description(""), DisplayName("UseClearSpans")>
-    Public Property UseClearSpans() As Boolean
+    Public Property UseClearSpans() As Boolean?
         Get
-            Return Me.prop_UseClearSpans
+            Return Me._UseClearSpans
         End Get
         Set
-            Me.prop_UseClearSpans = Value
+            Me._UseClearSpans = Value
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseClearSpansKlr")>
-    Public Property UseClearSpansKlr() As Boolean
+    Public Property UseClearSpansKlr() As Boolean?
         Get
-            Return Me.prop_UseClearSpansKlr
+            Return Me._UseClearSpansKlr
         End Get
         Set
-            Me.prop_UseClearSpansKlr = Value
+            Me._UseClearSpansKlr = Value
         End Set
     End Property
     <Category("TNX Options"), Description("treat feedline bundles as cylindrical"), DisplayName("UseFeedlineAsCylinder")>
-    Public Property UseFeedlineAsCylinder() As Boolean
+    Public Property UseFeedlineAsCylinder() As Boolean?
         Get
-            Return Me.prop_UseFeedlineAsCylinder
+            Return Me._UseFeedlineAsCylinder
         End Get
         Set
-            Me.prop_UseFeedlineAsCylinder = Value
+            Me._UseFeedlineAsCylinder = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Distribute Leg Loads As Uniform"), DisplayName("UseLegLoads")>
-    Public Property UseLegLoads() As Boolean
+    Public Property UseLegLoads() As Boolean?
         Get
-            Return Me.prop_UseLegLoads
+            Return Me._UseLegLoads
         End Get
         Set
-            Me.prop_UseLegLoads = Value
+            Me._UseLegLoads = Value
         End Set
     End Property
     <Category("TNX Options"), Description("SR Sleeve Bolts Resist Compression"), DisplayName("SRTakeCompression")>
-    Public Property SRTakeCompression() As Boolean
+    Public Property SRTakeCompression() As Boolean?
         Get
-            Return Me.prop_SRTakeCompression
+            Return Me._SRTakeCompression
         End Get
         Set
-            Me.prop_SRTakeCompression = Value
+            Me._SRTakeCompression = Value
         End Set
     End Property
     <Category("TNX Options"), Description("All Leg Panels Have Same Allowable"), DisplayName("AllLegPanelsSame")>
-    Public Property AllLegPanelsSame() As Boolean
+    Public Property AllLegPanelsSame() As Boolean?
         Get
-            Return Me.prop_AllLegPanelsSame
+            Return Me._AllLegPanelsSame
         End Get
         Set
-            Me.prop_AllLegPanelsSame = Value
+            Me._AllLegPanelsSame = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Include Bolts In Member Capacity"), DisplayName("UseCombinedBoltCapacity")>
-    Public Property UseCombinedBoltCapacity() As Boolean
+    Public Property UseCombinedBoltCapacity() As Boolean?
         Get
-            Return Me.prop_UseCombinedBoltCapacity
+            Return Me._UseCombinedBoltCapacity
         End Get
         Set
-            Me.prop_UseCombinedBoltCapacity = Value
+            Me._UseCombinedBoltCapacity = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Secondary Horizontal Braces Leg"), DisplayName("SecHorzBracesLeg")>
-    Public Property SecHorzBracesLeg() As Boolean
+    Public Property SecHorzBracesLeg() As Boolean?
         Get
-            Return Me.prop_SecHorzBracesLeg
+            Return Me._SecHorzBracesLeg
         End Get
         Set
-            Me.prop_SecHorzBracesLeg = Value
+            Me._SecHorzBracesLeg = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Sort Capacity Reports By Component"), DisplayName("SortByComponent")>
-    Public Property SortByComponent() As Boolean
+    Public Property SortByComponent() As Boolean?
         Get
-            Return Me.prop_SortByComponent
+            Return Me._SortByComponent
         End Get
         Set
-            Me.prop_SortByComponent = Value
+            Me._SortByComponent = Value
         End Set
     End Property
     <Category("TNX Options"), Description("SR Members Have Cut Ends"), DisplayName("SRCutEnds")>
-    Public Property SRCutEnds() As Boolean
+    Public Property SRCutEnds() As Boolean?
         Get
-            Return Me.prop_SRCutEnds
+            Return Me._SRCutEnds
         End Get
         Set
-            Me.prop_SRCutEnds = Value
+            Me._SRCutEnds = Value
         End Set
     End Property
     <Category("TNX Options"), Description("SR Members Are Concentric"), DisplayName("SRConcentric")>
-    Public Property SRConcentric() As Boolean
+    Public Property SRConcentric() As Boolean?
         Get
-            Return Me.prop_SRConcentric
+            Return Me._SRConcentric
         End Get
         Set
-            Me.prop_SRConcentric = Value
+            Me._SRConcentric = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Include Angle Block Shear Check"), DisplayName("CalcBlockShear")>
-    Public Property CalcBlockShear() As Boolean
+    Public Property CalcBlockShear() As Boolean?
         Get
-            Return Me.prop_CalcBlockShear
+            Return Me._CalcBlockShear
         End Get
         Set
-            Me.prop_CalcBlockShear = Value
+            Me._CalcBlockShear = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Use Diamond Inner Bracing"), DisplayName("Use4SidedDiamondBracing")>
-    Public Property Use4SidedDiamondBracing() As Boolean
+    Public Property Use4SidedDiamondBracing() As Boolean?
         Get
-            Return Me.prop_Use4SidedDiamondBracing
+            Return Me._Use4SidedDiamondBracing
         End Get
         Set
-            Me.prop_Use4SidedDiamondBracing = Value
+            Me._Use4SidedDiamondBracing = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Triangulate Diamond Inner Bracing"), DisplayName("TriangulateInnerBracing")>
-    Public Property TriangulateInnerBracing() As Boolean
+    Public Property TriangulateInnerBracing() As Boolean?
         Get
-            Return Me.prop_TriangulateInnerBracing
+            Return Me._TriangulateInnerBracing
         End Get
         Set
-            Me.prop_TriangulateInnerBracing = Value
+            Me._TriangulateInnerBracing = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Print Carrier/Notes"), DisplayName("PrintCarrierNotes")>
-    Public Property PrintCarrierNotes() As Boolean
+    Public Property PrintCarrierNotes() As Boolean?
         Get
-            Return Me.prop_PrintCarrierNotes
+            Return Me._PrintCarrierNotes
         End Get
         Set
-            Me.prop_PrintCarrierNotes = Value
+            Me._PrintCarrierNotes = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Add IBC .6D+W Combination"), DisplayName("AddIBCWindCase")>
-    Public Property AddIBCWindCase() As Boolean
+    Public Property AddIBCWindCase() As Boolean?
         Get
-            Return Me.prop_AddIBCWindCase
+            Return Me._AddIBCWindCase
         End Get
         Set
-            Me.prop_AddIBCWindCase = Value
+            Me._AddIBCWindCase = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Leg Bolts Are At Top Of Section"), DisplayName("LegBoltsAtTop")>
-    Public Property LegBoltsAtTop() As Boolean
+    Public Property LegBoltsAtTop() As Boolean?
         Get
-            Return Me.prop_LegBoltsAtTop
+            Return Me._LegBoltsAtTop
         End Get
         Set
-            Me.prop_LegBoltsAtTop = Value
+            Me._LegBoltsAtTop = Value
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_MinBracingResistance")>
-    Public Property UseTIA222Exemptions_MinBracingResistance() As Boolean
+    Public Property UseTIA222Exemptions_MinBracingResistance() As Boolean?
         Get
-            Return Me.prop_UseTIA222Exemptions_MinBracingResistance
+            Return Me._UseTIA222Exemptions_MinBracingResistance
         End Get
         Set
-            Me.prop_UseTIA222Exemptions_MinBracingResistance = Value
+            Me._UseTIA222Exemptions_MinBracingResistance = Value
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_TensionSplice")>
-    Public Property UseTIA222Exemptions_TensionSplice() As Boolean
+    Public Property UseTIA222Exemptions_TensionSplice() As Boolean?
         Get
-            Return Me.prop_UseTIA222Exemptions_TensionSplice
+            Return Me._UseTIA222Exemptions_TensionSplice
         End Get
         Set
-            Me.prop_UseTIA222Exemptions_TensionSplice = Value
+            Me._UseTIA222Exemptions_TensionSplice = Value
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("IgnoreKLryFor60DegAngleLegs")>
-    Public Property IgnoreKLryFor60DegAngleLegs() As Boolean
+    Public Property IgnoreKLryFor60DegAngleLegs() As Boolean?
         Get
-            Return Me.prop_IgnoreKLryFor60DegAngleLegs
+            Return Me._IgnoreKLryFor60DegAngleLegs
         End Get
         Set
-            Me.prop_IgnoreKLryFor60DegAngleLegs = Value
+            Me._IgnoreKLryFor60DegAngleLegs = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Consider Feed Line Torque"), DisplayName("UseFeedlineTorque")>
-    Public Property UseFeedlineTorque() As Boolean
+    Public Property UseFeedlineTorque() As Boolean?
         Get
-            Return Me.prop_UseFeedlineTorque
+            Return Me._UseFeedlineTorque
         End Get
         Set
-            Me.prop_UseFeedlineTorque = Value
+            Me._UseFeedlineTorque = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Assume Legs Pinned"), DisplayName("UsePinnedElements")>
-    Public Property UsePinnedElements() As Boolean
+    Public Property UsePinnedElements() As Boolean?
         Get
-            Return Me.prop_UsePinnedElements
+            Return Me._UsePinnedElements
         End Get
         Set
-            Me.prop_UsePinnedElements = Value
+            Me._UsePinnedElements = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Assume Rigid Index Plate"), DisplayName("UseRigidIndex")>
-    Public Property UseRigidIndex() As Boolean
+    Public Property UseRigidIndex() As Boolean?
         Get
-            Return Me.prop_UseRigidIndex
+            Return Me._UseRigidIndex
         End Get
         Set
-            Me.prop_UseRigidIndex = Value
+            Me._UseRigidIndex = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Retension Guys To Initial Tension"), DisplayName("UseTrueCable")>
-    Public Property UseTrueCable() As Boolean
+    Public Property UseTrueCable() As Boolean?
         Get
-            Return Me.prop_UseTrueCable
+            Return Me._UseTrueCable
         End Get
         Set
-            Me.prop_UseTrueCable = Value
+            Me._UseTrueCable = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Use ASCE 10 X-Brace Ly Rules"), DisplayName("UseASCELy")>
-    Public Property UseASCELy() As Boolean
+    Public Property UseASCELy() As Boolean?
         Get
-            Return Me.prop_UseASCELy
+            Return Me._UseASCELy
         End Get
         Set
-            Me.prop_UseASCELy = Value
+            Me._UseASCELy = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Calculate Forces in Supporing Bracing Members"), DisplayName("CalcBracingForces")>
-    Public Property CalcBracingForces() As Boolean
+    Public Property CalcBracingForces() As Boolean?
         Get
-            Return Me.prop_CalcBracingForces
+            Return Me._CalcBracingForces
         End Get
         Set
-            Me.prop_CalcBracingForces = Value
+            Me._CalcBracingForces = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Ignore Redundant Bracing in FEA"), DisplayName("IgnoreBracingFEA")>
-    Public Property IgnoreBracingFEA() As Boolean
+    Public Property IgnoreBracingFEA() As Boolean?
         Get
-            Return Me.prop_IgnoreBracingFEA
+            Return Me._IgnoreBracingFEA
         End Get
         Set
-            Me.prop_IgnoreBracingFEA = Value
+            Me._IgnoreBracingFEA = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Bypass Mast Stability Checks"), DisplayName("BypassStabilityChecks")>
-    Public Property BypassStabilityChecks() As Boolean
+    Public Property BypassStabilityChecks() As Boolean?
         Get
-            Return Me.prop_BypassStabilityChecks
+            Return Me._BypassStabilityChecks
         End Get
         Set
-            Me.prop_BypassStabilityChecks = Value
+            Me._BypassStabilityChecks = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Project Wind Area Of Appurtenances"), DisplayName("UseWindProjection")>
-    Public Property UseWindProjection() As Boolean
+    Public Property UseWindProjection() As Boolean?
         Get
-            Return Me.prop_UseWindProjection
+            Return Me._UseWindProjection
         End Get
         Set
-            Me.prop_UseWindProjection = Value
+            Me._UseWindProjection = Value
         End Set
     End Property
     <Category("TNX Options"), Description("Use Azimuth Dish Coefficients"), DisplayName("UseDishCoeff")>
-    Public Property UseDishCoeff() As Boolean
+    Public Property UseDishCoeff() As Boolean?
         Get
-            Return Me.prop_UseDishCoeff
+            Return Me._UseDishCoeff
         End Get
         Set
-            Me.prop_UseDishCoeff = Value
+            Me._UseDishCoeff = Value
         End Set
     End Property
     <Category("TNX Options"), Description("AutoCalc Torque Arm Area"), DisplayName("AutoCalcTorqArmArea")>
-    Public Property AutoCalcTorqArmArea() As Boolean
+    Public Property AutoCalcTorqArmArea() As Boolean?
         Get
-            Return Me.prop_AutoCalcTorqArmArea
+            Return Me._AutoCalcTorqArmArea
         End Get
         Set
-            Me.prop_AutoCalcTorqArmArea = Value
+            Me._AutoCalcTorqArmArea = Value
         End Set
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Foundation Stiffness Options")>
     Public Property foundationStiffness() As tnxFoundaionStiffness
         Get
-            Return Me.prop_foundationStiffness
+            Return Me._foundationStiffness
         End Get
         Set
-            Me.prop_foundationStiffness = Value
+            Me._foundationStiffness = Value
         End Set
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Default Girt Offsets Options")>
     Public Property defaultGirtOffsets() As tnxDefaultGirtOffsets
         Get
-            Return Me.prop_defaultGirtOffsets
+            Return Me._defaultGirtOffsets
         End Get
         Set
-            Me.prop_defaultGirtOffsets = Value
+            Me._defaultGirtOffsets = Value
         End Set
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Cantilever Pole Options")>
     Public Property cantileverPoles() As tnxCantileverPoles
         Get
-            Return Me.prop_cantileverPoles
+            Return Me._cantileverPoles
         End Get
         Set
-            Me.prop_cantileverPoles = Value
+            Me._cantileverPoles = Value
         End Set
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Wind Direction Options")>
     Public Property windDirections() As tnxWindDirections
         Get
-            Return Me.prop_windDirections
+            Return Me._windDirections
         End Get
         Set
-            Me.prop_windDirections = Value
+            Me._windDirections = Value
         End Set
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Miscellaneous Options")>
     Public Property misclOptions() As tnxMisclOptions
         Get
-            Return Me.prop_misclOptions
+            Return Me._misclOptions
         End Get
         Set
-            Me.prop_misclOptions = Value
+            Me._misclOptions = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxFoundaionStiffness
-    Private prop_MastVert As Double
-    Private prop_MastHorz As Double
-    Private prop_GuyVert As Double
-    Private prop_GuyHorz As Double
+    Private _MastVert As Double?
+    Private _MastHorz As Double?
+    Private _GuyVert As Double?
+    Private _GuyHorz As Double?
 
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastVert")>
-    Public Property MastVert() As Double
+    Public Property MastVert() As Double?
         Get
-            Return Me.prop_MastVert
+            Return Me._MastVert
         End Get
         Set
-            Me.prop_MastVert = Value
+            Me._MastVert = Value
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastHorz")>
-    Public Property MastHorz() As Double
+    Public Property MastHorz() As Double?
         Get
-            Return Me.prop_MastHorz
+            Return Me._MastHorz
         End Get
         Set
-            Me.prop_MastHorz = Value
+            Me._MastHorz = Value
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyVert")>
-    Public Property GuyVert() As Double
+    Public Property GuyVert() As Double?
         Get
-            Return Me.prop_GuyVert
+            Return Me._GuyVert
         End Get
         Set
-            Me.prop_GuyVert = Value
+            Me._GuyVert = Value
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyHorz")>
-    Public Property GuyHorz() As Double
+    Public Property GuyHorz() As Double?
         Get
-            Return Me.prop_GuyHorz
+            Return Me._GuyHorz
         End Get
         Set
-            Me.prop_GuyHorz = Value
+            Me._GuyHorz = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxDefaultGirtOffsets
-    Private prop_GirtOffset As Double
-    Private prop_GirtOffsetLatticedPole As Double
-    Private prop_OffsetBotGirt As Boolean
+    Private _GirtOffset As Double?
+    Private _GirtOffsetLatticedPole As Double?
+    Private _OffsetBotGirt As Boolean?
 
     <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffset")>
-    Public Property GirtOffset() As Double
+    Public Property GirtOffset() As Double?
         Get
-            Return Me.prop_GirtOffset
+            Return Me._GirtOffset
         End Get
         Set
-            Me.prop_GirtOffset = Value
+            Me._GirtOffset = Value
         End Set
     End Property
     <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffsetLatticedPole")>
-    Public Property GirtOffsetLatticedPole() As Double
+    Public Property GirtOffsetLatticedPole() As Double?
         Get
-            Return Me.prop_GirtOffsetLatticedPole
+            Return Me._GirtOffsetLatticedPole
         End Get
         Set
-            Me.prop_GirtOffsetLatticedPole = Value
+            Me._GirtOffsetLatticedPole = Value
         End Set
     End Property
     <Category("TNX Default Girt Offset Options"), Description("offset girt at foundation"), DisplayName("OffsetBotGirt")>
-    Public Property OffsetBotGirt() As Boolean
+    Public Property OffsetBotGirt() As Boolean?
         Get
-            Return Me.prop_OffsetBotGirt
+            Return Me._OffsetBotGirt
         End Get
         Set
-            Me.prop_OffsetBotGirt = Value
+            Me._OffsetBotGirt = Value
         End Set
     End Property
 End Class
 
 Partial Public Class tnxCantileverPoles
-    Private prop_CheckVonMises As Boolean
-    Private prop_SocketTopMount As Boolean
-    Private prop_PrintMonopoleAtIncrements As Boolean
-    Private prop_UseSubCriticalFlow As Boolean
-    Private prop_AssumePoleWithNoAttachments As Boolean
-    Private prop_AssumePoleWithShroud As Boolean
-    Private prop_PoleCornerRadiusKnown As Boolean
-    Private prop_CantKFactor As Double
+    Private _CheckVonMises As Boolean?
+    Private _SocketTopMount As Boolean?
+    Private _PrintMonopoleAtIncrements As Boolean?
+    Private _UseSubCriticalFlow As Boolean?
+    Private _AssumePoleWithNoAttachments As Boolean?
+    Private _AssumePoleWithShroud As Boolean?
+    Private _PoleCornerRadiusKnown As Boolean?
+    Private _CantKFactor As Double?
 
     <Category("TNX Cantilever Pole Options"), Description(")Include Shear-Torsion Interaction"), DisplayName("CheckVonMises")>
-    Public Property CheckVonMises() As Boolean
+    Public Property CheckVonMises() As Boolean?
         Get
-            Return Me.prop_CheckVonMises
+            Return Me._CheckVonMises
         End Get
         Set
-            Me.prop_CheckVonMises = Value
+            Me._CheckVonMises = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Use Top Mounted Socket"), DisplayName("SocketTopMount")>
-    Public Property SocketTopMount() As Boolean
+    Public Property SocketTopMount() As Boolean?
         Get
-            Return Me.prop_SocketTopMount
+            Return Me._SocketTopMount
         End Get
         Set
-            Me.prop_SocketTopMount = Value
+            Me._SocketTopMount = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Print Pole Stresses at Increments"), DisplayName("PrintMonopoleAtIncrements")>
-    Public Property PrintMonopoleAtIncrements() As Boolean
+    Public Property PrintMonopoleAtIncrements() As Boolean?
         Get
-            Return Me.prop_PrintMonopoleAtIncrements
+            Return Me._PrintMonopoleAtIncrements
         End Get
         Set
-            Me.prop_PrintMonopoleAtIncrements = Value
+            Me._PrintMonopoleAtIncrements = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Always Yse Sub-Critical Flow"), DisplayName("UseSubCriticalFlow")>
-    Public Property UseSubCriticalFlow() As Boolean
+    Public Property UseSubCriticalFlow() As Boolean?
         Get
-            Return Me.prop_UseSubCriticalFlow
+            Return Me._UseSubCriticalFlow
         End Get
         Set
-            Me.prop_UseSubCriticalFlow = Value
+            Me._UseSubCriticalFlow = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Pole Without Linear Attachments"), DisplayName("AssumePoleWithNoAttachments")>
-    Public Property AssumePoleWithNoAttachments() As Boolean
+    Public Property AssumePoleWithNoAttachments() As Boolean?
         Get
-            Return Me.prop_AssumePoleWithNoAttachments
+            Return Me._AssumePoleWithNoAttachments
         End Get
         Set
-            Me.prop_AssumePoleWithNoAttachments = Value
+            Me._AssumePoleWithNoAttachments = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Pole With Shroud or No Appurtenances"), DisplayName("AssumePoleWithShroud")>
-    Public Property AssumePoleWithShroud() As Boolean
+    Public Property AssumePoleWithShroud() As Boolean?
         Get
-            Return Me.prop_AssumePoleWithShroud
+            Return Me._AssumePoleWithShroud
         End Get
         Set
-            Me.prop_AssumePoleWithShroud = Value
+            Me._AssumePoleWithShroud = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Outside and Inside Corner Radii Are Known"), DisplayName("PoleCornerRadiusKnown")>
-    Public Property PoleCornerRadiusKnown() As Boolean
+    Public Property PoleCornerRadiusKnown() As Boolean?
         Get
-            Return Me.prop_PoleCornerRadiusKnown
+            Return Me._PoleCornerRadiusKnown
         End Get
         Set
-            Me.prop_PoleCornerRadiusKnown = Value
+            Me._PoleCornerRadiusKnown = Value
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Cantilevered Poles K Factor"), DisplayName("CantKFactor")>
-    Public Property CantKFactor() As Double
+    Public Property CantKFactor() As Double?
         Get
-            Return Me.prop_CantKFactor
+            Return Me._CantKFactor
         End Get
         Set
-            Me.prop_CantKFactor = Value
+            Me._CantKFactor = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxWindDirections
-    Private prop_WindDirOption As Integer
-    Private prop_WindDir0_0 As Boolean
-    Private prop_WindDir0_1 As Boolean
-    Private prop_WindDir0_2 As Boolean
-    Private prop_WindDir0_3 As Boolean
-    Private prop_WindDir0_4 As Boolean
-    Private prop_WindDir0_5 As Boolean
-    Private prop_WindDir0_6 As Boolean
-    Private prop_WindDir0_7 As Boolean
-    Private prop_WindDir0_8 As Boolean
-    Private prop_WindDir0_9 As Boolean
-    Private prop_WindDir0_10 As Boolean
-    Private prop_WindDir0_11 As Boolean
-    Private prop_WindDir0_12 As Boolean
-    Private prop_WindDir0_13 As Boolean
-    Private prop_WindDir0_14 As Boolean
-    Private prop_WindDir0_15 As Boolean
-    Private prop_WindDir1_0 As Boolean
-    Private prop_WindDir1_1 As Boolean
-    Private prop_WindDir1_2 As Boolean
-    Private prop_WindDir1_3 As Boolean
-    Private prop_WindDir1_4 As Boolean
-    Private prop_WindDir1_5 As Boolean
-    Private prop_WindDir1_6 As Boolean
-    Private prop_WindDir1_7 As Boolean
-    Private prop_WindDir1_8 As Boolean
-    Private prop_WindDir1_9 As Boolean
-    Private prop_WindDir1_10 As Boolean
-    Private prop_WindDir1_11 As Boolean
-    Private prop_WindDir1_12 As Boolean
-    Private prop_WindDir1_13 As Boolean
-    Private prop_WindDir1_14 As Boolean
-    Private prop_WindDir1_15 As Boolean
-    Private prop_WindDir2_0 As Boolean
-    Private prop_WindDir2_1 As Boolean
-    Private prop_WindDir2_2 As Boolean
-    Private prop_WindDir2_3 As Boolean
-    Private prop_WindDir2_4 As Boolean
-    Private prop_WindDir2_5 As Boolean
-    Private prop_WindDir2_6 As Boolean
-    Private prop_WindDir2_7 As Boolean
-    Private prop_WindDir2_8 As Boolean
-    Private prop_WindDir2_9 As Boolean
-    Private prop_WindDir2_10 As Boolean
-    Private prop_WindDir2_11 As Boolean
-    Private prop_WindDir2_12 As Boolean
-    Private prop_WindDir2_13 As Boolean
-    Private prop_WindDir2_14 As Boolean
-    Private prop_WindDir2_15 As Boolean
-    Private prop_SuppressWindPatternLoading As Boolean
+    Private _WindDirOption As Integer?
+    Private _WindDir0_0 As Boolean?
+    Private _WindDir0_1 As Boolean?
+    Private _WindDir0_2 As Boolean?
+    Private _WindDir0_3 As Boolean?
+    Private _WindDir0_4 As Boolean?
+    Private _WindDir0_5 As Boolean?
+    Private _WindDir0_6 As Boolean?
+    Private _WindDir0_7 As Boolean?
+    Private _WindDir0_8 As Boolean?
+    Private _WindDir0_9 As Boolean?
+    Private _WindDir0_10 As Boolean?
+    Private _WindDir0_11 As Boolean?
+    Private _WindDir0_12 As Boolean?
+    Private _WindDir0_13 As Boolean?
+    Private _WindDir0_14 As Boolean?
+    Private _WindDir0_15 As Boolean?
+    Private _WindDir1_0 As Boolean?
+    Private _WindDir1_1 As Boolean?
+    Private _WindDir1_2 As Boolean?
+    Private _WindDir1_3 As Boolean?
+    Private _WindDir1_4 As Boolean?
+    Private _WindDir1_5 As Boolean?
+    Private _WindDir1_6 As Boolean?
+    Private _WindDir1_7 As Boolean?
+    Private _WindDir1_8 As Boolean?
+    Private _WindDir1_9 As Boolean?
+    Private _WindDir1_10 As Boolean?
+    Private _WindDir1_11 As Boolean?
+    Private _WindDir1_12 As Boolean?
+    Private _WindDir1_13 As Boolean?
+    Private _WindDir1_14 As Boolean?
+    Private _WindDir1_15 As Boolean?
+    Private _WindDir2_0 As Boolean?
+    Private _WindDir2_1 As Boolean?
+    Private _WindDir2_2 As Boolean?
+    Private _WindDir2_3 As Boolean?
+    Private _WindDir2_4 As Boolean?
+    Private _WindDir2_5 As Boolean?
+    Private _WindDir2_6 As Boolean?
+    Private _WindDir2_7 As Boolean?
+    Private _WindDir2_8 As Boolean?
+    Private _WindDir2_9 As Boolean?
+    Private _WindDir2_10 As Boolean?
+    Private _WindDir2_11 As Boolean?
+    Private _WindDir2_12 As Boolean?
+    Private _WindDir2_13 As Boolean?
+    Private _WindDir2_14 As Boolean?
+    Private _WindDir2_15 As Boolean?
+    Private _SuppressWindPatternLoading As Boolean?
 
     <Category("TNX Wind Direction Options"), Description("Wind Directions - 0 = Basic 3, 1 = All, 2 = Custom"), DisplayName("WindDirOption")>
-    Public Property WindDirOption() As Integer
+    Public Property WindDirOption() As Integer?
         Get
-            Return Me.prop_WindDirOption
+            Return Me._WindDirOption
         End Get
         Set
-            Me.prop_WindDirOption = Value
+            Me._WindDirOption = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 0 deg"), DisplayName("WindDir0_0")>
-    Public Property WindDir0_0() As Boolean
+    Public Property WindDir0_0() As Boolean?
         Get
-            Return Me.prop_WindDir0_0
+            Return Me._WindDir0_0
         End Get
         Set
-            Me.prop_WindDir0_0 = Value
+            Me._WindDir0_0 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 30 deg"), DisplayName("WindDir0_1")>
-    Public Property WindDir0_1() As Boolean
+    Public Property WindDir0_1() As Boolean?
         Get
-            Return Me.prop_WindDir0_1
+            Return Me._WindDir0_1
         End Get
         Set
-            Me.prop_WindDir0_1 = Value
+            Me._WindDir0_1 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 45 deg"), DisplayName("WindDir0_2")>
-    Public Property WindDir0_2() As Boolean
+    Public Property WindDir0_2() As Boolean?
         Get
-            Return Me.prop_WindDir0_2
+            Return Me._WindDir0_2
         End Get
         Set
-            Me.prop_WindDir0_2 = Value
+            Me._WindDir0_2 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 60 deg"), DisplayName("WindDir0_3")>
-    Public Property WindDir0_3() As Boolean
+    Public Property WindDir0_3() As Boolean?
         Get
-            Return Me.prop_WindDir0_3
+            Return Me._WindDir0_3
         End Get
         Set
-            Me.prop_WindDir0_3 = Value
+            Me._WindDir0_3 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 90 deg"), DisplayName("WindDir0_4")>
-    Public Property WindDir0_4() As Boolean
+    Public Property WindDir0_4() As Boolean?
         Get
-            Return Me.prop_WindDir0_4
+            Return Me._WindDir0_4
         End Get
         Set
-            Me.prop_WindDir0_4 = Value
+            Me._WindDir0_4 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 120 deg"), DisplayName("WindDir0_5")>
-    Public Property WindDir0_5() As Boolean
+    Public Property WindDir0_5() As Boolean?
         Get
-            Return Me.prop_WindDir0_5
+            Return Me._WindDir0_5
         End Get
         Set
-            Me.prop_WindDir0_5 = Value
+            Me._WindDir0_5 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 135 deg"), DisplayName("WindDir0_6")>
-    Public Property WindDir0_6() As Boolean
+    Public Property WindDir0_6() As Boolean?
         Get
-            Return Me.prop_WindDir0_6
+            Return Me._WindDir0_6
         End Get
         Set
-            Me.prop_WindDir0_6 = Value
+            Me._WindDir0_6 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 150 deg"), DisplayName("WindDir0_7")>
-    Public Property WindDir0_7() As Boolean
+    Public Property WindDir0_7() As Boolean?
         Get
-            Return Me.prop_WindDir0_7
+            Return Me._WindDir0_7
         End Get
         Set
-            Me.prop_WindDir0_7 = Value
+            Me._WindDir0_7 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 180 deg"), DisplayName("WindDir0_8")>
-    Public Property WindDir0_8() As Boolean
+    Public Property WindDir0_8() As Boolean?
         Get
-            Return Me.prop_WindDir0_8
+            Return Me._WindDir0_8
         End Get
         Set
-            Me.prop_WindDir0_8 = Value
+            Me._WindDir0_8 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 210 deg"), DisplayName("WindDir0_9")>
-    Public Property WindDir0_9() As Boolean
+    Public Property WindDir0_9() As Boolean?
         Get
-            Return Me.prop_WindDir0_9
+            Return Me._WindDir0_9
         End Get
         Set
-            Me.prop_WindDir0_9 = Value
+            Me._WindDir0_9 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 225 deg"), DisplayName("WindDir0_10")>
-    Public Property WindDir0_10() As Boolean
+    Public Property WindDir0_10() As Boolean?
         Get
-            Return Me.prop_WindDir0_10
+            Return Me._WindDir0_10
         End Get
         Set
-            Me.prop_WindDir0_10 = Value
+            Me._WindDir0_10 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 240 deg"), DisplayName("WindDir0_11")>
-    Public Property WindDir0_11() As Boolean
+    Public Property WindDir0_11() As Boolean?
         Get
-            Return Me.prop_WindDir0_11
+            Return Me._WindDir0_11
         End Get
         Set
-            Me.prop_WindDir0_11 = Value
+            Me._WindDir0_11 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 270 deg"), DisplayName("WindDir0_12")>
-    Public Property WindDir0_12() As Boolean
+    Public Property WindDir0_12() As Boolean?
         Get
-            Return Me.prop_WindDir0_12
+            Return Me._WindDir0_12
         End Get
         Set
-            Me.prop_WindDir0_12 = Value
+            Me._WindDir0_12 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 300 deg"), DisplayName("WindDir0_13")>
-    Public Property WindDir0_13() As Boolean
+    Public Property WindDir0_13() As Boolean?
         Get
-            Return Me.prop_WindDir0_13
+            Return Me._WindDir0_13
         End Get
         Set
-            Me.prop_WindDir0_13 = Value
+            Me._WindDir0_13 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 315 deg"), DisplayName("WindDir0_14")>
-    Public Property WindDir0_14() As Boolean
+    Public Property WindDir0_14() As Boolean?
         Get
-            Return Me.prop_WindDir0_14
+            Return Me._WindDir0_14
         End Get
         Set
-            Me.prop_WindDir0_14 = Value
+            Me._WindDir0_14 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind No Ice 330 deg"), DisplayName("WindDir0_15")>
-    Public Property WindDir0_15() As Boolean
+    Public Property WindDir0_15() As Boolean?
         Get
-            Return Me.prop_WindDir0_15
+            Return Me._WindDir0_15
         End Get
         Set
-            Me.prop_WindDir0_15 = Value
+            Me._WindDir0_15 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 0 deg"), DisplayName("WindDir1_0")>
-    Public Property WindDir1_0() As Boolean
+    Public Property WindDir1_0() As Boolean?
         Get
-            Return Me.prop_WindDir1_0
+            Return Me._WindDir1_0
         End Get
         Set
-            Me.prop_WindDir1_0 = Value
+            Me._WindDir1_0 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 30 deg"), DisplayName("WindDir1_1")>
-    Public Property WindDir1_1() As Boolean
+    Public Property WindDir1_1() As Boolean?
         Get
-            Return Me.prop_WindDir1_1
+            Return Me._WindDir1_1
         End Get
         Set
-            Me.prop_WindDir1_1 = Value
+            Me._WindDir1_1 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 45 deg"), DisplayName("WindDir1_2")>
-    Public Property WindDir1_2() As Boolean
+    Public Property WindDir1_2() As Boolean?
         Get
-            Return Me.prop_WindDir1_2
+            Return Me._WindDir1_2
         End Get
         Set
-            Me.prop_WindDir1_2 = Value
+            Me._WindDir1_2 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 60 deg"), DisplayName("WindDir1_3")>
-    Public Property WindDir1_3() As Boolean
+    Public Property WindDir1_3() As Boolean?
         Get
-            Return Me.prop_WindDir1_3
+            Return Me._WindDir1_3
         End Get
         Set
-            Me.prop_WindDir1_3 = Value
+            Me._WindDir1_3 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 90 deg"), DisplayName("WindDir1_4")>
-    Public Property WindDir1_4() As Boolean
+    Public Property WindDir1_4() As Boolean?
         Get
-            Return Me.prop_WindDir1_4
+            Return Me._WindDir1_4
         End Get
         Set
-            Me.prop_WindDir1_4 = Value
+            Me._WindDir1_4 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 120 deg"), DisplayName("WindDir1_5")>
-    Public Property WindDir1_5() As Boolean
+    Public Property WindDir1_5() As Boolean?
         Get
-            Return Me.prop_WindDir1_5
+            Return Me._WindDir1_5
         End Get
         Set
-            Me.prop_WindDir1_5 = Value
+            Me._WindDir1_5 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 135 deg"), DisplayName("WindDir1_6")>
-    Public Property WindDir1_6() As Boolean
+    Public Property WindDir1_6() As Boolean?
         Get
-            Return Me.prop_WindDir1_6
+            Return Me._WindDir1_6
         End Get
         Set
-            Me.prop_WindDir1_6 = Value
+            Me._WindDir1_6 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 150 deg"), DisplayName("WindDir1_7")>
-    Public Property WindDir1_7() As Boolean
+    Public Property WindDir1_7() As Boolean?
         Get
-            Return Me.prop_WindDir1_7
+            Return Me._WindDir1_7
         End Get
         Set
-            Me.prop_WindDir1_7 = Value
+            Me._WindDir1_7 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 180 deg"), DisplayName("WindDir1_8")>
-    Public Property WindDir1_8() As Boolean
+    Public Property WindDir1_8() As Boolean?
         Get
-            Return Me.prop_WindDir1_8
+            Return Me._WindDir1_8
         End Get
         Set
-            Me.prop_WindDir1_8 = Value
+            Me._WindDir1_8 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 210 deg"), DisplayName("WindDir1_9")>
-    Public Property WindDir1_9() As Boolean
+    Public Property WindDir1_9() As Boolean?
         Get
-            Return Me.prop_WindDir1_9
+            Return Me._WindDir1_9
         End Get
         Set
-            Me.prop_WindDir1_9 = Value
+            Me._WindDir1_9 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 225 deg"), DisplayName("WindDir1_10")>
-    Public Property WindDir1_10() As Boolean
+    Public Property WindDir1_10() As Boolean?
         Get
-            Return Me.prop_WindDir1_10
+            Return Me._WindDir1_10
         End Get
         Set
-            Me.prop_WindDir1_10 = Value
+            Me._WindDir1_10 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 240 deg"), DisplayName("WindDir1_11")>
-    Public Property WindDir1_11() As Boolean
+    Public Property WindDir1_11() As Boolean?
         Get
-            Return Me.prop_WindDir1_11
+            Return Me._WindDir1_11
         End Get
         Set
-            Me.prop_WindDir1_11 = Value
+            Me._WindDir1_11 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 270 deg"), DisplayName("WindDir1_12")>
-    Public Property WindDir1_12() As Boolean
+    Public Property WindDir1_12() As Boolean?
         Get
-            Return Me.prop_WindDir1_12
+            Return Me._WindDir1_12
         End Get
         Set
-            Me.prop_WindDir1_12 = Value
+            Me._WindDir1_12 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 300 deg"), DisplayName("WindDir1_13")>
-    Public Property WindDir1_13() As Boolean
+    Public Property WindDir1_13() As Boolean?
         Get
-            Return Me.prop_WindDir1_13
+            Return Me._WindDir1_13
         End Get
         Set
-            Me.prop_WindDir1_13 = Value
+            Me._WindDir1_13 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 315 deg"), DisplayName("WindDir1_14")>
-    Public Property WindDir1_14() As Boolean
+    Public Property WindDir1_14() As Boolean?
         Get
-            Return Me.prop_WindDir1_14
+            Return Me._WindDir1_14
         End Get
         Set
-            Me.prop_WindDir1_14 = Value
+            Me._WindDir1_14 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Ice 330 deg"), DisplayName("WindDir1_15")>
-    Public Property WindDir1_15() As Boolean
+    Public Property WindDir1_15() As Boolean?
         Get
-            Return Me.prop_WindDir1_15
+            Return Me._WindDir1_15
         End Get
         Set
-            Me.prop_WindDir1_15 = Value
+            Me._WindDir1_15 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 0 deg"), DisplayName("WindDir2_0")>
-    Public Property WindDir2_0() As Boolean
+    Public Property WindDir2_0() As Boolean?
         Get
-            Return Me.prop_WindDir2_0
+            Return Me._WindDir2_0
         End Get
         Set
-            Me.prop_WindDir2_0 = Value
+            Me._WindDir2_0 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 30 deg"), DisplayName("WindDir2_1")>
-    Public Property WindDir2_1() As Boolean
+    Public Property WindDir2_1() As Boolean?
         Get
-            Return Me.prop_WindDir2_1
+            Return Me._WindDir2_1
         End Get
         Set
-            Me.prop_WindDir2_1 = Value
+            Me._WindDir2_1 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 45 deg"), DisplayName("WindDir2_2")>
-    Public Property WindDir2_2() As Boolean
+    Public Property WindDir2_2() As Boolean?
         Get
-            Return Me.prop_WindDir2_2
+            Return Me._WindDir2_2
         End Get
         Set
-            Me.prop_WindDir2_2 = Value
+            Me._WindDir2_2 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 60 deg"), DisplayName("WindDir2_3")>
-    Public Property WindDir2_3() As Boolean
+    Public Property WindDir2_3() As Boolean?
         Get
-            Return Me.prop_WindDir2_3
+            Return Me._WindDir2_3
         End Get
         Set
-            Me.prop_WindDir2_3 = Value
+            Me._WindDir2_3 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 90 deg"), DisplayName("WindDir2_4")>
-    Public Property WindDir2_4() As Boolean
+    Public Property WindDir2_4() As Boolean?
         Get
-            Return Me.prop_WindDir2_4
+            Return Me._WindDir2_4
         End Get
         Set
-            Me.prop_WindDir2_4 = Value
+            Me._WindDir2_4 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 120 deg"), DisplayName("WindDir2_5")>
-    Public Property WindDir2_5() As Boolean
+    Public Property WindDir2_5() As Boolean?
         Get
-            Return Me.prop_WindDir2_5
+            Return Me._WindDir2_5
         End Get
         Set
-            Me.prop_WindDir2_5 = Value
+            Me._WindDir2_5 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 135 deg"), DisplayName("WindDir2_6")>
-    Public Property WindDir2_6() As Boolean
+    Public Property WindDir2_6() As Boolean?
         Get
-            Return Me.prop_WindDir2_6
+            Return Me._WindDir2_6
         End Get
         Set
-            Me.prop_WindDir2_6 = Value
+            Me._WindDir2_6 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 150 deg"), DisplayName("WindDir2_7")>
-    Public Property WindDir2_7() As Boolean
+    Public Property WindDir2_7() As Boolean?
         Get
-            Return Me.prop_WindDir2_7
+            Return Me._WindDir2_7
         End Get
         Set
-            Me.prop_WindDir2_7 = Value
+            Me._WindDir2_7 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 180 deg"), DisplayName("WindDir2_8")>
-    Public Property WindDir2_8() As Boolean
+    Public Property WindDir2_8() As Boolean?
         Get
-            Return Me.prop_WindDir2_8
+            Return Me._WindDir2_8
         End Get
         Set
-            Me.prop_WindDir2_8 = Value
+            Me._WindDir2_8 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 210 deg"), DisplayName("WindDir2_9")>
-    Public Property WindDir2_9() As Boolean
+    Public Property WindDir2_9() As Boolean?
         Get
-            Return Me.prop_WindDir2_9
+            Return Me._WindDir2_9
         End Get
         Set
-            Me.prop_WindDir2_9 = Value
+            Me._WindDir2_9 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 225 deg"), DisplayName("WindDir2_10")>
-    Public Property WindDir2_10() As Boolean
+    Public Property WindDir2_10() As Boolean?
         Get
-            Return Me.prop_WindDir2_10
+            Return Me._WindDir2_10
         End Get
         Set
-            Me.prop_WindDir2_10 = Value
+            Me._WindDir2_10 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 240 deg"), DisplayName("WindDir2_11")>
-    Public Property WindDir2_11() As Boolean
+    Public Property WindDir2_11() As Boolean?
         Get
-            Return Me.prop_WindDir2_11
+            Return Me._WindDir2_11
         End Get
         Set
-            Me.prop_WindDir2_11 = Value
+            Me._WindDir2_11 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 270 deg"), DisplayName("WindDir2_12")>
-    Public Property WindDir2_12() As Boolean
+    Public Property WindDir2_12() As Boolean?
         Get
-            Return Me.prop_WindDir2_12
+            Return Me._WindDir2_12
         End Get
         Set
-            Me.prop_WindDir2_12 = Value
+            Me._WindDir2_12 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 300 deg"), DisplayName("WindDir2_13")>
-    Public Property WindDir2_13() As Boolean
+    Public Property WindDir2_13() As Boolean?
         Get
-            Return Me.prop_WindDir2_13
+            Return Me._WindDir2_13
         End Get
         Set
-            Me.prop_WindDir2_13 = Value
+            Me._WindDir2_13 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 315 deg"), DisplayName("WindDir2_14")>
-    Public Property WindDir2_14() As Boolean
+    Public Property WindDir2_14() As Boolean?
         Get
-            Return Me.prop_WindDir2_14
+            Return Me._WindDir2_14
         End Get
         Set
-            Me.prop_WindDir2_14 = Value
+            Me._WindDir2_14 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Service 330 deg"), DisplayName("WindDir2_15")>
-    Public Property WindDir2_15() As Boolean
+    Public Property WindDir2_15() As Boolean?
         Get
-            Return Me.prop_WindDir2_15
+            Return Me._WindDir2_15
         End Get
         Set
-            Me.prop_WindDir2_15 = Value
+            Me._WindDir2_15 = Value
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description("Wind Directions - Suppress Generation of Pattrn Loading"), DisplayName("SuppressWindPatternLoading")>
-    Public Property SuppressWindPatternLoading() As Boolean
+    Public Property SuppressWindPatternLoading() As Boolean?
         Get
-            Return Me.prop_SuppressWindPatternLoading
+            Return Me._SuppressWindPatternLoading
         End Get
         Set
-            Me.prop_SuppressWindPatternLoading = Value
+            Me._SuppressWindPatternLoading = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxMisclOptions
-    Private prop_HogRodTakeup As Double
-    Private prop_RadiusSampleDist As Double
+    Private _HogRodTakeup As Double?
+    Private _RadiusSampleDist As Double?
 
     <Category("TNX Miscl Options"), Description("Tension Only Take-Up"), DisplayName("HogRodTakeup")>
-    Public Property HogRodTakeup() As Double
+    Public Property HogRodTakeup() As Double?
         Get
-            Return Me.prop_HogRodTakeup
+            Return Me._HogRodTakeup
         End Get
         Set
-            Me.prop_HogRodTakeup = Value
+            Me._HogRodTakeup = Value
         End Set
     End Property
     <Category("TNX Miscl Options"), Description("Sampling Distance"), DisplayName("RadiusSampleDist")>
-    Public Property RadiusSampleDist() As Double
+    Public Property RadiusSampleDist() As Double?
         Get
-            Return Me.prop_RadiusSampleDist
+            Return Me._RadiusSampleDist
         End Get
         Set
-            Me.prop_RadiusSampleDist = Value
+            Me._RadiusSampleDist = Value
         End Set
     End Property
 
@@ -16249,546 +18859,562 @@ End Class
 
 Partial Public Class tnxSettings
     'Other settings are not saved in ERI file
-    Private prop_USUnits As New tnxUnits()
-    'Private prop_SIunits As tnxSIUnits 
-    Private prop_projectInfo As New tnxProjectInfo()
-    Private prop_userInfo As New tnxUserInfo()
+    Private _USUnits As New tnxUnits()
+    'Private _SIunits As tnxSIUnits 
+    Private _projectInfo As New tnxProjectInfo()
+    Private _userInfo As New tnxUserInfo()
 
     <Category("TNX Setings"), Description(""), DisplayName("US Units")>
     Public Property USUnits() As tnxUnits
         Get
-            Return Me.prop_USUnits
+            Return Me._USUnits
         End Get
         Set
-            Me.prop_USUnits = Value
+            Me._USUnits = Value
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("Project Info")>
     Public Property projectInfo() As tnxProjectInfo
         Get
-            Return Me.prop_projectInfo
+            Return Me._projectInfo
         End Get
         Set
-            Me.prop_projectInfo = Value
+            Me._projectInfo = Value
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("User Info")>
     Public Property userInfo() As tnxUserInfo
         Get
-            Return Me.prop_userInfo
+            Return Me._userInfo
         End Get
         Set
-            Me.prop_userInfo = Value
+            Me._userInfo = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxSolutionSettings
-    Private prop_SolutionUsePDelta As Boolean
-    Private prop_SolutionMinStiffness As Double
-    Private prop_SolutionMaxStiffness As Double
-    Private prop_SolutionMaxCycles As Integer
-    Private prop_SolutionPower As Double
-    Private prop_SolutionTolerance As Double
+    Private _SolutionUsePDelta As Boolean?
+    Private _SolutionMinStiffness As Double?
+    Private _SolutionMaxStiffness As Double?
+    Private _SolutionMaxCycles As Integer?
+    Private _SolutionPower As Double?
+    Private _SolutionTolerance As Double?
 
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionUsePDelta")>
-    Public Property SolutionUsePDelta() As Boolean
+    Public Property SolutionUsePDelta() As Boolean?
         Get
-            Return Me.prop_SolutionUsePDelta
+            Return Me._SolutionUsePDelta
         End Get
         Set
-            Me.prop_SolutionUsePDelta = Value
+            Me._SolutionUsePDelta = Value
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMinStiffness")>
-    Public Property SolutionMinStiffness() As Double
+    Public Property SolutionMinStiffness() As Double?
         Get
-            Return Me.prop_SolutionMinStiffness
+            Return Me._SolutionMinStiffness
         End Get
         Set
-            Me.prop_SolutionMinStiffness = Value
+            Me._SolutionMinStiffness = Value
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxStiffness")>
-    Public Property SolutionMaxStiffness() As Double
+    Public Property SolutionMaxStiffness() As Double?
         Get
-            Return Me.prop_SolutionMaxStiffness
+            Return Me._SolutionMaxStiffness
         End Get
         Set
-            Me.prop_SolutionMaxStiffness = Value
+            Me._SolutionMaxStiffness = Value
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxCycles")>
-    Public Property SolutionMaxCycles() As Integer
+    Public Property SolutionMaxCycles() As Integer?
         Get
-            Return Me.prop_SolutionMaxCycles
+            Return Me._SolutionMaxCycles
         End Get
         Set
-            Me.prop_SolutionMaxCycles = Value
+            Me._SolutionMaxCycles = Value
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionPower")>
-    Public Property SolutionPower() As Double
+    Public Property SolutionPower() As Double?
         Get
-            Return Me.prop_SolutionPower
+            Return Me._SolutionPower
         End Get
         Set
-            Me.prop_SolutionPower = Value
+            Me._SolutionPower = Value
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionTolerance")>
-    Public Property SolutionTolerance() As Double
+    Public Property SolutionTolerance() As Double?
         Get
-            Return Me.prop_SolutionTolerance
+            Return Me._SolutionTolerance
         End Get
         Set
-            Me.prop_SolutionTolerance = Value
+            Me._SolutionTolerance = Value
         End Set
     End Property
 
 End Class
 
 Partial Public Class tnxReportSettings
-    Private prop_ReportInputCosts As Boolean
-    Private prop_ReportInputGeometry As Boolean
-    Private prop_ReportInputOptions As Boolean
-    Private prop_ReportMaxForces As Boolean
-    Private prop_ReportInputMap As Boolean
-    Private prop_CostReportOutputType As String
-    Private prop_CapacityReportOutputType As String
-    Private prop_ReportPrintForceTotals As Boolean
-    Private prop_ReportPrintForceDetails As Boolean
-    Private prop_ReportPrintMastVectors As Boolean
-    Private prop_ReportPrintAntPoleVectors As Boolean
-    Private prop_ReportPrintDiscreteVectors As Boolean
-    Private prop_ReportPrintDishVectors As Boolean
-    Private prop_ReportPrintFeedTowerVectors As Boolean
-    Private prop_ReportPrintUserLoadVectors As Boolean
-    Private prop_ReportPrintPressures As Boolean
-    Private prop_ReportPrintAppurtForces As Boolean
-    Private prop_ReportPrintGuyForces As Boolean
-    Private prop_ReportPrintGuyStressing As Boolean
-    Private prop_ReportPrintDeflections As Boolean
-    Private prop_ReportPrintReactions As Boolean
-    Private prop_ReportPrintStressChecks As Boolean
-    Private prop_ReportPrintBoltChecks As Boolean
-    Private prop_ReportPrintInputGVerificationTables As Boolean
-    Private prop_ReportPrintOutputGVerificationTables As Boolean
+    Private _ReportInputCosts As Boolean?
+    Private _ReportInputGeometry As Boolean?
+    Private _ReportInputOptions As Boolean?
+    Private _ReportMaxForces As Boolean?
+    Private _ReportInputMap As Boolean?
+    Private _CostReportOutputType As String
+    Private _CapacityReportOutputType As String
+    Private _ReportPrintForceTotals As Boolean?
+    Private _ReportPrintForceDetails As Boolean?
+    Private _ReportPrintMastVectors As Boolean?
+    Private _ReportPrintAntPoleVectors As Boolean?
+    Private _ReportPrintDiscreteVectors As Boolean?
+    Private _ReportPrintDishVectors As Boolean?
+    Private _ReportPrintFeedTowerVectors As Boolean?
+    Private _ReportPrintUserLoadVectors As Boolean?
+    Private _ReportPrintPressures As Boolean?
+    Private _ReportPrintAppurtForces As Boolean?
+    Private _ReportPrintGuyForces As Boolean?
+    Private _ReportPrintGuyStressing As Boolean?
+    Private _ReportPrintDeflections As Boolean?
+    Private _ReportPrintReactions As Boolean?
+    Private _ReportPrintStressChecks As Boolean?
+    Private _ReportPrintBoltChecks As Boolean?
+    Private _ReportPrintInputGVerificationTables As Boolean?
+    Private _ReportPrintOutputGVerificationTables As Boolean?
 
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputCosts")>
-    Public Property ReportInputCosts() As Boolean
+    Public Property ReportInputCosts() As Boolean?
         Get
-            Return Me.prop_ReportInputCosts
+            Return Me._ReportInputCosts
         End Get
         Set
-            Me.prop_ReportInputCosts = Value
+            Me._ReportInputCosts = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputGeometry")>
-    Public Property ReportInputGeometry() As Boolean
+    Public Property ReportInputGeometry() As Boolean?
         Get
-            Return Me.prop_ReportInputGeometry
+            Return Me._ReportInputGeometry
         End Get
         Set
-            Me.prop_ReportInputGeometry = Value
+            Me._ReportInputGeometry = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputOptions")>
-    Public Property ReportInputOptions() As Boolean
+    Public Property ReportInputOptions() As Boolean?
         Get
-            Return Me.prop_ReportInputOptions
+            Return Me._ReportInputOptions
         End Get
         Set
-            Me.prop_ReportInputOptions = Value
+            Me._ReportInputOptions = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportMaxForces")>
-    Public Property ReportMaxForces() As Boolean
+    Public Property ReportMaxForces() As Boolean?
         Get
-            Return Me.prop_ReportMaxForces
+            Return Me._ReportMaxForces
         End Get
         Set
-            Me.prop_ReportMaxForces = Value
+            Me._ReportMaxForces = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputMap")>
-    Public Property ReportInputMap() As Boolean
+    Public Property ReportInputMap() As Boolean?
         Get
-            Return Me.prop_ReportInputMap
+            Return Me._ReportInputMap
         End Get
         Set
-            Me.prop_ReportInputMap = Value
+            Me._ReportInputMap = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description("{No Capacity Output, Capacity Summary, Capacity Details}"), DisplayName("CostReportOutputType")>
     Public Property CostReportOutputType() As String
         Get
-            Return Me.prop_CostReportOutputType
+            Return Me._CostReportOutputType
         End Get
         Set
-            Me.prop_CostReportOutputType = Value
+            Me._CostReportOutputType = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description("{No Cost Output, Cost Summary, Cost Details}"), DisplayName("CapacityReportOutputType")>
     Public Property CapacityReportOutputType() As String
         Get
-            Return Me.prop_CapacityReportOutputType
+            Return Me._CapacityReportOutputType
         End Get
         Set
-            Me.prop_CapacityReportOutputType = Value
+            Me._CapacityReportOutputType = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceTotals")>
-    Public Property ReportPrintForceTotals() As Boolean
+    Public Property ReportPrintForceTotals() As Boolean?
         Get
-            Return Me.prop_ReportPrintForceTotals
+            Return Me._ReportPrintForceTotals
         End Get
         Set
-            Me.prop_ReportPrintForceTotals = Value
+            Me._ReportPrintForceTotals = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceDetails")>
-    Public Property ReportPrintForceDetails() As Boolean
+    Public Property ReportPrintForceDetails() As Boolean?
         Get
-            Return Me.prop_ReportPrintForceDetails
+            Return Me._ReportPrintForceDetails
         End Get
         Set
-            Me.prop_ReportPrintForceDetails = Value
+            Me._ReportPrintForceDetails = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintMastVectors")>
-    Public Property ReportPrintMastVectors() As Boolean
+    Public Property ReportPrintMastVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintMastVectors
+            Return Me._ReportPrintMastVectors
         End Get
         Set
-            Me.prop_ReportPrintMastVectors = Value
+            Me._ReportPrintMastVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAntPoleVectors")>
-    Public Property ReportPrintAntPoleVectors() As Boolean
+    Public Property ReportPrintAntPoleVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintAntPoleVectors
+            Return Me._ReportPrintAntPoleVectors
         End Get
         Set
-            Me.prop_ReportPrintAntPoleVectors = Value
+            Me._ReportPrintAntPoleVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDiscreteVectors")>
-    Public Property ReportPrintDiscreteVectors() As Boolean
+    Public Property ReportPrintDiscreteVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintDiscreteVectors
+            Return Me._ReportPrintDiscreteVectors
         End Get
         Set
-            Me.prop_ReportPrintDiscreteVectors = Value
+            Me._ReportPrintDiscreteVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDishVectors")>
-    Public Property ReportPrintDishVectors() As Boolean
+    Public Property ReportPrintDishVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintDishVectors
+            Return Me._ReportPrintDishVectors
         End Get
         Set
-            Me.prop_ReportPrintDishVectors = Value
+            Me._ReportPrintDishVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintFeedTowerVectors")>
-    Public Property ReportPrintFeedTowerVectors() As Boolean
+    Public Property ReportPrintFeedTowerVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintFeedTowerVectors
+            Return Me._ReportPrintFeedTowerVectors
         End Get
         Set
-            Me.prop_ReportPrintFeedTowerVectors = Value
+            Me._ReportPrintFeedTowerVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintUserLoadVectors")>
-    Public Property ReportPrintUserLoadVectors() As Boolean
+    Public Property ReportPrintUserLoadVectors() As Boolean?
         Get
-            Return Me.prop_ReportPrintUserLoadVectors
+            Return Me._ReportPrintUserLoadVectors
         End Get
         Set
-            Me.prop_ReportPrintUserLoadVectors = Value
+            Me._ReportPrintUserLoadVectors = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintPressures")>
-    Public Property ReportPrintPressures() As Boolean
+    Public Property ReportPrintPressures() As Boolean?
         Get
-            Return Me.prop_ReportPrintPressures
+            Return Me._ReportPrintPressures
         End Get
         Set
-            Me.prop_ReportPrintPressures = Value
+            Me._ReportPrintPressures = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAppurtForces")>
-    Public Property ReportPrintAppurtForces() As Boolean
+    Public Property ReportPrintAppurtForces() As Boolean?
         Get
-            Return Me.prop_ReportPrintAppurtForces
+            Return Me._ReportPrintAppurtForces
         End Get
         Set
-            Me.prop_ReportPrintAppurtForces = Value
+            Me._ReportPrintAppurtForces = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyForces")>
-    Public Property ReportPrintGuyForces() As Boolean
+    Public Property ReportPrintGuyForces() As Boolean?
         Get
-            Return Me.prop_ReportPrintGuyForces
+            Return Me._ReportPrintGuyForces
         End Get
         Set
-            Me.prop_ReportPrintGuyForces = Value
+            Me._ReportPrintGuyForces = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyStressing")>
-    Public Property ReportPrintGuyStressing() As Boolean
+    Public Property ReportPrintGuyStressing() As Boolean?
         Get
-            Return Me.prop_ReportPrintGuyStressing
+            Return Me._ReportPrintGuyStressing
         End Get
         Set
-            Me.prop_ReportPrintGuyStressing = Value
+            Me._ReportPrintGuyStressing = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDeflections")>
-    Public Property ReportPrintDeflections() As Boolean
+    Public Property ReportPrintDeflections() As Boolean?
         Get
-            Return Me.prop_ReportPrintDeflections
+            Return Me._ReportPrintDeflections
         End Get
         Set
-            Me.prop_ReportPrintDeflections = Value
+            Me._ReportPrintDeflections = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintReactions")>
-    Public Property ReportPrintReactions() As Boolean
+    Public Property ReportPrintReactions() As Boolean?
         Get
-            Return Me.prop_ReportPrintReactions
+            Return Me._ReportPrintReactions
         End Get
         Set
-            Me.prop_ReportPrintReactions = Value
+            Me._ReportPrintReactions = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintStressChecks")>
-    Public Property ReportPrintStressChecks() As Boolean
+    Public Property ReportPrintStressChecks() As Boolean?
         Get
-            Return Me.prop_ReportPrintStressChecks
+            Return Me._ReportPrintStressChecks
         End Get
         Set
-            Me.prop_ReportPrintStressChecks = Value
+            Me._ReportPrintStressChecks = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintBoltChecks")>
-    Public Property ReportPrintBoltChecks() As Boolean
+    Public Property ReportPrintBoltChecks() As Boolean?
         Get
-            Return Me.prop_ReportPrintBoltChecks
+            Return Me._ReportPrintBoltChecks
         End Get
         Set
-            Me.prop_ReportPrintBoltChecks = Value
+            Me._ReportPrintBoltChecks = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintInputGVerificationTables")>
-    Public Property ReportPrintInputGVerificationTables() As Boolean
+    Public Property ReportPrintInputGVerificationTables() As Boolean?
         Get
-            Return Me.prop_ReportPrintInputGVerificationTables
+            Return Me._ReportPrintInputGVerificationTables
         End Get
         Set
-            Me.prop_ReportPrintInputGVerificationTables = Value
+            Me._ReportPrintInputGVerificationTables = Value
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintOutputGVerificationTables")>
-    Public Property ReportPrintOutputGVerificationTables() As Boolean
+    Public Property ReportPrintOutputGVerificationTables() As Boolean?
         Get
-            Return Me.prop_ReportPrintOutputGVerificationTables
+            Return Me._ReportPrintOutputGVerificationTables
         End Get
         Set
-            Me.prop_ReportPrintOutputGVerificationTables = Value
+            Me._ReportPrintOutputGVerificationTables = Value
         End Set
     End Property
 End Class
 
 Partial Public Class tnxMTOSettings
-    Private prop_IncludeCapacityNote As Boolean
-    Private prop_IncludeAppurtGraphics As Boolean
-    Private prop_DisplayNotes As Boolean
-    Private prop_DisplayReactions As Boolean
-    Private prop_DisplaySchedule As Boolean
-    Private prop_DisplayAppurtenanceTable As Boolean
-    Private prop_DisplayMaterialStrengthTable As Boolean
-    Private prop_Notes As New List(Of String)
+    Private _IncludeCapacityNote As Boolean?
+    Private _IncludeAppurtGraphics As Boolean?
+    Private _DisplayNotes As Boolean?
+    Private _DisplayReactions As Boolean?
+    Private _DisplaySchedule As Boolean?
+    Private _DisplayAppurtenanceTable As Boolean?
+    Private _DisplayMaterialStrengthTable As Boolean?
+    Private _Notes As New List(Of tnxNote)
 
     <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeCapacityNote")>
-    Public Property IncludeCapacityNote() As Boolean
+    Public Property IncludeCapacityNote() As Boolean?
         Get
-            Return Me.prop_IncludeCapacityNote
+            Return Me._IncludeCapacityNote
         End Get
         Set
-            Me.prop_IncludeCapacityNote = Value
+            Me._IncludeCapacityNote = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeAppurtGraphics")>
-    Public Property IncludeAppurtGraphics() As Boolean
+    Public Property IncludeAppurtGraphics() As Boolean?
         Get
-            Return Me.prop_IncludeAppurtGraphics
+            Return Me._IncludeAppurtGraphics
         End Get
         Set
-            Me.prop_IncludeAppurtGraphics = Value
+            Me._IncludeAppurtGraphics = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayNotes")>
-    Public Property DisplayNotes() As Boolean
+    Public Property DisplayNotes() As Boolean?
         Get
-            Return Me.prop_DisplayNotes
+            Return Me._DisplayNotes
         End Get
         Set
-            Me.prop_DisplayNotes = Value
+            Me._DisplayNotes = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayReactions")>
-    Public Property DisplayReactions() As Boolean
+    Public Property DisplayReactions() As Boolean?
         Get
-            Return Me.prop_DisplayReactions
+            Return Me._DisplayReactions
         End Get
         Set
-            Me.prop_DisplayReactions = Value
+            Me._DisplayReactions = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplaySchedule")>
-    Public Property DisplaySchedule() As Boolean
+    Public Property DisplaySchedule() As Boolean?
         Get
-            Return Me.prop_DisplaySchedule
+            Return Me._DisplaySchedule
         End Get
         Set
-            Me.prop_DisplaySchedule = Value
+            Me._DisplaySchedule = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayAppurtenanceTable")>
-    Public Property DisplayAppurtenanceTable() As Boolean
+    Public Property DisplayAppurtenanceTable() As Boolean?
         Get
-            Return Me.prop_DisplayAppurtenanceTable
+            Return Me._DisplayAppurtenanceTable
         End Get
         Set
-            Me.prop_DisplayAppurtenanceTable = Value
+            Me._DisplayAppurtenanceTable = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayMaterialStrengthTable")>
-    Public Property DisplayMaterialStrengthTable() As Boolean
+    Public Property DisplayMaterialStrengthTable() As Boolean?
         Get
-            Return Me.prop_DisplayMaterialStrengthTable
+            Return Me._DisplayMaterialStrengthTable
         End Get
         Set
-            Me.prop_DisplayMaterialStrengthTable = Value
+            Me._DisplayMaterialStrengthTable = Value
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("Notes")>
-    Public Property Notes() As List(Of String)
+    Public Property Notes() As List(Of tnxNote)
         Get
-            Return Me.prop_Notes
+            Return Me._Notes
         End Get
         Set
-            Me.prop_Notes = Value
+            Me._Notes = Value
         End Set
     End Property
 
 End Class
 
+Partial Public Class tnxNote
+    Inherits tnxDatabaseEntry
+
+    Private _Note As String
+
+    <Category("TNX Note"), Description(""), DisplayName("Note")>
+    Public Property Note As String
+        Get
+            Return Me._Note
+        End Get
+        Set
+            Me._Note = Value
+        End Set
+    End Property
+End Class
+
 Partial Public Class tnxProjectInfo
 
-    Private prop_DesignStandardSeries As String
-    Private prop_UnitsSystem As String
-    Private prop_ClientName As String
-    Private prop_ProjectName As String
-    Private prop_ProjectNumber As String
-    Private prop_CreatedBy As String
-    Private prop_CreatedOn As String
-    Private prop_LastUsedBy As String
-    Private prop_LastUsedOn As String
-    Private prop_VersionUsed As String
+    Private _DesignStandardSeries As String
+    Private _UnitsSystem As String
+    Private _ClientName As String
+    Private _ProjectName As String
+    Private _ProjectNumber As String
+    Private _CreatedBy As String
+    Private _CreatedOn As String
+    Private _LastUsedBy As String
+    Private _LastUsedOn As String
+    Private _VersionUsed As String
 
     <Category("TNX Project Info"), Description("TIA/EIA or CSA-S37"), DisplayName("DesignStandardSeries")>
     Public Property DesignStandardSeries() As String
         Get
-            Return Me.prop_DesignStandardSeries
+            Return Me._DesignStandardSeries
         End Get
         Set
-            Me.prop_DesignStandardSeries = Value
+            Me._DesignStandardSeries = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description("US or SI"), DisplayName("UnitsSystem")>
     Public Property UnitsSystem() As String
         Get
-            Return Me.prop_UnitsSystem
+            Return Me._UnitsSystem
         End Get
         Set
-            Me.prop_UnitsSystem = Value
+            Me._UnitsSystem = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ClientName")>
     Public Property ClientName() As String
         Get
-            Return Me.prop_ClientName
+            Return Me._ClientName
         End Get
         Set
-            Me.prop_ClientName = Value
+            Me._ClientName = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ProjectName")>
     Public Property ProjectName() As String
         Get
-            Return Me.prop_ProjectName
+            Return Me._ProjectName
         End Get
         Set
-            Me.prop_ProjectName = Value
+            Me._ProjectName = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ProjectNumber")>
     Public Property ProjectNumber() As String
         Get
-            Return Me.prop_ProjectNumber
+            Return Me._ProjectNumber
         End Get
         Set
-            Me.prop_ProjectNumber = Value
+            Me._ProjectNumber = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("CreatedBy")>
     Public Property CreatedBy() As String
         Get
-            Return Me.prop_CreatedBy
+            Return Me._CreatedBy
         End Get
         Set
-            Me.prop_CreatedBy = Value
+            Me._CreatedBy = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("CreatedOn")>
     Public Property CreatedOn() As String
         Get
-            Return Me.prop_CreatedOn
+            Return Me._CreatedOn
         End Get
         Set
-            Me.prop_CreatedOn = Value
+            Me._CreatedOn = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("LastUsedBy")>
     Public Property LastUsedBy() As String
         Get
-            Return Me.prop_LastUsedBy
+            Return Me._LastUsedBy
         End Get
         Set
-            Me.prop_LastUsedBy = Value
+            Me._LastUsedBy = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("LastUsedOn")>
     Public Property LastUsedOn() As String
         Get
-            Return Me.prop_LastUsedOn
+            Return Me._LastUsedOn
         End Get
         Set
-            Me.prop_LastUsedOn = Value
+            Me._LastUsedOn = Value
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("VersionUsed")>
     Public Property VersionUsed() As String
         Get
-            Return Me.prop_VersionUsed
+            Return Me._VersionUsed
         End Get
         Set
-            Me.prop_VersionUsed = Value
+            Me._VersionUsed = Value
         End Set
     End Property
 
@@ -16797,85 +19423,85 @@ End Class
 
 Partial Public Class tnxUserInfo
 
-    Private prop_ViewerUserName As String
-    Private prop_ViewerCompanyName As String
-    Private prop_ViewerStreetAddress As String
-    Private prop_ViewerCityState As String
-    Private prop_ViewerPhone As String
-    Private prop_ViewerFAX As String
-    Private prop_ViewerLogo As String
-    Private prop_ViewerCompanyBitmap As String
+    Private _ViewerUserName As String
+    Private _ViewerCompanyName As String
+    Private _ViewerStreetAddress As String
+    Private _ViewerCityState As String
+    Private _ViewerPhone As String
+    Private _ViewerFAX As String
+    Private _ViewerLogo As String
+    Private _ViewerCompanyBitmap As String
 
     <Category("TNX User Info"), Description(""), DisplayName("ViewerUserName")>
     Public Property ViewerUserName() As String
         Get
-            Return Me.prop_ViewerUserName
+            Return Me._ViewerUserName
         End Get
         Set
-            Me.prop_ViewerUserName = Value
+            Me._ViewerUserName = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyName")>
     Public Property ViewerCompanyName() As String
         Get
-            Return Me.prop_ViewerCompanyName
+            Return Me._ViewerCompanyName
         End Get
         Set
-            Me.prop_ViewerCompanyName = Value
+            Me._ViewerCompanyName = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerStreetAddress")>
     Public Property ViewerStreetAddress() As String
         Get
-            Return Me.prop_ViewerStreetAddress
+            Return Me._ViewerStreetAddress
         End Get
         Set
-            Me.prop_ViewerStreetAddress = Value
+            Me._ViewerStreetAddress = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCityState")>
     Public Property ViewerCityState() As String
         Get
-            Return Me.prop_ViewerCityState
+            Return Me._ViewerCityState
         End Get
         Set
-            Me.prop_ViewerCityState = Value
+            Me._ViewerCityState = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerPhone")>
     Public Property ViewerPhone() As String
         Get
-            Return Me.prop_ViewerPhone
+            Return Me._ViewerPhone
         End Get
         Set
-            Me.prop_ViewerPhone = Value
+            Me._ViewerPhone = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerFAX")>
     Public Property ViewerFAX() As String
         Get
-            Return Me.prop_ViewerFAX
+            Return Me._ViewerFAX
         End Get
         Set
-            Me.prop_ViewerFAX = Value
+            Me._ViewerFAX = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerLogo")>
     Public Property ViewerLogo() As String
         Get
-            Return Me.prop_ViewerLogo
+            Return Me._ViewerLogo
         End Get
         Set
-            Me.prop_ViewerLogo = Value
+            Me._ViewerLogo = Value
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyBitmap")>
     Public Property ViewerCompanyBitmap() As String
         Get
-            Return Me.prop_ViewerCompanyBitmap
+            Return Me._ViewerCompanyBitmap
         End Get
         Set
-            Me.prop_ViewerCompanyBitmap = Value
+            Me._ViewerCompanyBitmap = Value
         End Set
     End Property
 
@@ -16883,205 +19509,205 @@ End Class
 
 Partial Public Class tnxUnits
 
-    Private prop_Length As New tnxLengthUnit()
-    Private prop_Coordinate As New tnxCoordinateUnit()
-    Private prop_Force As New tnxForceUnit()
-    Private prop_Load As New tnxLoadUnit()
-    Private prop_Moment As New tnxMomentUnit()
-    Private prop_Properties As New tnxPropertiesUnit()
-    Private prop_Pressure As New tnxPressureUnit()
-    Private prop_Velocity As New tnxVelocityUnit()
-    Private prop_Displacement As New tnxDisplacementUnit()
-    Private prop_Mass As New tnxMassUnit()
-    Private prop_Acceleration As New tnxAccelerationUnit()
-    Private prop_Stress As New tnxStressUnit()
-    Private prop_Density As New tnxDensityUnit()
-    Private prop_UnitWt As New tnxUnitWTUnit()
-    Private prop_Strength As New tnxStrengthUnit()
-    Private prop_Modulus As New tnxModulusUnit()
-    Private prop_Temperature As New tnxTempUnit()
-    Private prop_Printer As New tnxPrinterUnit()
-    Private prop_Rotation As New tnxRotationUnit()
-    Private prop_Spacing As New tnxSpacingUnit()
+    Private _Length As New tnxLengthUnit()
+    Private _Coordinate As New tnxCoordinateUnit()
+    Private _Force As New tnxForceUnit()
+    Private _Load As New tnxLoadUnit()
+    Private _Moment As New tnxMomentUnit()
+    Private _Properties As New tnxPropertiesUnit()
+    Private _Pressure As New tnxPressureUnit()
+    Private _Velocity As New tnxVelocityUnit()
+    Private _Displacement As New tnxDisplacementUnit()
+    Private _Mass As New tnxMassUnit()
+    Private _Acceleration As New tnxAccelerationUnit()
+    Private _Stress As New tnxStressUnit()
+    Private _Density As New tnxDensityUnit()
+    Private _UnitWt As New tnxUnitWTUnit()
+    Private _Strength As New tnxStrengthUnit()
+    Private _Modulus As New tnxModulusUnit()
+    Private _Temperature As New tnxTempUnit()
+    Private _Printer As New tnxPrinterUnit()
+    Private _Rotation As New tnxRotationUnit()
+    Private _Spacing As New tnxSpacingUnit()
 
     <Category("TNX Units"), Description(""), DisplayName("Length")>
     Public Property Length() As tnxLengthUnit
         Get
-            Return Me.prop_Length
+            Return Me._Length
         End Get
         Set
-            Me.prop_Length = Value
+            Me._Length = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Coordinate")>
     Public Property Coordinate() As tnxCoordinateUnit
         Get
-            Return Me.prop_Coordinate
+            Return Me._Coordinate
         End Get
         Set
-            Me.prop_Coordinate = Value
+            Me._Coordinate = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Force")>
     Public Property Force() As tnxForceUnit
         Get
-            Return Me.prop_Force
+            Return Me._Force
         End Get
         Set
-            Me.prop_Force = Value
+            Me._Force = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Load")>
     Public Property Load() As tnxLoadUnit
         Get
-            Return Me.prop_Load
+            Return Me._Load
         End Get
         Set
-            Me.prop_Load = Value
+            Me._Load = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Moment")>
     Public Property Moment() As tnxMomentUnit
         Get
-            Return Me.prop_Moment
+            Return Me._Moment
         End Get
         Set
-            Me.prop_Moment = Value
+            Me._Moment = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Properties")>
     Public Property Properties() As tnxPropertiesUnit
         Get
-            Return Me.prop_Properties
+            Return Me._Properties
         End Get
         Set
-            Me.prop_Properties = Value
+            Me._Properties = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Pressure")>
     Public Property Pressure() As tnxPressureUnit
         Get
-            Return Me.prop_Pressure
+            Return Me._Pressure
         End Get
         Set
-            Me.prop_Pressure = Value
+            Me._Pressure = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Velocity")>
     Public Property Velocity() As tnxVelocityUnit
         Get
-            Return Me.prop_Velocity
+            Return Me._Velocity
         End Get
         Set
-            Me.prop_Velocity = Value
+            Me._Velocity = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Displacement")>
     Public Property Displacement() As tnxDisplacementUnit
         Get
-            Return Me.prop_Displacement
+            Return Me._Displacement
         End Get
         Set
-            Me.prop_Displacement = Value
+            Me._Displacement = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Mass")>
     Public Property Mass() As tnxMassUnit
         Get
-            Return Me.prop_Mass
+            Return Me._Mass
         End Get
         Set
-            Me.prop_Mass = Value
+            Me._Mass = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Acceleration")>
     Public Property Acceleration() As tnxAccelerationUnit
         Get
-            Return Me.prop_Acceleration
+            Return Me._Acceleration
         End Get
         Set
-            Me.prop_Acceleration = Value
+            Me._Acceleration = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Stress")>
     Public Property Stress() As tnxStressUnit
         Get
-            Return Me.prop_Stress
+            Return Me._Stress
         End Get
         Set
-            Me.prop_Stress = Value
+            Me._Stress = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Density")>
     Public Property Density() As tnxDensityUnit
         Get
-            Return Me.prop_Density
+            Return Me._Density
         End Get
         Set
-            Me.prop_Density = Value
+            Me._Density = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Unitwt")>
     Public Property UnitWt() As tnxUnitWTUnit
         Get
-            Return Me.prop_UnitWt
+            Return Me._UnitWt
         End Get
         Set
-            Me.prop_UnitWt = Value
+            Me._UnitWt = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Strength")>
     Public Property Strength() As tnxStrengthUnit
         Get
-            Return Me.prop_Strength
+            Return Me._Strength
         End Get
         Set
-            Me.prop_Strength = Value
+            Me._Strength = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Modulus")>
     Public Property Modulus() As tnxModulusUnit
         Get
-            Return Me.prop_Modulus
+            Return Me._Modulus
         End Get
         Set
-            Me.prop_Modulus = Value
+            Me._Modulus = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Temperature")>
     Public Property Temperature() As tnxTempUnit
         Get
-            Return Me.prop_Temperature
+            Return Me._Temperature
         End Get
         Set
-            Me.prop_Temperature = Value
+            Me._Temperature = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Printer")>
     Public Property Printer() As tnxPrinterUnit
         Get
-            Return Me.prop_Printer
+            Return Me._Printer
         End Get
         Set
-            Me.prop_Printer = Value
+            Me._Printer = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Rotation")>
     Public Property Rotation() As tnxRotationUnit
         Get
-            Return Me.prop_Rotation
+            Return Me._Rotation
         End Get
         Set
-            Me.prop_Rotation = Value
+            Me._Rotation = Value
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Spacing")>
     Public Property Spacing() As tnxSpacingUnit
         Get
-            Return Me.prop_Spacing
+            Return Me._Spacing
         End Get
         Set
-            Me.prop_Spacing = Value
+            Me._Spacing = Value
         End Set
     End Property
 
@@ -17089,56 +19715,52 @@ End Class
 
 Partial Public Class tnxUnitProperty
     'Variables need to be public for inheritance
-    Public prop_value As String
-    Public prop_precision As Integer
-    Public prop_multiplier As Double
+    Public _value As String
+    Public _precision As Integer?
+    Public _multiplier As Double?
 
     <Category("TNX Unit Property"), Description(""), DisplayName("Value")>
     Public Overridable Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
         End Set
     End Property
     <Category("TNX Unit Property"), Description(""), DisplayName("Precision")>
-    Public Overridable Property precision() As Integer
+    Public Overridable Property precision() As Integer?
         Get
-            Return Me.prop_precision
+            Return Me._precision
         End Get
         Set
             If Value < 0 Then
-                Me.prop_precision = 0
+                Me._precision = 0
             ElseIf Value > 4 Then
-                Me.prop_precision = 4
+                Me._precision = 4
             Else
-                Me.prop_precision = Value
+                Me._precision = Value
             End If
         End Set
     End Property
     <Category("TNX Unit Property"), Description("Used to convert TNX file units to default EDS units during import."), DisplayName("Multiplier")>
-    Public Overridable Property multiplier() As Double
+    Public Overridable Property multiplier() As Double?
         Get
-            Return Me.prop_multiplier
+            Return Me._multiplier
         End Get
         Set
-            Me.prop_multiplier = Value
+            Me._multiplier = Value
         End Set
     End Property
 
     Public Sub New()
     End Sub
-    Public Sub New(new_value As String)
 
-        Me.value = new_value
+    Public Overridable Function convertToEDSDefaultUnits(InputValue As Double?) As Double?
 
-    End Sub
-    Public Overridable Function convertToEDSDefaultUnits(InputValue As Double) As Double
-
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me.prop_multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
@@ -17146,11 +19768,11 @@ Partial Public Class tnxUnitProperty
 
     End Function
 
-    Public Overridable Function convertToERIUnits(InputValue As Double) As Double
+    Public Overridable Function convertToERIUnits(InputValue As Double?) As Double?
 
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me.prop_multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
@@ -17165,26 +19787,26 @@ Partial Public Class tnxLengthUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "ft" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "in" Then
-                Me.prop_multiplier = 12
+            If Me._value = "ft" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "in" Then
+                Me._multiplier = 12
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
 
-    Public Overridable Function convertAreaToEDSDefaultUnits(InputValue As Double) As Double
+    Public Overridable Function convertAreaToEDSDefaultUnits(InputValue As Double?) As Double?
 
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me.prop_multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
@@ -17192,11 +19814,11 @@ Partial Public Class tnxLengthUnit
 
     End Function
 
-    Public Overridable Function convertAreaToERIUnits(InputValue As Double) As Double
+    Public Overridable Function convertAreaToERIUnits(InputValue As Double?) As Double?
 
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me.prop_multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
@@ -17230,19 +19852,19 @@ Partial Public Class tnxForceUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "K" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "lb" Then
-                Me.prop_multiplier = 1000
-            ElseIf Me.prop_value = "T" Then
-                Me.prop_multiplier = 0.5
+            If Me._value = "K" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "lb" Then
+                Me._multiplier = 1000
+            ElseIf Me._value = "T" Then
+                Me._multiplier = 0.5
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17259,17 +19881,17 @@ Partial Public Class tnxLoadUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "klf" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "plf" Then
-                Me.prop_multiplier = 1000
+            If Me._value = "klf" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "plf" Then
+                Me._multiplier = 1000
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17286,21 +19908,21 @@ Partial Public Class tnxMomentUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "kip-ft" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "lb-ft" Then
-                Me.prop_multiplier = 1000
-            ElseIf Me.prop_value = "lb-in" Then
-                Me.prop_multiplier = 12000
-            ElseIf Me.prop_value = "kip-in" Then
-                Me.prop_multiplier = 12
+            If Me._value = "kip-ft" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "lb-ft" Then
+                Me._multiplier = 1000
+            ElseIf Me._value = "lb-in" Then
+                Me._multiplier = 12000
+            ElseIf Me._value = "kip-in" Then
+                Me._multiplier = 12
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17327,17 +19949,17 @@ Partial Public Class tnxPressureUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "ksf" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "psf" Then
-                Me.prop_multiplier = 1000
+            If Me._value = "ksf" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "psf" Then
+                Me._multiplier = 1000
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17354,17 +19976,17 @@ Partial Public Class tnxVelocityUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "mph" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "fps" Then
-                Me.prop_multiplier = 5280 / 3600
+            If Me._value = "mph" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "fps" Then
+                Me._multiplier = 5280 / 3600
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17379,17 +20001,17 @@ End Class
 Partial Public Class tnxDisplacementUnit
     'Note: This is called deflection in the TNX UI
     Inherits tnxLengthUnit
-    Public Overrides Property precision() As Integer
+    Public Overrides Property precision() As Integer?
         Get
-            Return Me.prop_precision
+            Return Me._precision
         End Get
         Set
             If Value < 0 Then
-                Me.prop_precision = 0
+                Me._precision = 0
             ElseIf Value > 6 Then
-                Me.prop_precision = 6
+                Me._precision = 6
             Else
-                Me.prop_precision = Value
+                Me._precision = Value
             End If
         End Set
     End Property
@@ -17407,15 +20029,15 @@ Partial Public Class tnxMassUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "lb" Then
-                Me.prop_multiplier = 1
+            If Me._value = "lb" Then
+                Me._multiplier = 1
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17432,17 +20054,17 @@ Partial Public Class tnxAccelerationUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "G" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "fpss" Then
-                Me.prop_multiplier = 32.17405
+            If Me._value = "G" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "fpss" Then
+                Me._multiplier = 32.17405
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17459,17 +20081,17 @@ Partial Public Class tnxStressUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "ksi" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "psi" Then
-                Me.prop_multiplier = 1000
+            If Me._value = "ksi" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1000
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17486,17 +20108,17 @@ Partial Public Class tnxDensityUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "pcf" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "pci" Then
-                Me.prop_multiplier = 1728
+            If Me._value = "pcf" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "pci" Then
+                Me._multiplier = 1728
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17513,17 +20135,17 @@ Partial Public Class tnxUnitWTUnit
     'As of version 8.1.1.0 of TNX there is a bug in TNX, the unit wt is always tied to the density units.
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "plf" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "klf" Then
-                Me.prop_multiplier = 0.001
+            If Me._value = "plf" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "klf" Then
+                Me._multiplier = 0.001
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17540,17 +20162,17 @@ Partial Public Class tnxStrengthUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "ksi" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "psi" Then
-                Me.prop_multiplier = 1000
+            If Me._value = "ksi" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1000
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17567,17 +20189,17 @@ Partial Public Class tnxModulusUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "ksi" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "psi" Then
-                Me.prop_multiplier = 1000
+            If Me._value = "ksi" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1000
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17594,30 +20216,30 @@ Partial Public Class tnxTempUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "F" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "C" Then
+            If Me._value = "F" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "C" Then
                 'This conversion doesn't use a simple multiplier.
                 'Override coversion function to get correct results
-                Me.prop_multiplier = 1
+                Me._multiplier = 1
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
 
-    Public Overrides Function convertToEDSDefaultUnits(InputValue As Double) As Double
+    Public Overrides Function convertToEDSDefaultUnits(InputValue As Double?) As Double?
 
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
         End If
 
-        If Me.prop_value = "C" Then
+        If Me._value = "C" Then
             Return InputValue * (9 / 5) + 32
         Else
             Return InputValue
@@ -17625,13 +20247,13 @@ Partial Public Class tnxTempUnit
 
     End Function
 
-    Public Overrides Function convertToERIUnits(InputValue As Double) As Double
+    Public Overrides Function convertToERIUnits(InputValue As Double?) As Double?
 
-        If Me.prop_value = "" Then
+        If Me._value = "" Then
             Throw New System.Exception("Property value not set")
         End If
 
-        If Me.prop_value = "C" Then
+        If Me._value = "C" Then
             Return (InputValue - 32) * (5 / 9)
         Else
             Return InputValue
@@ -17653,15 +20275,15 @@ Partial Public Class tnxPrinterUnit
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "in" Then
-                Me.prop_multiplier = 1
+            If Me._value = "in" Then
+                Me._multiplier = 1
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17677,34 +20299,34 @@ End Class
 Partial Public Class tnxRotationUnit
     Inherits tnxUnitProperty
 
-    Public Overrides Property precision() As Integer
+    Public Overrides Property precision() As Integer?
         Get
-            Return Me.prop_precision
+            Return Me._precision
         End Get
         Set
             If Value < 0 Then
-                Me.prop_precision = 0
+                Me._precision = 0
             ElseIf Value > 6 Then
-                Me.prop_precision = 6
+                Me._precision = 6
             Else
-                Me.prop_precision = Value
+                Me._precision = Value
             End If
         End Set
     End Property
 
     Public Overrides Property value() As String
         Get
-            Return Me.prop_value
+            Return Me._value
         End Get
         Set
-            Me.prop_value = Value
+            Me._value = Value
 
-            If Me.prop_value = "deg" Then
-                Me.prop_multiplier = 1
-            ElseIf Me.prop_value = "rad" Then
-                Me.prop_multiplier = 3.14159 / 180
+            If Me._value = "deg" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "rad" Then
+                Me._multiplier = 3.14159 / 180
             Else
-                Throw New System.Exception("Unrecognized Unit: " & Me.prop_value)
+                Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
         End Set
     End Property
@@ -17732,605 +20354,605 @@ End Class
 #End Region
 
 Partial Public Class tnxCCIReport
-    Private prop_sReportProjectNumber As String
-    Private prop_sReportJobType As String
-    Private prop_sReportCarrierName As String
-    Private prop_sReportCarrierSiteNumber As String
-    Private prop_sReportCarrierSiteName As String
-    Private prop_sReportSiteAddress As String
-    Private prop_sReportLatitudeDegree As Double
-    Private prop_sReportLatitudeMinute As Double
-    Private prop_sReportLatitudeSecond As Double
-    Private prop_sReportLongitudeDegree As Double
-    Private prop_sReportLongitudeMinute As Double
-    Private prop_sReportLongitudeSecond As Double
-    Private prop_sReportLocalCodeRequirement As String
-    Private prop_sReportSiteHistory As String
-    Private prop_sReportTowerManufacturer As String
-    Private prop_sReportMonthManufactured As String
-    Private prop_sReportYearManufactured As Integer
-    Private prop_sReportOriginalSpeed As Double
-    Private prop_sReportOriginalCode As String
-    Private prop_sReportTowerType As String
-    Private prop_sReportEngrName As String
-    Private prop_sReportEngrTitle As String
-    Private prop_sReportHQPhoneNumber As String
-    Private prop_sReportEmailAddress As String
-    Private prop_sReportLogoPath As String
-    Private prop_sReportCCiContactName As String
-    Private prop_sReportCCiAddress1 As String
-    Private prop_sReportCCiAddress2 As String
-    Private prop_sReportCCiBUNumber As String
-    Private prop_sReportCCiSiteName As String
-    Private prop_sReportCCiJDENumber As String
-    Private prop_sReportCCiWONumber As String
-    Private prop_sReportCCiPONumber As String
-    Private prop_sReportCCiAppNumber As String
-    Private prop_sReportCCiRevNumber As String
-    Private prop_sReportDocsProvided As New List(Of String)
-    Private prop_sReportRecommendations As String
-    Private prop_sReportAppurt1 As New List(Of String)
-    Private prop_sReportAppurt2 As New List(Of String)
-    Private prop_sReportAppurt3 As New List(Of String)
-    Private prop_sReportAddlCapacity As New List(Of String)
-    Private prop_sReportAssumption As New List(Of String)
-    Private prop_sReportAppurt1Note1 As String
-    Private prop_sReportAppurt1Note2 As String
-    Private prop_sReportAppurt1Note3 As String
-    Private prop_sReportAppurt1Note4 As String
-    Private prop_sReportAppurt1Note5 As String
-    Private prop_sReportAppurt1Note6 As String
-    Private prop_sReportAppurt1Note7 As String
-    Private prop_sReportAppurt2Note1 As String
-    Private prop_sReportAppurt2Note2 As String
-    Private prop_sReportAppurt2Note3 As String
-    Private prop_sReportAppurt2Note4 As String
-    Private prop_sReportAppurt2Note5 As String
-    Private prop_sReportAppurt2Note6 As String
-    Private prop_sReportAppurt2Note7 As String
-    Private prop_sReportAddlCapacityNote1 As String
-    Private prop_sReportAddlCapacityNote2 As String
-    Private prop_sReportAddlCapacityNote3 As String
-    Private prop_sReportAddlCapacityNote4 As String
+    Private _sReportProjectNumber As String
+    Private _sReportJobType As String
+    Private _sReportCarrierName As String
+    Private _sReportCarrierSiteNumber As String
+    Private _sReportCarrierSiteName As String
+    Private _sReportSiteAddress As String
+    Private _sReportLatitudeDegree As Double?
+    Private _sReportLatitudeMinute As Double?
+    Private _sReportLatitudeSecond As Double?
+    Private _sReportLongitudeDegree As Double?
+    Private _sReportLongitudeMinute As Double?
+    Private _sReportLongitudeSecond As Double?
+    Private _sReportLocalCodeRequirement As String
+    Private _sReportSiteHistory As String
+    Private _sReportTowerManufacturer As String
+    Private _sReportMonthManufactured As String
+    Private _sReportYearManufactured As Integer?
+    Private _sReportOriginalSpeed As Double?
+    Private _sReportOriginalCode As String
+    Private _sReportTowerType As String
+    Private _sReportEngrName As String
+    Private _sReportEngrTitle As String
+    Private _sReportHQPhoneNumber As String
+    Private _sReportEmailAddress As String
+    Private _sReportLogoPath As String
+    Private _sReportCCiContactName As String
+    Private _sReportCCiAddress1 As String
+    Private _sReportCCiAddress2 As String
+    Private _sReportCCiBUNumber As String
+    Private _sReportCCiSiteName As String
+    Private _sReportCCiJDENumber As String
+    Private _sReportCCiWONumber As String
+    Private _sReportCCiPONumber As String
+    Private _sReportCCiAppNumber As String
+    Private _sReportCCiRevNumber As String
+    Private _sReportDocsProvided As New List(Of String)
+    Private _sReportRecommendations As String
+    Private _sReportAppurt1 As New List(Of String)
+    Private _sReportAppurt2 As New List(Of String)
+    Private _sReportAppurt3 As New List(Of String)
+    Private _sReportAddlCapacity As New List(Of String)
+    Private _sReportAssumption As New List(Of String)
+    Private _sReportAppurt1Note1 As String
+    Private _sReportAppurt1Note2 As String
+    Private _sReportAppurt1Note3 As String
+    Private _sReportAppurt1Note4 As String
+    Private _sReportAppurt1Note5 As String
+    Private _sReportAppurt1Note6 As String
+    Private _sReportAppurt1Note7 As String
+    Private _sReportAppurt2Note1 As String
+    Private _sReportAppurt2Note2 As String
+    Private _sReportAppurt2Note3 As String
+    Private _sReportAppurt2Note4 As String
+    Private _sReportAppurt2Note5 As String
+    Private _sReportAppurt2Note6 As String
+    Private _sReportAppurt2Note7 As String
+    Private _sReportAddlCapacityNote1 As String
+    Private _sReportAddlCapacityNote2 As String
+    Private _sReportAddlCapacityNote3 As String
+    Private _sReportAddlCapacityNote4 As String
 
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportProjectNumber")>
     Public Property sReportProjectNumber() As String
         Get
-            Return Me.prop_sReportProjectNumber
+            Return Me._sReportProjectNumber
         End Get
         Set
-            Me.prop_sReportProjectNumber = Value
+            Me._sReportProjectNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportJobType")>
     Public Property sReportJobType() As String
         Get
-            Return Me.prop_sReportJobType
+            Return Me._sReportJobType
         End Get
         Set
-            Me.prop_sReportJobType = Value
+            Me._sReportJobType = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierName")>
     Public Property sReportCarrierName() As String
         Get
-            Return Me.prop_sReportCarrierName
+            Return Me._sReportCarrierName
         End Get
         Set
-            Me.prop_sReportCarrierName = Value
+            Me._sReportCarrierName = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteNumber")>
     Public Property sReportCarrierSiteNumber() As String
         Get
-            Return Me.prop_sReportCarrierSiteNumber
+            Return Me._sReportCarrierSiteNumber
         End Get
         Set
-            Me.prop_sReportCarrierSiteNumber = Value
+            Me._sReportCarrierSiteNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteName")>
     Public Property sReportCarrierSiteName() As String
         Get
-            Return Me.prop_sReportCarrierSiteName
+            Return Me._sReportCarrierSiteName
         End Get
         Set
-            Me.prop_sReportCarrierSiteName = Value
+            Me._sReportCarrierSiteName = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteAddress")>
     Public Property sReportSiteAddress() As String
         Get
-            Return Me.prop_sReportSiteAddress
+            Return Me._sReportSiteAddress
         End Get
         Set
-            Me.prop_sReportSiteAddress = Value
+            Me._sReportSiteAddress = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeDegree")>
-    Public Property sReportLatitudeDegree() As Double
+    Public Property sReportLatitudeDegree() As Double?
         Get
-            Return Me.prop_sReportLatitudeDegree
+            Return Me._sReportLatitudeDegree
         End Get
         Set
-            Me.prop_sReportLatitudeDegree = Value
+            Me._sReportLatitudeDegree = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeMinute")>
-    Public Property sReportLatitudeMinute() As Double
+    Public Property sReportLatitudeMinute() As Double?
         Get
-            Return Me.prop_sReportLatitudeMinute
+            Return Me._sReportLatitudeMinute
         End Get
         Set
-            Me.prop_sReportLatitudeMinute = Value
+            Me._sReportLatitudeMinute = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeSecond")>
-    Public Property sReportLatitudeSecond() As Double
+    Public Property sReportLatitudeSecond() As Double?
         Get
-            Return Me.prop_sReportLatitudeSecond
+            Return Me._sReportLatitudeSecond
         End Get
         Set
-            Me.prop_sReportLatitudeSecond = Value
+            Me._sReportLatitudeSecond = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeDegree")>
-    Public Property sReportLongitudeDegree() As Double
+    Public Property sReportLongitudeDegree() As Double?
         Get
-            Return Me.prop_sReportLongitudeDegree
+            Return Me._sReportLongitudeDegree
         End Get
         Set
-            Me.prop_sReportLongitudeDegree = Value
+            Me._sReportLongitudeDegree = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeMinute")>
-    Public Property sReportLongitudeMinute() As Double
+    Public Property sReportLongitudeMinute() As Double?
         Get
-            Return Me.prop_sReportLongitudeMinute
+            Return Me._sReportLongitudeMinute
         End Get
         Set
-            Me.prop_sReportLongitudeMinute = Value
+            Me._sReportLongitudeMinute = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeSecond")>
-    Public Property sReportLongitudeSecond() As Double
+    Public Property sReportLongitudeSecond() As Double?
         Get
-            Return Me.prop_sReportLongitudeSecond
+            Return Me._sReportLongitudeSecond
         End Get
         Set
-            Me.prop_sReportLongitudeSecond = Value
+            Me._sReportLongitudeSecond = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLocalCodeRequirement")>
     Public Property sReportLocalCodeRequirement() As String
         Get
-            Return Me.prop_sReportLocalCodeRequirement
+            Return Me._sReportLocalCodeRequirement
         End Get
         Set
-            Me.prop_sReportLocalCodeRequirement = Value
+            Me._sReportLocalCodeRequirement = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteHistory")>
     Public Property sReportSiteHistory() As String
         Get
-            Return Me.prop_sReportSiteHistory
+            Return Me._sReportSiteHistory
         End Get
         Set
-            Me.prop_sReportSiteHistory = Value
+            Me._sReportSiteHistory = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerManufacturer")>
     Public Property sReportTowerManufacturer() As String
         Get
-            Return Me.prop_sReportTowerManufacturer
+            Return Me._sReportTowerManufacturer
         End Get
         Set
-            Me.prop_sReportTowerManufacturer = Value
+            Me._sReportTowerManufacturer = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportMonthManufactured")>
     Public Property sReportMonthManufactured() As String
         Get
-            Return Me.prop_sReportMonthManufactured
+            Return Me._sReportMonthManufactured
         End Get
         Set
-            Me.prop_sReportMonthManufactured = Value
+            Me._sReportMonthManufactured = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportYearManufactured")>
-    Public Property sReportYearManufactured() As Integer
+    Public Property sReportYearManufactured() As Integer?
         Get
-            Return Me.prop_sReportYearManufactured
+            Return Me._sReportYearManufactured
         End Get
         Set
-            Me.prop_sReportYearManufactured = Value
+            Me._sReportYearManufactured = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalSpeed")>
-    Public Property sReportOriginalSpeed() As Double
+    Public Property sReportOriginalSpeed() As Double?
         Get
-            Return Me.prop_sReportOriginalSpeed
+            Return Me._sReportOriginalSpeed
         End Get
         Set
-            Me.prop_sReportOriginalSpeed = Value
+            Me._sReportOriginalSpeed = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalCode")>
     Public Property sReportOriginalCode() As String
         Get
-            Return Me.prop_sReportOriginalCode
+            Return Me._sReportOriginalCode
         End Get
         Set
-            Me.prop_sReportOriginalCode = Value
+            Me._sReportOriginalCode = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerType")>
     Public Property sReportTowerType() As String
         Get
-            Return Me.prop_sReportTowerType
+            Return Me._sReportTowerType
         End Get
         Set
-            Me.prop_sReportTowerType = Value
+            Me._sReportTowerType = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrName")>
     Public Property sReportEngrName() As String
         Get
-            Return Me.prop_sReportEngrName
+            Return Me._sReportEngrName
         End Get
         Set
-            Me.prop_sReportEngrName = Value
+            Me._sReportEngrName = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrTitle")>
     Public Property sReportEngrTitle() As String
         Get
-            Return Me.prop_sReportEngrTitle
+            Return Me._sReportEngrTitle
         End Get
         Set
-            Me.prop_sReportEngrTitle = Value
+            Me._sReportEngrTitle = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportHQPhoneNumber")>
     Public Property sReportHQPhoneNumber() As String
         Get
-            Return Me.prop_sReportHQPhoneNumber
+            Return Me._sReportHQPhoneNumber
         End Get
         Set
-            Me.prop_sReportHQPhoneNumber = Value
+            Me._sReportHQPhoneNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEmailAddress")>
     Public Property sReportEmailAddress() As String
         Get
-            Return Me.prop_sReportEmailAddress
+            Return Me._sReportEmailAddress
         End Get
         Set
-            Me.prop_sReportEmailAddress = Value
+            Me._sReportEmailAddress = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLogoPath")>
     Public Property sReportLogoPath() As String
         Get
-            Return Me.prop_sReportLogoPath
+            Return Me._sReportLogoPath
         End Get
         Set
-            Me.prop_sReportLogoPath = Value
+            Me._sReportLogoPath = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiContactName")>
     Public Property sReportCCiContactName() As String
         Get
-            Return Me.prop_sReportCCiContactName
+            Return Me._sReportCCiContactName
         End Get
         Set
-            Me.prop_sReportCCiContactName = Value
+            Me._sReportCCiContactName = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress1")>
     Public Property sReportCCiAddress1() As String
         Get
-            Return Me.prop_sReportCCiAddress1
+            Return Me._sReportCCiAddress1
         End Get
         Set
-            Me.prop_sReportCCiAddress1 = Value
+            Me._sReportCCiAddress1 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress2")>
     Public Property sReportCCiAddress2() As String
         Get
-            Return Me.prop_sReportCCiAddress2
+            Return Me._sReportCCiAddress2
         End Get
         Set
-            Me.prop_sReportCCiAddress2 = Value
+            Me._sReportCCiAddress2 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiBUNumber")>
     Public Property sReportCCiBUNumber() As String
         Get
-            Return Me.prop_sReportCCiBUNumber
+            Return Me._sReportCCiBUNumber
         End Get
         Set
-            Me.prop_sReportCCiBUNumber = Value
+            Me._sReportCCiBUNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiSiteName")>
     Public Property sReportCCiSiteName() As String
         Get
-            Return Me.prop_sReportCCiSiteName
+            Return Me._sReportCCiSiteName
         End Get
         Set
-            Me.prop_sReportCCiSiteName = Value
+            Me._sReportCCiSiteName = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiJDENumber")>
     Public Property sReportCCiJDENumber() As String
         Get
-            Return Me.prop_sReportCCiJDENumber
+            Return Me._sReportCCiJDENumber
         End Get
         Set
-            Me.prop_sReportCCiJDENumber = Value
+            Me._sReportCCiJDENumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiWONumber")>
     Public Property sReportCCiWONumber() As String
         Get
-            Return Me.prop_sReportCCiWONumber
+            Return Me._sReportCCiWONumber
         End Get
         Set
-            Me.prop_sReportCCiWONumber = Value
+            Me._sReportCCiWONumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiPONumber")>
     Public Property sReportCCiPONumber() As String
         Get
-            Return Me.prop_sReportCCiPONumber
+            Return Me._sReportCCiPONumber
         End Get
         Set
-            Me.prop_sReportCCiPONumber = Value
+            Me._sReportCCiPONumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAppNumber")>
     Public Property sReportCCiAppNumber() As String
         Get
-            Return Me.prop_sReportCCiAppNumber
+            Return Me._sReportCCiAppNumber
         End Get
         Set
-            Me.prop_sReportCCiAppNumber = Value
+            Me._sReportCCiAppNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiRevNumber")>
     Public Property sReportCCiRevNumber() As String
         Get
-            Return Me.prop_sReportCCiRevNumber
+            Return Me._sReportCCiRevNumber
         End Get
         Set
-            Me.prop_sReportCCiRevNumber = Value
+            Me._sReportCCiRevNumber = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Reference Document Row. String format: Doc Type<~~>Remarks<~~>Ref No<~~>Source"), DisplayName("sReportDocsProvided")>
     Public Property sReportDocsProvided() As List(Of String)
         Get
-            Return Me.prop_sReportDocsProvided
+            Return Me._sReportDocsProvided
         End Get
         Set
-            Me.prop_sReportDocsProvided = Value
+            Me._sReportDocsProvided = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportRecommendations")>
     Public Property sReportRecommendations() As String
         Get
-            Return Me.prop_sReportRecommendations
+            Return Me._sReportRecommendations
         End Get
         Set
-            Me.prop_sReportRecommendations = Value
+            Me._sReportRecommendations = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Proposed Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Proposed"), DisplayName("sReportAppurt1")>
     Public Property sReportAppurt1() As List(Of String)
         Get
-            Return Me.prop_sReportAppurt1
+            Return Me._sReportAppurt1
         End Get
         Set
-            Me.prop_sReportAppurt1 = Value
+            Me._sReportAppurt1 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Existing Equipment Row. String format:MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Existing"), DisplayName("sReportAppurt2")>
     Public Property sReportAppurt2() As List(Of String)
         Get
-            Return Me.prop_sReportAppurt2
+            Return Me._sReportAppurt2
         End Get
         Set
-            Me.prop_sReportAppurt2 = Value
+            Me._sReportAppurt2 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Design Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>"), DisplayName("sReportAppurt2")>
     Public Property sReportAppurt3() As List(Of String)
         Get
-            Return Me.prop_sReportAppurt3
+            Return Me._sReportAppurt3
         End Get
         Set
-            Me.prop_sReportAppurt3 = Value
+            Me._sReportAppurt3 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Additional Capacity Row. String format: Component<~~>Note #<~~>Elevation<~~>Cap%<~~>Pass/Fail<~~>Include in Report {Yes/No}"), DisplayName("sReportAddlCapacity")>
     Public Property sReportAddlCapacity() As List(Of String)
         Get
-            Return Me.prop_sReportAddlCapacity
+            Return Me._sReportAddlCapacity
         End Get
         Set
-            Me.prop_sReportAddlCapacity = Value
+            Me._sReportAddlCapacity = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAssumption")>
     Public Property sReportAssumption() As List(Of String)
         Get
-            Return Me.prop_sReportAssumption
+            Return Me._sReportAssumption
         End Get
         Set
-            Me.prop_sReportAssumption = Value
+            Me._sReportAssumption = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note1")>
     Public Property sReportAppurt1Note1() As String
         Get
-            Return Me.prop_sReportAppurt1Note1
+            Return Me._sReportAppurt1Note1
         End Get
         Set
-            Me.prop_sReportAppurt1Note1 = Value
+            Me._sReportAppurt1Note1 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note2")>
     Public Property sReportAppurt1Note2() As String
         Get
-            Return Me.prop_sReportAppurt1Note2
+            Return Me._sReportAppurt1Note2
         End Get
         Set
-            Me.prop_sReportAppurt1Note2 = Value
+            Me._sReportAppurt1Note2 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note3")>
     Public Property sReportAppurt1Note3() As String
         Get
-            Return Me.prop_sReportAppurt1Note3
+            Return Me._sReportAppurt1Note3
         End Get
         Set
-            Me.prop_sReportAppurt1Note3 = Value
+            Me._sReportAppurt1Note3 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note4")>
     Public Property sReportAppurt1Note4() As String
         Get
-            Return Me.prop_sReportAppurt1Note4
+            Return Me._sReportAppurt1Note4
         End Get
         Set
-            Me.prop_sReportAppurt1Note4 = Value
+            Me._sReportAppurt1Note4 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note5")>
     Public Property sReportAppurt1Note5() As String
         Get
-            Return Me.prop_sReportAppurt1Note5
+            Return Me._sReportAppurt1Note5
         End Get
         Set
-            Me.prop_sReportAppurt1Note5 = Value
+            Me._sReportAppurt1Note5 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note6")>
     Public Property sReportAppurt1Note6() As String
         Get
-            Return Me.prop_sReportAppurt1Note6
+            Return Me._sReportAppurt1Note6
         End Get
         Set
-            Me.prop_sReportAppurt1Note6 = Value
+            Me._sReportAppurt1Note6 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note7")>
     Public Property sReportAppurt1Note7() As String
         Get
-            Return Me.prop_sReportAppurt1Note7
+            Return Me._sReportAppurt1Note7
         End Get
         Set
-            Me.prop_sReportAppurt1Note7 = Value
+            Me._sReportAppurt1Note7 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note1")>
     Public Property sReportAppurt2Note1() As String
         Get
-            Return Me.prop_sReportAppurt2Note1
+            Return Me._sReportAppurt2Note1
         End Get
         Set
-            Me.prop_sReportAppurt2Note1 = Value
+            Me._sReportAppurt2Note1 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note2")>
     Public Property sReportAppurt2Note2() As String
         Get
-            Return Me.prop_sReportAppurt2Note2
+            Return Me._sReportAppurt2Note2
         End Get
         Set
-            Me.prop_sReportAppurt2Note2 = Value
+            Me._sReportAppurt2Note2 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note3")>
     Public Property sReportAppurt2Note3() As String
         Get
-            Return Me.prop_sReportAppurt2Note3
+            Return Me._sReportAppurt2Note3
         End Get
         Set
-            Me.prop_sReportAppurt2Note3 = Value
+            Me._sReportAppurt2Note3 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note4")>
     Public Property sReportAppurt2Note4() As String
         Get
-            Return Me.prop_sReportAppurt2Note4
+            Return Me._sReportAppurt2Note4
         End Get
         Set
-            Me.prop_sReportAppurt2Note4 = Value
+            Me._sReportAppurt2Note4 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note5")>
     Public Property sReportAppurt2Note5() As String
         Get
-            Return Me.prop_sReportAppurt2Note5
+            Return Me._sReportAppurt2Note5
         End Get
         Set
-            Me.prop_sReportAppurt2Note5 = Value
+            Me._sReportAppurt2Note5 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note6")>
     Public Property sReportAppurt2Note6() As String
         Get
-            Return Me.prop_sReportAppurt2Note6
+            Return Me._sReportAppurt2Note6
         End Get
         Set
-            Me.prop_sReportAppurt2Note6 = Value
+            Me._sReportAppurt2Note6 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note7")>
     Public Property sReportAppurt2Note7() As String
         Get
-            Return Me.prop_sReportAppurt2Note7
+            Return Me._sReportAppurt2Note7
         End Get
         Set
-            Me.prop_sReportAppurt2Note7 = Value
+            Me._sReportAppurt2Note7 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote1")>
     Public Property sReportAddlCapacityNote1() As String
         Get
-            Return Me.prop_sReportAddlCapacityNote1
+            Return Me._sReportAddlCapacityNote1
         End Get
         Set
-            Me.prop_sReportAddlCapacityNote1 = Value
+            Me._sReportAddlCapacityNote1 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote2")>
     Public Property sReportAddlCapacityNote2() As String
         Get
-            Return Me.prop_sReportAddlCapacityNote2
+            Return Me._sReportAddlCapacityNote2
         End Get
         Set
-            Me.prop_sReportAddlCapacityNote2 = Value
+            Me._sReportAddlCapacityNote2 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote3")>
     Public Property sReportAddlCapacityNote3() As String
         Get
-            Return Me.prop_sReportAddlCapacityNote3
+            Return Me._sReportAddlCapacityNote3
         End Get
         Set
-            Me.prop_sReportAddlCapacityNote3 = Value
+            Me._sReportAddlCapacityNote3 = Value
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote4")>
     Public Property sReportAddlCapacityNote4() As String
         Get
-            Return Me.prop_sReportAddlCapacityNote4
+            Return Me._sReportAddlCapacityNote4
         End Get
         Set
-            Me.prop_sReportAddlCapacityNote4 = Value
+            Me._sReportAddlCapacityNote4 = Value
         End Set
     End Property
 
