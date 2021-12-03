@@ -55,6 +55,12 @@ BEGIN
 	SELECT @ModelID=ModelID FROM @Model
 	--Create new row in structure_model_xref, associating BU to newly created Model ID
 	INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
+	
+	--Set the variables to default below so that it forces guyed anchor data to be created 
+	--^^(JUST A SUGGESTION. This was a fix for the test case I had that goes against our intended workflow) - IEM
+	--SET @GABID = NULL
+	--Set @FndGroupNeeded = 1
+	--Set @GABNeeded = 1
 END--Select existing model ID or insert new
 
 
