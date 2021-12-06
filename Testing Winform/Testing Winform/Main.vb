@@ -13,6 +13,7 @@ Partial Public Class frmMain
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     Public myPiles As New DataTransfererPile
     Public MyCCIpoles As New DataTransfererCCIpole
+    Public MyCCIplates As New DataTransfererCCIplate
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
@@ -24,8 +25,9 @@ Partial Public Class frmMain
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Drilled Pier Foundation (5.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 811236 - Pile Foundation (2.2.1.6).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870799 - Drilled Pier Foundation (5.1.0) - 10-13-21.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
@@ -37,8 +39,9 @@ Partial Public Class frmMain
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\846182 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\EDS - 811236 - Pile Foundation (2.2.1.6) - Change 1.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Connection\812637\CCIplate (4.1.2.1) - Copy - Copy.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -131,6 +134,10 @@ Partial Public Class frmMain
                 MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 MyCCIpoles.ExcelFilePath = item
                 If MyCCIpoles.LoadFromEDS() Then MyCCIpoles.SaveToExcel()
+            ElseIf item.Contains("CCIplate") Then
+                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIplates.ExcelFilePath = item
+                'If MyCCIplates.LoadFromEDS() Then MyCCIplates.SaveToExcel()
             End If
         Next
 
@@ -170,6 +177,11 @@ Partial Public Class frmMain
                 MyCCIpoles.ExcelFilePath = item
                 MyCCIpoles.LoadFromExcel()
                 MyCCIpoles.SaveToEDS()
+            ElseIf item.Contains("CCIplate") Then
+                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIplates.ExcelFilePath = item
+                MyCCIplates.LoadFromExcel()
+                MyCCIplates.SaveToEDS()
             End If
         Next
 
@@ -182,6 +194,7 @@ Partial Public Class frmMain
         myGuyedAnchorBlocks.Clear()
         myPiles.Clear()
         MyCCIpoles.Clear()
+        MyCCIplates.Clear()
     End Sub
 
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
