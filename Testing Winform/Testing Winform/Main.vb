@@ -197,9 +197,9 @@ Partial Public Class frmMain
         MyCCIplates.Clear()
     End Sub
 
-    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        MsgBox("Stop touching me")
-    End Sub
+    'Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+    '    MsgBox("Stop touching me")
+    'End Sub
 
     Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
 
@@ -217,6 +217,11 @@ Partial Public Class frmMain
 
         If eriFd.ShowDialog = DialogResult.OK Then
             tnxObject = New tnxModel(eriFd.FileName)
+            'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
+            'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
+            'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
+            'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
+
             propgridTNXObject.SelectedObject = tnxObject
         End If
     End Sub
@@ -235,7 +240,53 @@ Partial Public Class frmMain
         End If
     End Sub
 
-    Private Sub pgSQL_Click(sender As Object, e As EventArgs) Handles pgSQL.Click
+    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
+        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+
+    End Sub
+
+    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+
+        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+        propgridTNXObject.SelectedObject = tnxObject
+    End Sub
+
+
+
+
+
+
+
+
+
+
+    Dim tappy As Integer
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+        Dim pwd As String
+        If tappy = 0 Then
+            MessageBox.Show("Stop touching me. GAR it makes me so mad!", "DO NOT TAP ON GLASS")
+            tappy += 1
+        ElseIf tappy = 1 Then
+            MessageBox.Show("What, are you just doing this for the HALIBUT? Please stop.", "DO NOT TAP ON GLASS")
+            tappy = 2
+        ElseIf tappy = 2 Then
+            If MessageBox.Show("Please, I have asked you nicely to stop. Let MINNOW, are you are going to stop?", "DO NOT TAP ON GLASS", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                MessageBox.Show("WALLEYE just can't thank you enough for being reasonable. Now go away.", "DO NOT TAP ON GLASS")
+                tappy = 0
+            Else
+                pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
+                If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
+                    MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
+                    tappy = 3
+                Else
+                    MessageBox.Show("You clearly didn't want it bad enough. Better TUNA round and never try again.", "DO NOT TAP ON GLASS")
+                    tappy = 0
+                End If
+            End If
+        End If
     End Sub
 End Class

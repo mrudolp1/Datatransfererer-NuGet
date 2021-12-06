@@ -47,6 +47,15 @@ Public Module Common
 
 
 
+    <DebuggerStepThrough()>
+    Sub dtClearer(ByVal sqlsrc As String)
+        Try
+            If ds.Tables.Contains(sqlsrc) Then
+                ds.Tables(sqlsrc).Clear()
+            End If
+        Catch
+        End Try
+    End Sub
 
 
 
