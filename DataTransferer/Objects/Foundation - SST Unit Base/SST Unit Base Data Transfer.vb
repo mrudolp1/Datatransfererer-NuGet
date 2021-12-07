@@ -12,6 +12,7 @@ Partial Public Class DataTransfererUnitBase
     Public Property UnitBases As New List(Of SST_Unit_Base)
     Public Property sqlUnitBases As New List(Of SST_Unit_Base)
     Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\Reference\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
+    'Private Property UnitBaseTemplatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Unit Base\Template\SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"
     Private Property UnitBaseFileType As DocumentFormat = DocumentFormat.Xlsm
 
     'Public Property ubDS As New DataSet
@@ -223,32 +224,73 @@ Partial Public Class DataTransfererUnitBase
                 'reactions (From tnx)
 
                 'Worksheet Change Events
-                If ub.top_and_bottom_rebar_different = True Then
-                    .Worksheets("Input").Rows(42).Visible = True
-                    .Worksheets("Input").Rows(43).Visible = True
-                Else
-                    .Worksheets("Input").Rows(42).Visible = False
-                    .Worksheets("Input").Rows(43).Visible = False
-                End If
-                If ub.rectangular_foundation = True Then
-                    .Worksheets("Input").Rows(38).Visible = True
-                    .Worksheets("Input").Rows(44).Visible = True
-                    .Worksheets("Input").Rows(45).Visible = True
-                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
-                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
-                Else
-                    .Worksheets("Input").Rows(38).Visible = False
-                    .Worksheets("Input").Rows(42).Visible = False
-                    .Worksheets("Input").Rows(43).Visible = False
+                'If ub.top_and_bottom_rebar_different = True Then
+                '    .Worksheets("Input").Rows(42).Visible = True
+                '    .Worksheets("Input").Rows(43).Visible = True
+                'Else
+                '    .Worksheets("Input").Rows(42).Visible = False
+                '    .Worksheets("Input").Rows(43).Visible = False
+                'End If
+                'If ub.rectangular_foundation = True Then
+                '    .Worksheets("Input").Rows(38).Visible = True
+                '    .Worksheets("Input").Rows(44).Visible = True
+                '    .Worksheets("Input").Rows(45).Visible = True
+                '    .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
+                '    .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
+                'Else
+                '    .Worksheets("Input").Rows(38).Visible = False
+                '    .Worksheets("Input").Rows(42).Visible = False
+                '    .Worksheets("Input").Rows(43).Visible = False
+                '    .Worksheets("Plastic Bearing & Overturn (2)").Visible = False
+                '    .Worksheets("Elastic Bearing & Overturn (2)").Visible = False
+                'End If
+                'If ub.top_and_bottom_rebar_different = True And ub.rectangular_foundation = True Then
+                '    .Worksheets("Input").Rows(40).Visible = True
+                '    .Worksheets("Input").Rows(41).Visible = True
+                'Else
+                '    .Worksheets("Input").Rows(40).Visible = False
+                '    .Worksheets("Input").Rows(41).Visible = False
+                'End If
+                If ub.top_and_bottom_rebar_different = False And ub.rectangular_foundation = False Then
+                    .Worksheets("Input").Rows("38").Visible = False
+                    .Worksheets("Input").Rows("40").Visible = False
+                    .Worksheets("Input").Rows("41").Visible = False
+                    .Worksheets("Input").Rows("42").Visible = False
+                    .Worksheets("Input").Rows("43").Visible = False
+                    .Worksheets("Input").Rows("44").Visible = False
+                    .Worksheets("Input").Rows("45").Visible = False
                     .Worksheets("Plastic Bearing & Overturn (2)").Visible = False
                     .Worksheets("Elastic Bearing & Overturn (2)").Visible = False
-                End If
-                If ub.top_and_bottom_rebar_different = True And ub.rectangular_foundation = True Then
-                    .Worksheets("Input").Rows(40).Visible = True
-                    .Worksheets("Input").Rows(41).Visible = True
-                Else
-                    .Worksheets("Input").Rows(40).Visible = False
-                    .Worksheets("Input").Rows(41).Visible = False
+                ElseIf ub.top_and_bottom_rebar_different = True And ub.rectangular_foundation = False Then
+                    .Worksheets("Input").Rows("38").Visible = False
+                    .Worksheets("Input").Rows("40").Visible = False
+                    .Worksheets("Input").Rows("41").Visible = False
+                    .Worksheets("Input").Rows("42").Visible = True
+                    .Worksheets("Input").Rows("43").Visible = True
+                    .Worksheets("Input").Rows("44").Visible = False
+                    .Worksheets("Input").Rows("45").Visible = False
+                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = False
+                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = False
+                ElseIf ub.top_and_bottom_rebar_different = False And ub.rectangular_foundation = True Then
+                    .Worksheets("Input").Rows("38").Visible = True
+                    .Worksheets("Input").Rows("40").Visible = False
+                    .Worksheets("Input").Rows("41").Visible = False
+                    .Worksheets("Input").Rows("42").Visible = False
+                    .Worksheets("Input").Rows("43").Visible = False
+                    .Worksheets("Input").Rows("44").Visible = True
+                    .Worksheets("Input").Rows("45").Visible = True
+                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
+                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
+                ElseIf ub.top_and_bottom_rebar_different = True And ub.rectangular_foundation = True Then
+                    .Worksheets("Input").Rows("38").Visible = True
+                    .Worksheets("Input").Rows("40").Visible = True
+                    .Worksheets("Input").Rows("41").Visible = True
+                    .Worksheets("Input").Rows("42").Visible = True
+                    .Worksheets("Input").Rows("43").Visible = True
+                    .Worksheets("Input").Rows("44").Visible = True
+                    .Worksheets("Input").Rows("45").Visible = True
+                    .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
+                    .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
                 End If
 
 
@@ -551,7 +593,7 @@ Partial Public Class DataTransfererUnitBase
         If Check1Change(xlUnitBase.pier_rebar_quantity, sqlUnitBase.pier_rebar_quantity, "SST Unit Base", "Pier_Rebar_Quantity") Then changesMade = True
         If Check1Change(xlUnitBase.basic_soil_check, sqlUnitBase.basic_soil_check, "SST Unit Base", "Basic_Soil_Check") Then changesMade = True
         If Check1Change(xlUnitBase.structural_check, sqlUnitBase.structural_check, "SST Unit Base", "Structural_Check") Then changesMade = True
-        If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, "SST Unit Base", "Tool_Version") Then changesMade = True
+        'If Check1Change(xlUnitBase.tool_version, sqlUnitBase.tool_version, "SST Unit Base", "Tool_Version") Then changesMade = True
         If Check1Change(xlUnitBase.modified, sqlUnitBase.modified, "SST Unit Base", "Modified") Then changesMade = True
 
         CreateChangeSummary(changeDt) 'possible alternative to listing change summary

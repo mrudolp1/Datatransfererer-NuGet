@@ -30,6 +30,36 @@ Module DoDaSQL
         Return True
     End Function
 
+    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer) As Boolean
+
+        'This overload accepts a list of SQL commands and tables names and only opens the SQL connection one time to execute all commands. - DHS
+
+        If SQLCommand.Count <> tableName.Count Then Return False
+
+        Dim errors As Boolean = False
+
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            Using sqlCon As New SqlConnection(ActiveDatabase)
+                sqlCon.Open()
+
+                For i = 0 To SQLCommand.Count - 1
+                    Try
+                        ClearDataTable(tableName(i), SaveToDataSet)
+                        Using SQLAdapter As New SqlDataAdapter(SQLCommand(i), sqlCon)
+                            SQLAdapter.Fill(SaveToDataSet, tableName(i))
+                        End Using
+                    Catch ex As Exception
+                        erNo = erNo + i
+                        Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                        errors = True
+                    End Try
+                Next
+            End Using
+        End Using
+
+        Return True
+    End Function
+
     <DebuggerStepThrough()>
     Public Function sqlSender(ByVal SQLCommand As String, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
         Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()

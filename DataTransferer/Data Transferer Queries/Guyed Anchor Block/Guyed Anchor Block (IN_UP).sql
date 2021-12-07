@@ -55,6 +55,12 @@ BEGIN
 	SELECT @ModelID=ModelID FROM @Model
 	--Create new row in structure_model_xref, associating BU to newly created Model ID
 	INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
+	
+	--Set the variables to default below so that it forces guyed anchor data to be created 
+	--^^(JUST A SUGGESTION. This was a fix for the test case I had that goes against our intended workflow) - IEM
+	--SET @GABID = NULL
+	--Set @FndGroupNeeded = 1
+	--Set @GABNeeded = 1
 END--Select existing model ID or insert new
 
 
@@ -92,7 +98,7 @@ BEGIN
 			SELECT @GABID=GABID FROM @GAB
 
 			--INSERT Soil Layers 
-			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+			--INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 
 			--INSERT Profile
 			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])
@@ -113,7 +119,7 @@ IF @FndGroupNeeded = 0 --FALSE --if Foundation Group is not Needed
 			SELECT @GABID=GABID FROM @GAB
 
 			--INSERT Soil Layers 
-			INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
+			--INSERT INTO fnd.anchor_block_soil_layer VALUES ([INSERT ALL SOIL LAYERS])
 
 			--INSERT Profile
 			INSERT INTO fnd.anchor_block_profile VALUES ([INSERT ALL GUYED ANCHOR BLOCK PROFILES])

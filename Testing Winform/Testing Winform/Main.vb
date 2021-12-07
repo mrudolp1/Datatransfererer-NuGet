@@ -13,32 +13,35 @@ Partial Public Class frmMain
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     Public myPiles As New DataTransfererPile
     Public MyCCIpoles As New DataTransfererCCIpole
+    Public MyCCIplates As New DataTransfererCCIplate
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
 
     'Import to Excel
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 879480 - Pier and Pad Foundation (4.1.2).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - Pier and Pad Foundation (4.1.2).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDStest - Pile Foundation (2.2.1.6).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800010 - Pile Foundation (2.2.1.5).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\841585\Test\SST Unit Base Foundation (4.0.4)_3_EDS.xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 813750 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
-
-
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 870799 - Drilled Pier Foundation (5.1.0) - 10-13-21.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 806889 - Pier and Pad Foundation (4.1.2).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800011 - Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Drilled Pier Foundation (5.1.0).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 811236 - Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
     'Import to EDS
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\879480 - Pier and Pad Foundation (4.1.2).xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\874286\874286 Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\874286\EDS4 - Pier and Pad Foundation (4.1.2) - Change 1.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\870074\ASYM Test\8\EDStest - Pile Foundation (2.2.1.6).xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870800 - Drilled Pier Foundation (5.1.0) - 10-14-21.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\841585\Test\SST Unit Base Foundation (4.0.4)_2.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870799 - Drilled Pier Foundation (5.1.0) - 10-13-21.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800011 - Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Unit Base\806956\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS - Change1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Unit Base\806956\806956 SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-9-2021.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\813750\813750 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-25-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\846182 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\EDS - 811236 - Pile Foundation (2.2.1.6) - Change 1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Connection\812637\CCIplate (4.1.2.1) - Copy - Copy.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"
@@ -131,6 +134,10 @@ Partial Public Class frmMain
                 MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
                 MyCCIpoles.ExcelFilePath = item
                 If MyCCIpoles.LoadFromEDS() Then MyCCIpoles.SaveToExcel()
+            ElseIf item.Contains("CCIplate") Then
+                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIplates.ExcelFilePath = item
+                'If MyCCIplates.LoadFromEDS() Then MyCCIplates.SaveToExcel()
             End If
         Next
 
@@ -170,6 +177,11 @@ Partial Public Class frmMain
                 MyCCIpoles.ExcelFilePath = item
                 MyCCIpoles.LoadFromExcel()
                 MyCCIpoles.SaveToEDS()
+            ElseIf item.Contains("CCIplate") Then
+                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+                MyCCIplates.ExcelFilePath = item
+                MyCCIplates.LoadFromExcel()
+                MyCCIplates.SaveToEDS()
             End If
         Next
 
@@ -182,11 +194,12 @@ Partial Public Class frmMain
         myGuyedAnchorBlocks.Clear()
         myPiles.Clear()
         MyCCIpoles.Clear()
+        MyCCIplates.Clear()
     End Sub
 
-    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        MsgBox("Stop touching me")
-    End Sub
+    'Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+    '    MsgBox("Stop touching me")
+    'End Sub
 
     Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
 
@@ -204,6 +217,11 @@ Partial Public Class frmMain
 
         If eriFd.ShowDialog = DialogResult.OK Then
             tnxObject = New tnxModel(eriFd.FileName)
+            'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
+            'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
+            'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
+            'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
+
             propgridTNXObject.SelectedObject = tnxObject
         End If
     End Sub
@@ -219,6 +237,56 @@ Partial Public Class frmMain
 
         If eriFd.ShowDialog = DialogResult.OK Then
             tnxObject.GenerateERI(eriFd.FileName)
+        End If
+    End Sub
+
+    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
+
+        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+
+    End Sub
+
+    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+
+        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+        propgridTNXObject.SelectedObject = tnxObject
+    End Sub
+
+
+
+
+
+
+
+
+
+
+    Dim tappy As Integer
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+        Dim pwd As String
+        If tappy = 0 Then
+            MessageBox.Show("Stop touching me. GAR it makes me so mad!", "DO NOT TAP ON GLASS")
+            tappy += 1
+        ElseIf tappy = 1 Then
+            MessageBox.Show("What, are you just doing this for the HALIBUT? Please stop.", "DO NOT TAP ON GLASS")
+            tappy = 2
+        ElseIf tappy = 2 Then
+            If MessageBox.Show("Please, I have asked you nicely to stop. Let MINNOW, are you are going to stop?", "DO NOT TAP ON GLASS", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                MessageBox.Show("WALLEYE just can't thank you enough for being reasonable. Now go away.", "DO NOT TAP ON GLASS")
+                tappy = 0
+            Else
+                pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
+                If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
+                    MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
+                    tappy = 3
+                Else
+                    MessageBox.Show("You clearly didn't want it bad enough. Better TUNA round and never try again.", "DO NOT TAP ON GLASS")
+                    tappy = 0
+                End If
+            End If
         End If
     End Sub
 End Class

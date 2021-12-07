@@ -20,7 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP SubQuery Reinf Groups).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -59,6 +64,16 @@
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Guys).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Upper Structure ).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Details).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Guys).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Materials).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Members).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Upper Structure).sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
   </ItemGroup>
@@ -76,6 +91,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Connections%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Connection Group%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Base Plate Options%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate (SUB QUERY).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -193,6 +226,36 @@
     <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Location%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Base Structure%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Materials%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Members%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Guys%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Upper Structure%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Guys%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Upper Structure %29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -202,28 +265,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DevExpress.Charts.v20.2.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Charts.v20.2.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Charts.v21.1.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Charts.v21.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v20.2">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Data.v20.2.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Data.v21.1">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Data.v21.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.DataAccess.v20.2">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.DataAccess.v20.2.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.DataAccess.v21.1">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.DataAccess.v21.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Docs.v20.2">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Docs.v20.2.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Docs.v21.1">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Docs.v21.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Office.v20.2.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Office.v20.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Office.v21.1.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Office.v21.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Spreadsheet.v20.2.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 20.2\Components\Bin\Framework\DevExpress.Spreadsheet.v20.2.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Spreadsheet.v21.1.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Spreadsheet.v21.1.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Services" />
