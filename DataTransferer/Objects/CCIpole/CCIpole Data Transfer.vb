@@ -74,8 +74,8 @@ Partial Public Class DataTransfererCCIpole
     End Function 'Create CCIpole objects based on what is saved in EDS
 
     Public Sub LoadFromExcel()
-        Dim refID As Integer
-        Dim refCol As String
+        'Dim refID As Integer
+        'Dim refCol As String
 
         For Each item As EXCELDTParameter In CCIpoleExcelDTParameters()
             'Get tables from excel file 
@@ -83,12 +83,14 @@ Partial Public Class DataTransfererCCIpole
         Next
 
         'Custom Section to transfer data for the CCIpole tool. Needs to be adjusted for each tool.
-        For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General EXCEL").Rows
-            refCol = "pole_structure_id"
-            refID = CType(CCIpoleDataRow.Item(refCol), Integer)
+        'For Each CCIpoleDataRow As DataRow In ds.Tables("CCIpole General EXCEL").Rows
+        '    refCol = "pole_structure_id"
+        '    refID = CType(CCIpoleDataRow.Item(refCol), Integer)
 
-            Poles.Add(New CCIpole(CCIpoleDataRow, refID))
-        Next
+        '    Poles.Add(New CCIpole(CCIpoleDataRow, refID))
+        'Next
+
+        Poles.Add(New CCIpole(ExcelFilePath))
 
         'Pull SQL data, if applicable, to compare with excel data
         CreateSQLPoles(sqlPoles)
@@ -172,7 +174,7 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ANALYSIS CRITERIA])", myCriteria)
+        CCIpoleSaver = CCIpoleSaver.Replace("('[INSERT POLE CRITERIA]')", myCriteria)
 
         For Each cpps As PoleSection In cp.unreinf_sections
             If Not IsNothing(cpps.analysis_section_id) Or Not IsNothing(cpps.elev_bot) Or Not IsNothing(cpps.elev_top) Or Not IsNothing(cpps.length_section) Or Not IsNothing(cpps.length_splice) Or Not IsNothing(cpps.num_sides) Or Not IsNothing(cpps.diam_bot) Or Not IsNothing(cpps.diam_top) Or Not IsNothing(cpps.wall_thickness) Or Not IsNothing(cpps.bend_radius) Or Not IsNothing(cpps.steel_grade_id) Or Not IsNothing(cpps.pole_type) Or Not IsNothing(cpps.section_name) Or Not IsNothing(cpps.socket_length) Or Not IsNothing(cpps.weight_mult) Or Not IsNothing(cpps.wp_mult) Or Not IsNothing(cpps.af_factor) Or Not IsNothing(cpps.ar_factor) Or Not IsNothing(cpps.round_area_ratio) Or Not IsNothing(cpps.flat_area_ratio) Then
@@ -202,45 +204,56 @@ Partial Public Class DataTransfererCCIpole
         firstOne = True
         CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF SECTIONS])", myPoleReinfSection)
 
-        For Each cprg As PoleReinfGroup In cp.reinf_groups
-            If Not IsNothing(cprg.elev_bot_actual) Or Not IsNothing(cprg.elev_bot_eff) Or Not IsNothing(cprg.elev_top_actual) Or Not IsNothing(cprg.elev_top_eff) Or Not IsNothing(cprg.reinf_db_id) Then
-                Dim tempPoleReinfGroup As String = InsertPoleReinfGroup(cprg)
-                If Not firstOne Then
-                    myReinfGroup += ",(" & tempPoleReinfGroup & ")"
-                Else
-                    myReinfGroup += "(" & tempPoleReinfGroup & ")"
-                End If
-            End If
-
-            For Each cprd As PoleReinfDetail In cprg.reinf_ids
-                If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
-                    Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
-                    If Not firstOne Then
-                        myReinfDetail += ",(" & tempPoleReinfDetail & ")"
-                    Else
-                        myReinfDetail += "(" & tempPoleReinfDetail & ")"
-                    End If
-                End If
-                firstOne = False
-            Next
-        Next
-        firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF GROUPS])", myReinfGroup)
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF DETAILS])", myReinfDetail)
-
-        'For Each cprd As PoleReinfDetail In cp.reinf_ids
-        '    If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
-        '        Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+        'For Each cprg As PoleReinfGroup In cp.reinf_groups
+        '    If Not IsNothing(cprg.elev_bot_actual) Or Not IsNothing(cprg.elev_bot_eff) Or Not IsNothing(cprg.elev_top_actual) Or Not IsNothing(cprg.elev_top_eff) Or Not IsNothing(cprg.reinf_db_id) Then
+        '        Dim tempPoleReinfGroup As String = InsertPoleReinfGroup(cprg)
         '        If Not firstOne Then
-        '            myReinfDetail += ",(" & tempPoleReinfDetail & ")"
+        '            myReinfGroup += ",(" & tempPoleReinfGroup & ")"
         '        Else
-        '            myReinfDetail += "(" & tempPoleReinfDetail & ")"
+        '            myReinfGroup += "(" & tempPoleReinfGroup & ")"
         '        End If
         '    End If
-        '    firstOne = False
+
+        '    For Each cprd As PoleReinfDetail In cprg.reinf_ids
+        '        If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
+        '            Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+        '            If Not firstOne Then
+        '                myReinfDetail += ",(" & tempPoleReinfDetail & ")"
+        '            Else
+        '                myReinfDetail += "(" & tempPoleReinfDetail & ")"
+        '            End If
+        '        End If
+        '        firstOne = False
+        '    Next
         'Next
         'firstOne = True
+        'CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF GROUPS])", myReinfGroup)
         'CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF DETAILS])", myReinfDetail)
+
+        For Each cprg As PoleReinfGroup In cp.reinf_groups
+            If Not IsNothing(cprg.elev_bot_actual) Or Not IsNothing(cprg.elev_bot_eff) Or Not IsNothing(cprg.elev_top_actual) Or Not IsNothing(cprg.elev_top_eff) Or Not IsNothing(cprg.reinf_db_id) Then
+
+                Dim tempPoleReinfGroup As String = InsertPoleReinfGroup(cprg)
+                myReinfGroup = tempPoleReinfGroup
+
+                Dim subQuery As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (IN_UP SUBQUERY Reinf Groups).sql")
+                subQuery = subQuery.Replace("'[REINF GROUP]'", myReinfGroup)
+
+                For Each cprd As PoleReinfDetail In cprg.reinf_ids
+                    'if groupid = groupid in details table then
+                    If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
+                        Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+                        myReinfDetail = tempPoleReinfDetail
+
+                        subQuery = subQuery.Replace("'[REINF DETAILS]'", myReinfGroup)
+                    End If
+                Next
+
+                CCIpoleSaver = CCIpoleSaver.Replace("--[REINFORCEMENT SUBQUERY]", subQuery)
+            End If
+
+        Next
+
 
         For Each cpig As PoleIntGroup In cp.int_groups
             If Not IsNothing(cpig.elev_bot) Or Not IsNothing(cpig.elev_top) Or Not IsNothing(cpig.width) Or Not IsNothing(cpig.description) Then
@@ -1686,7 +1699,7 @@ Partial Public Class DataTransfererCCIpole
         MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Details EXCEL", "A2:F200", "Reinf ID (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:G50", "Interference Groups (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Int Details EXCEL", "A2:F200", "Interference ID (SAPI)"))
-        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:F200", "Reinf Results (SAPI)"))
+        MyParameters.Add(New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:F1000", "Reinf Results (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:DX50", "Reinforcements (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:R20", "Bolts (SAPI)"))
         MyParameters.Add(New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:F20", "Materials (SAPI)"))

@@ -26,6 +26,8 @@ Partial Public Class frmMain
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\841585\Test\SST Unit Base Foundation (4.0.4)_3_EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
     Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 813750 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
+
 
     'Import to EDS
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\879480 - Pier and Pad Foundation (4.1.2).xlsm"}
@@ -36,6 +38,7 @@ Partial Public Class frmMain
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Unit Base EDS Testing\841585\Test\SST Unit Base Foundation (4.0.4)_2.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-9-2021.xlsm"}
     Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\813750\813750 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 10-25-2021.xlsm"}
 #End Region
 
 #Region "Other Required Declarations"

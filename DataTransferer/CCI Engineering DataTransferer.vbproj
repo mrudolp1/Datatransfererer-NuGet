@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP SubQuery Reinf Groups).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -112,6 +113,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT General%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28IN_UP SUBQUERY Reinf Groups%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
