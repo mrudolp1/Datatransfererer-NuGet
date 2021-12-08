@@ -52,8 +52,19 @@ BEGIN
 		--Update status to FALSE for existing model_id
 		UPDATE gen.structure_model_xref Set isActive='False' WHERE model_id=@ModelID
 		--Create new Model ID by copying previous data and pasting new row into Structure_model
-		INSERT INTO gen.structure_model (connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id) OUTPUT Inserted.id INTO @Model SELECT connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id FROM gen.structure_model WHERE id=@ModelID
+
+		--Delete temp table if already exists
+		IF OBJECT_ID(N'tempdb..#TempTable') IS NOT NULL
+		Begin
+			DROP TABLE #TempTable
+		End
+
+		SELECT * INTO #TempTable FROM gen.structure_model WHERE ID=@ModelID
+		ALTER TABLE #TempTable DROP COLUMN ID
+		INSERT INTO gen.structure_model OUTPUT INSERTED.ID INTO @Model SELECT * FROM #TempTable
+		DROP TABLE #TempTable
 		SELECT @ModelID=ModelID FROM @Model
+
 		--Create new row in structure_model_xref, associating BU to newly created Model ID
 		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 	END

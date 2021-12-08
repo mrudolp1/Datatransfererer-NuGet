@@ -96,11 +96,13 @@ Partial Public Class DataTransfererDrilledPier
 
         'If sqlGuyedAnchorBlocks.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As DrilledPier In DrilledPiers
+            Dim IDmatch As Boolean = False
             'If fnd.ID > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
             If fnd.pier_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlfnd As DrilledPier In sqlDrilledPiers 'MRP - UPDATES NEEDED!!! Chackchanges needs updated to apply to multiple objects within the same tool. Only want one foundation group per tool
                     'If fnd.ID = sqlfnd.ID Then
                     If fnd.pier_id = sqlfnd.pier_id Then
+                        IDmatch = True
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
@@ -109,7 +111,12 @@ Partial Public Class DataTransfererDrilledPier
                         Exit For
                     End If
                 Next
-
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isfndGroupNeeded = True
+                    isDrilledPierNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -1352,6 +1359,21 @@ Partial Public Class DataTransfererDrilledPier
     Public Sub Clear()
         ExcelFilePath = ""
         DrilledPiers.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In DrilledPierExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In DrilledPierSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function DrilledPierSQLDataTables() As List(Of SQLParameter)
