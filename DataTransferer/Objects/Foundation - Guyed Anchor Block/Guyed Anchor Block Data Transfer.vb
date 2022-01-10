@@ -124,10 +124,12 @@ Partial Public Class DataTransfererGuyedAnchorBlock
         'Next
 
         For Each fnd As GuyedAnchorBlock In GuyedAnchorBlocks
+            Dim IDmatch As Boolean = False
             If fnd.anchor_id > 0 Then 'can skip loading SQL data if id = 0 (Either first time adding to EDS or guy location has been redefined with new profile ID)
                 For Each sqlfnd As GuyedAnchorBlock In sqlGuyedAnchorBlocks
                     'If fnd.ID = sqlfnd.ID Then
                     If fnd.anchor_id = sqlfnd.ID Then
+                        IDmatch = True
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
@@ -136,6 +138,12 @@ Partial Public Class DataTransfererGuyedAnchorBlock
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isfndGroupNeeded = True
+                    isGuyedAnchorBlockNeeded = True
+                End If
 
             Else
                 For Each gabp As GuyedAnchorBlockProfile In fnd.anchor_profiles

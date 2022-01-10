@@ -20,6 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
+    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -87,6 +93,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Connections%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Connection Group%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Base Plate Options%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIplate\CCIplate (SUB QUERY).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -84,9 +84,11 @@ Partial Public Class DataTransfererPile
 
         'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As Pile In Piles
+            Dim IDmatch As Boolean = False
             If fnd.pile_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlfnd As Pile In sqlPiles
                     If fnd.pile_id = sqlfnd.pile_id Then
+                        IDmatch = True
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
@@ -95,6 +97,12 @@ Partial Public Class DataTransfererPile
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isfndGroupNeeded = True
+                    isPileNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -885,6 +893,21 @@ Partial Public Class DataTransfererPile
     Public Sub Clear()
         ExcelFilePath = ""
         Piles.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In PileExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In PileSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function PileSQLDataTables() As List(Of SQLParameter)
