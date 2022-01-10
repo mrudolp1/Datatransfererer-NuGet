@@ -6340,7 +6340,7 @@ Partial Public Class tnxModel
 #End Region
 
 #Region "Save Data"
-    Sub SaveToEDS(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BUNumber As String, ByVal STR_ID As String)
+    Sub SaveToEDS(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP).sql")
 
@@ -6354,13 +6354,17 @@ Partial Public Class tnxModel
 
         tnxUpQuery = tnxUpQuery.Replace("[TNX FILE PATH]", Me.filePath.ToDBString)
 
-        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Base Structure (IN_UP).sql")
-        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
-        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure).sql")
+        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Upper Structure).sql")
+        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Guys).sql")
+        Dim tnxMemberSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Members).sql")
+        Dim tnxMaterialSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Materials).sql")
 
         Dim tnxAllBaseSectionQuery As String = ""
         Dim tnxAllUpperSectionQuery As String = ""
         Dim tnxAllGuyQuery As String = ""
+        Dim tnxAllMemberQuery As String = ""
+        Dim tnxAllMaterialQuery As String = ""
 
         For Each base In Me.geometry.baseStructure
             Dim baseString As String = tnxBaseSectionSubQuery
@@ -6371,10 +6375,10 @@ Partial Public Class tnxModel
             tnxAllBaseSectionQuery += baseString & vbNewLine
         Next
 
-        tnxUpQuery = tnxUpQuery.Replace("[BASE Structure]", tnxAllBaseSectionQuery)
+        tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
 
         For Each upper In Me.geometry.upperStructure
-            Dim upperString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
+            Dim upperString As String = tnxUpperSectionSubQuery
 
             upperString = upperString.Replace("[UPPER SECTION ID]", upper.ID.ToString.ToDBString)
             upperString = upperString.Replace("[ALL UPPER SECTION VALUES]", upper.GenerateSQL)
@@ -6382,10 +6386,10 @@ Partial Public Class tnxModel
             tnxAllUpperSectionQuery += upperString & vbNewLine
         Next
 
-        tnxUpQuery = tnxUpQuery.Replace("[UPPER Structure]", tnxAllUpperSectionQuery)
+        tnxUpQuery = tnxUpQuery.Replace("[UPPER STRUCTURE]", tnxAllUpperSectionQuery)
 
         For Each guy In Me.geometry.guyWires
-            Dim guyString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+            Dim guyString As String = tnxGuySubQuery
 
             guyString = guyString.Replace("[GUY ID]", guy.ID.ToString.ToDBString)
             guyString = guyString.Replace("[ALL GUY VALUES]", guy.GenerateSQL)
@@ -6394,6 +6398,43 @@ Partial Public Class tnxModel
         Next
 
         tnxUpQuery = tnxUpQuery.Replace("[GUY LEVELS]", tnxAllGuyQuery)
+
+        'There are often duplicate members within the TNX file database, especially guy wires. This should remove duplicated to avoid adding them to the database.
+        'Dim members As List(Of tnxMember) = Me.database.members.Distinct().ToList
+        Me.database.members = Me.database.DistinctMembers
+
+        For Each member In Me.database.members
+            Dim memberString As String = tnxMemberSubQuery
+
+            memberString = memberString.Replace("[MEMBER ID]", member.ID.ToString.ToDBString)
+            memberString = memberString.Replace("[ALL MEMBER VALUES]", member.GenerateSQL)
+
+            tnxAllMemberQuery += memberString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[MEMBERS]", tnxAllMemberQuery)
+
+        For Each material In Me.database.materials
+            Dim materialString As String = tnxMaterialSubQuery
+
+            materialString = materialString.Replace("[MATERIAL ID]", material.ID.ToString.ToDBString)
+            materialString = materialString.Replace("[ALL MATERIAL VALUES]", material.GenerateSQL)
+
+            tnxAllMaterialQuery += materialString & vbNewLine
+        Next
+
+        'Note: Materials and Bolts use the same database, there is an  "IsBolt" field to differentiate them. They use the same subquery.
+
+        For Each bolt In Me.database.bolts
+            Dim boltString As String = tnxMaterialSubQuery
+
+            boltString = boltString.Replace("[MATERIAL ID]", bolt.ID.ToString.ToDBString)
+            boltString = boltString.Replace("[ALL MATERIAL VALUES]", bolt.GenerateSQL)
+
+            tnxAllMaterialQuery += boltString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[MATERIALS]", tnxAllMaterialQuery)
 
         sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
 
@@ -8190,6 +8231,26 @@ Partial Public Class tnxDatabase
             Me._bolts = Value
         End Set
     End Property
+
+    Public Function DistinctMembers() As List(Of tnxMember)
+        Dim distinctList As New List(Of tnxMember)
+
+        For Each member In Me.members
+            Dim addToList As Boolean = True
+            For Each distinctMember In distinctList
+                If distinctMember Is member Then 'This is not working, not identifying when do objects have the same properties
+                    'Not distinct
+                    addToList = False
+                    Exit For
+                End If
+            Next
+            If addToList Then distinctList.Add(member)
+        Next
+
+        Return distinctList
+    End Function
+
+
 End Class
 
 Partial Public Class tnxDatabaseFile
@@ -8279,10 +8340,26 @@ Partial Public Class tnxMember
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.File = CNullStr(data.Item("File"))
+        Me.USName = CNullStr(data.Item("USName"))
+        Me.SIName = CNullStr(data.Item("SIName"))
+        Me.values = CNullStr(data.Item("Values"))
+
     End Sub
 #End Region
 
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString(Me.File.ToString)
+        insertString = insertString.AddtoDBString(Me.USName.ToString)
+        insertString = insertString.AddtoDBString(Me.SIName.ToString)
+        insertString = insertString.AddtoDBString(Me.values.ToString)
+
+        Return insertString
+    End Function
 End Class
 
 Partial Public Class tnxMaterial
@@ -8326,9 +8403,37 @@ Partial Public Class tnxMaterial
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.MemberMatFile = CNullStr(data.Item("MemberMatFile"))
+        Me.MatName = CNullStr(data.Item("MatName"))
+        Me.MatValues = CNullStr(data.Item("MatValues"))
+
     End Sub
+
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString("False") 'IsBolt property
+        insertString = insertString.AddtoDBString(Me.MemberMatFile.ToString)
+        insertString = insertString.AddtoDBString(Me.MatName.ToString)
+        insertString = insertString.AddtoDBString(Me.MatValues.ToString)
+
+        Return insertString
+    End Function
 #End Region
+
+    'Public Sub addMeToDataTable(ByRef table As DataTable)
+    '    Dim meRow As DataRow = table.NewRow
+    '    Try
+    '        meRow("MemberMaterialFile") = Me.MemberMatFile
+    '        meRow("Name") = Me.MatName
+    '        meRow("MemberMaterialFile") = Me.MemberMatFile
+
+    '    Catch ex As Exception
+
+    '    End Try
+    'End Sub
 
 End Class
 
@@ -8373,10 +8478,25 @@ Partial Public Class tnxBolt
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = CNullInt(data.Item("ID"))
+        Me.BoltMatFile = CNullStr(data.Item("MemberMatFile"))
+        Me.MatName = CNullStr(data.Item("MatName"))
+        Me.MatValues = CNullStr(data.Item("MatValues"))
+
     End Sub
 #End Region
 
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString("True") 'IsBolt property
+        insertString = insertString.AddtoDBString(Me.BoltMatFile.ToString)
+        insertString = insertString.AddtoDBString(Me.MatName.ToString)
+        insertString = insertString.AddtoDBString(Me.MatValues.ToString)
+
+        Return insertString
+    End Function
 End Class
 
 #End Region
@@ -15726,7 +15846,6 @@ Partial Public Class tnxGuyRecord
         insertString = insertString.AddtoDBString(Me.GuyInsulatorLength.ToString)
         insertString = insertString.AddtoDBString(Me.GuyInsulatorDia.ToString)
         insertString = insertString.AddtoDBString(Me.GuyInsulatorWt.ToString)
-
 
         Return insertString
     End Function

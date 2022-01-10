@@ -24,6 +24,10 @@ DECLARE @upperSectionID INT
 DECLARE @upperSection TABLE(upperSectionID INT)
 DECLARE @guyID INT
 DECLARE @guy TABLE(guyID INT)
+DECLARE @memberID INT
+DECLARE @member TABLE(memberID INT)
+DECLARE @materialID INT
+DECLARE @material TABLE(materialID INT)
 
 	--Minimum information needed to insert a new model into structure_model
 	SET @BU = [BU NUMBER]
@@ -84,6 +88,10 @@ BEGIN
 			[UPPER STRUCTURE]
 
 			[GUY LEVELS]
+
+			[MEMBERS]
+
+			[MATERIALS]
 		END
 END
 

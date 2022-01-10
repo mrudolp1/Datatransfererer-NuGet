@@ -230,7 +230,7 @@ Partial Public Class frmMain
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
-        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+        tnxObject.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
     End Sub
 

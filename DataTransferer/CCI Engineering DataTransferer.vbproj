@@ -60,7 +60,9 @@
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Guys).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Upper Structure ).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Materials).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Members).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Upper Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Details).sql" />
@@ -223,10 +225,16 @@
     <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Guys%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Upper Structure %29.sql">
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Upper Structure%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Members%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Materials%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">

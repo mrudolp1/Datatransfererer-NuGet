@@ -32,7 +32,7 @@ Module DoDaSQL
 
     Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer) As Boolean
 
-        'This overload accepts a list of SQL commands and tables names and only opens the SQL connection one time to execute all commands. - DHS
+        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
 
         If SQLCommand.Count <> tableName.Count Then Return False
 
