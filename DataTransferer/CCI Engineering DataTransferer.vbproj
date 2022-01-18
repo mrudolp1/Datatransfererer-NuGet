@@ -73,7 +73,9 @@
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Guys).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Material Matching).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Materials).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Member Matching).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Members).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Upper Structure).sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
@@ -261,6 +263,12 @@
     <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Materials%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Member Matching%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Material Matching%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -300,6 +308,10 @@
 
   <ItemGroup>
     <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 
 </Project>

@@ -209,25 +209,26 @@ Partial Public Class frmMain
 
     End Sub
 
-    Public tnxObject As tnxModel
-    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
+    Public tnxFromERI As tnxModel
+    Public tnxFromDB As tnxModel
+    Private Sub btnImportERI_Click(sender As Object, e As EventArgs) Handles btnImportERI.Click
         Dim eriFd As New OpenFileDialog
         eriFd.Multiselect = False
         eriFd.Filter = "TNX File|*.eri"
 
         If eriFd.ShowDialog = DialogResult.OK Then
-            tnxObject = New tnxModel(eriFd.FileName)
+            tnxFromERI = New tnxModel(eriFd.FileName)
             'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
             'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
             'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
             'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
 
-            propgridTNXObject.SelectedObject = tnxObject
+            propgridTNXERI.SelectedObject = tnxFromERI
         End If
     End Sub
 
-    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
-        If tnxObject Is Nothing Then
+    Private Sub btnExportERI_Click(sender As Object, e As EventArgs) Handles btnExportERI.Click
+        If tnxFromDB Is Nothing Then
             MessageBox.Show("Import a file first.")
             Exit Sub
         End If
@@ -236,33 +237,38 @@ Partial Public Class frmMain
         eriFd.Filter = "TNX File|*.eri"
 
         If eriFd.ShowDialog = DialogResult.OK Then
-            tnxObject.GenerateERI(eriFd.FileName)
+            tnxFromDB.GenerateERI(eriFd.FileName)
         End If
     End Sub
 
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        tnxObject.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
     End Sub
 
     Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
 
-        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxFromDB = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridTNXObject.SelectedObject = tnxObject
+        propgridTNXEDS.SelectedObject = tnxFromDB
     End Sub
 
+    Private Sub btnCompare_Click(sender As Object, e As EventArgs) Handles btnCompare.Click
+        If tnxFromDB Is Nothing Or tnxFromERI Is Nothing Then
+            MessageBox.Show("Import both models to compare.")
+        End If
 
+        Dim differences As String = ""
+        Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
 
+        My.Computer.Clipboard.SetText(differences)
 
+        MessageBox.Show(result.ToString)
 
-
-
-
-
+    End Sub
 
     Dim tappy As Integer
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
@@ -279,7 +285,8 @@ Partial Public Class frmMain
                 tappy = 0
             Else
                 pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
-                If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
+                If pwd = "DanIsTheBest" Then
+                    'If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
                     MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
                     tappy = 3
                 Else
@@ -288,5 +295,11 @@ Partial Public Class frmMain
                 End If
             End If
         End If
+    End Sub
+
+    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+        MessageBox.Show(CStr(Nothing))
+
+        MessageBox.Show(CStr(Nothing) = "")
     End Sub
 End Class
