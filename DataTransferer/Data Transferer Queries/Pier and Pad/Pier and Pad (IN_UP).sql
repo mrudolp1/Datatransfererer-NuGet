@@ -72,12 +72,12 @@ IF @FndGroupNeeded = 1 --TRUE (Reference isfndGroupNeeded)
 				SELECT @FndID=FndID FROM @Foundation
 			END
 		--END
-	ELSE
-		BEGIN
-			--Create new Foundation ID by copying previous data and pasting new row into foundation_details
-			SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
-			INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@PPID
-			SELECT @FndID=FndID FROM @Foundation
+		ELSE
+			BEGIN
+				--Create new Foundation ID by copying previous data and pasting new row into foundation_details
+				SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+				INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@PPID
+				SELECT @FndID=FndID FROM @Foundation
 		END
 
 	--Create new foundation group ID by adding row to foundation_group

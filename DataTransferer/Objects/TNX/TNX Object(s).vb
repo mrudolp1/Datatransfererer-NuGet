@@ -8,167 +8,8 @@ Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 
 
-Public Module Extensions
-
-    <Extension()>
-    Public Function ToDBString(aString As String, Optional isValue As Boolean = True) As String
-        If aString = String.Empty Or aString Is Nothing Then
-            Return "NULL"
-        Else
-            If isValue Then aString = "'" & aString & "'"
-            Return aString
-        End If
-    End Function
-
-    <Extension()>
-    Public Function AddtoDBString(astring As String, ByRef newString As String, Optional isValue As Boolean = True) As String
-        'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
-        If astring = String.Empty Or astring Is Nothing Then
-            astring = newString.ToDBString(isValue)
-        Else
-            astring += ", " & newString.ToDBString(isValue)
-        End If
-        Return astring
-    End Function
-
-    <Extension()>
-    Public Function GetDistinct(Of T As tnxDatabaseEntry)(alist As List(Of T)) As List(Of T)
-        'Notes: Removes duplicates from list of tnxDatabaseEntry by using their CompareMe function
-        'Making this generic (Of T As tnxDatabaseEntry) allows it to work for all subclasses of tnxDatabaseEntry
-
-        Dim distinctList As New List(Of T)
-
-        For Each item In alist
-            Dim addToList As Boolean = True
-            For Each distinctItem In distinctList
-                If item.CompareMe(distinctItem) Then
-                    'Not distinct
-                    addToList = False
-                    Exit For
-                End If
-            Next
-            If addToList Then distinctList.Add(item)
-        Next
-
-        Return distinctList
-    End Function
-
-End Module
-
-Partial Public Class tnxDatabaseEntry
-    Private _ID As Integer?
-
-    <Category("TNX Structure Section"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
-
-    Public Function CompareMe(Of T As tnxDatabaseEntry)(toCompare As T, Optional SetID As Boolean = False, Optional ByRef strDiff As String = Nothing) As Boolean
-        'Compare another tnxDatabaseEntry object to itself using the objects comparer.
-        'Making this generic (Of T As tnxDatabaseEntry) allows it to work for all subclasses of tnxDatabaseEntry
-
-        If toCompare Is Nothing Or Me.GetType() IsNot toCompare.GetType() Then Return False
-
-        Dim comparer As New ObjectsComparer.Comparer(Of T)()
-
-        If strDiff Is Nothing Then
-            CompareMe = comparer.Compare(CType(Me, T), toCompare)
-        Else
-            Dim Differences As IEnumerable(Of ObjectsComparer.Difference)
-            CompareMe = comparer.Compare(CType(Me, T), toCompare, Differences)
-            strDiff = String.Join(vbCrLf, Differences)
-        End If
-
-        If CompareMe And SetID Then Me.ID = toCompare.ID
-
-        Return CompareMe
-
-    End Function
-
-#Region "Helper Functions"
-    Public Shared Function trueFalseYesNo(input As String) As Boolean?
-        If input.ToLower = "yes" Then
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-
-    Public Shared Function trueFalseYesNo(input As Boolean?) As String
-        If input Then
-            Return "Yes"
-        Else
-            Return "No"
-        End If
-    End Function
-    Public Shared Function BooltoBitString(input As Boolean?) As String
-        If input Then
-            Return "1"
-        Else
-            Return "0"
-        End If
-    End Function
-
-    Public Shared Function DBtoNullableInt(ByVal item As Object) As Integer?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CInt(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Public Shared Function DBtoNullableDbl(ByVal item As Object) As Double?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return Math.Round(CDbl(item), 6)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Public Shared Function DBtoNullableBool(ByVal item As Object) As Boolean?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CBool(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Public Shared Function DBtoStr(ByVal item As Object) As String
-        'Strings are nullable, but the default value is "" so that's what should be used
-        'CStr(Nothing) = "" which is the default value of a string, this works better for comparing EDS to ERI opbjects
-        If IsDBNull(item) Then
-            Return ""
-        Else
-            Try
-                Return CStr(item)
-            Catch ex As Exception
-                Return ""
-            End Try
-        End If
-    End Function
-#End Region
-
-End Class
-
 Partial Public Class tnxModel
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
 #Region "Define"
     Private _filePath As String
@@ -9488,19 +9329,19 @@ Partial Public Class tnxDatabase
 
         If tnxDS.Tables.Contains("tnxMembers") Then
             For Each member As DataRow In tnxDS.Tables("tnxMembers").Rows
-                Me.members(CInt(member.Item("Index"))).ID = tnxDatabaseEntry.DBtoNullableInt(member.Item("ID"))
+                Me.members(CInt(member.Item("Index"))).ID = DBtoNullableInt(member.Item("ID"))
             Next
         End If
 
         If tnxDS.Tables.Contains("tnxMaterials") Then
             For Each material As DataRow In tnxDS.Tables("tnxMaterials").Rows
-                Me.materials(CInt(material.Item("Index"))).ID = tnxDatabaseEntry.DBtoNullableInt(material.Item("ID"))
+                Me.materials(CInt(material.Item("Index"))).ID = DBtoNullableInt(material.Item("ID"))
             Next
         End If
 
         If tnxDS.Tables.Contains("tnxBolts") Then
             For Each bolt As DataRow In tnxDS.Tables("tnxBolts").Rows
-                Me.bolts(CInt(bolt.Item("Index"))).ID = tnxDatabaseEntry.DBtoNullableInt(bolt.Item("ID"))
+                Me.bolts(CInt(bolt.Item("Index"))).ID = DBtoNullableInt(bolt.Item("ID"))
             Next
         End If
 
@@ -9509,7 +9350,7 @@ Partial Public Class tnxDatabase
 End Class
 
 Partial Public Class tnxDatabaseFile
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _USName As String
     Private _SIName As String
@@ -9545,7 +9386,7 @@ Partial Public Class tnxDatabaseFile
 End Class
 
 Partial Public Class tnxMember
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _File As String
     Private _USName As String
@@ -9618,7 +9459,7 @@ Partial Public Class tnxMember
 End Class
 
 Partial Public Class tnxMaterial
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _MemberMatFile As String
     Private _MatName As String
@@ -9682,7 +9523,7 @@ Partial Public Class tnxMaterial
 End Class
 
 Partial Public Class tnxBolt
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _BoltMatFile As String
     Private _MatName As String
@@ -10015,7 +9856,7 @@ Partial Public Class tnxGeometry
 End Class
 
 Partial Public Class tnxAntennaRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
     'upper structure
 #Region "Define"
     Private _AntennaRec As Integer?
@@ -13074,7 +12915,7 @@ Partial Public Class tnxAntennaRecord
 End Class
 
 Partial Public Class tnxTowerRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
     'base structure
 #Region "Define"
     Private _TowerRec As Integer?
@@ -16048,7 +15889,7 @@ Partial Public Class tnxTowerRecord
 End Class
 
 Partial Public Class tnxGuyRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
 #Region "Define"
     Private _GuyRec As Integer?
@@ -20678,7 +20519,7 @@ Partial Public Class tnxMTOSettings
 End Class
 
 Partial Public Class tnxNote
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _Note As String
 

@@ -35,17 +35,12 @@ End Module
 
 Public Module Common
 
-
-
-
     'IEM 11/4/2021 Sometimes you need a little something
     Public Function IsSomething(ByVal sender As Object) As Boolean
         If Not IsNothing(sender) Then Return True
 
         Return False
     End Function
-
-
 
     <DebuggerStepThrough()>
     Sub dtClearer(ByVal sqlsrc As String)

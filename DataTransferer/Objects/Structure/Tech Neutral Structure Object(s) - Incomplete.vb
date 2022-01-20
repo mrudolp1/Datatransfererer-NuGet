@@ -5,7 +5,7 @@ Imports System.Data
 Imports DevExpress.Spreadsheet
 Imports System.IO
 
-Partial Public Class structure_model
+Partial Public Class tower_structure
     Private prop_ID As Integer
     Private prop_bus_unit As Integer
     Private prop_mod_wo_seq_num As Integer
