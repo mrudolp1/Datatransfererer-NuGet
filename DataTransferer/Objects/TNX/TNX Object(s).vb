@@ -5,135 +5,11 @@ Imports System.ComponentModel
 Imports System.Data
 Imports System.IO
 Imports System.Security.Principal
-
 Imports System.Runtime.CompilerServices
 
-Public Module Extensions
-
-    <Extension()>
-    Public Function ToDBString(aString As String, Optional isValue As Boolean = True) As String
-        If aString = String.Empty Or aString Is Nothing Then
-            Return "NULL"
-        Else
-            If isValue Then aString = "'" & aString & "'"
-            Return aString
-        End If
-    End Function
-
-    <Extension()>
-    Public Function AddtoDBString(astring As String, ByRef newString As String, Optional isValue As Boolean = True) As String
-        'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
-        If astring = String.Empty Or astring Is Nothing Then
-            astring = newString.ToDBString(isValue)
-        Else
-            astring += ", " & newString.ToDBString(isValue)
-        End If
-        Return astring
-    End Function
-
-End Module
-
-Partial Public Class tnxDatabaseEntry
-    Private _ID As Integer?
-
-    <Category("TNX Structure Section"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
-
-    Public Function CompareMe(compare As tnxDatabaseEntry, Optional SetUpdateNeeded As Boolean = False) As Boolean
-        Dim newMe As tnxDatabaseEntry = Me
-        Dim result As Boolean
-        newMe.ID = compare.ID
-        result = Me Is compare
-        'If SetUpdateNeeded Then Me._UpdateNeeded = result
-        If SetUpdateNeeded Then Me._ID = compare.ID
-        Return result
-    End Function
-
-#Region "Helper Functions"
-    Public Function trueFalseYesNo(input As String) As Boolean?
-        If input.ToLower = "yes" Then
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-
-    Public Function trueFalseYesNo(input As Boolean?) As String
-        If input Then
-            Return "Yes"
-        Else
-            Return "No"
-        End If
-    End Function
-    Public Function BooltoBitString(input As Boolean?) As String
-        If input Then
-            Return "1"
-        Else
-            Return "0"
-        End If
-    End Function
-
-    Function CNullInt(ByVal item As Object) As Integer?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CInt(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Function CNullDbl(ByVal item As Object) As Double?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CDbl(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Function CNullBool(ByVal item As Object) As Boolean?
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CBool(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-    Function CNullStr(ByVal item As Object) As String
-        If IsDBNull(item) Then
-            Return Nothing
-        Else
-            Try
-                Return CStr(item)
-            Catch ex As Exception
-                Return Nothing
-            End Try
-        End If
-    End Function
-
-#End Region
-
-End Class
 
 Partial Public Class tnxModel
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
 #Region "Define"
     Private _filePath As String
@@ -331,7 +207,13 @@ Partial Public Class tnxModel
 
         If tnxDS.Tables.Contains("tnxMaterials") Then
             For Each material As DataRow In tnxDS.Tables("tnxMaterials").Rows
-                Me.database.materials.Add(New tnxMaterial(material))
+                If Not IsDBNull(material.Item("IsBolt")) Then
+                    If CBool(material.Item("IsBolt")) Then
+                        Me.database.bolts.Add(New tnxBolt(material))
+                    Else
+                        Me.database.materials.Add(New tnxMaterial(material))
+                    End If
+                End If
             Next
         End If
 
@@ -345,305 +227,345 @@ Partial Public Class tnxModel
 
     Public Sub setIndInputs(Data As DataRow)
 
-        Me.ID = CNullInt(Data.Item("tnx_id"))
-        Me.settings.projectInfo.DesignStandardSeries = CNullStr(Data.Item("DesignStandardSeries"))
-        Me.settings.projectInfo.UnitsSystem = CNullStr(Data.Item("UnitsSystem"))
-        Me.settings.projectInfo.ClientName = CNullStr(Data.Item("ClientName"))
-        Me.settings.projectInfo.ProjectName = CNullStr(Data.Item("ProjectName"))
-        Me.settings.projectInfo.ProjectNumber = CNullStr(Data.Item("ProjectNumber"))
-        Me.settings.projectInfo.CreatedBy = CNullStr(Data.Item("CreatedBy"))
-        Me.settings.projectInfo.CreatedOn = CNullStr(Data.Item("CreatedOn"))
-        Me.settings.projectInfo.LastUsedBy = CNullStr(Data.Item("LastUsedBy"))
-        Me.settings.projectInfo.LastUsedOn = CNullStr(Data.Item("LastUsedOn"))
-        Me.settings.projectInfo.VersionUsed = CNullStr(Data.Item("VersionUsed"))
-        Me.settings.userInfo.ViewerUserName = CNullStr(Data.Item("ViewerUserName"))
-        Me.settings.userInfo.ViewerCompanyName = CNullStr(Data.Item("ViewerCompanyName"))
-        Me.settings.userInfo.ViewerStreetAddress = CNullStr(Data.Item("ViewerStreetAddress"))
-        Me.settings.userInfo.ViewerCityState = CNullStr(Data.Item("ViewerCityState"))
-        Me.settings.userInfo.ViewerPhone = CNullStr(Data.Item("ViewerPhone"))
-        Me.settings.userInfo.ViewerFAX = CNullStr(Data.Item("ViewerFAX"))
-        Me.settings.userInfo.ViewerLogo = CNullStr(Data.Item("ViewerLogo"))
-        Me.settings.userInfo.ViewerCompanyBitmap = CNullStr(Data.Item("ViewerCompanyBitmap"))
-        Me.CCIReport.sReportProjectNumber = CNullStr(Data.Item("sReportProjectNumber"))
-        Me.CCIReport.sReportJobType = CNullStr(Data.Item("sReportJobType"))
-        Me.CCIReport.sReportCarrierName = CNullStr(Data.Item("sReportCarrierName"))
-        Me.CCIReport.sReportCarrierSiteNumber = CNullStr(Data.Item("sReportCarrierSiteNumber"))
-        Me.CCIReport.sReportCarrierSiteName = CNullStr(Data.Item("sReportCarrierSiteName"))
-        Me.CCIReport.sReportSiteAddress = CNullStr(Data.Item("sReportSiteAddress"))
-        Me.CCIReport.sReportLatitudeDegree = CNullDbl(Data.Item("sReportLatitudeDegree"))
-        Me.CCIReport.sReportLatitudeMinute = CNullDbl(Data.Item("sReportLatitudeMinute"))
-        Me.CCIReport.sReportLatitudeSecond = CNullDbl(Data.Item("sReportLatitudeSecond"))
-        Me.CCIReport.sReportLongitudeDegree = CNullDbl(Data.Item("sReportLongitudeDegree"))
-        Me.CCIReport.sReportLongitudeMinute = CNullDbl(Data.Item("sReportLongitudeMinute"))
-        Me.CCIReport.sReportLongitudeSecond = CNullDbl(Data.Item("sReportLongitudeSecond"))
-        Me.CCIReport.sReportLocalCodeRequirement = CNullStr(Data.Item("sReportLocalCodeRequirement"))
-        Me.CCIReport.sReportSiteHistory = CNullStr(Data.Item("sReportSiteHistory"))
-        Me.CCIReport.sReportTowerManufacturer = CNullStr(Data.Item("sReportTowerManufacturer"))
-        Me.CCIReport.sReportMonthManufactured = CNullStr(Data.Item("sReportMonthManufactured"))
-        Me.CCIReport.sReportYearManufactured = CNullInt(Data.Item("sReportYearManufactured"))
-        Me.CCIReport.sReportOriginalSpeed = CNullDbl(Data.Item("sReportOriginalSpeed"))
-        Me.CCIReport.sReportOriginalCode = CNullStr(Data.Item("sReportOriginalCode"))
-        Me.CCIReport.sReportTowerType = CNullStr(Data.Item("sReportTowerType"))
-        Me.CCIReport.sReportEngrName = CNullStr(Data.Item("sReportEngrName"))
-        Me.CCIReport.sReportEngrTitle = CNullStr(Data.Item("sReportEngrTitle"))
-        Me.CCIReport.sReportHQPhoneNumber = CNullStr(Data.Item("sReportHQPhoneNumber"))
-        Me.CCIReport.sReportEmailAddress = CNullStr(Data.Item("sReportEmailAddress"))
-        Me.CCIReport.sReportLogoPath = CNullStr(Data.Item("sReportLogoPath"))
-        Me.CCIReport.sReportCCiContactName = CNullStr(Data.Item("sReportCCiContactName"))
-        Me.CCIReport.sReportCCiAddress1 = CNullStr(Data.Item("sReportCCiAddress1"))
-        Me.CCIReport.sReportCCiAddress2 = CNullStr(Data.Item("sReportCCiAddress2"))
-        Me.CCIReport.sReportCCiBUNumber = CNullStr(Data.Item("sReportCCiBUNumber"))
-        Me.CCIReport.sReportCCiSiteName = CNullStr(Data.Item("sReportCCiSiteName"))
-        Me.CCIReport.sReportCCiJDENumber = CNullStr(Data.Item("sReportCCiJDENumber"))
-        Me.CCIReport.sReportCCiWONumber = CNullStr(Data.Item("sReportCCiWONumber"))
-        Me.CCIReport.sReportCCiPONumber = CNullStr(Data.Item("sReportCCiPONumber"))
-        Me.CCIReport.sReportCCiAppNumber = CNullStr(Data.Item("sReportCCiAppNumber"))
-        Me.CCIReport.sReportCCiRevNumber = CNullStr(Data.Item("sReportCCiRevNumber"))
-        Me.CCIReport.sReportRecommendations = CNullStr(Data.Item("sReportRecommendations"))
-        Me.CCIReport.sReportAppurt1Note1 = CNullStr(Data.Item("sReportAppurt1Note1"))
-        Me.CCIReport.sReportAppurt1Note2 = CNullStr(Data.Item("sReportAppurt1Note2"))
-        Me.CCIReport.sReportAppurt1Note3 = CNullStr(Data.Item("sReportAppurt1Note3"))
-        Me.CCIReport.sReportAppurt1Note4 = CNullStr(Data.Item("sReportAppurt1Note4"))
-        Me.CCIReport.sReportAppurt1Note5 = CNullStr(Data.Item("sReportAppurt1Note5"))
-        Me.CCIReport.sReportAppurt1Note6 = CNullStr(Data.Item("sReportAppurt1Note6"))
-        Me.CCIReport.sReportAppurt1Note7 = CNullStr(Data.Item("sReportAppurt1Note7"))
-        Me.CCIReport.sReportAppurt2Note1 = CNullStr(Data.Item("sReportAppurt2Note1"))
-        Me.CCIReport.sReportAppurt2Note2 = CNullStr(Data.Item("sReportAppurt2Note2"))
-        Me.CCIReport.sReportAppurt2Note3 = CNullStr(Data.Item("sReportAppurt2Note3"))
-        Me.CCIReport.sReportAppurt2Note4 = CNullStr(Data.Item("sReportAppurt2Note4"))
-        Me.CCIReport.sReportAppurt2Note5 = CNullStr(Data.Item("sReportAppurt2Note5"))
-        Me.CCIReport.sReportAppurt2Note6 = CNullStr(Data.Item("sReportAppurt2Note6"))
-        Me.CCIReport.sReportAppurt2Note7 = CNullStr(Data.Item("sReportAppurt2Note7"))
-        Me.CCIReport.sReportAddlCapacityNote1 = CNullStr(Data.Item("sReportAddlCapacityNote1"))
-        Me.CCIReport.sReportAddlCapacityNote2 = CNullStr(Data.Item("sReportAddlCapacityNote2"))
-        Me.CCIReport.sReportAddlCapacityNote3 = CNullStr(Data.Item("sReportAddlCapacityNote3"))
-        Me.CCIReport.sReportAddlCapacityNote4 = CNullStr(Data.Item("sReportAddlCapacityNote4"))
-        Me.code.design.DesignCode = CNullStr(Data.Item("DesignCode"))
-        Me.geometry.TowerType = CNullStr(Data.Item("TowerType"))
-        Me.geometry.AntennaType = CNullStr(Data.Item("AntennaType"))
-        Me.geometry.OverallHeight = CNullDbl(Data.Item("OverallHeight"))
-        Me.geometry.BaseElevation = CNullDbl(Data.Item("BaseElevation"))
-        Me.geometry.Lambda = CNullDbl(Data.Item("Lambda"))
-        Me.geometry.TowerTopFaceWidth = CNullDbl(Data.Item("TowerTopFaceWidth"))
-        Me.geometry.TowerBaseFaceWidth = CNullDbl(Data.Item("TowerBaseFaceWidth"))
-        Me.code.wind.WindSpeed = CNullDbl(Data.Item("WindSpeed"))
-        Me.code.wind.WindSpeedIce = CNullDbl(Data.Item("WindSpeedIce"))
-        Me.code.wind.WindSpeedService = CNullDbl(Data.Item("WindSpeedService"))
-        Me.code.ice.IceThickness = CNullDbl(Data.Item("IceThickness"))
-        Me.code.wind.CSA_S37_RefVelPress = CNullDbl(Data.Item("CSA_S37_RefVelPress"))
-        Me.code.wind.CSA_S37_ReliabilityClass = CNullInt(Data.Item("CSA_S37_ReliabilityClass"))
-        Me.code.wind.CSA_S37_ServiceabilityFactor = CNullDbl(Data.Item("CSA_S37_ServiceabilityFactor"))
-        Me.code.ice.UseModified_TIA_222_IceParameters = CNullBool(Data.Item("UseModified_TIA_222_IceParameters"))
-        Me.code.ice.TIA_222_IceThicknessMultiplier = CNullDbl(Data.Item("TIA_222_IceThicknessMultiplier"))
-        Me.code.ice.DoNotUse_TIA_222_IceEscalation = CNullBool(Data.Item("DoNotUse_TIA_222_IceEscalation"))
-        Me.code.ice.IceDensity = CNullDbl(Data.Item("IceDensity"))
-        Me.code.seismic.SeismicSiteClass = CNullInt(Data.Item("SeismicSiteClass"))
-        Me.code.seismic.SeismicSs = CNullDbl(Data.Item("SeismicSs"))
-        Me.code.seismic.SeismicS1 = CNullDbl(Data.Item("SeismicS1"))
-        Me.code.thermal.TempDrop = CNullDbl(Data.Item("TempDrop"))
-        Me.code.misclCode.GroutFc = CNullDbl(Data.Item("GroutFc"))
-        Me.options.defaultGirtOffsets.GirtOffset = CNullDbl(Data.Item("GirtOffset"))
-        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = CNullDbl(Data.Item("GirtOffsetLatticedPole"))
-        Me.options.foundationStiffness.MastVert = CNullDbl(Data.Item("MastVert"))
-        Me.options.foundationStiffness.MastHorz = CNullDbl(Data.Item("MastHorz"))
-        Me.options.foundationStiffness.GuyVert = CNullDbl(Data.Item("GuyVert"))
-        Me.options.foundationStiffness.GuyHorz = CNullDbl(Data.Item("GuyHorz"))
-        Me.options.misclOptions.HogRodTakeup = CNullDbl(Data.Item("HogRodTakeup"))
-        Me.geometry.TowerTaper = CNullStr(Data.Item("TowerTaper"))
-        Me.geometry.GuyedMonopoleBaseType = CNullStr(Data.Item("GuyedMonopoleBaseType"))
-        Me.geometry.TaperHeight = CNullDbl(Data.Item("TaperHeight"))
-        Me.geometry.PivotHeight = CNullDbl(Data.Item("PivotHeight"))
-        Me.geometry.AutoCalcGH = CNullBool(Data.Item("AutoCalcGH"))
-        Me.MTOSettings.IncludeCapacityNote = CNullBool(Data.Item("IncludeCapacityNote"))
-        Me.MTOSettings.IncludeAppurtGraphics = CNullBool(Data.Item("IncludeAppurtGraphics"))
-        Me.MTOSettings.DisplayNotes = CNullBool(Data.Item("DisplayNotes"))
-        Me.MTOSettings.DisplayReactions = CNullBool(Data.Item("DisplayReactions"))
-        Me.MTOSettings.DisplaySchedule = CNullBool(Data.Item("DisplaySchedule"))
-        Me.MTOSettings.DisplayAppurtenanceTable = CNullBool(Data.Item("DisplayAppurtenanceTable"))
-        Me.MTOSettings.DisplayMaterialStrengthTable = CNullBool(Data.Item("DisplayMaterialStrengthTable"))
-        Me.code.wind.AutoCalc_ASCE_GH = CNullBool(Data.Item("AutoCalc_ASCE_GH"))
-        Me.code.wind.ASCE_ExposureCat = CNullInt(Data.Item("ASCE_ExposureCat"))
-        Me.code.wind.ASCE_Year = CNullInt(Data.Item("ASCE_Year"))
-        Me.code.wind.ASCEGh = CNullDbl(Data.Item("ASCEGh"))
-        Me.code.wind.ASCEI = CNullDbl(Data.Item("ASCEI"))
-        Me.code.wind.UseASCEWind = CNullBool(Data.Item("UseASCEWind"))
-        Me.geometry.UserGHElev = CNullDbl(Data.Item("UserGHElev"))
-        Me.code.design.UseCodeGuySF = CNullBool(Data.Item("UseCodeGuySF"))
-        Me.code.design.GuySF = CNullDbl(Data.Item("GuySF"))
-        Me.code.wind.CalcWindAt = CNullInt(Data.Item("CalcWindAt"))
-        Me.code.misclCode.TowerBoltGrade = CNullStr(Data.Item("TowerBoltGrade"))
-        Me.code.misclCode.TowerBoltMinEdgeDist = CNullDbl(Data.Item("TowerBoltMinEdgeDist"))
-        Me.code.design.AllowStressRatio = CNullDbl(Data.Item("AllowStressRatio"))
-        Me.code.design.AllowAntStressRatio = CNullDbl(Data.Item("AllowAntStressRatio"))
-        Me.code.wind.WindCalcPoints = CNullDbl(Data.Item("WindCalcPoints"))
-        Me.geometry.UseIndexPlate = CNullBool(Data.Item("UseIndexPlate"))
-        Me.geometry.EnterUserDefinedGhValues = CNullBool(Data.Item("EnterUserDefinedGhValues"))
-        Me.geometry.BaseTowerGhInput = CNullDbl(Data.Item("BaseTowerGhInput"))
-        Me.geometry.UpperStructureGhInput = CNullDbl(Data.Item("UpperStructureGhInput"))
-        Me.geometry.EnterUserDefinedCgValues = CNullBool(Data.Item("EnterUserDefinedCgValues"))
-        Me.geometry.BaseTowerCgInput = CNullDbl(Data.Item("BaseTowerCgInput"))
-        Me.geometry.UpperStructureCgInput = CNullDbl(Data.Item("UpperStructureCgInput"))
-        Me.options.cantileverPoles.CheckVonMises = CNullBool(Data.Item("CheckVonMises"))
-        Me.options.UseClearSpans = CNullBool(Data.Item("UseClearSpans"))
-        Me.options.UseClearSpansKlr = CNullBool(Data.Item("UseClearSpansKlr"))
-        Me.geometry.AntennaFaceWidth = CNullDbl(Data.Item("AntennaFaceWidth"))
-        Me.code.design.DoInteraction = CNullBool(Data.Item("DoInteraction"))
-        Me.code.design.DoHorzInteraction = CNullBool(Data.Item("DoHorzInteraction"))
-        Me.code.design.DoDiagInteraction = CNullBool(Data.Item("DoDiagInteraction"))
-        Me.code.design.UseMomentMagnification = CNullBool(Data.Item("UseMomentMagnification"))
-        Me.options.UseFeedlineAsCylinder = CNullBool(Data.Item("UseFeedlineAsCylinder"))
-        Me.options.defaultGirtOffsets.OffsetBotGirt = CNullBool(Data.Item("OffsetBotGirt"))
-        Me.code.design.PrintBitmaps = CNullBool(Data.Item("PrintBitmaps"))
-        Me.geometry.UseTopTakeup = CNullBool(Data.Item("UseTopTakeup"))
-        Me.geometry.ConstantSlope = CNullBool(Data.Item("ConstantSlope"))
-        Me.code.design.UseCodeStressRatio = CNullBool(Data.Item("UseCodeStressRatio"))
-        Me.options.UseLegLoads = CNullBool(Data.Item("UseLegLoads"))
-        Me.code.design.ERIDesignMode = CNullStr(Data.Item("ERIDesignMode"))
-        Me.code.wind.WindExposure = CNullInt(Data.Item("WindExposure"))
-        Me.code.wind.WindZone = CNullInt(Data.Item("WindZone"))
-        Me.code.wind.StructureCategory = CNullInt(Data.Item("StructureCategory"))
-        Me.code.wind.RiskCategory = CNullInt(Data.Item("RiskCategory"))
-        Me.code.wind.TopoCategory = CNullInt(Data.Item("TopoCategory"))
-        Me.code.wind.RSMTopographicFeature = CNullInt(Data.Item("RSMTopographicFeature"))
-        Me.code.wind.RSM_L = CNullDbl(Data.Item("RSM_L"))
-        Me.code.wind.RSM_X = CNullDbl(Data.Item("RSM_X"))
-        Me.code.wind.CrestHeight = CNullDbl(Data.Item("CrestHeight"))
-        Me.code.wind.TIA_222_H_TopoFeatureDownwind = CNullBool(Data.Item("TIA_222_H_TopoFeatureDownwind"))
-        Me.code.wind.BaseElevAboveSeaLevel = CNullDbl(Data.Item("BaseElevAboveSeaLevel"))
-        Me.code.wind.ConsiderRooftopSpeedUp = CNullBool(Data.Item("ConsiderRooftopSpeedUp"))
-        Me.code.wind.RooftopWS = CNullDbl(Data.Item("RooftopWS"))
-        Me.code.wind.RooftopHS = CNullDbl(Data.Item("RooftopHS"))
-        Me.code.wind.RooftopParapetHt = CNullDbl(Data.Item("RooftopParapetHt"))
-        Me.code.wind.RooftopXB = CNullDbl(Data.Item("RooftopXB"))
-        Me.code.design.UseTIA222H_AnnexS = CNullBool(Data.Item("UseTIA222H_AnnexS"))
-        Me.code.design.TIA_222_H_AnnexS_Ratio = CNullDbl(Data.Item("TIA_222_H_AnnexS_Ratio"))
-        Me.code.wind.EIACWindMult = CNullDbl(Data.Item("EIACWindMult"))
-        Me.code.wind.EIACWindMultIce = CNullDbl(Data.Item("EIACWindMultIce"))
-        Me.code.wind.EIACIgnoreCableDrag = CNullBool(Data.Item("EIACIgnoreCableDrag"))
-        'Me.MTOSettings.Notes = CNullStr(Data.Item("Notes"))
-        Me.reportSettings.ReportInputCosts = CNullBool(Data.Item("ReportInputCosts"))
-        Me.reportSettings.ReportInputGeometry = CNullBool(Data.Item("ReportInputGeometry"))
-        Me.reportSettings.ReportInputOptions = CNullBool(Data.Item("ReportInputOptions"))
-        Me.reportSettings.ReportMaxForces = CNullBool(Data.Item("ReportMaxForces"))
-        Me.reportSettings.ReportInputMap = CNullBool(Data.Item("ReportInputMap"))
-        Me.reportSettings.CostReportOutputType = CNullStr(Data.Item("CostReportOutputType"))
-        Me.reportSettings.CapacityReportOutputType = CNullStr(Data.Item("CapacityReportOutputType"))
-        Me.reportSettings.ReportPrintForceTotals = CNullBool(Data.Item("ReportPrintForceTotals"))
-        Me.reportSettings.ReportPrintForceDetails = CNullBool(Data.Item("ReportPrintForceDetails"))
-        Me.reportSettings.ReportPrintMastVectors = CNullBool(Data.Item("ReportPrintMastVectors"))
-        Me.reportSettings.ReportPrintAntPoleVectors = CNullBool(Data.Item("ReportPrintAntPoleVectors"))
-        Me.reportSettings.ReportPrintDiscreteVectors = CNullBool(Data.Item("ReportPrintDiscreteVectors"))
-        Me.reportSettings.ReportPrintDishVectors = CNullBool(Data.Item("ReportPrintDishVectors"))
-        Me.reportSettings.ReportPrintFeedTowerVectors = CNullBool(Data.Item("ReportPrintFeedTowerVectors"))
-        Me.reportSettings.ReportPrintUserLoadVectors = CNullBool(Data.Item("ReportPrintUserLoadVectors"))
-        Me.reportSettings.ReportPrintPressures = CNullBool(Data.Item("ReportPrintPressures"))
-        Me.reportSettings.ReportPrintAppurtForces = CNullBool(Data.Item("ReportPrintAppurtForces"))
-        Me.reportSettings.ReportPrintGuyForces = CNullBool(Data.Item("ReportPrintGuyForces"))
-        Me.reportSettings.ReportPrintGuyStressing = CNullBool(Data.Item("ReportPrintGuyStressing"))
-        Me.reportSettings.ReportPrintDeflections = CNullBool(Data.Item("ReportPrintDeflections"))
-        Me.reportSettings.ReportPrintReactions = CNullBool(Data.Item("ReportPrintReactions"))
-        Me.reportSettings.ReportPrintStressChecks = CNullBool(Data.Item("ReportPrintStressChecks"))
-        Me.reportSettings.ReportPrintBoltChecks = CNullBool(Data.Item("ReportPrintBoltChecks"))
-        Me.reportSettings.ReportPrintInputGVerificationTables = CNullBool(Data.Item("ReportPrintInputGVerificationTables"))
-        Me.reportSettings.ReportPrintOutputGVerificationTables = CNullBool(Data.Item("ReportPrintOutputGVerificationTables"))
-        Me.options.cantileverPoles.SocketTopMount = CNullBool(Data.Item("SocketTopMount"))
-        Me.options.SRTakeCompression = CNullBool(Data.Item("SRTakeCompression"))
-        Me.options.AllLegPanelsSame = CNullBool(Data.Item("AllLegPanelsSame"))
-        Me.options.UseCombinedBoltCapacity = CNullBool(Data.Item("UseCombinedBoltCapacity"))
-        Me.options.SecHorzBracesLeg = CNullBool(Data.Item("SecHorzBracesLeg"))
-        Me.options.SortByComponent = CNullBool(Data.Item("SortByComponent"))
-        Me.options.SRCutEnds = CNullBool(Data.Item("SRCutEnds"))
-        Me.options.SRConcentric = CNullBool(Data.Item("SRConcentric"))
-        Me.options.CalcBlockShear = CNullBool(Data.Item("CalcBlockShear"))
-        Me.options.Use4SidedDiamondBracing = CNullBool(Data.Item("Use4SidedDiamondBracing"))
-        Me.options.TriangulateInnerBracing = CNullBool(Data.Item("TriangulateInnerBracing"))
-        Me.options.PrintCarrierNotes = CNullBool(Data.Item("PrintCarrierNotes"))
-        Me.options.AddIBCWindCase = CNullBool(Data.Item("AddIBCWindCase"))
-        Me.code.wind.UseStateCountyLookup = CNullBool(Data.Item("UseStateCountyLookup"))
-        Me.code.wind.State = CNullStr(Data.Item("State"))
-        Me.code.wind.County = CNullStr(Data.Item("County"))
-        Me.options.LegBoltsAtTop = CNullBool(Data.Item("LegBoltsAtTop"))
-        Me.options.cantileverPoles.PrintMonopoleAtIncrements = CNullBool(Data.Item("PrintMonopoleAtIncrements"))
-        Me.options.UseTIA222Exemptions_MinBracingResistance = CNullBool(Data.Item("UseTIA222Exemptions_MinBracingResistance"))
-        Me.options.UseTIA222Exemptions_TensionSplice = CNullBool(Data.Item("UseTIA222Exemptions_TensionSplice"))
-        Me.options.IgnoreKLryFor60DegAngleLegs = CNullBool(Data.Item("IgnoreKLryFor60DegAngleLegs"))
-        Me.code.wind.ASCE_7_10_WindData = CNullBool(Data.Item("ASCE_7_10_WindData"))
-        Me.code.wind.ASCE_7_10_ConvertWindToASD = CNullBool(Data.Item("ASCE_7_10_ConvertWindToASD"))
-        Me.solutionSettings.SolutionUsePDelta = CNullBool(Data.Item("SolutionUsePDelta"))
-        Me.options.UseFeedlineTorque = CNullBool(Data.Item("UseFeedlineTorque"))
-        Me.options.UsePinnedElements = CNullBool(Data.Item("UsePinnedElements"))
-        Me.code.wind.UseMaxKz = CNullBool(Data.Item("UseMaxKz"))
-        Me.options.UseRigidIndex = CNullBool(Data.Item("UseRigidIndex"))
-        Me.options.UseTrueCable = CNullBool(Data.Item("UseTrueCable"))
-        Me.options.UseASCELy = CNullBool(Data.Item("UseASCELy"))
-        Me.options.CalcBracingForces = CNullBool(Data.Item("CalcBracingForces"))
-        Me.options.IgnoreBracingFEA = CNullBool(Data.Item("IgnoreBracingFEA"))
-        Me.options.cantileverPoles.UseSubCriticalFlow = CNullBool(Data.Item("UseSubCriticalFlow"))
-        Me.options.cantileverPoles.AssumePoleWithNoAttachments = CNullBool(Data.Item("AssumePoleWithNoAttachments"))
-        Me.options.cantileverPoles.AssumePoleWithShroud = CNullBool(Data.Item("AssumePoleWithShroud"))
-        Me.options.cantileverPoles.PoleCornerRadiusKnown = CNullBool(Data.Item("PoleCornerRadiusKnown"))
-        Me.solutionSettings.SolutionMinStiffness = CNullDbl(Data.Item("SolutionMinStiffness"))
-        Me.solutionSettings.SolutionMaxStiffness = CNullDbl(Data.Item("SolutionMaxStiffness"))
-        Me.solutionSettings.SolutionMaxCycles = CNullInt(Data.Item("SolutionMaxCycles"))
-        Me.solutionSettings.SolutionPower = CNullDbl(Data.Item("SolutionPower"))
-        Me.solutionSettings.SolutionTolerance = CNullDbl(Data.Item("SolutionTolerance"))
-        Me.options.cantileverPoles.CantKFactor = CNullDbl(Data.Item("CantKFactor"))
-        Me.options.misclOptions.RadiusSampleDist = CNullDbl(Data.Item("RadiusSampleDist"))
-        Me.options.BypassStabilityChecks = CNullBool(Data.Item("BypassStabilityChecks"))
-        Me.options.UseWindProjection = CNullBool(Data.Item("UseWindProjection"))
-        Me.code.ice.UseIceEscalation = CNullBool(Data.Item("UseIceEscalation"))
-        Me.options.UseDishCoeff = CNullBool(Data.Item("UseDishCoeff"))
-        Me.options.AutoCalcTorqArmArea = CNullBool(Data.Item("AutoCalcTorqArmArea"))
-        Me.options.windDirections.WindDirOption = CNullInt(Data.Item("WindDirOption"))
-        Me.options.windDirections.WindDir0_0 = CNullBool(Data.Item("WindDir0_0"))
-        Me.options.windDirections.WindDir0_1 = CNullBool(Data.Item("WindDir0_1"))
-        Me.options.windDirections.WindDir0_2 = CNullBool(Data.Item("WindDir0_2"))
-        Me.options.windDirections.WindDir0_3 = CNullBool(Data.Item("WindDir0_3"))
-        Me.options.windDirections.WindDir0_4 = CNullBool(Data.Item("WindDir0_4"))
-        Me.options.windDirections.WindDir0_5 = CNullBool(Data.Item("WindDir0_5"))
-        Me.options.windDirections.WindDir0_6 = CNullBool(Data.Item("WindDir0_6"))
-        Me.options.windDirections.WindDir0_7 = CNullBool(Data.Item("WindDir0_7"))
-        Me.options.windDirections.WindDir0_8 = CNullBool(Data.Item("WindDir0_8"))
-        Me.options.windDirections.WindDir0_9 = CNullBool(Data.Item("WindDir0_9"))
-        Me.options.windDirections.WindDir0_10 = CNullBool(Data.Item("WindDir0_10"))
-        Me.options.windDirections.WindDir0_11 = CNullBool(Data.Item("WindDir0_11"))
-        Me.options.windDirections.WindDir0_12 = CNullBool(Data.Item("WindDir0_12"))
-        Me.options.windDirections.WindDir0_13 = CNullBool(Data.Item("WindDir0_13"))
-        Me.options.windDirections.WindDir0_14 = CNullBool(Data.Item("WindDir0_14"))
-        Me.options.windDirections.WindDir0_15 = CNullBool(Data.Item("WindDir0_15"))
-        Me.options.windDirections.WindDir1_0 = CNullBool(Data.Item("WindDir1_0"))
-        Me.options.windDirections.WindDir1_1 = CNullBool(Data.Item("WindDir1_1"))
-        Me.options.windDirections.WindDir1_2 = CNullBool(Data.Item("WindDir1_2"))
-        Me.options.windDirections.WindDir1_3 = CNullBool(Data.Item("WindDir1_3"))
-        Me.options.windDirections.WindDir1_4 = CNullBool(Data.Item("WindDir1_4"))
-        Me.options.windDirections.WindDir1_5 = CNullBool(Data.Item("WindDir1_5"))
-        Me.options.windDirections.WindDir1_6 = CNullBool(Data.Item("WindDir1_6"))
-        Me.options.windDirections.WindDir1_7 = CNullBool(Data.Item("WindDir1_7"))
-        Me.options.windDirections.WindDir1_8 = CNullBool(Data.Item("WindDir1_8"))
-        Me.options.windDirections.WindDir1_9 = CNullBool(Data.Item("WindDir1_9"))
-        Me.options.windDirections.WindDir1_10 = CNullBool(Data.Item("WindDir1_10"))
-        Me.options.windDirections.WindDir1_11 = CNullBool(Data.Item("WindDir1_11"))
-        Me.options.windDirections.WindDir1_12 = CNullBool(Data.Item("WindDir1_12"))
-        Me.options.windDirections.WindDir1_13 = CNullBool(Data.Item("WindDir1_13"))
-        Me.options.windDirections.WindDir1_14 = CNullBool(Data.Item("WindDir1_14"))
-        Me.options.windDirections.WindDir1_15 = CNullBool(Data.Item("WindDir1_15"))
-        Me.options.windDirections.WindDir2_0 = CNullBool(Data.Item("WindDir2_0"))
-        Me.options.windDirections.WindDir2_1 = CNullBool(Data.Item("WindDir2_1"))
-        Me.options.windDirections.WindDir2_2 = CNullBool(Data.Item("WindDir2_2"))
-        Me.options.windDirections.WindDir2_3 = CNullBool(Data.Item("WindDir2_3"))
-        Me.options.windDirections.WindDir2_4 = CNullBool(Data.Item("WindDir2_4"))
-        Me.options.windDirections.WindDir2_5 = CNullBool(Data.Item("WindDir2_5"))
-        Me.options.windDirections.WindDir2_6 = CNullBool(Data.Item("WindDir2_6"))
-        Me.options.windDirections.WindDir2_7 = CNullBool(Data.Item("WindDir2_7"))
-        Me.options.windDirections.WindDir2_8 = CNullBool(Data.Item("WindDir2_8"))
-        Me.options.windDirections.WindDir2_9 = CNullBool(Data.Item("WindDir2_9"))
-        Me.options.windDirections.WindDir2_10 = CNullBool(Data.Item("WindDir2_10"))
-        Me.options.windDirections.WindDir2_11 = CNullBool(Data.Item("WindDir2_11"))
-        Me.options.windDirections.WindDir2_12 = CNullBool(Data.Item("WindDir2_12"))
-        Me.options.windDirections.WindDir2_13 = CNullBool(Data.Item("WindDir2_13"))
-        Me.options.windDirections.WindDir2_14 = CNullBool(Data.Item("WindDir2_14"))
-        Me.options.windDirections.WindDir2_15 = CNullBool(Data.Item("WindDir2_15"))
-        Me.options.windDirections.SuppressWindPatternLoading = CNullBool(Data.Item("SuppressWindPatternLoading"))
+        Me.ID = DBtoNullableInt(Data.Item("tnx_id"))
+        Me.settings.projectInfo.DesignStandardSeries = DBtoStr(Data.Item("DesignStandardSeries"))
+        Me.settings.projectInfo.UnitsSystem = DBtoStr(Data.Item("UnitsSystem"))
+        Me.settings.projectInfo.ClientName = DBtoStr(Data.Item("ClientName"))
+        Me.settings.projectInfo.ProjectName = DBtoStr(Data.Item("ProjectName"))
+        Me.settings.projectInfo.ProjectNumber = DBtoStr(Data.Item("ProjectNumber"))
+        Me.settings.projectInfo.CreatedBy = DBtoStr(Data.Item("CreatedBy"))
+        Me.settings.projectInfo.CreatedOn = DBtoStr(Data.Item("CreatedOn"))
+        Me.settings.projectInfo.LastUsedBy = DBtoStr(Data.Item("LastUsedBy"))
+        Me.settings.projectInfo.LastUsedOn = DBtoStr(Data.Item("LastUsedOn"))
+        Me.settings.projectInfo.VersionUsed = DBtoStr(Data.Item("VersionUsed"))
+        Me.settings.USUnits.Length.value = DBtoStr(Data.Item("USLength"))
+        Me.settings.USUnits.Length.precision = DBtoNullableInt(Data.Item("USLengthPrec"))
+        Me.settings.USUnits.Coordinate.value = DBtoStr(Data.Item("USCoordinate"))
+        Me.settings.USUnits.Coordinate.precision = DBtoNullableInt(Data.Item("USCoordinatePrec"))
+        Me.settings.USUnits.Force.value = DBtoStr(Data.Item("USForce"))
+        Me.settings.USUnits.Force.precision = DBtoNullableInt(Data.Item("USForcePrec"))
+        Me.settings.USUnits.Load.value = DBtoStr(Data.Item("USLoad"))
+        Me.settings.USUnits.Load.precision = DBtoNullableInt(Data.Item("USLoadPrec"))
+        Me.settings.USUnits.Moment.value = DBtoStr(Data.Item("USMoment"))
+        Me.settings.USUnits.Moment.precision = DBtoNullableInt(Data.Item("USMomentPrec"))
+        Me.settings.USUnits.Properties.value = DBtoStr(Data.Item("USProperties"))
+        Me.settings.USUnits.Properties.precision = DBtoNullableInt(Data.Item("USPropertiesPrec"))
+        Me.settings.USUnits.Pressure.value = DBtoStr(Data.Item("USPressure"))
+        Me.settings.USUnits.Pressure.precision = DBtoNullableInt(Data.Item("USPressurePrec"))
+        Me.settings.USUnits.Velocity.value = DBtoStr(Data.Item("USVelocity"))
+        Me.settings.USUnits.Velocity.precision = DBtoNullableInt(Data.Item("USVelocityPrec"))
+        Me.settings.USUnits.Displacement.value = DBtoStr(Data.Item("USDisplacement"))
+        Me.settings.USUnits.Displacement.precision = DBtoNullableInt(Data.Item("USDisplacementPrec"))
+        Me.settings.USUnits.Mass.value = DBtoStr(Data.Item("USMass"))
+        Me.settings.USUnits.Mass.precision = DBtoNullableInt(Data.Item("USMassPrec"))
+        Me.settings.USUnits.Acceleration.value = DBtoStr(Data.Item("USAcceleration"))
+        Me.settings.USUnits.Acceleration.precision = DBtoNullableInt(Data.Item("USAccelerationPrec"))
+        Me.settings.USUnits.Stress.value = DBtoStr(Data.Item("USStress"))
+        Me.settings.USUnits.Stress.precision = DBtoNullableInt(Data.Item("USStressPrec"))
+        Me.settings.USUnits.Density.value = DBtoStr(Data.Item("USDensity"))
+        Me.settings.USUnits.Density.precision = DBtoNullableInt(Data.Item("USDensityPrec"))
+        Me.settings.USUnits.UnitWt.value = DBtoStr(Data.Item("USUnitWt"))
+        Me.settings.USUnits.UnitWt.precision = DBtoNullableInt(Data.Item("USUnitWtPrec"))
+        Me.settings.USUnits.Strength.value = DBtoStr(Data.Item("USStrength"))
+        Me.settings.USUnits.Strength.precision = DBtoNullableInt(Data.Item("USStrengthPrec"))
+        Me.settings.USUnits.Modulus.value = DBtoStr(Data.Item("USModulus"))
+        Me.settings.USUnits.Modulus.precision = DBtoNullableInt(Data.Item("USModulusPrec"))
+        Me.settings.USUnits.Temperature.value = DBtoStr(Data.Item("USTemperature"))
+        Me.settings.USUnits.Temperature.precision = DBtoNullableInt(Data.Item("USTemperaturePrec"))
+        Me.settings.USUnits.Printer.value = DBtoStr(Data.Item("USPrinter"))
+        Me.settings.USUnits.Printer.precision = DBtoNullableInt(Data.Item("USPrinterPrec"))
+        Me.settings.USUnits.Rotation.value = DBtoStr(Data.Item("USRotation"))
+        Me.settings.USUnits.Rotation.precision = DBtoNullableInt(Data.Item("USRotationPrec"))
+        Me.settings.USUnits.Spacing.value = DBtoStr(Data.Item("USSpacing"))
+        Me.settings.USUnits.Spacing.precision = DBtoNullableInt(Data.Item("USSpacingPrec"))
+        Me.settings.userInfo.ViewerUserName = DBtoStr(Data.Item("ViewerUserName"))
+        Me.settings.userInfo.ViewerCompanyName = DBtoStr(Data.Item("ViewerCompanyName"))
+        Me.settings.userInfo.ViewerStreetAddress = DBtoStr(Data.Item("ViewerStreetAddress"))
+        Me.settings.userInfo.ViewerCityState = DBtoStr(Data.Item("ViewerCityState"))
+        Me.settings.userInfo.ViewerPhone = DBtoStr(Data.Item("ViewerPhone"))
+        Me.settings.userInfo.ViewerFAX = DBtoStr(Data.Item("ViewerFAX"))
+        Me.settings.userInfo.ViewerLogo = DBtoStr(Data.Item("ViewerLogo"))
+        Me.settings.userInfo.ViewerCompanyBitmap = DBtoStr(Data.Item("ViewerCompanyBitmap"))
+        Me.CCIReport.sReportProjectNumber = DBtoStr(Data.Item("sReportProjectNumber"))
+        Me.CCIReport.sReportJobType = DBtoStr(Data.Item("sReportJobType"))
+        Me.CCIReport.sReportCarrierName = DBtoStr(Data.Item("sReportCarrierName"))
+        Me.CCIReport.sReportCarrierSiteNumber = DBtoStr(Data.Item("sReportCarrierSiteNumber"))
+        Me.CCIReport.sReportCarrierSiteName = DBtoStr(Data.Item("sReportCarrierSiteName"))
+        Me.CCIReport.sReportSiteAddress = DBtoStr(Data.Item("sReportSiteAddress"))
+        Me.CCIReport.sReportLatitudeDegree = DBtoNullableDbl(Data.Item("sReportLatitudeDegree"))
+        Me.CCIReport.sReportLatitudeMinute = DBtoNullableDbl(Data.Item("sReportLatitudeMinute"))
+        Me.CCIReport.sReportLatitudeSecond = DBtoNullableDbl(Data.Item("sReportLatitudeSecond"))
+        Me.CCIReport.sReportLongitudeDegree = DBtoNullableDbl(Data.Item("sReportLongitudeDegree"))
+        Me.CCIReport.sReportLongitudeMinute = DBtoNullableDbl(Data.Item("sReportLongitudeMinute"))
+        Me.CCIReport.sReportLongitudeSecond = DBtoNullableDbl(Data.Item("sReportLongitudeSecond"))
+        Me.CCIReport.sReportLocalCodeRequirement = DBtoStr(Data.Item("sReportLocalCodeRequirement"))
+        Me.CCIReport.sReportSiteHistory = DBtoStr(Data.Item("sReportSiteHistory"))
+        Me.CCIReport.sReportTowerManufacturer = DBtoStr(Data.Item("sReportTowerManufacturer"))
+        Me.CCIReport.sReportMonthManufactured = DBtoStr(Data.Item("sReportMonthManufactured"))
+        Me.CCIReport.sReportYearManufactured = DBtoNullableInt(Data.Item("sReportYearManufactured"))
+        Me.CCIReport.sReportOriginalSpeed = DBtoNullableDbl(Data.Item("sReportOriginalSpeed"))
+        Me.CCIReport.sReportOriginalCode = DBtoStr(Data.Item("sReportOriginalCode"))
+        Me.CCIReport.sReportTowerType = DBtoStr(Data.Item("sReportTowerType"))
+        Me.CCIReport.sReportEngrName = DBtoStr(Data.Item("sReportEngrName"))
+        Me.CCIReport.sReportEngrTitle = DBtoStr(Data.Item("sReportEngrTitle"))
+        Me.CCIReport.sReportHQPhoneNumber = DBtoStr(Data.Item("sReportHQPhoneNumber"))
+        Me.CCIReport.sReportEmailAddress = DBtoStr(Data.Item("sReportEmailAddress"))
+        Me.CCIReport.sReportLogoPath = DBtoStr(Data.Item("sReportLogoPath"))
+        Me.CCIReport.sReportCCiContactName = DBtoStr(Data.Item("sReportCCiContactName"))
+        Me.CCIReport.sReportCCiAddress1 = DBtoStr(Data.Item("sReportCCiAddress1"))
+        Me.CCIReport.sReportCCiAddress2 = DBtoStr(Data.Item("sReportCCiAddress2"))
+        Me.CCIReport.sReportCCiBUNumber = DBtoStr(Data.Item("sReportCCiBUNumber"))
+        Me.CCIReport.sReportCCiSiteName = DBtoStr(Data.Item("sReportCCiSiteName"))
+        Me.CCIReport.sReportCCiJDENumber = DBtoStr(Data.Item("sReportCCiJDENumber"))
+        Me.CCIReport.sReportCCiWONumber = DBtoStr(Data.Item("sReportCCiWONumber"))
+        Me.CCIReport.sReportCCiPONumber = DBtoStr(Data.Item("sReportCCiPONumber"))
+        Me.CCIReport.sReportCCiAppNumber = DBtoStr(Data.Item("sReportCCiAppNumber"))
+        Me.CCIReport.sReportCCiRevNumber = DBtoStr(Data.Item("sReportCCiRevNumber"))
+        Me.CCIReport.sReportRecommendations = DBtoStr(Data.Item("sReportRecommendations"))
+        Me.CCIReport.sReportAppurt1Note1 = DBtoStr(Data.Item("sReportAppurt1Note1"))
+        Me.CCIReport.sReportAppurt1Note2 = DBtoStr(Data.Item("sReportAppurt1Note2"))
+        Me.CCIReport.sReportAppurt1Note3 = DBtoStr(Data.Item("sReportAppurt1Note3"))
+        Me.CCIReport.sReportAppurt1Note4 = DBtoStr(Data.Item("sReportAppurt1Note4"))
+        Me.CCIReport.sReportAppurt1Note5 = DBtoStr(Data.Item("sReportAppurt1Note5"))
+        Me.CCIReport.sReportAppurt1Note6 = DBtoStr(Data.Item("sReportAppurt1Note6"))
+        Me.CCIReport.sReportAppurt1Note7 = DBtoStr(Data.Item("sReportAppurt1Note7"))
+        Me.CCIReport.sReportAppurt2Note1 = DBtoStr(Data.Item("sReportAppurt2Note1"))
+        Me.CCIReport.sReportAppurt2Note2 = DBtoStr(Data.Item("sReportAppurt2Note2"))
+        Me.CCIReport.sReportAppurt2Note3 = DBtoStr(Data.Item("sReportAppurt2Note3"))
+        Me.CCIReport.sReportAppurt2Note4 = DBtoStr(Data.Item("sReportAppurt2Note4"))
+        Me.CCIReport.sReportAppurt2Note5 = DBtoStr(Data.Item("sReportAppurt2Note5"))
+        Me.CCIReport.sReportAppurt2Note6 = DBtoStr(Data.Item("sReportAppurt2Note6"))
+        Me.CCIReport.sReportAppurt2Note7 = DBtoStr(Data.Item("sReportAppurt2Note7"))
+        Me.CCIReport.sReportAddlCapacityNote1 = DBtoStr(Data.Item("sReportAddlCapacityNote1"))
+        Me.CCIReport.sReportAddlCapacityNote2 = DBtoStr(Data.Item("sReportAddlCapacityNote2"))
+        Me.CCIReport.sReportAddlCapacityNote3 = DBtoStr(Data.Item("sReportAddlCapacityNote3"))
+        Me.CCIReport.sReportAddlCapacityNote4 = DBtoStr(Data.Item("sReportAddlCapacityNote4"))
+        Me.code.design.DesignCode = DBtoStr(Data.Item("DesignCode"))
+        Me.geometry.TowerType = DBtoStr(Data.Item("TowerType"))
+        Me.geometry.AntennaType = DBtoStr(Data.Item("AntennaType"))
+        Me.geometry.OverallHeight = DBtoNullableDbl(Data.Item("OverallHeight"))
+        Me.geometry.BaseElevation = DBtoNullableDbl(Data.Item("BaseElevation"))
+        Me.geometry.Lambda = DBtoNullableDbl(Data.Item("Lambda"))
+        Me.geometry.TowerTopFaceWidth = DBtoNullableDbl(Data.Item("TowerTopFaceWidth"))
+        Me.geometry.TowerBaseFaceWidth = DBtoNullableDbl(Data.Item("TowerBaseFaceWidth"))
+        Me.code.wind.WindSpeed = DBtoNullableDbl(Data.Item("WindSpeed"))
+        Me.code.wind.WindSpeedIce = DBtoNullableDbl(Data.Item("WindSpeedIce"))
+        Me.code.wind.WindSpeedService = DBtoNullableDbl(Data.Item("WindSpeedService"))
+        Me.code.ice.IceThickness = DBtoNullableDbl(Data.Item("IceThickness"))
+        Me.code.wind.CSA_S37_RefVelPress = DBtoNullableDbl(Data.Item("CSA_S37_RefVelPress"))
+        Me.code.wind.CSA_S37_ReliabilityClass = DBtoNullableInt(Data.Item("CSA_S37_ReliabilityClass"))
+        Me.code.wind.CSA_S37_ServiceabilityFactor = DBtoNullableDbl(Data.Item("CSA_S37_ServiceabilityFactor"))
+        Me.code.ice.UseModified_TIA_222_IceParameters = DBtoNullableBool(Data.Item("UseModified_TIA_222_IceParameters"))
+        Me.code.ice.TIA_222_IceThicknessMultiplier = DBtoNullableDbl(Data.Item("TIA_222_IceThicknessMultiplier"))
+        Me.code.ice.DoNotUse_TIA_222_IceEscalation = DBtoNullableBool(Data.Item("DoNotUse_TIA_222_IceEscalation"))
+        Me.code.ice.IceDensity = DBtoNullableDbl(Data.Item("IceDensity"))
+        Me.code.seismic.SeismicSiteClass = DBtoNullableInt(Data.Item("SeismicSiteClass"))
+        Me.code.seismic.SeismicSs = DBtoNullableDbl(Data.Item("SeismicSs"))
+        Me.code.seismic.SeismicS1 = DBtoNullableDbl(Data.Item("SeismicS1"))
+        Me.code.thermal.TempDrop = DBtoNullableDbl(Data.Item("TempDrop"))
+        Me.code.misclCode.GroutFc = DBtoNullableDbl(Data.Item("GroutFc"))
+        Me.options.defaultGirtOffsets.GirtOffset = DBtoNullableDbl(Data.Item("GirtOffset"))
+        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = DBtoNullableDbl(Data.Item("GirtOffsetLatticedPole"))
+        Me.options.foundationStiffness.MastVert = DBtoNullableDbl(Data.Item("MastVert"))
+        Me.options.foundationStiffness.MastHorz = DBtoNullableDbl(Data.Item("MastHorz"))
+        Me.options.foundationStiffness.GuyVert = DBtoNullableDbl(Data.Item("GuyVert"))
+        Me.options.foundationStiffness.GuyHorz = DBtoNullableDbl(Data.Item("GuyHorz"))
+        Me.options.misclOptions.HogRodTakeup = DBtoNullableDbl(Data.Item("HogRodTakeup"))
+        Me.geometry.TowerTaper = DBtoStr(Data.Item("TowerTaper"))
+        Me.geometry.GuyedMonopoleBaseType = DBtoStr(Data.Item("GuyedMonopoleBaseType"))
+        Me.geometry.TaperHeight = DBtoNullableDbl(Data.Item("TaperHeight"))
+        Me.geometry.PivotHeight = DBtoNullableDbl(Data.Item("PivotHeight"))
+        Me.geometry.AutoCalcGH = DBtoNullableBool(Data.Item("AutoCalcGH"))
+        Me.MTOSettings.IncludeCapacityNote = DBtoNullableBool(Data.Item("IncludeCapacityNote"))
+        Me.MTOSettings.IncludeAppurtGraphics = DBtoNullableBool(Data.Item("IncludeAppurtGraphics"))
+        Me.MTOSettings.DisplayNotes = DBtoNullableBool(Data.Item("DisplayNotes"))
+        Me.MTOSettings.DisplayReactions = DBtoNullableBool(Data.Item("DisplayReactions"))
+        Me.MTOSettings.DisplaySchedule = DBtoNullableBool(Data.Item("DisplaySchedule"))
+        Me.MTOSettings.DisplayAppurtenanceTable = DBtoNullableBool(Data.Item("DisplayAppurtenanceTable"))
+        Me.MTOSettings.DisplayMaterialStrengthTable = DBtoNullableBool(Data.Item("DisplayMaterialStrengthTable"))
+        Me.code.wind.AutoCalc_ASCE_GH = DBtoNullableBool(Data.Item("AutoCalc_ASCE_GH"))
+        Me.code.wind.ASCE_ExposureCat = DBtoNullableInt(Data.Item("ASCE_ExposureCat"))
+        Me.code.wind.ASCE_Year = DBtoNullableInt(Data.Item("ASCE_Year"))
+        Me.code.wind.ASCEGh = DBtoNullableDbl(Data.Item("ASCEGh"))
+        Me.code.wind.ASCEI = DBtoNullableDbl(Data.Item("ASCEI"))
+        Me.code.wind.UseASCEWind = DBtoNullableBool(Data.Item("UseASCEWind"))
+        Me.geometry.UserGHElev = DBtoNullableDbl(Data.Item("UserGHElev"))
+        Me.code.design.UseCodeGuySF = DBtoNullableBool(Data.Item("UseCodeGuySF"))
+        Me.code.design.GuySF = DBtoNullableDbl(Data.Item("GuySF"))
+        Me.code.wind.CalcWindAt = DBtoNullableInt(Data.Item("CalcWindAt"))
+        Me.code.misclCode.TowerBoltGrade = DBtoStr(Data.Item("TowerBoltGrade"))
+        Me.code.misclCode.TowerBoltMinEdgeDist = DBtoNullableDbl(Data.Item("TowerBoltMinEdgeDist"))
+        Me.code.design.AllowStressRatio = DBtoNullableDbl(Data.Item("AllowStressRatio"))
+        Me.code.design.AllowAntStressRatio = DBtoNullableDbl(Data.Item("AllowAntStressRatio"))
+        Me.code.wind.WindCalcPoints = DBtoNullableDbl(Data.Item("WindCalcPoints"))
+        Me.geometry.UseIndexPlate = DBtoNullableBool(Data.Item("UseIndexPlate"))
+        Me.geometry.EnterUserDefinedGhValues = DBtoNullableBool(Data.Item("EnterUserDefinedGhValues"))
+        Me.geometry.BaseTowerGhInput = DBtoNullableDbl(Data.Item("BaseTowerGhInput"))
+        Me.geometry.UpperStructureGhInput = DBtoNullableDbl(Data.Item("UpperStructureGhInput"))
+        Me.geometry.EnterUserDefinedCgValues = DBtoNullableBool(Data.Item("EnterUserDefinedCgValues"))
+        Me.geometry.BaseTowerCgInput = DBtoNullableDbl(Data.Item("BaseTowerCgInput"))
+        Me.geometry.UpperStructureCgInput = DBtoNullableDbl(Data.Item("UpperStructureCgInput"))
+        Me.options.cantileverPoles.CheckVonMises = DBtoNullableBool(Data.Item("CheckVonMises"))
+        Me.options.UseClearSpans = DBtoNullableBool(Data.Item("UseClearSpans"))
+        Me.options.UseClearSpansKlr = DBtoNullableBool(Data.Item("UseClearSpansKlr"))
+        Me.geometry.AntennaFaceWidth = DBtoNullableDbl(Data.Item("AntennaFaceWidth"))
+        Me.code.design.DoInteraction = DBtoNullableBool(Data.Item("DoInteraction"))
+        Me.code.design.DoHorzInteraction = DBtoNullableBool(Data.Item("DoHorzInteraction"))
+        Me.code.design.DoDiagInteraction = DBtoNullableBool(Data.Item("DoDiagInteraction"))
+        Me.code.design.UseMomentMagnification = DBtoNullableBool(Data.Item("UseMomentMagnification"))
+        Me.options.UseFeedlineAsCylinder = DBtoNullableBool(Data.Item("UseFeedlineAsCylinder"))
+        Me.options.defaultGirtOffsets.OffsetBotGirt = DBtoNullableBool(Data.Item("OffsetBotGirt"))
+        Me.code.design.PrintBitmaps = DBtoNullableBool(Data.Item("PrintBitmaps"))
+        Me.geometry.UseTopTakeup = DBtoNullableBool(Data.Item("UseTopTakeup"))
+        Me.geometry.ConstantSlope = DBtoNullableBool(Data.Item("ConstantSlope"))
+        Me.code.design.UseCodeStressRatio = DBtoNullableBool(Data.Item("UseCodeStressRatio"))
+        Me.options.UseLegLoads = DBtoNullableBool(Data.Item("UseLegLoads"))
+        Me.code.design.ERIDesignMode = DBtoStr(Data.Item("ERIDesignMode"))
+        Me.code.wind.WindExposure = DBtoNullableInt(Data.Item("WindExposure"))
+        Me.code.wind.WindZone = DBtoNullableInt(Data.Item("WindZone"))
+        Me.code.wind.StructureCategory = DBtoNullableInt(Data.Item("StructureCategory"))
+        Me.code.wind.RiskCategory = DBtoNullableInt(Data.Item("RiskCategory"))
+        Me.code.wind.TopoCategory = DBtoNullableInt(Data.Item("TopoCategory"))
+        Me.code.wind.RSMTopographicFeature = DBtoNullableInt(Data.Item("RSMTopographicFeature"))
+        Me.code.wind.RSM_L = DBtoNullableDbl(Data.Item("RSM_L"))
+        Me.code.wind.RSM_X = DBtoNullableDbl(Data.Item("RSM_X"))
+        Me.code.wind.CrestHeight = DBtoNullableDbl(Data.Item("CrestHeight"))
+        Me.code.wind.TIA_222_H_TopoFeatureDownwind = DBtoNullableBool(Data.Item("TIA_222_H_TopoFeatureDownwind"))
+        Me.code.wind.BaseElevAboveSeaLevel = DBtoNullableDbl(Data.Item("BaseElevAboveSeaLevel"))
+        Me.code.wind.ConsiderRooftopSpeedUp = DBtoNullableBool(Data.Item("ConsiderRooftopSpeedUp"))
+        Me.code.wind.RooftopWS = DBtoNullableDbl(Data.Item("RooftopWS"))
+        Me.code.wind.RooftopHS = DBtoNullableDbl(Data.Item("RooftopHS"))
+        Me.code.wind.RooftopParapetHt = DBtoNullableDbl(Data.Item("RooftopParapetHt"))
+        Me.code.wind.RooftopXB = DBtoNullableDbl(Data.Item("RooftopXB"))
+        Me.code.design.UseTIA222H_AnnexS = DBtoNullableBool(Data.Item("UseTIA222H_AnnexS"))
+        Me.code.design.TIA_222_H_AnnexS_Ratio = DBtoNullableDbl(Data.Item("TIA_222_H_AnnexS_Ratio"))
+        Me.code.wind.EIACWindMult = DBtoNullableDbl(Data.Item("EIACWindMult"))
+        Me.code.wind.EIACWindMultIce = DBtoNullableDbl(Data.Item("EIACWindMultIce"))
+        Me.code.wind.EIACIgnoreCableDrag = DBtoNullableBool(Data.Item("EIACIgnoreCableDrag"))
+        'Me.MTOSettings.Notes = DBtoStr(Data.Item("Notes"))
+        Me.reportSettings.ReportInputCosts = DBtoNullableBool(Data.Item("ReportInputCosts"))
+        Me.reportSettings.ReportInputGeometry = DBtoNullableBool(Data.Item("ReportInputGeometry"))
+        Me.reportSettings.ReportInputOptions = DBtoNullableBool(Data.Item("ReportInputOptions"))
+        Me.reportSettings.ReportMaxForces = DBtoNullableBool(Data.Item("ReportMaxForces"))
+        Me.reportSettings.ReportInputMap = DBtoNullableBool(Data.Item("ReportInputMap"))
+        Me.reportSettings.CostReportOutputType = DBtoStr(Data.Item("CostReportOutputType"))
+        Me.reportSettings.CapacityReportOutputType = DBtoStr(Data.Item("CapacityReportOutputType"))
+        Me.reportSettings.ReportPrintForceTotals = DBtoNullableBool(Data.Item("ReportPrintForceTotals"))
+        Me.reportSettings.ReportPrintForceDetails = DBtoNullableBool(Data.Item("ReportPrintForceDetails"))
+        Me.reportSettings.ReportPrintMastVectors = DBtoNullableBool(Data.Item("ReportPrintMastVectors"))
+        Me.reportSettings.ReportPrintAntPoleVectors = DBtoNullableBool(Data.Item("ReportPrintAntPoleVectors"))
+        Me.reportSettings.ReportPrintDiscreteVectors = DBtoNullableBool(Data.Item("ReportPrintDiscreteVectors"))
+        Me.reportSettings.ReportPrintDishVectors = DBtoNullableBool(Data.Item("ReportPrintDishVectors"))
+        Me.reportSettings.ReportPrintFeedTowerVectors = DBtoNullableBool(Data.Item("ReportPrintFeedTowerVectors"))
+        Me.reportSettings.ReportPrintUserLoadVectors = DBtoNullableBool(Data.Item("ReportPrintUserLoadVectors"))
+        Me.reportSettings.ReportPrintPressures = DBtoNullableBool(Data.Item("ReportPrintPressures"))
+        Me.reportSettings.ReportPrintAppurtForces = DBtoNullableBool(Data.Item("ReportPrintAppurtForces"))
+        Me.reportSettings.ReportPrintGuyForces = DBtoNullableBool(Data.Item("ReportPrintGuyForces"))
+        Me.reportSettings.ReportPrintGuyStressing = DBtoNullableBool(Data.Item("ReportPrintGuyStressing"))
+        Me.reportSettings.ReportPrintDeflections = DBtoNullableBool(Data.Item("ReportPrintDeflections"))
+        Me.reportSettings.ReportPrintReactions = DBtoNullableBool(Data.Item("ReportPrintReactions"))
+        Me.reportSettings.ReportPrintStressChecks = DBtoNullableBool(Data.Item("ReportPrintStressChecks"))
+        Me.reportSettings.ReportPrintBoltChecks = DBtoNullableBool(Data.Item("ReportPrintBoltChecks"))
+        Me.reportSettings.ReportPrintInputGVerificationTables = DBtoNullableBool(Data.Item("ReportPrintInputGVerificationTables"))
+        Me.reportSettings.ReportPrintOutputGVerificationTables = DBtoNullableBool(Data.Item("ReportPrintOutputGVerificationTables"))
+        Me.options.cantileverPoles.SocketTopMount = DBtoNullableBool(Data.Item("SocketTopMount"))
+        Me.options.SRTakeCompression = DBtoNullableBool(Data.Item("SRTakeCompression"))
+        Me.options.AllLegPanelsSame = DBtoNullableBool(Data.Item("AllLegPanelsSame"))
+        Me.options.UseCombinedBoltCapacity = DBtoNullableBool(Data.Item("UseCombinedBoltCapacity"))
+        Me.options.SecHorzBracesLeg = DBtoNullableBool(Data.Item("SecHorzBracesLeg"))
+        Me.options.SortByComponent = DBtoNullableBool(Data.Item("SortByComponent"))
+        Me.options.SRCutEnds = DBtoNullableBool(Data.Item("SRCutEnds"))
+        Me.options.SRConcentric = DBtoNullableBool(Data.Item("SRConcentric"))
+        Me.options.CalcBlockShear = DBtoNullableBool(Data.Item("CalcBlockShear"))
+        Me.options.Use4SidedDiamondBracing = DBtoNullableBool(Data.Item("Use4SidedDiamondBracing"))
+        Me.options.TriangulateInnerBracing = DBtoNullableBool(Data.Item("TriangulateInnerBracing"))
+        Me.options.PrintCarrierNotes = DBtoNullableBool(Data.Item("PrintCarrierNotes"))
+        Me.options.AddIBCWindCase = DBtoNullableBool(Data.Item("AddIBCWindCase"))
+        Me.code.wind.UseStateCountyLookup = DBtoNullableBool(Data.Item("UseStateCountyLookup"))
+        Me.code.wind.State = DBtoStr(Data.Item("State"))
+        Me.code.wind.County = DBtoStr(Data.Item("County"))
+        Me.options.LegBoltsAtTop = DBtoNullableBool(Data.Item("LegBoltsAtTop"))
+        Me.options.cantileverPoles.PrintMonopoleAtIncrements = DBtoNullableBool(Data.Item("PrintMonopoleAtIncrements"))
+        Me.options.UseTIA222Exemptions_MinBracingResistance = DBtoNullableBool(Data.Item("UseTIA222Exemptions_MinBracingResistance"))
+        Me.options.UseTIA222Exemptions_TensionSplice = DBtoNullableBool(Data.Item("UseTIA222Exemptions_TensionSplice"))
+        Me.options.IgnoreKLryFor60DegAngleLegs = DBtoNullableBool(Data.Item("IgnoreKLryFor60DegAngleLegs"))
+        Me.code.wind.ASCE_7_10_WindData = DBtoNullableBool(Data.Item("ASCE_7_10_WindData"))
+        Me.code.wind.ASCE_7_10_ConvertWindToASD = DBtoNullableBool(Data.Item("ASCE_7_10_ConvertWindToASD"))
+        Me.solutionSettings.SolutionUsePDelta = DBtoNullableBool(Data.Item("SolutionUsePDelta"))
+        Me.options.UseFeedlineTorque = DBtoNullableBool(Data.Item("UseFeedlineTorque"))
+        Me.options.UsePinnedElements = DBtoNullableBool(Data.Item("UsePinnedElements"))
+        Me.code.wind.UseMaxKz = DBtoNullableBool(Data.Item("UseMaxKz"))
+        Me.options.UseRigidIndex = DBtoNullableBool(Data.Item("UseRigidIndex"))
+        Me.options.UseTrueCable = DBtoNullableBool(Data.Item("UseTrueCable"))
+        Me.options.UseASCELy = DBtoNullableBool(Data.Item("UseASCELy"))
+        Me.options.CalcBracingForces = DBtoNullableBool(Data.Item("CalcBracingForces"))
+        Me.options.IgnoreBracingFEA = DBtoNullableBool(Data.Item("IgnoreBracingFEA"))
+        Me.options.cantileverPoles.UseSubCriticalFlow = DBtoNullableBool(Data.Item("UseSubCriticalFlow"))
+        Me.options.cantileverPoles.AssumePoleWithNoAttachments = DBtoNullableBool(Data.Item("AssumePoleWithNoAttachments"))
+        Me.options.cantileverPoles.AssumePoleWithShroud = DBtoNullableBool(Data.Item("AssumePoleWithShroud"))
+        Me.options.cantileverPoles.PoleCornerRadiusKnown = DBtoNullableBool(Data.Item("PoleCornerRadiusKnown"))
+        Me.solutionSettings.SolutionMinStiffness = DBtoNullableDbl(Data.Item("SolutionMinStiffness"))
+        Me.solutionSettings.SolutionMaxStiffness = DBtoNullableDbl(Data.Item("SolutionMaxStiffness"))
+        Me.solutionSettings.SolutionMaxCycles = DBtoNullableInt(Data.Item("SolutionMaxCycles"))
+        Me.solutionSettings.SolutionPower = DBtoNullableDbl(Data.Item("SolutionPower"))
+        Me.solutionSettings.SolutionTolerance = DBtoNullableDbl(Data.Item("SolutionTolerance"))
+        Me.options.cantileverPoles.CantKFactor = DBtoNullableDbl(Data.Item("CantKFactor"))
+        Me.options.misclOptions.RadiusSampleDist = DBtoNullableDbl(Data.Item("RadiusSampleDist"))
+        Me.options.BypassStabilityChecks = DBtoNullableBool(Data.Item("BypassStabilityChecks"))
+        Me.options.UseWindProjection = DBtoNullableBool(Data.Item("UseWindProjection"))
+        Me.code.ice.UseIceEscalation = DBtoNullableBool(Data.Item("UseIceEscalation"))
+        Me.options.UseDishCoeff = DBtoNullableBool(Data.Item("UseDishCoeff"))
+        Me.options.AutoCalcTorqArmArea = DBtoNullableBool(Data.Item("AutoCalcTorqArmArea"))
+        Me.options.windDirections.WindDirOption = DBtoNullableInt(Data.Item("WindDirOption"))
+        Me.options.windDirections.WindDir0_0 = DBtoNullableBool(Data.Item("WindDir0_0"))
+        Me.options.windDirections.WindDir0_1 = DBtoNullableBool(Data.Item("WindDir0_1"))
+        Me.options.windDirections.WindDir0_2 = DBtoNullableBool(Data.Item("WindDir0_2"))
+        Me.options.windDirections.WindDir0_3 = DBtoNullableBool(Data.Item("WindDir0_3"))
+        Me.options.windDirections.WindDir0_4 = DBtoNullableBool(Data.Item("WindDir0_4"))
+        Me.options.windDirections.WindDir0_5 = DBtoNullableBool(Data.Item("WindDir0_5"))
+        Me.options.windDirections.WindDir0_6 = DBtoNullableBool(Data.Item("WindDir0_6"))
+        Me.options.windDirections.WindDir0_7 = DBtoNullableBool(Data.Item("WindDir0_7"))
+        Me.options.windDirections.WindDir0_8 = DBtoNullableBool(Data.Item("WindDir0_8"))
+        Me.options.windDirections.WindDir0_9 = DBtoNullableBool(Data.Item("WindDir0_9"))
+        Me.options.windDirections.WindDir0_10 = DBtoNullableBool(Data.Item("WindDir0_10"))
+        Me.options.windDirections.WindDir0_11 = DBtoNullableBool(Data.Item("WindDir0_11"))
+        Me.options.windDirections.WindDir0_12 = DBtoNullableBool(Data.Item("WindDir0_12"))
+        Me.options.windDirections.WindDir0_13 = DBtoNullableBool(Data.Item("WindDir0_13"))
+        Me.options.windDirections.WindDir0_14 = DBtoNullableBool(Data.Item("WindDir0_14"))
+        Me.options.windDirections.WindDir0_15 = DBtoNullableBool(Data.Item("WindDir0_15"))
+        Me.options.windDirections.WindDir1_0 = DBtoNullableBool(Data.Item("WindDir1_0"))
+        Me.options.windDirections.WindDir1_1 = DBtoNullableBool(Data.Item("WindDir1_1"))
+        Me.options.windDirections.WindDir1_2 = DBtoNullableBool(Data.Item("WindDir1_2"))
+        Me.options.windDirections.WindDir1_3 = DBtoNullableBool(Data.Item("WindDir1_3"))
+        Me.options.windDirections.WindDir1_4 = DBtoNullableBool(Data.Item("WindDir1_4"))
+        Me.options.windDirections.WindDir1_5 = DBtoNullableBool(Data.Item("WindDir1_5"))
+        Me.options.windDirections.WindDir1_6 = DBtoNullableBool(Data.Item("WindDir1_6"))
+        Me.options.windDirections.WindDir1_7 = DBtoNullableBool(Data.Item("WindDir1_7"))
+        Me.options.windDirections.WindDir1_8 = DBtoNullableBool(Data.Item("WindDir1_8"))
+        Me.options.windDirections.WindDir1_9 = DBtoNullableBool(Data.Item("WindDir1_9"))
+        Me.options.windDirections.WindDir1_10 = DBtoNullableBool(Data.Item("WindDir1_10"))
+        Me.options.windDirections.WindDir1_11 = DBtoNullableBool(Data.Item("WindDir1_11"))
+        Me.options.windDirections.WindDir1_12 = DBtoNullableBool(Data.Item("WindDir1_12"))
+        Me.options.windDirections.WindDir1_13 = DBtoNullableBool(Data.Item("WindDir1_13"))
+        Me.options.windDirections.WindDir1_14 = DBtoNullableBool(Data.Item("WindDir1_14"))
+        Me.options.windDirections.WindDir1_15 = DBtoNullableBool(Data.Item("WindDir1_15"))
+        Me.options.windDirections.WindDir2_0 = DBtoNullableBool(Data.Item("WindDir2_0"))
+        Me.options.windDirections.WindDir2_1 = DBtoNullableBool(Data.Item("WindDir2_1"))
+        Me.options.windDirections.WindDir2_2 = DBtoNullableBool(Data.Item("WindDir2_2"))
+        Me.options.windDirections.WindDir2_3 = DBtoNullableBool(Data.Item("WindDir2_3"))
+        Me.options.windDirections.WindDir2_4 = DBtoNullableBool(Data.Item("WindDir2_4"))
+        Me.options.windDirections.WindDir2_5 = DBtoNullableBool(Data.Item("WindDir2_5"))
+        Me.options.windDirections.WindDir2_6 = DBtoNullableBool(Data.Item("WindDir2_6"))
+        Me.options.windDirections.WindDir2_7 = DBtoNullableBool(Data.Item("WindDir2_7"))
+        Me.options.windDirections.WindDir2_8 = DBtoNullableBool(Data.Item("WindDir2_8"))
+        Me.options.windDirections.WindDir2_9 = DBtoNullableBool(Data.Item("WindDir2_9"))
+        Me.options.windDirections.WindDir2_10 = DBtoNullableBool(Data.Item("WindDir2_10"))
+        Me.options.windDirections.WindDir2_11 = DBtoNullableBool(Data.Item("WindDir2_11"))
+        Me.options.windDirections.WindDir2_12 = DBtoNullableBool(Data.Item("WindDir2_12"))
+        Me.options.windDirections.WindDir2_13 = DBtoNullableBool(Data.Item("WindDir2_13"))
+        Me.options.windDirections.WindDir2_14 = DBtoNullableBool(Data.Item("WindDir2_14"))
+        Me.options.windDirections.WindDir2_15 = DBtoNullableBool(Data.Item("WindDir2_15"))
+        Me.options.windDirections.SuppressWindPatternLoading = DBtoNullableBool(Data.Item("SuppressWindPatternLoading"))
     End Sub
 
     <Category("Constructor"), Description("Create TNX object from TNX file.")>
@@ -656,6 +578,8 @@ Partial Public Class tnxModel
         Dim sectionFilter As String = ""
         Dim caseFilter As String = ""
         Dim dbFileFilter As String = ""
+
+        'Dim testLines As String() = File.ReadAllLines(tnxPath)
 
         For Each line In File.ReadLines(tnxPath)
 
@@ -725,64 +649,74 @@ Partial Public Class tnxModel
             End Select
 
             Select Case True
+                ''''Check for main file sections and activate corresponding filter''''
+                Case tnxVar.Equals("[Databases]")
+                    Try
+                        sectionFilter = "db"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("[Structure]")
+                    Try
+                        sectionFilter = "" 'Deactivate main section filter from database
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumAntennaRecs")
+                    Try
+                        sectionFilter = "Antenna"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumTowerRecs")
+                    Try
+                        sectionFilter = "Tower"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumGuyRecs")
+                    Try
+                        sectionFilter = "Guy"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumFeedLineRecs")
+                    Try
+                        sectionFilter = "FeedLine"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumTowerLoadRecs")
+                    Try
+                        sectionFilter = "Discrete"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumDishRecs")
+                    Try
+                        sectionFilter = "Dish"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                Case tnxVar.Equals("NumUserForceRecs")
+                    Try
+                        sectionFilter = "UserForce"
+                        Me.otherLines.Add(New String() {tnxVar, tnxValue})
+                    Catch ex As Exception
+                        Debug.Print("Error parsing TNX variable: " & tnxVar)
+                    End Try
+                '''''If not a main section divider, use the caseFilter to minimize the number of cases checked per line.
                 Case caseFilter = ""
                     ''''These are all the individual options for the eri file. They are not part of a record which there may be multiple of.'''
                     Select Case True
-                        ''''Main Section Filters''''
-                        Case tnxVar.Equals("[Databases]")
-                            Try
-                                sectionFilter = "db"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("[Structure]")
-                            Try
-                                sectionFilter = ""
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumAntennaRecs")
-                            Try
-                                sectionFilter = "Antenna"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumTowerRecs")
-                            Try
-                                sectionFilter = "Tower"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumGuyRecs")
-                            Try
-                                sectionFilter = "Guy"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumFeedLineRecs")
-                            Try
-                                sectionFilter = "FeedLine"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumTowerLoadRecs")
-                            Try
-                                sectionFilter = "Discrete"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumDishRecs")
-                            Try
-                                sectionFilter = "Dish"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
-                        Case tnxVar.Equals("NumUserForceRecs")
-                            Try
-                                sectionFilter = "UserForce"
-                                Me.otherLines.Add(New String() {tnxVar, tnxValue})
-                            Catch ex As Exception
-                            End Try
                     ''''Units''''
                         Case tnxVar.Equals("UnitsSystem")
                             If tnxValue <> "US" Then
@@ -803,6 +737,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("LengthPrec")
                             Try
@@ -812,6 +747,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Coordinate")
                             Try
@@ -821,6 +757,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CoordinatePrec")
                             Try
@@ -830,6 +767,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Force")
                             Try
@@ -839,6 +777,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ForcePrec")
                             Try
@@ -848,6 +787,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Load")
                             Try
@@ -857,6 +797,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("LoadPrec")
                             Try
@@ -866,6 +807,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Moment")
                             Try
@@ -875,6 +817,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("MomentPrec")
                             Try
@@ -884,6 +827,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Properties")
                             Try
@@ -893,6 +837,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PropertiesPrec")
                             Try
@@ -902,6 +847,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Pressure")
                             Try
@@ -911,6 +857,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PressurePrec")
                             Try
@@ -920,6 +867,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Velocity")
                             Try
@@ -929,6 +877,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("VelocityPrec")
                             Try
@@ -938,6 +887,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Displacement")
                             Try
@@ -947,6 +897,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplacementPrec")
                             Try
@@ -956,6 +907,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Mass")
                             Try
@@ -965,6 +917,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("MassPrec")
                             Try
@@ -974,6 +927,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Acceleration")
                             Try
@@ -983,6 +937,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AccelerationPrec")
                             Try
@@ -992,6 +947,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Stress")
                             Try
@@ -1001,6 +957,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("StressPrec")
                             Try
@@ -1010,6 +967,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Density")
                             Try
@@ -1019,6 +977,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DensityPrec")
                             Try
@@ -1028,6 +987,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UnitWt")
                             Try
@@ -1037,6 +997,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UnitWtPrec")
                             Try
@@ -1046,6 +1007,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Strength")
                             Try
@@ -1055,6 +1017,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("StrengthPrec")
                             Try
@@ -1064,6 +1027,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Modulus")
                             Try
@@ -1073,6 +1037,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ModulusPrec")
                             Try
@@ -1082,6 +1047,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Temperature")
                             Try
@@ -1091,6 +1057,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TemperaturePrec")
                             Try
@@ -1100,6 +1067,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Printer")
                             Try
@@ -1109,6 +1077,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PrinterPrec")
                             Try
@@ -1118,6 +1087,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Rotation")
                             Try
@@ -1127,6 +1097,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RotationPrec")
                             Try
@@ -1136,6 +1107,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Spacing")
                             Try
@@ -1145,6 +1117,7 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SpacingPrec")
                             Try
@@ -1154,933 +1127,1117 @@ Partial Public Class tnxModel
                                     Me.otherLines.Add(New String() {tnxVar, tnxValue})
                                 End If
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                 ''''Project Info Settings
                         Case tnxVar.Equals("DesignStandardSeries")
                             Try
                                 Me.settings.projectInfo.DesignStandardSeries = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UnitsSystem")
                             Try
                                 Me.settings.projectInfo.UnitsSystem = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ClientName")
                             Try
                                 Me.settings.projectInfo.ClientName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ProjectName")
                             Try
                                 Me.settings.projectInfo.ProjectName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ProjectNumber")
                             Try
                                 Me.settings.projectInfo.ProjectNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CreatedBy")
                             Try
                                 Me.settings.projectInfo.CreatedBy = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CreatedOn")
                             Try
                                 Me.settings.projectInfo.CreatedOn = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("LastUsedBy")
                             Try
                                 Me.settings.projectInfo.LastUsedBy = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("LastUsedOn")
                             Try
                                 Me.settings.projectInfo.LastUsedOn = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("VersionUsed")
                             Try
                                 Me.settings.projectInfo.VersionUsed = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                             '''User Info Settings
                         Case tnxVar.Equals("ViewerUserName")
                             Try
                                 Me.settings.userInfo.ViewerUserName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerCompanyName")
                             Try
                                 Me.settings.userInfo.ViewerCompanyName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerStreetAddress")
                             Try
                                 Me.settings.userInfo.ViewerStreetAddress = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerCityState")
                             Try
                                 Me.settings.userInfo.ViewerCityState = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerPhone")
                             Try
                                 Me.settings.userInfo.ViewerPhone = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerFAX")
                             Try
                                 Me.settings.userInfo.ViewerFAX = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerLogo")
                             Try
                                 Me.settings.userInfo.ViewerLogo = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ViewerCompanyBitmap")
                             Try
                                 Me.settings.userInfo.ViewerCompanyBitmap = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                 ''''Code''''
                         Case tnxVar.Equals("DesignCode")
                             Try
                                 Me.code.design.DesignCode = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ERIDesignMode")
                             Try
                                 Me.code.design.ERIDesignMode = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DoInteraction")
                             Try
                                 Me.code.design.DoInteraction = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DoHorzInteraction")
                             Try
                                 Me.code.design.DoHorzInteraction = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DoDiagInteraction")
                             Try
                                 Me.code.design.DoDiagInteraction = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseMomentMagnification")
                             Try
                                 Me.code.design.UseMomentMagnification = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseCodeStressRatio")
                             Try
                                 Me.code.design.UseCodeStressRatio = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AllowStressRatio")
                             Try
                                 Me.code.design.AllowStressRatio = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AllowAntStressRatio")
                             Try
                                 Me.code.design.AllowAntStressRatio = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseCodeGuySF")
                             Try
                                 Me.code.design.UseCodeGuySF = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuySF")
                             Try
                                 Me.code.design.GuySF = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseTIA222H_AnnexS")
                             Try
                                 Me.code.design.UseTIA222H_AnnexS = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TIA_222_H_AnnexS_Ratio")
                             Try
                                 Me.code.design.TIA_222_H_AnnexS_Ratio = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PrintBitmaps")
                             Try
                                 Me.code.design.PrintBitmaps = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("IceThickness")
                             Try
-                                Me.code.ice.IceThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.ice.IceThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("IceDensity")
                             Try
-                                Me.code.ice.IceDensity = Me.settings.USUnits.Density.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.ice.IceDensity = Me.settings.USUnits.Density.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseModified_TIA_222_IceParameters")
                             Try
                                 Me.code.ice.UseModified_TIA_222_IceParameters = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TIA_222_IceThicknessMultiplier")
                             Try
                                 Me.code.ice.TIA_222_IceThicknessMultiplier = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DoNotUse_TIA_222_IceEscalation")
                             Try
                                 Me.code.ice.DoNotUse_TIA_222_IceEscalation = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseIceEscalation")
                             Try
                                 Me.code.ice.UseIceEscalation = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TempDrop")
                             Try
-                                Me.code.thermal.TempDrop = Me.settings.USUnits.Temperature.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.thermal.TempDrop = Me.settings.USUnits.Temperature.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GroutFc")
                             Try
-                                Me.code.misclCode.GroutFc = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.misclCode.GroutFc = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBoltGrade")
                             Try
                                 Me.code.misclCode.TowerBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBoltMinEdgeDist")
                             Try
-                                Me.code.misclCode.TowerBoltMinEdgeDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.misclCode.TowerBoltMinEdgeDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindSpeed")
                             Try
-                                Me.code.wind.WindSpeed = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.WindSpeed = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindSpeedIce")
                             Try
-                                Me.code.wind.WindSpeedIce = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.WindSpeedIce = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindSpeedService")
                             Try
-                                Me.code.wind.WindSpeedService = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.WindSpeedService = Me.settings.USUnits.Velocity.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseStateCountyLookup")
                             Try
                                 Me.code.wind.UseStateCountyLookup = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("State")
                             Try
                                 Me.code.wind.State = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("County")
                             Try
                                 Me.code.wind.County = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseMaxKz")
                             Try
                                 Me.code.wind.UseMaxKz = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCE_7_10_WindData")
                             Try
                                 Me.code.wind.ASCE_7_10_WindData = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCE_7_10_ConvertWindToASD")
                             Try
                                 Me.code.wind.ASCE_7_10_ConvertWindToASD = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseASCEWind")
                             Try
                                 Me.code.wind.UseASCEWind = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AutoCalc_ASCE_GH")
                             Try
                                 Me.code.wind.AutoCalc_ASCE_GH = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCE_ExposureCat")
                             Try
                                 Me.code.wind.ASCE_ExposureCat = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCE_Year")
                             Try
                                 Me.code.wind.ASCE_Year = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCEGh")
                             Try
                                 Me.code.wind.ASCEGh = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ASCEI")
                             Try
                                 Me.code.wind.ASCEI = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CalcWindAt")
                             Try
                                 Me.code.wind.CalcWindAt = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindCalcPoints")
                             Try
-                                Me.code.wind.WindCalcPoints = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.WindCalcPoints = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindExposure")
                             Try
                                 Me.code.wind.WindExposure = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("StructureCategory")
                             Try
                                 Me.code.wind.StructureCategory = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RiskCategory")
                             Try
                                 Me.code.wind.RiskCategory = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TopoCategory")
                             Try
                                 Me.code.wind.TopoCategory = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RSMTopographicFeature")
                             Try
                                 Me.code.wind.RSMTopographicFeature = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RSM_L")
                             Try
-                                Me.code.wind.RSM_L = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RSM_L = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RSM_X")
                             Try
-                                Me.code.wind.RSM_X = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RSM_X = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CrestHeight")
                             Try
-                                Me.code.wind.CrestHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.CrestHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TIA_222_H_TopoFeatureDownwind")
                             Try
                                 Me.code.wind.TIA_222_H_TopoFeatureDownwind = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("BaseElevAboveSeaLevel")
                             Try
-                                Me.code.wind.BaseElevAboveSeaLevel = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.BaseElevAboveSeaLevel = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ConsiderRooftopSpeedUp")
                             Try
                                 Me.code.wind.ConsiderRooftopSpeedUp = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RooftopWS")
                             Try
-                                Me.code.wind.RooftopWS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RooftopWS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RooftopHS")
                             Try
-                                Me.code.wind.RooftopHS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RooftopHS = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RooftopParapetHt")
                             Try
-                                Me.code.wind.RooftopParapetHt = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RooftopParapetHt = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RooftopXB")
                             Try
-                                Me.code.wind.RooftopXB = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.RooftopXB = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindZone")
                             Try
                                 Me.code.wind.WindZone = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("EIACWindMult")
                             Try
                                 Me.code.wind.EIACWindMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("EIACWindMultIce")
                             Try
                                 Me.code.wind.EIACWindMultIce = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("EIACIgnoreCableDrag")
                             Try
                                 Me.code.wind.EIACIgnoreCableDrag = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CSA_S37_RefVelPress")
                             Try
-                                Me.code.wind.CSA_S37_RefVelPress = Me.settings.USUnits.Pressure.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.code.wind.CSA_S37_RefVelPress = Me.settings.USUnits.Pressure.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CSA_S37_ReliabilityClass")
                             Try
                                 Me.code.wind.CSA_S37_ReliabilityClass = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CSA_S37_ServiceabilityFactor")
                             Try
                                 Me.code.wind.CSA_S37_ServiceabilityFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseASCE7_10_Seismic_Lcomb")
                             Try
                                 Me.code.seismic.UseASCE7_10_Seismic_Lcomb = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SeismicSiteClass")
                             Try
                                 Me.code.seismic.SeismicSiteClass = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SeismicSs")
                             Try
                                 Me.code.seismic.SeismicSs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SeismicS1")
                             Try
                                 Me.code.seismic.SeismicS1 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                 ''''Options''''
                         Case tnxVar.Equals("UseClearSpans")
                             Try
                                 Me.options.UseClearSpans = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseClearSpansKlr")
                             Try
                                 Me.options.UseClearSpansKlr = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseFeedlineAsCylinder")
                             Try
                                 Me.options.UseFeedlineAsCylinder = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseLegLoads")
                             Try
                                 Me.options.UseLegLoads = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SRTakeCompression")
                             Try
                                 Me.options.SRTakeCompression = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AllLegPanelsSame")
                             Try
                                 Me.options.AllLegPanelsSame = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseCombinedBoltCapacity")
                             Try
                                 Me.options.UseCombinedBoltCapacity = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SecHorzBracesLeg")
                             Try
                                 Me.options.SecHorzBracesLeg = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SortByComponent")
                             Try
                                 Me.options.SortByComponent = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SRCutEnds")
                             Try
                                 Me.options.SRCutEnds = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SRConcentric")
                             Try
                                 Me.options.SRConcentric = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CalcBlockShear")
                             Try
                                 Me.options.CalcBlockShear = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Use4SidedDiamondBracing")
                             Try
                                 Me.options.Use4SidedDiamondBracing = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TriangulateInnerBracing")
                             Try
                                 Me.options.TriangulateInnerBracing = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PrintCarrierNotes")
                             Try
                                 Me.options.PrintCarrierNotes = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AddIBCWindCase")
                             Try
                                 Me.options.AddIBCWindCase = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("LegBoltsAtTop")
                             Try
                                 Me.options.LegBoltsAtTop = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseTIA222Exemptions_MinBracingResistance")
                             Try
                                 Me.options.UseTIA222Exemptions_MinBracingResistance = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseTIA222Exemptions_TensionSplice")
                             Try
                                 Me.options.UseTIA222Exemptions_TensionSplice = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("IgnoreKLryFor60DegAngleLegs")
                             Try
                                 Me.options.IgnoreKLryFor60DegAngleLegs = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseFeedlineTorque")
                             Try
                                 Me.options.UseFeedlineTorque = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UsePinnedElements")
                             Try
                                 Me.options.UsePinnedElements = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseRigidIndex")
                             Try
                                 Me.options.UseRigidIndex = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseTrueCable")
                             Try
                                 Me.options.UseTrueCable = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseASCELy")
                             Try
                                 Me.options.UseASCELy = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CalcBracingForces")
                             Try
                                 Me.options.CalcBracingForces = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("IgnoreBracingFEA")
                             Try
                                 Me.options.IgnoreBracingFEA = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("BypassStabilityChecks")
                             Try
                                 Me.options.BypassStabilityChecks = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseWindProjection")
                             Try
                                 Me.options.UseWindProjection = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseDishCoeff")
                             Try
                                 Me.options.UseDishCoeff = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AutoCalcTorqArmArea")
                             Try
                                 Me.options.AutoCalcTorqArmArea = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("MastVert")
                             'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
-                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
                             Try
-                                Me.options.foundationStiffness.MastVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                'Me.options.foundationStiffness.MastVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                Me.options.foundationStiffness.MastVert = Me.settings.USUnits.convertForcePerUnitLengthtoDefault(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("MastHorz")
                             'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
-                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
                             Try
-                                Me.options.foundationStiffness.MastHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                'Me.options.foundationStiffness.MastHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                Me.options.foundationStiffness.MastHorz = Me.settings.USUnits.convertForcePerUnitLengthtoDefault(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyVert")
                             'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
-                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
                             Try
-                                Me.options.foundationStiffness.GuyVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                'Me.options.foundationStiffness.GuyVert = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                Me.options.foundationStiffness.GuyVert = Me.settings.USUnits.convertForcePerUnitLengthtoDefault(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyHorz")
                             'The units of this input are dependant on the TNX force unit setting and the TNX property unit setting. (ie K/ft or Force/Properties) 
-                            'Don't use covertTOEDSDefault, instead multiply Properties mult and divide by Force Mult
                             Try
-                                Me.options.foundationStiffness.GuyHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                'Me.options.foundationStiffness.GuyHorz = (CDbl(tnxValue)) * (Me.settings.USUnits.Properties.multiplier / Me.settings.USUnits.Force.multiplier)
+                                Me.options.foundationStiffness.GuyHorz = Me.settings.USUnits.convertForcePerUnitLengthtoDefault(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GirtOffset")
                             Try
-                                Me.options.defaultGirtOffsets.GirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.options.defaultGirtOffsets.GirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GirtOffsetLatticedPole")
                             Try
-                                Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("OffsetBotGirt")
                             Try
                                 Me.options.defaultGirtOffsets.OffsetBotGirt = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CheckVonMises")
                             Try
                                 Me.options.cantileverPoles.CheckVonMises = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SocketTopMount")
                             Try
                                 Me.options.cantileverPoles.SocketTopMount = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PrintMonopoleAtIncrements")
                             Try
                                 Me.options.cantileverPoles.PrintMonopoleAtIncrements = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseSubCriticalFlow")
                             Try
                                 Me.options.cantileverPoles.UseSubCriticalFlow = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AssumePoleWithNoAttachments")
                             Try
                                 Me.options.cantileverPoles.AssumePoleWithNoAttachments = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AssumePoleWithShroud")
                             Try
                                 Me.options.cantileverPoles.AssumePoleWithShroud = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PoleCornerRadiusKnown")
                             Try
                                 Me.options.cantileverPoles.PoleCornerRadiusKnown = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CantKFactor")
                             Try
                                 Me.options.cantileverPoles.CantKFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("HogRodTakeup")
                             Try
-                                Me.options.misclOptions.HogRodTakeup = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.options.misclOptions.HogRodTakeup = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("RadiusSampleDist")
                             Try
-                                Me.options.misclOptions.RadiusSampleDist = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.options.misclOptions.RadiusSampleDist = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDirOption")
                             Try
                                 Me.options.windDirections.WindDirOption = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_0")
                             Try
                                 Me.options.windDirections.WindDir0_0 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_1")
                             Try
                                 Me.options.windDirections.WindDir0_1 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_2")
                             Try
                                 Me.options.windDirections.WindDir0_2 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_3")
                             Try
                                 Me.options.windDirections.WindDir0_3 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_4")
                             Try
                                 Me.options.windDirections.WindDir0_4 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_5")
                             Try
                                 Me.options.windDirections.WindDir0_5 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_6")
                             Try
                                 Me.options.windDirections.WindDir0_6 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_7")
                             Try
                                 Me.options.windDirections.WindDir0_7 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_8")
                             Try
                                 Me.options.windDirections.WindDir0_8 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_9")
                             Try
                                 Me.options.windDirections.WindDir0_9 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_10")
                             Try
                                 Me.options.windDirections.WindDir0_10 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_11")
                             Try
                                 Me.options.windDirections.WindDir0_11 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_12")
                             Try
                                 Me.options.windDirections.WindDir0_12 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_13")
                             Try
                                 Me.options.windDirections.WindDir0_13 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_14")
                             Try
                                 Me.options.windDirections.WindDir0_14 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir0_15")
                             Try
                                 Me.options.windDirections.WindDir0_15 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_0")
                             Try
                                 Me.options.windDirections.WindDir1_0 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_1")
                             Try
                                 Me.options.windDirections.WindDir1_1 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_2")
                             Try
                                 Me.options.windDirections.WindDir1_2 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_3")
                             Try
                                 Me.options.windDirections.WindDir1_3 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_4")
                             Try
                                 Me.options.windDirections.WindDir1_4 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_5")
                             Try
                                 Me.options.windDirections.WindDir1_5 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_6")
                             Try
                                 Me.options.windDirections.WindDir1_6 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_7")
                             Try
                                 Me.options.windDirections.WindDir1_7 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_8")
                             Try
                                 Me.options.windDirections.WindDir1_8 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_9")
                             Try
                                 Me.options.windDirections.WindDir1_9 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_10")
                             Try
                                 Me.options.windDirections.WindDir1_10 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_11")
                             Try
                                 Me.options.windDirections.WindDir1_11 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_12")
                             Try
                                 Me.options.windDirections.WindDir1_12 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_13")
                             Try
                                 Me.options.windDirections.WindDir1_13 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_14")
                             Try
                                 Me.options.windDirections.WindDir1_14 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir1_15")
                             Try
                                 Me.options.windDirections.WindDir1_15 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_0")
                             Try
                                 Me.options.windDirections.WindDir2_0 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_1")
                             Try
                                 Me.options.windDirections.WindDir2_1 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_2")
                             Try
                                 Me.options.windDirections.WindDir2_2 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_3")
                             Try
                                 Me.options.windDirections.WindDir2_3 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_4")
                             Try
                                 Me.options.windDirections.WindDir2_4 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_5")
                             Try
                                 Me.options.windDirections.WindDir2_5 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_6")
                             Try
                                 Me.options.windDirections.WindDir2_6 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_7")
                             Try
                                 Me.options.windDirections.WindDir2_7 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_8")
                             Try
                                 Me.options.windDirections.WindDir2_8 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_9")
                             Try
                                 Me.options.windDirections.WindDir2_9 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_10")
                             Try
                                 Me.options.windDirections.WindDir2_10 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_11")
                             Try
                                 Me.options.windDirections.WindDir2_11 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_12")
                             Try
                                 Me.options.windDirections.WindDir2_12 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_13")
                             Try
                                 Me.options.windDirections.WindDir2_13 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_14")
                             Try
                                 Me.options.windDirections.WindDir2_14 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("WindDir2_15")
                             Try
                                 Me.options.windDirections.WindDir2_15 = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SuppressWindPatternLoading")
                             Try
                                 Me.options.windDirections.SuppressWindPatternLoading = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
 
                 ''''General Geometry''''
@@ -2088,116 +2245,139 @@ Partial Public Class tnxModel
                             Try
                                 Me.geometry.TowerType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaType")
                             Try
                                 Me.geometry.AntennaType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("OverallHeight")
                             Try
-                                Me.geometry.OverallHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.OverallHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("BaseElevation")
                             Try
-                                Me.geometry.BaseElevation = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.BaseElevation = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Lambda")
                             Try
-                                Me.geometry.Lambda = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.Lambda = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopFaceWidth")
                             Try
-                                Me.geometry.TowerTopFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.TowerTopFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBaseFaceWidth")
                             Try
-                                Me.geometry.TowerBaseFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.TowerBaseFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTaper")
                             Try
                                 Me.geometry.TowerTaper = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyedMonopoleBaseType")
                             Try
                                 Me.geometry.GuyedMonopoleBaseType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TaperHeight")
                             Try
-                                Me.geometry.TaperHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.TaperHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("PivotHeight")
                             Try
-                                Me.geometry.PivotHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.PivotHeight = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AutoCalcGH")
                             Try
                                 Me.geometry.AutoCalcGH = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserGHElev")
                             Try
-                                Me.geometry.UserGHElev = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.UserGHElev = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseIndexPlate")
                             Try
                                 Me.geometry.UseIndexPlate = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("EnterUserDefinedGhValues")
                             Try
                                 Me.geometry.EnterUserDefinedGhValues = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("BaseTowerGhInput")
                             Try
                                 Me.geometry.BaseTowerGhInput = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UpperStructureGhInput")
                             Try
                                 Me.geometry.UpperStructureGhInput = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("EnterUserDefinedCgValues")
                             Try
                                 Me.geometry.EnterUserDefinedCgValues = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("BaseTowerCgInput")
                             Try
                                 Me.geometry.BaseTowerCgInput = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UpperStructureCgInput")
                             Try
                                 Me.geometry.UpperStructureCgInput = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaFaceWidth")
                             Try
-                                Me.geometry.AntennaFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.AntennaFaceWidth = Me.settings.USUnits.Spacing.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UseTopTakeup")
                             Try
                                 Me.geometry.UseTopTakeup = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ConstantSlope")
                             Try
                                 Me.geometry.ConstantSlope = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("[End Application]")
                             Me.otherLines.Add(New String() {tnxVar})
@@ -2207,499 +2387,598 @@ Partial Public Class tnxModel
                             Try
                                 Me.solutionSettings.SolutionUsePDelta = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SolutionMinStiffness")
                             Try
                                 Me.solutionSettings.SolutionMinStiffness = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SolutionMaxStiffness")
                             Try
                                 Me.solutionSettings.SolutionMaxStiffness = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SolutionMaxCycles")
                             Try
                                 Me.solutionSettings.SolutionMaxCycles = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SolutionPower")
                             Try
                                 Me.solutionSettings.SolutionPower = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("SolutionTolerance")
                             Try
                                 Me.solutionSettings.SolutionTolerance = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         '''''MTO Settings''''
                         Case tnxVar.Equals("IncludeCapacityNote")
                             Try
                                 Me.MTOSettings.IncludeCapacityNote = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("IncludeAppurtGraphics")
                             Try
                                 Me.MTOSettings.IncludeAppurtGraphics = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplayNotes")
                             Try
                                 Me.MTOSettings.DisplayNotes = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplayReactions")
                             Try
                                 Me.MTOSettings.DisplayReactions = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplaySchedule")
                             Try
                                 Me.MTOSettings.DisplaySchedule = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplayAppurtenanceTable")
                             Try
                                 Me.MTOSettings.DisplayAppurtenanceTable = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DisplayMaterialStrengthTable")
                             Try
                                 Me.MTOSettings.DisplayMaterialStrengthTable = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Notes")
                             Try
                                 Me.MTOSettings.Notes.Add(New tnxNote With {.Note = tnxValue})
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     ''''Report Settings''''
                         Case tnxVar.Equals("ReportInputCosts")
                             Try
                                 Me.reportSettings.ReportInputCosts = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportInputGeometry")
                             Try
                                 Me.reportSettings.ReportInputGeometry = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportInputOptions")
                             Try
                                 Me.reportSettings.ReportInputOptions = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportMaxForces")
                             Try
                                 Me.reportSettings.ReportMaxForces = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportInputMap")
                             Try
                                 Me.reportSettings.ReportInputMap = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CostReportOutputType")
                             Try
                                 Me.reportSettings.CostReportOutputType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("CapacityReportOutputType")
                             Try
                                 Me.reportSettings.CapacityReportOutputType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintForceTotals")
                             Try
                                 Me.reportSettings.ReportPrintForceTotals = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintForceDetails")
                             Try
                                 Me.reportSettings.ReportPrintForceDetails = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintMastVectors")
                             Try
                                 Me.reportSettings.ReportPrintMastVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintAntPoleVectors")
                             Try
                                 Me.reportSettings.ReportPrintAntPoleVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintDiscreteVectors")
                             Try
                                 Me.reportSettings.ReportPrintDiscreteVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintDishVectors")
                             Try
                                 Me.reportSettings.ReportPrintDishVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintFeedTowerVectors")
                             Try
                                 Me.reportSettings.ReportPrintFeedTowerVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintUserLoadVectors")
                             Try
                                 Me.reportSettings.ReportPrintUserLoadVectors = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintPressures")
                             Try
                                 Me.reportSettings.ReportPrintPressures = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintAppurtForces")
                             Try
                                 Me.reportSettings.ReportPrintAppurtForces = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintGuyForces")
                             Try
                                 Me.reportSettings.ReportPrintGuyForces = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintGuyStressing")
                             Try
                                 Me.reportSettings.ReportPrintGuyStressing = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintDeflections")
                             Try
                                 Me.reportSettings.ReportPrintDeflections = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintReactions")
                             Try
                                 Me.reportSettings.ReportPrintReactions = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintStressChecks")
                             Try
                                 Me.reportSettings.ReportPrintStressChecks = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintBoltChecks")
                             Try
                                 Me.reportSettings.ReportPrintBoltChecks = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintInputGVerificationTables")
                             Try
                                 Me.reportSettings.ReportPrintInputGVerificationTables = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ReportPrintOutputGVerificationTables")
                             Try
                                 Me.reportSettings.ReportPrintOutputGVerificationTables = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     ''''CCI Report''''
                         Case tnxVar.Equals("sReportProjectNumber")
                             Try
                                 Me.CCIReport.sReportProjectNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportJobType")
                             Try
                                 Me.CCIReport.sReportJobType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCarrierName")
                             Try
                                 Me.CCIReport.sReportCarrierName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCarrierSiteNumber")
                             Try
                                 Me.CCIReport.sReportCarrierSiteNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCarrierSiteName")
                             Try
                                 Me.CCIReport.sReportCarrierSiteName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportSiteAddress")
                             Try
                                 Me.CCIReport.sReportSiteAddress = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLatitudeDegree")
                             Try
                                 Me.CCIReport.sReportLatitudeDegree = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLatitudeMinute")
                             Try
                                 Me.CCIReport.sReportLatitudeMinute = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLatitudeSecond")
                             Try
                                 Me.CCIReport.sReportLatitudeSecond = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLongitudeDegree")
                             Try
                                 Me.CCIReport.sReportLongitudeDegree = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLongitudeMinute")
                             Try
                                 Me.CCIReport.sReportLongitudeMinute = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLongitudeSecond")
                             Try
                                 Me.CCIReport.sReportLongitudeSecond = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLocalCodeRequirement")
                             Try
                                 Me.CCIReport.sReportLocalCodeRequirement = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportSiteHistory")
                             Try
                                 Me.CCIReport.sReportSiteHistory = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportTowerManufacturer")
                             Try
                                 Me.CCIReport.sReportTowerManufacturer = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportMonthManufactured")
                             Try
                                 Me.CCIReport.sReportMonthManufactured = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportYearManufactured")
                             Try
                                 Me.CCIReport.sReportYearManufactured = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportOriginalSpeed")
                             Try
                                 Me.CCIReport.sReportOriginalSpeed = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportOriginalCode")
                             Try
                                 Me.CCIReport.sReportOriginalCode = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportTowerType")
                             Try
                                 Me.CCIReport.sReportTowerType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportEngrName")
                             Try
                                 Me.CCIReport.sReportEngrName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportEngrTitle")
                             Try
                                 Me.CCIReport.sReportEngrTitle = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportHQPhoneNumber")
                             Try
                                 Me.CCIReport.sReportHQPhoneNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportEmailAddress")
                             Try
                                 Me.CCIReport.sReportEmailAddress = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportLogoPath")
                             Try
                                 Me.CCIReport.sReportLogoPath = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiContactName")
                             Try
                                 Me.CCIReport.sReportCCiContactName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiAddress1")
                             Try
                                 Me.CCIReport.sReportCCiAddress1 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiAddress2")
                             Try
                                 Me.CCIReport.sReportCCiAddress2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiBUNumber")
                             Try
                                 Me.CCIReport.sReportCCiBUNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiSiteName")
                             Try
                                 Me.CCIReport.sReportCCiSiteName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiJDENumber")
                             Try
                                 Me.CCIReport.sReportCCiJDENumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiWONumber")
                             Try
                                 Me.CCIReport.sReportCCiWONumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiPONumber")
                             Try
                                 Me.CCIReport.sReportCCiPONumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiAppNumber")
                             Try
                                 Me.CCIReport.sReportCCiAppNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportCCiRevNumber")
                             Try
                                 Me.CCIReport.sReportCCiRevNumber = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportDocsProvided")
                             Try
                                 Me.CCIReport.sReportDocsProvided.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportRecommendations")
                             Try
                                 Me.CCIReport.sReportRecommendations = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1")
                             Try
                                 Me.CCIReport.sReportAppurt1.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2")
                             Try
                                 Me.CCIReport.sReportAppurt2.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt3")
                             Try
                                 Me.CCIReport.sReportAppurt3.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAddlCapacity")
                             Try
                                 Me.CCIReport.sReportAddlCapacity.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAssumption")
                             Try
                                 Me.CCIReport.sReportAssumption.Add(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note1")
                             Try
                                 Me.CCIReport.sReportAppurt1Note1 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note2")
                             Try
                                 Me.CCIReport.sReportAppurt1Note2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note3")
                             Try
                                 Me.CCIReport.sReportAppurt1Note3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note4")
                             Try
                                 Me.CCIReport.sReportAppurt1Note4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note5")
                             Try
                                 Me.CCIReport.sReportAppurt1Note5 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note6")
                             Try
                                 Me.CCIReport.sReportAppurt1Note6 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt1Note7")
                             Try
                                 Me.CCIReport.sReportAppurt1Note7 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note1")
                             Try
                                 Me.CCIReport.sReportAppurt2Note1 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note2")
                             Try
                                 Me.CCIReport.sReportAppurt2Note2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note3")
                             Try
                                 Me.CCIReport.sReportAppurt2Note3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note4")
                             Try
                                 Me.CCIReport.sReportAppurt2Note4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note5")
                             Try
                                 Me.CCIReport.sReportAppurt2Note5 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note6")
                             Try
                                 Me.CCIReport.sReportAppurt2Note6 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAppurt2Note7")
                             Try
                                 Me.CCIReport.sReportAppurt2Note7 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAddlCapacityNote1")
                             Try
                                 Me.CCIReport.sReportAddlCapacityNote1 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAddlCapacityNote2")
                             Try
                                 Me.CCIReport.sReportAddlCapacityNote2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAddlCapacityNote3")
                             Try
                                 Me.CCIReport.sReportAddlCapacityNote3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("sReportAddlCapacityNote4")
                             Try
                                 Me.CCIReport.sReportAddlCapacityNote4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case Else ''''All other lines
                             If line.Contains("=") Then
@@ -2749,1261 +3028,1513 @@ Partial Public Class tnxModel
                                 Me.geometry.upperStructure.Add(New tnxAntennaRecord())
                                 Me.geometry.upperStructure(recIndex).AntennaRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBraceType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBraceType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHeight")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalSpacing")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalSpacingEx")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaNumSections")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaNumSections = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaNumSesctions")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaNumSesctions = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaSectionLength")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerBracingGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerBracingMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerBracingMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLongHorizontalGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLongHorizontalMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLongHorizontalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerBracingType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerBracingType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerBracingSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerBracingSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtOffset")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtOffset = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtOffset")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtOffset = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHasKBraceEndPanels")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHasKBraceEndPanels = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHasHorizontals")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHasHorizontals = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLongHorizontalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLongHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLongHorizontalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLongHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalSize2")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalSize3")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalSize4")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalSize2")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalSize3")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalSize4")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaSubDiagLocation")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaSubDiagLocation = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalSize2")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalSize3")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalSize4")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipSize2")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipSize3")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipSize4")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaNumInnerGirts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaNumInnerGirts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaPoleShapeType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaPoleShapeType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaPoleSize")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaPoleSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaPoleGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaPoleMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaPoleMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaPoleSpliceLength")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaPoleSpliceLength = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleNumSides")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTaperPoleNumSides = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleTopDiameter")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleTopDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleTopDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleBotDiameter")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBotDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBotDiameter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleWallThickness")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleWallThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleWallThickness = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleBendRadius")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBendRadius = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleBendRadius = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTaperPoleGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTaperPoleMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTaperPoleMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaSWMult")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaSWMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaWPMult")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaWPMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaAutoCalcKSingleAngle")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaAutoCalcKSingleAngle = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaAutoCalcKSolidRound")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaAutoCalcKSolidRound = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaAfGusset")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTfGusset")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaGussetBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaGussetGrade")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaGussetMatlGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaGussetMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaAfMult")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaAfMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaArMult")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaArMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaFlatIPAPole")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaFlatIPAPole = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRoundIPAPole")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRoundIPAPole = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaFlatIPALeg")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaFlatIPALeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRoundIPALeg")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRoundIPALeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaFlatIPAHorizontal")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaFlatIPAHorizontal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRoundIPAHorizontal")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRoundIPAHorizontal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaFlatIPADiagonal")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaFlatIPADiagonal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRoundIPADiagonal")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRoundIPADiagonal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaCSA_S37_SpeedUpFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaCSA_S37_SpeedUpFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKLegs")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKLegs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKXBracedDiags")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKXBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKKBracedDiags")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKKBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKZBracedDiags")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKZBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKHorzs")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKHorzs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKSecHorzs")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKSecHorzs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKGirts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKGirts = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKInners")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKInners = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKXBracedDiagsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKXBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKKBracedDiagsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKKBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKZBracedDiagsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKZBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKHorzsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKHorzsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKSecHorzsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKSecHorzsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKGirtsY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKGirtsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKInnersY")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKInnersY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedHorz")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedHorz = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedDiag")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedSubDiag")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedSubDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedSubHorz")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedSubHorz = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedVert")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedVert = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedHip")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedHip = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKRedHipDiag")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKRedHipDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKTLX")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKTLX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKTLZ")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKTLZ = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKTLLeg")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaKTLLeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerKTLX")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerKTLX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerKTLZ")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerKTLZ = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerKTLLeg")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerKTLLeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchBoltLocationHoriz")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaStitchBoltLocationHoriz = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchBoltLocationDiag")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaStitchBoltLocationDiag = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchSpacing")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchSpacingHorz")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchSpacingDiag")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaStitchSpacingRed")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegConnType")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegConnType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaLegBoltEdgeDistance")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaLegBoltEdgeDistance = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBotGirtGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaInnerGirtGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaShortHorizontalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHorizontalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantDiagonalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubDiagonalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantSubHorizontalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantVerticalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagonalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaTopGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaTopGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaBottomGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaBottomGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaMidGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaMidGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaHorizontalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaSecondaryHorizontalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.upperStructure(recIndex).AntennaSecondaryHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagOffsetNEY")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagOffsetNEX")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagOffsetPEY")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaDiagOffsetPEX")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKbraceOffsetNEY")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKbraceOffsetNEX")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKbraceOffsetPEY")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AntennaKbraceOffsetPEX")
                             Try
-                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.upperStructure(recIndex).AntennaKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "Tower"
@@ -4015,1226 +4546,1471 @@ Partial Public Class tnxModel
                                 Me.geometry.baseStructure.Add(New tnxTowerRecord())
                                 Me.geometry.baseStructure(recIndex).TowerRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDatabase")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDatabase = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerName")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerName = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHeight")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFaceWidth")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerFaceWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerFaceWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerNumSections")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerNumSections = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerSectionLength")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerSectionLength = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalSpacing")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalSpacingEx")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalSpacingEx = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBraceType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBraceType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFaceBevel")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerFaceBevel = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtOffset")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtOffset")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtOffset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHasKBraceEndPanels")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHasKBraceEndPanels = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHasHorizontals")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHasHorizontals = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerBracingGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerBracingGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerBracingMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerBracingMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLongHorizontalGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerLongHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLongHorizontalMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLongHorizontalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerBracingType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerBracingType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerBracingSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerBracingSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerNumInnerGirts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerNumInnerGirts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLongHorizontalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLongHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLongHorizontalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLongHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantVerticalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalSize2")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalSize3")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalSize4")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalSize2")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalSize3")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalSize4")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerSubDiagLocation")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerSubDiagLocation = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantVerticalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipSize2")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipSize3")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipSize4")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalSize")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalSize2")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize2 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalSize3")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize3 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalSize4")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalSize4 = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerSWMult")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerSWMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerWPMult")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerWPMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAutoCalcKSingleAngle")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerAutoCalcKSingleAngle = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAutoCalcKSolidRound")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerAutoCalcKSolidRound = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAfGusset")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerAfGusset = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTfGusset")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTfGusset = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerGussetBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerGussetBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerGussetGrade")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerGussetGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerGussetMatlGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerGussetMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAfMult")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerAfMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerArMult")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerArMult = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFlatIPAPole")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerFlatIPAPole = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRoundIPAPole")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRoundIPAPole = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFlatIPALeg")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerFlatIPALeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRoundIPALeg")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRoundIPALeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFlatIPAHorizontal")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerFlatIPAHorizontal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRoundIPAHorizontal")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRoundIPAHorizontal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerFlatIPADiagonal")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerFlatIPADiagonal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRoundIPADiagonal")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRoundIPADiagonal = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerCSA_S37_SpeedUpFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerCSA_S37_SpeedUpFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKLegs")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKLegs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKXBracedDiags")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKXBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKKBracedDiags")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKKBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKZBracedDiags")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKZBracedDiags = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKHorzs")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKHorzs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKSecHorzs")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKSecHorzs = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKGirts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKGirts = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKInners")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKInners = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKXBracedDiagsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKXBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKKBracedDiagsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKKBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKZBracedDiagsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKZBracedDiagsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKHorzsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKHorzsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKSecHorzsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKSecHorzsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKGirtsY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKGirtsY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKInnersY")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKInnersY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedHorz")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedHorz = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedDiag")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedSubDiag")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedSubDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedSubHorz")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedSubHorz = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedVert")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedVert = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedHip")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedHip = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKRedHipDiag")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKRedHipDiag = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKTLX")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKTLX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKTLZ")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKTLZ = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKTLLeg")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerKTLLeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerKTLX")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerKTLX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerKTLZ")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerKTLZ = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerKTLLeg")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerKTLLeg = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchBoltLocationHoriz")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationHoriz = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchBoltLocationDiag")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationDiag = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchBoltLocationRed")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerStitchBoltLocationRed = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchSpacing")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchSpacingDiag")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingDiag = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchSpacingHorz")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingHorz = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerStitchSpacingRed")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerStitchSpacingRed = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerLegNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegConnType")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegConnType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerLegBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBotGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLegBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerLegBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerLegBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerTopGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBotGirtGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerBotGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerInnerGirtGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerInnerGirtGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerShortHorizontalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerShortHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHorizontalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantDiagonalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubDiagonalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantSubHorizontalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantVerticalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantVerticalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantVerticalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagonalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerTopGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerTopGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerBottomGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerBottomGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerMidGirtOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerMidGirtOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerHorizontalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerSecondaryHorizontalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerSecondaryHorizontalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerUniqueFlag")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerUniqueFlag = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagOffsetNEY")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagOffsetNEX")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagOffsetPEY")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerDiagOffsetPEX")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerDiagOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKbraceOffsetNEY")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKbraceOffsetNEX")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetNEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKbraceOffsetPEY")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEY = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerKbraceOffsetPEX")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.baseStructure(recIndex).TowerKbraceOffsetPEX = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "Guy"
@@ -5246,431 +6022,517 @@ Partial Public Class tnxModel
                                 Me.geometry.guyWires.Add(New tnxGuyRecord())
                                 Me.geometry.guyWires(recIndex).GuyRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyHeight")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyHeight = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyAutoCalcKSingleAngle")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyAutoCalcKSingleAngle = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyAutoCalcKSolidRound")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyAutoCalcKSolidRound = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyMount")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyMount = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmStyle")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmStyle = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyRadius")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyRadius120")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyRadius120 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyRadius120 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyRadius240")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyRadius240 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyRadius240 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyRadius360")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyRadius360 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyRadius360 = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmRadius")
                             Try
-                                Me.geometry.guyWires(recIndex).TorqueArmRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).TorqueArmRadius = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmLegAngle")
                             Try
-                                Me.geometry.guyWires(recIndex).TorqueArmLegAngle = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).TorqueArmLegAngle = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Azimuth0Adjustment")
                             Try
-                                Me.geometry.guyWires(recIndex).Azimuth0Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Azimuth0Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Azimuth120Adjustment")
                             Try
-                                Me.geometry.guyWires(recIndex).Azimuth120Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Azimuth120Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Azimuth240Adjustment")
                             Try
-                                Me.geometry.guyWires(recIndex).Azimuth240Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Azimuth240Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Azimuth360Adjustment")
                             Try
-                                Me.geometry.guyWires(recIndex).Azimuth360Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Azimuth360Adjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Anchor0Elevation")
                             Try
-                                Me.geometry.guyWires(recIndex).Anchor0Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Anchor0Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Anchor120Elevation")
                             Try
-                                Me.geometry.guyWires(recIndex).Anchor120Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Anchor120Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Anchor240Elevation")
                             Try
-                                Me.geometry.guyWires(recIndex).Anchor240Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Anchor240Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Anchor360Elevation")
                             Try
-                                Me.geometry.guyWires(recIndex).Anchor360Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).Anchor360Elevation = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuySize")
                             Try
                                 Me.geometry.guyWires(recIndex).GuySize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Guy120Size")
                             Try
                                 Me.geometry.guyWires(recIndex).Guy120Size = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Guy240Size")
                             Try
                                 Me.geometry.guyWires(recIndex).Guy240Size = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("Guy360Size")
                             Try
                                 Me.geometry.guyWires(recIndex).Guy360Size = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmSize")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmSizeBot")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmSizeBot = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmType")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmGrade")
                             Try
-                                Me.geometry.guyWires(recIndex).TorqueArmGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).TorqueArmGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmMatlGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmKFactor")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmKFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TorqueArmKFactorY")
                             Try
                                 Me.geometry.guyWires(recIndex).TorqueArmKFactorY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffKFactorX")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffKFactorX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffKFactorY")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffKFactorY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagKFactorX")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagKFactorX = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagKFactorY")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagKFactorY = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyAutoCalc")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyAutoCalc = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyAllGuysSame")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyAllGuysSame = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyAllGuysAnchorSame")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyAllGuysAnchorSame = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyIsStrapping")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyIsStrapping = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffSize")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffSizeBot")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffSizeBot = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffType")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffGrade")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyPullOffGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyPullOffGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffMatlGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyUpperDiagSize")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyUpperDiagSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyLowerDiagSize")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyLowerDiagSize = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagType")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagGrade")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyDiagGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyDiagGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagMatlGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagMatlGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagNetWidthDeduct")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyDiagNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyDiagNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagUFactor")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagNumBolts")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagonalOutOfPlaneRestraint")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagonalOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagBoltGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyDiagBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagBoltSize")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyDiagBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagBoltEdgeDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyDiagBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyDiagBoltGageDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyDiagBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyDiagBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffNetWidthDeduct")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyPullOffNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyPullOffNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffUFactor")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffNumBolts")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffOutOfPlaneRestraint")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffBoltGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPullOffBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffBoltSize")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyPullOffBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffBoltEdgeDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyPullOffBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPullOffBoltGageDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyPullOffBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyPullOffBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmNetWidthDeduct")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyTorqueArmNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmNetWidthDeduct = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmUFactor")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyTorqueArmUFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmNumBolts")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyTorqueArmNumBolts = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmOutOfPlaneRestraint")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyTorqueArmOutOfPlaneRestraint = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmBoltGrade")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyTorqueArmBoltGrade = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmBoltSize")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltSize = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmBoltEdgeDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltEdgeDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyTorqueArmBoltGageDistance")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyTorqueArmBoltGageDistance = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPerCentTension")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPerCentTension = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPerCentTension120")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPerCentTension120 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPerCentTension240")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPerCentTension240 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyPerCentTension360")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyPerCentTension360 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyEffFactor")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyEffFactor = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyEffFactor120")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyEffFactor120 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyEffFactor240")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyEffFactor240 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyEffFactor360")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyEffFactor360 = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyNumInsulators")
                             Try
                                 Me.geometry.guyWires(recIndex).GuyNumInsulators = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyInsulatorLength")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyInsulatorLength = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyInsulatorLength = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyInsulatorDia")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyInsulatorDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyInsulatorDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("GuyInsulatorWt")
                             Try
-                                Me.geometry.guyWires(recIndex).GuyInsulatorWt = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.geometry.guyWires(recIndex).GuyInsulatorWt = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "FeedLine"
@@ -5682,201 +6544,240 @@ Partial Public Class tnxModel
                                 Me.feedLines.Add(New tnxFeedLine())
                                 Me.feedLines(recIndex).FeedLineRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineEnabled")
                             Try
                                 Me.feedLines(recIndex).FeedLineEnabled = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineDatabase")
                             Try
                                 Me.feedLines(recIndex).FeedLineDatabase = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineDescription")
                             Try
                                 Me.feedLines(recIndex).FeedLineDescription = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineClassificationCategory")
                             Try
                                 Me.feedLines(recIndex).FeedLineClassificationCategory = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineNote")
                             Try
                                 Me.feedLines(recIndex).FeedLineNote = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineNum")
                             Try
                                 Me.feedLines(recIndex).FeedLineNum = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineUseShielding")
                             Try
                                 Me.feedLines(recIndex).FeedLineUseShielding = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("ExcludeFeedLineFromTorque")
                             Try
                                 Me.feedLines(recIndex).ExcludeFeedLineFromTorque = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineNumPerRow")
                             Try
                                 Me.feedLines(recIndex).FeedLineNumPerRow = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineFace")
                             Try
                                 Me.feedLines(recIndex).FeedLineFace = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineComponentType")
                             Try
                                 Me.feedLines(recIndex).FeedLineComponentType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineGroupTreatmentType")
                             Try
                                 Me.feedLines(recIndex).FeedLineGroupTreatmentType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineRoundClusterDia")
                             Try
-                                Me.feedLines(recIndex).FeedLineRoundClusterDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineRoundClusterDia = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWidth")
                             Try
-                                Me.feedLines(recIndex).FeedLineWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWidth = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLinePerimeter")
                             Try
-                                Me.feedLines(recIndex).FeedLinePerimeter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLinePerimeter = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FlatAttachmentEffectiveWidthRatio")
                             Try
                                 Me.feedLines(recIndex).FlatAttachmentEffectiveWidthRatio = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("AutoCalcFlatAttachmentEffectiveWidthRatio")
                             Try
                                 Me.feedLines(recIndex).AutoCalcFlatAttachmentEffectiveWidthRatio = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineShieldingFactorKaNoIce")
                             Try
                                 Me.feedLines(recIndex).FeedLineShieldingFactorKaNoIce = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineShieldingFactorKaIce")
                             Try
                                 Me.feedLines(recIndex).FeedLineShieldingFactorKaIce = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineAutoCalcKa")
                             Try
                                 Me.feedLines(recIndex).FeedLineAutoCalcKa = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineCaAaNoIce")
                             'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
                             Try
                                 Me.feedLines(recIndex).FeedLineCaAaNoIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineCaAaIce")
                             'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
                             Try
                                 Me.feedLines(recIndex).FeedLineCaAaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineCaAaIce_1")
                             'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
                             Try
                                 Me.feedLines(recIndex).FeedLineCaAaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineCaAaIce_2")
                             'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
                             Try
                                 Me.feedLines(recIndex).FeedLineCaAaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineCaAaIce_4")
                             'The units of this input are dependant on the TNX length unit setting but they are an area (in^2 or ft^2)
                             Try
                                 Me.feedLines(recIndex).FeedLineCaAaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWtNoIce")
                             Try
-                                Me.feedLines(recIndex).FeedLineWtNoIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWtNoIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWtIce")
                             Try
-                                Me.feedLines(recIndex).FeedLineWtIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWtIce = Me.settings.USUnits.Load.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWtIce_1")
                             Try
-                                Me.feedLines(recIndex).FeedLineWtIce_1 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWtIce_1 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWtIce_2")
                             Try
-                                Me.feedLines(recIndex).FeedLineWtIce_2 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWtIce_2 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineWtIce_4")
                             Try
-                                Me.feedLines(recIndex).FeedLineWtIce_4 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineWtIce_4 = Me.settings.USUnits.Load.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineFaceOffset")
                             Try
                                 Me.feedLines(recIndex).FeedLineFaceOffset = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineOffsetFrac")
                             Try
                                 Me.feedLines(recIndex).FeedLineOffsetFrac = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLinePerimeterOffsetStartFrac")
                             Try
                                 Me.feedLines(recIndex).FeedLinePerimeterOffsetStartFrac = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLinePerimeterOffsetEndFrac")
                             Try
                                 Me.feedLines(recIndex).FeedLinePerimeterOffsetEndFrac = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineStartHt")
                             Try
-                                Me.feedLines(recIndex).FeedLineStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineEndHt")
                             Try
-                                Me.feedLines(recIndex).FeedLineEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineClearSpacing")
                             Try
-                                Me.feedLines(recIndex).FeedLineClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("FeedLineRowClearSpacing")
                             Try
-                                Me.feedLines(recIndex).FeedLineRowClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.feedLines(recIndex).FeedLineRowClearSpacing = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "Discrete"
@@ -5888,176 +6789,211 @@ Partial Public Class tnxModel
                                 Me.discreteLoads.Add(New tnxDiscreteLoad())
                                 Me.discreteLoads(recIndex).TowerLoadRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadEnabled")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadEnabled = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadDatabase")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadDatabase = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadDescription")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadDescription = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadType")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadClassificationCategory")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadClassificationCategory = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadNote")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadNote = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadNum")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadNum = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadFace")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadFace = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerOffsetType")
                             Try
                                 Me.discreteLoads(recIndex).TowerOffsetType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerOffsetDist")
                             Try
-                                Me.discreteLoads(recIndex).TowerOffsetDist = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerOffsetDist = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerVertOffset")
                             Try
-                                Me.discreteLoads(recIndex).TowerVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLateralOffset")
                             Try
-                                Me.discreteLoads(recIndex).TowerLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAzimuthAdjustment")
                             Try
-                                Me.discreteLoads(recIndex).TowerAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerAppurtSymbol")
                             Try
                                 Me.discreteLoads(recIndex).TowerAppurtSymbol = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadShieldingFactorKaNoIce")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadShieldingFactorKaNoIce = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadShieldingFactorKaIce")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadShieldingFactorKaIce = CDbl(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadAutoCalcKa")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadAutoCalcKa = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaNoIce")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaNoIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_1")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_2")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_4")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaNoIce_Side")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaNoIce_Side = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_Side")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_Side_1")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_Side_2")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadCaAaIce_Side_4")
                             Try
                                 Me.discreteLoads(recIndex).TowerLoadCaAaIce_Side_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadWtNoIce")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadWtIce")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadWtIce_1")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadWtIce_2")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadWtIce_4")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadStartHt")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("TowerLoadEndHt")
                             Try
-                                Me.discreteLoads(recIndex).TowerLoadEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.discreteLoads(recIndex).TowerLoadEndHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "Dish"
@@ -6069,136 +7005,163 @@ Partial Public Class tnxModel
                                 Me.dishes.Add(New tnxDish())
                                 Me.dishes(recIndex).DishRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishEnabled")
                             Try
                                 Me.dishes(recIndex).DishEnabled = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishDatabase")
                             Try
                                 Me.dishes(recIndex).DishDatabase = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishDescription")
                             Try
                                 Me.dishes(recIndex).DishDescription = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishClassificationCategory")
                             Try
                                 Me.dishes(recIndex).DishClassificationCategory = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishNote")
                             Try
                                 Me.dishes(recIndex).DishNote = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishNum")
                             Try
                                 Me.dishes(recIndex).DishNum = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishFace")
                             Try
                                 Me.dishes(recIndex).DishFace = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishType")
                             Try
                                 Me.dishes(recIndex).DishType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishOffsetType")
                             Try
                                 Me.dishes(recIndex).DishOffsetType = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishVertOffset")
                             Try
-                                Me.dishes(recIndex).DishVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishVertOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishLateralOffset")
                             Try
-                                Me.dishes(recIndex).DishLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishLateralOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishOffsetDist")
                             Try
-                                Me.dishes(recIndex).DishOffsetDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishOffsetDist = Me.settings.USUnits.Properties.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishArea")
                             Try
                                 Me.dishes(recIndex).DishArea = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishAreaIce")
                             Try
                                 Me.dishes(recIndex).DishAreaIce = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishAreaIce_1")
                             Try
                                 Me.dishes(recIndex).DishAreaIce_1 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishAreaIce_2")
                             Try
                                 Me.dishes(recIndex).DishAreaIce_2 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishAreaIce_4")
                             Try
                                 Me.dishes(recIndex).DishAreaIce_4 = Me.settings.USUnits.Length.convertAreaToEDSDefaultUnits(CDbl(tnxValue))
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishDiameter")
                             Try
-                                Me.dishes(recIndex).DishDiameter = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishDiameter = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishWtNoIce")
                             Try
-                                Me.dishes(recIndex).DishWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishWtNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishWtIce")
                             Try
-                                Me.dishes(recIndex).DishWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishWtIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishWtIce_1")
                             Try
-                                Me.dishes(recIndex).DishWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishWtIce_1 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishWtIce_2")
                             Try
-                                Me.dishes(recIndex).DishWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishWtIce_2 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishWtIce_4")
                             Try
-                                Me.dishes(recIndex).DishWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishWtIce_4 = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishStartHt")
                             Try
-                                Me.dishes(recIndex).DishStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishAzimuthAdjustment")
                             Try
-                                Me.dishes(recIndex).DishAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishAzimuthAdjustment = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("DishBeamWidth")
                             Try
-                                Me.dishes(recIndex).DishBeamWidth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.dishes(recIndex).DishBeamWidth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
                 Case caseFilter = "UserForce"
@@ -6210,129 +7173,155 @@ Partial Public Class tnxModel
                                 Me.userForces.Add(New tnxUserForce())
                                 Me.userForces(recIndex).UserForceRec = CInt(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceEnabled")
                             Try
                                 Me.userForces(recIndex).UserForceEnabled = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceDescription")
                             Try
                                 Me.userForces(recIndex).UserForceDescription = tnxValue
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceStartHt")
                             Try
-                                Me.userForces(recIndex).UserForceStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceStartHt = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceOffset")
                             Try
-                                Me.userForces(recIndex).UserForceOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceOffset = Me.settings.USUnits.Coordinate.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceAzimuth")
                             Try
-                                Me.userForces(recIndex).UserForceAzimuth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceAzimuth = Me.settings.USUnits.Rotation.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFxNoIce")
                             Try
-                                Me.userForces(recIndex).UserForceFxNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFxNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFzNoIce")
                             Try
-                                Me.userForces(recIndex).UserForceFzNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFzNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceAxialNoIce")
                             Try
-                                Me.userForces(recIndex).UserForceAxialNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceAxialNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceShearNoIce")
                             Try
-                                Me.userForces(recIndex).UserForceShearNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceShearNoIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceCaAcNoIce")
                             Try
-                                Me.userForces(recIndex).UserForceCaAcNoIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceCaAcNoIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFxIce")
                             Try
-                                Me.userForces(recIndex).UserForceFxIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFxIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFzIce")
                             Try
-                                Me.userForces(recIndex).UserForceFzIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFzIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceAxialIce")
                             Try
-                                Me.userForces(recIndex).UserForceAxialIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceAxialIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceShearIce")
                             Try
-                                Me.userForces(recIndex).UserForceShearIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceShearIce = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceCaAcIce")
                             Try
-                                Me.userForces(recIndex).UserForceCaAcIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceCaAcIce = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFxService")
                             Try
-                                Me.userForces(recIndex).UserForceFxService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFxService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceFzService")
                             Try
-                                Me.userForces(recIndex).UserForceFzService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceFzService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceAxialService")
                             Try
-                                Me.userForces(recIndex).UserForceAxialService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceAxialService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceShearService")
                             Try
-                                Me.userForces(recIndex).UserForceShearService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceShearService = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceCaAcService")
                             Try
-                                Me.userForces(recIndex).UserForceCaAcService = Me.settings.USUnits.Length.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceCaAcService = Me.settings.USUnits.Length.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceEhx")
                             Try
-                                Me.userForces(recIndex).UserForceEhx = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceEhx = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceEhz")
                             Try
-                                Me.userForces(recIndex).UserForceEhz = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceEhz = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceEv")
                             Try
-                                Me.userForces(recIndex).UserForceEv = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceEv = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                         Case tnxVar.Equals("UserForceEh")
                             Try
-                                Me.userForces(recIndex).UserForceEh = Me.settings.USUnits.Force.convertToEDSDefaultUnits(CDbl(tnxValue))
+                                Me.userForces(recIndex).UserForceEh = Me.settings.USUnits.Force.convertToEDSDefaultUnits(tnxValue)
                             Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
                     End Select
             End Select
+
         Next
 
     End Sub
@@ -6340,7 +7329,7 @@ Partial Public Class tnxModel
 #End Region
 
 #Region "Save Data"
-    Sub SaveToEDS(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal BUNumber As String, ByVal STR_ID As String)
+    Sub SaveToEDS(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP).sql")
 
@@ -6354,13 +7343,17 @@ Partial Public Class tnxModel
 
         tnxUpQuery = tnxUpQuery.Replace("[TNX FILE PATH]", Me.filePath.ToDBString)
 
-        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Base Structure (IN_UP).sql")
-        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
-        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure).sql")
+        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Upper Structure).sql")
+        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Guys).sql")
+        Dim tnxMemberSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Members).sql")
+        Dim tnxMaterialSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Materials).sql")
 
         Dim tnxAllBaseSectionQuery As String = ""
         Dim tnxAllUpperSectionQuery As String = ""
         Dim tnxAllGuyQuery As String = ""
+        Dim tnxAllMemberQuery As String = ""
+        Dim tnxAllMaterialQuery As String = ""
 
         For Each base In Me.geometry.baseStructure
             Dim baseString As String = tnxBaseSectionSubQuery
@@ -6371,10 +7364,10 @@ Partial Public Class tnxModel
             tnxAllBaseSectionQuery += baseString & vbNewLine
         Next
 
-        tnxUpQuery = tnxUpQuery.Replace("[BASE Structure]", tnxAllBaseSectionQuery)
+        tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
 
         For Each upper In Me.geometry.upperStructure
-            Dim upperString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Upper Structure (IN_UP).sql")
+            Dim upperString As String = tnxUpperSectionSubQuery
 
             upperString = upperString.Replace("[UPPER SECTION ID]", upper.ID.ToString.ToDBString)
             upperString = upperString.Replace("[ALL UPPER SECTION VALUES]", upper.GenerateSQL)
@@ -6382,10 +7375,10 @@ Partial Public Class tnxModel
             tnxAllUpperSectionQuery += upperString & vbNewLine
         Next
 
-        tnxUpQuery = tnxUpQuery.Replace("[UPPER Structure]", tnxAllUpperSectionQuery)
+        tnxUpQuery = tnxUpQuery.Replace("[UPPER STRUCTURE]", tnxAllUpperSectionQuery)
 
         For Each guy In Me.geometry.guyWires
-            Dim guyString As String = QueryBuilderFromFile(queryPath & "TNX\TNX Guys (IN_UP).sql")
+            Dim guyString As String = tnxGuySubQuery
 
             guyString = guyString.Replace("[GUY ID]", guy.ID.ToString.ToDBString)
             guyString = guyString.Replace("[ALL GUY VALUES]", guy.GenerateSQL)
@@ -6394,6 +7387,44 @@ Partial Public Class tnxModel
         Next
 
         tnxUpQuery = tnxUpQuery.Replace("[GUY LEVELS]", tnxAllGuyQuery)
+
+        'There are often duplicate members within the TNX file database, especially guy wires. This should remove duplicated to avoid adding them to the database.
+        'Dim members As List(Of tnxMember) = Me.database.members.Distinct().ToList
+        Me.database.members = Me.database.members.GetDistinct
+        Me.database.GetIDs(LogOnUser, ActiveDatabase)
+
+        For Each member In Me.database.members
+            Dim memberString As String = tnxMemberSubQuery
+
+            memberString = memberString.Replace("[MEMBER ID]", member.ID.ToString.ToDBString)
+            memberString = memberString.Replace("[ALL MEMBER VALUES]", member.GenerateSQL)
+
+            tnxAllMemberQuery += memberString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[MEMBERS]", tnxAllMemberQuery)
+
+        For Each material In Me.database.materials
+            Dim materialString As String = tnxMaterialSubQuery
+
+            materialString = materialString.Replace("[MATERIAL ID]", material.ID.ToString.ToDBString)
+            materialString = materialString.Replace("[ALL MATERIAL VALUES]", material.GenerateSQL)
+
+            tnxAllMaterialQuery += materialString & vbNewLine
+        Next
+
+        'Note: Materials and Bolts use the same database, there is an  "IsBolt" field to differentiate them. They use the same subquery.
+
+        For Each bolt In Me.database.bolts
+            Dim boltString As String = tnxMaterialSubQuery
+
+            boltString = boltString.Replace("[MATERIAL ID]", bolt.ID.ToString.ToDBString)
+            boltString = boltString.Replace("[ALL MATERIAL VALUES]", bolt.GenerateSQL)
+
+            tnxAllMaterialQuery += boltString & vbNewLine
+        Next
+
+        tnxUpQuery = tnxUpQuery.Replace("[MATERIALS]", tnxAllMaterialQuery)
 
         sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
 
@@ -6412,6 +7443,46 @@ Partial Public Class tnxModel
         If Me.settings.projectInfo.LastUsedBy IsNot Nothing Then insertString = insertString.AddtoDBString("LastUsedBy", False)
         If Me.settings.projectInfo.LastUsedOn IsNot Nothing Then insertString = insertString.AddtoDBString("LastUsedOn", False)
         If Me.settings.projectInfo.VersionUsed IsNot Nothing Then insertString = insertString.AddtoDBString("VersionUsed", False)
+        If Me.settings.USUnits.Length.value IsNot Nothing Then insertString = insertString.AddtoDBString("USLength", False)
+        If Me.settings.USUnits.Length.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USLengthPrec", False)
+        If Me.settings.USUnits.Coordinate.value IsNot Nothing Then insertString = insertString.AddtoDBString("USCoordinate", False)
+        If Me.settings.USUnits.Coordinate.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USCoordinatePrec", False)
+        If Me.settings.USUnits.Force.value IsNot Nothing Then insertString = insertString.AddtoDBString("USForce", False)
+        If Me.settings.USUnits.Force.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USForcePrec", False)
+        If Me.settings.USUnits.Load.value IsNot Nothing Then insertString = insertString.AddtoDBString("USLoad", False)
+        If Me.settings.USUnits.Load.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USLoadPrec", False)
+        If Me.settings.USUnits.Moment.value IsNot Nothing Then insertString = insertString.AddtoDBString("USMoment", False)
+        If Me.settings.USUnits.Moment.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USMomentPrec", False)
+        If Me.settings.USUnits.Properties.value IsNot Nothing Then insertString = insertString.AddtoDBString("USProperties", False)
+        If Me.settings.USUnits.Properties.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USPropertiesPrec", False)
+        If Me.settings.USUnits.Pressure.value IsNot Nothing Then insertString = insertString.AddtoDBString("USPressure", False)
+        If Me.settings.USUnits.Pressure.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USPressurePrec", False)
+        If Me.settings.USUnits.Velocity.value IsNot Nothing Then insertString = insertString.AddtoDBString("USVelocity", False)
+        If Me.settings.USUnits.Velocity.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USVelocityPrec", False)
+        If Me.settings.USUnits.Displacement.value IsNot Nothing Then insertString = insertString.AddtoDBString("USDisplacement", False)
+        If Me.settings.USUnits.Displacement.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USDisplacementPrec", False)
+        If Me.settings.USUnits.Mass.value IsNot Nothing Then insertString = insertString.AddtoDBString("USMass", False)
+        If Me.settings.USUnits.Mass.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USMassPrec", False)
+        If Me.settings.USUnits.Acceleration.value IsNot Nothing Then insertString = insertString.AddtoDBString("USAcceleration", False)
+        If Me.settings.USUnits.Acceleration.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USAccelerationPrec", False)
+        If Me.settings.USUnits.Stress.value IsNot Nothing Then insertString = insertString.AddtoDBString("USStress", False)
+        If Me.settings.USUnits.Stress.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USStressPrec", False)
+        If Me.settings.USUnits.Density.value IsNot Nothing Then insertString = insertString.AddtoDBString("USDensity", False)
+        If Me.settings.USUnits.Density.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USDensityPrec", False)
+        If Me.settings.USUnits.UnitWt.value IsNot Nothing Then insertString = insertString.AddtoDBString("USUnitWt", False)
+        If Me.settings.USUnits.UnitWt.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USUnitWtPrec", False)
+        If Me.settings.USUnits.Strength.value IsNot Nothing Then insertString = insertString.AddtoDBString("USStrength", False)
+        If Me.settings.USUnits.Strength.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USStrengthPrec", False)
+        If Me.settings.USUnits.Modulus.value IsNot Nothing Then insertString = insertString.AddtoDBString("USModulus", False)
+        If Me.settings.USUnits.Modulus.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USModulusPrec", False)
+        If Me.settings.USUnits.Temperature.value IsNot Nothing Then insertString = insertString.AddtoDBString("USTemperature", False)
+        If Me.settings.USUnits.Temperature.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USTemperaturePrec", False)
+        If Me.settings.USUnits.Printer.value IsNot Nothing Then insertString = insertString.AddtoDBString("USPrinter", False)
+        If Me.settings.USUnits.Printer.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USPrinterPrec", False)
+        If Me.settings.USUnits.Rotation.value IsNot Nothing Then insertString = insertString.AddtoDBString("USRotation", False)
+        If Me.settings.USUnits.Rotation.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USRotationPrec", False)
+        If Me.settings.USUnits.Spacing.value IsNot Nothing Then insertString = insertString.AddtoDBString("USSpacing", False)
+        If Me.settings.USUnits.Spacing.precision IsNot Nothing Then insertString = insertString.AddtoDBString("USSpacingPrec", False)
         If Me.settings.userInfo.ViewerUserName IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerUserName", False)
         If Me.settings.userInfo.ViewerCompanyName IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerCompanyName", False)
         If Me.settings.userInfo.ViewerStreetAddress IsNot Nothing Then insertString = insertString.AddtoDBString("ViewerStreetAddress", False)
@@ -6716,6 +7787,46 @@ Partial Public Class tnxModel
         If Me.settings.projectInfo.LastUsedBy IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.LastUsedBy.ToString)
         If Me.settings.projectInfo.LastUsedOn IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.LastUsedOn.ToString)
         If Me.settings.projectInfo.VersionUsed IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.projectInfo.VersionUsed.ToString)
+        If Me.settings.USUnits.Length.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Length.value.ToString)
+        If Me.settings.USUnits.Length.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Length.precision.ToString)
+        If Me.settings.USUnits.Coordinate.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Coordinate.value.ToString)
+        If Me.settings.USUnits.Coordinate.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Coordinate.precision.ToString)
+        If Me.settings.USUnits.Force.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Force.value.ToString)
+        If Me.settings.USUnits.Force.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Force.precision.ToString)
+        If Me.settings.USUnits.Load.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Load.value.ToString)
+        If Me.settings.USUnits.Load.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Load.precision.ToString)
+        If Me.settings.USUnits.Moment.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Moment.value.ToString)
+        If Me.settings.USUnits.Moment.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Moment.precision.ToString)
+        If Me.settings.USUnits.Properties.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Properties.value.ToString)
+        If Me.settings.USUnits.Properties.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Properties.precision.ToString)
+        If Me.settings.USUnits.Pressure.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Pressure.value.ToString)
+        If Me.settings.USUnits.Pressure.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Pressure.precision.ToString)
+        If Me.settings.USUnits.Velocity.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Velocity.value.ToString)
+        If Me.settings.USUnits.Velocity.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Velocity.precision.ToString)
+        If Me.settings.USUnits.Displacement.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Displacement.value.ToString)
+        If Me.settings.USUnits.Displacement.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Displacement.precision.ToString)
+        If Me.settings.USUnits.Mass.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Mass.value.ToString)
+        If Me.settings.USUnits.Mass.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Mass.precision.ToString)
+        If Me.settings.USUnits.Acceleration.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Acceleration.value.ToString)
+        If Me.settings.USUnits.Acceleration.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Acceleration.precision.ToString)
+        If Me.settings.USUnits.Stress.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Stress.value.ToString)
+        If Me.settings.USUnits.Stress.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Stress.precision.ToString)
+        If Me.settings.USUnits.Density.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Density.value.ToString)
+        If Me.settings.USUnits.Density.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Density.precision.ToString)
+        If Me.settings.USUnits.UnitWt.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.UnitWt.value.ToString)
+        If Me.settings.USUnits.UnitWt.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.UnitWt.precision.ToString)
+        If Me.settings.USUnits.Strength.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Strength.value.ToString)
+        If Me.settings.USUnits.Strength.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Strength.precision.ToString)
+        If Me.settings.USUnits.Modulus.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Modulus.value.ToString)
+        If Me.settings.USUnits.Modulus.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Modulus.precision.ToString)
+        If Me.settings.USUnits.Temperature.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Temperature.value.ToString)
+        If Me.settings.USUnits.Temperature.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Temperature.precision.ToString)
+        If Me.settings.USUnits.Printer.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Printer.value.ToString)
+        If Me.settings.USUnits.Printer.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Printer.precision.ToString)
+        If Me.settings.USUnits.Rotation.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Rotation.value.ToString)
+        If Me.settings.USUnits.Rotation.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Rotation.precision.ToString)
+        If Me.settings.USUnits.Spacing.value IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Spacing.value.ToString)
+        If Me.settings.USUnits.Spacing.precision IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.USUnits.Spacing.precision.ToString)
         If Me.settings.userInfo.ViewerUserName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerUserName.ToString)
         If Me.settings.userInfo.ViewerCompanyName IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerCompanyName.ToString)
         If Me.settings.userInfo.ViewerStreetAddress IsNot Nothing Then insertString = insertString.AddtoDBString(Me.settings.userInfo.ViewerStreetAddress.ToString)
@@ -7305,10 +8416,10 @@ Partial Public Class tnxModel
                     newERIList.Add("UseDishCoeff=" & trueFalseYesNo(Me.options.UseDishCoeff))
                     newERIList.Add("AutoCalcTorqArmArea=" & trueFalseYesNo(Me.options.AutoCalcTorqArmArea))
                     'Options - Foundations
-                    newERIList.Add("MastVert=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.MastVert))
-                    newERIList.Add("MastHorz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.MastHorz))
-                    newERIList.Add("GuyVert=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.GuyVert))
-                    newERIList.Add("GuyHorz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.options.foundationStiffness.GuyHorz))
+                    newERIList.Add("MastVert=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.MastVert))
+                    newERIList.Add("MastHorz=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.MastHorz))
+                    newERIList.Add("GuyVert=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.GuyVert))
+                    newERIList.Add("GuyHorz=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.GuyHorz))
                     'Options - Poles
                     newERIList.Add("CheckVonMises=" & trueFalseYesNo(Me.options.cantileverPoles.CheckVonMises))
                     newERIList.Add("SocketTopMount=" & trueFalseYesNo(Me.options.cantileverPoles.SocketTopMount))
@@ -8190,10 +9301,56 @@ Partial Public Class tnxDatabase
             Me._bolts = Value
         End Set
     End Property
+
+    Public Sub GetIDs(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        'Check database for matching members, materials, and bolts. Assign IDs to items in this towers database.
+        Dim tnxDS As New DataSet
+        Dim queries As New List(Of String)
+        Dim tableNames As New List(Of String)
+        Dim memberQuery As String = QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Member Matching).sql")
+        Dim matBoltQuery As String = QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Material Matching).sql")
+
+        For Each member In Me.members
+            queries.Add(memberQuery.Replace("[FILE]", member.File.ToDBString).Replace("[USNAME]", member.USName.ToDBString).Replace("[SINAME]", member.SIName.ToDBString).Replace("[VALUES]", member.values.ToDBString).Replace("[INDEX]", Me.members.IndexOf(member).ToString))
+            tableNames.Add("tnxMembers")
+        Next
+
+        For Each material In Me.materials
+            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", material.MemberMatFile.ToDBString).Replace("[MATNAME]", material.MatName.ToDBString).Replace("[MATVALUES]", material.MatValues.ToDBString).Replace("[ISBOLT]", "'False'").Replace("[INDEX]", Me.materials.IndexOf(material).ToString))
+            tableNames.Add("tnxMaterials")
+        Next
+
+        For Each bolt In Me.bolts
+            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", bolt.BoltMatFile.ToDBString).Replace("[MATNAME]", bolt.MatName.ToDBString).Replace("[MATVALUES]", bolt.MatValues.ToDBString).Replace("[ISBOLT]", "'True'").Replace("[INDEX]", Me.bolts.IndexOf(bolt).ToString))
+            tableNames.Add("tnxBolts")
+        Next
+
+        sqlLoader(queries, tableNames, tnxDS, ActiveDatabase, LogOnUser, 500, False)
+
+        If tnxDS.Tables.Contains("tnxMembers") Then
+            For Each member As DataRow In tnxDS.Tables("tnxMembers").Rows
+                Me.members(CInt(member.Item("Index"))).ID = DBtoNullableInt(member.Item("ID"))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxMaterials") Then
+            For Each material As DataRow In tnxDS.Tables("tnxMaterials").Rows
+                Me.materials(CInt(material.Item("Index"))).ID = DBtoNullableInt(material.Item("ID"))
+            Next
+        End If
+
+        If tnxDS.Tables.Contains("tnxBolts") Then
+            For Each bolt As DataRow In tnxDS.Tables("tnxBolts").Rows
+                Me.bolts(CInt(bolt.Item("Index"))).ID = DBtoNullableInt(bolt.Item("ID"))
+            Next
+        End If
+
+    End Sub
+
 End Class
 
 Partial Public Class tnxDatabaseFile
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _USName As String
     Private _SIName As String
@@ -8229,7 +9386,7 @@ Partial Public Class tnxDatabaseFile
 End Class
 
 Partial Public Class tnxMember
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _File As String
     Private _USName As String
@@ -8279,14 +9436,30 @@ Partial Public Class tnxMember
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.File = DBtoStr(data.Item("File"))
+        Me.USName = DBtoStr(data.Item("USName"))
+        Me.SIName = DBtoStr(data.Item("SIName"))
+        Me.values = DBtoStr(data.Item("Values"))
+
     End Sub
 #End Region
 
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString(Me.File.ToString)
+        insertString = insertString.AddtoDBString(Me.USName.ToString)
+        insertString = insertString.AddtoDBString(Me.SIName.ToString)
+        insertString = insertString.AddtoDBString(Me.values.ToString)
+
+        Return insertString
+    End Function
 End Class
 
 Partial Public Class tnxMaterial
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _MemberMatFile As String
     Private _MatName As String
@@ -8326,14 +9499,31 @@ Partial Public Class tnxMaterial
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.MemberMatFile = DBtoStr(data.Item("MemberMatFile"))
+        Me.MatName = DBtoStr(data.Item("MatName"))
+        Me.MatValues = DBtoStr(data.Item("MatValues"))
+
     End Sub
+
 #End Region
+
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString("False") 'IsBolt property
+        insertString = insertString.AddtoDBString(Me.MemberMatFile.ToString)
+        insertString = insertString.AddtoDBString(Me.MatName.ToString)
+        insertString = insertString.AddtoDBString(Me.MatValues.ToString)
+
+        Return insertString
+    End Function
 
 End Class
 
 Partial Public Class tnxBolt
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _BoltMatFile As String
     Private _MatName As String
@@ -8373,10 +9563,25 @@ Partial Public Class tnxBolt
     End Sub
 
     Public Sub New(data As DataRow)
-        'Do things
+
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.BoltMatFile = DBtoStr(data.Item("MemberMatFile"))
+        Me.MatName = DBtoStr(data.Item("MatName"))
+        Me.MatValues = DBtoStr(data.Item("MatValues"))
+
     End Sub
 #End Region
 
+    Public Function GenerateSQL() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString("True") 'IsBolt property
+        insertString = insertString.AddtoDBString(Me.BoltMatFile.ToString)
+        insertString = insertString.AddtoDBString(Me.MatName.ToString)
+        insertString = insertString.AddtoDBString(Me.MatValues.ToString)
+
+        Return insertString
+    End Function
 End Class
 
 #End Region
@@ -8475,7 +9680,7 @@ Partial Public Class tnxGeometry
             Me._TowerBaseFaceWidth = Value
         End Set
     End Property
-    <Category("TNX Geometry"), Description("Base Type - None, I-Beam, I-Beam Free, Taper, Taper-Free"), DisplayName("TowerTaper")>
+    <Category("TNX Geometry"), Description("Base Type - None, I - Beam, I - Beam Free, Taper, Taper - Free"), DisplayName("TowerTaper")>
     Public Property TowerTaper() As String
         Get
             Return Me._TowerTaper
@@ -8650,9 +9855,8 @@ Partial Public Class tnxGeometry
 
 End Class
 
-
 Partial Public Class tnxAntennaRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
     'upper structure
 #Region "Define"
     Private _AntennaRec As Integer?
@@ -11185,259 +12389,259 @@ Partial Public Class tnxAntennaRecord
 
     Public Sub New(data As DataRow)
 
-        Me.ID = CNullInt(data.Item("ID"))
-        Me.AntennaRec = CNullInt(data.Item("AntennaRec"))
-        Me.AntennaBraceType = CNullStr(data.Item("AntennaBraceType"))
-        Me.AntennaHeight = CNullDbl(data.Item("AntennaHeight"))
-        Me.AntennaDiagonalSpacing = CNullDbl(data.Item("AntennaDiagonalSpacing"))
-        Me.AntennaDiagonalSpacingEx = CNullDbl(data.Item("AntennaDiagonalSpacingEx"))
-        Me.AntennaNumSections = CNullInt(data.Item("AntennaNumSections"))
-        Me.AntennaNumSesctions = CNullInt(data.Item("AntennaNumSesctions"))
-        Me.AntennaSectionLength = CNullDbl(data.Item("AntennaSectionLength"))
-        Me.AntennaLegType = CNullStr(data.Item("AntennaLegType"))
-        Me.AntennaLegSize = CNullStr(data.Item("AntennaLegSize"))
-        Me.AntennaLegGrade = CNullDbl(data.Item("AntennaLegGrade"))
-        Me.AntennaLegMatlGrade = CNullStr(data.Item("AntennaLegMatlGrade"))
-        Me.AntennaDiagonalGrade = CNullDbl(data.Item("AntennaDiagonalGrade"))
-        Me.AntennaDiagonalMatlGrade = CNullStr(data.Item("AntennaDiagonalMatlGrade"))
-        Me.AntennaInnerBracingGrade = CNullDbl(data.Item("AntennaInnerBracingGrade"))
-        Me.AntennaInnerBracingMatlGrade = CNullStr(data.Item("AntennaInnerBracingMatlGrade"))
-        Me.AntennaTopGirtGrade = CNullDbl(data.Item("AntennaTopGirtGrade"))
-        Me.AntennaTopGirtMatlGrade = CNullStr(data.Item("AntennaTopGirtMatlGrade"))
-        Me.AntennaBotGirtGrade = CNullDbl(data.Item("AntennaBotGirtGrade"))
-        Me.AntennaBotGirtMatlGrade = CNullStr(data.Item("AntennaBotGirtMatlGrade"))
-        Me.AntennaInnerGirtGrade = CNullDbl(data.Item("AntennaInnerGirtGrade"))
-        Me.AntennaInnerGirtMatlGrade = CNullStr(data.Item("AntennaInnerGirtMatlGrade"))
-        Me.AntennaLongHorizontalGrade = CNullDbl(data.Item("AntennaLongHorizontalGrade"))
-        Me.AntennaLongHorizontalMatlGrade = CNullStr(data.Item("AntennaLongHorizontalMatlGrade"))
-        Me.AntennaShortHorizontalGrade = CNullDbl(data.Item("AntennaShortHorizontalGrade"))
-        Me.AntennaShortHorizontalMatlGrade = CNullStr(data.Item("AntennaShortHorizontalMatlGrade"))
-        Me.AntennaDiagonalType = CNullStr(data.Item("AntennaDiagonalType"))
-        Me.AntennaDiagonalSize = CNullStr(data.Item("AntennaDiagonalSize"))
-        Me.AntennaInnerBracingType = CNullStr(data.Item("AntennaInnerBracingType"))
-        Me.AntennaInnerBracingSize = CNullStr(data.Item("AntennaInnerBracingSize"))
-        Me.AntennaTopGirtType = CNullStr(data.Item("AntennaTopGirtType"))
-        Me.AntennaTopGirtSize = CNullStr(data.Item("AntennaTopGirtSize"))
-        Me.AntennaBotGirtType = CNullStr(data.Item("AntennaBotGirtType"))
-        Me.AntennaBotGirtSize = CNullStr(data.Item("AntennaBotGirtSize"))
-        Me.AntennaTopGirtOffset = CNullDbl(data.Item("AntennaTopGirtOffset"))
-        Me.AntennaBotGirtOffset = CNullDbl(data.Item("AntennaBotGirtOffset"))
-        Me.AntennaHasKBraceEndPanels = CNullBool(data.Item("AntennaHasKBraceEndPanels"))
-        Me.AntennaHasHorizontals = CNullBool(data.Item("AntennaHasHorizontals"))
-        Me.AntennaLongHorizontalType = CNullStr(data.Item("AntennaLongHorizontalType"))
-        Me.AntennaLongHorizontalSize = CNullStr(data.Item("AntennaLongHorizontalSize"))
-        Me.AntennaShortHorizontalType = CNullStr(data.Item("AntennaShortHorizontalType"))
-        Me.AntennaShortHorizontalSize = CNullStr(data.Item("AntennaShortHorizontalSize"))
-        Me.AntennaRedundantGrade = CNullDbl(data.Item("AntennaRedundantGrade"))
-        Me.AntennaRedundantMatlGrade = CNullStr(data.Item("AntennaRedundantMatlGrade"))
-        Me.AntennaRedundantType = CNullStr(data.Item("AntennaRedundantType"))
-        Me.AntennaRedundantDiagType = CNullStr(data.Item("AntennaRedundantDiagType"))
-        Me.AntennaRedundantSubDiagonalType = CNullStr(data.Item("AntennaRedundantSubDiagonalType"))
-        Me.AntennaRedundantSubHorizontalType = CNullStr(data.Item("AntennaRedundantSubHorizontalType"))
-        Me.AntennaRedundantVerticalType = CNullStr(data.Item("AntennaRedundantVerticalType"))
-        Me.AntennaRedundantHipType = CNullStr(data.Item("AntennaRedundantHipType"))
-        Me.AntennaRedundantHipDiagonalType = CNullStr(data.Item("AntennaRedundantHipDiagonalType"))
-        Me.AntennaRedundantHorizontalSize = CNullStr(data.Item("AntennaRedundantHorizontalSize"))
-        Me.AntennaRedundantHorizontalSize2 = CNullStr(data.Item("AntennaRedundantHorizontalSize2"))
-        Me.AntennaRedundantHorizontalSize3 = CNullStr(data.Item("AntennaRedundantHorizontalSize3"))
-        Me.AntennaRedundantHorizontalSize4 = CNullStr(data.Item("AntennaRedundantHorizontalSize4"))
-        Me.AntennaRedundantDiagonalSize = CNullStr(data.Item("AntennaRedundantDiagonalSize"))
-        Me.AntennaRedundantDiagonalSize2 = CNullStr(data.Item("AntennaRedundantDiagonalSize2"))
-        Me.AntennaRedundantDiagonalSize3 = CNullStr(data.Item("AntennaRedundantDiagonalSize3"))
-        Me.AntennaRedundantDiagonalSize4 = CNullStr(data.Item("AntennaRedundantDiagonalSize4"))
-        Me.AntennaRedundantSubHorizontalSize = CNullStr(data.Item("AntennaRedundantSubHorizontalSize"))
-        Me.AntennaRedundantSubDiagonalSize = CNullStr(data.Item("AntennaRedundantSubDiagonalSize"))
-        Me.AntennaSubDiagLocation = CNullDbl(data.Item("AntennaSubDiagLocation"))
-        Me.AntennaRedundantVerticalSize = CNullStr(data.Item("AntennaRedundantVerticalSize"))
-        Me.AntennaRedundantHipDiagonalSize = CNullStr(data.Item("AntennaRedundantHipDiagonalSize"))
-        Me.AntennaRedundantHipDiagonalSize2 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize2"))
-        Me.AntennaRedundantHipDiagonalSize3 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize3"))
-        Me.AntennaRedundantHipDiagonalSize4 = CNullStr(data.Item("AntennaRedundantHipDiagonalSize4"))
-        Me.AntennaRedundantHipSize = CNullStr(data.Item("AntennaRedundantHipSize"))
-        Me.AntennaRedundantHipSize2 = CNullStr(data.Item("AntennaRedundantHipSize2"))
-        Me.AntennaRedundantHipSize3 = CNullStr(data.Item("AntennaRedundantHipSize3"))
-        Me.AntennaRedundantHipSize4 = CNullStr(data.Item("AntennaRedundantHipSize4"))
-        Me.AntennaNumInnerGirts = CNullInt(data.Item("AntennaNumInnerGirts"))
-        Me.AntennaInnerGirtType = CNullStr(data.Item("AntennaInnerGirtType"))
-        Me.AntennaInnerGirtSize = CNullStr(data.Item("AntennaInnerGirtSize"))
-        Me.AntennaPoleShapeType = CNullStr(data.Item("AntennaPoleShapeType"))
-        Me.AntennaPoleSize = CNullStr(data.Item("AntennaPoleSize"))
-        Me.AntennaPoleGrade = CNullDbl(data.Item("AntennaPoleGrade"))
-        Me.AntennaPoleMatlGrade = CNullStr(data.Item("AntennaPoleMatlGrade"))
-        Me.AntennaPoleSpliceLength = CNullDbl(data.Item("AntennaPoleSpliceLength"))
-        Me.AntennaTaperPoleNumSides = CNullInt(data.Item("AntennaTaperPoleNumSides"))
-        Me.AntennaTaperPoleTopDiameter = CNullDbl(data.Item("AntennaTaperPoleTopDiameter"))
-        Me.AntennaTaperPoleBotDiameter = CNullDbl(data.Item("AntennaTaperPoleBotDiameter"))
-        Me.AntennaTaperPoleWallThickness = CNullDbl(data.Item("AntennaTaperPoleWallThickness"))
-        Me.AntennaTaperPoleBendRadius = CNullDbl(data.Item("AntennaTaperPoleBendRadius"))
-        Me.AntennaTaperPoleGrade = CNullDbl(data.Item("AntennaTaperPoleGrade"))
-        Me.AntennaTaperPoleMatlGrade = CNullStr(data.Item("AntennaTaperPoleMatlGrade"))
-        Me.AntennaSWMult = CNullDbl(data.Item("AntennaSWMult"))
-        Me.AntennaWPMult = CNullDbl(data.Item("AntennaWPMult"))
-        Me.AntennaAutoCalcKSingleAngle = CNullDbl(data.Item("AntennaAutoCalcKSingleAngle"))
-        Me.AntennaAutoCalcKSolidRound = CNullDbl(data.Item("AntennaAutoCalcKSolidRound"))
-        Me.AntennaAfGusset = CNullDbl(data.Item("AntennaAfGusset"))
-        Me.AntennaTfGusset = CNullDbl(data.Item("AntennaTfGusset"))
-        Me.AntennaGussetBoltEdgeDistance = CNullDbl(data.Item("AntennaGussetBoltEdgeDistance"))
-        Me.AntennaGussetGrade = CNullDbl(data.Item("AntennaGussetGrade"))
-        Me.AntennaGussetMatlGrade = CNullStr(data.Item("AntennaGussetMatlGrade"))
-        Me.AntennaAfMult = CNullDbl(data.Item("AntennaAfMult"))
-        Me.AntennaArMult = CNullDbl(data.Item("AntennaArMult"))
-        Me.AntennaFlatIPAPole = CNullDbl(data.Item("AntennaFlatIPAPole"))
-        Me.AntennaRoundIPAPole = CNullDbl(data.Item("AntennaRoundIPAPole"))
-        Me.AntennaFlatIPALeg = CNullDbl(data.Item("AntennaFlatIPALeg"))
-        Me.AntennaRoundIPALeg = CNullDbl(data.Item("AntennaRoundIPALeg"))
-        Me.AntennaFlatIPAHorizontal = CNullDbl(data.Item("AntennaFlatIPAHorizontal"))
-        Me.AntennaRoundIPAHorizontal = CNullDbl(data.Item("AntennaRoundIPAHorizontal"))
-        Me.AntennaFlatIPADiagonal = CNullDbl(data.Item("AntennaFlatIPADiagonal"))
-        Me.AntennaRoundIPADiagonal = CNullDbl(data.Item("AntennaRoundIPADiagonal"))
-        Me.AntennaCSA_S37_SpeedUpFactor = CNullDbl(data.Item("AntennaCSA_S37_SpeedUpFactor"))
-        Me.AntennaKLegs = CNullDbl(data.Item("AntennaKLegs"))
-        Me.AntennaKXBracedDiags = CNullDbl(data.Item("AntennaKXBracedDiags"))
-        Me.AntennaKKBracedDiags = CNullDbl(data.Item("AntennaKKBracedDiags"))
-        Me.AntennaKZBracedDiags = CNullDbl(data.Item("AntennaKZBracedDiags"))
-        Me.AntennaKHorzs = CNullDbl(data.Item("AntennaKHorzs"))
-        Me.AntennaKSecHorzs = CNullDbl(data.Item("AntennaKSecHorzs"))
-        Me.AntennaKGirts = CNullDbl(data.Item("AntennaKGirts"))
-        Me.AntennaKInners = CNullDbl(data.Item("AntennaKInners"))
-        Me.AntennaKXBracedDiagsY = CNullDbl(data.Item("AntennaKXBracedDiagsY"))
-        Me.AntennaKKBracedDiagsY = CNullDbl(data.Item("AntennaKKBracedDiagsY"))
-        Me.AntennaKZBracedDiagsY = CNullDbl(data.Item("AntennaKZBracedDiagsY"))
-        Me.AntennaKHorzsY = CNullDbl(data.Item("AntennaKHorzsY"))
-        Me.AntennaKSecHorzsY = CNullDbl(data.Item("AntennaKSecHorzsY"))
-        Me.AntennaKGirtsY = CNullDbl(data.Item("AntennaKGirtsY"))
-        Me.AntennaKInnersY = CNullDbl(data.Item("AntennaKInnersY"))
-        Me.AntennaKRedHorz = CNullDbl(data.Item("AntennaKRedHorz"))
-        Me.AntennaKRedDiag = CNullDbl(data.Item("AntennaKRedDiag"))
-        Me.AntennaKRedSubDiag = CNullDbl(data.Item("AntennaKRedSubDiag"))
-        Me.AntennaKRedSubHorz = CNullDbl(data.Item("AntennaKRedSubHorz"))
-        Me.AntennaKRedVert = CNullDbl(data.Item("AntennaKRedVert"))
-        Me.AntennaKRedHip = CNullDbl(data.Item("AntennaKRedHip"))
-        Me.AntennaKRedHipDiag = CNullDbl(data.Item("AntennaKRedHipDiag"))
-        Me.AntennaKTLX = CNullDbl(data.Item("AntennaKTLX"))
-        Me.AntennaKTLZ = CNullDbl(data.Item("AntennaKTLZ"))
-        Me.AntennaKTLLeg = CNullDbl(data.Item("AntennaKTLLeg"))
-        Me.AntennaInnerKTLX = CNullDbl(data.Item("AntennaInnerKTLX"))
-        Me.AntennaInnerKTLZ = CNullDbl(data.Item("AntennaInnerKTLZ"))
-        Me.AntennaInnerKTLLeg = CNullDbl(data.Item("AntennaInnerKTLLeg"))
-        Me.AntennaStitchBoltLocationHoriz = CNullStr(data.Item("AntennaStitchBoltLocationHoriz"))
-        Me.AntennaStitchBoltLocationDiag = CNullStr(data.Item("AntennaStitchBoltLocationDiag"))
-        Me.AntennaStitchSpacing = CNullDbl(data.Item("AntennaStitchSpacing"))
-        Me.AntennaStitchSpacingHorz = CNullDbl(data.Item("AntennaStitchSpacingHorz"))
-        Me.AntennaStitchSpacingDiag = CNullDbl(data.Item("AntennaStitchSpacingDiag"))
-        Me.AntennaStitchSpacingRed = CNullDbl(data.Item("AntennaStitchSpacingRed"))
-        Me.AntennaLegNetWidthDeduct = CNullDbl(data.Item("AntennaLegNetWidthDeduct"))
-        Me.AntennaLegUFactor = CNullDbl(data.Item("AntennaLegUFactor"))
-        Me.AntennaDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaDiagonalNetWidthDeduct"))
-        Me.AntennaTopGirtNetWidthDeduct = CNullDbl(data.Item("AntennaTopGirtNetWidthDeduct"))
-        Me.AntennaBotGirtNetWidthDeduct = CNullDbl(data.Item("AntennaBotGirtNetWidthDeduct"))
-        Me.AntennaInnerGirtNetWidthDeduct = CNullDbl(data.Item("AntennaInnerGirtNetWidthDeduct"))
-        Me.AntennaHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaHorizontalNetWidthDeduct"))
-        Me.AntennaShortHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaShortHorizontalNetWidthDeduct"))
-        Me.AntennaDiagonalUFactor = CNullDbl(data.Item("AntennaDiagonalUFactor"))
-        Me.AntennaTopGirtUFactor = CNullDbl(data.Item("AntennaTopGirtUFactor"))
-        Me.AntennaBotGirtUFactor = CNullDbl(data.Item("AntennaBotGirtUFactor"))
-        Me.AntennaInnerGirtUFactor = CNullDbl(data.Item("AntennaInnerGirtUFactor"))
-        Me.AntennaHorizontalUFactor = CNullDbl(data.Item("AntennaHorizontalUFactor"))
-        Me.AntennaShortHorizontalUFactor = CNullDbl(data.Item("AntennaShortHorizontalUFactor"))
-        Me.AntennaLegConnType = CNullStr(data.Item("AntennaLegConnType"))
-        Me.AntennaLegNumBolts = CNullInt(data.Item("AntennaLegNumBolts"))
-        Me.AntennaDiagonalNumBolts = CNullInt(data.Item("AntennaDiagonalNumBolts"))
-        Me.AntennaTopGirtNumBolts = CNullInt(data.Item("AntennaTopGirtNumBolts"))
-        Me.AntennaBotGirtNumBolts = CNullInt(data.Item("AntennaBotGirtNumBolts"))
-        Me.AntennaInnerGirtNumBolts = CNullInt(data.Item("AntennaInnerGirtNumBolts"))
-        Me.AntennaHorizontalNumBolts = CNullInt(data.Item("AntennaHorizontalNumBolts"))
-        Me.AntennaShortHorizontalNumBolts = CNullInt(data.Item("AntennaShortHorizontalNumBolts"))
-        Me.AntennaLegBoltGrade = CNullStr(data.Item("AntennaLegBoltGrade"))
-        Me.AntennaLegBoltSize = CNullDbl(data.Item("AntennaLegBoltSize"))
-        Me.AntennaDiagonalBoltGrade = CNullStr(data.Item("AntennaDiagonalBoltGrade"))
-        Me.AntennaDiagonalBoltSize = CNullDbl(data.Item("AntennaDiagonalBoltSize"))
-        Me.AntennaTopGirtBoltGrade = CNullStr(data.Item("AntennaTopGirtBoltGrade"))
-        Me.AntennaTopGirtBoltSize = CNullDbl(data.Item("AntennaTopGirtBoltSize"))
-        Me.AntennaBotGirtBoltGrade = CNullStr(data.Item("AntennaBotGirtBoltGrade"))
-        Me.AntennaBotGirtBoltSize = CNullDbl(data.Item("AntennaBotGirtBoltSize"))
-        Me.AntennaInnerGirtBoltGrade = CNullStr(data.Item("AntennaInnerGirtBoltGrade"))
-        Me.AntennaInnerGirtBoltSize = CNullDbl(data.Item("AntennaInnerGirtBoltSize"))
-        Me.AntennaHorizontalBoltGrade = CNullStr(data.Item("AntennaHorizontalBoltGrade"))
-        Me.AntennaHorizontalBoltSize = CNullDbl(data.Item("AntennaHorizontalBoltSize"))
-        Me.AntennaShortHorizontalBoltGrade = CNullStr(data.Item("AntennaShortHorizontalBoltGrade"))
-        Me.AntennaShortHorizontalBoltSize = CNullDbl(data.Item("AntennaShortHorizontalBoltSize"))
-        Me.AntennaLegBoltEdgeDistance = CNullDbl(data.Item("AntennaLegBoltEdgeDistance"))
-        Me.AntennaDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaDiagonalBoltEdgeDistance"))
-        Me.AntennaTopGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaTopGirtBoltEdgeDistance"))
-        Me.AntennaBotGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaBotGirtBoltEdgeDistance"))
-        Me.AntennaInnerGirtBoltEdgeDistance = CNullDbl(data.Item("AntennaInnerGirtBoltEdgeDistance"))
-        Me.AntennaHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaHorizontalBoltEdgeDistance"))
-        Me.AntennaShortHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaShortHorizontalBoltEdgeDistance"))
-        Me.AntennaDiagonalGageG1Distance = CNullDbl(data.Item("AntennaDiagonalGageG1Distance"))
-        Me.AntennaTopGirtGageG1Distance = CNullDbl(data.Item("AntennaTopGirtGageG1Distance"))
-        Me.AntennaBotGirtGageG1Distance = CNullDbl(data.Item("AntennaBotGirtGageG1Distance"))
-        Me.AntennaInnerGirtGageG1Distance = CNullDbl(data.Item("AntennaInnerGirtGageG1Distance"))
-        Me.AntennaHorizontalGageG1Distance = CNullDbl(data.Item("AntennaHorizontalGageG1Distance"))
-        Me.AntennaShortHorizontalGageG1Distance = CNullDbl(data.Item("AntennaShortHorizontalGageG1Distance"))
-        Me.AntennaRedundantHorizontalBoltGrade = CNullStr(data.Item("AntennaRedundantHorizontalBoltGrade"))
-        Me.AntennaRedundantHorizontalBoltSize = CNullDbl(data.Item("AntennaRedundantHorizontalBoltSize"))
-        Me.AntennaRedundantHorizontalNumBolts = CNullInt(data.Item("AntennaRedundantHorizontalNumBolts"))
-        Me.AntennaRedundantHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance"))
-        Me.AntennaRedundantHorizontalGageG1Distance = CNullDbl(data.Item("AntennaRedundantHorizontalGageG1Distance"))
-        Me.AntennaRedundantHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct"))
-        Me.AntennaRedundantHorizontalUFactor = CNullDbl(data.Item("AntennaRedundantHorizontalUFactor"))
-        Me.AntennaRedundantDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantDiagonalBoltGrade"))
-        Me.AntennaRedundantDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantDiagonalBoltSize"))
-        Me.AntennaRedundantDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantDiagonalNumBolts"))
-        Me.AntennaRedundantDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantDiagonalGageG1Distance"))
-        Me.AntennaRedundantDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantDiagonalUFactor"))
-        Me.AntennaRedundantSubDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantSubDiagonalBoltGrade"))
-        Me.AntennaRedundantSubDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantSubDiagonalBoltSize"))
-        Me.AntennaRedundantSubDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantSubDiagonalNumBolts"))
-        Me.AntennaRedundantSubDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantSubDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantSubDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantSubDiagonalGageG1Distance"))
-        Me.AntennaRedundantSubDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantSubDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantSubDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantSubDiagonalUFactor"))
-        Me.AntennaRedundantSubHorizontalBoltGrade = CNullStr(data.Item("AntennaRedundantSubHorizontalBoltGrade"))
-        Me.AntennaRedundantSubHorizontalBoltSize = CNullDbl(data.Item("AntennaRedundantSubHorizontalBoltSize"))
-        Me.AntennaRedundantSubHorizontalNumBolts = CNullInt(data.Item("AntennaRedundantSubHorizontalNumBolts"))
-        Me.AntennaRedundantSubHorizontalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantSubHorizontalBoltEdgeDistance"))
-        Me.AntennaRedundantSubHorizontalGageG1Distance = CNullDbl(data.Item("AntennaRedundantSubHorizontalGageG1Distance"))
-        Me.AntennaRedundantSubHorizontalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantSubHorizontalNetWidthDeduct"))
-        Me.AntennaRedundantSubHorizontalUFactor = CNullDbl(data.Item("AntennaRedundantSubHorizontalUFactor"))
-        Me.AntennaRedundantVerticalBoltGrade = CNullStr(data.Item("AntennaRedundantVerticalBoltGrade"))
-        Me.AntennaRedundantVerticalBoltSize = CNullDbl(data.Item("AntennaRedundantVerticalBoltSize"))
-        Me.AntennaRedundantVerticalNumBolts = CNullInt(data.Item("AntennaRedundantVerticalNumBolts"))
-        Me.AntennaRedundantVerticalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantVerticalBoltEdgeDistance"))
-        Me.AntennaRedundantVerticalGageG1Distance = CNullDbl(data.Item("AntennaRedundantVerticalGageG1Distance"))
-        Me.AntennaRedundantVerticalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantVerticalNetWidthDeduct"))
-        Me.AntennaRedundantVerticalUFactor = CNullDbl(data.Item("AntennaRedundantVerticalUFactor"))
-        Me.AntennaRedundantHipBoltGrade = CNullStr(data.Item("AntennaRedundantHipBoltGrade"))
-        Me.AntennaRedundantHipBoltSize = CNullDbl(data.Item("AntennaRedundantHipBoltSize"))
-        Me.AntennaRedundantHipNumBolts = CNullInt(data.Item("AntennaRedundantHipNumBolts"))
-        Me.AntennaRedundantHipBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHipBoltEdgeDistance"))
-        Me.AntennaRedundantHipGageG1Distance = CNullDbl(data.Item("AntennaRedundantHipGageG1Distance"))
-        Me.AntennaRedundantHipNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHipNetWidthDeduct"))
-        Me.AntennaRedundantHipUFactor = CNullDbl(data.Item("AntennaRedundantHipUFactor"))
-        Me.AntennaRedundantHipDiagonalBoltGrade = CNullStr(data.Item("AntennaRedundantHipDiagonalBoltGrade"))
-        Me.AntennaRedundantHipDiagonalBoltSize = CNullDbl(data.Item("AntennaRedundantHipDiagonalBoltSize"))
-        Me.AntennaRedundantHipDiagonalNumBolts = CNullInt(data.Item("AntennaRedundantHipDiagonalNumBolts"))
-        Me.AntennaRedundantHipDiagonalBoltEdgeDistance = CNullDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantHipDiagonalGageG1Distance = CNullDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance"))
-        Me.AntennaRedundantHipDiagonalNetWidthDeduct = CNullDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantHipDiagonalUFactor = CNullDbl(data.Item("AntennaRedundantHipDiagonalUFactor"))
-        Me.AntennaDiagonalOutOfPlaneRestraint = CNullBool(data.Item("AntennaDiagonalOutOfPlaneRestraint"))
-        Me.AntennaTopGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaTopGirtOutOfPlaneRestraint"))
-        Me.AntennaBottomGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaBottomGirtOutOfPlaneRestraint"))
-        Me.AntennaMidGirtOutOfPlaneRestraint = CNullBool(data.Item("AntennaMidGirtOutOfPlaneRestraint"))
-        Me.AntennaHorizontalOutOfPlaneRestraint = CNullBool(data.Item("AntennaHorizontalOutOfPlaneRestraint"))
-        Me.AntennaSecondaryHorizontalOutOfPlaneRestraint = CNullBool(data.Item("AntennaSecondaryHorizontalOutOfPlaneRestraint"))
-        Me.AntennaDiagOffsetNEY = CNullDbl(data.Item("AntennaDiagOffsetNEY"))
-        Me.AntennaDiagOffsetNEX = CNullDbl(data.Item("AntennaDiagOffsetNEX"))
-        Me.AntennaDiagOffsetPEY = CNullDbl(data.Item("AntennaDiagOffsetPEY"))
-        Me.AntennaDiagOffsetPEX = CNullDbl(data.Item("AntennaDiagOffsetPEX"))
-        Me.AntennaKbraceOffsetNEY = CNullDbl(data.Item("AntennaKbraceOffsetNEY"))
-        Me.AntennaKbraceOffsetNEX = CNullDbl(data.Item("AntennaKbraceOffsetNEX"))
-        Me.AntennaKbraceOffsetPEY = CNullDbl(data.Item("AntennaKbraceOffsetPEY"))
-        Me.AntennaKbraceOffsetPEX = CNullDbl(data.Item("AntennaKbraceOffsetPEX"))
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.AntennaRec = DBtoNullableInt(data.Item("AntennaRec"))
+        Me.AntennaBraceType = DBtoStr(data.Item("AntennaBraceType"))
+        Me.AntennaHeight = DBtoNullableDbl(data.Item("AntennaHeight"))
+        Me.AntennaDiagonalSpacing = DBtoNullableDbl(data.Item("AntennaDiagonalSpacing"))
+        Me.AntennaDiagonalSpacingEx = DBtoNullableDbl(data.Item("AntennaDiagonalSpacingEx"))
+        Me.AntennaNumSections = DBtoNullableInt(data.Item("AntennaNumSections"))
+        Me.AntennaNumSesctions = DBtoNullableInt(data.Item("AntennaNumSesctions"))
+        Me.AntennaSectionLength = DBtoNullableDbl(data.Item("AntennaSectionLength"))
+        Me.AntennaLegType = DBtoStr(data.Item("AntennaLegType"))
+        Me.AntennaLegSize = DBtoStr(data.Item("AntennaLegSize"))
+        Me.AntennaLegGrade = DBtoNullableDbl(data.Item("AntennaLegGrade"))
+        Me.AntennaLegMatlGrade = DBtoStr(data.Item("AntennaLegMatlGrade"))
+        Me.AntennaDiagonalGrade = DBtoNullableDbl(data.Item("AntennaDiagonalGrade"))
+        Me.AntennaDiagonalMatlGrade = DBtoStr(data.Item("AntennaDiagonalMatlGrade"))
+        Me.AntennaInnerBracingGrade = DBtoNullableDbl(data.Item("AntennaInnerBracingGrade"))
+        Me.AntennaInnerBracingMatlGrade = DBtoStr(data.Item("AntennaInnerBracingMatlGrade"))
+        Me.AntennaTopGirtGrade = DBtoNullableDbl(data.Item("AntennaTopGirtGrade"))
+        Me.AntennaTopGirtMatlGrade = DBtoStr(data.Item("AntennaTopGirtMatlGrade"))
+        Me.AntennaBotGirtGrade = DBtoNullableDbl(data.Item("AntennaBotGirtGrade"))
+        Me.AntennaBotGirtMatlGrade = DBtoStr(data.Item("AntennaBotGirtMatlGrade"))
+        Me.AntennaInnerGirtGrade = DBtoNullableDbl(data.Item("AntennaInnerGirtGrade"))
+        Me.AntennaInnerGirtMatlGrade = DBtoStr(data.Item("AntennaInnerGirtMatlGrade"))
+        Me.AntennaLongHorizontalGrade = DBtoNullableDbl(data.Item("AntennaLongHorizontalGrade"))
+        Me.AntennaLongHorizontalMatlGrade = DBtoStr(data.Item("AntennaLongHorizontalMatlGrade"))
+        Me.AntennaShortHorizontalGrade = DBtoNullableDbl(data.Item("AntennaShortHorizontalGrade"))
+        Me.AntennaShortHorizontalMatlGrade = DBtoStr(data.Item("AntennaShortHorizontalMatlGrade"))
+        Me.AntennaDiagonalType = DBtoStr(data.Item("AntennaDiagonalType"))
+        Me.AntennaDiagonalSize = DBtoStr(data.Item("AntennaDiagonalSize"))
+        Me.AntennaInnerBracingType = DBtoStr(data.Item("AntennaInnerBracingType"))
+        Me.AntennaInnerBracingSize = DBtoStr(data.Item("AntennaInnerBracingSize"))
+        Me.AntennaTopGirtType = DBtoStr(data.Item("AntennaTopGirtType"))
+        Me.AntennaTopGirtSize = DBtoStr(data.Item("AntennaTopGirtSize"))
+        Me.AntennaBotGirtType = DBtoStr(data.Item("AntennaBotGirtType"))
+        Me.AntennaBotGirtSize = DBtoStr(data.Item("AntennaBotGirtSize"))
+        Me.AntennaTopGirtOffset = DBtoNullableDbl(data.Item("AntennaTopGirtOffset"))
+        Me.AntennaBotGirtOffset = DBtoNullableDbl(data.Item("AntennaBotGirtOffset"))
+        Me.AntennaHasKBraceEndPanels = DBtoNullableBool(data.Item("AntennaHasKBraceEndPanels"))
+        Me.AntennaHasHorizontals = DBtoNullableBool(data.Item("AntennaHasHorizontals"))
+        Me.AntennaLongHorizontalType = DBtoStr(data.Item("AntennaLongHorizontalType"))
+        Me.AntennaLongHorizontalSize = DBtoStr(data.Item("AntennaLongHorizontalSize"))
+        Me.AntennaShortHorizontalType = DBtoStr(data.Item("AntennaShortHorizontalType"))
+        Me.AntennaShortHorizontalSize = DBtoStr(data.Item("AntennaShortHorizontalSize"))
+        Me.AntennaRedundantGrade = DBtoNullableDbl(data.Item("AntennaRedundantGrade"))
+        Me.AntennaRedundantMatlGrade = DBtoStr(data.Item("AntennaRedundantMatlGrade"))
+        Me.AntennaRedundantType = DBtoStr(data.Item("AntennaRedundantType"))
+        Me.AntennaRedundantDiagType = DBtoStr(data.Item("AntennaRedundantDiagType"))
+        Me.AntennaRedundantSubDiagonalType = DBtoStr(data.Item("AntennaRedundantSubDiagonalType"))
+        Me.AntennaRedundantSubHorizontalType = DBtoStr(data.Item("AntennaRedundantSubHorizontalType"))
+        Me.AntennaRedundantVerticalType = DBtoStr(data.Item("AntennaRedundantVerticalType"))
+        Me.AntennaRedundantHipType = DBtoStr(data.Item("AntennaRedundantHipType"))
+        Me.AntennaRedundantHipDiagonalType = DBtoStr(data.Item("AntennaRedundantHipDiagonalType"))
+        Me.AntennaRedundantHorizontalSize = DBtoStr(data.Item("AntennaRedundantHorizontalSize"))
+        Me.AntennaRedundantHorizontalSize2 = DBtoStr(data.Item("AntennaRedundantHorizontalSize2"))
+        Me.AntennaRedundantHorizontalSize3 = DBtoStr(data.Item("AntennaRedundantHorizontalSize3"))
+        Me.AntennaRedundantHorizontalSize4 = DBtoStr(data.Item("AntennaRedundantHorizontalSize4"))
+        Me.AntennaRedundantDiagonalSize = DBtoStr(data.Item("AntennaRedundantDiagonalSize"))
+        Me.AntennaRedundantDiagonalSize2 = DBtoStr(data.Item("AntennaRedundantDiagonalSize2"))
+        Me.AntennaRedundantDiagonalSize3 = DBtoStr(data.Item("AntennaRedundantDiagonalSize3"))
+        Me.AntennaRedundantDiagonalSize4 = DBtoStr(data.Item("AntennaRedundantDiagonalSize4"))
+        Me.AntennaRedundantSubHorizontalSize = DBtoStr(data.Item("AntennaRedundantSubHorizontalSize"))
+        Me.AntennaRedundantSubDiagonalSize = DBtoStr(data.Item("AntennaRedundantSubDiagonalSize"))
+        Me.AntennaSubDiagLocation = DBtoNullableDbl(data.Item("AntennaSubDiagLocation"))
+        Me.AntennaRedundantVerticalSize = DBtoStr(data.Item("AntennaRedundantVerticalSize"))
+        Me.AntennaRedundantHipDiagonalSize = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize"))
+        Me.AntennaRedundantHipDiagonalSize2 = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize2"))
+        Me.AntennaRedundantHipDiagonalSize3 = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize3"))
+        Me.AntennaRedundantHipDiagonalSize4 = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize4"))
+        Me.AntennaRedundantHipSize = DBtoStr(data.Item("AntennaRedundantHipSize"))
+        Me.AntennaRedundantHipSize2 = DBtoStr(data.Item("AntennaRedundantHipSize2"))
+        Me.AntennaRedundantHipSize3 = DBtoStr(data.Item("AntennaRedundantHipSize3"))
+        Me.AntennaRedundantHipSize4 = DBtoStr(data.Item("AntennaRedundantHipSize4"))
+        Me.AntennaNumInnerGirts = DBtoNullableInt(data.Item("AntennaNumInnerGirts"))
+        Me.AntennaInnerGirtType = DBtoStr(data.Item("AntennaInnerGirtType"))
+        Me.AntennaInnerGirtSize = DBtoStr(data.Item("AntennaInnerGirtSize"))
+        Me.AntennaPoleShapeType = DBtoStr(data.Item("AntennaPoleShapeType"))
+        Me.AntennaPoleSize = DBtoStr(data.Item("AntennaPoleSize"))
+        Me.AntennaPoleGrade = DBtoNullableDbl(data.Item("AntennaPoleGrade"))
+        Me.AntennaPoleMatlGrade = DBtoStr(data.Item("AntennaPoleMatlGrade"))
+        Me.AntennaPoleSpliceLength = DBtoNullableDbl(data.Item("AntennaPoleSpliceLength"))
+        Me.AntennaTaperPoleNumSides = DBtoNullableInt(data.Item("AntennaTaperPoleNumSides"))
+        Me.AntennaTaperPoleTopDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleTopDiameter"))
+        Me.AntennaTaperPoleBotDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleBotDiameter"))
+        Me.AntennaTaperPoleWallThickness = DBtoNullableDbl(data.Item("AntennaTaperPoleWallThickness"))
+        Me.AntennaTaperPoleBendRadius = DBtoNullableDbl(data.Item("AntennaTaperPoleBendRadius"))
+        Me.AntennaTaperPoleGrade = DBtoNullableDbl(data.Item("AntennaTaperPoleGrade"))
+        Me.AntennaTaperPoleMatlGrade = DBtoStr(data.Item("AntennaTaperPoleMatlGrade"))
+        Me.AntennaSWMult = DBtoNullableDbl(data.Item("AntennaSWMult"))
+        Me.AntennaWPMult = DBtoNullableDbl(data.Item("AntennaWPMult"))
+        Me.AntennaAutoCalcKSingleAngle = DBtoNullableDbl(data.Item("AntennaAutoCalcKSingleAngle"))
+        Me.AntennaAutoCalcKSolidRound = DBtoNullableDbl(data.Item("AntennaAutoCalcKSolidRound"))
+        Me.AntennaAfGusset = DBtoNullableDbl(data.Item("AntennaAfGusset"))
+        Me.AntennaTfGusset = DBtoNullableDbl(data.Item("AntennaTfGusset"))
+        Me.AntennaGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaGussetBoltEdgeDistance"))
+        Me.AntennaGussetGrade = DBtoNullableDbl(data.Item("AntennaGussetGrade"))
+        Me.AntennaGussetMatlGrade = DBtoStr(data.Item("AntennaGussetMatlGrade"))
+        Me.AntennaAfMult = DBtoNullableDbl(data.Item("AntennaAfMult"))
+        Me.AntennaArMult = DBtoNullableDbl(data.Item("AntennaArMult"))
+        Me.AntennaFlatIPAPole = DBtoNullableDbl(data.Item("AntennaFlatIPAPole"))
+        Me.AntennaRoundIPAPole = DBtoNullableDbl(data.Item("AntennaRoundIPAPole"))
+        Me.AntennaFlatIPALeg = DBtoNullableDbl(data.Item("AntennaFlatIPALeg"))
+        Me.AntennaRoundIPALeg = DBtoNullableDbl(data.Item("AntennaRoundIPALeg"))
+        Me.AntennaFlatIPAHorizontal = DBtoNullableDbl(data.Item("AntennaFlatIPAHorizontal"))
+        Me.AntennaRoundIPAHorizontal = DBtoNullableDbl(data.Item("AntennaRoundIPAHorizontal"))
+        Me.AntennaFlatIPADiagonal = DBtoNullableDbl(data.Item("AntennaFlatIPADiagonal"))
+        Me.AntennaRoundIPADiagonal = DBtoNullableDbl(data.Item("AntennaRoundIPADiagonal"))
+        Me.AntennaCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("AntennaCSA_S37_SpeedUpFactor"))
+        Me.AntennaKLegs = DBtoNullableDbl(data.Item("AntennaKLegs"))
+        Me.AntennaKXBracedDiags = DBtoNullableDbl(data.Item("AntennaKXBracedDiags"))
+        Me.AntennaKKBracedDiags = DBtoNullableDbl(data.Item("AntennaKKBracedDiags"))
+        Me.AntennaKZBracedDiags = DBtoNullableDbl(data.Item("AntennaKZBracedDiags"))
+        Me.AntennaKHorzs = DBtoNullableDbl(data.Item("AntennaKHorzs"))
+        Me.AntennaKSecHorzs = DBtoNullableDbl(data.Item("AntennaKSecHorzs"))
+        Me.AntennaKGirts = DBtoNullableDbl(data.Item("AntennaKGirts"))
+        Me.AntennaKInners = DBtoNullableDbl(data.Item("AntennaKInners"))
+        Me.AntennaKXBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKXBracedDiagsY"))
+        Me.AntennaKKBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKKBracedDiagsY"))
+        Me.AntennaKZBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKZBracedDiagsY"))
+        Me.AntennaKHorzsY = DBtoNullableDbl(data.Item("AntennaKHorzsY"))
+        Me.AntennaKSecHorzsY = DBtoNullableDbl(data.Item("AntennaKSecHorzsY"))
+        Me.AntennaKGirtsY = DBtoNullableDbl(data.Item("AntennaKGirtsY"))
+        Me.AntennaKInnersY = DBtoNullableDbl(data.Item("AntennaKInnersY"))
+        Me.AntennaKRedHorz = DBtoNullableDbl(data.Item("AntennaKRedHorz"))
+        Me.AntennaKRedDiag = DBtoNullableDbl(data.Item("AntennaKRedDiag"))
+        Me.AntennaKRedSubDiag = DBtoNullableDbl(data.Item("AntennaKRedSubDiag"))
+        Me.AntennaKRedSubHorz = DBtoNullableDbl(data.Item("AntennaKRedSubHorz"))
+        Me.AntennaKRedVert = DBtoNullableDbl(data.Item("AntennaKRedVert"))
+        Me.AntennaKRedHip = DBtoNullableDbl(data.Item("AntennaKRedHip"))
+        Me.AntennaKRedHipDiag = DBtoNullableDbl(data.Item("AntennaKRedHipDiag"))
+        Me.AntennaKTLX = DBtoNullableDbl(data.Item("AntennaKTLX"))
+        Me.AntennaKTLZ = DBtoNullableDbl(data.Item("AntennaKTLZ"))
+        Me.AntennaKTLLeg = DBtoNullableDbl(data.Item("AntennaKTLLeg"))
+        Me.AntennaInnerKTLX = DBtoNullableDbl(data.Item("AntennaInnerKTLX"))
+        Me.AntennaInnerKTLZ = DBtoNullableDbl(data.Item("AntennaInnerKTLZ"))
+        Me.AntennaInnerKTLLeg = DBtoNullableDbl(data.Item("AntennaInnerKTLLeg"))
+        Me.AntennaStitchBoltLocationHoriz = DBtoStr(data.Item("AntennaStitchBoltLocationHoriz"))
+        Me.AntennaStitchBoltLocationDiag = DBtoStr(data.Item("AntennaStitchBoltLocationDiag"))
+        Me.AntennaStitchSpacing = DBtoNullableDbl(data.Item("AntennaStitchSpacing"))
+        Me.AntennaStitchSpacingHorz = DBtoNullableDbl(data.Item("AntennaStitchSpacingHorz"))
+        Me.AntennaStitchSpacingDiag = DBtoNullableDbl(data.Item("AntennaStitchSpacingDiag"))
+        Me.AntennaStitchSpacingRed = DBtoNullableDbl(data.Item("AntennaStitchSpacingRed"))
+        Me.AntennaLegNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaLegNetWidthDeduct"))
+        Me.AntennaLegUFactor = DBtoNullableDbl(data.Item("AntennaLegUFactor"))
+        Me.AntennaDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaDiagonalNetWidthDeduct"))
+        Me.AntennaTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaTopGirtNetWidthDeduct"))
+        Me.AntennaBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaBotGirtNetWidthDeduct"))
+        Me.AntennaInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaInnerGirtNetWidthDeduct"))
+        Me.AntennaHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaHorizontalNetWidthDeduct"))
+        Me.AntennaShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaShortHorizontalNetWidthDeduct"))
+        Me.AntennaDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaDiagonalUFactor"))
+        Me.AntennaTopGirtUFactor = DBtoNullableDbl(data.Item("AntennaTopGirtUFactor"))
+        Me.AntennaBotGirtUFactor = DBtoNullableDbl(data.Item("AntennaBotGirtUFactor"))
+        Me.AntennaInnerGirtUFactor = DBtoNullableDbl(data.Item("AntennaInnerGirtUFactor"))
+        Me.AntennaHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaHorizontalUFactor"))
+        Me.AntennaShortHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaShortHorizontalUFactor"))
+        Me.AntennaLegConnType = DBtoStr(data.Item("AntennaLegConnType"))
+        Me.AntennaLegNumBolts = DBtoNullableInt(data.Item("AntennaLegNumBolts"))
+        Me.AntennaDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaDiagonalNumBolts"))
+        Me.AntennaTopGirtNumBolts = DBtoNullableInt(data.Item("AntennaTopGirtNumBolts"))
+        Me.AntennaBotGirtNumBolts = DBtoNullableInt(data.Item("AntennaBotGirtNumBolts"))
+        Me.AntennaInnerGirtNumBolts = DBtoNullableInt(data.Item("AntennaInnerGirtNumBolts"))
+        Me.AntennaHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaHorizontalNumBolts"))
+        Me.AntennaShortHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaShortHorizontalNumBolts"))
+        Me.AntennaLegBoltGrade = DBtoStr(data.Item("AntennaLegBoltGrade"))
+        Me.AntennaLegBoltSize = DBtoNullableDbl(data.Item("AntennaLegBoltSize"))
+        Me.AntennaDiagonalBoltGrade = DBtoStr(data.Item("AntennaDiagonalBoltGrade"))
+        Me.AntennaDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaDiagonalBoltSize"))
+        Me.AntennaTopGirtBoltGrade = DBtoStr(data.Item("AntennaTopGirtBoltGrade"))
+        Me.AntennaTopGirtBoltSize = DBtoNullableDbl(data.Item("AntennaTopGirtBoltSize"))
+        Me.AntennaBotGirtBoltGrade = DBtoStr(data.Item("AntennaBotGirtBoltGrade"))
+        Me.AntennaBotGirtBoltSize = DBtoNullableDbl(data.Item("AntennaBotGirtBoltSize"))
+        Me.AntennaInnerGirtBoltGrade = DBtoStr(data.Item("AntennaInnerGirtBoltGrade"))
+        Me.AntennaInnerGirtBoltSize = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltSize"))
+        Me.AntennaHorizontalBoltGrade = DBtoStr(data.Item("AntennaHorizontalBoltGrade"))
+        Me.AntennaHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaHorizontalBoltSize"))
+        Me.AntennaShortHorizontalBoltGrade = DBtoStr(data.Item("AntennaShortHorizontalBoltGrade"))
+        Me.AntennaShortHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltSize"))
+        Me.AntennaLegBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaLegBoltEdgeDistance"))
+        Me.AntennaDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaDiagonalBoltEdgeDistance"))
+        Me.AntennaTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaTopGirtBoltEdgeDistance"))
+        Me.AntennaBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaBotGirtBoltEdgeDistance"))
+        Me.AntennaInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltEdgeDistance"))
+        Me.AntennaHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaHorizontalBoltEdgeDistance"))
+        Me.AntennaShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltEdgeDistance"))
+        Me.AntennaDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaDiagonalGageG1Distance"))
+        Me.AntennaTopGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaTopGirtGageG1Distance"))
+        Me.AntennaBotGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaBotGirtGageG1Distance"))
+        Me.AntennaInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaInnerGirtGageG1Distance"))
+        Me.AntennaHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaHorizontalGageG1Distance"))
+        Me.AntennaShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaShortHorizontalGageG1Distance"))
+        Me.AntennaRedundantHorizontalBoltGrade = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade"))
+        Me.AntennaRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize"))
+        Me.AntennaRedundantHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance"))
+        Me.AntennaRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance"))
+        Me.AntennaRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct"))
+        Me.AntennaRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor"))
+        Me.AntennaRedundantDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade"))
+        Me.AntennaRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize"))
+        Me.AntennaRedundantDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance"))
+        Me.AntennaRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor"))
+        Me.AntennaRedundantSubDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantSubDiagonalBoltGrade"))
+        Me.AntennaRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltSize"))
+        Me.AntennaRedundantSubDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantSubDiagonalNumBolts"))
+        Me.AntennaRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalGageG1Distance"))
+        Me.AntennaRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalUFactor"))
+        Me.AntennaRedundantSubHorizontalBoltGrade = DBtoStr(data.Item("AntennaRedundantSubHorizontalBoltGrade"))
+        Me.AntennaRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltSize"))
+        Me.AntennaRedundantSubHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantSubHorizontalNumBolts"))
+        Me.AntennaRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltEdgeDistance"))
+        Me.AntennaRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalGageG1Distance"))
+        Me.AntennaRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalNetWidthDeduct"))
+        Me.AntennaRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalUFactor"))
+        Me.AntennaRedundantVerticalBoltGrade = DBtoStr(data.Item("AntennaRedundantVerticalBoltGrade"))
+        Me.AntennaRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltSize"))
+        Me.AntennaRedundantVerticalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantVerticalNumBolts"))
+        Me.AntennaRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltEdgeDistance"))
+        Me.AntennaRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalGageG1Distance"))
+        Me.AntennaRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantVerticalNetWidthDeduct"))
+        Me.AntennaRedundantVerticalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantVerticalUFactor"))
+        Me.AntennaRedundantHipBoltGrade = DBtoStr(data.Item("AntennaRedundantHipBoltGrade"))
+        Me.AntennaRedundantHipBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize"))
+        Me.AntennaRedundantHipNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts"))
+        Me.AntennaRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance"))
+        Me.AntennaRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance"))
+        Me.AntennaRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct"))
+        Me.AntennaRedundantHipUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor"))
+        Me.AntennaRedundantHipDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade"))
+        Me.AntennaRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize"))
+        Me.AntennaRedundantHipDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance"))
+        Me.AntennaRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance"))
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct"))
+        Me.AntennaRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor"))
+        Me.AntennaDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaDiagonalOutOfPlaneRestraint"))
+        Me.AntennaTopGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaTopGirtOutOfPlaneRestraint"))
+        Me.AntennaBottomGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaBottomGirtOutOfPlaneRestraint"))
+        Me.AntennaMidGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaMidGirtOutOfPlaneRestraint"))
+        Me.AntennaHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaHorizontalOutOfPlaneRestraint"))
+        Me.AntennaSecondaryHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaSecondaryHorizontalOutOfPlaneRestraint"))
+        Me.AntennaDiagOffsetNEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEY"))
+        Me.AntennaDiagOffsetNEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEX"))
+        Me.AntennaDiagOffsetPEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEY"))
+        Me.AntennaDiagOffsetPEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEX"))
+        Me.AntennaKbraceOffsetNEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEY"))
+        Me.AntennaKbraceOffsetNEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEX"))
+        Me.AntennaKbraceOffsetPEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEY"))
+        Me.AntennaKbraceOffsetPEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEX"))
 
     End Sub
 #End Region
@@ -11702,10 +12906,16 @@ Partial Public Class tnxAntennaRecord
         Return insertString
     End Function
 
+    Public Function GetIdentity() As String
+
+        Return "Upper Section: " & Me.AntennaRec.ToString
+
+    End Function
+
 End Class
 
 Partial Public Class tnxTowerRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
     'base structure
 #Region "Define"
     Private _TowerRec As Integer?
@@ -14168,252 +15378,252 @@ Partial Public Class tnxTowerRecord
 
     Public Sub New(data As DataRow)
 
-        Me.ID = CNullInt(data.Item("ID"))
-        Me.TowerRec = CNullInt(data.Item("TowerRec"))
-        Me.TowerDatabase = CNullStr(data.Item("TowerDatabase"))
-        Me.TowerName = CNullStr(data.Item("TowerName"))
-        Me.TowerHeight = CNullDbl(data.Item("TowerHeight"))
-        Me.TowerFaceWidth = CNullDbl(data.Item("TowerFaceWidth"))
-        Me.TowerNumSections = CNullInt(data.Item("TowerNumSections"))
-        Me.TowerSectionLength = CNullDbl(data.Item("TowerSectionLength"))
-        Me.TowerDiagonalSpacing = CNullDbl(data.Item("TowerDiagonalSpacing"))
-        Me.TowerDiagonalSpacingEx = CNullDbl(data.Item("TowerDiagonalSpacingEx"))
-        Me.TowerBraceType = CNullStr(data.Item("TowerBraceType"))
-        Me.TowerFaceBevel = CNullDbl(data.Item("TowerFaceBevel"))
-        Me.TowerTopGirtOffset = CNullDbl(data.Item("TowerTopGirtOffset"))
-        Me.TowerBotGirtOffset = CNullDbl(data.Item("TowerBotGirtOffset"))
-        Me.TowerHasKBraceEndPanels = CNullBool(data.Item("TowerHasKBraceEndPanels"))
-        Me.TowerHasHorizontals = CNullBool(data.Item("TowerHasHorizontals"))
-        Me.TowerLegType = CNullStr(data.Item("TowerLegType"))
-        Me.TowerLegSize = CNullStr(data.Item("TowerLegSize"))
-        Me.TowerLegGrade = CNullDbl(data.Item("TowerLegGrade"))
-        Me.TowerLegMatlGrade = CNullStr(data.Item("TowerLegMatlGrade"))
-        Me.TowerDiagonalGrade = CNullDbl(data.Item("TowerDiagonalGrade"))
-        Me.TowerDiagonalMatlGrade = CNullStr(data.Item("TowerDiagonalMatlGrade"))
-        Me.TowerInnerBracingGrade = CNullDbl(data.Item("TowerInnerBracingGrade"))
-        Me.TowerInnerBracingMatlGrade = CNullStr(data.Item("TowerInnerBracingMatlGrade"))
-        Me.TowerTopGirtGrade = CNullDbl(data.Item("TowerTopGirtGrade"))
-        Me.TowerTopGirtMatlGrade = CNullStr(data.Item("TowerTopGirtMatlGrade"))
-        Me.TowerBotGirtGrade = CNullDbl(data.Item("TowerBotGirtGrade"))
-        Me.TowerBotGirtMatlGrade = CNullStr(data.Item("TowerBotGirtMatlGrade"))
-        Me.TowerInnerGirtGrade = CNullDbl(data.Item("TowerInnerGirtGrade"))
-        Me.TowerInnerGirtMatlGrade = CNullStr(data.Item("TowerInnerGirtMatlGrade"))
-        Me.TowerLongHorizontalGrade = CNullDbl(data.Item("TowerLongHorizontalGrade"))
-        Me.TowerLongHorizontalMatlGrade = CNullStr(data.Item("TowerLongHorizontalMatlGrade"))
-        Me.TowerShortHorizontalGrade = CNullDbl(data.Item("TowerShortHorizontalGrade"))
-        Me.TowerShortHorizontalMatlGrade = CNullStr(data.Item("TowerShortHorizontalMatlGrade"))
-        Me.TowerDiagonalType = CNullStr(data.Item("TowerDiagonalType"))
-        Me.TowerDiagonalSize = CNullStr(data.Item("TowerDiagonalSize"))
-        Me.TowerInnerBracingType = CNullStr(data.Item("TowerInnerBracingType"))
-        Me.TowerInnerBracingSize = CNullStr(data.Item("TowerInnerBracingSize"))
-        Me.TowerTopGirtType = CNullStr(data.Item("TowerTopGirtType"))
-        Me.TowerTopGirtSize = CNullStr(data.Item("TowerTopGirtSize"))
-        Me.TowerBotGirtType = CNullStr(data.Item("TowerBotGirtType"))
-        Me.TowerBotGirtSize = CNullStr(data.Item("TowerBotGirtSize"))
-        Me.TowerNumInnerGirts = CNullInt(data.Item("TowerNumInnerGirts"))
-        Me.TowerInnerGirtType = CNullStr(data.Item("TowerInnerGirtType"))
-        Me.TowerInnerGirtSize = CNullStr(data.Item("TowerInnerGirtSize"))
-        Me.TowerLongHorizontalType = CNullStr(data.Item("TowerLongHorizontalType"))
-        Me.TowerLongHorizontalSize = CNullStr(data.Item("TowerLongHorizontalSize"))
-        Me.TowerShortHorizontalType = CNullStr(data.Item("TowerShortHorizontalType"))
-        Me.TowerShortHorizontalSize = CNullStr(data.Item("TowerShortHorizontalSize"))
-        Me.TowerRedundantGrade = CNullDbl(data.Item("TowerRedundantGrade"))
-        Me.TowerRedundantMatlGrade = CNullStr(data.Item("TowerRedundantMatlGrade"))
-        Me.TowerRedundantType = CNullStr(data.Item("TowerRedundantType"))
-        Me.TowerRedundantDiagType = CNullStr(data.Item("TowerRedundantDiagType"))
-        Me.TowerRedundantSubDiagonalType = CNullStr(data.Item("TowerRedundantSubDiagonalType"))
-        Me.TowerRedundantSubHorizontalType = CNullStr(data.Item("TowerRedundantSubHorizontalType"))
-        Me.TowerRedundantVerticalType = CNullStr(data.Item("TowerRedundantVerticalType"))
-        Me.TowerRedundantHipType = CNullStr(data.Item("TowerRedundantHipType"))
-        Me.TowerRedundantHipDiagonalType = CNullStr(data.Item("TowerRedundantHipDiagonalType"))
-        Me.TowerRedundantHorizontalSize = CNullStr(data.Item("TowerRedundantHorizontalSize"))
-        Me.TowerRedundantHorizontalSize2 = CNullStr(data.Item("TowerRedundantHorizontalSize2"))
-        Me.TowerRedundantHorizontalSize3 = CNullStr(data.Item("TowerRedundantHorizontalSize3"))
-        Me.TowerRedundantHorizontalSize4 = CNullStr(data.Item("TowerRedundantHorizontalSize4"))
-        Me.TowerRedundantDiagonalSize = CNullStr(data.Item("TowerRedundantDiagonalSize"))
-        Me.TowerRedundantDiagonalSize2 = CNullStr(data.Item("TowerRedundantDiagonalSize2"))
-        Me.TowerRedundantDiagonalSize3 = CNullStr(data.Item("TowerRedundantDiagonalSize3"))
-        Me.TowerRedundantDiagonalSize4 = CNullStr(data.Item("TowerRedundantDiagonalSize4"))
-        Me.TowerRedundantSubHorizontalSize = CNullStr(data.Item("TowerRedundantSubHorizontalSize"))
-        Me.TowerRedundantSubDiagonalSize = CNullStr(data.Item("TowerRedundantSubDiagonalSize"))
-        Me.TowerSubDiagLocation = CNullDbl(data.Item("TowerSubDiagLocation"))
-        Me.TowerRedundantVerticalSize = CNullStr(data.Item("TowerRedundantVerticalSize"))
-        Me.TowerRedundantHipSize = CNullStr(data.Item("TowerRedundantHipSize"))
-        Me.TowerRedundantHipSize2 = CNullStr(data.Item("TowerRedundantHipSize2"))
-        Me.TowerRedundantHipSize3 = CNullStr(data.Item("TowerRedundantHipSize3"))
-        Me.TowerRedundantHipSize4 = CNullStr(data.Item("TowerRedundantHipSize4"))
-        Me.TowerRedundantHipDiagonalSize = CNullStr(data.Item("TowerRedundantHipDiagonalSize"))
-        Me.TowerRedundantHipDiagonalSize2 = CNullStr(data.Item("TowerRedundantHipDiagonalSize2"))
-        Me.TowerRedundantHipDiagonalSize3 = CNullStr(data.Item("TowerRedundantHipDiagonalSize3"))
-        Me.TowerRedundantHipDiagonalSize4 = CNullStr(data.Item("TowerRedundantHipDiagonalSize4"))
-        Me.TowerSWMult = CNullDbl(data.Item("TowerSWMult"))
-        Me.TowerWPMult = CNullDbl(data.Item("TowerWPMult"))
-        Me.TowerAutoCalcKSingleAngle = CNullBool(data.Item("TowerAutoCalcKSingleAngle"))
-        Me.TowerAutoCalcKSolidRound = CNullBool(data.Item("TowerAutoCalcKSolidRound"))
-        Me.TowerAfGusset = CNullDbl(data.Item("TowerAfGusset"))
-        Me.TowerTfGusset = CNullDbl(data.Item("TowerTfGusset"))
-        Me.TowerGussetBoltEdgeDistance = CNullDbl(data.Item("TowerGussetBoltEdgeDistance"))
-        Me.TowerGussetGrade = CNullDbl(data.Item("TowerGussetGrade"))
-        Me.TowerGussetMatlGrade = CNullStr(data.Item("TowerGussetMatlGrade"))
-        Me.TowerAfMult = CNullDbl(data.Item("TowerAfMult"))
-        Me.TowerArMult = CNullDbl(data.Item("TowerArMult"))
-        Me.TowerFlatIPAPole = CNullDbl(data.Item("TowerFlatIPAPole"))
-        Me.TowerRoundIPAPole = CNullDbl(data.Item("TowerRoundIPAPole"))
-        Me.TowerFlatIPALeg = CNullDbl(data.Item("TowerFlatIPALeg"))
-        Me.TowerRoundIPALeg = CNullDbl(data.Item("TowerRoundIPALeg"))
-        Me.TowerFlatIPAHorizontal = CNullDbl(data.Item("TowerFlatIPAHorizontal"))
-        Me.TowerRoundIPAHorizontal = CNullDbl(data.Item("TowerRoundIPAHorizontal"))
-        Me.TowerFlatIPADiagonal = CNullDbl(data.Item("TowerFlatIPADiagonal"))
-        Me.TowerRoundIPADiagonal = CNullDbl(data.Item("TowerRoundIPADiagonal"))
-        Me.TowerCSA_S37_SpeedUpFactor = CNullDbl(data.Item("TowerCSA_S37_SpeedUpFactor"))
-        Me.TowerKLegs = CNullDbl(data.Item("TowerKLegs"))
-        Me.TowerKXBracedDiags = CNullDbl(data.Item("TowerKXBracedDiags"))
-        Me.TowerKKBracedDiags = CNullDbl(data.Item("TowerKKBracedDiags"))
-        Me.TowerKZBracedDiags = CNullDbl(data.Item("TowerKZBracedDiags"))
-        Me.TowerKHorzs = CNullDbl(data.Item("TowerKHorzs"))
-        Me.TowerKSecHorzs = CNullDbl(data.Item("TowerKSecHorzs"))
-        Me.TowerKGirts = CNullDbl(data.Item("TowerKGirts"))
-        Me.TowerKInners = CNullDbl(data.Item("TowerKInners"))
-        Me.TowerKXBracedDiagsY = CNullDbl(data.Item("TowerKXBracedDiagsY"))
-        Me.TowerKKBracedDiagsY = CNullDbl(data.Item("TowerKKBracedDiagsY"))
-        Me.TowerKZBracedDiagsY = CNullDbl(data.Item("TowerKZBracedDiagsY"))
-        Me.TowerKHorzsY = CNullDbl(data.Item("TowerKHorzsY"))
-        Me.TowerKSecHorzsY = CNullDbl(data.Item("TowerKSecHorzsY"))
-        Me.TowerKGirtsY = CNullDbl(data.Item("TowerKGirtsY"))
-        Me.TowerKInnersY = CNullDbl(data.Item("TowerKInnersY"))
-        Me.TowerKRedHorz = CNullDbl(data.Item("TowerKRedHorz"))
-        Me.TowerKRedDiag = CNullDbl(data.Item("TowerKRedDiag"))
-        Me.TowerKRedSubDiag = CNullDbl(data.Item("TowerKRedSubDiag"))
-        Me.TowerKRedSubHorz = CNullDbl(data.Item("TowerKRedSubHorz"))
-        Me.TowerKRedVert = CNullDbl(data.Item("TowerKRedVert"))
-        Me.TowerKRedHip = CNullDbl(data.Item("TowerKRedHip"))
-        Me.TowerKRedHipDiag = CNullDbl(data.Item("TowerKRedHipDiag"))
-        Me.TowerKTLX = CNullDbl(data.Item("TowerKTLX"))
-        Me.TowerKTLZ = CNullDbl(data.Item("TowerKTLZ"))
-        Me.TowerKTLLeg = CNullDbl(data.Item("TowerKTLLeg"))
-        Me.TowerInnerKTLX = CNullDbl(data.Item("TowerInnerKTLX"))
-        Me.TowerInnerKTLZ = CNullDbl(data.Item("TowerInnerKTLZ"))
-        Me.TowerInnerKTLLeg = CNullDbl(data.Item("TowerInnerKTLLeg"))
-        Me.TowerStitchBoltLocationHoriz = CNullStr(data.Item("TowerStitchBoltLocationHoriz"))
-        Me.TowerStitchBoltLocationDiag = CNullStr(data.Item("TowerStitchBoltLocationDiag"))
-        Me.TowerStitchBoltLocationRed = CNullStr(data.Item("TowerStitchBoltLocationRed"))
-        Me.TowerStitchSpacing = CNullDbl(data.Item("TowerStitchSpacing"))
-        Me.TowerStitchSpacingDiag = CNullDbl(data.Item("TowerStitchSpacingDiag"))
-        Me.TowerStitchSpacingHorz = CNullDbl(data.Item("TowerStitchSpacingHorz"))
-        Me.TowerStitchSpacingRed = CNullDbl(data.Item("TowerStitchSpacingRed"))
-        Me.TowerLegNetWidthDeduct = CNullDbl(data.Item("TowerLegNetWidthDeduct"))
-        Me.TowerLegUFactor = CNullDbl(data.Item("TowerLegUFactor"))
-        Me.TowerDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerDiagonalNetWidthDeduct"))
-        Me.TowerTopGirtNetWidthDeduct = CNullDbl(data.Item("TowerTopGirtNetWidthDeduct"))
-        Me.TowerBotGirtNetWidthDeduct = CNullDbl(data.Item("TowerBotGirtNetWidthDeduct"))
-        Me.TowerInnerGirtNetWidthDeduct = CNullDbl(data.Item("TowerInnerGirtNetWidthDeduct"))
-        Me.TowerHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerHorizontalNetWidthDeduct"))
-        Me.TowerShortHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerShortHorizontalNetWidthDeduct"))
-        Me.TowerDiagonalUFactor = CNullDbl(data.Item("TowerDiagonalUFactor"))
-        Me.TowerTopGirtUFactor = CNullDbl(data.Item("TowerTopGirtUFactor"))
-        Me.TowerBotGirtUFactor = CNullDbl(data.Item("TowerBotGirtUFactor"))
-        Me.TowerInnerGirtUFactor = CNullDbl(data.Item("TowerInnerGirtUFactor"))
-        Me.TowerHorizontalUFactor = CNullDbl(data.Item("TowerHorizontalUFactor"))
-        Me.TowerShortHorizontalUFactor = CNullDbl(data.Item("TowerShortHorizontalUFactor"))
-        Me.TowerLegConnType = CNullStr(data.Item("TowerLegConnType"))
-        Me.TowerLegNumBolts = CNullInt(data.Item("TowerLegNumBolts"))
-        Me.TowerDiagonalNumBolts = CNullInt(data.Item("TowerDiagonalNumBolts"))
-        Me.TowerTopGirtNumBolts = CNullInt(data.Item("TowerTopGirtNumBolts"))
-        Me.TowerBotGirtNumBolts = CNullInt(data.Item("TowerBotGirtNumBolts"))
-        Me.TowerInnerGirtNumBolts = CNullInt(data.Item("TowerInnerGirtNumBolts"))
-        Me.TowerHorizontalNumBolts = CNullInt(data.Item("TowerHorizontalNumBolts"))
-        Me.TowerShortHorizontalNumBolts = CNullInt(data.Item("TowerShortHorizontalNumBolts"))
-        Me.TowerLegBoltGrade = CNullStr(data.Item("TowerLegBoltGrade"))
-        Me.TowerLegBoltSize = CNullDbl(data.Item("TowerLegBoltSize"))
-        Me.TowerDiagonalBoltGrade = CNullStr(data.Item("TowerDiagonalBoltGrade"))
-        Me.TowerDiagonalBoltSize = CNullDbl(data.Item("TowerDiagonalBoltSize"))
-        Me.TowerTopGirtBoltGrade = CNullStr(data.Item("TowerTopGirtBoltGrade"))
-        Me.TowerTopGirtBoltSize = CNullDbl(data.Item("TowerTopGirtBoltSize"))
-        Me.TowerBotGirtBoltGrade = CNullStr(data.Item("TowerBotGirtBoltGrade"))
-        Me.TowerBotGirtBoltSize = CNullDbl(data.Item("TowerBotGirtBoltSize"))
-        Me.TowerInnerGirtBoltGrade = CNullStr(data.Item("TowerInnerGirtBoltGrade"))
-        Me.TowerInnerGirtBoltSize = CNullDbl(data.Item("TowerInnerGirtBoltSize"))
-        Me.TowerHorizontalBoltGrade = CNullStr(data.Item("TowerHorizontalBoltGrade"))
-        Me.TowerHorizontalBoltSize = CNullDbl(data.Item("TowerHorizontalBoltSize"))
-        Me.TowerShortHorizontalBoltGrade = CNullStr(data.Item("TowerShortHorizontalBoltGrade"))
-        Me.TowerShortHorizontalBoltSize = CNullDbl(data.Item("TowerShortHorizontalBoltSize"))
-        Me.TowerLegBoltEdgeDistance = CNullDbl(data.Item("TowerLegBoltEdgeDistance"))
-        Me.TowerDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerDiagonalBoltEdgeDistance"))
-        Me.TowerTopGirtBoltEdgeDistance = CNullDbl(data.Item("TowerTopGirtBoltEdgeDistance"))
-        Me.TowerBotGirtBoltEdgeDistance = CNullDbl(data.Item("TowerBotGirtBoltEdgeDistance"))
-        Me.TowerInnerGirtBoltEdgeDistance = CNullDbl(data.Item("TowerInnerGirtBoltEdgeDistance"))
-        Me.TowerHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerHorizontalBoltEdgeDistance"))
-        Me.TowerShortHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerShortHorizontalBoltEdgeDistance"))
-        Me.TowerDiagonalGageG1Distance = CNullDbl(data.Item("TowerDiagonalGageG1Distance"))
-        Me.TowerTopGirtGageG1Distance = CNullDbl(data.Item("TowerTopGirtGageG1Distance"))
-        Me.TowerBotGirtGageG1Distance = CNullDbl(data.Item("TowerBotGirtGageG1Distance"))
-        Me.TowerInnerGirtGageG1Distance = CNullDbl(data.Item("TowerInnerGirtGageG1Distance"))
-        Me.TowerHorizontalGageG1Distance = CNullDbl(data.Item("TowerHorizontalGageG1Distance"))
-        Me.TowerShortHorizontalGageG1Distance = CNullDbl(data.Item("TowerShortHorizontalGageG1Distance"))
-        Me.TowerRedundantHorizontalBoltGrade = CNullStr(data.Item("TowerRedundantHorizontalBoltGrade"))
-        Me.TowerRedundantHorizontalBoltSize = CNullDbl(data.Item("TowerRedundantHorizontalBoltSize"))
-        Me.TowerRedundantHorizontalNumBolts = CNullInt(data.Item("TowerRedundantHorizontalNumBolts"))
-        Me.TowerRedundantHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance"))
-        Me.TowerRedundantHorizontalGageG1Distance = CNullDbl(data.Item("TowerRedundantHorizontalGageG1Distance"))
-        Me.TowerRedundantHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct"))
-        Me.TowerRedundantHorizontalUFactor = CNullDbl(data.Item("TowerRedundantHorizontalUFactor"))
-        Me.TowerRedundantDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantDiagonalBoltGrade"))
-        Me.TowerRedundantDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantDiagonalBoltSize"))
-        Me.TowerRedundantDiagonalNumBolts = CNullInt(data.Item("TowerRedundantDiagonalNumBolts"))
-        Me.TowerRedundantDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantDiagonalGageG1Distance"))
-        Me.TowerRedundantDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct"))
-        Me.TowerRedundantDiagonalUFactor = CNullDbl(data.Item("TowerRedundantDiagonalUFactor"))
-        Me.TowerRedundantSubDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantSubDiagonalBoltGrade"))
-        Me.TowerRedundantSubDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantSubDiagonalBoltSize"))
-        Me.TowerRedundantSubDiagonalNumBolts = CNullInt(data.Item("TowerRedundantSubDiagonalNumBolts"))
-        Me.TowerRedundantSubDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantSubDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantSubDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantSubDiagonalGageG1Distance"))
-        Me.TowerRedundantSubDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantSubDiagonalNetWidthDeduct"))
-        Me.TowerRedundantSubDiagonalUFactor = CNullDbl(data.Item("TowerRedundantSubDiagonalUFactor"))
-        Me.TowerRedundantSubHorizontalBoltGrade = CNullStr(data.Item("TowerRedundantSubHorizontalBoltGrade"))
-        Me.TowerRedundantSubHorizontalBoltSize = CNullDbl(data.Item("TowerRedundantSubHorizontalBoltSize"))
-        Me.TowerRedundantSubHorizontalNumBolts = CNullInt(data.Item("TowerRedundantSubHorizontalNumBolts"))
-        Me.TowerRedundantSubHorizontalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantSubHorizontalBoltEdgeDistance"))
-        Me.TowerRedundantSubHorizontalGageG1Distance = CNullDbl(data.Item("TowerRedundantSubHorizontalGageG1Distance"))
-        Me.TowerRedundantSubHorizontalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantSubHorizontalNetWidthDeduct"))
-        Me.TowerRedundantSubHorizontalUFactor = CNullDbl(data.Item("TowerRedundantSubHorizontalUFactor"))
-        Me.TowerRedundantVerticalBoltGrade = CNullStr(data.Item("TowerRedundantVerticalBoltGrade"))
-        Me.TowerRedundantVerticalBoltSize = CNullDbl(data.Item("TowerRedundantVerticalBoltSize"))
-        Me.TowerRedundantVerticalNumBolts = CNullInt(data.Item("TowerRedundantVerticalNumBolts"))
-        Me.TowerRedundantVerticalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantVerticalBoltEdgeDistance"))
-        Me.TowerRedundantVerticalGageG1Distance = CNullDbl(data.Item("TowerRedundantVerticalGageG1Distance"))
-        Me.TowerRedundantVerticalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantVerticalNetWidthDeduct"))
-        Me.TowerRedundantVerticalUFactor = CNullDbl(data.Item("TowerRedundantVerticalUFactor"))
-        Me.TowerRedundantHipBoltGrade = CNullStr(data.Item("TowerRedundantHipBoltGrade"))
-        Me.TowerRedundantHipBoltSize = CNullDbl(data.Item("TowerRedundantHipBoltSize"))
-        Me.TowerRedundantHipNumBolts = CNullInt(data.Item("TowerRedundantHipNumBolts"))
-        Me.TowerRedundantHipBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHipBoltEdgeDistance"))
-        Me.TowerRedundantHipGageG1Distance = CNullDbl(data.Item("TowerRedundantHipGageG1Distance"))
-        Me.TowerRedundantHipNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHipNetWidthDeduct"))
-        Me.TowerRedundantHipUFactor = CNullDbl(data.Item("TowerRedundantHipUFactor"))
-        Me.TowerRedundantHipDiagonalBoltGrade = CNullStr(data.Item("TowerRedundantHipDiagonalBoltGrade"))
-        Me.TowerRedundantHipDiagonalBoltSize = CNullDbl(data.Item("TowerRedundantHipDiagonalBoltSize"))
-        Me.TowerRedundantHipDiagonalNumBolts = CNullInt(data.Item("TowerRedundantHipDiagonalNumBolts"))
-        Me.TowerRedundantHipDiagonalBoltEdgeDistance = CNullDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantHipDiagonalGageG1Distance = CNullDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance"))
-        Me.TowerRedundantHipDiagonalNetWidthDeduct = CNullDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct"))
-        Me.TowerRedundantHipDiagonalUFactor = CNullDbl(data.Item("TowerRedundantHipDiagonalUFactor"))
-        Me.TowerDiagonalOutOfPlaneRestraint = CNullBool(data.Item("TowerDiagonalOutOfPlaneRestraint"))
-        Me.TowerTopGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerTopGirtOutOfPlaneRestraint"))
-        Me.TowerBottomGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerBottomGirtOutOfPlaneRestraint"))
-        Me.TowerMidGirtOutOfPlaneRestraint = CNullBool(data.Item("TowerMidGirtOutOfPlaneRestraint"))
-        Me.TowerHorizontalOutOfPlaneRestraint = CNullBool(data.Item("TowerHorizontalOutOfPlaneRestraint"))
-        Me.TowerSecondaryHorizontalOutOfPlaneRestraint = CNullBool(data.Item("TowerSecondaryHorizontalOutOfPlaneRestraint"))
-        Me.TowerUniqueFlag = CNullInt(data.Item("TowerUniqueFlag"))
-        Me.TowerDiagOffsetNEY = CNullDbl(data.Item("TowerDiagOffsetNEY"))
-        Me.TowerDiagOffsetNEX = CNullDbl(data.Item("TowerDiagOffsetNEX"))
-        Me.TowerDiagOffsetPEY = CNullDbl(data.Item("TowerDiagOffsetPEY"))
-        Me.TowerDiagOffsetPEX = CNullDbl(data.Item("TowerDiagOffsetPEX"))
-        Me.TowerKbraceOffsetNEY = CNullDbl(data.Item("TowerKbraceOffsetNEY"))
-        Me.TowerKbraceOffsetNEX = CNullDbl(data.Item("TowerKbraceOffsetNEX"))
-        Me.TowerKbraceOffsetPEY = CNullDbl(data.Item("TowerKbraceOffsetPEY"))
-        Me.TowerKbraceOffsetPEX = CNullDbl(data.Item("TowerKbraceOffsetPEX"))
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.TowerRec = DBtoNullableInt(data.Item("TowerRec"))
+        Me.TowerDatabase = DBtoStr(data.Item("TowerDatabase"))
+        Me.TowerName = DBtoStr(data.Item("TowerName"))
+        Me.TowerHeight = DBtoNullableDbl(data.Item("TowerHeight"))
+        Me.TowerFaceWidth = DBtoNullableDbl(data.Item("TowerFaceWidth"))
+        Me.TowerNumSections = DBtoNullableInt(data.Item("TowerNumSections"))
+        Me.TowerSectionLength = DBtoNullableDbl(data.Item("TowerSectionLength"))
+        Me.TowerDiagonalSpacing = DBtoNullableDbl(data.Item("TowerDiagonalSpacing"))
+        Me.TowerDiagonalSpacingEx = DBtoNullableDbl(data.Item("TowerDiagonalSpacingEx"))
+        Me.TowerBraceType = DBtoStr(data.Item("TowerBraceType"))
+        Me.TowerFaceBevel = DBtoNullableDbl(data.Item("TowerFaceBevel"))
+        Me.TowerTopGirtOffset = DBtoNullableDbl(data.Item("TowerTopGirtOffset"))
+        Me.TowerBotGirtOffset = DBtoNullableDbl(data.Item("TowerBotGirtOffset"))
+        Me.TowerHasKBraceEndPanels = DBtoNullableBool(data.Item("TowerHasKBraceEndPanels"))
+        Me.TowerHasHorizontals = DBtoNullableBool(data.Item("TowerHasHorizontals"))
+        Me.TowerLegType = DBtoStr(data.Item("TowerLegType"))
+        Me.TowerLegSize = DBtoStr(data.Item("TowerLegSize"))
+        Me.TowerLegGrade = DBtoNullableDbl(data.Item("TowerLegGrade"))
+        Me.TowerLegMatlGrade = DBtoStr(data.Item("TowerLegMatlGrade"))
+        Me.TowerDiagonalGrade = DBtoNullableDbl(data.Item("TowerDiagonalGrade"))
+        Me.TowerDiagonalMatlGrade = DBtoStr(data.Item("TowerDiagonalMatlGrade"))
+        Me.TowerInnerBracingGrade = DBtoNullableDbl(data.Item("TowerInnerBracingGrade"))
+        Me.TowerInnerBracingMatlGrade = DBtoStr(data.Item("TowerInnerBracingMatlGrade"))
+        Me.TowerTopGirtGrade = DBtoNullableDbl(data.Item("TowerTopGirtGrade"))
+        Me.TowerTopGirtMatlGrade = DBtoStr(data.Item("TowerTopGirtMatlGrade"))
+        Me.TowerBotGirtGrade = DBtoNullableDbl(data.Item("TowerBotGirtGrade"))
+        Me.TowerBotGirtMatlGrade = DBtoStr(data.Item("TowerBotGirtMatlGrade"))
+        Me.TowerInnerGirtGrade = DBtoNullableDbl(data.Item("TowerInnerGirtGrade"))
+        Me.TowerInnerGirtMatlGrade = DBtoStr(data.Item("TowerInnerGirtMatlGrade"))
+        Me.TowerLongHorizontalGrade = DBtoNullableDbl(data.Item("TowerLongHorizontalGrade"))
+        Me.TowerLongHorizontalMatlGrade = DBtoStr(data.Item("TowerLongHorizontalMatlGrade"))
+        Me.TowerShortHorizontalGrade = DBtoNullableDbl(data.Item("TowerShortHorizontalGrade"))
+        Me.TowerShortHorizontalMatlGrade = DBtoStr(data.Item("TowerShortHorizontalMatlGrade"))
+        Me.TowerDiagonalType = DBtoStr(data.Item("TowerDiagonalType"))
+        Me.TowerDiagonalSize = DBtoStr(data.Item("TowerDiagonalSize"))
+        Me.TowerInnerBracingType = DBtoStr(data.Item("TowerInnerBracingType"))
+        Me.TowerInnerBracingSize = DBtoStr(data.Item("TowerInnerBracingSize"))
+        Me.TowerTopGirtType = DBtoStr(data.Item("TowerTopGirtType"))
+        Me.TowerTopGirtSize = DBtoStr(data.Item("TowerTopGirtSize"))
+        Me.TowerBotGirtType = DBtoStr(data.Item("TowerBotGirtType"))
+        Me.TowerBotGirtSize = DBtoStr(data.Item("TowerBotGirtSize"))
+        Me.TowerNumInnerGirts = DBtoNullableInt(data.Item("TowerNumInnerGirts"))
+        Me.TowerInnerGirtType = DBtoStr(data.Item("TowerInnerGirtType"))
+        Me.TowerInnerGirtSize = DBtoStr(data.Item("TowerInnerGirtSize"))
+        Me.TowerLongHorizontalType = DBtoStr(data.Item("TowerLongHorizontalType"))
+        Me.TowerLongHorizontalSize = DBtoStr(data.Item("TowerLongHorizontalSize"))
+        Me.TowerShortHorizontalType = DBtoStr(data.Item("TowerShortHorizontalType"))
+        Me.TowerShortHorizontalSize = DBtoStr(data.Item("TowerShortHorizontalSize"))
+        Me.TowerRedundantGrade = DBtoNullableDbl(data.Item("TowerRedundantGrade"))
+        Me.TowerRedundantMatlGrade = DBtoStr(data.Item("TowerRedundantMatlGrade"))
+        Me.TowerRedundantType = DBtoStr(data.Item("TowerRedundantType"))
+        Me.TowerRedundantDiagType = DBtoStr(data.Item("TowerRedundantDiagType"))
+        Me.TowerRedundantSubDiagonalType = DBtoStr(data.Item("TowerRedundantSubDiagonalType"))
+        Me.TowerRedundantSubHorizontalType = DBtoStr(data.Item("TowerRedundantSubHorizontalType"))
+        Me.TowerRedundantVerticalType = DBtoStr(data.Item("TowerRedundantVerticalType"))
+        Me.TowerRedundantHipType = DBtoStr(data.Item("TowerRedundantHipType"))
+        Me.TowerRedundantHipDiagonalType = DBtoStr(data.Item("TowerRedundantHipDiagonalType"))
+        Me.TowerRedundantHorizontalSize = DBtoStr(data.Item("TowerRedundantHorizontalSize"))
+        Me.TowerRedundantHorizontalSize2 = DBtoStr(data.Item("TowerRedundantHorizontalSize2"))
+        Me.TowerRedundantHorizontalSize3 = DBtoStr(data.Item("TowerRedundantHorizontalSize3"))
+        Me.TowerRedundantHorizontalSize4 = DBtoStr(data.Item("TowerRedundantHorizontalSize4"))
+        Me.TowerRedundantDiagonalSize = DBtoStr(data.Item("TowerRedundantDiagonalSize"))
+        Me.TowerRedundantDiagonalSize2 = DBtoStr(data.Item("TowerRedundantDiagonalSize2"))
+        Me.TowerRedundantDiagonalSize3 = DBtoStr(data.Item("TowerRedundantDiagonalSize3"))
+        Me.TowerRedundantDiagonalSize4 = DBtoStr(data.Item("TowerRedundantDiagonalSize4"))
+        Me.TowerRedundantSubHorizontalSize = DBtoStr(data.Item("TowerRedundantSubHorizontalSize"))
+        Me.TowerRedundantSubDiagonalSize = DBtoStr(data.Item("TowerRedundantSubDiagonalSize"))
+        Me.TowerSubDiagLocation = DBtoNullableDbl(data.Item("TowerSubDiagLocation"))
+        Me.TowerRedundantVerticalSize = DBtoStr(data.Item("TowerRedundantVerticalSize"))
+        Me.TowerRedundantHipSize = DBtoStr(data.Item("TowerRedundantHipSize"))
+        Me.TowerRedundantHipSize2 = DBtoStr(data.Item("TowerRedundantHipSize2"))
+        Me.TowerRedundantHipSize3 = DBtoStr(data.Item("TowerRedundantHipSize3"))
+        Me.TowerRedundantHipSize4 = DBtoStr(data.Item("TowerRedundantHipSize4"))
+        Me.TowerRedundantHipDiagonalSize = DBtoStr(data.Item("TowerRedundantHipDiagonalSize"))
+        Me.TowerRedundantHipDiagonalSize2 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize2"))
+        Me.TowerRedundantHipDiagonalSize3 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize3"))
+        Me.TowerRedundantHipDiagonalSize4 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize4"))
+        Me.TowerSWMult = DBtoNullableDbl(data.Item("TowerSWMult"))
+        Me.TowerWPMult = DBtoNullableDbl(data.Item("TowerWPMult"))
+        Me.TowerAutoCalcKSingleAngle = DBtoNullableBool(data.Item("TowerAutoCalcKSingleAngle"))
+        Me.TowerAutoCalcKSolidRound = DBtoNullableBool(data.Item("TowerAutoCalcKSolidRound"))
+        Me.TowerAfGusset = DBtoNullableDbl(data.Item("TowerAfGusset"))
+        Me.TowerTfGusset = DBtoNullableDbl(data.Item("TowerTfGusset"))
+        Me.TowerGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerGussetBoltEdgeDistance"))
+        Me.TowerGussetGrade = DBtoNullableDbl(data.Item("TowerGussetGrade"))
+        Me.TowerGussetMatlGrade = DBtoStr(data.Item("TowerGussetMatlGrade"))
+        Me.TowerAfMult = DBtoNullableDbl(data.Item("TowerAfMult"))
+        Me.TowerArMult = DBtoNullableDbl(data.Item("TowerArMult"))
+        Me.TowerFlatIPAPole = DBtoNullableDbl(data.Item("TowerFlatIPAPole"))
+        Me.TowerRoundIPAPole = DBtoNullableDbl(data.Item("TowerRoundIPAPole"))
+        Me.TowerFlatIPALeg = DBtoNullableDbl(data.Item("TowerFlatIPALeg"))
+        Me.TowerRoundIPALeg = DBtoNullableDbl(data.Item("TowerRoundIPALeg"))
+        Me.TowerFlatIPAHorizontal = DBtoNullableDbl(data.Item("TowerFlatIPAHorizontal"))
+        Me.TowerRoundIPAHorizontal = DBtoNullableDbl(data.Item("TowerRoundIPAHorizontal"))
+        Me.TowerFlatIPADiagonal = DBtoNullableDbl(data.Item("TowerFlatIPADiagonal"))
+        Me.TowerRoundIPADiagonal = DBtoNullableDbl(data.Item("TowerRoundIPADiagonal"))
+        Me.TowerCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("TowerCSA_S37_SpeedUpFactor"))
+        Me.TowerKLegs = DBtoNullableDbl(data.Item("TowerKLegs"))
+        Me.TowerKXBracedDiags = DBtoNullableDbl(data.Item("TowerKXBracedDiags"))
+        Me.TowerKKBracedDiags = DBtoNullableDbl(data.Item("TowerKKBracedDiags"))
+        Me.TowerKZBracedDiags = DBtoNullableDbl(data.Item("TowerKZBracedDiags"))
+        Me.TowerKHorzs = DBtoNullableDbl(data.Item("TowerKHorzs"))
+        Me.TowerKSecHorzs = DBtoNullableDbl(data.Item("TowerKSecHorzs"))
+        Me.TowerKGirts = DBtoNullableDbl(data.Item("TowerKGirts"))
+        Me.TowerKInners = DBtoNullableDbl(data.Item("TowerKInners"))
+        Me.TowerKXBracedDiagsY = DBtoNullableDbl(data.Item("TowerKXBracedDiagsY"))
+        Me.TowerKKBracedDiagsY = DBtoNullableDbl(data.Item("TowerKKBracedDiagsY"))
+        Me.TowerKZBracedDiagsY = DBtoNullableDbl(data.Item("TowerKZBracedDiagsY"))
+        Me.TowerKHorzsY = DBtoNullableDbl(data.Item("TowerKHorzsY"))
+        Me.TowerKSecHorzsY = DBtoNullableDbl(data.Item("TowerKSecHorzsY"))
+        Me.TowerKGirtsY = DBtoNullableDbl(data.Item("TowerKGirtsY"))
+        Me.TowerKInnersY = DBtoNullableDbl(data.Item("TowerKInnersY"))
+        Me.TowerKRedHorz = DBtoNullableDbl(data.Item("TowerKRedHorz"))
+        Me.TowerKRedDiag = DBtoNullableDbl(data.Item("TowerKRedDiag"))
+        Me.TowerKRedSubDiag = DBtoNullableDbl(data.Item("TowerKRedSubDiag"))
+        Me.TowerKRedSubHorz = DBtoNullableDbl(data.Item("TowerKRedSubHorz"))
+        Me.TowerKRedVert = DBtoNullableDbl(data.Item("TowerKRedVert"))
+        Me.TowerKRedHip = DBtoNullableDbl(data.Item("TowerKRedHip"))
+        Me.TowerKRedHipDiag = DBtoNullableDbl(data.Item("TowerKRedHipDiag"))
+        Me.TowerKTLX = DBtoNullableDbl(data.Item("TowerKTLX"))
+        Me.TowerKTLZ = DBtoNullableDbl(data.Item("TowerKTLZ"))
+        Me.TowerKTLLeg = DBtoNullableDbl(data.Item("TowerKTLLeg"))
+        Me.TowerInnerKTLX = DBtoNullableDbl(data.Item("TowerInnerKTLX"))
+        Me.TowerInnerKTLZ = DBtoNullableDbl(data.Item("TowerInnerKTLZ"))
+        Me.TowerInnerKTLLeg = DBtoNullableDbl(data.Item("TowerInnerKTLLeg"))
+        Me.TowerStitchBoltLocationHoriz = DBtoStr(data.Item("TowerStitchBoltLocationHoriz"))
+        Me.TowerStitchBoltLocationDiag = DBtoStr(data.Item("TowerStitchBoltLocationDiag"))
+        Me.TowerStitchBoltLocationRed = DBtoStr(data.Item("TowerStitchBoltLocationRed"))
+        Me.TowerStitchSpacing = DBtoNullableDbl(data.Item("TowerStitchSpacing"))
+        Me.TowerStitchSpacingDiag = DBtoNullableDbl(data.Item("TowerStitchSpacingDiag"))
+        Me.TowerStitchSpacingHorz = DBtoNullableDbl(data.Item("TowerStitchSpacingHorz"))
+        Me.TowerStitchSpacingRed = DBtoNullableDbl(data.Item("TowerStitchSpacingRed"))
+        Me.TowerLegNetWidthDeduct = DBtoNullableDbl(data.Item("TowerLegNetWidthDeduct"))
+        Me.TowerLegUFactor = DBtoNullableDbl(data.Item("TowerLegUFactor"))
+        Me.TowerDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerDiagonalNetWidthDeduct"))
+        Me.TowerTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerTopGirtNetWidthDeduct"))
+        Me.TowerBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerBotGirtNetWidthDeduct"))
+        Me.TowerInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerInnerGirtNetWidthDeduct"))
+        Me.TowerHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerHorizontalNetWidthDeduct"))
+        Me.TowerShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerShortHorizontalNetWidthDeduct"))
+        Me.TowerDiagonalUFactor = DBtoNullableDbl(data.Item("TowerDiagonalUFactor"))
+        Me.TowerTopGirtUFactor = DBtoNullableDbl(data.Item("TowerTopGirtUFactor"))
+        Me.TowerBotGirtUFactor = DBtoNullableDbl(data.Item("TowerBotGirtUFactor"))
+        Me.TowerInnerGirtUFactor = DBtoNullableDbl(data.Item("TowerInnerGirtUFactor"))
+        Me.TowerHorizontalUFactor = DBtoNullableDbl(data.Item("TowerHorizontalUFactor"))
+        Me.TowerShortHorizontalUFactor = DBtoNullableDbl(data.Item("TowerShortHorizontalUFactor"))
+        Me.TowerLegConnType = DBtoStr(data.Item("TowerLegConnType"))
+        Me.TowerLegNumBolts = DBtoNullableInt(data.Item("TowerLegNumBolts"))
+        Me.TowerDiagonalNumBolts = DBtoNullableInt(data.Item("TowerDiagonalNumBolts"))
+        Me.TowerTopGirtNumBolts = DBtoNullableInt(data.Item("TowerTopGirtNumBolts"))
+        Me.TowerBotGirtNumBolts = DBtoNullableInt(data.Item("TowerBotGirtNumBolts"))
+        Me.TowerInnerGirtNumBolts = DBtoNullableInt(data.Item("TowerInnerGirtNumBolts"))
+        Me.TowerHorizontalNumBolts = DBtoNullableInt(data.Item("TowerHorizontalNumBolts"))
+        Me.TowerShortHorizontalNumBolts = DBtoNullableInt(data.Item("TowerShortHorizontalNumBolts"))
+        Me.TowerLegBoltGrade = DBtoStr(data.Item("TowerLegBoltGrade"))
+        Me.TowerLegBoltSize = DBtoNullableDbl(data.Item("TowerLegBoltSize"))
+        Me.TowerDiagonalBoltGrade = DBtoStr(data.Item("TowerDiagonalBoltGrade"))
+        Me.TowerDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerDiagonalBoltSize"))
+        Me.TowerTopGirtBoltGrade = DBtoStr(data.Item("TowerTopGirtBoltGrade"))
+        Me.TowerTopGirtBoltSize = DBtoNullableDbl(data.Item("TowerTopGirtBoltSize"))
+        Me.TowerBotGirtBoltGrade = DBtoStr(data.Item("TowerBotGirtBoltGrade"))
+        Me.TowerBotGirtBoltSize = DBtoNullableDbl(data.Item("TowerBotGirtBoltSize"))
+        Me.TowerInnerGirtBoltGrade = DBtoStr(data.Item("TowerInnerGirtBoltGrade"))
+        Me.TowerInnerGirtBoltSize = DBtoNullableDbl(data.Item("TowerInnerGirtBoltSize"))
+        Me.TowerHorizontalBoltGrade = DBtoStr(data.Item("TowerHorizontalBoltGrade"))
+        Me.TowerHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerHorizontalBoltSize"))
+        Me.TowerShortHorizontalBoltGrade = DBtoStr(data.Item("TowerShortHorizontalBoltGrade"))
+        Me.TowerShortHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltSize"))
+        Me.TowerLegBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerLegBoltEdgeDistance"))
+        Me.TowerDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerDiagonalBoltEdgeDistance"))
+        Me.TowerTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerTopGirtBoltEdgeDistance"))
+        Me.TowerBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerBotGirtBoltEdgeDistance"))
+        Me.TowerInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerInnerGirtBoltEdgeDistance"))
+        Me.TowerHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerHorizontalBoltEdgeDistance"))
+        Me.TowerShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltEdgeDistance"))
+        Me.TowerDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerDiagonalGageG1Distance"))
+        Me.TowerTopGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerTopGirtGageG1Distance"))
+        Me.TowerBotGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerBotGirtGageG1Distance"))
+        Me.TowerInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerInnerGirtGageG1Distance"))
+        Me.TowerHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerHorizontalGageG1Distance"))
+        Me.TowerShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerShortHorizontalGageG1Distance"))
+        Me.TowerRedundantHorizontalBoltGrade = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade"))
+        Me.TowerRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize"))
+        Me.TowerRedundantHorizontalNumBolts = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance"))
+        Me.TowerRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance"))
+        Me.TowerRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct"))
+        Me.TowerRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor"))
+        Me.TowerRedundantDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade"))
+        Me.TowerRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize"))
+        Me.TowerRedundantDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance"))
+        Me.TowerRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct"))
+        Me.TowerRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor"))
+        Me.TowerRedundantSubDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantSubDiagonalBoltGrade"))
+        Me.TowerRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltSize"))
+        Me.TowerRedundantSubDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantSubDiagonalNumBolts"))
+        Me.TowerRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalGageG1Distance"))
+        Me.TowerRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalNetWidthDeduct"))
+        Me.TowerRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalUFactor"))
+        Me.TowerRedundantSubHorizontalBoltGrade = DBtoStr(data.Item("TowerRedundantSubHorizontalBoltGrade"))
+        Me.TowerRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltSize"))
+        Me.TowerRedundantSubHorizontalNumBolts = DBtoNullableInt(data.Item("TowerRedundantSubHorizontalNumBolts"))
+        Me.TowerRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltEdgeDistance"))
+        Me.TowerRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalGageG1Distance"))
+        Me.TowerRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalNetWidthDeduct"))
+        Me.TowerRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalUFactor"))
+        Me.TowerRedundantVerticalBoltGrade = DBtoStr(data.Item("TowerRedundantVerticalBoltGrade"))
+        Me.TowerRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltSize"))
+        Me.TowerRedundantVerticalNumBolts = DBtoNullableInt(data.Item("TowerRedundantVerticalNumBolts"))
+        Me.TowerRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltEdgeDistance"))
+        Me.TowerRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantVerticalGageG1Distance"))
+        Me.TowerRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantVerticalNetWidthDeduct"))
+        Me.TowerRedundantVerticalUFactor = DBtoNullableDbl(data.Item("TowerRedundantVerticalUFactor"))
+        Me.TowerRedundantHipBoltGrade = DBtoStr(data.Item("TowerRedundantHipBoltGrade"))
+        Me.TowerRedundantHipBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize"))
+        Me.TowerRedundantHipNumBolts = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts"))
+        Me.TowerRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance"))
+        Me.TowerRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance"))
+        Me.TowerRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct"))
+        Me.TowerRedundantHipUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor"))
+        Me.TowerRedundantHipDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade"))
+        Me.TowerRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize"))
+        Me.TowerRedundantHipDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance"))
+        Me.TowerRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance"))
+        Me.TowerRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct"))
+        Me.TowerRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor"))
+        Me.TowerDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerDiagonalOutOfPlaneRestraint"))
+        Me.TowerTopGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerTopGirtOutOfPlaneRestraint"))
+        Me.TowerBottomGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerBottomGirtOutOfPlaneRestraint"))
+        Me.TowerMidGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerMidGirtOutOfPlaneRestraint"))
+        Me.TowerHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerHorizontalOutOfPlaneRestraint"))
+        Me.TowerSecondaryHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerSecondaryHorizontalOutOfPlaneRestraint"))
+        Me.TowerUniqueFlag = DBtoNullableInt(data.Item("TowerUniqueFlag"))
+        Me.TowerDiagOffsetNEY = DBtoNullableDbl(data.Item("TowerDiagOffsetNEY"))
+        Me.TowerDiagOffsetNEX = DBtoNullableDbl(data.Item("TowerDiagOffsetNEX"))
+        Me.TowerDiagOffsetPEY = DBtoNullableDbl(data.Item("TowerDiagOffsetPEY"))
+        Me.TowerDiagOffsetPEX = DBtoNullableDbl(data.Item("TowerDiagOffsetPEX"))
+        Me.TowerKbraceOffsetNEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEY"))
+        Me.TowerKbraceOffsetNEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEX"))
+        Me.TowerKbraceOffsetPEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEY"))
+        Me.TowerKbraceOffsetPEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEX"))
 
     End Sub
 #End Region
@@ -14670,10 +15880,16 @@ Partial Public Class tnxTowerRecord
         Return insertString
     End Function
 
+    Public Function GetIdentity() As String
+
+        Return "Base Section: " & Me.TowerRec.ToString
+
+    End Function
+
 End Class
 
 Partial Public Class tnxGuyRecord
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
 #Region "Define"
     Private _GuyRec As Integer?
@@ -15546,93 +16762,93 @@ Partial Public Class tnxGuyRecord
 
     Public Sub New(data As DataRow)
 
-        Me.ID = CNullInt(data.Item("ID"))
-        Me.GuyRec = CNullInt(data.Item("GuyRec"))
-        Me.GuyHeight = CNullDbl(data.Item("GuyHeight"))
-        Me.GuyAutoCalcKSingleAngle = CNullBool(data.Item("GuyAutoCalcKSingleAngle"))
-        Me.GuyAutoCalcKSolidRound = CNullBool(data.Item("GuyAutoCalcKSolidRound"))
-        Me.GuyMount = CNullStr(data.Item("GuyMount"))
-        Me.TorqueArmStyle = CNullStr(data.Item("TorqueArmStyle"))
-        Me.GuyRadius = CNullDbl(data.Item("GuyRadius"))
-        Me.GuyRadius120 = CNullDbl(data.Item("GuyRadius120"))
-        Me.GuyRadius240 = CNullDbl(data.Item("GuyRadius240"))
-        Me.GuyRadius360 = CNullDbl(data.Item("GuyRadius360"))
-        Me.TorqueArmRadius = CNullDbl(data.Item("TorqueArmRadius"))
-        Me.TorqueArmLegAngle = CNullDbl(data.Item("TorqueArmLegAngle"))
-        Me.Azimuth0Adjustment = CNullDbl(data.Item("Azimuth0Adjustment"))
-        Me.Azimuth120Adjustment = CNullDbl(data.Item("Azimuth120Adjustment"))
-        Me.Azimuth240Adjustment = CNullDbl(data.Item("Azimuth240Adjustment"))
-        Me.Azimuth360Adjustment = CNullDbl(data.Item("Azimuth360Adjustment"))
-        Me.Anchor0Elevation = CNullDbl(data.Item("Anchor0Elevation"))
-        Me.Anchor120Elevation = CNullDbl(data.Item("Anchor120Elevation"))
-        Me.Anchor240Elevation = CNullDbl(data.Item("Anchor240Elevation"))
-        Me.Anchor360Elevation = CNullDbl(data.Item("Anchor360Elevation"))
-        Me.GuySize = CNullStr(data.Item("GuySize"))
-        Me.Guy120Size = CNullStr(data.Item("Guy120Size"))
-        Me.Guy240Size = CNullStr(data.Item("Guy240Size"))
-        Me.Guy360Size = CNullStr(data.Item("Guy360Size"))
-        Me.GuyGrade = CNullStr(data.Item("GuyGrade"))
-        Me.TorqueArmSize = CNullStr(data.Item("TorqueArmSize"))
-        Me.TorqueArmSizeBot = CNullStr(data.Item("TorqueArmSizeBot"))
-        Me.TorqueArmType = CNullStr(data.Item("TorqueArmType"))
-        Me.TorqueArmGrade = CNullDbl(data.Item("TorqueArmGrade"))
-        Me.TorqueArmMatlGrade = CNullStr(data.Item("TorqueArmMatlGrade"))
-        Me.TorqueArmKFactor = CNullDbl(data.Item("TorqueArmKFactor"))
-        Me.TorqueArmKFactorY = CNullDbl(data.Item("TorqueArmKFactorY"))
-        Me.GuyPullOffKFactorX = CNullDbl(data.Item("GuyPullOffKFactorX"))
-        Me.GuyPullOffKFactorY = CNullDbl(data.Item("GuyPullOffKFactorY"))
-        Me.GuyDiagKFactorX = CNullDbl(data.Item("GuyDiagKFactorX"))
-        Me.GuyDiagKFactorY = CNullDbl(data.Item("GuyDiagKFactorY"))
-        Me.GuyAutoCalc = CNullBool(data.Item("GuyAutoCalc"))
-        Me.GuyAllGuysSame = CNullBool(data.Item("GuyAllGuysSame"))
-        Me.GuyAllGuysAnchorSame = CNullBool(data.Item("GuyAllGuysAnchorSame"))
-        Me.GuyIsStrapping = CNullBool(data.Item("GuyIsStrapping"))
-        Me.GuyPullOffSize = CNullStr(data.Item("GuyPullOffSize"))
-        Me.GuyPullOffSizeBot = CNullStr(data.Item("GuyPullOffSizeBot"))
-        Me.GuyPullOffType = CNullStr(data.Item("GuyPullOffType"))
-        Me.GuyPullOffGrade = CNullDbl(data.Item("GuyPullOffGrade"))
-        Me.GuyPullOffMatlGrade = CNullStr(data.Item("GuyPullOffMatlGrade"))
-        Me.GuyUpperDiagSize = CNullStr(data.Item("GuyUpperDiagSize"))
-        Me.GuyLowerDiagSize = CNullStr(data.Item("GuyLowerDiagSize"))
-        Me.GuyDiagType = CNullStr(data.Item("GuyDiagType"))
-        Me.GuyDiagGrade = CNullDbl(data.Item("GuyDiagGrade"))
-        Me.GuyDiagMatlGrade = CNullStr(data.Item("GuyDiagMatlGrade"))
-        Me.GuyDiagNetWidthDeduct = CNullDbl(data.Item("GuyDiagNetWidthDeduct"))
-        Me.GuyDiagUFactor = CNullDbl(data.Item("GuyDiagUFactor"))
-        Me.GuyDiagNumBolts = CNullInt(data.Item("GuyDiagNumBolts"))
-        Me.GuyDiagonalOutOfPlaneRestraint = CNullBool(data.Item("GuyDiagonalOutOfPlaneRestraint"))
-        Me.GuyDiagBoltGrade = CNullStr(data.Item("GuyDiagBoltGrade"))
-        Me.GuyDiagBoltSize = CNullDbl(data.Item("GuyDiagBoltSize"))
-        Me.GuyDiagBoltEdgeDistance = CNullDbl(data.Item("GuyDiagBoltEdgeDistance"))
-        Me.GuyDiagBoltGageDistance = CNullDbl(data.Item("GuyDiagBoltGageDistance"))
-        Me.GuyPullOffNetWidthDeduct = CNullDbl(data.Item("GuyPullOffNetWidthDeduct"))
-        Me.GuyPullOffUFactor = CNullDbl(data.Item("GuyPullOffUFactor"))
-        Me.GuyPullOffNumBolts = CNullInt(data.Item("GuyPullOffNumBolts"))
-        Me.GuyPullOffOutOfPlaneRestraint = CNullBool(data.Item("GuyPullOffOutOfPlaneRestraint"))
-        Me.GuyPullOffBoltGrade = CNullStr(data.Item("GuyPullOffBoltGrade"))
-        Me.GuyPullOffBoltSize = CNullDbl(data.Item("GuyPullOffBoltSize"))
-        Me.GuyPullOffBoltEdgeDistance = CNullDbl(data.Item("GuyPullOffBoltEdgeDistance"))
-        Me.GuyPullOffBoltGageDistance = CNullDbl(data.Item("GuyPullOffBoltGageDistance"))
-        Me.GuyTorqueArmNetWidthDeduct = CNullDbl(data.Item("GuyTorqueArmNetWidthDeduct"))
-        Me.GuyTorqueArmUFactor = CNullDbl(data.Item("GuyTorqueArmUFactor"))
-        Me.GuyTorqueArmNumBolts = CNullInt(data.Item("GuyTorqueArmNumBolts"))
-        Me.GuyTorqueArmOutOfPlaneRestraint = CNullBool(data.Item("GuyTorqueArmOutOfPlaneRestraint"))
-        Me.GuyTorqueArmBoltGrade = CNullStr(data.Item("GuyTorqueArmBoltGrade"))
-        Me.GuyTorqueArmBoltSize = CNullDbl(data.Item("GuyTorqueArmBoltSize"))
-        Me.GuyTorqueArmBoltEdgeDistance = CNullDbl(data.Item("GuyTorqueArmBoltEdgeDistance"))
-        Me.GuyTorqueArmBoltGageDistance = CNullDbl(data.Item("GuyTorqueArmBoltGageDistance"))
-        Me.GuyPerCentTension = CNullDbl(data.Item("GuyPerCentTension"))
-        Me.GuyPerCentTension120 = CNullDbl(data.Item("GuyPerCentTension120"))
-        Me.GuyPerCentTension240 = CNullDbl(data.Item("GuyPerCentTension240"))
-        Me.GuyPerCentTension360 = CNullDbl(data.Item("GuyPerCentTension360"))
-        Me.GuyEffFactor = CNullDbl(data.Item("GuyEffFactor"))
-        Me.GuyEffFactor120 = CNullDbl(data.Item("GuyEffFactor120"))
-        Me.GuyEffFactor240 = CNullDbl(data.Item("GuyEffFactor240"))
-        Me.GuyEffFactor360 = CNullDbl(data.Item("GuyEffFactor360"))
-        Me.GuyNumInsulators = CNullInt(data.Item("GuyNumInsulators"))
-        Me.GuyInsulatorLength = CNullDbl(data.Item("GuyInsulatorLength"))
-        Me.GuyInsulatorDia = CNullDbl(data.Item("GuyInsulatorDia"))
-        Me.GuyInsulatorWt = CNullDbl(data.Item("GuyInsulatorWt"))
+        Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.GuyRec = DBtoNullableInt(data.Item("GuyRec"))
+        Me.GuyHeight = DBtoNullableDbl(data.Item("GuyHeight"))
+        Me.GuyAutoCalcKSingleAngle = DBtoNullableBool(data.Item("GuyAutoCalcKSingleAngle"))
+        Me.GuyAutoCalcKSolidRound = DBtoNullableBool(data.Item("GuyAutoCalcKSolidRound"))
+        Me.GuyMount = DBtoStr(data.Item("GuyMount"))
+        Me.TorqueArmStyle = DBtoStr(data.Item("TorqueArmStyle"))
+        Me.GuyRadius = DBtoNullableDbl(data.Item("GuyRadius"))
+        Me.GuyRadius120 = DBtoNullableDbl(data.Item("GuyRadius120"))
+        Me.GuyRadius240 = DBtoNullableDbl(data.Item("GuyRadius240"))
+        Me.GuyRadius360 = DBtoNullableDbl(data.Item("GuyRadius360"))
+        Me.TorqueArmRadius = DBtoNullableDbl(data.Item("TorqueArmRadius"))
+        Me.TorqueArmLegAngle = DBtoNullableDbl(data.Item("TorqueArmLegAngle"))
+        Me.Azimuth0Adjustment = DBtoNullableDbl(data.Item("Azimuth0Adjustment"))
+        Me.Azimuth120Adjustment = DBtoNullableDbl(data.Item("Azimuth120Adjustment"))
+        Me.Azimuth240Adjustment = DBtoNullableDbl(data.Item("Azimuth240Adjustment"))
+        Me.Azimuth360Adjustment = DBtoNullableDbl(data.Item("Azimuth360Adjustment"))
+        Me.Anchor0Elevation = DBtoNullableDbl(data.Item("Anchor0Elevation"))
+        Me.Anchor120Elevation = DBtoNullableDbl(data.Item("Anchor120Elevation"))
+        Me.Anchor240Elevation = DBtoNullableDbl(data.Item("Anchor240Elevation"))
+        Me.Anchor360Elevation = DBtoNullableDbl(data.Item("Anchor360Elevation"))
+        Me.GuySize = DBtoStr(data.Item("GuySize"))
+        Me.Guy120Size = DBtoStr(data.Item("Guy120Size"))
+        Me.Guy240Size = DBtoStr(data.Item("Guy240Size"))
+        Me.Guy360Size = DBtoStr(data.Item("Guy360Size"))
+        Me.GuyGrade = DBtoStr(data.Item("GuyGrade"))
+        Me.TorqueArmSize = DBtoStr(data.Item("TorqueArmSize"))
+        Me.TorqueArmSizeBot = DBtoStr(data.Item("TorqueArmSizeBot"))
+        Me.TorqueArmType = DBtoStr(data.Item("TorqueArmType"))
+        Me.TorqueArmGrade = DBtoNullableDbl(data.Item("TorqueArmGrade"))
+        Me.TorqueArmMatlGrade = DBtoStr(data.Item("TorqueArmMatlGrade"))
+        Me.TorqueArmKFactor = DBtoNullableDbl(data.Item("TorqueArmKFactor"))
+        Me.TorqueArmKFactorY = DBtoNullableDbl(data.Item("TorqueArmKFactorY"))
+        Me.GuyPullOffKFactorX = DBtoNullableDbl(data.Item("GuyPullOffKFactorX"))
+        Me.GuyPullOffKFactorY = DBtoNullableDbl(data.Item("GuyPullOffKFactorY"))
+        Me.GuyDiagKFactorX = DBtoNullableDbl(data.Item("GuyDiagKFactorX"))
+        Me.GuyDiagKFactorY = DBtoNullableDbl(data.Item("GuyDiagKFactorY"))
+        Me.GuyAutoCalc = DBtoNullableBool(data.Item("GuyAutoCalc"))
+        Me.GuyAllGuysSame = DBtoNullableBool(data.Item("GuyAllGuysSame"))
+        Me.GuyAllGuysAnchorSame = DBtoNullableBool(data.Item("GuyAllGuysAnchorSame"))
+        Me.GuyIsStrapping = DBtoNullableBool(data.Item("GuyIsStrapping"))
+        Me.GuyPullOffSize = DBtoStr(data.Item("GuyPullOffSize"))
+        Me.GuyPullOffSizeBot = DBtoStr(data.Item("GuyPullOffSizeBot"))
+        Me.GuyPullOffType = DBtoStr(data.Item("GuyPullOffType"))
+        Me.GuyPullOffGrade = DBtoNullableDbl(data.Item("GuyPullOffGrade"))
+        Me.GuyPullOffMatlGrade = DBtoStr(data.Item("GuyPullOffMatlGrade"))
+        Me.GuyUpperDiagSize = DBtoStr(data.Item("GuyUpperDiagSize"))
+        Me.GuyLowerDiagSize = DBtoStr(data.Item("GuyLowerDiagSize"))
+        Me.GuyDiagType = DBtoStr(data.Item("GuyDiagType"))
+        Me.GuyDiagGrade = DBtoNullableDbl(data.Item("GuyDiagGrade"))
+        Me.GuyDiagMatlGrade = DBtoStr(data.Item("GuyDiagMatlGrade"))
+        Me.GuyDiagNetWidthDeduct = DBtoNullableDbl(data.Item("GuyDiagNetWidthDeduct"))
+        Me.GuyDiagUFactor = DBtoNullableDbl(data.Item("GuyDiagUFactor"))
+        Me.GuyDiagNumBolts = DBtoNullableInt(data.Item("GuyDiagNumBolts"))
+        Me.GuyDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyDiagonalOutOfPlaneRestraint"))
+        Me.GuyDiagBoltGrade = DBtoStr(data.Item("GuyDiagBoltGrade"))
+        Me.GuyDiagBoltSize = DBtoNullableDbl(data.Item("GuyDiagBoltSize"))
+        Me.GuyDiagBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyDiagBoltEdgeDistance"))
+        Me.GuyDiagBoltGageDistance = DBtoNullableDbl(data.Item("GuyDiagBoltGageDistance"))
+        Me.GuyPullOffNetWidthDeduct = DBtoNullableDbl(data.Item("GuyPullOffNetWidthDeduct"))
+        Me.GuyPullOffUFactor = DBtoNullableDbl(data.Item("GuyPullOffUFactor"))
+        Me.GuyPullOffNumBolts = DBtoNullableInt(data.Item("GuyPullOffNumBolts"))
+        Me.GuyPullOffOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyPullOffOutOfPlaneRestraint"))
+        Me.GuyPullOffBoltGrade = DBtoStr(data.Item("GuyPullOffBoltGrade"))
+        Me.GuyPullOffBoltSize = DBtoNullableDbl(data.Item("GuyPullOffBoltSize"))
+        Me.GuyPullOffBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltEdgeDistance"))
+        Me.GuyPullOffBoltGageDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltGageDistance"))
+        Me.GuyTorqueArmNetWidthDeduct = DBtoNullableDbl(data.Item("GuyTorqueArmNetWidthDeduct"))
+        Me.GuyTorqueArmUFactor = DBtoNullableDbl(data.Item("GuyTorqueArmUFactor"))
+        Me.GuyTorqueArmNumBolts = DBtoNullableInt(data.Item("GuyTorqueArmNumBolts"))
+        Me.GuyTorqueArmOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyTorqueArmOutOfPlaneRestraint"))
+        Me.GuyTorqueArmBoltGrade = DBtoStr(data.Item("GuyTorqueArmBoltGrade"))
+        Me.GuyTorqueArmBoltSize = DBtoNullableDbl(data.Item("GuyTorqueArmBoltSize"))
+        Me.GuyTorqueArmBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltEdgeDistance"))
+        Me.GuyTorqueArmBoltGageDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltGageDistance"))
+        Me.GuyPerCentTension = DBtoNullableDbl(data.Item("GuyPerCentTension"))
+        Me.GuyPerCentTension120 = DBtoNullableDbl(data.Item("GuyPerCentTension120"))
+        Me.GuyPerCentTension240 = DBtoNullableDbl(data.Item("GuyPerCentTension240"))
+        Me.GuyPerCentTension360 = DBtoNullableDbl(data.Item("GuyPerCentTension360"))
+        Me.GuyEffFactor = DBtoNullableDbl(data.Item("GuyEffFactor"))
+        Me.GuyEffFactor120 = DBtoNullableDbl(data.Item("GuyEffFactor120"))
+        Me.GuyEffFactor240 = DBtoNullableDbl(data.Item("GuyEffFactor240"))
+        Me.GuyEffFactor360 = DBtoNullableDbl(data.Item("GuyEffFactor360"))
+        Me.GuyNumInsulators = DBtoNullableInt(data.Item("GuyNumInsulators"))
+        Me.GuyInsulatorLength = DBtoNullableDbl(data.Item("GuyInsulatorLength"))
+        Me.GuyInsulatorDia = DBtoNullableDbl(data.Item("GuyInsulatorDia"))
+        Me.GuyInsulatorWt = DBtoNullableDbl(data.Item("GuyInsulatorWt"))
 
     End Sub
 #End Region
@@ -15727,10 +16943,14 @@ Partial Public Class tnxGuyRecord
         insertString = insertString.AddtoDBString(Me.GuyInsulatorDia.ToString)
         insertString = insertString.AddtoDBString(Me.GuyInsulatorWt.ToString)
 
-
         Return insertString
     End Function
 
+    Public Function GetIdentity() As String
+
+        Return "Guy Level: " & Me.GuyRec.ToString
+
+    End Function
 End Class
 #End Region
 
@@ -19299,7 +20519,7 @@ Partial Public Class tnxMTOSettings
 End Class
 
 Partial Public Class tnxNote
-    Inherits tnxDatabaseEntry
+    Inherits EDSObject
 
     Private _Note As String
 
@@ -19711,6 +20931,45 @@ Partial Public Class tnxUnits
         End Set
     End Property
 
+    Public Function convertForcePerUnitLengthtoDefault(InputValue As Double?) As Double?
+        If Not InputValue.HasValue Then
+            Return Nothing
+        End If
+
+        Try
+            Return InputValue.Value * (Me.Properties.multiplier / Me.Force.multiplier)
+        Catch ex As Exception
+            Debug.Print("Error Converting Force Per Unit Length to Default")
+            Return Nothing
+        End Try
+    End Function
+
+    Public Function convertForcePerUnitLengthtoDefault(InputValue As String) As Double?
+        Dim dblInputValue As Double
+        If Not Double.TryParse(InputValue, dblInputValue) Then
+            Return Nothing
+        End If
+
+        Try
+            Return dblInputValue * (Me.Properties.multiplier / Me.Force.multiplier)
+        Catch ex As Exception
+            Debug.Print("Error Converting Force Per Unit Length to Default")
+            Return Nothing
+        End Try
+    End Function
+    Public Function convertForcePerUnitLengthtoERISpecified(InputValue As Double?) As Double?
+        If Not InputValue.HasValue Then
+            Return Nothing
+        End If
+
+        Try
+            Return InputValue.Value / (Me.Properties.multiplier / Me.Force.multiplier)
+        Catch ex As Exception
+            Debug.Print("Error Converting Force Per Unit Length to ERI Specified")
+            Return Nothing
+        End Try
+    End Function
+
 End Class
 
 Partial Public Class tnxUnitProperty
@@ -19758,25 +21017,49 @@ Partial Public Class tnxUnitProperty
 
     Public Overridable Function convertToEDSDefaultUnits(InputValue As Double?) As Double?
 
-        If Me._value = "" Then
+        If InputValue Is Nothing Then
+            Return Nothing
+        End If
+
+        If Me._value = "" Or Me._value Is Nothing Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me._multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Or Me._multiplier Is Nothing Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return InputValue / Me.multiplier
+        Return Math.Round(InputValue.Value / Me.multiplier.Value, 6)
+
+    End Function
+
+    Public Overridable Function convertToEDSDefaultUnits(strInputValue As String) As Double?
+        Dim InputValue As Double
+        If Not Double.TryParse(strInputValue, InputValue) Then
+            Return Nothing
+        End If
+
+        If Me._value = "" Or Me._value Is Nothing Then
+            Throw New System.Exception("Property value not set")
+        ElseIf Me._multiplier = 0 Or Me._multiplier Is Nothing Then
+            Throw New System.Exception("Property multiplier not set")
+        End If
+
+        Return Math.Round(InputValue / Me.multiplier.Value, 6)
 
     End Function
 
     Public Overridable Function convertToERIUnits(InputValue As Double?) As Double?
 
-        If Me._value = "" Then
+        If InputValue Is Nothing Then
+            Return Nothing
+        End If
+
+        If Me._value = "" Or Me._value Is Nothing Then
             Throw New System.Exception("Property value not set")
-        ElseIf Me._multiplier = 0 Then
+        ElseIf Me._multiplier = 0 Or Me._multiplier Is Nothing Then
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return InputValue * Me.multiplier
+        Return Math.Round(InputValue.Value * Me.multiplier.Value)
 
     End Function
 
@@ -20235,12 +21518,16 @@ Partial Public Class tnxTempUnit
 
     Public Overrides Function convertToEDSDefaultUnits(InputValue As Double?) As Double?
 
+        If Not InputValue.HasValue Then
+            Return Nothing
+        End If
+
         If Me._value = "" Then
             Throw New System.Exception("Property value not set")
         End If
 
         If Me._value = "C" Then
-            Return InputValue * (9 / 5) + 32
+            Return Math.Round(InputValue.Value * (9 / 5) + 32, 6)
         Else
             Return InputValue
         End If
@@ -20249,12 +21536,16 @@ Partial Public Class tnxTempUnit
 
     Public Overrides Function convertToERIUnits(InputValue As Double?) As Double?
 
+        If Not InputValue.HasValue Then
+            Return Nothing
+        End If
+
         If Me._value = "" Then
             Throw New System.Exception("Property value not set")
         End If
 
         If Me._value = "C" Then
-            Return (InputValue - 32) * (5 / 9)
+            Return Math.Round((InputValue.Value - 32) * (5 / 9), 6)
         Else
             Return InputValue
         End If

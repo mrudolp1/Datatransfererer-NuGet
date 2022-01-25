@@ -45,8 +45,19 @@ BEGIN
 		--Update status to FALSE for existing model_id
 		UPDATE gen.structure_model_xref Set isActive='False' WHERE model_id=@ModelID
 		--Create new Model ID by copying previous data and pasting new row into Structure_model
-		INSERT INTO gen.structure_model (connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id) OUTPUT Inserted.id INTO @Model SELECT connection_group_id,foundation_group_id,guy_config_id,lattice_structure_id,pole_structure_id,critera_id FROM gen.structure_model WHERE id=@ModelID
+
+		--Delete temp table if already exists
+		IF OBJECT_ID(N'tempdb..#TempTable') IS NOT NULL
+		Begin
+			DROP TABLE #TempTable
+		End
+
+		SELECT * INTO #TempTable FROM gen.structure_model WHERE ID=@ModelID
+		ALTER TABLE #TempTable DROP COLUMN ID
+		INSERT INTO gen.structure_model OUTPUT INSERTED.ID INTO @Model SELECT * FROM #TempTable
+		DROP TABLE #TempTable
 		SELECT @ModelID=ModelID FROM @Model
+
 		--Create new row in structure_model_xref, associating BU to newly created Model ID
 		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 	END
@@ -72,12 +83,23 @@ BEGIN
 		SELECT @FndID=FndID FROM @Foundation
 	End
 	ELSE
-	BEGIN
-		--Create new Foundation ID by copying previous data and pasting new row into foundation_details
-		SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
-		INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@PID
-		SELECT @FndID=FndID FROM @Foundation
-	END
+		BEGIN
+			--Check and see if PID was accidentally copied from a different file. If doesn't match for BU, create new Foundation ID in foundation_details
+			SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+			IF EXISTS(SELECT * FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@PID)
+				BEGIN
+					--Create new Foundation ID by copying previous data and pasting new row into foundation_details
+					SELECT @FndgrpID=foundation_group_id FROM gen.structure_model WHERE ID=@ModelID
+					INSERT INTO fnd.foundation_details (foundation_group_id,foundation_type,guy_group_id,details_id) OUTPUT Inserted.id INTO @Foundation SELECT foundation_group_id,foundation_type,guy_group_id,details_id FROM fnd.foundation_details WHERE foundation_group_id=@FndgrpID AND foundation_type=@FndType AND details_id=@PID
+					SELECT @FndID=FndID FROM @Foundation
+				END
+			ELSE
+				BEGIN
+					-- Create new Foundation ID by adding row to foundation_details
+					INSERT INTO fnd.foundation_details (foundation_type) OUTPUT Inserted.id INTO @Foundation VALUES (@FndType)
+					SELECT @FndID=FndID FROM @Foundation
+				END
+		END
 
 	--Create new foundation group ID by adding row to foundation_group
 	INSERT INTO fnd.foundation_group OUTPUT Inserted.ID INTO @Fndgrp DEFAULT VALUES

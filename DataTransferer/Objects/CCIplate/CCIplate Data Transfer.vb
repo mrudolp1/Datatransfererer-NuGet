@@ -99,9 +99,11 @@ Partial Public Class DataTransfererCCIplate
 
         'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each con As CCIplate In Connections
+            Dim IDmatch As Boolean = False
             If con.connection_group_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlcon As CCIplate In sqlConnections
                     If con.connection_group_id = sqlcon.connection_group_id Then
+                        IDmatch = True
                         'If CheckChanges(con, sqlcon) Then
                         '    isModelNeeded = True
                         '    isconGroupNeeded = True
@@ -110,6 +112,12 @@ Partial Public Class DataTransfererCCIplate
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isconGroupNeeded = True
+                    isConnectionNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -1021,6 +1029,21 @@ Partial Public Class DataTransfererCCIplate
     Public Sub Clear()
         ExcelFilePath = ""
         Connections.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In CCIplateExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In CCIplateSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function CCIplateSQLDataTables() As List(Of SQLParameter)

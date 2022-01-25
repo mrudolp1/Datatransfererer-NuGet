@@ -30,9 +30,9 @@ Module DoDaSQL
         Return True
     End Function
 
-    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer) As Boolean
+    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer, Optional ByVal ClearExistingDataTable As Boolean = True) As Boolean
 
-        'This overload accepts a list of SQL commands and tables names and only opens the SQL connection one time to execute all commands. - DHS
+        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
 
         If SQLCommand.Count <> tableName.Count Then Return False
 
@@ -44,9 +44,37 @@ Module DoDaSQL
 
                 For i = 0 To SQLCommand.Count - 1
                     Try
-                        ClearDataTable(tableName(i), SaveToDataSet)
+                        If ClearExistingDataTable Then ClearDataTable(tableName(i), SaveToDataSet)
                         Using SQLAdapter As New SqlDataAdapter(SQLCommand(i), sqlCon)
                             SQLAdapter.Fill(SaveToDataSet, tableName(i))
+                        End Using
+                    Catch ex As Exception
+                        erNo = erNo + i
+                        Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                        errors = True
+                    End Try
+                Next
+            End Using
+        End Using
+
+        Return True
+    End Function
+
+    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer) As Boolean
+
+        'This overload accepts a list of SQL commands and adds all the output to one datatable. - DHS
+
+        Dim errors As Boolean = False
+
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            Using sqlCon As New SqlConnection(ActiveDatabase)
+                sqlCon.Open()
+
+                For i = 0 To SQLCommand.Count - 1
+                    Try
+                        ClearDataTable(tableName, SaveToDataSet)
+                        Using SQLAdapter As New SqlDataAdapter(SQLCommand(i), sqlCon)
+                            SQLAdapter.Fill(SaveToDataSet, tableName)
                         End Using
                     Catch ex As Exception
                         erNo = erNo + i
