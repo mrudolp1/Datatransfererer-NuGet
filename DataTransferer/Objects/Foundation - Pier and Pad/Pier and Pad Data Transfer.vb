@@ -94,9 +94,11 @@ Partial Public Class DataTransfererPierandPad
 
         'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As PierAndPad In PierAndPads
+            Dim IDmatch As Boolean = False
             If fnd.pp_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlfnd As PierAndPad In sqlPierAndPads
                     If fnd.pp_id = sqlfnd.pp_id Then
+                        IDmatch = True
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
@@ -105,6 +107,12 @@ Partial Public Class DataTransfererPierandPad
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isfndGroupNeeded = True
+                    isPierAndPadNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -494,6 +502,21 @@ Partial Public Class DataTransfererPierandPad
     Public Sub Clear()
         ExcelFilePath = ""
         PierAndPads.Clear()
+
+        'Remove all datatables from main dataset
+        For Each item As EXCELDTParameter In PierAndPadExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In PierAndPadSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function PierAndPadSQLDataTables() As List(Of SQLParameter)

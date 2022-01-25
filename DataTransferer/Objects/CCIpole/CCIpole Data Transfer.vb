@@ -97,9 +97,11 @@ Partial Public Class DataTransfererCCIpole
 
         'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each pole As CCIpole In Poles
+            Dim IDmatch As Boolean = False
             If pole.pole_structure_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlpole As CCIpole In sqlPoles
                     If pole.pole_structure_id = sqlpole.pole_structure_id Then
+                        IDmatch = True
                         If CheckChanges(pole, sqlpole) Then
                             isModelNeeded = True
                             isPoleNeeded = True
@@ -107,6 +109,11 @@ Partial Public Class DataTransfererCCIpole
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isPoleNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -154,9 +161,9 @@ Partial Public Class DataTransfererCCIpole
 
         'Determine if new Pole ID needs created
         If isPoleNeeded Then
-            CCIpoleSaver = CCIpoleSaver.Replace("'[Pole ID Needed]'", 1)
+            CCIpoleSaver = CCIpoleSaver.Replace("'[CCIpole ID Needed]'", 1)
         Else
-            CCIpoleSaver = CCIpoleSaver.Replace("'[Pole ID Needed]'", 0)
+            CCIpoleSaver = CCIpoleSaver.Replace("'[CCIpole ID Needed]'", 0)
         End If
 
         'CCIpoleSaver = CCIpoleSaver.Replace("[INSERT ALL CCIPOLE DETAILS]", InsertPoleDetail(cp))
@@ -174,24 +181,41 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("('[INSERT POLE CRITERIA]')", myCriteria)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT POLE CRITERIA]'", myCriteria)
 
         For Each cpps As PoleSection In cp.unreinf_sections
-            If Not IsNothing(cpps.analysis_section_id) Or Not IsNothing(cpps.elev_bot) Or Not IsNothing(cpps.elev_top) Or Not IsNothing(cpps.length_section) Or Not IsNothing(cpps.length_splice) Or Not IsNothing(cpps.num_sides) Or Not IsNothing(cpps.diam_bot) Or Not IsNothing(cpps.diam_top) Or Not IsNothing(cpps.wall_thickness) Or Not IsNothing(cpps.bend_radius) Or Not IsNothing(cpps.steel_grade_id) Or Not IsNothing(cpps.pole_type) Or Not IsNothing(cpps.section_name) Or Not IsNothing(cpps.socket_length) Or Not IsNothing(cpps.weight_mult) Or Not IsNothing(cpps.wp_mult) Or Not IsNothing(cpps.af_factor) Or Not IsNothing(cpps.ar_factor) Or Not IsNothing(cpps.round_area_ratio) Or Not IsNothing(cpps.flat_area_ratio) Then
+            If Not IsNothing(cpps.local_section_id) Or Not IsNothing(cpps.elev_bot) Or Not IsNothing(cpps.elev_top) Or Not IsNothing(cpps.length_section) Or Not IsNothing(cpps.length_splice) Or Not IsNothing(cpps.num_sides) Or Not IsNothing(cpps.diam_bot) Or Not IsNothing(cpps.diam_top) Or Not IsNothing(cpps.wall_thickness) Or Not IsNothing(cpps.bend_radius) Or Not IsNothing(cpps.steel_grade_id) Or Not IsNothing(cpps.pole_type) Or Not IsNothing(cpps.section_name) Or Not IsNothing(cpps.socket_length) Or Not IsNothing(cpps.weight_mult) Or Not IsNothing(cpps.wp_mult) Or Not IsNothing(cpps.af_factor) Or Not IsNothing(cpps.ar_factor) Or Not IsNothing(cpps.round_area_ratio) Or Not IsNothing(cpps.flat_area_ratio) Then
+
                 Dim tempPoleSection As String = InsertPoleSection(cpps)
-                If Not firstOne Then
-                    myPoleSection += ",(" & tempPoleSection & ")"
-                Else
-                    myPoleSection += "(" & tempPoleSection & ")"
-                End If
+                'If Not firstOne Then
+                '    myPoleSection += ",(" & tempPoleSection & ")"
+                'Else
+                '    myPoleSection += "(" & tempPoleSection & ")"
+                'End If
+                myPoleSection = tempPoleSection
+
+                Dim SubQuery_BGeom As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (SubQuery_GeomBase).sql")
+                SubQuery_BGeom = SubQuery_BGeom.Replace("'[INSERT POLE SECTION]'", myPoleSection)
+
+                For Each cpm As PropMatl In cp.matls
+                    If cpm.matl_id = cpps.local_matl_id Then
+                        Dim tempPropMatl As String = InsertPropMatl(cpm)
+                        myMatlProp = tempPropMatl
+                        SubQuery_BGeom = SubQuery_BGeom.Replace("'[INSERT MATL PROP]'", myMatlProp)
+                    End If
+                Next
+
+                'firstOne = False
+
+                CCIpoleSaver = CCIpoleSaver.Replace("--'[SUBQUERY]'", SubQuery_BGeom)
             End If
-            firstOne = False
         Next
-        firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT UNREINF SECTIONS])", myPoleSection)
+        'firstOne = True
+
 
         For Each cprs As PoleReinfSection In cp.reinf_sections
-            If Not IsNothing(cprs.analysis_section_ID) Or Not IsNothing(cprs.elev_bot) Or Not IsNothing(cprs.elev_top) Or Not IsNothing(cprs.length_section) Or Not IsNothing(cprs.length_splice) Or Not IsNothing(cprs.num_sides) Or Not IsNothing(cprs.diam_bot) Or Not IsNothing(cprs.diam_top) Or Not IsNothing(cprs.wall_thickness) Or Not IsNothing(cprs.bend_radius) Or Not IsNothing(cprs.steel_grade_id) Or Not IsNothing(cprs.pole_type) Or Not IsNothing(cprs.weight_mult) Or Not IsNothing(cprs.section_name) Or Not IsNothing(cprs.socket_length) Or Not IsNothing(cprs.wp_mult) Or Not IsNothing(cprs.af_factor) Or Not IsNothing(cprs.ar_factor) Or Not IsNothing(cprs.round_area_ratio) Or Not IsNothing(cprs.flat_area_ratio) Then
+            Dim SubQuery_RGeom As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (IN_UP SUBQUERY R_Geom).sql")
+            If Not IsNothing(cprs.local_section_id) Or Not IsNothing(cprs.elev_bot) Or Not IsNothing(cprs.elev_top) Or Not IsNothing(cprs.length_section) Or Not IsNothing(cprs.length_splice) Or Not IsNothing(cprs.num_sides) Or Not IsNothing(cprs.diam_bot) Or Not IsNothing(cprs.diam_top) Or Not IsNothing(cprs.wall_thickness) Or Not IsNothing(cprs.bend_radius) Or Not IsNothing(cprs.steel_grade_id) Or Not IsNothing(cprs.pole_type) Or Not IsNothing(cprs.weight_mult) Or Not IsNothing(cprs.section_name) Or Not IsNothing(cprs.socket_length) Or Not IsNothing(cprs.wp_mult) Or Not IsNothing(cprs.af_factor) Or Not IsNothing(cprs.ar_factor) Or Not IsNothing(cprs.round_area_ratio) Or Not IsNothing(cprs.flat_area_ratio) Then
                 Dim tempPoleReinfSection As String = InsertPoleReinfSection(cprs)
                 If Not firstOne Then
                     myPoleReinfSection += ",(" & tempPoleReinfSection & ")"
@@ -200,9 +224,10 @@ Partial Public Class DataTransfererCCIpole
                 End If
             End If
             firstOne = False
+            SubQuery_RGeom = SubQuery_RGeom.Replace("'[REINF SECTION]'", myPoleReinfSection)
+            CCIpoleSaver = CCIpoleSaver.Replace("--'[SUBQUERY]'", SubQuery_RGeom)
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF SECTIONS])", myPoleReinfSection)
 
         'For Each cprg As PoleReinfGroup In cp.reinf_groups
         '    If Not IsNothing(cprg.elev_bot_actual) Or Not IsNothing(cprg.elev_bot_eff) Or Not IsNothing(cprg.elev_top_actual) Or Not IsNothing(cprg.elev_top_eff) Or Not IsNothing(cprg.reinf_db_id) Then
@@ -236,20 +261,20 @@ Partial Public Class DataTransfererCCIpole
                 Dim tempPoleReinfGroup As String = InsertPoleReinfGroup(cprg)
                 myReinfGroup = tempPoleReinfGroup
 
-                Dim subQuery As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (IN_UP SUBQUERY Reinf Groups).sql")
-                subQuery = subQuery.Replace("'[REINF GROUP]'", myReinfGroup)
+                Dim subQuery_RGrp As String = QueryBuilderFromFile(queryPath & "CCIpole\CCIpole (IN_UP SUBQUERY Reinf Groups).sql")
+                subQuery_RGrp = subQuery_RGrp.Replace("'[REINF GROUP]'", myReinfGroup)
 
                 For Each cprd As PoleReinfDetail In cprg.reinf_ids
-                    'if groupid = groupid in details table then
-                    If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
-                        Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
-                        myReinfDetail = tempPoleReinfDetail
-
-                        subQuery = subQuery.Replace("'[REINF DETAILS]'", myReinfGroup)
+                    If cprd.local_group_id = cprg.local_group_id Then
+                        If Not IsNothing(cprd.pole_flat) Or Not IsNothing(cprd.horizontal_offset) Or Not IsNothing(cprd.rotation) Or Not IsNothing(cprd.note) Then
+                            Dim tempPoleReinfDetail As String = InsertPoleReinfDetail(cprd)
+                            myReinfDetail = tempPoleReinfDetail
+                        End If
+                        subQuery_RGrp = subQuery_RGrp.Replace("'[REINF DETAILS]'", myReinfDetail)
                     End If
+                    CCIpoleSaver = CCIpoleSaver.Replace("--'[SUBQUERY]'", subQuery_RGrp)
                 Next
 
-                CCIpoleSaver = CCIpoleSaver.Replace("--[REINFORCEMENT SUBQUERY]", subQuery)
             End If
 
         Next
@@ -278,8 +303,8 @@ Partial Public Class DataTransfererCCIpole
             End If
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT INT GROUPS])", myIntGroup)
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT INT DETAILS])", myIntDetail)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT INT GROUPS]'", myIntGroup)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT INT DETAILS]'", myIntDetail)
 
         'For Each cpid As PoleIntDetail In cp.int_ids
         '    If Not IsNothing(cpid.pole_flat) Or Not IsNothing(cpid.horizontal_offset) Or Not IsNothing(cpid.rotation) Or Not IsNothing(cpid.note) Then
@@ -307,7 +332,7 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT REINF RESULTS])", myReinfResults)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT REINF RESULTS]'", myReinfResults)
 
         For Each cpr As PropReinf In cp.reinfs
             If Not IsNothing(cpr.name) Or Not IsNothing(cpr.type) Or Not IsNothing(cpr.b) Or Not IsNothing(cpr.h) Or Not IsNothing(cpr.sr_diam) Or Not IsNothing(cpr.channel_thkns_web) Or Not IsNothing(cpr.channel_thkns_flange) Or Not IsNothing(cpr.channel_eo) Or Not IsNothing(cpr.channel_J) Or Not IsNothing(cpr.channel_Cw) Or Not IsNothing(cpr.area_gross) Or Not IsNothing(cpr.centroid) Or Not IsNothing(cpr.istension) Or Not IsNothing(cpr.matl_id) Or Not IsNothing(cpr.Ix) Or Not IsNothing(cpr.Iy) Or Not IsNothing(cpr.Lu) Or Not IsNothing(cpr.Kx) Or Not IsNothing(cpr.Ky) Or Not IsNothing(cpr.bolt_hole_size) Or Not IsNothing(cpr.area_net) Or Not IsNothing(cpr.shear_lag) Or Not IsNothing(cpr.connection_type_bot) Or Not IsNothing(cpr.connection_cap_revF_bot) Or Not IsNothing(cpr.connection_cap_revG_bot) Or Not IsNothing(cpr.connection_cap_revH_bot) Or Not IsNothing(cpr.bolt_id_bot) Or Not IsNothing(cpr.bolt_N_or_X_bot) Or Not IsNothing(cpr.bolt_num_bot) Or Not IsNothing(cpr.bolt_spacing_bot) Or Not IsNothing(cpr.bolt_edge_dist_bot) Or Not IsNothing(cpr.FlangeOrBP_connected_bot) Or Not IsNothing(cpr.weld_grade_bot) Or Not IsNothing(cpr.weld_trans_type_bot) Or Not IsNothing(cpr.weld_trans_length_bot) Or Not IsNothing(cpr.weld_groove_depth_bot) Or Not IsNothing(cpr.weld_groove_angle_bot) Or Not IsNothing(cpr.weld_trans_fillet_size_bot) Or Not IsNothing(cpr.weld_trans_eff_throat_bot) Or Not IsNothing(cpr.weld_long_type_bot) Or Not IsNothing(cpr.weld_long_length_bot) Or Not IsNothing(cpr.weld_long_fillet_size_bot) Or Not IsNothing(cpr.weld_long_eff_throat_bot) Or Not IsNothing(cpr.top_bot_connections_symmetrical) Or Not IsNothing(cpr.connection_type_top) Or Not IsNothing(cpr.connection_cap_revF_top) Or Not IsNothing(cpr.connection_cap_revG_top) Or Not IsNothing(cpr.connection_cap_revH_top) Or Not IsNothing(cpr.bolt_id_top) Or Not IsNothing(cpr.bolt_N_or_X_top) Or Not IsNothing(cpr.bolt_num_top) Or Not IsNothing(cpr.bolt_spacing_top) Or Not IsNothing(cpr.bolt_edge_dist_top) Or Not IsNothing(cpr.FlangeOrBP_connected_top) Or Not IsNothing(cpr.weld_grade_top) Or Not IsNothing(cpr.weld_trans_type_top) Or Not IsNothing(cpr.weld_trans_length_top) Or Not IsNothing(cpr.weld_groove_depth_top) Or Not IsNothing(cpr.weld_groove_angle_top) Or Not IsNothing(cpr.weld_trans_fillet_size_top) Or Not IsNothing(cpr.weld_trans_eff_throat_top) Or Not IsNothing(cpr.weld_long_type_top) Or Not IsNothing(cpr.weld_long_length_top) Or Not IsNothing(cpr.weld_long_fillet_size_top) Or Not IsNothing(cpr.weld_long_eff_throat_top) Or Not IsNothing(cpr.conn_length_bot) Or Not IsNothing(cpr.conn_length_top) Or Not IsNothing(cpr.cap_comp_xx_f) Or Not IsNothing(cpr.cap_comp_yy_f) Or Not IsNothing(cpr.cap_tens_yield_f) Or Not IsNothing(cpr.cap_tens_rupture_f) Or Not IsNothing(cpr.cap_shear_f) Or Not IsNothing(cpr.cap_bolt_shear_bot_f) Or Not IsNothing(cpr.cap_bolt_shear_top_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_bot_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_f) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_f) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_f) Or Not IsNothing(cpr.cap_weld_trans_bot_f) Or Not IsNothing(cpr.cap_weld_long_bot_f) Or Not IsNothing(cpr.cap_weld_trans_top_f) Or Not IsNothing(cpr.cap_weld_long_top_f) Or Not IsNothing(cpr.cap_comp_xx_g) Or Not IsNothing(cpr.cap_comp_yy_g) Or Not IsNothing(cpr.cap_tens_yield_g) Or Not IsNothing(cpr.cap_tens_rupture_g) Or Not IsNothing(cpr.cap_shear_g) Or Not IsNothing(cpr.cap_bolt_shear_bot_g) Or Not IsNothing(cpr.cap_bolt_shear_top_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_g) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_g) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_g) Or Not IsNothing(cpr.cap_weld_trans_bot_g) Or Not IsNothing(cpr.cap_weld_long_bot_g) Or Not IsNothing(cpr.cap_weld_trans_top_g) Or Not IsNothing(cpr.cap_weld_long_top_g) Or Not IsNothing(cpr.cap_comp_xx_h) Or Not IsNothing(cpr.cap_comp_yy_h) Or Not IsNothing(cpr.cap_tens_yield_h) Or Not IsNothing(cpr.cap_tens_rupture_h) Or Not IsNothing(cpr.cap_shear_h) Or Not IsNothing(cpr.cap_bolt_shear_bot_h) Or Not IsNothing(cpr.cap_bolt_shear_top_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_bot_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_bot_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_nodeform_top_h) Or Not IsNothing(cpr.cap_boltshaft_bearing_deform_top_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_bot_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_bot_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_nodeform_top_h) Or Not IsNothing(cpr.cap_boltreinf_bearing_deform_top_h) Or Not IsNothing(cpr.cap_weld_trans_bot_h) Or Not IsNothing(cpr.cap_weld_long_bot_h) Or Not IsNothing(cpr.cap_weld_trans_top_h) Or Not IsNothing(cpr.cap_weld_long_top_h) Then
@@ -321,7 +346,7 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL REINF PROP])", myReinfProp)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT ALL REINF PROP]'", myReinfProp)
 
         For Each cpb As PropBolt In cp.bolts
             If Not IsNothing(cpb.name) Or Not IsNothing(cpb.description) Or Not IsNothing(cpb.diam) Or Not IsNothing(cpb.area) Or Not IsNothing(cpb.fu_bolt) Or Not IsNothing(cpb.sleeve_diam_out) Or Not IsNothing(cpb.sleeve_diam_in) Or Not IsNothing(cpb.fu_sleeve) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revF) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revF) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revG) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revG) Or Not IsNothing(cpb.bolt_n_sleeve_shear_revH) Or Not IsNothing(cpb.bolt_x_sleeve_shear_revH) Or Not IsNothing(cpb.rb_applied_revH) Then
@@ -335,7 +360,7 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL BOLT PROP])", myBoltProp)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT ALL BOLT PROP')", myBoltProp)
 
         For Each cpm As PropMatl In cp.matls
             If Not IsNothing(cpm.name) Or Not IsNothing(cpm.fy) Or Not IsNothing(cpm.fu) Then
@@ -349,7 +374,7 @@ Partial Public Class DataTransfererCCIpole
             firstOne = False
         Next
         firstOne = True
-        CCIpoleSaver = CCIpoleSaver.Replace("([INSERT ALL MATL PROP])", myMatlProp)
+        CCIpoleSaver = CCIpoleSaver.Replace("'[INSERT MATL PROP]'", myMatlProp)
 
         myCriteria = ""
         myPoleSection = ""
@@ -423,7 +448,7 @@ Partial Public Class DataTransfererCCIpole
                     col += 1
                     If Not IsNothing(ps.section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.section_id, Integer)
                     col += 1
-                    If Not IsNothing(ps.analysis_section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.analysis_section_id, Integer)
+                    If Not IsNothing(ps.local_section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.local_section_id, Integer)
                     col += 1
                     If Not IsNothing(ps.elev_bot) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.elev_bot, Double)
                     col += 1
@@ -478,7 +503,7 @@ Partial Public Class DataTransfererCCIpole
                     col += 1
                     If Not IsNothing(prs.section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.section_id, Integer)
                     col += 1
-                    If Not IsNothing(prs.analysis_section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.analysis_section_id, Integer)
+                    If Not IsNothing(prs.local_section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.local_section_id, Integer)
                     col += 1
                     If Not IsNothing(prs.elev_bot) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.elev_bot, Double)
                     col += 1
@@ -989,7 +1014,7 @@ Partial Public Class DataTransfererCCIpole
 
         Next
 
-        'Worksheet Change Events
+        ''Worksheet Change Events
         'If pf.pile_group_config = "Circular" Then
         '    .Worksheets("Moment of Inertia").Visible = False
         '    .Worksheets("Moment of Inertia (Circle)").Visible = True
@@ -1048,8 +1073,8 @@ Partial Public Class DataTransfererCCIpole
         Dim insertString As String = ""
 
         insertString += "@PoleSectionID"
-        insertString += "," & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
-        insertString += "," & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
+        'insertString += "," & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
+        insertString += "," & IIf(IsNothing(ps.local_section_id), "Null", ps.local_section_id.ToString)
         insertString += "," & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
         insertString += "," & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
         insertString += "," & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
@@ -1059,7 +1084,7 @@ Partial Public Class DataTransfererCCIpole
         insertString += "," & IIf(IsNothing(ps.diam_top), "Null", ps.diam_top.ToString)
         insertString += "," & IIf(IsNothing(ps.wall_thickness), "Null", ps.wall_thickness.ToString)
         insertString += "," & IIf(IsNothing(ps.bend_radius), "Null", ps.bend_radius.ToString)
-        insertString += "," & IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
+        insertString += "," & "@MatlID" 'IIf(IsNothing(ps.steel_grade_id), "Null", ps.steel_grade_id.ToString)
         insertString += "," & IIf(IsNothing(ps.pole_type), "Null", "'" & ps.pole_type.ToString & "'")
         insertString += "," & IIf(IsNothing(ps.section_name), "Null", "'" & ps.section_name.ToString & "'")
         insertString += "," & IIf(IsNothing(ps.socket_length), "Null", ps.socket_length.ToString)
@@ -1078,7 +1103,7 @@ Partial Public Class DataTransfererCCIpole
 
         insertString += "@PoleReinfSectionID"
         insertString += "," & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
-        insertString += "," & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
+        insertString += "," & IIf(IsNothing(prs.local_section_id), "Null", prs.local_section_id.ToString)
         insertString += "," & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
         insertString += "," & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
         insertString += "," & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
@@ -1111,7 +1136,8 @@ Partial Public Class DataTransfererCCIpole
         insertString += "," & IIf(IsNothing(prg.elev_bot_eff), "Null", prg.elev_bot_eff.ToString)
         insertString += "," & IIf(IsNothing(prg.elev_top_actual), "Null", prg.elev_top_actual.ToString)
         insertString += "," & IIf(IsNothing(prg.elev_top_eff), "Null", prg.elev_top_eff.ToString)
-        insertString += "," & IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)
+        insertString += "," & "@TypeID" 'IIf(IsNothing(prg.reinf_db_id), "Null", prg.reinf_db_id.ToString)  IF 18 or Less then set to NULL in sub sub query
+
 
         Return insertString
     End Function
@@ -1363,7 +1389,7 @@ Partial Public Class DataTransfererCCIpole
 
         updateString += "UPDATE pole_section SET "
         updateString += " section_id=" & IIf(IsNothing(ps.section_id), "Null", ps.section_id.ToString)
-        updateString += ", analysis_section_id=" & IIf(IsNothing(ps.analysis_section_id), "Null", ps.analysis_section_id.ToString)
+        updateString += ", local_section_id=" & IIf(IsNothing(ps.local_section_id), "Null", ps.local_section_id.ToString)
         updateString += ", elev_bot=" & IIf(IsNothing(ps.elev_bot), "Null", ps.elev_bot.ToString)
         updateString += ", elev_top=" & IIf(IsNothing(ps.elev_top), "Null", ps.elev_top.ToString)
         updateString += ", length_section=" & IIf(IsNothing(ps.length_section), "Null", ps.length_section.ToString)
@@ -1393,7 +1419,7 @@ Partial Public Class DataTransfererCCIpole
 
         updateString += "UPDATE pole_reinf_section SET "
         updateString += " section_ID=" & IIf(IsNothing(prs.section_ID), "Null", prs.section_ID.ToString)
-        updateString += ", analysis_section_ID=" & IIf(IsNothing(prs.analysis_section_ID), "Null", prs.analysis_section_ID.ToString)
+        updateString += ", local_section_id=" & IIf(IsNothing(prs.local_section_id), "Null", prs.local_section_id.ToString)
         updateString += ", elev_bot=" & IIf(IsNothing(prs.elev_bot), "Null", prs.elev_bot.ToString)
         updateString += ", elev_top=" & IIf(IsNothing(prs.elev_top), "Null", prs.elev_top.ToString)
         updateString += ", length_section=" & IIf(IsNothing(prs.length_section), "Null", prs.length_section.ToString)
@@ -1667,6 +1693,21 @@ Partial Public Class DataTransfererCCIpole
     Public Sub Clear()
         ExcelFilePath = ""
         Poles.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In CCIpoleExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In CCIpoleSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function CCIpoleSQLDataTables() As List(Of SQLParameter)
@@ -1744,7 +1785,7 @@ Partial Public Class DataTransfererCCIpole
         For Each xlps As PoleSection In xlPole.unreinf_sections
             For Each sqlps As PoleSection In sqlPole.unreinf_sections
                 If xlps.section_id = sqlps.section_id Then
-                    If Check1Change(xlps.analysis_section_id, sqlps.analysis_section_id, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.local_section_id, sqlps.local_section_id, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.elev_bot, sqlps.elev_bot, "CCIpole", "Elev_Bot " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.elev_top, sqlps.elev_top, "CCIpole", "Elev_Top " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.length_section, sqlps.length_section, "CCIpole", "Length_Section " & xlps.section_id.ToString) Then changesMade = True
@@ -1766,7 +1807,7 @@ Partial Public Class DataTransfererCCIpole
                     If Check1Change(xlps.flat_area_ratio, sqlps.flat_area_ratio, "CCIpole", "Flat_Area_Ratio " & xlps.section_id.ToString) Then changesMade = True
                     Exit For
                 ElseIf xlps.section_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them. 
-                    If Check1Change(xlps.analysis_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlps.local_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.elev_bot, Nothing, "CCIpole", "Elev_Bot " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.elev_top, Nothing, "CCIpole", "Elev_Top " & xlps.section_id.ToString) Then changesMade = True
                     If Check1Change(xlps.length_section, Nothing, "CCIpole", "Length_Section " & xlps.section_id.ToString) Then changesMade = True
@@ -1795,7 +1836,7 @@ Partial Public Class DataTransfererCCIpole
         For Each xlprs As PoleReinfSection In xlPole.reinf_sections
             For Each sqlprs As PoleReinfSection In sqlPole.reinf_sections
                 If xlprs.section_id = sqlprs.section_id Then
-                    If Check1Change(xlprs.analysis_section_id, sqlprs.analysis_section_id, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.local_section_id, sqlprs.local_section_id, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.elev_bot, sqlprs.elev_bot, "CCIpole", "Elev_Bot " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.elev_top, sqlprs.elev_top, "CCIpole", "Elev_Top " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.length_section, sqlprs.length_section, "CCIpole", "Length_Section " & xlprs.section_id.ToString) Then changesMade = True
@@ -1817,7 +1858,7 @@ Partial Public Class DataTransfererCCIpole
                     If Check1Change(xlprs.flat_area_ratio, sqlprs.flat_area_ratio, "CCIpole", "Flat_Area_Ratio " & xlprs.section_id.ToString) Then changesMade = True
                     Exit For
                 ElseIf xlprs.section_id = 0 Then 'accounts for inserting new rows. additional rows won't have an ID associated to them.
-                    If Check1Change(xlprs.analysis_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
+                    If Check1Change(xlprs.local_section_id, Nothing, "CCIpole", "Analysis_Section_Id " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.elev_bot, Nothing, "CCIpole", "Elev_Bot " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.elev_top, Nothing, "CCIpole", "Elev_Top " & xlprs.section_id.ToString) Then changesMade = True
                     If Check1Change(xlprs.length_section, Nothing, "CCIpole", "Length_Section " & xlprs.section_id.ToString) Then changesMade = True

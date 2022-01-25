@@ -5,21 +5,35 @@ SELECT
 fg.id fnd_group_id 
 ,sm.id model_id 
 ,fd.id fnd_detail_id 
-,s.* 
+,dpd.id drilled_pier_id
+--,dps.*
+,dps.id section_id
+,dps.local_drilled_pier_id
+,dps.pier_diameter
+,dps.clear_cover
+,dps.clear_cover_rebar_cage_option
+,dps.tie_size
+,dps.tie_spacing
+,dps.bottom_elevation
+,dps.local_section_id
+,dps.rho_override
 FROM 
 gen.structure_model_xref smx 
 ,gen.structure_model sm 
 ,fnd.foundation_group fg 
 ,fnd.foundation_details fd 
-,fnd.drilled_pier_section s
+,fnd.drilled_pier_details dpd
+,fnd.drilled_pier_section dps
 WHERE 
-smx.model_id = sm.id 
+smx.model_id = @ModelID
+AND smx.model_id = sm.id 
 AND sm.foundation_group_id = fg.id 
 AND fd.foundation_group_id = fg.id 
-AND fd.details_id = s.id 
+AND fd.details_id = dpd.id 
+AND dps.drilled_pier_id = dpd.id
 --AND fd.foundation_type = @FndType
-AND smx.bus_unit = @BU 
-AND smx.structure_id = @STR_ID
+--AND smx.bus_unit = @BU 
+--AND smx.structure_id = @STR_ID
 
 
 

@@ -5,21 +5,31 @@ SELECT
 fg.id fnd_group_id 
 ,sm.id model_id 
 ,fd.id fnd_detail_id 
-,dpp.* 
+,dpd.id drilled_pier_id
+--,dpp.*
+,dpp.id profile_id
+,dpp.reaction_position
+,dpp.reaction_location
+,dpp.local_drilled_pier_id
+,dpp.drilled_pier_profile
+,dpp.soil_profile
 FROM 
 gen.structure_model_xref smx 
 ,gen.structure_model sm 
 ,fnd.foundation_group fg 
 ,fnd.foundation_details fd 
+,fnd.drilled_pier_details dpd
 ,fnd.drilled_pier_profile dpp
 WHERE 
-smx.model_id = sm.id 
+smx.model_id = @ModelID
+AND smx.model_id = sm.id 
 AND sm.foundation_group_id = fg.id 
 AND fd.foundation_group_id = fg.id 
-AND fd.details_id = dpp.id 
+AND fd.details_id = dpd.id 
+AND dpp.drilled_pier_id = dpd.id 
 --AND fd.foundation_type = @FndType
-AND smx.bus_unit = @BU 
-AND smx.structure_id = @STR_ID
+--AND smx.bus_unit = @BU 
+--AND smx.structure_id = @STR_ID
 
 
 --SELECT 
