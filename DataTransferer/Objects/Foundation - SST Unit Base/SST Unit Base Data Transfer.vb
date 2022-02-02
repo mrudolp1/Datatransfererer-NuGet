@@ -92,9 +92,11 @@ Partial Public Class DataTransfererUnitBase
 
         'If sqlUnitBases.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
         For Each fnd As SST_Unit_Base In UnitBases
+            Dim IDmatch As Boolean = False
             If fnd.unit_base_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
                 For Each sqlfnd As SST_Unit_Base In sqlUnitBases
                     If fnd.unit_base_id = sqlfnd.unit_base_id Then
+                        IDmatch = True
                         If CheckChanges(fnd, sqlfnd) Then
                             isModelNeeded = True
                             isfndGroupNeeded = True
@@ -103,6 +105,12 @@ Partial Public Class DataTransfererUnitBase
                         Exit For
                     End If
                 Next
+                'IF ID match = False, Save the data because nothing exists in sql (could have copied tool from a different BU)
+                If IDmatch = False Then
+                    isModelNeeded = True
+                    isfndGroupNeeded = True
+                    isUnitBaseNeeded = True
+                End If
             Else
                 'Save the data because nothing exists in sql
                 isModelNeeded = True
@@ -472,6 +480,21 @@ Partial Public Class DataTransfererUnitBase
     Public Sub Clear()
         ExcelFilePath = ""
         UnitBases.Clear()
+
+        'Remove all datatables from the main dataset
+        For Each item As EXCELDTParameter In UnitBaseExcelDTParameters()
+            Try
+                ds.Tables.Remove(item.xlsDatatable)
+            Catch ex As Exception
+            End Try
+        Next
+
+        For Each item As SQLParameter In UnitBaseSQLDataTables()
+            Try
+                ds.Tables.Remove(item.sqlDatatable)
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Private Function UnitBaseSQLDataTables() As List(Of SQLParameter)

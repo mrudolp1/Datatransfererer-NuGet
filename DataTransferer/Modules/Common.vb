@@ -5,9 +5,9 @@ Imports DevExpress.DataAccess.Excel
 Module IDoDeclare
     Public ds As New DataSet
     Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "7878770"
+    Public BUNumber As String = "1809534"
     Public STR_ID As String = "A"
-    Public CurWO As String = "123456"
+    Public CurWO As String = "2345678"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
@@ -35,12 +35,17 @@ End Module
 
 Public Module Common
 
+
+
+
     'IEM 11/4/2021 Sometimes you need a little something
     Public Function IsSomething(ByVal sender As Object) As Boolean
         If Not IsNothing(sender) Then Return True
 
         Return False
     End Function
+
+
 
     <DebuggerStepThrough()>
     Sub dtClearer(ByVal sqlsrc As String)

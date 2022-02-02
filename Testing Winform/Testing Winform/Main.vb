@@ -19,27 +19,28 @@ Partial Public Class frmMain
     Public StrcID As String = ""
 
     'Import to Excel
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 870799 - Drilled Pier Foundation (5.1.0) - 10-13-21.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Drilled Pier Foundation (5.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 811236 - Pile Foundation (2.2.1.6).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 878770 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
+
     'Import to EDS
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\870799 - Drilled Pier Foundation (5.1.0) - 10-13-21.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Unit Base\806956\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS - Change1.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Unit Base\806956\806956 SST Unit Base Foundation (4.0.4) - TEMPLATE.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 9-9-2021.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\878770\878770 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\846182 Guyed Anchor Block Foundation (4.1.0) - TEMPLATE - 11-2-2021.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\EDS - 811236 - Pile Foundation (2.2.1.6) - Change 1.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\878770\EDS - 878770 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Connection\812637\CCIplate (4.1.2.1) - Copy - Copy.xlsm"}
 #End Region
@@ -294,9 +295,8 @@ Partial Public Class frmMain
 
 #Region "tnx"
 
-    Public tnxFromERI As tnxModel
-    Public tnxFromDB As tnxModel
-    Private Sub btnImportERI_Click(sender As Object, e As EventArgs) Handles btnImportERI.Click
+    Public tnxObject As tnxModel
+    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
         Dim eriFd As New OpenFileDialog
         eriFd.Multiselect = False
         eriFd.Filter = "TNX File|*.eri"
@@ -304,12 +304,12 @@ Partial Public Class frmMain
         If eriFd.ShowDialog = DialogResult.OK Then
             tnxFromERI = New tnxModel(eriFd.FileName)
 
-            propgridTNXERI.SelectedObject = tnxFromERI
+            propgridTNXObject.SelectedObject = tnxObject
         End If
     End Sub
 
-    Private Sub btnExportERI_Click(sender As Object, e As EventArgs) Handles btnExportERI.Click
-        If tnxFromDB Is Nothing Then
+    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
+        If tnxObject Is Nothing Then
             MessageBox.Show("Import a file first.")
             Exit Sub
         End If
@@ -318,14 +318,14 @@ Partial Public Class frmMain
         eriFd.Filter = "TNX File|*.eri"
 
         If eriFd.ShowDialog = DialogResult.OK Then
-            tnxFromDB.GenerateERI(eriFd.FileName)
+            tnxObject.GenerateERI(eriFd.FileName)
         End If
     End Sub
 
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
-        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
 
     End Sub
 
@@ -343,24 +343,19 @@ Partial Public Class frmMain
     Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
 
-        tnxFromDB = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridTNXEDS.SelectedObject = tnxFromDB
+        propgridTNXObject.SelectedObject = tnxObject
     End Sub
 
-    Private Sub btnCompare_Click(sender As Object, e As EventArgs) Handles btnCompare.Click
-        If tnxFromDB Is Nothing Or tnxFromERI Is Nothing Then
-            MessageBox.Show("Import both models to compare.")
-        End If
 
-        Dim differences As String = ""
-        Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
 
-        My.Computer.Clipboard.SetText(differences)
 
-        MessageBox.Show(result.ToString)
 
-    End Sub
+
+
+
+
 
 
 #End Region
@@ -382,8 +377,7 @@ Partial Public Class frmMain
                 tappy = 0
             Else
                 pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
-                If pwd = "DanIsTheBest" Then
-                    'If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
+                If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
                     MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
                     tappy = 3
                 Else
