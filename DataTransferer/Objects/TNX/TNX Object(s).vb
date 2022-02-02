@@ -6,6 +6,7 @@ Imports System.Data
 Imports System.IO
 Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
+Imports System.Data.SqlClient
 
 
 Partial Public Class tnxModel
@@ -7430,6 +7431,138 @@ Partial Public Class tnxModel
 
     End Sub
 
+    Sub SaveBaseToEDSSub(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+
+        Using New Benchmark("SaveBasetoEDS With Subquery")
+            Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP) - Sub Query Test.sql")
+
+
+            Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Sub Query Test.sql")
+
+            Dim tnxAllBaseSectionQuery As String = ""
+
+            For Each base In Me.geometry.baseStructure
+                Dim baseString As String = tnxBaseSectionSubQuery
+
+                baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
+                baseString = baseString.Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL)
+
+                tnxAllBaseSectionQuery += baseString & vbNewLine
+            Next
+
+
+            tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
+
+            sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
+        End Using
+
+    End Sub
+
+    'Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    'BULK UPLOAD
+    '    Using New Benchmark("SaveBasetoEDS With Full Individual Query")
+
+    '        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Full Query.sql")
+
+    '        Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
+    '            Using sqlCon As New SqlConnection(ActiveDatabase)
+    '                sqlCon.Open()
+    '                Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
+    '                sqlCmd.CommandText = tnxBaseSectionSubQuery
+    '                Dim DT As DataTable = Me.geometry.baseStructure(0).GenerateDataTable
+    '                For Each base In Me.geometry.baseStructure
+    '                    base.GenerateDataRow(DT)
+    '                Next
+
+    '                Using sqlBlk As New SqlBulkCopy(sqlCon)
+    '                    'Bulk upload works but not sure how to create cross references - DHS
+    '                    sqlBlk.DestinationTableName = "tnx.base_structure"
+    '                    sqlBlk.WriteToServer(DT)
+    '                    sqlBlk.Close()
+
+    '                End Using
+    '            End Using
+    '        End Using
+    '    End Using
+
+    'End Sub
+    'Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    '    'Individual parameters
+    '    Using New Benchmark("SaveBasetoEDS With Full Individual Query")
+
+    '        'Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Full Query Params.sql")
+
+    '        Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
+    '            Using sqlCon As New SqlConnection(ActiveDatabase)
+    '                sqlCon.Open()
+    '                Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
+    '                sqlCmd.CommandText = 'storeProcedureName'
+    '                'sqlCmd.CommandType = CommandType.StoredProcedure
+
+    '                For Each base In Me.geometry.baseStructure
+    '                    sqlCmd.Parameters.Clear()
+    '                    base.AddSQLParams(sqlCmd)
+    '                    If base.ID Is Nothing Then
+    '                        Try
+    '                            base.ID = DBtoNullableInt(sqlCmd.ExecuteScalar())
+    '                        Catch ex As Exception
+    '                            Console.WriteLine("Error Uploading Base Section: " & base.TowerRec.ToString & vbNewLine & ex.Message)
+    '                        End Try
+    '                    End If
+    ''                Next
+
+    '            End Using
+    '        End Using
+    '    End Using
+
+    'End Sub
+
+    Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        'Individual parameters
+        Using New Benchmark("SaveBasetoEDS With Full Individual Query")
+
+            'Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Full Query Params.sql")
+
+            Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
+                Using sqlCon As New SqlConnection(ActiveDatabase)
+                    sqlCon.Open()
+                    Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
+                    sqlCmd.CommandText = "tnx.insert_base_structure_data"
+                    sqlCmd.CommandType = CommandType.StoredProcedure
+                    Dim ds As New DataSet
+                    Dim DT As DataTable
+                    Dim unchangedDT As New DataTable()
+                    unchangedDT.Columns.Add("ID", GetType(Integer))
+                    Dim i As Integer = 477
+                    For Each base In Me.geometry.baseStructure
+                        If DT Is Nothing Then
+                            DT = base.GenerateDataTable
+                            base.TowerBraceType = "z-brace"
+                            base.GenerateDataRow(DT)
+                        Else
+                            base.ID = i
+                        End If
+
+                        If base.ID Is Nothing Then
+                            'base.GenerateDataRow(DT)
+                        Else
+                            unchangedDT.Rows.Add(base.ID)
+                        End If
+                        i += 1
+                    Next
+                    sqlCmd.Parameters.Clear()
+                    sqlCmd.Parameters.AddWithValue("@tnx_structure_id", 15)
+                    sqlCmd.Parameters.AddWithValue("@base_structure", DT)
+                    sqlCmd.Parameters.AddWithValue("@unchanged_records", unchangedDT)
+                    'unchangedDT.Clear()
+                    'unchangedDT.
+                    sqlCmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Using
+
+    End Sub
+
     Function GenerateIndInputSqlColumns() As String
         Dim insertString As String = ""
 
@@ -8118,7 +8251,6 @@ Partial Public Class tnxModel
 
         Return insertString
     End Function
-
     Public Sub GenerateERI(FilePath As String)
 
         Dim newERIList As New List(Of String)
@@ -15628,6 +15760,761 @@ Partial Public Class tnxTowerRecord
     End Sub
 #End Region
 
+    Public Function GenerateDataTable() As DataTable
+        GenerateDataTable = New DataTable
+        '    GenerateDataTable.Columns.Add("ID", GetTypeNullable(Me.ID))
+        GenerateDataTable.Columns.Add("TowerRec", GetTypeNullable(Me.TowerRec))
+        'GenerateDataTable.Columns.Add("TowerDatabase", GetTypeNullable(Me.TowerDatabase))
+        '    GenerateDataTable.Columns.Add("TowerName", GetTypeNullable(Me.TowerName))
+        '    GenerateDataTable.Columns.Add("TowerHeight", GetTypeNullable(Me.TowerHeight))
+        '    GenerateDataTable.Columns.Add("TowerFaceWidth", GetTypeNullable(Me.TowerFaceWidth))
+        '    GenerateDataTable.Columns.Add("TowerNumSections", GetTypeNullable(Me.TowerNumSections))
+        '    GenerateDataTable.Columns.Add("TowerSectionLength", GetTypeNullable(Me.TowerSectionLength))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalSpacing", GetTypeNullable(Me.TowerDiagonalSpacing))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalSpacingEx", GetTypeNullable(Me.TowerDiagonalSpacingEx))
+        GenerateDataTable.Columns.Add("TowerBraceType", GetTypeNullable(Me.TowerBraceType))
+        '    GenerateDataTable.Columns.Add("TowerFaceBevel", GetTypeNullable(Me.TowerFaceBevel))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtOffset", GetTypeNullable(Me.TowerTopGirtOffset))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtOffset", GetTypeNullable(Me.TowerBotGirtOffset))
+        '    GenerateDataTable.Columns.Add("TowerHasKBraceEndPanels", GetTypeNullable(Me.TowerHasKBraceEndPanels))
+        '    GenerateDataTable.Columns.Add("TowerHasHorizontals", GetTypeNullable(Me.TowerHasHorizontals))
+        '    GenerateDataTable.Columns.Add("TowerLegType", GetTypeNullable(Me.TowerLegType))
+        '    GenerateDataTable.Columns.Add("TowerLegSize", GetTypeNullable(Me.TowerLegSize))
+        '    GenerateDataTable.Columns.Add("TowerLegGrade", GetTypeNullable(Me.TowerLegGrade))
+        '    GenerateDataTable.Columns.Add("TowerLegMatlGrade", GetTypeNullable(Me.TowerLegMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalGrade", GetTypeNullable(Me.TowerDiagonalGrade))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalMatlGrade", GetTypeNullable(Me.TowerDiagonalMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerInnerBracingGrade", GetTypeNullable(Me.TowerInnerBracingGrade))
+        '    GenerateDataTable.Columns.Add("TowerInnerBracingMatlGrade", GetTypeNullable(Me.TowerInnerBracingMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtGrade", GetTypeNullable(Me.TowerTopGirtGrade))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtMatlGrade", GetTypeNullable(Me.TowerTopGirtMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtGrade", GetTypeNullable(Me.TowerBotGirtGrade))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtMatlGrade", GetTypeNullable(Me.TowerBotGirtMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtGrade", GetTypeNullable(Me.TowerInnerGirtGrade))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtMatlGrade", GetTypeNullable(Me.TowerInnerGirtMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerLongHorizontalGrade", GetTypeNullable(Me.TowerLongHorizontalGrade))
+        '    GenerateDataTable.Columns.Add("TowerLongHorizontalMatlGrade", GetTypeNullable(Me.TowerLongHorizontalMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalGrade", GetTypeNullable(Me.TowerShortHorizontalGrade))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalMatlGrade", GetTypeNullable(Me.TowerShortHorizontalMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalType", GetTypeNullable(Me.TowerDiagonalType))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalSize", GetTypeNullable(Me.TowerDiagonalSize))
+        '    GenerateDataTable.Columns.Add("TowerInnerBracingType", GetTypeNullable(Me.TowerInnerBracingType))
+        '    GenerateDataTable.Columns.Add("TowerInnerBracingSize", GetTypeNullable(Me.TowerInnerBracingSize))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtType", GetTypeNullable(Me.TowerTopGirtType))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtSize", GetTypeNullable(Me.TowerTopGirtSize))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtType", GetTypeNullable(Me.TowerBotGirtType))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtSize", GetTypeNullable(Me.TowerBotGirtSize))
+        '    GenerateDataTable.Columns.Add("TowerNumInnerGirts", GetTypeNullable(Me.TowerNumInnerGirts))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtType", GetTypeNullable(Me.TowerInnerGirtType))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtSize", GetTypeNullable(Me.TowerInnerGirtSize))
+        '    GenerateDataTable.Columns.Add("TowerLongHorizontalType", GetTypeNullable(Me.TowerLongHorizontalType))
+        '    GenerateDataTable.Columns.Add("TowerLongHorizontalSize", GetTypeNullable(Me.TowerLongHorizontalSize))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalType", GetTypeNullable(Me.TowerShortHorizontalType))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalSize", GetTypeNullable(Me.TowerShortHorizontalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantGrade", GetTypeNullable(Me.TowerRedundantGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantMatlGrade", GetTypeNullable(Me.TowerRedundantMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantType", GetTypeNullable(Me.TowerRedundantType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagType", GetTypeNullable(Me.TowerRedundantDiagType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalType", GetTypeNullable(Me.TowerRedundantSubDiagonalType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalType", GetTypeNullable(Me.TowerRedundantSubHorizontalType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalType", GetTypeNullable(Me.TowerRedundantVerticalType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipType", GetTypeNullable(Me.TowerRedundantHipType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalType", GetTypeNullable(Me.TowerRedundantHipDiagonalType))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalSize", GetTypeNullable(Me.TowerRedundantHorizontalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalSize2", GetTypeNullable(Me.TowerRedundantHorizontalSize2))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalSize3", GetTypeNullable(Me.TowerRedundantHorizontalSize3))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalSize4", GetTypeNullable(Me.TowerRedundantHorizontalSize4))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalSize", GetTypeNullable(Me.TowerRedundantDiagonalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalSize2", GetTypeNullable(Me.TowerRedundantDiagonalSize2))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalSize3", GetTypeNullable(Me.TowerRedundantDiagonalSize3))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalSize4", GetTypeNullable(Me.TowerRedundantDiagonalSize4))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalSize", GetTypeNullable(Me.TowerRedundantSubHorizontalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalSize", GetTypeNullable(Me.TowerRedundantSubDiagonalSize))
+        '    GenerateDataTable.Columns.Add("TowerSubDiagLocation", GetTypeNullable(Me.TowerSubDiagLocation))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalSize", GetTypeNullable(Me.TowerRedundantVerticalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipSize", GetTypeNullable(Me.TowerRedundantHipSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipSize2", GetTypeNullable(Me.TowerRedundantHipSize2))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipSize3", GetTypeNullable(Me.TowerRedundantHipSize3))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipSize4", GetTypeNullable(Me.TowerRedundantHipSize4))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalSize", GetTypeNullable(Me.TowerRedundantHipDiagonalSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalSize2", GetTypeNullable(Me.TowerRedundantHipDiagonalSize2))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalSize3", GetTypeNullable(Me.TowerRedundantHipDiagonalSize3))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalSize4", GetTypeNullable(Me.TowerRedundantHipDiagonalSize4))
+        '    GenerateDataTable.Columns.Add("TowerSWMult", GetTypeNullable(Me.TowerSWMult))
+        '    GenerateDataTable.Columns.Add("TowerWPMult", GetTypeNullable(Me.TowerWPMult))
+        '    GenerateDataTable.Columns.Add("TowerAutoCalcKSingleAngle", GetTypeNullable(Me.TowerAutoCalcKSingleAngle))
+        '    GenerateDataTable.Columns.Add("TowerAutoCalcKSolidRound", GetTypeNullable(Me.TowerAutoCalcKSolidRound))
+        '    GenerateDataTable.Columns.Add("TowerAfGusset", GetTypeNullable(Me.TowerAfGusset))
+        '    GenerateDataTable.Columns.Add("TowerTfGusset", GetTypeNullable(Me.TowerTfGusset))
+        '    GenerateDataTable.Columns.Add("TowerGussetBoltEdgeDistance", GetTypeNullable(Me.TowerGussetBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerGussetGrade", GetTypeNullable(Me.TowerGussetGrade))
+        '    GenerateDataTable.Columns.Add("TowerGussetMatlGrade", GetTypeNullable(Me.TowerGussetMatlGrade))
+        '    GenerateDataTable.Columns.Add("TowerAfMult", GetTypeNullable(Me.TowerAfMult))
+        '    GenerateDataTable.Columns.Add("TowerArMult", GetTypeNullable(Me.TowerArMult))
+        '    GenerateDataTable.Columns.Add("TowerFlatIPAPole", GetTypeNullable(Me.TowerFlatIPAPole))
+        '    GenerateDataTable.Columns.Add("TowerRoundIPAPole", GetTypeNullable(Me.TowerRoundIPAPole))
+        '    GenerateDataTable.Columns.Add("TowerFlatIPALeg", GetTypeNullable(Me.TowerFlatIPALeg))
+        '    GenerateDataTable.Columns.Add("TowerRoundIPALeg", GetTypeNullable(Me.TowerRoundIPALeg))
+        '    GenerateDataTable.Columns.Add("TowerFlatIPAHorizontal", GetTypeNullable(Me.TowerFlatIPAHorizontal))
+        '    GenerateDataTable.Columns.Add("TowerRoundIPAHorizontal", GetTypeNullable(Me.TowerRoundIPAHorizontal))
+        '    GenerateDataTable.Columns.Add("TowerFlatIPADiagonal", GetTypeNullable(Me.TowerFlatIPADiagonal))
+        '    GenerateDataTable.Columns.Add("TowerRoundIPADiagonal", GetTypeNullable(Me.TowerRoundIPADiagonal))
+        '    GenerateDataTable.Columns.Add("TowerCSA_S37_SpeedUpFactor", GetTypeNullable(Me.TowerCSA_S37_SpeedUpFactor))
+        '    GenerateDataTable.Columns.Add("TowerKLegs", GetTypeNullable(Me.TowerKLegs))
+        '    GenerateDataTable.Columns.Add("TowerKXBracedDiags", GetTypeNullable(Me.TowerKXBracedDiags))
+        '    GenerateDataTable.Columns.Add("TowerKKBracedDiags", GetTypeNullable(Me.TowerKKBracedDiags))
+        '    GenerateDataTable.Columns.Add("TowerKZBracedDiags", GetTypeNullable(Me.TowerKZBracedDiags))
+        '    GenerateDataTable.Columns.Add("TowerKHorzs", GetTypeNullable(Me.TowerKHorzs))
+        '    GenerateDataTable.Columns.Add("TowerKSecHorzs", GetTypeNullable(Me.TowerKSecHorzs))
+        '    GenerateDataTable.Columns.Add("TowerKGirts", GetTypeNullable(Me.TowerKGirts))
+        '    GenerateDataTable.Columns.Add("TowerKInners", GetTypeNullable(Me.TowerKInners))
+        '    GenerateDataTable.Columns.Add("TowerKXBracedDiagsY", GetTypeNullable(Me.TowerKXBracedDiagsY))
+        '    GenerateDataTable.Columns.Add("TowerKKBracedDiagsY", GetTypeNullable(Me.TowerKKBracedDiagsY))
+        '    GenerateDataTable.Columns.Add("TowerKZBracedDiagsY", GetTypeNullable(Me.TowerKZBracedDiagsY))
+        '    GenerateDataTable.Columns.Add("TowerKHorzsY", GetTypeNullable(Me.TowerKHorzsY))
+        '    GenerateDataTable.Columns.Add("TowerKSecHorzsY", GetTypeNullable(Me.TowerKSecHorzsY))
+        '    GenerateDataTable.Columns.Add("TowerKGirtsY", GetTypeNullable(Me.TowerKGirtsY))
+        '    GenerateDataTable.Columns.Add("TowerKInnersY", GetTypeNullable(Me.TowerKInnersY))
+        '    GenerateDataTable.Columns.Add("TowerKRedHorz", GetTypeNullable(Me.TowerKRedHorz))
+        '    GenerateDataTable.Columns.Add("TowerKRedDiag", GetTypeNullable(Me.TowerKRedDiag))
+        '    GenerateDataTable.Columns.Add("TowerKRedSubDiag", GetTypeNullable(Me.TowerKRedSubDiag))
+        '    GenerateDataTable.Columns.Add("TowerKRedSubHorz", GetTypeNullable(Me.TowerKRedSubHorz))
+        '    GenerateDataTable.Columns.Add("TowerKRedVert", GetTypeNullable(Me.TowerKRedVert))
+        '    GenerateDataTable.Columns.Add("TowerKRedHip", GetTypeNullable(Me.TowerKRedHip))
+        '    GenerateDataTable.Columns.Add("TowerKRedHipDiag", GetTypeNullable(Me.TowerKRedHipDiag))
+        '    GenerateDataTable.Columns.Add("TowerKTLX", GetTypeNullable(Me.TowerKTLX))
+        '    GenerateDataTable.Columns.Add("TowerKTLZ", GetTypeNullable(Me.TowerKTLZ))
+        '    GenerateDataTable.Columns.Add("TowerKTLLeg", GetTypeNullable(Me.TowerKTLLeg))
+        '    GenerateDataTable.Columns.Add("TowerInnerKTLX", GetTypeNullable(Me.TowerInnerKTLX))
+        '    GenerateDataTable.Columns.Add("TowerInnerKTLZ", GetTypeNullable(Me.TowerInnerKTLZ))
+        '    GenerateDataTable.Columns.Add("TowerInnerKTLLeg", GetTypeNullable(Me.TowerInnerKTLLeg))
+        '    GenerateDataTable.Columns.Add("TowerStitchBoltLocationHoriz", GetTypeNullable(Me.TowerStitchBoltLocationHoriz))
+        '    GenerateDataTable.Columns.Add("TowerStitchBoltLocationDiag", GetTypeNullable(Me.TowerStitchBoltLocationDiag))
+        '    GenerateDataTable.Columns.Add("TowerStitchBoltLocationRed", GetTypeNullable(Me.TowerStitchBoltLocationRed))
+        '    GenerateDataTable.Columns.Add("TowerStitchSpacing", GetTypeNullable(Me.TowerStitchSpacing))
+        '    GenerateDataTable.Columns.Add("TowerStitchSpacingDiag", GetTypeNullable(Me.TowerStitchSpacingDiag))
+        '    GenerateDataTable.Columns.Add("TowerStitchSpacingHorz", GetTypeNullable(Me.TowerStitchSpacingHorz))
+        '    GenerateDataTable.Columns.Add("TowerStitchSpacingRed", GetTypeNullable(Me.TowerStitchSpacingRed))
+        '    GenerateDataTable.Columns.Add("TowerLegNetWidthDeduct", GetTypeNullable(Me.TowerLegNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerLegUFactor", GetTypeNullable(Me.TowerLegUFactor))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalNetWidthDeduct", GetTypeNullable(Me.TowerDiagonalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtNetWidthDeduct", GetTypeNullable(Me.TowerTopGirtNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtNetWidthDeduct", GetTypeNullable(Me.TowerBotGirtNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtNetWidthDeduct", GetTypeNullable(Me.TowerInnerGirtNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalNetWidthDeduct", GetTypeNullable(Me.TowerHorizontalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalNetWidthDeduct", GetTypeNullable(Me.TowerShortHorizontalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalUFactor", GetTypeNullable(Me.TowerDiagonalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtUFactor", GetTypeNullable(Me.TowerTopGirtUFactor))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtUFactor", GetTypeNullable(Me.TowerBotGirtUFactor))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtUFactor", GetTypeNullable(Me.TowerInnerGirtUFactor))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalUFactor", GetTypeNullable(Me.TowerHorizontalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalUFactor", GetTypeNullable(Me.TowerShortHorizontalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerLegConnType", GetTypeNullable(Me.TowerLegConnType))
+        '    GenerateDataTable.Columns.Add("TowerLegNumBolts", GetTypeNullable(Me.TowerLegNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalNumBolts", GetTypeNullable(Me.TowerDiagonalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtNumBolts", GetTypeNullable(Me.TowerTopGirtNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtNumBolts", GetTypeNullable(Me.TowerBotGirtNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtNumBolts", GetTypeNullable(Me.TowerInnerGirtNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalNumBolts", GetTypeNullable(Me.TowerHorizontalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalNumBolts", GetTypeNullable(Me.TowerShortHorizontalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerLegBoltGrade", GetTypeNullable(Me.TowerLegBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerLegBoltSize", GetTypeNullable(Me.TowerLegBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalBoltGrade", GetTypeNullable(Me.TowerDiagonalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalBoltSize", GetTypeNullable(Me.TowerDiagonalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtBoltGrade", GetTypeNullable(Me.TowerTopGirtBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtBoltSize", GetTypeNullable(Me.TowerTopGirtBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtBoltGrade", GetTypeNullable(Me.TowerBotGirtBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtBoltSize", GetTypeNullable(Me.TowerBotGirtBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtBoltGrade", GetTypeNullable(Me.TowerInnerGirtBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtBoltSize", GetTypeNullable(Me.TowerInnerGirtBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalBoltGrade", GetTypeNullable(Me.TowerHorizontalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalBoltSize", GetTypeNullable(Me.TowerHorizontalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalBoltGrade", GetTypeNullable(Me.TowerShortHorizontalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalBoltSize", GetTypeNullable(Me.TowerShortHorizontalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerLegBoltEdgeDistance", GetTypeNullable(Me.TowerLegBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalBoltEdgeDistance", GetTypeNullable(Me.TowerDiagonalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtBoltEdgeDistance", GetTypeNullable(Me.TowerTopGirtBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtBoltEdgeDistance", GetTypeNullable(Me.TowerBotGirtBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtBoltEdgeDistance", GetTypeNullable(Me.TowerInnerGirtBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalBoltEdgeDistance", GetTypeNullable(Me.TowerHorizontalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalBoltEdgeDistance", GetTypeNullable(Me.TowerShortHorizontalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalGageG1Distance", GetTypeNullable(Me.TowerDiagonalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtGageG1Distance", GetTypeNullable(Me.TowerTopGirtGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerBotGirtGageG1Distance", GetTypeNullable(Me.TowerBotGirtGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerInnerGirtGageG1Distance", GetTypeNullable(Me.TowerInnerGirtGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalGageG1Distance", GetTypeNullable(Me.TowerHorizontalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerShortHorizontalGageG1Distance", GetTypeNullable(Me.TowerShortHorizontalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalBoltGrade", GetTypeNullable(Me.TowerRedundantHorizontalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalBoltSize", GetTypeNullable(Me.TowerRedundantHorizontalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalNumBolts", GetTypeNullable(Me.TowerRedundantHorizontalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantHorizontalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalGageG1Distance", GetTypeNullable(Me.TowerRedundantHorizontalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantHorizontalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHorizontalUFactor", GetTypeNullable(Me.TowerRedundantHorizontalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalBoltGrade", GetTypeNullable(Me.TowerRedundantDiagonalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalBoltSize", GetTypeNullable(Me.TowerRedundantDiagonalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalNumBolts", GetTypeNullable(Me.TowerRedundantDiagonalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantDiagonalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalGageG1Distance", GetTypeNullable(Me.TowerRedundantDiagonalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantDiagonalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantDiagonalUFactor", GetTypeNullable(Me.TowerRedundantDiagonalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalBoltGrade", GetTypeNullable(Me.TowerRedundantSubDiagonalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalBoltSize", GetTypeNullable(Me.TowerRedundantSubDiagonalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalNumBolts", GetTypeNullable(Me.TowerRedundantSubDiagonalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantSubDiagonalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalGageG1Distance", GetTypeNullable(Me.TowerRedundantSubDiagonalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantSubDiagonalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubDiagonalUFactor", GetTypeNullable(Me.TowerRedundantSubDiagonalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalBoltGrade", GetTypeNullable(Me.TowerRedundantSubHorizontalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalBoltSize", GetTypeNullable(Me.TowerRedundantSubHorizontalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalNumBolts", GetTypeNullable(Me.TowerRedundantSubHorizontalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantSubHorizontalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalGageG1Distance", GetTypeNullable(Me.TowerRedundantSubHorizontalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantSubHorizontalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantSubHorizontalUFactor", GetTypeNullable(Me.TowerRedundantSubHorizontalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalBoltGrade", GetTypeNullable(Me.TowerRedundantVerticalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalBoltSize", GetTypeNullable(Me.TowerRedundantVerticalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalNumBolts", GetTypeNullable(Me.TowerRedundantVerticalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantVerticalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalGageG1Distance", GetTypeNullable(Me.TowerRedundantVerticalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantVerticalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantVerticalUFactor", GetTypeNullable(Me.TowerRedundantVerticalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipBoltGrade", GetTypeNullable(Me.TowerRedundantHipBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipBoltSize", GetTypeNullable(Me.TowerRedundantHipBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipNumBolts", GetTypeNullable(Me.TowerRedundantHipNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantHipBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipGageG1Distance", GetTypeNullable(Me.TowerRedundantHipGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipNetWidthDeduct", GetTypeNullable(Me.TowerRedundantHipNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipUFactor", GetTypeNullable(Me.TowerRedundantHipUFactor))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalBoltGrade", GetTypeNullable(Me.TowerRedundantHipDiagonalBoltGrade))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalBoltSize", GetTypeNullable(Me.TowerRedundantHipDiagonalBoltSize))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalNumBolts", GetTypeNullable(Me.TowerRedundantHipDiagonalNumBolts))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalBoltEdgeDistance", GetTypeNullable(Me.TowerRedundantHipDiagonalBoltEdgeDistance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalGageG1Distance", GetTypeNullable(Me.TowerRedundantHipDiagonalGageG1Distance))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalNetWidthDeduct", GetTypeNullable(Me.TowerRedundantHipDiagonalNetWidthDeduct))
+        '    GenerateDataTable.Columns.Add("TowerRedundantHipDiagonalUFactor", GetTypeNullable(Me.TowerRedundantHipDiagonalUFactor))
+        '    GenerateDataTable.Columns.Add("TowerDiagonalOutOfPlaneRestraint", GetTypeNullable(Me.TowerDiagonalOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerTopGirtOutOfPlaneRestraint", GetTypeNullable(Me.TowerTopGirtOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerBottomGirtOutOfPlaneRestraint", GetTypeNullable(Me.TowerBottomGirtOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerMidGirtOutOfPlaneRestraint", GetTypeNullable(Me.TowerMidGirtOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerHorizontalOutOfPlaneRestraint", GetTypeNullable(Me.TowerHorizontalOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerSecondaryHorizontalOutOfPlaneRestraint", GetTypeNullable(Me.TowerSecondaryHorizontalOutOfPlaneRestraint))
+        '    GenerateDataTable.Columns.Add("TowerUniqueFlag", GetTypeNullable(Me.TowerUniqueFlag))
+        '    GenerateDataTable.Columns.Add("TowerDiagOffsetNEY", GetTypeNullable(Me.TowerDiagOffsetNEY))
+        '    GenerateDataTable.Columns.Add("TowerDiagOffsetNEX", GetTypeNullable(Me.TowerDiagOffsetNEX))
+        '    GenerateDataTable.Columns.Add("TowerDiagOffsetPEY", GetTypeNullable(Me.TowerDiagOffsetPEY))
+        '    GenerateDataTable.Columns.Add("TowerDiagOffsetPEX", GetTypeNullable(Me.TowerDiagOffsetPEX))
+        '    GenerateDataTable.Columns.Add("TowerKbraceOffsetNEY", GetTypeNullable(Me.TowerKbraceOffsetNEY))
+        '    GenerateDataTable.Columns.Add("TowerKbraceOffsetNEX", GetTypeNullable(Me.TowerKbraceOffsetNEX))
+        '    GenerateDataTable.Columns.Add("TowerKbraceOffsetPEY", GetTypeNullable(Me.TowerKbraceOffsetPEY))
+        '    GenerateDataTable.Columns.Add("TowerKbraceOffsetPEX", GetTypeNullable(Me.TowerKbraceOffsetPEX))
+
+        Return GenerateDataTable
+    End Function
+
+    Public Sub GenerateDataRow(ByVal DT As DataTable)
+        Dim newRow As DataRow = DT.NewRow()
+
+        'If Me.ID.HasValue Then newRow("ID") = Me.ID.Value
+        If Me.TowerRec.HasValue Then newRow("TowerRec") = Me.TowerRec.Value
+        '    If Not Me.TowerDatabase = "" Then newRow("TowerDatabase") = Me.TowerDatabase
+        '    If Not Me.TowerName = "" Then newRow("TowerName") = Me.TowerName
+        '    If Me.TowerHeight.HasValue Then newRow("TowerHeight") = Me.TowerHeight.Value
+        '    If Me.TowerFaceWidth.HasValue Then newRow("TowerFaceWidth") = Me.TowerFaceWidth.Value
+        '    If Me.TowerNumSections.HasValue Then newRow("TowerNumSections") = Me.TowerNumSections.Value
+        '    If Me.TowerSectionLength.HasValue Then newRow("TowerSectionLength") = Me.TowerSectionLength.Value
+        '    If Me.TowerDiagonalSpacing.HasValue Then newRow("TowerDiagonalSpacing") = Me.TowerDiagonalSpacing.Value
+        '    If Me.TowerDiagonalSpacingEx.HasValue Then newRow("TowerDiagonalSpacingEx") = Me.TowerDiagonalSpacingEx.Value
+        If Not Me.TowerBraceType = "" Then newRow("TowerBraceType") = Me.TowerBraceType
+        '    If Me.TowerFaceBevel.HasValue Then newRow("TowerFaceBevel") = Me.TowerFaceBevel.Value
+        '    If Me.TowerTopGirtOffset.HasValue Then newRow("TowerTopGirtOffset") = Me.TowerTopGirtOffset.Value
+        '    If Me.TowerBotGirtOffset.HasValue Then newRow("TowerBotGirtOffset") = Me.TowerBotGirtOffset.Value
+        '    If Me.TowerHasKBraceEndPanels.HasValue Then newRow("TowerHasKBraceEndPanels") = Me.TowerHasKBraceEndPanels.Value
+        '    If Me.TowerHasHorizontals.HasValue Then newRow("TowerHasHorizontals") = Me.TowerHasHorizontals.Value
+        '    If Not Me.TowerLegType = "" Then newRow("TowerLegType") = Me.TowerLegType
+        '    If Not Me.TowerLegSize = "" Then newRow("TowerLegSize") = Me.TowerLegSize
+        '    If Me.TowerLegGrade.HasValue Then newRow("TowerLegGrade") = Me.TowerLegGrade.Value
+        '    If Not Me.TowerLegMatlGrade = "" Then newRow("TowerLegMatlGrade") = Me.TowerLegMatlGrade
+        '    If Me.TowerDiagonalGrade.HasValue Then newRow("TowerDiagonalGrade") = Me.TowerDiagonalGrade.Value
+        '    If Not Me.TowerDiagonalMatlGrade = "" Then newRow("TowerDiagonalMatlGrade") = Me.TowerDiagonalMatlGrade
+        '    If Me.TowerInnerBracingGrade.HasValue Then newRow("TowerInnerBracingGrade") = Me.TowerInnerBracingGrade.Value
+        '    If Not Me.TowerInnerBracingMatlGrade = "" Then newRow("TowerInnerBracingMatlGrade") = Me.TowerInnerBracingMatlGrade
+        '    If Me.TowerTopGirtGrade.HasValue Then newRow("TowerTopGirtGrade") = Me.TowerTopGirtGrade.Value
+        '    If Not Me.TowerTopGirtMatlGrade = "" Then newRow("TowerTopGirtMatlGrade") = Me.TowerTopGirtMatlGrade
+        '    If Me.TowerBotGirtGrade.HasValue Then newRow("TowerBotGirtGrade") = Me.TowerBotGirtGrade.Value
+        '    If Not Me.TowerBotGirtMatlGrade = "" Then newRow("TowerBotGirtMatlGrade") = Me.TowerBotGirtMatlGrade
+        '    If Me.TowerInnerGirtGrade.HasValue Then newRow("TowerInnerGirtGrade") = Me.TowerInnerGirtGrade.Value
+        '    If Not Me.TowerInnerGirtMatlGrade = "" Then newRow("TowerInnerGirtMatlGrade") = Me.TowerInnerGirtMatlGrade
+        '    If Me.TowerLongHorizontalGrade.HasValue Then newRow("TowerLongHorizontalGrade") = Me.TowerLongHorizontalGrade.Value
+        '    If Not Me.TowerLongHorizontalMatlGrade = "" Then newRow("TowerLongHorizontalMatlGrade") = Me.TowerLongHorizontalMatlGrade
+        '    If Me.TowerShortHorizontalGrade.HasValue Then newRow("TowerShortHorizontalGrade") = Me.TowerShortHorizontalGrade.Value
+        '    If Not Me.TowerShortHorizontalMatlGrade = "" Then newRow("TowerShortHorizontalMatlGrade") = Me.TowerShortHorizontalMatlGrade
+        '    If Not Me.TowerDiagonalType = "" Then newRow("TowerDiagonalType") = Me.TowerDiagonalType
+        '    If Not Me.TowerDiagonalSize = "" Then newRow("TowerDiagonalSize") = Me.TowerDiagonalSize
+        '    If Not Me.TowerInnerBracingType = "" Then newRow("TowerInnerBracingType") = Me.TowerInnerBracingType
+        '    If Not Me.TowerInnerBracingSize = "" Then newRow("TowerInnerBracingSize") = Me.TowerInnerBracingSize
+        '    If Not Me.TowerTopGirtType = "" Then newRow("TowerTopGirtType") = Me.TowerTopGirtType
+        '    If Not Me.TowerTopGirtSize = "" Then newRow("TowerTopGirtSize") = Me.TowerTopGirtSize
+        '    If Not Me.TowerBotGirtType = "" Then newRow("TowerBotGirtType") = Me.TowerBotGirtType
+        '    If Not Me.TowerBotGirtSize = "" Then newRow("TowerBotGirtSize") = Me.TowerBotGirtSize
+        '    If Me.TowerNumInnerGirts.HasValue Then newRow("TowerNumInnerGirts") = Me.TowerNumInnerGirts.Value
+        '    If Not Me.TowerInnerGirtType = "" Then newRow("TowerInnerGirtType") = Me.TowerInnerGirtType
+        '    If Not Me.TowerInnerGirtSize = "" Then newRow("TowerInnerGirtSize") = Me.TowerInnerGirtSize
+        '    If Not Me.TowerLongHorizontalType = "" Then newRow("TowerLongHorizontalType") = Me.TowerLongHorizontalType
+        '    If Not Me.TowerLongHorizontalSize = "" Then newRow("TowerLongHorizontalSize") = Me.TowerLongHorizontalSize
+        '    If Not Me.TowerShortHorizontalType = "" Then newRow("TowerShortHorizontalType") = Me.TowerShortHorizontalType
+        '    If Not Me.TowerShortHorizontalSize = "" Then newRow("TowerShortHorizontalSize") = Me.TowerShortHorizontalSize
+        '    If Me.TowerRedundantGrade.HasValue Then newRow("TowerRedundantGrade") = Me.TowerRedundantGrade.Value
+        '    If Not Me.TowerRedundantMatlGrade = "" Then newRow("TowerRedundantMatlGrade") = Me.TowerRedundantMatlGrade
+        '    If Not Me.TowerRedundantType = "" Then newRow("TowerRedundantType") = Me.TowerRedundantType
+        '    If Not Me.TowerRedundantDiagType = "" Then newRow("TowerRedundantDiagType") = Me.TowerRedundantDiagType
+        '    If Not Me.TowerRedundantSubDiagonalType = "" Then newRow("TowerRedundantSubDiagonalType") = Me.TowerRedundantSubDiagonalType
+        '    If Not Me.TowerRedundantSubHorizontalType = "" Then newRow("TowerRedundantSubHorizontalType") = Me.TowerRedundantSubHorizontalType
+        '    If Not Me.TowerRedundantVerticalType = "" Then newRow("TowerRedundantVerticalType") = Me.TowerRedundantVerticalType
+        '    If Not Me.TowerRedundantHipType = "" Then newRow("TowerRedundantHipType") = Me.TowerRedundantHipType
+        '    If Not Me.TowerRedundantHipDiagonalType = "" Then newRow("TowerRedundantHipDiagonalType") = Me.TowerRedundantHipDiagonalType
+        '    If Not Me.TowerRedundantHorizontalSize = "" Then newRow("TowerRedundantHorizontalSize") = Me.TowerRedundantHorizontalSize
+        '    If Not Me.TowerRedundantHorizontalSize2 = "" Then newRow("TowerRedundantHorizontalSize2") = Me.TowerRedundantHorizontalSize2
+        '    If Not Me.TowerRedundantHorizontalSize3 = "" Then newRow("TowerRedundantHorizontalSize3") = Me.TowerRedundantHorizontalSize3
+        '    If Not Me.TowerRedundantHorizontalSize4 = "" Then newRow("TowerRedundantHorizontalSize4") = Me.TowerRedundantHorizontalSize4
+        '    If Not Me.TowerRedundantDiagonalSize = "" Then newRow("TowerRedundantDiagonalSize") = Me.TowerRedundantDiagonalSize
+        '    If Not Me.TowerRedundantDiagonalSize2 = "" Then newRow("TowerRedundantDiagonalSize2") = Me.TowerRedundantDiagonalSize2
+        '    If Not Me.TowerRedundantDiagonalSize3 = "" Then newRow("TowerRedundantDiagonalSize3") = Me.TowerRedundantDiagonalSize3
+        '    If Not Me.TowerRedundantDiagonalSize4 = "" Then newRow("TowerRedundantDiagonalSize4") = Me.TowerRedundantDiagonalSize4
+        '    If Not Me.TowerRedundantSubHorizontalSize = "" Then newRow("TowerRedundantSubHorizontalSize") = Me.TowerRedundantSubHorizontalSize
+        '    If Not Me.TowerRedundantSubDiagonalSize = "" Then newRow("TowerRedundantSubDiagonalSize") = Me.TowerRedundantSubDiagonalSize
+        '    If Me.TowerSubDiagLocation.HasValue Then newRow("TowerSubDiagLocation") = Me.TowerSubDiagLocation.Value
+        '    If Not Me.TowerRedundantVerticalSize = "" Then newRow("TowerRedundantVerticalSize") = Me.TowerRedundantVerticalSize
+        '    If Not Me.TowerRedundantHipSize = "" Then newRow("TowerRedundantHipSize") = Me.TowerRedundantHipSize
+        '    If Not Me.TowerRedundantHipSize2 = "" Then newRow("TowerRedundantHipSize2") = Me.TowerRedundantHipSize2
+        '    If Not Me.TowerRedundantHipSize3 = "" Then newRow("TowerRedundantHipSize3") = Me.TowerRedundantHipSize3
+        '    If Not Me.TowerRedundantHipSize4 = "" Then newRow("TowerRedundantHipSize4") = Me.TowerRedundantHipSize4
+        '    If Not Me.TowerRedundantHipDiagonalSize = "" Then newRow("TowerRedundantHipDiagonalSize") = Me.TowerRedundantHipDiagonalSize
+        '    If Not Me.TowerRedundantHipDiagonalSize2 = "" Then newRow("TowerRedundantHipDiagonalSize2") = Me.TowerRedundantHipDiagonalSize2
+        '    If Not Me.TowerRedundantHipDiagonalSize3 = "" Then newRow("TowerRedundantHipDiagonalSize3") = Me.TowerRedundantHipDiagonalSize3
+        '    If Not Me.TowerRedundantHipDiagonalSize4 = "" Then newRow("TowerRedundantHipDiagonalSize4") = Me.TowerRedundantHipDiagonalSize4
+        '    If Me.TowerSWMult.HasValue Then newRow("TowerSWMult") = Me.TowerSWMult.Value
+        '    If Me.TowerWPMult.HasValue Then newRow("TowerWPMult") = Me.TowerWPMult.Value
+        '    If Me.TowerAutoCalcKSingleAngle.HasValue Then newRow("TowerAutoCalcKSingleAngle") = Me.TowerAutoCalcKSingleAngle.Value
+        '    If Me.TowerAutoCalcKSolidRound.HasValue Then newRow("TowerAutoCalcKSolidRound") = Me.TowerAutoCalcKSolidRound.Value
+        '    If Me.TowerAfGusset.HasValue Then newRow("TowerAfGusset") = Me.TowerAfGusset.Value
+        '    If Me.TowerTfGusset.HasValue Then newRow("TowerTfGusset") = Me.TowerTfGusset.Value
+        '    If Me.TowerGussetBoltEdgeDistance.HasValue Then newRow("TowerGussetBoltEdgeDistance") = Me.TowerGussetBoltEdgeDistance.Value
+        '    If Me.TowerGussetGrade.HasValue Then newRow("TowerGussetGrade") = Me.TowerGussetGrade.Value
+        '    If Not Me.TowerGussetMatlGrade = "" Then newRow("TowerGussetMatlGrade") = Me.TowerGussetMatlGrade
+        '    If Me.TowerAfMult.HasValue Then newRow("TowerAfMult") = Me.TowerAfMult.Value
+        '    If Me.TowerArMult.HasValue Then newRow("TowerArMult") = Me.TowerArMult.Value
+        '    If Me.TowerFlatIPAPole.HasValue Then newRow("TowerFlatIPAPole") = Me.TowerFlatIPAPole.Value
+        '    If Me.TowerRoundIPAPole.HasValue Then newRow("TowerRoundIPAPole") = Me.TowerRoundIPAPole.Value
+        '    If Me.TowerFlatIPALeg.HasValue Then newRow("TowerFlatIPALeg") = Me.TowerFlatIPALeg.Value
+        '    If Me.TowerRoundIPALeg.HasValue Then newRow("TowerRoundIPALeg") = Me.TowerRoundIPALeg.Value
+        '    If Me.TowerFlatIPAHorizontal.HasValue Then newRow("TowerFlatIPAHorizontal") = Me.TowerFlatIPAHorizontal.Value
+        '    If Me.TowerRoundIPAHorizontal.HasValue Then newRow("TowerRoundIPAHorizontal") = Me.TowerRoundIPAHorizontal.Value
+        '    If Me.TowerFlatIPADiagonal.HasValue Then newRow("TowerFlatIPADiagonal") = Me.TowerFlatIPADiagonal.Value
+        '    If Me.TowerRoundIPADiagonal.HasValue Then newRow("TowerRoundIPADiagonal") = Me.TowerRoundIPADiagonal.Value
+        '    If Me.TowerCSA_S37_SpeedUpFactor.HasValue Then newRow("TowerCSA_S37_SpeedUpFactor") = Me.TowerCSA_S37_SpeedUpFactor.Value
+        '    If Me.TowerKLegs.HasValue Then newRow("TowerKLegs") = Me.TowerKLegs.Value
+        '    If Me.TowerKXBracedDiags.HasValue Then newRow("TowerKXBracedDiags") = Me.TowerKXBracedDiags.Value
+        '    If Me.TowerKKBracedDiags.HasValue Then newRow("TowerKKBracedDiags") = Me.TowerKKBracedDiags.Value
+        '    If Me.TowerKZBracedDiags.HasValue Then newRow("TowerKZBracedDiags") = Me.TowerKZBracedDiags.Value
+        '    If Me.TowerKHorzs.HasValue Then newRow("TowerKHorzs") = Me.TowerKHorzs.Value
+        '    If Me.TowerKSecHorzs.HasValue Then newRow("TowerKSecHorzs") = Me.TowerKSecHorzs.Value
+        '    If Me.TowerKGirts.HasValue Then newRow("TowerKGirts") = Me.TowerKGirts.Value
+        '    If Me.TowerKInners.HasValue Then newRow("TowerKInners") = Me.TowerKInners.Value
+        '    If Me.TowerKXBracedDiagsY.HasValue Then newRow("TowerKXBracedDiagsY") = Me.TowerKXBracedDiagsY.Value
+        '    If Me.TowerKKBracedDiagsY.HasValue Then newRow("TowerKKBracedDiagsY") = Me.TowerKKBracedDiagsY.Value
+        '    If Me.TowerKZBracedDiagsY.HasValue Then newRow("TowerKZBracedDiagsY") = Me.TowerKZBracedDiagsY.Value
+        '    If Me.TowerKHorzsY.HasValue Then newRow("TowerKHorzsY") = Me.TowerKHorzsY.Value
+        '    If Me.TowerKSecHorzsY.HasValue Then newRow("TowerKSecHorzsY") = Me.TowerKSecHorzsY.Value
+        '    If Me.TowerKGirtsY.HasValue Then newRow("TowerKGirtsY") = Me.TowerKGirtsY.Value
+        '    If Me.TowerKInnersY.HasValue Then newRow("TowerKInnersY") = Me.TowerKInnersY.Value
+        '    If Me.TowerKRedHorz.HasValue Then newRow("TowerKRedHorz") = Me.TowerKRedHorz.Value
+        '    If Me.TowerKRedDiag.HasValue Then newRow("TowerKRedDiag") = Me.TowerKRedDiag.Value
+        '    If Me.TowerKRedSubDiag.HasValue Then newRow("TowerKRedSubDiag") = Me.TowerKRedSubDiag.Value
+        '    If Me.TowerKRedSubHorz.HasValue Then newRow("TowerKRedSubHorz") = Me.TowerKRedSubHorz.Value
+        '    If Me.TowerKRedVert.HasValue Then newRow("TowerKRedVert") = Me.TowerKRedVert.Value
+        '    If Me.TowerKRedHip.HasValue Then newRow("TowerKRedHip") = Me.TowerKRedHip.Value
+        '    If Me.TowerKRedHipDiag.HasValue Then newRow("TowerKRedHipDiag") = Me.TowerKRedHipDiag.Value
+        '    If Me.TowerKTLX.HasValue Then newRow("TowerKTLX") = Me.TowerKTLX.Value
+        '    If Me.TowerKTLZ.HasValue Then newRow("TowerKTLZ") = Me.TowerKTLZ.Value
+        '    If Me.TowerKTLLeg.HasValue Then newRow("TowerKTLLeg") = Me.TowerKTLLeg.Value
+        '    If Me.TowerInnerKTLX.HasValue Then newRow("TowerInnerKTLX") = Me.TowerInnerKTLX.Value
+        '    If Me.TowerInnerKTLZ.HasValue Then newRow("TowerInnerKTLZ") = Me.TowerInnerKTLZ.Value
+        '    If Me.TowerInnerKTLLeg.HasValue Then newRow("TowerInnerKTLLeg") = Me.TowerInnerKTLLeg.Value
+        '    If Not Me.TowerStitchBoltLocationHoriz = "" Then newRow("TowerStitchBoltLocationHoriz") = Me.TowerStitchBoltLocationHoriz
+        '    If Not Me.TowerStitchBoltLocationDiag = "" Then newRow("TowerStitchBoltLocationDiag") = Me.TowerStitchBoltLocationDiag
+        '    If Not Me.TowerStitchBoltLocationRed = "" Then newRow("TowerStitchBoltLocationRed") = Me.TowerStitchBoltLocationRed
+        '    If Me.TowerStitchSpacing.HasValue Then newRow("TowerStitchSpacing") = Me.TowerStitchSpacing.Value
+        '    If Me.TowerStitchSpacingDiag.HasValue Then newRow("TowerStitchSpacingDiag") = Me.TowerStitchSpacingDiag.Value
+        '    If Me.TowerStitchSpacingHorz.HasValue Then newRow("TowerStitchSpacingHorz") = Me.TowerStitchSpacingHorz.Value
+        '    If Me.TowerStitchSpacingRed.HasValue Then newRow("TowerStitchSpacingRed") = Me.TowerStitchSpacingRed.Value
+        '    If Me.TowerLegNetWidthDeduct.HasValue Then newRow("TowerLegNetWidthDeduct") = Me.TowerLegNetWidthDeduct.Value
+        '    If Me.TowerLegUFactor.HasValue Then newRow("TowerLegUFactor") = Me.TowerLegUFactor.Value
+        '    If Me.TowerDiagonalNetWidthDeduct.HasValue Then newRow("TowerDiagonalNetWidthDeduct") = Me.TowerDiagonalNetWidthDeduct.Value
+        '    If Me.TowerTopGirtNetWidthDeduct.HasValue Then newRow("TowerTopGirtNetWidthDeduct") = Me.TowerTopGirtNetWidthDeduct.Value
+        '    If Me.TowerBotGirtNetWidthDeduct.HasValue Then newRow("TowerBotGirtNetWidthDeduct") = Me.TowerBotGirtNetWidthDeduct.Value
+        '    If Me.TowerInnerGirtNetWidthDeduct.HasValue Then newRow("TowerInnerGirtNetWidthDeduct") = Me.TowerInnerGirtNetWidthDeduct.Value
+        '    If Me.TowerHorizontalNetWidthDeduct.HasValue Then newRow("TowerHorizontalNetWidthDeduct") = Me.TowerHorizontalNetWidthDeduct.Value
+        '    If Me.TowerShortHorizontalNetWidthDeduct.HasValue Then newRow("TowerShortHorizontalNetWidthDeduct") = Me.TowerShortHorizontalNetWidthDeduct.Value
+        '    If Me.TowerDiagonalUFactor.HasValue Then newRow("TowerDiagonalUFactor") = Me.TowerDiagonalUFactor.Value
+        '    If Me.TowerTopGirtUFactor.HasValue Then newRow("TowerTopGirtUFactor") = Me.TowerTopGirtUFactor.Value
+        '    If Me.TowerBotGirtUFactor.HasValue Then newRow("TowerBotGirtUFactor") = Me.TowerBotGirtUFactor.Value
+        '    If Me.TowerInnerGirtUFactor.HasValue Then newRow("TowerInnerGirtUFactor") = Me.TowerInnerGirtUFactor.Value
+        '    If Me.TowerHorizontalUFactor.HasValue Then newRow("TowerHorizontalUFactor") = Me.TowerHorizontalUFactor.Value
+        '    If Me.TowerShortHorizontalUFactor.HasValue Then newRow("TowerShortHorizontalUFactor") = Me.TowerShortHorizontalUFactor.Value
+        '    If Not Me.TowerLegConnType = "" Then newRow("TowerLegConnType") = Me.TowerLegConnType
+        '    If Me.TowerLegNumBolts.HasValue Then newRow("TowerLegNumBolts") = Me.TowerLegNumBolts.Value
+        '    If Me.TowerDiagonalNumBolts.HasValue Then newRow("TowerDiagonalNumBolts") = Me.TowerDiagonalNumBolts.Value
+        '    If Me.TowerTopGirtNumBolts.HasValue Then newRow("TowerTopGirtNumBolts") = Me.TowerTopGirtNumBolts.Value
+        '    If Me.TowerBotGirtNumBolts.HasValue Then newRow("TowerBotGirtNumBolts") = Me.TowerBotGirtNumBolts.Value
+        '    If Me.TowerInnerGirtNumBolts.HasValue Then newRow("TowerInnerGirtNumBolts") = Me.TowerInnerGirtNumBolts.Value
+        '    If Me.TowerHorizontalNumBolts.HasValue Then newRow("TowerHorizontalNumBolts") = Me.TowerHorizontalNumBolts.Value
+        '    If Me.TowerShortHorizontalNumBolts.HasValue Then newRow("TowerShortHorizontalNumBolts") = Me.TowerShortHorizontalNumBolts.Value
+        '    If Not Me.TowerLegBoltGrade = "" Then newRow("TowerLegBoltGrade") = Me.TowerLegBoltGrade
+        '    If Me.TowerLegBoltSize.HasValue Then newRow("TowerLegBoltSize") = Me.TowerLegBoltSize.Value
+        '    If Not Me.TowerDiagonalBoltGrade = "" Then newRow("TowerDiagonalBoltGrade") = Me.TowerDiagonalBoltGrade
+        '    If Me.TowerDiagonalBoltSize.HasValue Then newRow("TowerDiagonalBoltSize") = Me.TowerDiagonalBoltSize.Value
+        '    If Not Me.TowerTopGirtBoltGrade = "" Then newRow("TowerTopGirtBoltGrade") = Me.TowerTopGirtBoltGrade
+        '    If Me.TowerTopGirtBoltSize.HasValue Then newRow("TowerTopGirtBoltSize") = Me.TowerTopGirtBoltSize.Value
+        '    If Not Me.TowerBotGirtBoltGrade = "" Then newRow("TowerBotGirtBoltGrade") = Me.TowerBotGirtBoltGrade
+        '    If Me.TowerBotGirtBoltSize.HasValue Then newRow("TowerBotGirtBoltSize") = Me.TowerBotGirtBoltSize.Value
+        '    If Not Me.TowerInnerGirtBoltGrade = "" Then newRow("TowerInnerGirtBoltGrade") = Me.TowerInnerGirtBoltGrade
+        '    If Me.TowerInnerGirtBoltSize.HasValue Then newRow("TowerInnerGirtBoltSize") = Me.TowerInnerGirtBoltSize.Value
+        '    If Not Me.TowerHorizontalBoltGrade = "" Then newRow("TowerHorizontalBoltGrade") = Me.TowerHorizontalBoltGrade
+        '    If Me.TowerHorizontalBoltSize.HasValue Then newRow("TowerHorizontalBoltSize") = Me.TowerHorizontalBoltSize.Value
+        '    If Not Me.TowerShortHorizontalBoltGrade = "" Then newRow("TowerShortHorizontalBoltGrade") = Me.TowerShortHorizontalBoltGrade
+        '    If Me.TowerShortHorizontalBoltSize.HasValue Then newRow("TowerShortHorizontalBoltSize") = Me.TowerShortHorizontalBoltSize.Value
+        '    If Me.TowerLegBoltEdgeDistance.HasValue Then newRow("TowerLegBoltEdgeDistance") = Me.TowerLegBoltEdgeDistance.Value
+        '    If Me.TowerDiagonalBoltEdgeDistance.HasValue Then newRow("TowerDiagonalBoltEdgeDistance") = Me.TowerDiagonalBoltEdgeDistance.Value
+        '    If Me.TowerTopGirtBoltEdgeDistance.HasValue Then newRow("TowerTopGirtBoltEdgeDistance") = Me.TowerTopGirtBoltEdgeDistance.Value
+        '    If Me.TowerBotGirtBoltEdgeDistance.HasValue Then newRow("TowerBotGirtBoltEdgeDistance") = Me.TowerBotGirtBoltEdgeDistance.Value
+        '    If Me.TowerInnerGirtBoltEdgeDistance.HasValue Then newRow("TowerInnerGirtBoltEdgeDistance") = Me.TowerInnerGirtBoltEdgeDistance.Value
+        '    If Me.TowerHorizontalBoltEdgeDistance.HasValue Then newRow("TowerHorizontalBoltEdgeDistance") = Me.TowerHorizontalBoltEdgeDistance.Value
+        '    If Me.TowerShortHorizontalBoltEdgeDistance.HasValue Then newRow("TowerShortHorizontalBoltEdgeDistance") = Me.TowerShortHorizontalBoltEdgeDistance.Value
+        '    If Me.TowerDiagonalGageG1Distance.HasValue Then newRow("TowerDiagonalGageG1Distance") = Me.TowerDiagonalGageG1Distance.Value
+        '    If Me.TowerTopGirtGageG1Distance.HasValue Then newRow("TowerTopGirtGageG1Distance") = Me.TowerTopGirtGageG1Distance.Value
+        '    If Me.TowerBotGirtGageG1Distance.HasValue Then newRow("TowerBotGirtGageG1Distance") = Me.TowerBotGirtGageG1Distance.Value
+        '    If Me.TowerInnerGirtGageG1Distance.HasValue Then newRow("TowerInnerGirtGageG1Distance") = Me.TowerInnerGirtGageG1Distance.Value
+        '    If Me.TowerHorizontalGageG1Distance.HasValue Then newRow("TowerHorizontalGageG1Distance") = Me.TowerHorizontalGageG1Distance.Value
+        '    If Me.TowerShortHorizontalGageG1Distance.HasValue Then newRow("TowerShortHorizontalGageG1Distance") = Me.TowerShortHorizontalGageG1Distance.Value
+        '    If Not Me.TowerRedundantHorizontalBoltGrade = "" Then newRow("TowerRedundantHorizontalBoltGrade") = Me.TowerRedundantHorizontalBoltGrade
+        '    If Me.TowerRedundantHorizontalBoltSize.HasValue Then newRow("TowerRedundantHorizontalBoltSize") = Me.TowerRedundantHorizontalBoltSize.Value
+        '    If Me.TowerRedundantHorizontalNumBolts.HasValue Then newRow("TowerRedundantHorizontalNumBolts") = Me.TowerRedundantHorizontalNumBolts.Value
+        '    If Me.TowerRedundantHorizontalBoltEdgeDistance.HasValue Then newRow("TowerRedundantHorizontalBoltEdgeDistance") = Me.TowerRedundantHorizontalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantHorizontalGageG1Distance.HasValue Then newRow("TowerRedundantHorizontalGageG1Distance") = Me.TowerRedundantHorizontalGageG1Distance.Value
+        '    If Me.TowerRedundantHorizontalNetWidthDeduct.HasValue Then newRow("TowerRedundantHorizontalNetWidthDeduct") = Me.TowerRedundantHorizontalNetWidthDeduct.Value
+        '    If Me.TowerRedundantHorizontalUFactor.HasValue Then newRow("TowerRedundantHorizontalUFactor") = Me.TowerRedundantHorizontalUFactor.Value
+        '    If Not Me.TowerRedundantDiagonalBoltGrade = "" Then newRow("TowerRedundantDiagonalBoltGrade") = Me.TowerRedundantDiagonalBoltGrade
+        '    If Me.TowerRedundantDiagonalBoltSize.HasValue Then newRow("TowerRedundantDiagonalBoltSize") = Me.TowerRedundantDiagonalBoltSize.Value
+        '    If Me.TowerRedundantDiagonalNumBolts.HasValue Then newRow("TowerRedundantDiagonalNumBolts") = Me.TowerRedundantDiagonalNumBolts.Value
+        '    If Me.TowerRedundantDiagonalBoltEdgeDistance.HasValue Then newRow("TowerRedundantDiagonalBoltEdgeDistance") = Me.TowerRedundantDiagonalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantDiagonalGageG1Distance.HasValue Then newRow("TowerRedundantDiagonalGageG1Distance") = Me.TowerRedundantDiagonalGageG1Distance.Value
+        '    If Me.TowerRedundantDiagonalNetWidthDeduct.HasValue Then newRow("TowerRedundantDiagonalNetWidthDeduct") = Me.TowerRedundantDiagonalNetWidthDeduct.Value
+        '    If Me.TowerRedundantDiagonalUFactor.HasValue Then newRow("TowerRedundantDiagonalUFactor") = Me.TowerRedundantDiagonalUFactor.Value
+        '    If Not Me.TowerRedundantSubDiagonalBoltGrade = "" Then newRow("TowerRedundantSubDiagonalBoltGrade") = Me.TowerRedundantSubDiagonalBoltGrade
+        '    If Me.TowerRedundantSubDiagonalBoltSize.HasValue Then newRow("TowerRedundantSubDiagonalBoltSize") = Me.TowerRedundantSubDiagonalBoltSize.Value
+        '    If Me.TowerRedundantSubDiagonalNumBolts.HasValue Then newRow("TowerRedundantSubDiagonalNumBolts") = Me.TowerRedundantSubDiagonalNumBolts.Value
+        '    If Me.TowerRedundantSubDiagonalBoltEdgeDistance.HasValue Then newRow("TowerRedundantSubDiagonalBoltEdgeDistance") = Me.TowerRedundantSubDiagonalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantSubDiagonalGageG1Distance.HasValue Then newRow("TowerRedundantSubDiagonalGageG1Distance") = Me.TowerRedundantSubDiagonalGageG1Distance.Value
+        '    If Me.TowerRedundantSubDiagonalNetWidthDeduct.HasValue Then newRow("TowerRedundantSubDiagonalNetWidthDeduct") = Me.TowerRedundantSubDiagonalNetWidthDeduct.Value
+        '    If Me.TowerRedundantSubDiagonalUFactor.HasValue Then newRow("TowerRedundantSubDiagonalUFactor") = Me.TowerRedundantSubDiagonalUFactor.Value
+        '    If Not Me.TowerRedundantSubHorizontalBoltGrade = "" Then newRow("TowerRedundantSubHorizontalBoltGrade") = Me.TowerRedundantSubHorizontalBoltGrade
+        '    If Me.TowerRedundantSubHorizontalBoltSize.HasValue Then newRow("TowerRedundantSubHorizontalBoltSize") = Me.TowerRedundantSubHorizontalBoltSize.Value
+        '    If Me.TowerRedundantSubHorizontalNumBolts.HasValue Then newRow("TowerRedundantSubHorizontalNumBolts") = Me.TowerRedundantSubHorizontalNumBolts.Value
+        '    If Me.TowerRedundantSubHorizontalBoltEdgeDistance.HasValue Then newRow("TowerRedundantSubHorizontalBoltEdgeDistance") = Me.TowerRedundantSubHorizontalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantSubHorizontalGageG1Distance.HasValue Then newRow("TowerRedundantSubHorizontalGageG1Distance") = Me.TowerRedundantSubHorizontalGageG1Distance.Value
+        '    If Me.TowerRedundantSubHorizontalNetWidthDeduct.HasValue Then newRow("TowerRedundantSubHorizontalNetWidthDeduct") = Me.TowerRedundantSubHorizontalNetWidthDeduct.Value
+        '    If Me.TowerRedundantSubHorizontalUFactor.HasValue Then newRow("TowerRedundantSubHorizontalUFactor") = Me.TowerRedundantSubHorizontalUFactor.Value
+        '    If Not Me.TowerRedundantVerticalBoltGrade = "" Then newRow("TowerRedundantVerticalBoltGrade") = Me.TowerRedundantVerticalBoltGrade
+        '    If Me.TowerRedundantVerticalBoltSize.HasValue Then newRow("TowerRedundantVerticalBoltSize") = Me.TowerRedundantVerticalBoltSize.Value
+        '    If Me.TowerRedundantVerticalNumBolts.HasValue Then newRow("TowerRedundantVerticalNumBolts") = Me.TowerRedundantVerticalNumBolts.Value
+        '    If Me.TowerRedundantVerticalBoltEdgeDistance.HasValue Then newRow("TowerRedundantVerticalBoltEdgeDistance") = Me.TowerRedundantVerticalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantVerticalGageG1Distance.HasValue Then newRow("TowerRedundantVerticalGageG1Distance") = Me.TowerRedundantVerticalGageG1Distance.Value
+        '    If Me.TowerRedundantVerticalNetWidthDeduct.HasValue Then newRow("TowerRedundantVerticalNetWidthDeduct") = Me.TowerRedundantVerticalNetWidthDeduct.Value
+        '    If Me.TowerRedundantVerticalUFactor.HasValue Then newRow("TowerRedundantVerticalUFactor") = Me.TowerRedundantVerticalUFactor.Value
+        '    If Not Me.TowerRedundantHipBoltGrade = "" Then newRow("TowerRedundantHipBoltGrade") = Me.TowerRedundantHipBoltGrade
+        '    If Me.TowerRedundantHipBoltSize.HasValue Then newRow("TowerRedundantHipBoltSize") = Me.TowerRedundantHipBoltSize.Value
+        '    If Me.TowerRedundantHipNumBolts.HasValue Then newRow("TowerRedundantHipNumBolts") = Me.TowerRedundantHipNumBolts.Value
+        '    If Me.TowerRedundantHipBoltEdgeDistance.HasValue Then newRow("TowerRedundantHipBoltEdgeDistance") = Me.TowerRedundantHipBoltEdgeDistance.Value
+        '    If Me.TowerRedundantHipGageG1Distance.HasValue Then newRow("TowerRedundantHipGageG1Distance") = Me.TowerRedundantHipGageG1Distance.Value
+        '    If Me.TowerRedundantHipNetWidthDeduct.HasValue Then newRow("TowerRedundantHipNetWidthDeduct") = Me.TowerRedundantHipNetWidthDeduct.Value
+        '    If Me.TowerRedundantHipUFactor.HasValue Then newRow("TowerRedundantHipUFactor") = Me.TowerRedundantHipUFactor.Value
+        '    If Not Me.TowerRedundantHipDiagonalBoltGrade = "" Then newRow("TowerRedundantHipDiagonalBoltGrade") = Me.TowerRedundantHipDiagonalBoltGrade
+        '    If Me.TowerRedundantHipDiagonalBoltSize.HasValue Then newRow("TowerRedundantHipDiagonalBoltSize") = Me.TowerRedundantHipDiagonalBoltSize.Value
+        '    If Me.TowerRedundantHipDiagonalNumBolts.HasValue Then newRow("TowerRedundantHipDiagonalNumBolts") = Me.TowerRedundantHipDiagonalNumBolts.Value
+        '    If Me.TowerRedundantHipDiagonalBoltEdgeDistance.HasValue Then newRow("TowerRedundantHipDiagonalBoltEdgeDistance") = Me.TowerRedundantHipDiagonalBoltEdgeDistance.Value
+        '    If Me.TowerRedundantHipDiagonalGageG1Distance.HasValue Then newRow("TowerRedundantHipDiagonalGageG1Distance") = Me.TowerRedundantHipDiagonalGageG1Distance.Value
+        '    If Me.TowerRedundantHipDiagonalNetWidthDeduct.HasValue Then newRow("TowerRedundantHipDiagonalNetWidthDeduct") = Me.TowerRedundantHipDiagonalNetWidthDeduct.Value
+        '    If Me.TowerRedundantHipDiagonalUFactor.HasValue Then newRow("TowerRedundantHipDiagonalUFactor") = Me.TowerRedundantHipDiagonalUFactor.Value
+        '    If Me.TowerDiagonalOutOfPlaneRestraint.HasValue Then newRow("TowerDiagonalOutOfPlaneRestraint") = Me.TowerDiagonalOutOfPlaneRestraint.Value
+        '    If Me.TowerTopGirtOutOfPlaneRestraint.HasValue Then newRow("TowerTopGirtOutOfPlaneRestraint") = Me.TowerTopGirtOutOfPlaneRestraint.Value
+        '    If Me.TowerBottomGirtOutOfPlaneRestraint.HasValue Then newRow("TowerBottomGirtOutOfPlaneRestraint") = Me.TowerBottomGirtOutOfPlaneRestraint.Value
+        '    If Me.TowerMidGirtOutOfPlaneRestraint.HasValue Then newRow("TowerMidGirtOutOfPlaneRestraint") = Me.TowerMidGirtOutOfPlaneRestraint.Value
+        '    If Me.TowerHorizontalOutOfPlaneRestraint.HasValue Then newRow("TowerHorizontalOutOfPlaneRestraint") = Me.TowerHorizontalOutOfPlaneRestraint.Value
+        '    If Me.TowerSecondaryHorizontalOutOfPlaneRestraint.HasValue Then newRow("TowerSecondaryHorizontalOutOfPlaneRestraint") = Me.TowerSecondaryHorizontalOutOfPlaneRestraint.Value
+        '    If Me.TowerUniqueFlag.HasValue Then newRow("TowerUniqueFlag") = Me.TowerUniqueFlag.Value
+        '    If Me.TowerDiagOffsetNEY.HasValue Then newRow("TowerDiagOffsetNEY") = Me.TowerDiagOffsetNEY.Value
+        '    If Me.TowerDiagOffsetNEX.HasValue Then newRow("TowerDiagOffsetNEX") = Me.TowerDiagOffsetNEX.Value
+        '    If Me.TowerDiagOffsetPEY.HasValue Then newRow("TowerDiagOffsetPEY") = Me.TowerDiagOffsetPEY.Value
+        '    If Me.TowerDiagOffsetPEX.HasValue Then newRow("TowerDiagOffsetPEX") = Me.TowerDiagOffsetPEX.Value
+        '    If Me.TowerKbraceOffsetNEY.HasValue Then newRow("TowerKbraceOffsetNEY") = Me.TowerKbraceOffsetNEY.Value
+        '    If Me.TowerKbraceOffsetNEX.HasValue Then newRow("TowerKbraceOffsetNEX") = Me.TowerKbraceOffsetNEX.Value
+        '    If Me.TowerKbraceOffsetPEY.HasValue Then newRow("TowerKbraceOffsetPEY") = Me.TowerKbraceOffsetPEY.Value
+        '    If Me.TowerKbraceOffsetPEX.HasValue Then newRow("TowerKbraceOffsetPEX") = Me.TowerKbraceOffsetPEX.Value
+
+
+        DT.Rows.Add(newRow)
+
+    End Sub
+
+    Public Sub AddSQLParams(ByRef sqlCmd As SqlCommand)
+        'sqlCmd.Parameters.AddWithValue("@ID", Me.ID)
+        sqlCmd.Parameters.AddWithValue("@TowerRec", Me.TowerRec)
+        sqlCmd.Parameters.AddWithValue("@TowerDatabase", Me.TowerDatabase)
+        sqlCmd.Parameters.AddWithValue("@TowerName", Me.TowerName)
+        sqlCmd.Parameters.AddWithValue("@TowerHeight", Me.TowerHeight)
+        sqlCmd.Parameters.AddWithValue("@TowerFaceWidth", Me.TowerFaceWidth)
+        sqlCmd.Parameters.AddWithValue("@TowerNumSections", Me.TowerNumSections)
+        sqlCmd.Parameters.AddWithValue("@TowerSectionLength", Me.TowerSectionLength)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalSpacing", Me.TowerDiagonalSpacing)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalSpacingEx", Me.TowerDiagonalSpacingEx)
+        sqlCmd.Parameters.AddWithValue("@TowerBraceType", Me.TowerBraceType)
+        sqlCmd.Parameters.AddWithValue("@TowerFaceBevel", Me.TowerFaceBevel)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtOffset", Me.TowerTopGirtOffset)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtOffset", Me.TowerBotGirtOffset)
+        sqlCmd.Parameters.AddWithValue("@TowerHasKBraceEndPanels", Me.TowerHasKBraceEndPanels)
+        sqlCmd.Parameters.AddWithValue("@TowerHasHorizontals", Me.TowerHasHorizontals)
+        sqlCmd.Parameters.AddWithValue("@TowerLegType", Me.TowerLegType)
+        sqlCmd.Parameters.AddWithValue("@TowerLegSize", Me.TowerLegSize)
+        sqlCmd.Parameters.AddWithValue("@TowerLegGrade", Me.TowerLegGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerLegMatlGrade", Me.TowerLegMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalGrade", Me.TowerDiagonalGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalMatlGrade", Me.TowerDiagonalMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerBracingGrade", Me.TowerInnerBracingGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerBracingMatlGrade", Me.TowerInnerBracingMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtGrade", Me.TowerTopGirtGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtMatlGrade", Me.TowerTopGirtMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtGrade", Me.TowerBotGirtGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtMatlGrade", Me.TowerBotGirtMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtGrade", Me.TowerInnerGirtGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtMatlGrade", Me.TowerInnerGirtMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerLongHorizontalGrade", Me.TowerLongHorizontalGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerLongHorizontalMatlGrade", Me.TowerLongHorizontalMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalGrade", Me.TowerShortHorizontalGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalMatlGrade", Me.TowerShortHorizontalMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalType", Me.TowerDiagonalType)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalSize", Me.TowerDiagonalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerBracingType", Me.TowerInnerBracingType)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerBracingSize", Me.TowerInnerBracingSize)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtType", Me.TowerTopGirtType)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtSize", Me.TowerTopGirtSize)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtType", Me.TowerBotGirtType)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtSize", Me.TowerBotGirtSize)
+        sqlCmd.Parameters.AddWithValue("@TowerNumInnerGirts", Me.TowerNumInnerGirts)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtType", Me.TowerInnerGirtType)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtSize", Me.TowerInnerGirtSize)
+        sqlCmd.Parameters.AddWithValue("@TowerLongHorizontalType", Me.TowerLongHorizontalType)
+        sqlCmd.Parameters.AddWithValue("@TowerLongHorizontalSize", Me.TowerLongHorizontalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalType", Me.TowerShortHorizontalType)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalSize", Me.TowerShortHorizontalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantGrade", Me.TowerRedundantGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantMatlGrade", Me.TowerRedundantMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantType", Me.TowerRedundantType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagType", Me.TowerRedundantDiagType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalType", Me.TowerRedundantSubDiagonalType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalType", Me.TowerRedundantSubHorizontalType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalType", Me.TowerRedundantVerticalType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipType", Me.TowerRedundantHipType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalType", Me.TowerRedundantHipDiagonalType)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalSize", Me.TowerRedundantHorizontalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalSize2", Me.TowerRedundantHorizontalSize2)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalSize3", Me.TowerRedundantHorizontalSize3)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalSize4", Me.TowerRedundantHorizontalSize4)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalSize", Me.TowerRedundantDiagonalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalSize2", Me.TowerRedundantDiagonalSize2)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalSize3", Me.TowerRedundantDiagonalSize3)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalSize4", Me.TowerRedundantDiagonalSize4)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalSize", Me.TowerRedundantSubHorizontalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalSize", Me.TowerRedundantSubDiagonalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerSubDiagLocation", Me.TowerSubDiagLocation)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalSize", Me.TowerRedundantVerticalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipSize", Me.TowerRedundantHipSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipSize2", Me.TowerRedundantHipSize2)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipSize3", Me.TowerRedundantHipSize3)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipSize4", Me.TowerRedundantHipSize4)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalSize", Me.TowerRedundantHipDiagonalSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalSize2", Me.TowerRedundantHipDiagonalSize2)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalSize3", Me.TowerRedundantHipDiagonalSize3)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalSize4", Me.TowerRedundantHipDiagonalSize4)
+        sqlCmd.Parameters.AddWithValue("@TowerSWMult", Me.TowerSWMult)
+        sqlCmd.Parameters.AddWithValue("@TowerWPMult", Me.TowerWPMult)
+        sqlCmd.Parameters.AddWithValue("@TowerAutoCalcKSingleAngle", Me.TowerAutoCalcKSingleAngle)
+        sqlCmd.Parameters.AddWithValue("@TowerAutoCalcKSolidRound", Me.TowerAutoCalcKSolidRound)
+        sqlCmd.Parameters.AddWithValue("@TowerAfGusset", Me.TowerAfGusset)
+        sqlCmd.Parameters.AddWithValue("@TowerTfGusset", Me.TowerTfGusset)
+        sqlCmd.Parameters.AddWithValue("@TowerGussetBoltEdgeDistance", Me.TowerGussetBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerGussetGrade", Me.TowerGussetGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerGussetMatlGrade", Me.TowerGussetMatlGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerAfMult", Me.TowerAfMult)
+        sqlCmd.Parameters.AddWithValue("@TowerArMult", Me.TowerArMult)
+        sqlCmd.Parameters.AddWithValue("@TowerFlatIPAPole", Me.TowerFlatIPAPole)
+        sqlCmd.Parameters.AddWithValue("@TowerRoundIPAPole", Me.TowerRoundIPAPole)
+        sqlCmd.Parameters.AddWithValue("@TowerFlatIPALeg", Me.TowerFlatIPALeg)
+        sqlCmd.Parameters.AddWithValue("@TowerRoundIPALeg", Me.TowerRoundIPALeg)
+        sqlCmd.Parameters.AddWithValue("@TowerFlatIPAHorizontal", Me.TowerFlatIPAHorizontal)
+        sqlCmd.Parameters.AddWithValue("@TowerRoundIPAHorizontal", Me.TowerRoundIPAHorizontal)
+        sqlCmd.Parameters.AddWithValue("@TowerFlatIPADiagonal", Me.TowerFlatIPADiagonal)
+        sqlCmd.Parameters.AddWithValue("@TowerRoundIPADiagonal", Me.TowerRoundIPADiagonal)
+        sqlCmd.Parameters.AddWithValue("@TowerCSA_S37_SpeedUpFactor", Me.TowerCSA_S37_SpeedUpFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerKLegs", Me.TowerKLegs)
+        sqlCmd.Parameters.AddWithValue("@TowerKXBracedDiags", Me.TowerKXBracedDiags)
+        sqlCmd.Parameters.AddWithValue("@TowerKKBracedDiags", Me.TowerKKBracedDiags)
+        sqlCmd.Parameters.AddWithValue("@TowerKZBracedDiags", Me.TowerKZBracedDiags)
+        sqlCmd.Parameters.AddWithValue("@TowerKHorzs", Me.TowerKHorzs)
+        sqlCmd.Parameters.AddWithValue("@TowerKSecHorzs", Me.TowerKSecHorzs)
+        sqlCmd.Parameters.AddWithValue("@TowerKGirts", Me.TowerKGirts)
+        sqlCmd.Parameters.AddWithValue("@TowerKInners", Me.TowerKInners)
+        sqlCmd.Parameters.AddWithValue("@TowerKXBracedDiagsY", Me.TowerKXBracedDiagsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKKBracedDiagsY", Me.TowerKKBracedDiagsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKZBracedDiagsY", Me.TowerKZBracedDiagsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKHorzsY", Me.TowerKHorzsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKSecHorzsY", Me.TowerKSecHorzsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKGirtsY", Me.TowerKGirtsY)
+        sqlCmd.Parameters.AddWithValue("@TowerKInnersY", Me.TowerKInnersY)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedHorz", Me.TowerKRedHorz)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedDiag", Me.TowerKRedDiag)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedSubDiag", Me.TowerKRedSubDiag)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedSubHorz", Me.TowerKRedSubHorz)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedVert", Me.TowerKRedVert)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedHip", Me.TowerKRedHip)
+        sqlCmd.Parameters.AddWithValue("@TowerKRedHipDiag", Me.TowerKRedHipDiag)
+        sqlCmd.Parameters.AddWithValue("@TowerKTLX", Me.TowerKTLX)
+        sqlCmd.Parameters.AddWithValue("@TowerKTLZ", Me.TowerKTLZ)
+        sqlCmd.Parameters.AddWithValue("@TowerKTLLeg", Me.TowerKTLLeg)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerKTLX", Me.TowerInnerKTLX)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerKTLZ", Me.TowerInnerKTLZ)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerKTLLeg", Me.TowerInnerKTLLeg)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchBoltLocationHoriz", Me.TowerStitchBoltLocationHoriz)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchBoltLocationDiag", Me.TowerStitchBoltLocationDiag)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchBoltLocationRed", Me.TowerStitchBoltLocationRed)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchSpacing", Me.TowerStitchSpacing)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchSpacingDiag", Me.TowerStitchSpacingDiag)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchSpacingHorz", Me.TowerStitchSpacingHorz)
+        sqlCmd.Parameters.AddWithValue("@TowerStitchSpacingRed", Me.TowerStitchSpacingRed)
+        sqlCmd.Parameters.AddWithValue("@TowerLegNetWidthDeduct", Me.TowerLegNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerLegUFactor", Me.TowerLegUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalNetWidthDeduct", Me.TowerDiagonalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtNetWidthDeduct", Me.TowerTopGirtNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtNetWidthDeduct", Me.TowerBotGirtNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtNetWidthDeduct", Me.TowerInnerGirtNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalNetWidthDeduct", Me.TowerHorizontalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalNetWidthDeduct", Me.TowerShortHorizontalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalUFactor", Me.TowerDiagonalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtUFactor", Me.TowerTopGirtUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtUFactor", Me.TowerBotGirtUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtUFactor", Me.TowerInnerGirtUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalUFactor", Me.TowerHorizontalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalUFactor", Me.TowerShortHorizontalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerLegConnType", Me.TowerLegConnType)
+        sqlCmd.Parameters.AddWithValue("@TowerLegNumBolts", Me.TowerLegNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalNumBolts", Me.TowerDiagonalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtNumBolts", Me.TowerTopGirtNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtNumBolts", Me.TowerBotGirtNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtNumBolts", Me.TowerInnerGirtNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalNumBolts", Me.TowerHorizontalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalNumBolts", Me.TowerShortHorizontalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerLegBoltGrade", Me.TowerLegBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerLegBoltSize", Me.TowerLegBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalBoltGrade", Me.TowerDiagonalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalBoltSize", Me.TowerDiagonalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtBoltGrade", Me.TowerTopGirtBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtBoltSize", Me.TowerTopGirtBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtBoltGrade", Me.TowerBotGirtBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtBoltSize", Me.TowerBotGirtBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtBoltGrade", Me.TowerInnerGirtBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtBoltSize", Me.TowerInnerGirtBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalBoltGrade", Me.TowerHorizontalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalBoltSize", Me.TowerHorizontalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalBoltGrade", Me.TowerShortHorizontalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalBoltSize", Me.TowerShortHorizontalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerLegBoltEdgeDistance", Me.TowerLegBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalBoltEdgeDistance", Me.TowerDiagonalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtBoltEdgeDistance", Me.TowerTopGirtBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtBoltEdgeDistance", Me.TowerBotGirtBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtBoltEdgeDistance", Me.TowerInnerGirtBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalBoltEdgeDistance", Me.TowerHorizontalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalBoltEdgeDistance", Me.TowerShortHorizontalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalGageG1Distance", Me.TowerDiagonalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtGageG1Distance", Me.TowerTopGirtGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerBotGirtGageG1Distance", Me.TowerBotGirtGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerInnerGirtGageG1Distance", Me.TowerInnerGirtGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalGageG1Distance", Me.TowerHorizontalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerShortHorizontalGageG1Distance", Me.TowerShortHorizontalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalBoltGrade", Me.TowerRedundantHorizontalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalBoltSize", Me.TowerRedundantHorizontalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalNumBolts", Me.TowerRedundantHorizontalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalBoltEdgeDistance", Me.TowerRedundantHorizontalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalGageG1Distance", Me.TowerRedundantHorizontalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalNetWidthDeduct", Me.TowerRedundantHorizontalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHorizontalUFactor", Me.TowerRedundantHorizontalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalBoltGrade", Me.TowerRedundantDiagonalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalBoltSize", Me.TowerRedundantDiagonalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalNumBolts", Me.TowerRedundantDiagonalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalBoltEdgeDistance", Me.TowerRedundantDiagonalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalGageG1Distance", Me.TowerRedundantDiagonalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalNetWidthDeduct", Me.TowerRedundantDiagonalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantDiagonalUFactor", Me.TowerRedundantDiagonalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalBoltGrade", Me.TowerRedundantSubDiagonalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalBoltSize", Me.TowerRedundantSubDiagonalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalNumBolts", Me.TowerRedundantSubDiagonalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalBoltEdgeDistance", Me.TowerRedundantSubDiagonalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalGageG1Distance", Me.TowerRedundantSubDiagonalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalNetWidthDeduct", Me.TowerRedundantSubDiagonalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubDiagonalUFactor", Me.TowerRedundantSubDiagonalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalBoltGrade", Me.TowerRedundantSubHorizontalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalBoltSize", Me.TowerRedundantSubHorizontalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalNumBolts", Me.TowerRedundantSubHorizontalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalBoltEdgeDistance", Me.TowerRedundantSubHorizontalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalGageG1Distance", Me.TowerRedundantSubHorizontalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalNetWidthDeduct", Me.TowerRedundantSubHorizontalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantSubHorizontalUFactor", Me.TowerRedundantSubHorizontalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalBoltGrade", Me.TowerRedundantVerticalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalBoltSize", Me.TowerRedundantVerticalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalNumBolts", Me.TowerRedundantVerticalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalBoltEdgeDistance", Me.TowerRedundantVerticalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalGageG1Distance", Me.TowerRedundantVerticalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalNetWidthDeduct", Me.TowerRedundantVerticalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantVerticalUFactor", Me.TowerRedundantVerticalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipBoltGrade", Me.TowerRedundantHipBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipBoltSize", Me.TowerRedundantHipBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipNumBolts", Me.TowerRedundantHipNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipBoltEdgeDistance", Me.TowerRedundantHipBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipGageG1Distance", Me.TowerRedundantHipGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipNetWidthDeduct", Me.TowerRedundantHipNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipUFactor", Me.TowerRedundantHipUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalBoltGrade", Me.TowerRedundantHipDiagonalBoltGrade)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalBoltSize", Me.TowerRedundantHipDiagonalBoltSize)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalNumBolts", Me.TowerRedundantHipDiagonalNumBolts)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalBoltEdgeDistance", Me.TowerRedundantHipDiagonalBoltEdgeDistance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalGageG1Distance", Me.TowerRedundantHipDiagonalGageG1Distance)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalNetWidthDeduct", Me.TowerRedundantHipDiagonalNetWidthDeduct)
+        sqlCmd.Parameters.AddWithValue("@TowerRedundantHipDiagonalUFactor", Me.TowerRedundantHipDiagonalUFactor)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagonalOutOfPlaneRestraint", Me.TowerDiagonalOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerTopGirtOutOfPlaneRestraint", Me.TowerTopGirtOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerBottomGirtOutOfPlaneRestraint", Me.TowerBottomGirtOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerMidGirtOutOfPlaneRestraint", Me.TowerMidGirtOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerHorizontalOutOfPlaneRestraint", Me.TowerHorizontalOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerSecondaryHorizontalOutOfPlaneRestraint", Me.TowerSecondaryHorizontalOutOfPlaneRestraint)
+        sqlCmd.Parameters.AddWithValue("@TowerUniqueFlag", Me.TowerUniqueFlag)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagOffsetNEY", Me.TowerDiagOffsetNEY)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagOffsetNEX", Me.TowerDiagOffsetNEX)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagOffsetPEY", Me.TowerDiagOffsetPEY)
+        sqlCmd.Parameters.AddWithValue("@TowerDiagOffsetPEX", Me.TowerDiagOffsetPEX)
+        sqlCmd.Parameters.AddWithValue("@TowerKbraceOffsetNEY", Me.TowerKbraceOffsetNEY)
+        sqlCmd.Parameters.AddWithValue("@TowerKbraceOffsetNEX", Me.TowerKbraceOffsetNEX)
+        sqlCmd.Parameters.AddWithValue("@TowerKbraceOffsetPEY", Me.TowerKbraceOffsetPEY)
+        sqlCmd.Parameters.AddWithValue("@TowerKbraceOffsetPEX", Me.TowerKbraceOffsetPEX)
+    End Sub
     Public Function GenerateSQL() As String
         Dim insertString As String = ""
 

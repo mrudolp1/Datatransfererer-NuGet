@@ -25,17 +25,22 @@
     ''' </summary>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.TextBox2 = New System.Windows.Forms.TextBox()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.Button3 = New System.Windows.Forms.Button()
-        Me.Button4 = New System.Windows.Forms.Button()
-        Me.PropertyGrid1 = New System.Windows.Forms.PropertyGrid()
+        Me.pgFoundations = New System.Windows.Forms.TabPage()
+        Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
+        Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
+        Me.btnImportXLFnd = New System.Windows.Forms.Button()
+        Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
+        Me.propgridFndXL = New System.Windows.Forms.PropertyGrid()
+        Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
+        Me.propgridFndEDS = New System.Windows.Forms.PropertyGrid()
+        Me.btnLoadFndFromEDS = New System.Windows.Forms.Button()
+        Me.btnExportXLFnds = New System.Windows.Forms.Button()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.btnCompareFnd = New System.Windows.Forms.Button()
+        Me.txtFndStrc = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.txtFndBU = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.pgTNX = New System.Windows.Forms.TabPage()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.btnSavetoEDS = New System.Windows.Forms.Button()
@@ -47,22 +52,34 @@
         Me.btnLoadfromEDS = New System.Windows.Forms.Button()
         Me.btnExportERI = New System.Windows.Forms.Button()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.btnTest = New System.Windows.Forms.Button()
         Me.btnCompare = New System.Windows.Forms.Button()
         Me.txtStrc = New System.Windows.Forms.TextBox()
         Me.lblStrc = New System.Windows.Forms.Label()
         Me.txtBU = New System.Windows.Forms.TextBox()
         Me.lblBU = New System.Windows.Forms.Label()
-        Me.pgSQL = New System.Windows.Forms.TabPage()
+        Me.pgSQLBackUp = New System.Windows.Forms.TabPage()
+        Me.txtSQLStrc = New System.Windows.Forms.TextBox()
+        Me.txtSQLBU = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.sqltoexcel = New System.Windows.Forms.Button()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.btnTest = New System.Windows.Forms.Button()
-        Me.TabPage2.SuspendLayout()
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer2.Panel1.SuspendLayout()
-        Me.SplitContainer2.Panel2.SuspendLayout()
-        Me.SplitContainer2.SuspendLayout()
+        Me.pgFoundations.SuspendLayout()
+        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer3.Panel1.SuspendLayout()
+        Me.SplitContainer3.Panel2.SuspendLayout()
+        Me.SplitContainer3.SuspendLayout()
+        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer4.Panel2.SuspendLayout()
+        Me.SplitContainer4.SuspendLayout()
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer5.Panel1.SuspendLayout()
+        Me.SplitContainer5.Panel2.SuspendLayout()
+        Me.SplitContainer5.SuspendLayout()
+        Me.Panel2.SuspendLayout()
         Me.pgTNX.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -76,127 +93,184 @@
         Me.scFromEDS.Panel2.SuspendLayout()
         Me.scFromEDS.SuspendLayout()
         Me.Panel1.SuspendLayout()
-        Me.pgSQL.SuspendLayout()
+        Me.pgSQLBackUp.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabControl1.SuspendLayout()
         Me.SuspendLayout()
         '
-        'TabPage2
+        'pgFoundations
         '
-        Me.TabPage2.Controls.Add(Me.SplitContainer2)
-        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
-        Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(883, 461)
-        Me.TabPage2.TabIndex = 3
-        Me.TabPage2.Text = "TNXBackup"
-        Me.TabPage2.UseVisualStyleBackColor = True
+        Me.pgFoundations.Controls.Add(Me.SplitContainer3)
+        Me.pgFoundations.Controls.Add(Me.Panel2)
+        Me.pgFoundations.Location = New System.Drawing.Point(4, 22)
+        Me.pgFoundations.Name = "pgFoundations"
+        Me.pgFoundations.Padding = New System.Windows.Forms.Padding(3)
+        Me.pgFoundations.Size = New System.Drawing.Size(883, 461)
+        Me.pgFoundations.TabIndex = 4
+        Me.pgFoundations.Text = "Foundations"
+        Me.pgFoundations.UseVisualStyleBackColor = True
         '
-        'SplitContainer2
+        'SplitContainer3
         '
-        Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
-        Me.SplitContainer2.Location = New System.Drawing.Point(3, 3)
-        Me.SplitContainer2.Name = "SplitContainer2"
+        Me.SplitContainer3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer3.Location = New System.Drawing.Point(3, 48)
+        Me.SplitContainer3.Name = "SplitContainer3"
         '
-        'SplitContainer2.Panel1
+        'SplitContainer3.Panel1
         '
-        Me.SplitContainer2.Panel1.Controls.Add(Me.TextBox1)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Label1)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.TextBox2)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Label2)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Button1)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Button2)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Button3)
-        Me.SplitContainer2.Panel1.Controls.Add(Me.Button4)
-        Me.SplitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SplitContainer3.Panel1.Controls.Add(Me.btnSaveFndToEDS)
+        Me.SplitContainer3.Panel1.Controls.Add(Me.btnImportXLFnd)
+        Me.SplitContainer3.Panel1.Controls.Add(Me.SplitContainer4)
+        Me.SplitContainer3.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
         '
-        'SplitContainer2.Panel2
+        'SplitContainer3.Panel2
         '
-        Me.SplitContainer2.Panel2.Controls.Add(Me.PropertyGrid1)
-        Me.SplitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SplitContainer2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SplitContainer2.Size = New System.Drawing.Size(877, 455)
-        Me.SplitContainer2.SplitterDistance = 164
-        Me.SplitContainer2.TabIndex = 4
+        Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer5)
+        Me.SplitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SplitContainer3.Size = New System.Drawing.Size(877, 410)
+        Me.SplitContainer3.SplitterDistance = 438
+        Me.SplitContainer3.TabIndex = 7
         '
-        'TextBox1
+        'btnSaveFndToEDS
         '
-        Me.TextBox1.Location = New System.Drawing.Point(51, 39)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(100, 21)
-        Me.TextBox1.TabIndex = 8
-        Me.TextBox1.Text = "A"
+        Me.btnSaveFndToEDS.Location = New System.Drawing.Point(3, 40)
+        Me.btnSaveFndToEDS.Name = "btnSaveFndToEDS"
+        Me.btnSaveFndToEDS.Size = New System.Drawing.Size(160, 21)
+        Me.btnSaveFndToEDS.TabIndex = 3
+        Me.btnSaveFndToEDS.Text = "Save to EDS"
+        Me.btnSaveFndToEDS.UseVisualStyleBackColor = True
         '
-        'Label1
+        'btnImportXLFnd
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(10, 43)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(30, 13)
-        Me.Label1.TabIndex = 7
-        Me.Label1.Text = "Strc:"
+        Me.btnImportXLFnd.Location = New System.Drawing.Point(3, 10)
+        Me.btnImportXLFnd.Name = "btnImportXLFnd"
+        Me.btnImportXLFnd.Size = New System.Drawing.Size(160, 21)
+        Me.btnImportXLFnd.TabIndex = 1
+        Me.btnImportXLFnd.Text = "Import Foundation Tools"
+        Me.btnImportXLFnd.UseVisualStyleBackColor = True
         '
-        'TextBox2
+        'SplitContainer4
         '
-        Me.TextBox2.Location = New System.Drawing.Point(51, 12)
-        Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(100, 21)
-        Me.TextBox2.TabIndex = 6
-        Me.TextBox2.Text = "800000"
+        Me.SplitContainer4.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.SplitContainer4.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer4.Name = "SplitContainer4"
         '
-        'Label2
+        'SplitContainer4.Panel2
         '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(10, 16)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(24, 13)
-        Me.Label2.TabIndex = 5
-        Me.Label2.Text = "BU:"
+        Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
+        Me.SplitContainer4.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.SplitContainer4.Size = New System.Drawing.Size(438, 410)
+        Me.SplitContainer4.SplitterDistance = 164
+        Me.SplitContainer4.TabIndex = 4
         '
-        'Button1
+        'propgridFndXL
         '
-        Me.Button1.Location = New System.Drawing.Point(3, 128)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(160, 21)
-        Me.Button1.TabIndex = 4
-        Me.Button1.Text = "Load From EDS"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.propgridFndXL.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.propgridFndXL.Location = New System.Drawing.Point(0, 0)
+        Me.propgridFndXL.Name = "propgridFndXL"
+        Me.propgridFndXL.Size = New System.Drawing.Size(270, 410)
+        Me.propgridFndXL.TabIndex = 4
         '
-        'Button2
+        'SplitContainer5
         '
-        Me.Button2.Location = New System.Drawing.Point(3, 100)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(160, 21)
-        Me.Button2.TabIndex = 3
-        Me.Button2.Text = "Save to EDS"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.SplitContainer5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer5.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer5.Name = "SplitContainer5"
         '
-        'Button3
+        'SplitContainer5.Panel1
         '
-        Me.Button3.Location = New System.Drawing.Point(3, 72)
-        Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(160, 21)
-        Me.Button3.TabIndex = 1
-        Me.Button3.Text = "Import TNX"
-        Me.Button3.UseVisualStyleBackColor = True
+        Me.SplitContainer5.Panel1.Controls.Add(Me.propgridFndEDS)
         '
-        'Button4
+        'SplitContainer5.Panel2
         '
-        Me.Button4.Location = New System.Drawing.Point(3, 156)
-        Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(160, 21)
-        Me.Button4.TabIndex = 2
-        Me.Button4.Text = "Export TNX"
-        Me.Button4.UseVisualStyleBackColor = True
+        Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
+        Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportXLFnds)
+        Me.SplitContainer5.Size = New System.Drawing.Size(435, 410)
+        Me.SplitContainer5.SplitterDistance = 275
+        Me.SplitContainer5.TabIndex = 0
         '
-        'PropertyGrid1
+        'propgridFndEDS
         '
-        Me.PropertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PropertyGrid1.Location = New System.Drawing.Point(0, 0)
-        Me.PropertyGrid1.Name = "PropertyGrid1"
-        Me.PropertyGrid1.Size = New System.Drawing.Size(709, 455)
-        Me.PropertyGrid1.TabIndex = 3
+        Me.propgridFndEDS.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.propgridFndEDS.Location = New System.Drawing.Point(0, 0)
+        Me.propgridFndEDS.Name = "propgridFndEDS"
+        Me.propgridFndEDS.Size = New System.Drawing.Size(275, 410)
+        Me.propgridFndEDS.TabIndex = 4
+        '
+        'btnLoadFndFromEDS
+        '
+        Me.btnLoadFndFromEDS.Location = New System.Drawing.Point(-1, 10)
+        Me.btnLoadFndFromEDS.Name = "btnLoadFndFromEDS"
+        Me.btnLoadFndFromEDS.Size = New System.Drawing.Size(160, 21)
+        Me.btnLoadFndFromEDS.TabIndex = 6
+        Me.btnLoadFndFromEDS.Text = "Load From EDS"
+        Me.btnLoadFndFromEDS.UseVisualStyleBackColor = True
+        '
+        'btnExportXLFnds
+        '
+        Me.btnExportXLFnds.Location = New System.Drawing.Point(-1, 38)
+        Me.btnExportXLFnds.Name = "btnExportXLFnds"
+        Me.btnExportXLFnds.Size = New System.Drawing.Size(160, 21)
+        Me.btnExportXLFnds.TabIndex = 5
+        Me.btnExportXLFnds.Text = "Export Foundation Tools"
+        Me.btnExportXLFnds.UseVisualStyleBackColor = True
+        '
+        'Panel2
+        '
+        Me.Panel2.Controls.Add(Me.btnCompareFnd)
+        Me.Panel2.Controls.Add(Me.txtFndStrc)
+        Me.Panel2.Controls.Add(Me.Label5)
+        Me.Panel2.Controls.Add(Me.txtFndBU)
+        Me.Panel2.Controls.Add(Me.Label6)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Panel2.Location = New System.Drawing.Point(3, 3)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(877, 45)
+        Me.Panel2.TabIndex = 6
+        '
+        'btnCompareFnd
+        '
+        Me.btnCompareFnd.Location = New System.Drawing.Point(358, 12)
+        Me.btnCompareFnd.Name = "btnCompareFnd"
+        Me.btnCompareFnd.Size = New System.Drawing.Size(160, 21)
+        Me.btnCompareFnd.TabIndex = 9
+        Me.btnCompareFnd.Text = "Compare"
+        Me.btnCompareFnd.UseVisualStyleBackColor = True
+        '
+        'txtFndStrc
+        '
+        Me.txtFndStrc.Location = New System.Drawing.Point(205, 12)
+        Me.txtFndStrc.Name = "txtFndStrc"
+        Me.txtFndStrc.Size = New System.Drawing.Size(100, 21)
+        Me.txtFndStrc.TabIndex = 8
+        Me.txtFndStrc.Text = "A"
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(164, 16)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(30, 13)
+        Me.Label5.TabIndex = 7
+        Me.Label5.Text = "Strc:"
+        '
+        'txtFndBU
+        '
+        Me.txtFndBU.Location = New System.Drawing.Point(49, 12)
+        Me.txtFndBU.Name = "txtFndBU"
+        Me.txtFndBU.Size = New System.Drawing.Size(100, 21)
+        Me.txtFndBU.TabIndex = 6
+        Me.txtFndBU.Text = "800000"
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(8, 16)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(24, 13)
+        Me.Label6.TabIndex = 5
+        Me.Label6.Text = "BU:"
         '
         'pgTNX
         '
@@ -330,6 +404,15 @@
         Me.Panel1.Size = New System.Drawing.Size(877, 45)
         Me.Panel1.TabIndex = 5
         '
+        'btnTest
+        '
+        Me.btnTest.Location = New System.Drawing.Point(557, 11)
+        Me.btnTest.Name = "btnTest"
+        Me.btnTest.Size = New System.Drawing.Size(160, 21)
+        Me.btnTest.TabIndex = 5
+        Me.btnTest.Text = "Test"
+        Me.btnTest.UseVisualStyleBackColor = True
+        '
         'btnCompare
         '
         Me.btnCompare.Location = New System.Drawing.Point(358, 12)
@@ -373,22 +456,60 @@
         Me.lblBU.TabIndex = 5
         Me.lblBU.Text = "BU:"
         '
-        'pgSQL
+        'pgSQLBackUp
         '
-        Me.pgSQL.Controls.Add(Me.sqltoexcel)
-        Me.pgSQL.Controls.Add(Me.PictureBox1)
-        Me.pgSQL.Controls.Add(Me.exceltosql)
-        Me.pgSQL.Location = New System.Drawing.Point(4, 22)
-        Me.pgSQL.Name = "pgSQL"
-        Me.pgSQL.Padding = New System.Windows.Forms.Padding(3)
-        Me.pgSQL.Size = New System.Drawing.Size(883, 461)
-        Me.pgSQL.TabIndex = 0
-        Me.pgSQL.Text = "SQL"
-        Me.pgSQL.UseVisualStyleBackColor = True
+        Me.pgSQLBackUp.Controls.Add(Me.txtSQLStrc)
+        Me.pgSQLBackUp.Controls.Add(Me.txtSQLBU)
+        Me.pgSQLBackUp.Controls.Add(Me.Label3)
+        Me.pgSQLBackUp.Controls.Add(Me.Label4)
+        Me.pgSQLBackUp.Controls.Add(Me.sqltoexcel)
+        Me.pgSQLBackUp.Controls.Add(Me.PictureBox1)
+        Me.pgSQLBackUp.Controls.Add(Me.exceltosql)
+        Me.pgSQLBackUp.Location = New System.Drawing.Point(4, 22)
+        Me.pgSQLBackUp.Name = "pgSQLBackUp"
+        Me.pgSQLBackUp.Padding = New System.Windows.Forms.Padding(3)
+        Me.pgSQLBackUp.Size = New System.Drawing.Size(883, 461)
+        Me.pgSQLBackUp.TabIndex = 0
+        Me.pgSQLBackUp.Text = "SQL"
+        Me.pgSQLBackUp.UseVisualStyleBackColor = True
+        '
+        'txtSQLStrc
+        '
+        Me.txtSQLStrc.Location = New System.Drawing.Point(215, 14)
+        Me.txtSQLStrc.Name = "txtSQLStrc"
+        Me.txtSQLStrc.Size = New System.Drawing.Size(100, 21)
+        Me.txtSQLStrc.TabIndex = 12
+        Me.txtSQLStrc.Text = "A"
+        '
+        'txtSQLBU
+        '
+        Me.txtSQLBU.Location = New System.Drawing.Point(59, 14)
+        Me.txtSQLBU.Name = "txtSQLBU"
+        Me.txtSQLBU.Size = New System.Drawing.Size(100, 21)
+        Me.txtSQLBU.TabIndex = 10
+        Me.txtSQLBU.Text = "800000"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(174, 18)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(30, 13)
+        Me.Label3.TabIndex = 11
+        Me.Label3.Text = "Strc:"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(18, 18)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(24, 13)
+        Me.Label4.TabIndex = 9
+        Me.Label4.Text = "BU:"
         '
         'sqltoexcel
         '
-        Me.sqltoexcel.Location = New System.Drawing.Point(21, 21)
+        Me.sqltoexcel.Location = New System.Drawing.Point(21, 43)
         Me.sqltoexcel.Name = "sqltoexcel"
         Me.sqltoexcel.Size = New System.Drawing.Size(160, 52)
         Me.sqltoexcel.TabIndex = 0
@@ -400,7 +521,7 @@
         Me.PictureBox1.BackColor = System.Drawing.Color.White
         Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
         Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
-        Me.PictureBox1.Location = New System.Drawing.Point(245, 23)
+        Me.PictureBox1.Location = New System.Drawing.Point(245, 45)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(214, 140)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
@@ -409,7 +530,7 @@
         '
         'exceltosql
         '
-        Me.exceltosql.Location = New System.Drawing.Point(21, 111)
+        Me.exceltosql.Location = New System.Drawing.Point(21, 133)
         Me.exceltosql.Name = "exceltosql"
         Me.exceltosql.Size = New System.Drawing.Size(160, 52)
         Me.exceltosql.TabIndex = 1
@@ -418,24 +539,15 @@
         '
         'TabControl1
         '
-        Me.TabControl1.Controls.Add(Me.pgSQL)
+        Me.TabControl1.Controls.Add(Me.pgSQLBackUp)
         Me.TabControl1.Controls.Add(Me.pgTNX)
-        Me.TabControl1.Controls.Add(Me.TabPage2)
+        Me.TabControl1.Controls.Add(Me.pgFoundations)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
         Me.TabControl1.Size = New System.Drawing.Size(891, 487)
         Me.TabControl1.TabIndex = 3
-        '
-        'btnTest
-        '
-        Me.btnTest.Location = New System.Drawing.Point(557, 11)
-        Me.btnTest.Name = "btnTest"
-        Me.btnTest.Size = New System.Drawing.Size(160, 21)
-        Me.btnTest.TabIndex = 5
-        Me.btnTest.Text = "Test"
-        Me.btnTest.UseVisualStyleBackColor = True
         '
         'frmMain
         '
@@ -448,12 +560,20 @@
         Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
         Me.Name = "frmMain"
         Me.Text = "EDS & Excel Testing"
-        Me.TabPage2.ResumeLayout(False)
-        Me.SplitContainer2.Panel1.ResumeLayout(False)
-        Me.SplitContainer2.Panel1.PerformLayout()
-        Me.SplitContainer2.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer2.ResumeLayout(False)
+        Me.pgFoundations.ResumeLayout(False)
+        Me.SplitContainer3.Panel1.ResumeLayout(False)
+        Me.SplitContainer3.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer3.ResumeLayout(False)
+        Me.SplitContainer4.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer4.ResumeLayout(False)
+        Me.SplitContainer5.Panel1.ResumeLayout(False)
+        Me.SplitContainer5.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer5.ResumeLayout(False)
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
         Me.pgTNX.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -468,46 +588,56 @@
         Me.scFromEDS.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        Me.pgSQL.ResumeLayout(False)
+        Me.pgSQLBackUp.ResumeLayout(False)
+        Me.pgSQLBackUp.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabControl1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
 
-    Friend WithEvents TabPage2 As TabPage
-    Friend WithEvents SplitContainer2 As SplitContainer
-    Friend WithEvents TextBox1 As TextBox
-    Friend WithEvents Label1 As Label
-    Friend WithEvents TextBox2 As TextBox
-    Friend WithEvents Label2 As Label
-    Friend WithEvents Button1 As Button
-    Friend WithEvents Button2 As Button
-    Friend WithEvents Button3 As Button
-    Friend WithEvents Button4 As Button
-    Friend WithEvents PropertyGrid1 As PropertyGrid
+    Friend WithEvents pgFoundations As TabPage
+    Friend WithEvents SplitContainer3 As SplitContainer
+    Friend WithEvents btnSaveFndToEDS As Button
+    Friend WithEvents btnImportXLFnd As Button
+    Friend WithEvents SplitContainer4 As SplitContainer
+    Friend WithEvents propgridFndXL As PropertyGrid
+    Friend WithEvents SplitContainer5 As SplitContainer
+    Friend WithEvents propgridFndEDS As PropertyGrid
+    Friend WithEvents btnLoadFndFromEDS As Button
+    Friend WithEvents btnExportXLFnds As Button
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents btnCompareFnd As Button
+    Friend WithEvents txtFndStrc As TextBox
+    Friend WithEvents Label5 As Label
+    Friend WithEvents txtFndBU As TextBox
+    Friend WithEvents Label6 As Label
     Friend WithEvents pgTNX As TabPage
-    Friend WithEvents scFromERI As SplitContainer
-    Friend WithEvents txtStrc As TextBox
-    Friend WithEvents lblStrc As Label
-    Friend WithEvents txtBU As TextBox
-    Friend WithEvents lblBU As Label
+    Friend WithEvents SplitContainer1 As SplitContainer
     Friend WithEvents btnSavetoEDS As Button
     Friend WithEvents btnImportERI As Button
-    Friend WithEvents pgSQL As TabPage
-    Friend WithEvents sqltoexcel As Button
-    Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents exceltosql As Button
-    Friend WithEvents TabControl1 As TabControl
-    Friend WithEvents SplitContainer1 As SplitContainer
+    Friend WithEvents scFromERI As SplitContainer
+    Friend WithEvents propgridTNXERI As PropertyGrid
     Friend WithEvents scFromEDS As SplitContainer
     Friend WithEvents propgridTNXEDS As PropertyGrid
     Friend WithEvents btnLoadfromEDS As Button
     Friend WithEvents btnExportERI As Button
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents btnCompare As Button
-    Friend WithEvents propgridTNXERI As PropertyGrid
     Friend WithEvents btnTest As Button
+    Friend WithEvents btnCompare As Button
+    Friend WithEvents txtStrc As TextBox
+    Friend WithEvents lblStrc As Label
+    Friend WithEvents txtBU As TextBox
+    Friend WithEvents lblBU As Label
+    Friend WithEvents pgSQLBackUp As TabPage
+    Friend WithEvents txtSQLStrc As TextBox
+    Friend WithEvents txtSQLBU As TextBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents Label4 As Label
+    Friend WithEvents sqltoexcel As Button
+    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents exceltosql As Button
+    Friend WithEvents TabControl1 As TabControl
 
 #End Region
 
