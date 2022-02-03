@@ -490,11 +490,11 @@
 '#End Region
 
 
-#Region "General"
-Public Sub Clear()
-    ExcelFilePath = ""
-    PierAndPads.Clear()
-End Sub
+'#Region "General"
+'Public Sub Clear()
+'    ExcelFilePath = ""
+'    PierAndPads.Clear()
+'End Sub
 
 '    Private Function PierAndPadSQLDataTables() As List(Of SQLParameter)
 '        Dim MyParameters As New List(Of SQLParameter)

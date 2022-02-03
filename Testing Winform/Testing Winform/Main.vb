@@ -293,63 +293,61 @@ Partial Public Class frmMain
 
 #End Region
 
-#Region "tnx"
+    '#Region "tnx"
 
-    Public tnxObject As tnxModel
-    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
-        Dim eriFd As New OpenFileDialog
-        eriFd.Multiselect = False
-        eriFd.Filter = "TNX File|*.eri"
+    '    Public tnxFromEDS As tnxModel
+    '    Public tnxFromERI As tnxModel
+    '    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
+    '        Dim eriFd As New OpenFileDialog
+    '        eriFd.Multiselect = False
+    '        eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxFromERI = New tnxModel(eriFd.FileName)
+    '        If eriFd.ShowDialog = DialogResult.OK Then
+    '            tnxFromERI = New tnxModel(eriFd.FileName)
 
-            propgridTNXObject.SelectedObject = tnxObject
-        End If
-    End Sub
+    '            propgridTNXObject.SelectedObject = tnxObject
+    '        End If
+    '    End Sub
 
-    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
-        If tnxObject Is Nothing Then
-            MessageBox.Show("Import a file first.")
-            Exit Sub
-        End If
+    '    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
+    '        If tnxFromEDS Is Nothing Then
+    '            MessageBox.Show("Import a file first.")
+    '            Exit Sub
+    '        End If
 
-        Dim eriFd As New SaveFileDialog
-        eriFd.Filter = "TNX File|*.eri"
+    '        Dim eriFd As New SaveFileDialog
+    '        eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxObject.GenerateERI(eriFd.FileName)
-        End If
-    End Sub
+    '        If eriFd.ShowDialog = DialogResult.OK Then
+    '            tnxFromEDS.GenerateERI(eriFd.FileName)
+    '        End If
+    '    End Sub
 
-    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
+    '    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+    '        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
-        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+    '        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive, )
 
-    End Sub
+    '    End Sub
 
-    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+    '    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+    '        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        'benchmarked at 0.5 sec
+    '        'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '        'benchmarked at 0.5 sec
 
-        tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        'benchmarked between 1.5-2.25 sec
+    '        tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '        'benchmarked between 1.5-2.25 sec
 
-    End Sub
+    '    End Sub
 
-    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+    '    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+    '        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
 
-        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '        tnxFromEDS = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridTNXObject.SelectedObject = tnxObject
-    End Sub
-
-
-
+    '        propgridTNXEDS.SelectedObject = tnxFromEDS
+    '    End Sub
 
 
 
@@ -358,7 +356,10 @@ Partial Public Class frmMain
 
 
 
-#End Region
+
+
+
+    '#End Region
 
 #Region "Shame"
 
