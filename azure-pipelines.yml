@@ -38,13 +38,7 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    command: 'pack'
-    packagesToPack: 'DataTransferer*.vbproj'
-    versioningScheme: 'off'
-
-- task: NuGetCommand@2
-  inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    packagesToPush: '$(Build.SourcesDirectory)/DataTransferer/bin/Release/*.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: 'a0d7e461-fb78-4615-80c8-166bbd403ea8/ab75d666-309d-4dd0-bf8f-8a2ebd7b9f0a'
