@@ -18,6 +18,10 @@ Module IDoDeclare
     Public isPoleNeeded As Boolean = False 'Update CCIpole structure, criteria, pole section, reinf pole section, reinf group, reinf details, int group, int details, reinf results, reinforcement prop, bolt prop, matl prop
     Public isconGroupNeeded As Boolean = False 'CCIplate
     Public isConnectionNeeded As Boolean = False 'CCIplate
+    Public SQLQueryTemplates As New SQLTemplates()
+
+    'SQL templates
+    Public PierandPadInsert As String
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
@@ -32,6 +36,54 @@ Module IDoDeclare
     Public changeList As New List(Of AnalysisChanges)
 
 End Module
+
+Public Class SQLTemplates
+
+#Region "Pier and Pad"
+    Private _PierandPadInsert As String
+    Public ReadOnly Property PierandPadInsert() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (INSERT).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property PierandPadUpdate() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (Update).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property PierandPadDelete() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (Delete).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Private _PierandPadSelect As String
+    Public ReadOnly Property PierandPadSelect() As String
+        Get
+            If _PierandPadSelect = "" Then
+                _PierandPadSelect = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (SELECT Details).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+#End Region
+
+
+
+
+End Class
 
 Public Module Common
 
@@ -270,9 +322,9 @@ Public Module Common
 
         For Each chng As AnalysisChanges In changeList
             If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+                summary += chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+                summary += vbNewLine & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             End If
 
             counter += 1
@@ -362,17 +414,58 @@ Public Class EXCELRngParameter
     End Sub
 End Class
 
+Public Class Comparison
+    Public Property DBStatus As dbStatuses
+    Public Property Changes As List(Of AnalysisChanges)
+
+    Public Function CreateChangeSummary() As String
+        Dim summary As String = ""
+
+        For Each chng As AnalysisChanges In changeList
+            summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
+        Next
+
+    End Function
+
+    Public Function Check1Change(ByVal categoryName As String, ByVal fieldName As String, ByVal newValue As Object, ByVal previousValue As Object, Optional ByRef previousIdentity As String = "") As Boolean
+        'If changeDt.Columns.Count = 0 Then
+        '    changeDt.Columns.Add("Variable", Type.GetType("System.String"))
+        '    changeDt.Columns.Add("New Value", Type.GetType("System.String"))
+        '    changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
+        '    'changeDt.Columns.Add("WO", Type.GetType("System.String"))
+        'End If
+
+        If newValue <> previousValue Then
+            'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            Me.Changes.Add(New AnalysisChanges(categoryName, fieldName, newValue, previousValue, previousIdentity))
+            Return True
+            'ElseIf Not IsNothing(newValue) And IsNothing(previousValue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
+            '    'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            '    changeList.Add(New AnalysisChanges(previousValue, newValue, variable, db))
+            '    Return True
+            'ElseIf IsNothing(newValue) And Not IsNothing(previousValue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
+            '    'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
+            '    changeList.Add(New AnalysisChanges(previousValue, newValue, variable, db))
+            '    Return True
+        Else
+            Return False
+        End If
+
+    End Function
+End Class
 Public Class AnalysisChanges
     Property PreviousValue As String
     Property NewValue As String
-    Property Name As String
-    Property PartofDatabase As String
+    Property FieldName As String
+    Property CategoryName As String
+    Property PreviousIdentity As String
 
-    Public Sub New(prev As String, Newval As String, name As String, db As String)
-        Me.PreviousValue = prev
-        Me.NewValue = Newval
-        Me.Name = name
-        Me.PartofDatabase = db
+    Public Sub New(categoryName As String, fieldName As String, newValue As String, previousValue As String, Optional previousIdentity As String = "")
+        Me.PreviousValue = previousValue
+        Me.NewValue = newValue
+        Me.FieldName = fieldName
+        Me.CategoryName = categoryName
+        Me.PreviousIdentity = previousIdentity
     End Sub
 End Class
 <Description("Use this class to time parts of the code and record it to the console.")>

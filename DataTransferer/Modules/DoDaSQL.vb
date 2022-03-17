@@ -8,15 +8,15 @@ Module DoDaSQL
 
 #Region "Main SQL Functions"
     <DebuggerStepThrough()>
-    Public Function sqlLoader(ByVal SQLCommand As String, ByVal SQLSource As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
-        ClearDataTable(SQLSource, SaveToDataSet)
+    Public Function sqlLoader(ByVal SQLCommand As String, ByVal SaveToTableName As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+        ClearDataTable(SaveToTableName, SaveToDataSet)
         Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
             sqlCon = New SqlConnection(ActiveDatabase)
             sqlCon.Open()
 
             Try
                 SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
-                SQLAdapter.Fill(SaveToDataSet, SQLSource)
+                SQLAdapter.Fill(SaveToDataSet, SaveToTableName)
             Catch ex As Exception
                 sqlCon.Close()
                 Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo)
@@ -30,11 +30,7 @@ Module DoDaSQL
         Return True
     End Function
 
-    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer, Optional ByVal ClearExistingDataTable As Boolean = True) As Boolean
-
-        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
-
-        If SQLCommand.Count <> tableName.Count Then Return False
+    Public Function sqlLoader(ByVal SQLCommand As String, ByRef SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, Optional ByVal erNo As Integer = 0, Optional ByVal ClearSaveToDataSet As Boolean = True) As Boolean
 
         Dim errors As Boolean = False
 
@@ -42,15 +38,41 @@ Module DoDaSQL
             Using sqlCon As New SqlConnection(ActiveDatabase)
                 sqlCon.Open()
 
-                For i = 0 To SQLCommand.Count - 1
+                Try
+                    If ClearSaveToDataSet Then SaveToDataSet.Reset()
+                    SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
+                    SQLAdapter.Fill(SaveToDataSet)
+                Catch ex As Exception
+                    Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                    errors = True
+                End Try
+            End Using
+        End Using
+
+        Return True
+    End Function
+
+    Public Function sqlLoader(ByVal SQLCommands As List(Of String), ByVal SaveToDataTables As List(Of String), ByRef SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, Optional ByVal erNo As Integer = 0, Optional ByVal ClearSaveToDataTable As Boolean = True) As Boolean
+
+        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
+
+        If SQLCommands.Count <> SaveToDataTables.Count Then Return False
+
+        Dim errors As Boolean = False
+
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            Using sqlCon As New SqlConnection(ActiveDatabase)
+                sqlCon.Open()
+
+                For i = 0 To SQLCommands.Count - 1
                     Try
-                        If ClearExistingDataTable Then ClearDataTable(tableName(i), SaveToDataSet)
-                        Using SQLAdapter As New SqlDataAdapter(SQLCommand(i), sqlCon)
-                            SQLAdapter.Fill(SaveToDataSet, tableName(i))
+                        If ClearSaveToDataTable Then ClearDataTable(SaveToDataTables(i), SaveToDataSet)
+                        Using SQLAdapter As New SqlDataAdapter(SQLCommands(i), sqlCon)
+                            SQLAdapter.Fill(SaveToDataSet, SaveToDataTables(i))
                         End Using
                     Catch ex As Exception
                         erNo = erNo + i
-                        Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                        Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
                         errors = True
                     End Try
                 Next

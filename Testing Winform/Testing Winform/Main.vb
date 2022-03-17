@@ -46,7 +46,11 @@ Partial Public Class frmMain
 #End Region
 
 #Region "Other Required Declarations"
-    Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSDev;Integrated Security=SSPI"
+    'Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSDev;Integrated Security=SSPI"
+    'Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
+    'Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
+    'Changed to Uat for testing database changes
+    Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSUat;Integrated Security=SSPI"
     Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
     Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
 
@@ -109,8 +113,8 @@ Partial Public Class frmMain
 
 
 #Region "Foundations"
-    Public fndGroupXL As EDSFoundationGroup
-    Public fndGroupEDS As EDSFoundationGroup
+    Public strcXL As EDSStructure
+    Public strcEDS As EDSStructure
 
     Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportXLFnd.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
@@ -122,39 +126,38 @@ Partial Public Class frmMain
         xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            fndGroupXL = New EDSFoundationGroup(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
+            strcXL = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
         End If
 
-        propgridFndXL.SelectedObject = fndGroupXL
+        propgridFndXL.SelectedObject = strcXL
 
     End Sub
 
     Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportXLFnds.Click
-        If fndGroupEDS Is Nothing Then Exit Sub
+        If strcEDS Is Nothing Then Exit Sub
 
-        Dim eriFd As New FolderBrowserDialog
+        Dim strcFBD As New FolderBrowserDialog
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            fndGroupEDS.SaveAllFoundationstoExcel(eriFd.SelectedPath)
+        If strcFBD.ShowDialog = DialogResult.OK Then
+            strcEDS.SaveToolstoExcel(strcFBD.SelectedPath)
         End If
     End Sub
     Private Sub btnLoadFndFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        fndGroupEDS = New EDSFoundationGroup(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridFndEDS.SelectedObject = fndGroupEDS
+        propgridFndEDS.SelectedObject = strcEDS
 
     End Sub
     Private Sub btnSaveFndToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
-        If fndGroupXL Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        If strcXL Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        fndGroupXL.SaveAllFoundationsEDS(EDSnewId, EDSdbActive)
-
+        strcXL.SavetoEDS(EDSnewId, EDSdbActive)
     End Sub
     Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareFnd.Click
-        If fndGroupXL Is Nothing Or fndGroupEDS Is Nothing Then Exit Sub
-        fndGroupXL.CompareMe(fndGroupEDS)
+        If strcXL Is Nothing Or strcEDS Is Nothing Then Exit Sub
+        strcXL.CompareMe(strcEDS)
     End Sub
 #End Region
 
@@ -326,7 +329,8 @@ Partial Public Class frmMain
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
     End Sub
 

@@ -67,36 +67,54 @@
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP SUB).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP) - DNU.sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details Grp).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP SUB).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details Grp).sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details Grp).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Full Query Params.sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Full Query.sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
+    <None Remove="Data Transferer Queries\Structure\Structure (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\Structure\Structure (SELECT).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (INSERT Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query Params.sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query.sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Guys).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Materials).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Members).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Upper Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP) - Sub Query Test.sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Details).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Guys).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Material Matching).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Materials).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Member Matching).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Members).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Upper Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\Backup\TNX (UPDATE Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (INSERT Base Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (INSERT).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Guys).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Materials).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Members).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Upper Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP) - Sub Query Test.sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Details).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Guys).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Material Matching).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Materials).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Member Matching).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Members).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Upper Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (UPDATE Base Structure).sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
@@ -259,10 +277,31 @@
     <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP SUB).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP) - DNU.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details Grp).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29 - DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP SUB%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP).sql">
@@ -272,6 +311,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Details Grp%29.sql">
@@ -292,61 +334,91 @@
     <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Location%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29.sql">
+    <Content Include="Data Transferer Queries\Structure\Structure %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Details%29.sql">
+    <Content Include="Data Transferer Queries\Structure\Structure %28SELECT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (INSERT Base Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query Params.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Guys).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Materials).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Members).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Upper Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP) - Sub Query Test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Base Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Guys).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Material Matching).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Materials).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Member Matching).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Members).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Upper Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\Backup\TNX (UPDATE Base Structure).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Base Structure%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Materials%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Members%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Guys%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Upper Structure%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Guys%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Upper Structure%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Members%29.sql">
+    <Content Include="Data Transferer Queries\TNX\TNX %28UPDATE Base Structure%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Materials%29.sql">
+    <Content Include="Data Transferer Queries\TNX\TNX %28INSERT Base Structure%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Member Matching%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Material Matching%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Full Query.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29 - Sub Query Test.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Sub Query Test.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Sub Query Test Params.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Full Query Params.sql">
+    <Content Include="Data Transferer Queries\TNX\TNX %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
@@ -362,6 +434,7 @@
 
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
@@ -376,9 +449,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="DevExpress.Document.Processor" Version="21.2.5" />
     <PackageReference Include="DevExpress.Win" Version="21.2.5" />
     <PackageReference Include="DevExpress.Win.Spreadsheet" Version="21.2.5" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 
