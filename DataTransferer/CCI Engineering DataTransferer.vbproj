@@ -57,6 +57,11 @@
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Existing Model %28SELECT%29.sql" />
+    <None Remove="Data Transferer Queries\Foundation Group\Foundation (IN_UP Partial) DNU.sql" />
+    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (IN_UP) with Model.sql" />
+    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (SELECT ID Active).sql" />
+    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (SELECT ID WO).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP) - dnu.sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql" />
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details) - Copy.sql" />
@@ -65,17 +70,25 @@
     <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP SUB).sql" />
     <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP) - DNU.sql" />
+    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details Grp).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
+    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details Grp).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
     <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Full Query Params.sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Full Query.sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Guys).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Materials).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Members).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Upper Structure).sql" />
+    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP) - Sub Query Test.sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (IN_UP).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Details).sql" />
@@ -87,6 +100,7 @@
     <None Remove="Data Transferer Queries\TNX\TNX (SELECT Upper Structure).sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
+    <None Remove="Data Transferer Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -216,6 +230,15 @@
     <Content Include="Data Transferer Queries\Existing Model (SELECT).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28SELECT ID Active%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Foundation Group\Foundation %28IN_UP Partial%29 DNU.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28IN_UP%29 with Model.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -234,13 +257,28 @@
     <Content Include="Data Transferer Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28IN_UP%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP%29 - DNU.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28IN_UP SUB%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details Grp%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Pile\Pile %28IN_UP%29 - DNU.sql">
@@ -300,6 +338,24 @@
     <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Material Matching%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Full Query.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29 - Sub Query Test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Sub Query Test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Sub Query Test Params.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29 - Full Query Params.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -309,24 +365,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DevExpress.Charts.v21.1.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Charts.v21.1.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Data.v21.1">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Data.v21.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.DataAccess.v21.1">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.DataAccess.v21.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Docs.v21.1">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Docs.v21.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Office.v21.1.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Office.v21.1.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Spreadsheet.v21.1.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Spreadsheet.v21.1.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows" />
@@ -342,6 +380,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpress.Document.Processor" Version="21.2.5" />
+    <PackageReference Include="DevExpress.Win" Version="21.2.5" />
+    <PackageReference Include="DevExpress.Win.Spreadsheet" Version="21.2.5" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 

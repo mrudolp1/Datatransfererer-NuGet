@@ -5,9 +5,21 @@ Imports System.Data
 Imports DevExpress.Spreadsheet
 
 Partial Public Class PierAndPad
+    Inherits EDSFoundation
 
 #Region "Define"
-    Private prop_pp_id As Integer
+
+    '''Must override these inherited properties
+    Public Overrides ReadOnly Property foundationType As String = "Pier and Pad"
+    Public Overrides ReadOnly Property templatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\Template\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+        Get
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)")}
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String = "fnd.pier_pad_details"
+    '''
+
     Private prop_extension_above_grade As Double?
     Private prop_foundation_depth As Double?
     Private prop_concrete_compressive_strength As Double?
@@ -57,17 +69,6 @@ Partial Public Class PierAndPad
     Private prop_tool_version As String
     Private prop_modified As Boolean
 
-    'Public Property ModifiedRanges As New List(Of ModifiedRange)
-
-    <Category("Pier and Pad Details"), Description(""), DisplayName("Pier and Pad ID")>
-    Public Property pp_id() As Integer
-        Get
-            Return Me.prop_pp_id
-        End Get
-        Set
-            Me.prop_pp_id = Value
-        End Set
-    End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Extension Above Grade")>
     Public Property extension_above_grade() As Double?
         Get
@@ -475,15 +476,15 @@ Partial Public Class PierAndPad
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal PierandPadDataRow As DataRow, refID As Integer)
+    Public Sub New(ByVal ppDr As DataRow)
+        ''''''Customize for each foundation type'''''
+
+        Me.ID = DBtoNullableInt(ppDr.Item("foundation_id"))
+        Me.fndDetailID = DBtoNullableInt(ppDr.Item("foundation_detail_id"))
+        Me.guyGroupID = DBtoNullableInt(ppDr.Item("guy_group_id"))
         Try
-            Me.pp_id = refID
-        Catch
-            Me.pp_id = 0
-        End Try 'Pier and Pad ID
-        Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("extension_above_grade"), Double)) Then
-                Me.extension_above_grade = CType(PierandPadDataRow.Item("extension_above_grade"), Double)
+            If Not IsDBNull(CType(ppDr.Item("extension_above_grade"), Double)) Then
+                Me.extension_above_grade = CType(ppDr.Item("extension_above_grade"), Double)
             Else
                 Me.extension_above_grade = Nothing
             End If
@@ -491,8 +492,8 @@ Partial Public Class PierAndPad
             Me.extension_above_grade = Nothing
         End Try 'Extension Above Grade
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("foundation_depth"), Double)) Then
-                Me.foundation_depth = CType(PierandPadDataRow.Item("foundation_depth"), Double)
+            If Not IsDBNull(CType(ppDr.Item("foundation_depth"), Double)) Then
+                Me.foundation_depth = CType(ppDr.Item("foundation_depth"), Double)
             Else
                 Me.foundation_depth = Nothing
             End If
@@ -500,8 +501,8 @@ Partial Public Class PierAndPad
             Me.foundation_depth = Nothing
         End Try 'Foundation Depth
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("concrete_compressive_strength"), Double)) Then
-                Me.concrete_compressive_strength = CType(PierandPadDataRow.Item("concrete_compressive_strength"), Double)
+            If Not IsDBNull(CType(ppDr.Item("concrete_compressive_strength"), Double)) Then
+                Me.concrete_compressive_strength = CType(ppDr.Item("concrete_compressive_strength"), Double)
             Else
                 Me.concrete_compressive_strength = Nothing
             End If
@@ -509,8 +510,8 @@ Partial Public Class PierAndPad
             Me.concrete_compressive_strength = Nothing
         End Try 'Concrete Compressive Strength
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("dry_concrete_density"), Double)) Then
-                Me.dry_concrete_density = CType(PierandPadDataRow.Item("dry_concrete_density"), Double)
+            If Not IsDBNull(CType(ppDr.Item("dry_concrete_density"), Double)) Then
+                Me.dry_concrete_density = CType(ppDr.Item("dry_concrete_density"), Double)
             Else
                 Me.dry_concrete_density = Nothing
             End If
@@ -518,8 +519,8 @@ Partial Public Class PierAndPad
             Me.dry_concrete_density = Nothing
         End Try 'Dry Concrete Density
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("rebar_grade"), Double)) Then
-                Me.rebar_grade = CType(PierandPadDataRow.Item("rebar_grade"), Double)
+            If Not IsDBNull(CType(ppDr.Item("rebar_grade"), Double)) Then
+                Me.rebar_grade = CType(ppDr.Item("rebar_grade"), Double)
             Else
                 Me.rebar_grade = Nothing
             End If
@@ -527,23 +528,23 @@ Partial Public Class PierAndPad
             Me.rebar_grade = Nothing
         End Try 'Rebar Grade
         Try
-            Me.top_and_bottom_rebar_different = CType(PierandPadDataRow.Item("top_and_bottom_rebar_different"), Boolean)
+            Me.top_and_bottom_rebar_different = CType(ppDr.Item("top_and_bottom_rebar_different"), Boolean)
         Catch
             Me.top_and_bottom_rebar_different = False
         End Try 'Top and Bottom Rebar Different
         Try
-            Me.block_foundation = CType(PierandPadDataRow.Item("block_foundation"), Boolean)
+            Me.block_foundation = CType(ppDr.Item("block_foundation"), Boolean)
         Catch
             Me.block_foundation = False
         End Try 'Block Foundation 
         Try
-            Me.rectangular_foundation = CType(PierandPadDataRow.Item("rectangular_foundation"), Boolean)
+            Me.rectangular_foundation = CType(ppDr.Item("rectangular_foundation"), Boolean)
         Catch
             Me.rectangular_foundation = False
         End Try 'Rectangular Foundation
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("base_plate_distance_above_foundation"), Double)) Then
-                Me.base_plate_distance_above_foundation = CType(PierandPadDataRow.Item("base_plate_distance_above_foundation"), Double)
+            If Not IsDBNull(CType(ppDr.Item("base_plate_distance_above_foundation"), Double)) Then
+                Me.base_plate_distance_above_foundation = CType(ppDr.Item("base_plate_distance_above_foundation"), Double)
             Else
                 Me.base_plate_distance_above_foundation = Nothing
             End If
@@ -551,8 +552,8 @@ Partial Public Class PierAndPad
             Me.base_plate_distance_above_foundation = Nothing
         End Try 'Base Plate Distance Above Foundation
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("bolt_circle_bearing_plate_width"), Double)) Then
-                Me.bolt_circle_bearing_plate_width = CType(PierandPadDataRow.Item("bolt_circle_bearing_plate_width"), Double)
+            If Not IsDBNull(CType(ppDr.Item("bolt_circle_bearing_plate_width"), Double)) Then
+                Me.bolt_circle_bearing_plate_width = CType(ppDr.Item("bolt_circle_bearing_plate_width"), Double)
             Else
                 Me.bolt_circle_bearing_plate_width = Nothing
             End If
@@ -560,13 +561,13 @@ Partial Public Class PierAndPad
             Me.bolt_circle_bearing_plate_width = Nothing
         End Try 'Bolt Circle Bearing Plate Width
         Try
-            Me.pier_shape = CType(PierandPadDataRow.Item("pier_shape"), String)
+            Me.pier_shape = CType(ppDr.Item("pier_shape"), String)
         Catch
             Me.pier_shape = ""
         End Try 'Pier Shape
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_diameter"), Double)) Then
-                Me.pier_diameter = CType(PierandPadDataRow.Item("pier_diameter"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pier_diameter"), Double)) Then
+                Me.pier_diameter = CType(ppDr.Item("pier_diameter"), Double)
             Else
                 Me.pier_diameter = Nothing
             End If
@@ -574,8 +575,8 @@ Partial Public Class PierAndPad
             Me.pier_diameter = Nothing
         End Try 'Pier Diameter
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_rebar_quantity"), Double)) Then
-                Me.pier_rebar_quantity = CType(PierandPadDataRow.Item("pier_rebar_quantity"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pier_rebar_quantity"), Double)) Then
+                Me.pier_rebar_quantity = CType(ppDr.Item("pier_rebar_quantity"), Double)
             Else
                 Me.pier_rebar_quantity = Nothing
             End If
@@ -583,8 +584,8 @@ Partial Public Class PierAndPad
             Me.pier_rebar_quantity = Nothing
         End Try 'Pier Rebar Quantity
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_rebar_size"), Integer)) Then
-                Me.pier_rebar_size = CType(PierandPadDataRow.Item("pier_rebar_size"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pier_rebar_size"), Integer)) Then
+                Me.pier_rebar_size = CType(ppDr.Item("pier_rebar_size"), Integer)
             Else
                 Me.pier_rebar_size = Nothing
             End If
@@ -592,8 +593,8 @@ Partial Public Class PierAndPad
             Me.pier_rebar_size = Nothing
         End Try 'Pier Rebar Size
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_tie_quantity"), Double)) Then
-                Me.pier_tie_quantity = CType(PierandPadDataRow.Item("pier_tie_quantity"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pier_tie_quantity"), Double)) Then
+                Me.pier_tie_quantity = CType(ppDr.Item("pier_tie_quantity"), Double)
             Else
                 Me.pier_tie_quantity = Nothing
             End If
@@ -601,8 +602,8 @@ Partial Public Class PierAndPad
             Me.pier_tie_quantity = Nothing
         End Try 'Pier Tie Quantity
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_tie_size"), Integer)) Then
-                Me.pier_tie_size = CType(PierandPadDataRow.Item("pier_tie_size"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pier_tie_size"), Integer)) Then
+                Me.pier_tie_size = CType(ppDr.Item("pier_tie_size"), Integer)
             Else
                 Me.pier_tie_size = Nothing
             End If
@@ -610,13 +611,13 @@ Partial Public Class PierAndPad
             Me.pier_tie_size = Nothing
         End Try 'Pier Tie Size
         Try
-            Me.pier_reinforcement_type = CType(PierandPadDataRow.Item("pier_reinforcement_type"), String)
+            Me.pier_reinforcement_type = CType(ppDr.Item("pier_reinforcement_type"), String)
         Catch
             Me.pier_reinforcement_type = ""
         End Try 'Pier Reinforcement Type
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pier_clear_cover"), Double)) Then
-                Me.pier_clear_cover = CType(PierandPadDataRow.Item("pier_clear_cover"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pier_clear_cover"), Double)) Then
+                Me.pier_clear_cover = CType(ppDr.Item("pier_clear_cover"), Double)
             Else
                 Me.pier_clear_cover = Nothing
             End If
@@ -624,8 +625,8 @@ Partial Public Class PierAndPad
             Me.pier_clear_cover = Nothing
         End Try 'Pier Clear Cover
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_width_1"), Double)) Then
-                Me.pad_width_1 = CType(PierandPadDataRow.Item("pad_width_1"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_width_1"), Double)) Then
+                Me.pad_width_1 = CType(ppDr.Item("pad_width_1"), Double)
             Else
                 Me.pad_width_1 = Nothing
             End If
@@ -633,8 +634,8 @@ Partial Public Class PierAndPad
             Me.pad_width_1 = Nothing
         End Try 'Pad Width 1
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_width_2"), Double)) Then
-                Me.pad_width_2 = CType(PierandPadDataRow.Item("pad_width_2"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_width_2"), Double)) Then
+                Me.pad_width_2 = CType(ppDr.Item("pad_width_2"), Double)
             Else
                 Me.pad_width_2 = Nothing
             End If
@@ -642,8 +643,8 @@ Partial Public Class PierAndPad
             Me.pad_width_2 = Nothing
         End Try 'Pad Width 2
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_thickness"), Double)) Then
-                Me.pad_thickness = CType(PierandPadDataRow.Item("pad_thickness"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_thickness"), Double)) Then
+                Me.pad_thickness = CType(ppDr.Item("pad_thickness"), Double)
             Else
                 Me.pad_thickness = Nothing
             End If
@@ -651,8 +652,8 @@ Partial Public Class PierAndPad
             Me.pad_thickness = Nothing
         End Try 'Pad Thickness
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_size_top_dir1"), Integer)) Then
-                Me.pad_rebar_size_top_dir1 = CType(PierandPadDataRow.Item("pad_rebar_size_top_dir1"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_size_top_dir1"), Integer)) Then
+                Me.pad_rebar_size_top_dir1 = CType(ppDr.Item("pad_rebar_size_top_dir1"), Integer)
             Else
                 Me.pad_rebar_size_top_dir1 = Nothing
             End If
@@ -660,8 +661,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_size_top_dir1 = Nothing
         End Try 'Pad Rebar Size (Top Direction 1)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir1"), Integer)) Then
-                Me.pad_rebar_size_bottom_dir1 = CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir1"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_size_bottom_dir1"), Integer)) Then
+                Me.pad_rebar_size_bottom_dir1 = CType(ppDr.Item("pad_rebar_size_bottom_dir1"), Integer)
             Else
                 Me.pad_rebar_size_bottom_dir1 = Nothing
             End If
@@ -669,8 +670,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_size_bottom_dir1 = Nothing
         End Try 'Pad Rebar Size (Bottom Direction 1)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_size_top_dir2"), Integer)) Then
-                Me.pad_rebar_size_top_dir2 = CType(PierandPadDataRow.Item("pad_rebar_size_top_dir2"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_size_top_dir2"), Integer)) Then
+                Me.pad_rebar_size_top_dir2 = CType(ppDr.Item("pad_rebar_size_top_dir2"), Integer)
             Else
                 Me.pad_rebar_size_top_dir2 = Nothing
             End If
@@ -678,8 +679,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_size_top_dir2 = Nothing
         End Try 'Pad Rebar Size (Top Direction 2)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir2"), Integer)) Then
-                Me.pad_rebar_size_bottom_dir2 = CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir2"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_size_bottom_dir2"), Integer)) Then
+                Me.pad_rebar_size_bottom_dir2 = CType(ppDr.Item("pad_rebar_size_bottom_dir2"), Integer)
             Else
                 Me.pad_rebar_size_bottom_dir2 = Nothing
             End If
@@ -687,8 +688,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_size_bottom_dir2 = Nothing
         End Try 'Pad Rebar Size (Bottom Direction 2)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)) Then
-                Me.pad_rebar_quantity_top_dir1 = CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir1"), Integer)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_quantity_top_dir1"), Integer)) Then
+                Me.pad_rebar_quantity_top_dir1 = CType(ppDr.Item("pad_rebar_quantity_top_dir1"), Integer)
             Else
                 Me.pad_rebar_quantity_top_dir1 = Nothing
             End If
@@ -696,8 +697,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_quantity_top_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 1)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)) Then
-                Me.pad_rebar_quantity_bottom_dir1 = CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_quantity_bottom_dir1"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir1 = CType(ppDr.Item("pad_rebar_quantity_bottom_dir1"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir1 = Nothing
             End If
@@ -705,8 +706,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_quantity_bottom_dir1 = Nothing
         End Try 'Pad Rebar Quantity (Bottom Direction 1)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir2"), Double)) Then
-                Me.pad_rebar_quantity_top_dir2 = CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir2"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_quantity_top_dir2"), Double)) Then
+                Me.pad_rebar_quantity_top_dir2 = CType(ppDr.Item("pad_rebar_quantity_top_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_top_dir2 = Nothing
             End If
@@ -714,8 +715,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_quantity_top_dir2 = Nothing
         End Try 'Pad Rebar Quantity (Top Direction 2)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)) Then
-                Me.pad_rebar_quantity_bottom_dir2 = CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_rebar_quantity_bottom_dir2"), Double)) Then
+                Me.pad_rebar_quantity_bottom_dir2 = CType(ppDr.Item("pad_rebar_quantity_bottom_dir2"), Double)
             Else
                 Me.pad_rebar_quantity_bottom_dir2 = Nothing
             End If
@@ -723,8 +724,8 @@ Partial Public Class PierAndPad
             Me.pad_rebar_quantity_bottom_dir2 = Nothing
         End Try 'Pad Rebar Quantity (Bottom Direction 2)
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("pad_clear_cover"), Double)) Then
-                Me.pad_clear_cover = CType(PierandPadDataRow.Item("pad_clear_cover"), Double)
+            If Not IsDBNull(CType(ppDr.Item("pad_clear_cover"), Double)) Then
+                Me.pad_clear_cover = CType(ppDr.Item("pad_clear_cover"), Double)
             Else
                 Me.pad_clear_cover = Nothing
             End If
@@ -732,8 +733,8 @@ Partial Public Class PierAndPad
             Me.pad_clear_cover = Nothing
         End Try 'Pad Clear Cover
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("total_soil_unit_weight"), Double)) Then
-                Me.total_soil_unit_weight = CType(PierandPadDataRow.Item("total_soil_unit_weight"), Double)
+            If Not IsDBNull(CType(ppDr.Item("total_soil_unit_weight"), Double)) Then
+                Me.total_soil_unit_weight = CType(ppDr.Item("total_soil_unit_weight"), Double)
             Else
                 Me.total_soil_unit_weight = Nothing
             End If
@@ -741,13 +742,13 @@ Partial Public Class PierAndPad
             Me.total_soil_unit_weight = Nothing
         End Try 'Total Soil Unit Weight
         Try
-            Me.bearing_type = CType(PierandPadDataRow.Item("bearing_type"), String)
+            Me.bearing_type = CType(ppDr.Item("bearing_type"), String)
         Catch
             Me.bearing_type = "Ultimate Gross Bearing, Qult:"
         End Try 'Bearing Type
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("nominal_bearing_capacity"), Double)) Then
-                Me.nominal_bearing_capacity = CType(PierandPadDataRow.Item("nominal_bearing_capacity"), Double)
+            If Not IsDBNull(CType(ppDr.Item("nominal_bearing_capacity"), Double)) Then
+                Me.nominal_bearing_capacity = CType(ppDr.Item("nominal_bearing_capacity"), Double)
             Else
                 Me.nominal_bearing_capacity = Nothing
             End If
@@ -755,8 +756,8 @@ Partial Public Class PierAndPad
             Me.nominal_bearing_capacity = Nothing
         End Try 'Nominal Bearing Capacity
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("cohesion"), Double)) Then
-                Me.cohesion = CType(PierandPadDataRow.Item("cohesion"), Double)
+            If Not IsDBNull(CType(ppDr.Item("cohesion"), Double)) Then
+                Me.cohesion = CType(ppDr.Item("cohesion"), Double)
             Else
                 Me.cohesion = Nothing
             End If
@@ -764,8 +765,8 @@ Partial Public Class PierAndPad
             Me.cohesion = Nothing
         End Try 'Cohesion
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("friction_angle"), Double)) Then
-                Me.friction_angle = CType(PierandPadDataRow.Item("friction_angle"), Double)
+            If Not IsDBNull(CType(ppDr.Item("friction_angle"), Double)) Then
+                Me.friction_angle = CType(ppDr.Item("friction_angle"), Double)
             Else
                 Me.friction_angle = Nothing
             End If
@@ -773,8 +774,8 @@ Partial Public Class PierAndPad
             Me.friction_angle = Nothing
         End Try 'Friction Angle
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("spt_blow_count"), Double)) Then
-                Me.spt_blow_count = CType(PierandPadDataRow.Item("spt_blow_count"), Double)
+            If Not IsDBNull(CType(ppDr.Item("spt_blow_count"), Double)) Then
+                Me.spt_blow_count = CType(ppDr.Item("spt_blow_count"), Double)
             Else
                 Me.spt_blow_count = Nothing
             End If
@@ -782,8 +783,8 @@ Partial Public Class PierAndPad
             Me.spt_blow_count = Nothing
         End Try 'STP Blow Count
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("base_friction_factor"), Double)) Then
-                Me.base_friction_factor = CType(PierandPadDataRow.Item("base_friction_factor"), Double)
+            If Not IsDBNull(CType(ppDr.Item("base_friction_factor"), Double)) Then
+                Me.base_friction_factor = CType(ppDr.Item("base_friction_factor"), Double)
             Else
                 Me.base_friction_factor = Nothing
             End If
@@ -791,8 +792,8 @@ Partial Public Class PierAndPad
             Me.base_friction_factor = Nothing
         End Try 'Base Friction Factor
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("neglect_depth"), Double)) Then
-                Me.neglect_depth = CType(PierandPadDataRow.Item("neglect_depth"), Double)
+            If Not IsDBNull(CType(ppDr.Item("neglect_depth"), Double)) Then
+                Me.neglect_depth = CType(ppDr.Item("neglect_depth"), Double)
             Else
                 Me.neglect_depth = Nothing
             End If
@@ -800,13 +801,13 @@ Partial Public Class PierAndPad
             Me.neglect_depth = Nothing
         End Try 'Neglect Depth
         Try
-            Me.bearing_distribution_type = CType(PierandPadDataRow.Item("bearing_distribution_type"), Boolean)
+            Me.bearing_distribution_type = CType(ppDr.Item("bearing_distribution_type"), Boolean)
         Catch
             Me.bearing_distribution_type = True
         End Try 'Bearing Distribution Type
         Try
-            If Not IsDBNull(CType(PierandPadDataRow.Item("groundwater_depth"), Double)) Then
-                Me.groundwater_depth = CType(PierandPadDataRow.Item("groundwater_depth"), Double)
+            If Not IsDBNull(CType(ppDr.Item("groundwater_depth"), Double)) Then
+                Me.groundwater_depth = CType(ppDr.Item("groundwater_depth"), Double)
             Else
                 Me.groundwater_depth = Nothing
             End If
@@ -814,17 +815,17 @@ Partial Public Class PierAndPad
             Me.groundwater_depth = -1
         End Try 'Groundwater Depth
         Try
-            Me.basic_soil_check = CType(PierandPadDataRow.Item("basic_soil_check"), Boolean)
+            Me.basic_soil_check = CType(ppDr.Item("basic_soil_check"), Boolean)
         Catch
             Me.basic_soil_check = False
         End Try 'Basic Soil Interaction up to 110% Acceptable?
         Try
-            Me.structural_check = CType(PierandPadDataRow.Item("structural_check"), Boolean)
+            Me.structural_check = CType(ppDr.Item("structural_check"), Boolean)
         Catch
             Me.structural_check = False
         End Try 'Structural Checks up to 105.0% Acceptable?
         Try
-            Me.tool_version = CType(PierandPadDataRow.Item("tool_version"), String)
+            Me.tool_version = CType(ppDr.Item("tool_version"), String)
         Catch
             Me.tool_version = ""
         End Try 'Tool Version
@@ -840,696 +841,735 @@ Partial Public Class PierAndPad
 
     End Sub 'Generate a pp from EDS
 
-    'Public Sub New(ByVal path As String)
-    '    Try
-    '        Me.pp_id = CType(GetOneExcelRange(path, "ID"), Integer)
-    '    Catch
-    '        Me.pp_id = 0
-    '    End Try 'Pier and Pad ID
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "E"), Double)) Then
-    '            Me.extension_above_grade = CType(GetOneExcelRange(path, "E"), Double)
-    '        Else
-    '            Me.extension_above_grade = Nothing
-    '        End If
-    '    Catch
-    '        Me.extension_above_grade = Nothing
-    '    End Try 'Extension Above Grade
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "D"), Double)) Then
-    '            Me.foundation_depth = CType(GetOneExcelRange(path, "D"), Double)
-    '        Else
-    '            Me.foundation_depth = Nothing
-    '        End If
-    '    Catch
-    '        Me.foundation_depth = Nothing
-    '    End Try 'Foundation Depth
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "F\c"), Double)) Then
-    '            Me.concrete_compressive_strength = CType(GetOneExcelRange(path, "F\c"), Double)
-    '        Else
-    '            Me.concrete_compressive_strength = Nothing
-    '        End If
-    '    Catch
-    '        Me.concrete_compressive_strength = Nothing
-    '    End Try 'Concrete Compressive Strength
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "ConcreteDensity"), Double)) Then
-    '            Me.dry_concrete_density = CType(GetOneExcelRange(path, "ConcreteDensity"), Double)
-    '        Else
-    '            Me.dry_concrete_density = Nothing
-    '        End If
-    '    Catch
-    '        Me.dry_concrete_density = Nothing
-    '    End Try 'Dry Concrete Density
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "Fy"), Double)) Then
-    '            Me.rebar_grade = CType(GetOneExcelRange(path, "Fy"), Double)
-    '        Else
-    '            Me.rebar_grade = Nothing
-    '        End If
-    '    Catch
-    '        Me.rebar_grade = Nothing
-    '    End Try 'Rebar Grade
-    '    Try
-    '        Me.top_and_bottom_rebar_different = CType(GetOneExcelRange(path, "DifferentReinforcementBoolean"), Boolean)
-    '    Catch
-    '        Me.top_and_bottom_rebar_different = False
-    '    End Try 'Top and Bottom Rebar Different
-    '    Try
-    '        Me.block_foundation = CType(GetOneExcelRange(path, "BlockFoundationBoolean"), Boolean)
-    '    Catch
-    '        Me.block_foundation = False
-    '    End Try 'Block Foundation 
-    '    Try
-    '        Me.rectangular_foundation = CType(GetOneExcelRange(path, "RectangularPadBoolean"), Boolean)
-    '    Catch
-    '        Me.rectangular_foundation = False
-    '    End Try 'Rectangular Foundation
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "bpdist"), Double)) Then
-    '            Me.base_plate_distance_above_foundation = CType(GetOneExcelRange(path, "bpdist"), Double)
-    '        Else
-    '            Me.base_plate_distance_above_foundation = Nothing
-    '        End If
-    '    Catch
-    '        Me.base_plate_distance_above_foundation = Nothing
-    '    End Try 'Base Plate Distance Above Foundation
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "BC"), Double)) Then
-    '            Me.bolt_circle_bearing_plate_width = CType(GetOneExcelRange(path, "BC"), Double)
-    '        Else
-    '            Me.bolt_circle_bearing_plate_width = Nothing
-    '        End If
-    '    Catch
-    '        Me.bolt_circle_bearing_plate_width = Nothing
-    '    End Try 'Bolt Circle Bearing Plate Width
-    '    Try
-    '        Me.pier_shape = CType(GetOneExcelRange(path, "shape"), String)
-    '    Catch
-    '        Me.pier_shape = ""
-    '    End Try 'Pier Shape
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "dpier"), Double)) Then
-    '            Me.pier_diameter = CType(GetOneExcelRange(path, "dpier"), Double)
-    '        Else
-    '            Me.pier_diameter = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_diameter = Nothing
-    '    End Try 'Pier Diameter
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mc"), Integer)) Then
-    '            Me.pier_rebar_quantity = CType(GetOneExcelRange(path, "mc"), Integer)
-    '        Else
-    '            Me.pier_rebar_quantity = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_rebar_quantity = Nothing
-    '    End Try 'Pier Rebar Quantity
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "Sc"), Integer)) Then
-    '            Me.pier_rebar_size = CType(GetOneExcelRange(path, "Sc"), Integer)
-    '        Else
-    '            Me.pier_rebar_size = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_rebar_size = Nothing
-    '    End Try 'Pier Rebar Size
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mt"), Integer)) Then
-    '            Me.pier_tie_quantity = CType(GetOneExcelRange(path, "mt"), Integer)
-    '        Else
-    '            Me.pier_tie_quantity = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_tie_quantity = Nothing
-    '    End Try 'Pier Tie Quantity
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "St"), Integer)) Then
-    '            Me.pier_tie_size = CType(GetOneExcelRange(path, "St"), Integer)
-    '        Else
-    '            Me.pier_tie_size = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_tie_size = Nothing
-    '    End Try 'Pier Tie Size
-    '    Try
-    '        Me.pier_reinforcement_type = CType(GetOneExcelRange(path, "PierReinfType"), String)
-    '    Catch
-    '        Me.pier_reinforcement_type = ""
-    '    End Try 'Pier Reinforcement Type
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "ccpier"), Double)) Then
-    '            Me.pier_clear_cover = CType(GetOneExcelRange(path, "ccpier"), Double)
-    '        Else
-    '            Me.pier_clear_cover = Nothing
-    '        End If
-    '    Catch
-    '        Me.pier_clear_cover = Nothing
-    '    End Try 'Pier Clear Cover
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "W"), Double)) Then
-    '            Me.pad_width_1 = CType(GetOneExcelRange(path, "W"), Double)
-    '        Else
-    '            Me.pad_width_1 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_width_1 = Nothing
-    '    End Try 'Pad Width 1
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "W.dir2"), Double)) Then
-    '            Me.pad_width_2 = CType(GetOneExcelRange(path, "W.dir2"), Double)
-    '        Else
-    '            Me.pad_width_2 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_width_2 = Nothing
-    '    End Try 'Pad Width 2
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "T"), Double)) Then
-    '            Me.pad_thickness = CType(GetOneExcelRange(path, "T"), Double)
-    '        Else
-    '            Me.pad_thickness = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_thickness = Nothing
-    '    End Try 'Pad Thickness
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "sptop"), Integer)) Then
-    '            Me.pad_rebar_size_top_dir1 = CType(GetOneExcelRange(path, "sptop"), Integer)
-    '        Else
-    '            Me.pad_rebar_size_top_dir1 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_size_top_dir1 = Nothing
-    '    End Try 'Pad Rebar Size (Top Direction 1)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "Sp"), Integer)) Then
-    '            Me.pad_rebar_size_bottom_dir1 = CType(GetOneExcelRange(path, "Sp"), Integer)
-    '        Else
-    '            Me.pad_rebar_size_bottom_dir1 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_size_bottom_dir1 = Nothing
-    '    End Try 'Pad Rebar Size (Bottom Direction 1)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "sptop2"), Integer)) Then
-    '            Me.pad_rebar_size_top_dir2 = CType(GetOneExcelRange(path, "sptop2"), Integer)
-    '        Else
-    '            Me.pad_rebar_size_top_dir2 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_size_top_dir2 = Nothing
-    '    End Try 'Pad Rebar Size (Top Direction 2)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "sp_2"), Integer)) Then
-    '            Me.pad_rebar_size_bottom_dir2 = CType(GetOneExcelRange(path, "sp_2"), Integer)
-    '        Else
-    '            Me.pad_rebar_size_bottom_dir2 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_size_bottom_dir2 = Nothing
-    '    End Try 'Pad Rebar Size (Bottom Direction 2)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mptop"), Integer)) Then
-    '            Me.pad_rebar_quantity_top_dir1 = CType(GetOneExcelRange(path, "mptop"), Integer)
-    '        Else
-    '            Me.pad_rebar_quantity_top_dir1 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_quantity_top_dir1 = Nothing
-    '    End Try 'Pad Rebar Quantity (Top Direction 1)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mp"), Integer)) Then
-    '            Me.pad_rebar_quantity_bottom_dir1 = CType(GetOneExcelRange(path, "mp"), Integer)
-    '        Else
-    '            Me.pad_rebar_quantity_bottom_dir1 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_quantity_bottom_dir1 = Nothing
-    '    End Try 'Pad Rebar Quantity (Bottom Direction 1)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mptop2"), Integer)) Then
-    '            Me.pad_rebar_quantity_top_dir2 = CType(GetOneExcelRange(path, "mptop2"), Integer)
-    '        Else
-    '            Me.pad_rebar_quantity_top_dir2 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_quantity_top_dir2 = Nothing
-    '    End Try 'Pad Rebar Quantity (Top Direction 2)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "mp_2"), Integer)) Then
-    '            Me.pad_rebar_quantity_bottom_dir2 = CType(GetOneExcelRange(path, "mp_2"), Integer)
-    '        Else
-    '            Me.pad_rebar_quantity_bottom_dir2 = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_rebar_quantity_bottom_dir2 = Nothing
-    '    End Try 'Pad Rebar Quantity (Bottom Direction 2)
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "ccpad"), Double)) Then
-    '            Me.pad_clear_cover = CType(GetOneExcelRange(path, "ccpad"), Double)
-    '        Else
-    '            Me.pad_clear_cover = Nothing
-    '        End If
-    '    Catch
-    '        Me.pad_clear_cover = Nothing
-    '    End Try 'Pad Clear Cover
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "γ"), Double)) Then
-    '            Me.total_soil_unit_weight = CType(GetOneExcelRange(path, "γ"), Double)
-    '        Else
-    '            Me.total_soil_unit_weight = Nothing
-    '        End If
-    '    Catch
-    '        Me.total_soil_unit_weight = Nothing
-    '    End Try 'Total Soil Unit Weight
-    '    Try
-    '        Me.bearing_type = CType(GetOneExcelRange(path, "BearingType"), String)
-    '    Catch
-    '        Me.bearing_type = "Ultimate Gross Bearing, Qult:"
-    '    End Try 'Bearing Type ******String Options "Ultimate Gross Bearing, Qult:" / "Ultimate Net Bearing, Qnet:" *******
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "Qinput"), Double)) Then
-    '            Me.nominal_bearing_capacity = CType(GetOneExcelRange(path, "Qinput"), Double)
-    '        Else
-    '            Me.nominal_bearing_capacity = Nothing
-    '        End If
-    '    Catch
-    '        Me.nominal_bearing_capacity = Nothing
-    '    End Try 'Nominal Bearing Capacity
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "Cu"), Double)) Then
-    '            Me.cohesion = CType(GetOneExcelRange(path, "Cu"), Double)
-    '        Else
-    '            Me.cohesion = Nothing
-    '        End If
-    '    Catch
-    '        Me.cohesion = Nothing
-    '    End Try 'Cohesion
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "ϕ"), Double)) Then
-    '            Me.friction_angle = CType(GetOneExcelRange(path, "ϕ"), Double)
-    '        Else
-    '            Me.friction_angle = Nothing
-    '        End If
-    '    Catch
-    '        Me.friction_angle = Nothing
-    '    End Try 'Friction Angle
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "N_blows"), Integer)) Then
-    '            Me.spt_blow_count = CType(GetOneExcelRange(path, "N_blows"), Integer)
-    '        Else
-    '            Me.spt_blow_count = Nothing
-    '        End If
-    '    Catch
-    '        Me.spt_blow_count = Nothing
-    '    End Try 'STP Blow Count
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "μ"), Double)) Then
-    '            Me.base_friction_factor = CType(GetOneExcelRange(path, "μ"), Double)
-    '        Else
-    '            Me.base_friction_factor = Nothing
-    '        End If
-    '    Catch
-    '        Me.base_friction_factor = Nothing
-    '    End Try 'Base Friction Factor
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "N"), Double)) Then
-    '            Me.neglect_depth = CType(GetOneExcelRange(path, "N"), Double)
-    '        Else
-    '            Me.neglect_depth = Nothing
-    '        End If
-    '    Catch
-    '        Me.neglect_depth = Nothing
-    '    End Try 'Neglect Depth
-    '    Try
-    '        If CType(GetOneExcelRange(path, "Rock"), String) = "Yes" Then
-    '            Me.bearing_distribution_type = False
-    '        Else
-    '            Me.bearing_distribution_type = True
-    '        End If
-    '    Catch
-    '        Me.bearing_distribution_type = True
-    '    End Try
-    '    'Try
-    '    '    Me.bearing_distribution_type = CType(GetOneExcelRange(path, "Rock"), Boolean)
-    '    'Catch
-    '    '    Me.bearing_distribution_type = True
-    '    'End Try 'Bearing Distribution Type
-    '    Try
-    '        If Not IsNothing(CType(GetOneExcelRange(path, "gw"), Double)) Then
-    '            Me.groundwater_depth = CType(GetOneExcelRange(path, "gw"), Double)
-    '        Else
-    '            Me.groundwater_depth = Nothing
-    '        End If
-    '    Catch
-    '        Me.groundwater_depth = -1
-    '    End Try 'Groundwater Depth
-    '    Try
-    '        Me.basic_soil_check = CType(GetOneExcelRange(path, "SoilInteractionBoolean"), Boolean)
-    '    Catch
-    '        Me.basic_soil_check = False
-    '    End Try 'Basic Soil Interaction up to 110% Acceptable?
-    '    Try
-    '        Me.structural_check = CType(GetOneExcelRange(path, "StructuralCheckBoolean"), Boolean)
-    '    Catch
-    '        Me.structural_check = False
-    '    End Try 'Structural Checks up to 105.0% Acceptable?
-    '    Try
-    '        Me.tool_version = CType(GetOneExcelRange(path, "CurrentVersion"), String)
-    '    Catch
-    '        Me.tool_version = ""
-    '    End Try 'Tool Version
+    Public Sub New(ExcelFilePath As String)
+        ''''''Customize for each foundation type'''''
+        Dim excelDS As New DataSet
 
-    'End Sub 'Generate a pp from Excel
+        'This can be cleaned up. Do we need a list of ExcelDTParameters if there is only one? - DHS
+        For Each item As EXCELDTParameter In excelDTParams
+            'Get additional tables from excel file 
+            excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+        Next
 
-    Public Sub New(ByVal PierandPadDataRow As DataRow, ByVal refID As Integer, ByVal refcol As String)
-        Try
-            Me.pp_id = CType(PierandPadDataRow.Item("pp_id"), Integer)
-        Catch
-            Me.pp_id = 0
-        End Try 'Pier and Pad ID
-        Try
-            Me.extension_above_grade = CType(PierandPadDataRow.Item("extension_above_grade"), Double)
-        Catch
-            Me.extension_above_grade = Nothing
-        End Try 'Extension Above Grade
-        Try
-            Me.foundation_depth = CType(PierandPadDataRow.Item("foundation_depth"), Double)
-        Catch
-            Me.foundation_depth = Nothing
-        End Try 'Foundation Depth
-        Try
-            Me.concrete_compressive_strength = CType(PierandPadDataRow.Item("concrete_compressive_strength"), Double)
-        Catch
-            Me.concrete_compressive_strength = Nothing
-        End Try 'Concrete Compressive Strength
-        Try
-            Me.dry_concrete_density = CType(PierandPadDataRow.Item("dry_concrete_density"), Double)
-        Catch
-            Me.dry_concrete_density = Nothing
-        End Try 'Dry Concrete Density
-        Try
-            Me.rebar_grade = CType(PierandPadDataRow.Item("rebar_grade"), Double)
-        Catch
-            Me.rebar_grade = Nothing
-        End Try 'Rebar Grade
-        Try
-            Me.top_and_bottom_rebar_different = CType(PierandPadDataRow.Item("top_and_bottom_rebar_different"), Boolean)
-        Catch
-            Me.top_and_bottom_rebar_different = False
-        End Try 'Top and Bottom Rebar Different
-        Try
-            Me.block_foundation = CType(PierandPadDataRow.Item("block_foundation"), Boolean)
-        Catch
-            Me.block_foundation = False
-        End Try 'Block Foundation 
-        Try
-            Me.rectangular_foundation = CType(PierandPadDataRow.Item("rectangular_foundation"), Boolean)
-        Catch
-            Me.rectangular_foundation = False
-        End Try 'Rectangular Foundation
-        Try
-            Me.base_plate_distance_above_foundation = CType(PierandPadDataRow.Item("base_plate_distance_above_foundation"), Double)
-        Catch
-            Me.base_plate_distance_above_foundation = Nothing
-        End Try 'Base Plate Distance Above Foundation
-        Try
-            Me.bolt_circle_bearing_plate_width = CType(PierandPadDataRow.Item("bolt_circle_bearing_plate_width"), Double)
-        Catch
-            Me.bolt_circle_bearing_plate_width = Nothing
-        End Try 'Bolt Circle Bearing Plate Width
-        Try
-            Me.pier_shape = CType(PierandPadDataRow.Item("pier_shape"), String)
-        Catch
-            'Me.pier_shape = Nothing
-            Me.pier_shape = ""
-        End Try 'Pier Shape
-        Try
-            Me.pier_diameter = CType(PierandPadDataRow.Item("pier_diameter"), Double)
-        Catch
-            Me.pier_diameter = Nothing
-        End Try 'Pier Diameter
-        Try
-            Me.pier_rebar_quantity = CType(PierandPadDataRow.Item("pier_rebar_quantity"), Double)
-        Catch
-            Me.pier_rebar_quantity = Nothing
-        End Try 'Pier Rebar Quantity
-        Try
-            Me.pier_rebar_size = CType(PierandPadDataRow.Item("pier_rebar_size"), Integer)
-        Catch
-            Me.pier_rebar_size = Nothing
-        End Try 'Pier Rebar Size
-        Try
-            Me.pier_tie_quantity = CType(PierandPadDataRow.Item("pier_tie_quantity"), Double)
-        Catch
-            Me.pier_tie_quantity = Nothing
-        End Try 'Pier Tie Quantity
-        Try
-            Me.pier_tie_size = CType(PierandPadDataRow.Item("pier_tie_size"), Integer)
-        Catch
-            Me.pier_tie_size = Nothing
-        End Try 'Pier Tie Size
-        Try
-            Me.pier_reinforcement_type = CType(PierandPadDataRow.Item("pier_reinforcement_type"), String)
-        Catch
-            Me.pier_reinforcement_type = ""
-        End Try 'Pier Reinforcement Type
-        Try
-            Me.pier_clear_cover = CType(PierandPadDataRow.Item("pier_clear_cover"), Double)
-        Catch
-            Me.pier_clear_cover = Nothing
-        End Try 'Pier Clear Cover
-        Try
-            Me.pad_width_1 = CType(PierandPadDataRow.Item("pad_width_1"), Double)
-        Catch
-            Me.pad_width_1 = Nothing
-        End Try 'Pad Width 1
-        Try
-            Me.pad_width_2 = CType(PierandPadDataRow.Item("pad_width_2"), Double)
-        Catch
-            Me.pad_width_2 = Nothing
-        End Try 'Pad Width 2
-        Try
-            Me.pad_thickness = CType(PierandPadDataRow.Item("pad_thickness"), Double)
-        Catch
-            Me.pad_thickness = Nothing
-        End Try 'Pad Thickness
-        Try
-            Me.pad_rebar_size_top_dir1 = CType(PierandPadDataRow.Item("pad_rebar_size_top_dir1"), Integer)
-        Catch
-            Me.pad_rebar_size_top_dir1 = Nothing
-        End Try 'Pad Rebar Size (Top Direction 1)
-        Try
-            Me.pad_rebar_size_bottom_dir1 = CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir1"), Integer)
-        Catch
-            Me.pad_rebar_size_bottom_dir1 = Nothing
-        End Try 'Pad Rebar Size (Bottom Direction 1)
-        Try
-            Me.pad_rebar_size_top_dir2 = CType(PierandPadDataRow.Item("pad_rebar_size_top_dir2"), Integer)
-        Catch
-            Me.pad_rebar_size_top_dir2 = Nothing
-        End Try 'Pad Rebar Size (Top Direction 2)
-        Try
-            Me.pad_rebar_size_bottom_dir2 = CType(PierandPadDataRow.Item("pad_rebar_size_bottom_dir2"), Integer)
-        Catch
-            Me.pad_rebar_size_bottom_dir2 = Nothing
-        End Try 'Pad Rebar Size (Bottom Direction 2)
-        Try
-            Me.pad_rebar_quantity_top_dir1 = CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir1"), Double)
-        Catch
-            Me.pad_rebar_quantity_top_dir1 = Nothing
-        End Try 'Pad Rebar Quantity (Top Direction 1)
-        Try
-            Me.pad_rebar_quantity_bottom_dir1 = CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir1"), Double)
-        Catch
-            Me.pad_rebar_quantity_bottom_dir1 = Nothing
-        End Try 'Pad Rebar Quantity (Bottom Direction 1)
-        Try
-            Me.pad_rebar_quantity_top_dir2 = CType(PierandPadDataRow.Item("pad_rebar_quantity_top_dir2"), Double)
-        Catch
-            Me.pad_rebar_quantity_top_dir2 = Nothing
-        End Try 'Pad Rebar Quantity (Top Direction 2)
-        Try
-            Me.pad_rebar_quantity_bottom_dir2 = CType(PierandPadDataRow.Item("pad_rebar_quantity_bottom_dir2"), Double)
-        Catch
-            Me.pad_rebar_quantity_bottom_dir2 = Nothing
-        End Try 'Pad Rebar Quantity (Bottom Direction 2)
-        Try
-            Me.pad_clear_cover = CType(PierandPadDataRow.Item("pad_clear_cover"), Double)
-        Catch
-            Me.pad_clear_cover = Nothing
-        End Try 'Pad Clear Cover
-        Try
-            Me.total_soil_unit_weight = CType(PierandPadDataRow.Item("total_soil_unit_weight"), Double)
-        Catch
-            Me.total_soil_unit_weight = Nothing
-        End Try 'Total Soil Unit Weight
-        Try
-            Me.bearing_type = CType(PierandPadDataRow.Item("bearing_type"), String)
-        Catch
-            Me.bearing_type = "Ultimate Gross Bearing, Qult:"
-        End Try 'Bearing Type ******String Options "Ultimate Gross Bearing, Qult:" / "Ultimate Net Bearing, Qnet:" *******
-        Try
-            Me.nominal_bearing_capacity = CType(PierandPadDataRow.Item("nominal_bearing_capacity"), Double)
-        Catch
-            Me.nominal_bearing_capacity = Nothing
-        End Try 'Nominal Bearing Capacity
-        Try
-            Me.cohesion = CType(PierandPadDataRow.Item("cohesion"), Double)
-        Catch
-            Me.cohesion = Nothing
-        End Try 'Cohesion
-        Try
-            Me.friction_angle = CType(PierandPadDataRow.Item("friction_angle"), Double)
-        Catch
-            Me.friction_angle = Nothing
-        End Try 'Friction Angle
-        Try
-            Me.spt_blow_count = CType(PierandPadDataRow.Item("spt_blow_count"), Double)
-        Catch
-            Me.spt_blow_count = Nothing
-        End Try 'STP Blow Count
-        Try
-            Me.base_friction_factor = CType(PierandPadDataRow.Item("base_friction_factor"), Double)
-        Catch
-            Me.base_friction_factor = Nothing
-        End Try 'STP Blow Count
-        Try
-            Me.neglect_depth = CType(PierandPadDataRow.Item("neglect_depth"), Double)
-        Catch
-            Me.neglect_depth = Nothing
-        End Try 'Neglect Depth
-        Try
-            If CType(PierandPadDataRow.Item("bearing_distribution_type"), String) = "No" Then
-                Me.bearing_distribution_type = False
-            Else
+        If excelDS.Tables.Contains("Pier and Pad General Details EXCEL") Then
+            Dim dr = excelDS.Tables("Pier and Pad General Details EXCEL").Rows(0)
+
+            'Try
+            '    Me.ID = CType(dr.Item("pp_id"), Integer)
+            'Catch
+            '    Me.ID = 0
+            'End Try 'Pier and Pad ID
+            Try
+                Me.extension_above_grade = CType(dr.Item("extension_above_grade"), Double)
+            Catch
+                Me.extension_above_grade = Nothing
+            End Try 'Extension Above Grade
+            Try
+                Me.foundation_depth = CType(dr.Item("foundation_depth"), Double)
+            Catch
+                Me.foundation_depth = Nothing
+            End Try 'Foundation Depth
+            Try
+                Me.concrete_compressive_strength = CType(dr.Item("concrete_compressive_strength"), Double)
+            Catch
+                Me.concrete_compressive_strength = Nothing
+            End Try 'Concrete Compressive Strength
+            Try
+                Me.dry_concrete_density = CType(dr.Item("dry_concrete_density"), Double)
+            Catch
+                Me.dry_concrete_density = Nothing
+            End Try 'Dry Concrete Density
+            Try
+                Me.rebar_grade = CType(dr.Item("rebar_grade"), Double)
+            Catch
+                Me.rebar_grade = Nothing
+            End Try 'Rebar Grade
+            Try
+                Me.top_and_bottom_rebar_different = CType(dr.Item("top_and_bottom_rebar_different"), Boolean)
+            Catch
+                Me.top_and_bottom_rebar_different = False
+            End Try 'Top and Bottom Rebar Different
+            Try
+                Me.block_foundation = CType(dr.Item("block_foundation"), Boolean)
+            Catch
+                Me.block_foundation = False
+            End Try 'Block Foundation 
+            Try
+                Me.rectangular_foundation = CType(dr.Item("rectangular_foundation"), Boolean)
+            Catch
+                Me.rectangular_foundation = False
+            End Try 'Rectangular Foundation
+            Try
+                Me.base_plate_distance_above_foundation = CType(dr.Item("base_plate_distance_above_foundation"), Double)
+            Catch
+                Me.base_plate_distance_above_foundation = Nothing
+            End Try 'Base Plate Distance Above Foundation
+            Try
+                Me.bolt_circle_bearing_plate_width = CType(dr.Item("bolt_circle_bearing_plate_width"), Double)
+            Catch
+                Me.bolt_circle_bearing_plate_width = Nothing
+            End Try 'Bolt Circle Bearing Plate Width
+            Try
+                Me.pier_shape = CType(dr.Item("pier_shape"), String)
+            Catch
+                'Me.pier_shape = Nothing
+                Me.pier_shape = ""
+            End Try 'Pier Shape
+            Try
+                Me.pier_diameter = CType(dr.Item("pier_diameter"), Double)
+            Catch
+                Me.pier_diameter = Nothing
+            End Try 'Pier Diameter
+            Try
+                Me.pier_rebar_quantity = CType(dr.Item("pier_rebar_quantity"), Double)
+            Catch
+                Me.pier_rebar_quantity = Nothing
+            End Try 'Pier Rebar Quantity
+            Try
+                Me.pier_rebar_size = CType(dr.Item("pier_rebar_size"), Integer)
+            Catch
+                Me.pier_rebar_size = Nothing
+            End Try 'Pier Rebar Size
+            Try
+                Me.pier_tie_quantity = CType(dr.Item("pier_tie_quantity"), Double)
+            Catch
+                Me.pier_tie_quantity = Nothing
+            End Try 'Pier Tie Quantity
+            Try
+                Me.pier_tie_size = CType(dr.Item("pier_tie_size"), Integer)
+            Catch
+                Me.pier_tie_size = Nothing
+            End Try 'Pier Tie Size
+            Try
+                Me.pier_reinforcement_type = CType(dr.Item("pier_reinforcement_type"), String)
+            Catch
+                Me.pier_reinforcement_type = ""
+            End Try 'Pier Reinforcement Type
+            Try
+                Me.pier_clear_cover = CType(dr.Item("pier_clear_cover"), Double)
+            Catch
+                Me.pier_clear_cover = Nothing
+            End Try 'Pier Clear Cover
+            Try
+                Me.pad_width_1 = CType(dr.Item("pad_width_1"), Double)
+            Catch
+                Me.pad_width_1 = Nothing
+            End Try 'Pad Width 1
+            Try
+                Me.pad_width_2 = CType(dr.Item("pad_width_2"), Double)
+            Catch
+                Me.pad_width_2 = Nothing
+            End Try 'Pad Width 2
+            Try
+                Me.pad_thickness = CType(dr.Item("pad_thickness"), Double)
+            Catch
+                Me.pad_thickness = Nothing
+            End Try 'Pad Thickness
+            Try
+                Me.pad_rebar_size_top_dir1 = CType(dr.Item("pad_rebar_size_top_dir1"), Integer)
+            Catch
+                Me.pad_rebar_size_top_dir1 = Nothing
+            End Try 'Pad Rebar Size (Top Direction 1)
+            Try
+                Me.pad_rebar_size_bottom_dir1 = CType(dr.Item("pad_rebar_size_bottom_dir1"), Integer)
+            Catch
+                Me.pad_rebar_size_bottom_dir1 = Nothing
+            End Try 'Pad Rebar Size (Bottom Direction 1)
+            Try
+                Me.pad_rebar_size_top_dir2 = CType(dr.Item("pad_rebar_size_top_dir2"), Integer)
+            Catch
+                Me.pad_rebar_size_top_dir2 = Nothing
+            End Try 'Pad Rebar Size (Top Direction 2)
+            Try
+                Me.pad_rebar_size_bottom_dir2 = CType(dr.Item("pad_rebar_size_bottom_dir2"), Integer)
+            Catch
+                Me.pad_rebar_size_bottom_dir2 = Nothing
+            End Try 'Pad Rebar Size (Bottom Direction 2)
+            Try
+                Me.pad_rebar_quantity_top_dir1 = CType(dr.Item("pad_rebar_quantity_top_dir1"), Double)
+            Catch
+                Me.pad_rebar_quantity_top_dir1 = Nothing
+            End Try 'Pad Rebar Quantity (Top Direction 1)
+            Try
+                Me.pad_rebar_quantity_bottom_dir1 = CType(dr.Item("pad_rebar_quantity_bottom_dir1"), Double)
+            Catch
+                Me.pad_rebar_quantity_bottom_dir1 = Nothing
+            End Try 'Pad Rebar Quantity (Bottom Direction 1)
+            Try
+                Me.pad_rebar_quantity_top_dir2 = CType(dr.Item("pad_rebar_quantity_top_dir2"), Double)
+            Catch
+                Me.pad_rebar_quantity_top_dir2 = Nothing
+            End Try 'Pad Rebar Quantity (Top Direction 2)
+            Try
+                Me.pad_rebar_quantity_bottom_dir2 = CType(dr.Item("pad_rebar_quantity_bottom_dir2"), Double)
+            Catch
+                Me.pad_rebar_quantity_bottom_dir2 = Nothing
+            End Try 'Pad Rebar Quantity (Bottom Direction 2)
+            Try
+                Me.pad_clear_cover = CType(dr.Item("pad_clear_cover"), Double)
+            Catch
+                Me.pad_clear_cover = Nothing
+            End Try 'Pad Clear Cover
+            Try
+                Me.total_soil_unit_weight = CType(dr.Item("total_soil_unit_weight"), Double)
+            Catch
+                Me.total_soil_unit_weight = Nothing
+            End Try 'Total Soil Unit Weight
+            Try
+                Me.bearing_type = CType(dr.Item("bearing_type"), String)
+            Catch
+                Me.bearing_type = "Ultimate Gross Bearing, Qult:"
+            End Try 'Bearing Type ******String Options "Ultimate Gross Bearing, Qult:" / "Ultimate Net Bearing, Qnet:" *******
+            Try
+                Me.nominal_bearing_capacity = CType(dr.Item("nominal_bearing_capacity"), Double)
+            Catch
+                Me.nominal_bearing_capacity = Nothing
+            End Try 'Nominal Bearing Capacity
+            Try
+                Me.cohesion = CType(dr.Item("cohesion"), Double)
+            Catch
+                Me.cohesion = Nothing
+            End Try 'Cohesion
+            Try
+                Me.friction_angle = CType(dr.Item("friction_angle"), Double)
+            Catch
+                Me.friction_angle = Nothing
+            End Try 'Friction Angle
+            Try
+                Me.spt_blow_count = CType(dr.Item("spt_blow_count"), Double)
+            Catch
+                Me.spt_blow_count = Nothing
+            End Try 'STP Blow Count
+            Try
+                Me.base_friction_factor = CType(dr.Item("base_friction_factor"), Double)
+            Catch
+                Me.base_friction_factor = Nothing
+            End Try 'STP Blow Count
+            Try
+                Me.neglect_depth = CType(dr.Item("neglect_depth"), Double)
+            Catch
+                Me.neglect_depth = Nothing
+            End Try 'Neglect Depth
+            Try
+                If CType(dr.Item("bearing_distribution_type"), String) = "No" Then
+                    Me.bearing_distribution_type = False
+                Else
+                    Me.bearing_distribution_type = True
+                End If
+            Catch
                 Me.bearing_distribution_type = True
+            End Try 'Bearing Distribution Type
+            Try
+                If Not IsNothing(CType(dr.Item("groundwater_depth"), Double)) Then
+                    Me.groundwater_depth = CType(dr.Item("groundwater_depth"), Double)
+                Else
+                    Me.groundwater_depth = Nothing
+                End If
+            Catch
+                Me.groundwater_depth = -1
+            End Try 'Groundwater Depth
+            Try
+                Me.basic_soil_check = CType(dr.Item("basic_soil_check"), Boolean)
+            Catch
+                Me.basic_soil_check = False
+            End Try 'Basic Soil Interaction up to 110% Acceptable?
+            Try
+                Me.structural_check = CType(dr.Item("structural_check"), Boolean)
+            Catch
+                Me.structural_check = False
+            End Try 'Structural Checks up to 105.0% Acceptable?
+            Try
+                Me.tool_version = CType(dr.Item("tool_version"), String)
+            Catch
+                Me.tool_version = ""
+            End Try 'Tool Version
+            Try
+                Me.modified = CType(dr.Item("modified"), Boolean)
+            Catch
+                Me.modified = False
+            End Try 'Modified
+
+            'For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges EXCEL").Rows
+            '    Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
+            'Next 'Add Modified Ranges to Modified Range Object
+
+        End If
+
+    End Sub
+
+    'Public Sub LoadFromExcel()
+
+    '    Dim refID As Integer
+    '    Dim refCol As String
+
+    '    For Each item As EXCELDTParameter In PierAndPadExcelDTParameters()
+    '        'Get additional tables from excel file 
+    '        ds.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+    '    Next
+
+
+    '    For Each PierandPadDataRow As DataRow In ds.Tables("Pier and Pad General Details EXCEL").Rows
+
+    '        refCol = "pp_id"
+    '        refID = CType(PierandPadDataRow.Item(refCol), Integer)
+
+    '        PierAndPads.Add(New PierAndPad(PierandPadDataRow, refID, refCol))
+
+    '    Next
+
+
+    '    'Pull SQL data, if applicable, to compare with excel data
+    '    CreateSQLPierAndPad(sqlPierAndPads)
+
+    '    'If sqlPiles.Count > 0 Then 'same as if checking for id in tool, if ID greater than 0.
+    '    For Each fnd As PierAndPad In PierAndPads
+    '        If fnd.pp_id > 0 Then 'can skip loading SQL data if id = 0 (first time adding to EDS)
+    '            For Each sqlfnd As PierAndPad In sqlPierAndPads
+    '                If fnd.pp_id = sqlfnd.pp_id Then
+    '                    If CheckChanges(fnd, sqlfnd) Then
+    '                        isModelNeeded = True
+    '                        isfndGroupNeeded = True
+    '                        isPierAndPadNeeded = True
+    '                    End If
+    '                    Exit For
+    '                End If
+    '            Next
+    '        Else
+    '            'Save the data because nothing exists in sql
+    '            isModelNeeded = True
+    '            isfndGroupNeeded = True
+    '            isPierAndPadNeeded = True
+    '        End If
+    '    Next
+
+    '    'Else
+    '    '    'Save the data because nothing exists in sql
+    '    '    isModelNeeded = True
+    '    '    isfndGroupNeeded = True
+    '    '    isPileNeeded = True
+    '    '    End If
+
+    '    'End If
+
+    'End Sub
+
+#End Region
+
+#Region "Save to Excel"
+    Public Overrides Sub workBookFiller(ByRef wb As Workbook)
+        ''''''Customize for each foundation type'''''
+
+        With wb
+            .Worksheets("Input").Range("ID").Value = CType(Me.fndDetailID, Integer)
+            If Not IsNothing(Me.pier_shape) Then
+                .Worksheets("Input").Range("shape").Value = CType(Me.pier_shape, String)
             End If
-        Catch
-            Me.bearing_distribution_type = True
-        End Try 'Bearing Distribution Type
-        Try
-            If Not IsNothing(CType(PierandPadDataRow.Item("groundwater_depth"), Double)) Then
-                Me.groundwater_depth = CType(PierandPadDataRow.Item("groundwater_depth"), Double)
+
+            If Not IsNothing(Me.pier_diameter) Then
+                .Worksheets("Input").Range("dpier").Value = CType(Me.pier_diameter, Double)
             Else
-                Me.groundwater_depth = Nothing
+                .Worksheets("Input").Range("dpier").ClearContents
             End If
-        Catch
-            Me.groundwater_depth = -1
-        End Try 'Groundwater Depth
-        Try
-            Me.basic_soil_check = CType(PierandPadDataRow.Item("basic_soil_check"), Boolean)
-        Catch
-            Me.basic_soil_check = False
-        End Try 'Basic Soil Interaction up to 110% Acceptable?
-        Try
-            Me.structural_check = CType(PierandPadDataRow.Item("structural_check"), Boolean)
-        Catch
-            Me.structural_check = False
-        End Try 'Structural Checks up to 105.0% Acceptable?
-        Try
-            Me.tool_version = CType(PierandPadDataRow.Item("tool_version"), String)
-        Catch
-            Me.tool_version = ""
-        End Try 'Tool Version
-        Try
-            Me.modified = CType(PierandPadDataRow.Item("modified"), Boolean)
-        Catch
-            Me.modified = False
-        End Try 'Modified
 
-        'For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges EXCEL").Rows
-        '    Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
-        'Next 'Add Modified Ranges to Modified Range Object
+            If Not IsNothing(Me.extension_above_grade) Then
+                .Worksheets("Input").Range("E").Value = CType(Me.extension_above_grade, Double)
+            Else
+                .Worksheets("Input").Range("E").ClearContents
+            End If
 
-    End Sub 'Generate a pp from Excel
+            If Not IsNothing(Me.pier_rebar_size) Then
+                .Worksheets("Input").Range("Sc").Value = CType(Me.pier_rebar_size, Integer)
+            Else
+                .Worksheets("Input").Range("Sc").ClearContents
+            End If
 
+            If Not IsNothing(Me.pier_rebar_quantity) Then
+                .Worksheets("Input").Range("mc").Value = CType(Me.pier_rebar_quantity, Double)
+            Else
+                .Worksheets("Input").Range("mc").ClearContents
+            End If
+
+            If Not IsNothing(Me.pier_tie_size) Then
+                .Worksheets("Input").Range("St").Value = CType(Me.pier_tie_size, Integer)
+            Else
+                .Worksheets("Input").Range("St").ClearContents
+            End If
+
+            If Not IsNothing(Me.pier_tie_quantity) Then
+                .Worksheets("Input").Range("mt").Value = CType(Me.pier_tie_quantity, Double)
+            Else
+                .Worksheets("Input").Range("mt").ClearContents
+            End If
+
+            If Not IsNothing(Me.pier_reinforcement_type) Then
+                .Worksheets("Input").Range("PierReinfType").Value = CType(Me.pier_reinforcement_type, String)
+            End If
+
+            If Not IsNothing(Me.pier_clear_cover) Then
+                .Worksheets("Input").Range("ccpier").Value = CType(Me.pier_clear_cover, Double)
+            Else
+                .Worksheets("Input").Range("ccpier").ClearContents
+            End If
+
+            If Not IsNothing(Me.foundation_depth) Then
+                .Worksheets("Input").Range("D").Value = CType(Me.foundation_depth, Double)
+            Else
+                .Worksheets("Input").Range("D").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_width_1) Then
+                .Worksheets("Input").Range("W").Value = CType(Me.pad_width_1, Double)
+            Else
+                .Worksheets("Input").Range("W").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_width_2) Then
+                .Worksheets("Input").Range("W.dir2").Value = CType(Me.pad_width_2, Double)
+            Else
+                .Worksheets("Input").Range("W.dir2").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_thickness) Then
+                .Worksheets("Input").Range("T").Value = CType(Me.pad_thickness, Double)
+            Else
+                .Worksheets("Input").Range("T").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_size_top_dir1) Then
+                .Worksheets("Input").Range("sptop").Value = CType(Me.pad_rebar_size_top_dir1, Integer)
+            Else
+                .Worksheets("Input").Range("sptop").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_size_bottom_dir1) Then
+                .Worksheets("Input").Range("Sp").Value = CType(Me.pad_rebar_size_bottom_dir1, Integer)
+            Else
+                .Worksheets("Input").Range("Sp").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_size_top_dir2) Then
+                .Worksheets("Input").Range("sptop2").Value = CType(Me.pad_rebar_size_top_dir2, Integer)
+            Else
+                .Worksheets("Input").Range("sptop2").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_size_bottom_dir2) Then
+                .Worksheets("Input").Range("sp_2").Value = CType(Me.pad_rebar_size_bottom_dir2, Integer)
+            Else
+                .Worksheets("Input").Range("sp_2").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_quantity_top_dir1) Then
+                .Worksheets("Input").Range("mptop").Value = CType(Me.pad_rebar_quantity_top_dir1, Double)
+            Else
+                .Worksheets("Input").Range("mptop").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_quantity_bottom_dir1) Then
+                .Worksheets("Input").Range("mp").Value = CType(Me.pad_rebar_quantity_bottom_dir1, Double)
+            Else
+                .Worksheets("Input").Range("mp").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_quantity_top_dir2) Then
+                .Worksheets("Input").Range("mptop2").Value = CType(Me.pad_rebar_quantity_top_dir2, Double)
+            Else
+                .Worksheets("Input").Range("mptop2").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_rebar_quantity_bottom_dir2) Then
+                .Worksheets("Input").Range("mp_2").Value = CType(Me.pad_rebar_quantity_bottom_dir2, Double)
+            Else
+                .Worksheets("Input").Range("mp_2").ClearContents
+            End If
+
+            If Not IsNothing(Me.pad_clear_cover) Then
+                .Worksheets("Input").Range("ccpad").Value = CType(Me.pad_clear_cover, Double)
+            Else
+                .Worksheets("Input").Range("ccpad").ClearContents
+            End If
+
+            If Not IsNothing(Me.rebar_grade) Then
+                .Worksheets("Input").Range("Fy").Value = CType(Me.rebar_grade, Double)
+            Else
+                .Worksheets("Input").Range("Fy").ClearContents
+            End If
+
+            If Not IsNothing(Me.concrete_compressive_strength) Then
+                .Worksheets("Input").Range("F\c").Value = CType(Me.concrete_compressive_strength, Double)
+            Else
+                .Worksheets("Input").Range("F\c").ClearContents
+            End If
+
+            If Not IsNothing(Me.dry_concrete_density) Then
+                .Worksheets("Input").Range("ConcreteDensity").Value = CType(Me.dry_concrete_density, Double)
+            Else
+                .Worksheets("Input").Range("ConcreteDensity").ClearContents
+            End If
+
+            If Not IsNothing(Me.total_soil_unit_weight) Then
+                .Worksheets("Input").Range("γ").Value = CType(Me.total_soil_unit_weight, Double)
+            Else
+                .Worksheets("Input").Range("γ").ClearContents
+            End If
+
+            If Not IsNothing(Me.bearing_type) Then
+                .Worksheets("Input").Range("BearingType").Value = CType(Me.bearing_type, String)
+            Else
+                .Worksheets("Input").Range("BearingType").ClearContents
+            End If
+
+            If Not IsNothing(Me.nominal_bearing_capacity) Then
+                .Worksheets("Input").Range("Qinput").Value = CType(Me.nominal_bearing_capacity, Double)
+            Else
+                .Worksheets("Input").Range("Qinput").ClearContents
+            End If
+
+            If Not IsNothing(Me.cohesion) Then
+                .Worksheets("Input").Range("Cu").Value = CType(Me.cohesion, Double)
+            Else
+                .Worksheets("Input").Range("Cu").ClearContents
+            End If
+
+            If Not IsNothing(Me.friction_angle) Then
+                .Worksheets("Input").Range("ϕ").Value = CType(Me.friction_angle, Double)
+            Else
+                .Worksheets("Input").Range("ϕ").ClearContents
+            End If
+
+            If Not IsNothing(Me.spt_blow_count) Then
+                .Worksheets("Input").Range("N_blows").Value = CType(Me.spt_blow_count, Double)
+            Else
+                .Worksheets("Input").Range("N_blows").ClearContents
+            End If
+
+            If Not IsNothing(Me.base_friction_factor) Then
+                .Worksheets("Input").Range("μ").Value = CType(Me.base_friction_factor, Double)
+            Else
+                .Worksheets("Input").Range("μ").ClearContents
+            End If
+
+            If Not IsNothing(Me.neglect_depth) Then
+                .Worksheets("Input").Range("N").Value = CType(Me.neglect_depth, Double)
+            End If
+
+            If Me.bearing_distribution_type = False Then
+                .Worksheets("Input").Range("Rock").Value = "No"
+            Else
+                .Worksheets("Input").Range("Rock").Value = "Yes"
+            End If
+
+            If Me.groundwater_depth = -1 Then
+                .Worksheets("Input").Range("gw").Value = "N/A"
+            Else
+                .Worksheets("Input").Range("gw").Value = CType(Me.groundwater_depth, Double)
+            End If
+
+            If Not IsNothing(Me.top_and_bottom_rebar_different) Then
+                .Worksheets("Input").Range("DifferentReinforcementBoolean").Value = CType(Me.top_and_bottom_rebar_different, Boolean)
+            End If
+
+            If Not IsNothing(Me.block_foundation) Then
+                .Worksheets("Input").Range("BlockFoundationBoolean").Value = CType(Me.block_foundation, Boolean)
+            End If
+
+            If Not IsNothing(Me.rectangular_foundation) Then
+                .Worksheets("Input").Range("RectangularPadBoolean").Value = CType(Me.rectangular_foundation, Boolean)
+            End If
+
+            If Not IsNothing(Me.base_plate_distance_above_foundation) Then
+                .Worksheets("Input").Range("bpdist").Value = CType(Me.base_plate_distance_above_foundation, Double)
+            Else
+                .Worksheets("Input").Range("bpdist").ClearContents
+            End If
+
+            If Not IsNothing(Me.bolt_circle_bearing_plate_width) Then
+                .Worksheets("Input").Range("BC").Value = CType(Me.bolt_circle_bearing_plate_width, Double)
+            Else
+                .Worksheets("Input").Range("BC").ClearContents
+            End If
+
+            If Not IsNothing(Me.basic_soil_check) Then
+                .Worksheets("Input").Range("SoilInteractionBoolean").Value = CType(Me.basic_soil_check, Boolean)
+            End If
+
+            If Not IsNothing(Me.structural_check) Then
+                .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(Me.structural_check, Boolean)
+            End If
+        End With
+
+    End Sub
+
+#End Region
+
+#Region "Save to EDS"
+    Public Overrides Function PopulateSubQuery(blankQuery As String, index As Integer) As String
+
+        blankQuery = blankQuery.Replace("[FOUNDATION ID]", Me.ID.ToString.ToDBString)
+        blankQuery = blankQuery.Replace("[FOUNDATION TYPE]", Me.foundationType.ToDBString)
+        blankQuery = blankQuery.Replace("[GUY GROUP ID]", Me.guyGroupID.ToString.ToDBString)
+        blankQuery = blankQuery.Replace("[FOUNDATION TABLE]", Me.EDSTableName)
+        blankQuery = blankQuery.Replace("[FOUNDATION VALUES]", Me.GenerateSQLValues)
+        blankQuery = blankQuery.Replace("[i]", index.ToString.ToDBString)
+
+        Return blankQuery
+    End Function
+    Public Overrides Function GenerateSQLValues() As String
+        Dim insertString As String = ""
+
+        'Update to use AddtoDBString extension method
+        insertString += If(IsNothing(Me.pier_shape), "Null", "'" & Me.pier_shape.ToString & "'")
+        insertString += "," & If(IsNothing(Me.pier_diameter), "Null", Me.pier_diameter.ToString)
+        insertString += "," & If(IsNothing(Me.extension_above_grade), "Null", Me.extension_above_grade.ToString)
+        insertString += "," & If(IsNothing(Me.pier_rebar_size), "Null", Me.pier_rebar_size.ToString)
+        insertString += "," & If(IsNothing(Me.pier_tie_size), "Null", Me.pier_tie_size.ToString)
+        insertString += "," & If(IsNothing(Me.pier_tie_quantity), "Null", Me.pier_tie_quantity.ToString)
+        insertString += "," & If(IsNothing(Me.pier_reinforcement_type), "Null", "'" & Me.pier_reinforcement_type.ToString & "'")
+        insertString += "," & If(IsNothing(Me.pier_clear_cover), "Null", Me.pier_clear_cover.ToString)
+        insertString += "," & If(IsNothing(Me.foundation_depth), "Null", Me.foundation_depth.ToString)
+        insertString += "," & If(IsNothing(Me.pad_width_1), "Null", Me.pad_width_1.ToString)
+        insertString += "," & If(IsNothing(Me.pad_width_2), "Null", Me.pad_width_2.ToString)
+        insertString += "," & If(IsNothing(Me.pad_thickness), "Null", Me.pad_thickness.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_size_top_dir1), "Null", Me.pad_rebar_size_top_dir1.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_size_bottom_dir1), "Null", Me.pad_rebar_size_bottom_dir1.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_size_top_dir2), "Null", Me.pad_rebar_size_top_dir2.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_size_bottom_dir2), "Null", Me.pad_rebar_size_bottom_dir2.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_top_dir1), "Null", Me.pad_rebar_quantity_top_dir1.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_bottom_dir1), "Null", Me.pad_rebar_quantity_bottom_dir1.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_top_dir2), "Null", Me.pad_rebar_quantity_top_dir2.ToString)
+        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_bottom_dir2), "Null", Me.pad_rebar_quantity_bottom_dir2.ToString)
+        insertString += "," & If(IsNothing(Me.pad_clear_cover), "Null", Me.pad_clear_cover.ToString)
+        insertString += "," & If(IsNothing(Me.rebar_grade), "Null", Me.rebar_grade.ToString)
+        insertString += "," & If(IsNothing(Me.concrete_compressive_strength), "Null", Me.concrete_compressive_strength.ToString)
+        insertString += "," & If(IsNothing(Me.dry_concrete_density), "Null", Me.dry_concrete_density.ToString)
+        insertString += "," & If(IsNothing(Me.total_soil_unit_weight), "Null", Me.total_soil_unit_weight.ToString)
+        insertString += "," & If(IsNothing(Me.bearing_type), "Null", "'" & Me.bearing_type.ToString & "'")
+        insertString += "," & If(IsNothing(Me.nominal_bearing_capacity), "Null", Me.nominal_bearing_capacity.ToString)
+        insertString += "," & If(IsNothing(Me.cohesion), "Null", Me.cohesion.ToString)
+        insertString += "," & If(IsNothing(Me.friction_angle), "Null", Me.friction_angle.ToString)
+        insertString += "," & If(IsNothing(Me.spt_blow_count), "Null", Me.spt_blow_count.ToString)
+        insertString += "," & If(IsNothing(Me.base_friction_factor), "Null", Me.base_friction_factor.ToString)
+        insertString += "," & If(IsNothing(Me.neglect_depth), "Null", Me.neglect_depth.ToString)
+        insertString += "," & If(IsNothing(Me.bearing_distribution_type), "Null", "'" & Me.bearing_distribution_type.ToString & "'")
+        insertString += "," & If(IsNothing(Me.groundwater_depth), "Null", Me.groundwater_depth.ToString)
+        insertString += "," & If(IsNothing(Me.top_and_bottom_rebar_different), "Null", "'" & Me.top_and_bottom_rebar_different.ToString & "'")
+        insertString += "," & If(IsNothing(Me.block_foundation), "Null", "'" & Me.block_foundation.ToString & "'")
+        insertString += "," & If(IsNothing(Me.rectangular_foundation), "Null", "'" & Me.rectangular_foundation.ToString & "'")
+        insertString += "," & If(IsNothing(Me.base_plate_distance_above_foundation), "Null", Me.base_plate_distance_above_foundation.ToString)
+        insertString += "," & If(IsNothing(Me.bolt_circle_bearing_plate_width), "Null", Me.bolt_circle_bearing_plate_width.ToString)
+        insertString += "," & If(IsNothing(Me.pier_rebar_quantity), "Null", Me.pier_rebar_quantity.ToString)
+        insertString += "," & If(IsNothing(Me.basic_soil_check), "Null", "'" & Me.basic_soil_check.ToString & "'")
+        insertString += "," & If(IsNothing(Me.structural_check), "Null", "'" & Me.structural_check.ToString & "'")
+        insertString += "," & If(IsNothing(Me.tool_version), "Null", "'" & Me.tool_version.ToString & "'")
+        insertString += "," & If(IsNothing(Me.modified), "Null", "'" & Me.modified.ToString & "'")
+
+        Return insertString
+    End Function
+
+    'Public Overrides Function GenerateSQLColumns() As String
+    '    Return "pier_shape
+    '   ,pier_diameter
+    ',extension_above_grade
+    ',pier_rebar_size
+    ',pier_tie_size
+    ',pier_tie_quantity
+    ',pier_reinforcement_type
+    ',pier_clear_cover
+    ',foundation_depth
+    ',pad_width_1
+    ',pad_width_2
+    ',pad_thickness
+    ',pad_rebar_size_top_dir1
+    ',pad_rebar_size_bottom_dir1
+    ',pad_rebar_size_top_dir2
+    ',pad_rebar_size_bottom_dir2
+    ',pad_rebar_quantity_top_dir1
+    ',pad_rebar_quantity_bottom_dir1
+    ',pad_rebar_quantity_top_dir2
+    ',pad_rebar_quantity_bottom_dir2
+    ',pad_clear_cover
+    ',rebar_grade
+    ',concrete_compressive_strength
+    ',dry_concrete_density
+    ',total_soil_unit_weight
+    ',bearing_type
+    ',nominal_bearing_capacity
+    ',cohesion
+    ',friction_angle
+    ',spt_blow_count
+    ',base_friction_factor
+    ',neglect_depth
+    ',bearing_distribution_type
+    ',groundwater_depth
+    ',top_and_bottom_rebar_different
+    ',block_foundation
+    ',rectangular_foundation
+    ',base_plate_distance_above_foundation
+    ',bolt_circle_bearing_plate_width
+    ',pier_rebar_quantity
+    ',basic_soil_check
+    ',structural_check
+    ',tool_version
+    '            ,modified"
+    'End Function
+#End Region
+
+#Region "Check Changes"
+    Public Overloads Function CompareMe(ByVal newPierAndPad As PierAndPad, Optional SetID As Boolean = False) As Boolean
+        ''''''Customize for each foundation type'''''
+        '''This function "shadows" the generic CompareMe function inherited from it's grandparent class EDSObject
+        '''If you don't need specific change summary, you can delect this function and still use the inherited function to compare if objects are the same
+        Dim changesMade As Boolean = False
+
+        'Check Details
+        If Check1Change(newPierAndPad.pier_shape, Me.pier_shape, Me.foundationType, "Pier_Shape") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_diameter, Me.pier_diameter, Me.foundationType, "Pier_Diameter") Then changesMade = True
+        If Check1Change(newPierAndPad.extension_above_grade, Me.extension_above_grade, Me.foundationType, "Extension_Above_Grade") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_rebar_size, Me.pier_rebar_size, Me.foundationType, "Pier_Rebar_Size") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_tie_size, Me.pier_tie_size, Me.foundationType, "Pier_Tie_Size") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_tie_quantity, Me.pier_tie_quantity, Me.foundationType, "Pier_Tie_Quantity") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_reinforcement_type, Me.pier_reinforcement_type, Me.foundationType, "Pier_Reinforcement_Type") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_clear_cover, Me.pier_clear_cover, Me.foundationType, "Pier_Clear_Cover") Then changesMade = True
+        If Check1Change(newPierAndPad.foundation_depth, Me.foundation_depth, Me.foundationType, "Foundation_Depth") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_width_1, Me.pad_width_1, Me.foundationType, "Pad_Width_1") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_width_2, Me.pad_width_2, Me.foundationType, "Pad_Width_2") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_thickness, Me.pad_thickness, Me.foundationType, "Pad_Thickness") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_size_top_dir1, Me.pad_rebar_size_top_dir1, Me.foundationType, "Pad_Rebar_Size_Top_Dir1") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_size_bottom_dir1, Me.pad_rebar_size_bottom_dir1, Me.foundationType, "Pad_Rebar_Size_Bottom_Dir1") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_size_top_dir2, Me.pad_rebar_size_top_dir2, Me.foundationType, "Pad_Rebar_Size_Top_Dir2") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_size_bottom_dir2, Me.pad_rebar_size_bottom_dir2, Me.foundationType, "Pad_Rebar_Size_Bottom_Dir2") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_quantity_top_dir1, Me.pad_rebar_quantity_top_dir1, Me.foundationType, "Pad_Rebar_Quantity_Top_Dir1") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_quantity_bottom_dir1, Me.pad_rebar_quantity_bottom_dir1, Me.foundationType, "Pad_Rebar_Quantity_Bottom_Dir1") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_quantity_top_dir2, Me.pad_rebar_quantity_top_dir2, Me.foundationType, "Pad_Rebar_Quantity_Top_Dir2") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_rebar_quantity_bottom_dir2, Me.pad_rebar_quantity_bottom_dir2, Me.foundationType, "Pad_Rebar_Quantity_Bottom_Dir2") Then changesMade = True
+        If Check1Change(newPierAndPad.pad_clear_cover, Me.pad_clear_cover, Me.foundationType, "Pad_Clear_Cover") Then changesMade = True
+        If Check1Change(newPierAndPad.rebar_grade, Me.rebar_grade, Me.foundationType, "Rebar_Grade") Then changesMade = True
+        If Check1Change(newPierAndPad.concrete_compressive_strength, Me.concrete_compressive_strength, Me.foundationType, "Concrete_Compressive_Strength") Then changesMade = True
+        If Check1Change(newPierAndPad.dry_concrete_density, Me.dry_concrete_density, Me.foundationType, "Dry_Concrete_Density") Then changesMade = True
+        If Check1Change(newPierAndPad.total_soil_unit_weight, Me.total_soil_unit_weight, Me.foundationType, "Total_Soil_Unit_Weight") Then changesMade = True
+        If Check1Change(newPierAndPad.bearing_type, Me.bearing_type, Me.foundationType, "Bearing_Type") Then changesMade = True
+        If Check1Change(newPierAndPad.nominal_bearing_capacity, Me.nominal_bearing_capacity, Me.foundationType, "Nominal_Bearing_Capacity") Then changesMade = True
+        If Check1Change(newPierAndPad.cohesion, Me.cohesion, Me.foundationType, "Cohesion") Then changesMade = True
+        If Check1Change(newPierAndPad.friction_angle, Me.friction_angle, Me.foundationType, "Friction_Angle") Then changesMade = True
+        If Check1Change(newPierAndPad.spt_blow_count, Me.spt_blow_count, Me.foundationType, "Spt_Blow_Count") Then changesMade = True
+        If Check1Change(newPierAndPad.base_friction_factor, Me.base_friction_factor, Me.foundationType, "Base_Friction_Factor") Then changesMade = True
+        If Check1Change(newPierAndPad.neglect_depth, Me.neglect_depth, Me.foundationType, "Neglect_Depth") Then changesMade = True
+        If Check1Change(newPierAndPad.bearing_distribution_type, Me.bearing_distribution_type, Me.foundationType, "Bearing_Distribution_Type") Then changesMade = True
+        If Check1Change(newPierAndPad.groundwater_depth, Me.groundwater_depth, Me.foundationType, "Groundwater_Depth") Then changesMade = True
+        If Check1Change(newPierAndPad.top_and_bottom_rebar_different, Me.top_and_bottom_rebar_different, Me.foundationType, "Top_And_Bottom_Rebar_Different") Then changesMade = True
+        If Check1Change(newPierAndPad.block_foundation, Me.block_foundation, Me.foundationType, "Block_Foundation") Then changesMade = True
+        If Check1Change(newPierAndPad.rectangular_foundation, Me.rectangular_foundation, Me.foundationType, "Rectangular_Foundation") Then changesMade = True
+        If Check1Change(newPierAndPad.base_plate_distance_above_foundation, Me.base_plate_distance_above_foundation, Me.foundationType, "Base_Plate_Distance_Above_Foundation") Then changesMade = True
+        If Check1Change(newPierAndPad.bolt_circle_bearing_plate_width, Me.bolt_circle_bearing_plate_width, Me.foundationType, "Bolt_Circle_Bearing_Plate_Width") Then changesMade = True
+        If Check1Change(newPierAndPad.pier_rebar_quantity, Me.pier_rebar_quantity, Me.foundationType, "Pier_Rebar_Quantity") Then changesMade = True
+        If Check1Change(newPierAndPad.basic_soil_check, Me.basic_soil_check, Me.foundationType, "Basic_Soil_Check") Then changesMade = True
+        If Check1Change(newPierAndPad.structural_check, Me.structural_check, Me.foundationType, "Structural_Check") Then changesMade = True
+        If Check1Change(newPierAndPad.tool_version, Me.tool_version, Me.foundationType, "Tool_Version") Then changesMade = True
+
+        CreateChangeSummary(changeDt) 'possible alternative to listing change summary
+        Return changesMade
+
+    End Function
 #End Region
 
 End Class
-
-#Region "Pier and Pad Extras"
-'Partial Public Class ModifiedRange
-'    Private prop_modified_id As Integer
-'    Private prop_sheet_name As String
-'    Private prop_cell_range As String
-'    Private prop_cell_name As String
-'    Private prop_override As String
-
-'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Modified ID")>
-'    Public Property modified_id() As Integer
-'        Get
-'            Return Me.prop_modified_id
-'        End Get
-'        Set
-'            Me.prop_modified_id = Value
-'        End Set
-'    End Property
-'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Sheet Name")>
-'    Public Property sheet_name() As String
-'        Get
-'            Return Me.prop_sheet_name
-'        End Get
-'        Set
-'            Me.prop_sheet_name = Value
-'        End Set
-'    End Property
-'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Range")>
-'    Public Property cell_range() As String
-'        Get
-'            Return Me.prop_cell_range
-'        End Get
-'        Set
-'            Me.prop_cell_range = Value
-'        End Set
-'    End Property
-'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Cell Name")>
-'    Public Property cell_name() As String
-'        Get
-'            Return Me.prop_cell_name
-'        End Get
-'        Set
-'            Me.prop_cell_name = Value
-'        End Set
-'    End Property
-'    <Category("Pier and Pad Modified Range"), Description(""), DisplayName("Override")>
-'    Public Property override() As String
-'        Get
-'            Return Me.prop_override
-'        End Get
-'        Set
-'            Me.prop_override = Value
-'        End Set
-'    End Property
-'    Sub New(ByVal ModifiedRangeDataRow As DataRow)
-'        Try
-'            Me.modified_id = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
-'        Catch
-'            Me.modified_id = 0
-'        End Try 'Modified ID
-'        Try
-'            Me.sheet_name = CType(ModifiedRangeDataRow.Item("sheet_name"), String)
-'        Catch
-'            Me.sheet_name = ""
-'        End Try 'Sheet Name
-'        Try
-'            Me.cell_range = CType(ModifiedRangeDataRow.Item("cell_range"), String)
-'        Catch
-'            Me.cell_range = ""
-'        End Try 'Cell Range
-'        Try
-'            Me.cell_name = CType(ModifiedRangeDataRow.Item("cell_name"), String)
-'        Catch
-'            Me.cell_name = ""
-'        End Try 'Cell Name
-'        Try
-'            Me.override = CType(ModifiedRangeDataRow.Item("override"), String)
-'        Catch
-'            Me.override = ""
-'        End Try 'Override
-'End Sub
-'End Class
-#End Region

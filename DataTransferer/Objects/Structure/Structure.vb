@@ -50,6 +50,34 @@ Public Module Extensions
         Return distinctList
     End Function
 
+    <Extension()>
+    Public Function CompareEDSLists(Of T As EDSObject)(List1 As List(Of T), List2 As List(Of T), Optional SetID As Boolean = False) As Boolean
+        'Compare lists of EDSObjects that are not in the same order.
+        'If SetID then items in list1 will be updated with the IDs of matching items in list2.
+        'Typical use case list1 would be excel tools from the current analysis, list2 would be the tools on EDS.
+        CompareEDSLists = True
+
+        If List1.Count <> List2.Count Then
+            CompareEDSLists = False
+            'If setting IDs from list2, we need to keep going even tho we no the overall lists are different
+            If Not SetID Then Return CompareEDSLists
+        End If
+
+        For Each item In List1
+            Dim CompareItem As Boolean
+            For Each item2 In List2
+                CompareItem = item.CompareMe(item2, SetID)
+                If CompareItem Then Exit For
+            Next
+            If Not CompareItem Then
+                CompareEDSLists = False
+                If Not SetID Then Exit For
+            End If
+        Next
+
+        Return CompareEDSLists
+    End Function
+
 End Module
 
 Public Module myLittleHelpers
@@ -125,14 +153,53 @@ Public Module myLittleHelpers
             End Try
         End If
     End Function
+
+    Public Function GetTypeNullable(Of T)(ByVal obj As T) As Type
+        'This should return the type of a Nullable even if it's null
+        If Nullable.GetUnderlyingType(GetType(T)) Is Nothing Then
+            Return GetType(T)
+        Else
+            Return Nullable.GetUnderlyingType(GetType(T))
+        End If
+    End Function
 End Module
+
+'Partial Public Class EDSQueries
+'    'WIP - This depends on changes we might make to the query method - DHS 2/1/22
+'    Public Property BaseFolder As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
+
+'    Public Property ClassFolder As String
+'    <Description("Upload base on active model for BU and Structure ID"), DisplayName("Upload Query")>
+'    Public Property QueryUp As String
+'    <Description("Sub query for uploading from a higher level"), DisplayName("Upload Sub Query")>
+'    Public Property QueryUpSub As String
+'    <Description("Download base on WO"), DisplayName("Download Query for Specific WO")>
+'    Public Property QueryDownWO As String
+'    <Description("Download base on active model for BU and Structure ID"), DisplayName("Download Query for Active Model")>
+'    Public Property QueryDownActive As String
+
+'    Public Sub New()
+
+'    End Sub
+
+'    Public Sub New(ByVal FolderPathRelativetoQueriesFolder As String, ByVal QueryUp As String, ByVal QueryUpSub As String, ByVal QueryDownWO As String, ByVal QueryDownActive As String)
+'        Me.ClassFolder = Me.BaseFolder & FolderPathRelativetoQueriesFolder
+'        Me.QueryUp = Me.BaseFolder & FolderPathRelativetoQueriesFolder & QueryUp
+'        Me.QueryUpSub = Me.BaseFolder & FolderPathRelativetoQueriesFolder & QueryUpSub
+'        Me.QueryDownWO = Me.BaseFolder & FolderPathRelativetoQueriesFolder & QueryDownWO
+'        Me.QueryDownActive = Me.BaseFolder & FolderPathRelativetoQueriesFolder & QueryDownActive
+'    End Sub
+'End Class
 
 Partial Public Class EDSObject
 
     Public Property ID As Integer?
+    Public Property BU As String
+    Public Property strID As String
+    Public Property WO As String
+    'Public Property EDSQueries As New EDSQueries
     Public Property activeDatabase As String
     Public Property databaseIdentity As String
-
 
     Public Function CompareMe(Of T As EDSObject)(toCompare As T, Optional SetID As Boolean = False, Optional ByRef strDiff As String = Nothing) As Boolean
         'Compare another tnxDatabaseEntry object to itself using the objects comparer.
@@ -161,9 +228,6 @@ End Class
 Partial Public Class structure_model
     Inherits EDSObject
 
-    Public Property BU As String
-    Public Property strID As String
-    Public Property order As String
     Public Property tnx As tnxModel
     Public Property foundations As EDSFoundationGroup
     Public Property connections As DataTransfererCCIplate
@@ -173,44 +237,10 @@ Partial Public Class structure_model
     Public Sub New()
         'Leave method empty
     End Sub
-
-    Public Sub New(ByVal BU As String, ByVal Strucutre_ID As String, ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-        'Create from database using BU and Structure ID
-
-
-    End Sub
-
-    Public Sub New(ByVal WO As String, ByVal MyDataSet As DataSet, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-        'Create from database using WO
-
-
-    End Sub
-
-#End Region
-
-#Region "Save to EDS"
-    Public Sub saveToEDS()
-
-    End Sub
-
 #End Region
 End Class
 
-Partial Public Class EDSFoundationGroup
-    Inherits EDSObject
 
-    Public Property foundations As New List(Of EDSDataTransferer)
-
-End Class
-
-
-Partial Public Class EDSDataTransferer
-
-    Private _newWorkBook As New Workbook
-
-    Public Property workBookPath As String
-
-End Class
 
 
 

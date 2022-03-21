@@ -8,7 +8,7 @@ Imports System.IO
 Partial Public Class frmMain
 #Region "Object Declarations"
     Public myUnitBases As New DataTransfererUnitBase
-    Public myPierandPads As New DataTransfererPierandPad
+    'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     Public myPiles As New DataTransfererPile
@@ -19,18 +19,18 @@ Partial Public Class frmMain
     Public StrcID As String = ""
 
     'Import to Excel
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Drilled Pier Foundation (5.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 811236 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\123456\CCIpole (4.6.0.1)_1_EDS.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
 
     'Import to EDS
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"}
@@ -41,7 +41,7 @@ Partial Public Class frmMain
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\EDS - 811236 - Pile Foundation (2.2.1.6) - Change 1.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\123456\CCIpole (4.6.0.1)_0.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Connection\812637\CCIplate (4.1.2.1) - Copy - Copy.xlsm"}
 #End Region
 
@@ -107,163 +107,266 @@ Partial Public Class frmMain
     End Sub
 #End Region
 
-    Public Sub CreateExcelTemplates() Handles sqltoexcel.Click
-        ClearAllTools()
 
-        For Each item As String In ListOfFilesCopied
-            If item.Contains("SST Unit Base Foundation") Then
-                myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myUnitBases.ExcelFilePath = item
-                If myUnitBases.LoadFromEDS() Then myUnitBases.SaveToExcel()
-            ElseIf item.Contains("Pier and Pad Foundation") Then
-                myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPierandPads.ExcelFilePath = item
-                If myPierandPads.LoadFromEDS() Then myPierandPads.SaveToExcel()
-            ElseIf item.Contains("Drilled Pier Foundation") Then
-                myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myDrilledPiers.ExcelFilePath = item
-                If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
-            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
-                myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myGuyedAnchorBlocks.ExcelFilePath = item
-                If myGuyedAnchorBlocks.LoadFromEDS() Then myGuyedAnchorBlocks.SaveToExcel()
-            ElseIf item.Contains("Pile Foundation") Then
-                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPiles.ExcelFilePath = item
-                If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
-            ElseIf item.Contains("CCIpole") Then
-                MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                MyCCIpoles.ExcelFilePath = item
-                If MyCCIpoles.LoadFromEDS() Then MyCCIpoles.SaveToExcel()
-            ElseIf item.Contains("CCIplate") Then
-                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                MyCCIplates.ExcelFilePath = item
-                'If MyCCIplates.LoadFromEDS() Then MyCCIplates.SaveToExcel()
-            End If
-        Next
+#Region "Foundations"
+    Public fndGroupXL As EDSFoundationGroup
+    Public fndGroupEDS As EDSFoundationGroup
+
+    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportXLFnd.Click
+        If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        BUNumber = txtFndBU.Text
+        StrcID = txtFndStrc.Text
+
+        Dim xlFd As New OpenFileDialog
+        xlFd.Multiselect = True
+        xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
+
+        If xlFd.ShowDialog = DialogResult.OK Then
+            fndGroupXL = New EDSFoundationGroup(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
+        End If
+
+        propgridFndXL.SelectedObject = fndGroupXL
 
     End Sub
 
-    Public Sub UploadExcelFilesToEDS() Handles exceltosql.Click
-        ClearAllTools()
+    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportXLFnds.Click
+        If fndGroupEDS Is Nothing Then Exit Sub
 
-        For Each item As String In ListOfExcelFiles
-            If item.Contains("SST Unit Base Foundation") Then
-                myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myUnitBases.ExcelFilePath = item
-                myUnitBases.LoadFromExcel()
-                myUnitBases.SaveToEDS()
-            ElseIf item.Contains("Pier and Pad Foundation") Then
-                myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPierandPads.ExcelFilePath = item
-                myPierandPads.LoadFromExcel()
-                myPierandPads.SaveToEDS()
-            ElseIf item.Contains("Drilled Pier Foundation") Then
-                myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myDrilledPiers.ExcelFilePath = item
-                myDrilledPiers.LoadFromExcel()
-                myDrilledPiers.SaveToEDS()
-            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
-                myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myGuyedAnchorBlocks.ExcelFilePath = item
-                myGuyedAnchorBlocks.LoadFromExcel()
-                myGuyedAnchorBlocks.SaveToEDS()
-            ElseIf item.Contains("Pile Foundation") Then
-                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                myPiles.ExcelFilePath = item
-                myPiles.LoadFromExcel()
-                myPiles.SaveToEDS()
-            ElseIf item.Contains("CCIpole") Then
-                MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                MyCCIpoles.ExcelFilePath = item
-                MyCCIpoles.LoadFromExcel()
-                MyCCIpoles.SaveToEDS()
-            ElseIf item.Contains("CCIplate") Then
-                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
-                MyCCIplates.ExcelFilePath = item
-                MyCCIplates.LoadFromExcel()
-                MyCCIplates.SaveToEDS()
-            End If
-        Next
+        Dim eriFd As New FolderBrowserDialog
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            fndGroupEDS.SaveAllFoundationstoExcel(eriFd.SelectedPath)
+        End If
+    End Sub
+    Private Sub btnLoadFndFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
+        If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
+        fndGroupEDS = New EDSFoundationGroup(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+        propgridFndEDS.SelectedObject = fndGroupEDS
 
     End Sub
+    Private Sub btnSaveFndToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
+        If fndGroupXL Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
+        fndGroupXL.SaveAllFoundationsEDS(EDSnewId, EDSdbActive)
 
-    Sub ClearAllTools()
-        myUnitBases.Clear()
-        myPierandPads.Clear()
-        myDrilledPiers.Clear()
-        myGuyedAnchorBlocks.Clear()
-        myPiles.Clear()
-        MyCCIpoles.Clear()
-        MyCCIplates.Clear()
     End Sub
+    Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareFnd.Click
+        If fndGroupXL Is Nothing Or fndGroupEDS Is Nothing Then Exit Sub
+        fndGroupXL.CompareMe(fndGroupEDS)
+    End Sub
+#End Region
 
-    'Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-    '    MsgBox("Stop touching me")
+#Region "Original Excel"
+
+
+    'Public Sub CreateExcelTemplates() Handles sqltoexcel.Click
+    '    'ClearAllTools()
+
+    '    BUNumber = txtSQLBU.Text
+    '    StrcID = txtSQLStrc.Text
+
+    '    Dim xlFndGroup As New EDSFoundationGroup()
+
+    '    For Each item As String In ListOfFilesCopied
+    '        If item.Contains("SST Unit Base Foundation") Then
+    '            myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            myUnitBases.ExcelFilePath = item
+    '            If myUnitBases.LoadFromEDS() Then myUnitBases.SaveToExcel()
+    '        ElseIf item.Contains("Pier and Pad Foundation") Then
+    '            myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            myPierandPads.ExcelFilePath = item
+    '            If myPierandPads.LoadFromEDS() Then myPierandPads.SaveToExcel()
+    '        ElseIf item.Contains("Drilled Pier Foundation") Then
+    '            myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            myDrilledPiers.ExcelFilePath = item
+    '            If myDrilledPiers.LoadFromEDS() Then myDrilledPiers.SaveToExcel()
+    '        ElseIf item.Contains("Guyed Anchor Block Foundation") Then
+    '            myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            myGuyedAnchorBlocks.ExcelFilePath = item
+    '            If myGuyedAnchorBlocks.LoadFromEDS() Then myGuyedAnchorBlocks.SaveToExcel()
+    '        ElseIf item.Contains("Pile Foundation") Then
+    '            myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            myPiles.ExcelFilePath = item
+    '            If myPiles.LoadFromEDS() Then myPiles.SaveToExcel()
+    '        ElseIf item.Contains("CCIpole") Then
+    '            MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            MyCCIpoles.ExcelFilePath = item
+    '            If MyCCIpoles.LoadFromEDS() Then MyCCIpoles.SaveToExcel()
+    '        ElseIf item.Contains("CCIplate") Then
+    '            MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '            MyCCIplates.ExcelFilePath = item
+    '            'If MyCCIplates.LoadFromEDS() Then MyCCIplates.SaveToExcel()
+    '        End If
+    '    Next
+
     'End Sub
 
-    Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
+    'Public Sub UploadExcelFilesToEDS() Handles exceltosql.Click
+    '    'ClearAllTools()
 
-    End Sub
+    '    BUNumber = txtSQLBU.Text
+    '    StrcID = txtSQLStrc.Text
 
-    Private Sub UploadExcelFilesToEDS(sender As Object, e As EventArgs) Handles exceltosql.Click
+    '    Dim xlFd As New OpenFileDialog
+    '    xlFd.Multiselect = True
+    '    xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
-    End Sub
+    '    If xlFd.ShowDialog = DialogResult.OK Then
+    '        Dim xlFndGroup As New EDSFoundationGroup()
 
-    Public tnxObject As tnxModel
-    'Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
-    '    Dim eriFd As New OpenFileDialog
-    '    eriFd.Multiselect = False
-    '    eriFd.Filter = "TNX File|*.eri"
+    '        For Each item As String In xlFd.FileNames
+    '            If item.Contains("SST Unit Base Foundation") Then
+    '                myUnitBases = New DataTransfererUnitBase(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                myUnitBases.ExcelFilePath = item
+    '                myUnitBases.LoadFromExcel()
+    '                myUnitBases.SaveToEDS()
+    '            ElseIf item.Contains("Pier and Pad Foundation") Then
+    '                'myPierandPads = New DataTransfererPierandPad(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                'myPierandPads.ExcelFilePath = item
+    '                'myPierandPads.LoadFromExcel()
+    '                'myPierandPads.SaveToEDS()
 
-    '    If eriFd.ShowDialog = DialogResult.OK Then
-    '        tnxObject = New tnxModel(eriFd.FileName)
-    '        'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
-    '        'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
-    '        'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
-    '        'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
+    '                xlFndGroup.PierandPads.Add(New PierAndPad(item))
 
-    '        propgridTNXObject.SelectedObject = tnxObject
+    '            ElseIf item.Contains("Drilled Pier Foundation") Then
+    '                myDrilledPiers = New DataTransfererDrilledPier(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                myDrilledPiers.ExcelFilePath = item
+    '                myDrilledPiers.LoadFromExcel()
+    '                myDrilledPiers.SaveToEDS()
+    '            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
+    '                myGuyedAnchorBlocks = New DataTransfererGuyedAnchorBlock(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                myGuyedAnchorBlocks.ExcelFilePath = item
+    '                myGuyedAnchorBlocks.LoadFromExcel()
+    '                myGuyedAnchorBlocks.SaveToEDS()
+    '            ElseIf item.Contains("Pile Foundation") Then
+    '                myPiles = New DataTransfererPile(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                myPiles.ExcelFilePath = item
+    '                myPiles.LoadFromExcel()
+    '                myPiles.SaveToEDS()
+    '            ElseIf item.Contains("CCIpole") Then
+    '                MyCCIpoles = New DataTransfererCCIpole(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                MyCCIpoles.ExcelFilePath = item
+    '                MyCCIpoles.LoadFromExcel()
+    '                MyCCIpoles.SaveToEDS()
+    '            ElseIf item.Contains("CCIplate") Then
+    '                MyCCIplates = New DataTransfererCCIplate(ds, EDSnewId, EDSdbActive, BUNumber, StrcID)
+    '                MyCCIplates.ExcelFilePath = item
+    '                MyCCIplates.LoadFromExcel()
+    '                MyCCIplates.SaveToEDS()
+    '            End If
+    '        Next
+
+    '        'Compare excel foundations to the foundations in the active model for this BU and Str
+    '        'This will copy IDs on matching foundations and the whole foundation group if all the foundations match
+    '        xlFndGroup.CompareMe(New EDSFoundationGroup(BUNumber, StrcID, EDSnewId, EDSdbActive), True)
+
+    '        'Save all foundations, anything with an ID won't be uploaded, if the whole foundation group has an ID, nothing has changed
+    '        xlFndGroup.SaveAllFoundationsEDS(EDSnewId, EDSdbActive)
+
     '    End If
-    'End Sub
-
-    'Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
-    '    If tnxObject Is Nothing Then
-    '        MessageBox.Show("Import a file first.")
-    '        Exit Sub
-    '    End If
-
-    '    Dim eriFd As New SaveFileDialog
-    '    eriFd.Filter = "TNX File|*.eri"
-
-    '    If eriFd.ShowDialog = DialogResult.OK Then
-    '        tnxObject.GenerateERI(eriFd.FileName)
-    '    End If
-    'End Sub
-
-    'Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-    '    If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
-
-    '    tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
 
     'End Sub
 
-    'Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
-    '    If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
-
-    '    tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-
-    '    propgridTNXObject.SelectedObject = tnxObject
+    'Sub ClearAllTools()
+    '    myUnitBases.Clear()
+    '    'myPierandPads.Clear()
+    '    myDrilledPiers.Clear()
+    '    myGuyedAnchorBlocks.Clear()
+    '    myPiles.Clear()
+    '    MyCCIpoles.Clear()
+    '    MyCCIplates.Clear()
     'End Sub
 
+    ''Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+    ''    MsgBox("Stop touching me")
+    ''End Sub
+
+    'Private Sub CreateExcelTemplates(sender As Object, e As EventArgs) Handles sqltoexcel.Click
+
+    'End Sub
+
+    'Private Sub UploadExcelFilesToEDS(sender As Object, e As EventArgs) Handles exceltosql.Click
+
+    'End Sub
+
+#End Region
+
+#Region "tnx"
+
+    Public tnxFromERI As tnxModel
+    Public tnxFromDB As tnxModel
+    Private Sub btnImportERI_Click(sender As Object, e As EventArgs) Handles btnImportERI.Click
+        Dim eriFd As New OpenFileDialog
+        eriFd.Multiselect = False
+        eriFd.Filter = "TNX File|*.eri"
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            tnxFromERI = New tnxModel(eriFd.FileName)
+
+            propgridTNXERI.SelectedObject = tnxFromERI
+        End If
+    End Sub
+
+    Private Sub btnExportERI_Click(sender As Object, e As EventArgs) Handles btnExportERI.Click
+        If tnxFromDB Is Nothing Then
+            MessageBox.Show("Import a file first.")
+            Exit Sub
+        End If
+
+        Dim eriFd As New SaveFileDialog
+        eriFd.Filter = "TNX File|*.eri"
+
+        If eriFd.ShowDialog = DialogResult.OK Then
+            tnxFromDB.GenerateERI(eriFd.FileName)
+        End If
+    End Sub
+
+    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+
+        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+    End Sub
+
+    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+
+        'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'benchmarked at 0.5 sec
+
+        tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'benchmarked between 1.5-2.25 sec
+
+    End Sub
+
+    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+
+        tnxFromDB = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+
+        propgridTNXEDS.SelectedObject = tnxFromDB
+    End Sub
+
+    Private Sub btnCompare_Click(sender As Object, e As EventArgs) Handles btnCompare.Click
+        If tnxFromDB Is Nothing Or tnxFromERI Is Nothing Then
+            MessageBox.Show("Import both models to compare.")
+        End If
+
+        Dim differences As String = ""
+        Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
+
+        My.Computer.Clipboard.SetText(differences)
+
+        MessageBox.Show(result.ToString)
+
+    End Sub
 
 
+#End Region
 
-
-
-
-
-
+#Region "Shame"
 
     Dim tappy As Integer
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
@@ -280,7 +383,8 @@ Partial Public Class frmMain
                 tappy = 0
             Else
                 pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
-                If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
+                If pwd = "DanIsTheBest" Then
+                    'If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
                     MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
                     tappy = 3
                 Else
@@ -290,4 +394,8 @@ Partial Public Class frmMain
             End If
         End If
     End Sub
+
+
+#End Region
+
 End Class
