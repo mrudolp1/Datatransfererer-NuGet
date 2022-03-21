@@ -30,6 +30,8 @@ DECLARE @PropReinf TABLE (ReinfID INT)
 DECLARE @ReinfID INT
 DECLARE @PropBolt TABLE (BoltID INT)
 DECLARE @BoltID INT
+	DECLARE @BotBoltID INT
+	DECLARE @TopBoltID INT
 DECLARE @PropMatl TABLE (MatlID INT)
 DECLARE @MatlID INT
 
@@ -61,10 +63,8 @@ IF EXISTS(SELECT * FROM gen.structure_model_xref WHERE bus_unit=@BU AND structur
 	
 				--Delete temp table if already exists
 				IF OBJECT_ID(N'tempdb..#TempTable') IS NOT NULL
-				BEGIN
 					DROP TABLE #TempTable
-				END
-
+					
 				SELECT * INTO #TempTable FROM gen.structure_model WHERE ID=@ModelID
 				ALTER TABLE #TempTable DROP COLUMN ID
 				INSERT INTO gen.structure_model OUTPUT INSERTED.ID INTO @Model SELECT * FROM #TempTable
@@ -85,57 +85,42 @@ ELSE
 		INSERT INTO gen.structure_model_xref (model_id,bus_unit,structure_id,isActive) VALUES (@ModelID,@BU,@STR_ID,'True')
 	END--Select existing model ID or insert new
 
+---------------------------------------------------------------------------------------------------------------------------------------------------
 
 --Determine pole_structure_id (Table Impacts: gen.structure_model & pole.pole_structure & pole.pole_section & pole.pole_reinf_section & pole.pole_reinf_group & pole.pole_interference_group & pole.pole_reinf_results & pole.memb_prop_flat_plate & pole.bolt_prop_flat_plate & pole.matl_prop_flat_plate)
 IF @PoleNeeded = 1 --TRUE (Reference isPoleNeeded)
-	
-	--Create new Pole Criteria ID in pole_analysis_criteria
-	IF @CriteriaID IS NULL
-		BEGIN
-			INSERT INTO pole.pole_analysis_criteria OUTPUT INSERTED.ID INTO @Criteria VALUES ('[INSERT POLE CRITERIA]')
-			SELECT @CriteriaID = CriteriaID FROM @Criteria
-		END
-	
 
-	BEGIN  --Create new CCIpole ID in pole_structure
-		INSERT INTO pole.pole_structure OUTPUT INSTERED.ID INTO @PoleStructure DEFAULT VALUES
+	BEGIN 
+		--Create new CCIpole ID in pole_structure
+		INSERT INTO pole.pole_structure OUTPUT INSERTED.ID INTO @PoleStructure DEFAULT VALUES
 		SELECT @PoleID = PoleID FROM @PoleStructure
 		UPDATE gen.structure_model SET pole_structure_id = @PoleID WHERE ID = @ModelID
+
+		--Create new Pole Criteria ID in pole_analysis_criteria
+		--CriteriaDNU IF @CriteriaID IS NULL
+		--CriteriaDNU 	BEGIN
+		--CriteriaDNU 		IF EXISTS(SELECT * FROM pole.pole_analysis_criteria WHERE upper_structure_type = '[upper_structure_type]' AND analysis_deg = '[analysis_deg]' AND geom_increment_length = '[geom_increment_length]' AND vnum = '[vnum]' AND check_connections = '[check_connections]' AND hole_deformation = '[hole_deformation]' AND ineff_mod_check = '[ineff_mod_check]' AND modified = '[modified]')
+		--CriteriaDNU 			SELECT @CriteriaID = ID FROM pole.pole_analysis_criteria WHERE upper_structure_type = '[upper_structure_type]' AND analysis_deg = '[analysis_deg]' AND geom_increment_length = '[geom_increment_length]' AND vnum = '[vnum]' AND check_connections = '[check_connections]' AND hole_deformation = '[hole_deformation]' AND ineff_mod_check = '[ineff_mod_check]' AND modified = '[modified]'
+		--CriteriaDNU 		ELSE
+		--CriteriaDNU 			BEGIN
+		--CriteriaDNU 				INSERT INTO pole.pole_analysis_criteria OUTPUT INSERTED.ID INTO @Criteria VALUES ('[INSERT POLE CRITERIA]')
+		--CriteriaDNU 				SELECT @CriteriaID = CriteriaID FROM @Criteria
+		--CriteriaDNU 			END
+		--CriteriaDNU 	END
+
+		UPDATE pole.pole_structure SET criteria_id = @CriteriaID WHERE ID = @PoleID
+
+		--'[SUBQUERY]'
+
 	END	
 
+				
+	----Custom Matl Properties
+	--INSERT INTO pole.matl_prop_flat_plate VALUES ('[INSERT ALL MATL PROPERTIES]')
+	----Custom Bolt Properties
+	--INSERT INTO pole.bolt_prop_flat_plate VALUES ('[INSERT ALL BOLT PROPERTIES]')
+	----Custom Reinf Properties
+	--INSERT INTO pole.memb_prop_flat_plate VALUES ('[INSERT ALL REINF PROPERTIES]')
 
---'[SUBQUERY]'
-
-BEGIN
-		
-	--Custom Matl Properties
-	INSERT INTO pole.matl_prop_flat_plate VALUES ('[INSERT ALL MATL PROPERTIES]')
-	--Custom Bolt Properties
-	INSERT INTO pole.bolt_prop_flat_plate VALUES ('[INSERT ALL BOLT PROPERTIES]')
-	--Custom Reinf Properties
-	INSERT INTO pole.memb_prop_flat_plate VALUES ('[INSERT ALL REINF PROPERTIES]')
-
-	--Criteria 
-	INSERT INTO pole.pole_analysis_criteria VALUES ('[INSERT POLE CRITERIA]')
-	--Unreinf Geometry
-	INSERT INTO pole.pole_section VALUES ('[INSERT ALL POLE SECTIONS]')
-	--Reinf Geometry
-	INSERT INTO pole.pole_reinf_section VALUES ('[INSERT ALL REINF POLE SECTIONS]')
-	--Reinf Groups
-	INSERT INTO pole.pole_reinf_group VALUES ('[INSERT ALL REINF GROUPS]')
-	--Reinf Details
-	INSERT INTO pole.pole_reinf_details VALUES ('[INSERT ALL REINF DETAILS]')
-	--Interference Groups
-	INSERT INTO pole.pole_interference_group VALUES ('[INSERT ALL INTERFERENCE GROUPS]')
-	--Interference Details
-	INSERT INTO pole.pole_interference_details VALUES ('[INSERT ALL INTERFERENCE DETAILS]')
-	--Reinf Results
-	INSERT INTO pole.pole_reinf_results VALUES ('[INSERT ALL REINF RESULTS]')
-	
-	
-
-					
-	UPDATE pole.pole_structure Set pole_structure_id=@PoleID WHERE ID=@FndID --Not sure this is necessary
-
-END
-
+	----Reinf Results
+	--INSERT INTO pole.pole_reinf_results VALUES ('[INSERT ALL REINF RESULTS]')

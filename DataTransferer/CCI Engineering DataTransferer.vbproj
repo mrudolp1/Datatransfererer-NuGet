@@ -42,6 +42,7 @@
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_GeomBase).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_GeomReinf).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
+    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubSubQuery_Bolts).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
     <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
     <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
@@ -170,10 +171,13 @@
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubQuery_GeomReinf%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_Bolts%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">

@@ -1,22 +1,24 @@
 ﻿[EXISTING MODEL]
 
 SELECT
-    sm.bus_unit
-    ,sm.structure_id str_id
-    ,sm.ID model_id
-    ,ps.ID pole_structure_id
-    ,prr.ID section_id
-    ,prr.pole_structure_id
-    ,prr.work_order_seq_num
-    ,prr.reinf_group_id
-    ,prr.result_lkup_value
-    ,prr.rating
-
+	sm.ID model_id
+	,pstr.ID pole_structure_id
+	,prr.work_order_seq_num
+	,prr.ID section_id
+	,prr.reinf_group_id
+	,prr.local_section_id
+	,prr.local_reinf_group_id
+	,prr.result_lkup_value
+	,prr.rating
 FROM
-    structure_model sm
-    ,pole_structure ps
-    ,pole_reinf_results prr
+	gen.structure_model_xref smx
+	,gen.structure_model sm
+	,pole.pole_structure pstr
+	,gen.model_work_order_xref mwox
+	,pole.pole_reinf_results prr
 WHERE
-    sm.ID=@ModelID
-    AND ps.model_id=sm.ID
-    AND prr.pole_structure_id=ps.ID
+	smx.model_id=@ModelID
+	AND smx.model_id=sm.ID
+	AND sm.pole_structure_id=pstr.ID
+	AND mwox.model_id = sm.ID
+	AND prr.work_order_seq_num = mwox.work_order_seq_num

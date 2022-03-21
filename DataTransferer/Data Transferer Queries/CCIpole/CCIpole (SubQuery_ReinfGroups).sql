@@ -1,49 +1,53 @@
 ﻿BEGIN --Reinf Group SubQuery BEGIN
 
 	--Material ID
-	BEGIN
-		IF @MatlID IS NULL
-			BEGIN
-				DELETE FROM @PropMatl
-				INSERT INTO pole.matl_prop_flat_plate OUTPUT INSERTED.ID INTO @PropMatl VALUES ('[INSERT MATL PROP]')
-				SELECT @MatlID = ID FROM @PropMatl
-			END
-	END
+	SET @MatlID = '[STEEL GRADE ID]'
 
-	--Bolt ID
-	BEGIN
-		IF @BoltID IS NULL
-			BEGIN
-				DELETE FROM @PropBolt
-				INSERT INTO pole.bolt_prop_flat_plate OUTPUT INSERTED.ID INTO @PropBolt VALUES ('[INSERT BOLT PROP]')
-				SELECT @BoltID = ID FROM @PropBolt
-			END
-	END
+	--MatlDNU IF @MatlID IS NULL
+	--MatlDNU 	BEGIN
+	--MatlDNU 		IF EXISTS(SELECT * FROM pole.matl_prop_flat_plate WHERE local_id = '[local_id]' AND name = '[name]' AND fy = '[fy]' AND fu = '[fu]') 
+	--MatlDNU 			SELECT @MatlID = ID FROM pole.matl_prop_flat_plate WHERE local_id = '[local_id]' AND name = '[name]' AND fy = '[fy]' AND fu = '[fu]'
+	--MatlDNU 		ELSE
+	--MatlDNU 			BEGIN
+	--MatlDNU 				INSERT INTO pole.matl_prop_flat_plate OUTPUT INSERTED.ID INTO @PropMatl VALUES ('[INSERT MATL PROP]')
+	--MatlDNU 				SELECT @MatlID = MatlID FROM @PropMatl
+	--MatlDNU 			END
+	--MatlDNU 	END
+
+	--Add to Matl XREF table
+	IF NOT EXISTS (SELECT * FROM pole.matl_prop_flat_plate_xref WHERE pole_structure_id = @PoleID AND matl_id = @MatlID)
+		INSERT INTO pole.matl_prop_flat_plate_xref (pole_structure_id, matl_id) VALUES (@PoleID, @MatlID)
+
+
+	--'[BOLT SUB-SUBQUERY]'
+
+	--Add to Bolts to XREF table
+	IF NOT EXISTS (SELECT * FROM pole.bolt_prop_flat_plate_xref WHERE pole_structure_id = @PoleID AND bolt_id = @BotBoltID)
+		INSERT INTO pole.bolt_prop_flat_plate_xref (pole_structure_id, bolt_id) VALUES (@PoleID, @BotBoltID)
+	IF NOT EXISTS (SELECT * FROM pole.bolt_prop_flat_plate_xref WHERE pole_structure_id = @PoleID AND bolt_id = @TopBoltID)
+		INSERT INTO pole.bolt_prop_flat_plate_xref (pole_structure_id, bolt_id) VALUES (@PoleID, @TopBoltID)
+
 
 	--Reinforcement ID
-	BEGIN
-		IF @ReinfID IS NULL
-			BEGIN
-				DELETE FROM @PropReinf
-				INSERT INTO pole.memb_prop_flat_plate OUTPUT INSERTED.ID INTO @PropReinf VALUES ('[INSERT REINF PROP]')
-				SELECT @ReinfID = ID FROM @PropReinf
-			END
-	END
+	SET @ReinfID = '[REINFORCEMENT ID]'
+
+	--ReinfDNU IF @ReinfID IS NULL
+	--ReinfDNU 	BEGIN
+	--ReinfDNU 		INSERT INTO pole.memb_prop_flat_plate OUTPUT INSERTED.ID INTO @PropReinf VALUES ('[INSERT REINF PROP]')
+	--ReinfDNU 		SELECT @ReinfID = ReinfID FROM @PropReinf
+	--ReinfDNU 	END
+
+	--Add to Reinf XREF table
+	INSERT INTO pole.memb_prop_flat_plate_xref (pole_structure_id, reinf_id) VALUES (@PoleID, @ReinfID)
+	
 
 	--Group ID
-	BEGIN
-		DELETE FROM @ReinfGroups
+	INSERT INTO pole.pole_reinf_group OUTPUT INSERTED.ID INTO @ReinfGroups VALUES ('[INSERT SINGLE REINF GROUP]')
+	SELECT @ReinfGroupID = ReinfGroupID FROM @ReinfGroups
+	--Add to Group XREF table
+	INSERT INTO pole.pole_reinf_group_xref (pole_structure_id, reinf_group_id) VALUES (@PoleID, @ReinfGroupID)
 
-		--Add row with data to Groups table
-		INSERT INTO pole.pole_reinf_group OUTPUT INSERTED.ID INTO @ReinfGroups VALUES ('[INSERT REINF GROUP]')
-		SELECT @ReinfGroupID = ReinfGroupID FROM @ReinfGroups
-
-		--Add to xref table
-		INSERT INTO pole.pole_reinf_group_xref (pole_structure_id, reinf_group_id) VALUES (@PoleID, @ReinfGroupID)
-
-		--'[DETAIL SUB-SUBQUERY]'
-
-	END
+	--'[DETAIL SUB-SUBQUERY]'
 
 
 END --Reinf Group SubQuery END

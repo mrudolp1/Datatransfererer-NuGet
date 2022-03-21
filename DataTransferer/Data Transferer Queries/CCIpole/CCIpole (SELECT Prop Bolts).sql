@@ -1,14 +1,11 @@
 ﻿[EXISTING MODEL]
 
 SELECT
-    sm.bus_unit
-    ,sm.structure_id str_id
-    ,sm.ID model_id
-    ,ps.ID pole_structure_id
+    sm.ID model_id
+    ,pstr.ID pole_structure_id
     ,pb.ID bolt_db_id
-    ,pb.ID bolt_id
-    ,pb.pole_structure_id
-    ,pb.name
+    ,pb.local_id
+	,pb.name
     ,pb.description
     ,pb.diam
     ,pb.area
@@ -23,12 +20,15 @@ SELECT
     ,pb.bolt_n_sleeve_shear_revH
     ,pb.bolt_x_sleeve_shear_revH
     ,pb.rb_applied_revH
-
 FROM
-    structure_model sm
-    ,pole_structure ps
-    ,bolt_prop_flat_plate pb
+	gen.structure_model_xref smx
+	,gen.structure_model sm
+	,pole.pole_structure pstr
+	,pole.bolt_prop_flat_plate_xref pbx
+	,pole.bolt_prop_flat_plate pb
 WHERE
-    sm.ID=@ModelID
-    AND ps.model_id=sm.ID
-    AND pb.pole_structure_id=ps.ID
+	smx.model_id=@ModelID
+	AND smx.model_id=sm.ID
+	AND sm.pole_structure_id=pstr.ID
+	AND pbx.pole_structure_id = pstr.ID
+	AND pb.ID = pbx.bolt_id

@@ -19,18 +19,18 @@ Partial Public Class frmMain
     Public StrcID As String = ""
 
     'Import to Excel
-    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
+    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to Excel\EDS - 806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\EDS - 800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\EDS - 800009 - Drilled Pier Foundation (5.1.0).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 806956 -SST Unit Base Foundation (4.0.4) - from EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 811236 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0).xlsm"}
-    'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 1 - EDS.xlsm"}
+    Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\123456\CCIpole (4.6.0.1)_1_EDS.xlsm"}
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
 
     'Import to EDS
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
+    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"}
@@ -41,7 +41,7 @@ Partial Public Class frmMain
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\811236 Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pile\811236\EDS - 811236 - Pile Foundation (2.2.1.6) - Change 1.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Guyed Anchor Block\846182\EDS - 846182 - Guyed Anchor Block Foundation (4.1.0) - Change 1.xlsm"}
-    'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\800476\CCIpole (4.6.0) - 0.xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\CCIpole\EDS Testing\Test Sites\123456\CCIpole (4.6.0.1)_0.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Connection\812637\CCIplate (4.1.2.1) - Copy - Copy.xlsm"}
 #End Region
 
@@ -211,50 +211,50 @@ Partial Public Class frmMain
     End Sub
 
     Public tnxObject As tnxModel
-    Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
-        Dim eriFd As New OpenFileDialog
-        eriFd.Multiselect = False
-        eriFd.Filter = "TNX File|*.eri"
+    'Private Sub btnImportTNX_Click(sender As Object, e As EventArgs) Handles btnImportTNX.Click
+    '    Dim eriFd As New OpenFileDialog
+    '    eriFd.Multiselect = False
+    '    eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxObject = New tnxModel(eriFd.FileName)
-            'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
-            'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
-            'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
-            'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
+    '    If eriFd.ShowDialog = DialogResult.OK Then
+    '        tnxObject = New tnxModel(eriFd.FileName)
+    '        'MessageBox.Show("Am I myself? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(0)).ToString)
+    '        'MessageBox.Show("Am I the next section? " & tnxObject.geometry.baseStructure(0).CompareMe(tnxObject.geometry.baseStructure(1)).ToString)
+    '        'MessageBox.Show("Here are my individual properties: " & tnxObject.GenerateIndInputSqlColumns)
+    '        'MessageBox.Show("Here are my individual property values: " & tnxObject.GenerateIndInputSqlValues)
 
-            propgridTNXObject.SelectedObject = tnxObject
-        End If
-    End Sub
+    '        propgridTNXObject.SelectedObject = tnxObject
+    '    End If
+    'End Sub
 
-    Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
-        If tnxObject Is Nothing Then
-            MessageBox.Show("Import a file first.")
-            Exit Sub
-        End If
+    'Private Sub btnExportTNX_Click(sender As Object, e As EventArgs) Handles btnExportTNX.Click
+    '    If tnxObject Is Nothing Then
+    '        MessageBox.Show("Import a file first.")
+    '        Exit Sub
+    '    End If
 
-        Dim eriFd As New SaveFileDialog
-        eriFd.Filter = "TNX File|*.eri"
+    '    Dim eriFd As New SaveFileDialog
+    '    eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxObject.GenerateERI(eriFd.FileName)
-        End If
-    End Sub
+    '    If eriFd.ShowDialog = DialogResult.OK Then
+    '        tnxObject.GenerateERI(eriFd.FileName)
+    '    End If
+    'End Sub
 
-    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
+    'Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+    '    If txtBU.Text = "" Or txtStrc.Text = "" Or tnxObject Is Nothing Then Exit Sub
 
-        tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
+    '    tnxObject.SaveToEDS(EDSnewId, EDSdbActive, txtBU.Text, txtStrc.Text)
 
-    End Sub
+    'End Sub
 
-    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+    'Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+    '    If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
 
-        tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    tnxObject = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridTNXObject.SelectedObject = tnxObject
-    End Sub
+    '    propgridTNXObject.SelectedObject = tnxObject
+    'End Sub
 
 
 

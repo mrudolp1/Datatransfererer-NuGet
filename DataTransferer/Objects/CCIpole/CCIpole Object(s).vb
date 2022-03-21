@@ -13,9 +13,9 @@ Public Class CCIpole
     Public Property unreinf_sections As New List(Of PoleSection)
     Public Property reinf_sections As New List(Of PoleReinfSection)
     Public Property reinf_groups As New List(Of PoleReinfGroup)
-    Public Property reinf_ids As New List(Of PoleReinfDetail)
+    'Public Property reinf_ids As New List(Of PoleReinfDetail)
     Public Property int_groups As New List(Of PoleIntGroup)
-    Public Property int_ids As New List(Of PoleIntDetail)
+    'Public Property int_ids As New List(Of PoleIntDetail)
     Public Property reinf_section_results As New List(Of PoleReinfResults)
     Public Property reinfs As New List(Of PropReinf)
     Public Property bolts As New List(Of PropBolt)
@@ -69,32 +69,42 @@ Public Class CCIpole
         Next 'Add Reinf Sections to CCIpole Object
 
         For Each PoleReinfGroupDataRow As DataRow In ds.Tables("CCIpole Reinf Groups SQL").Rows
-            Dim PoleCriteriaRefID As Integer? = CType(PoleReinfGroupDataRow.Item("pole_structure_id"), Integer)
-            If PoleCriteriaRefID = refID Then
-                Me.reinf_groups.Add(New PoleReinfGroup(PoleReinfGroupDataRow))
+            Dim PoleReinfGroupRefID As Integer? = CType(PoleReinfGroupDataRow.Item("pole_structure_id"), Integer)
+            Dim PoleReinfGroupID As Integer? = CType(PoleReinfGroupDataRow.Item("group_id"), Integer)
+
+            If PoleReinfGroupRefID = refID Then
+                Dim NewReinfGroup As PoleReinfGroup
+                NewReinfGroup = New PoleReinfGroup(PoleReinfGroupDataRow)
+
+                For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details SQL").Rows
+                    Dim PoleReinfDetailRefID As Integer? = CType(PoleReinfDetailDataRow.Item("group_id"), Integer)
+                    If PoleReinfDetailRefID = PoleReinfGroupID Then
+                        NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(PoleReinfDetailDataRow))
+                    End If
+                Next 'Add Reinf Details to Group Object
+
+                Me.reinf_groups.Add(NewReinfGroup)
             End If
         Next 'Add Reinf Groups to CCIpole Object
 
-        'For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details SQL").Rows
-        '    Dim PoleReinfDetailRefID As Integer? = CType(PoleReinfDetailDataRow.Item("pole_structure_id"), Integer)
-        '    If PoleReinfDetailRefID = refID Then
-        '        Me.reinf_ids.Add(New PoleReinfDetail(PoleReinfDetailDataRow))
-        '    End If
-        'Next 'Add Reinf Details to CCIpole Object
-
         For Each PoleIntGroupDataRow As DataRow In ds.Tables("CCIpole Int Groups SQL").Rows
             Dim PoleIntGroupRefID As Integer? = CType(PoleIntGroupDataRow.Item("pole_structure_id"), Integer)
+            Dim PoleIntGroupID As Integer? = CType(PoleIntGroupDataRow.Item("group_id"), Integer)
+
             If PoleIntGroupRefID = refID Then
-                Me.int_groups.Add(New PoleIntGroup(PoleIntGroupDataRow))
+                Dim NewIntGroup As PoleIntGroup
+                NewIntGroup = New PoleIntGroup(PoleIntGroupDataRow)
+
+                For Each PoleIntDetailDataRow As DataRow In ds.Tables("CCIpole Int Details SQL").Rows
+                    Dim PoleIntDetailsRefID As Integer? = CType(PoleIntDetailDataRow.Item("group_id"), Integer)
+                    If PoleIntDetailsRefID = PoleIntGroupID Then
+                        NewIntGroup.int_ids.Add(New PoleIntDetail(PoleIntDetailDataRow))
+                    End If
+                Next 'Add Interference Details to Group Object
+
+                Me.int_groups.Add(NewIntGroup)
             End If
         Next 'Add Interference Groups to CCIpole Object
-
-        'For Each PoleIntDetailDataRow As DataRow In ds.Tables("CCIpole Int Details SQL").Rows
-        '    Dim PoleIntDetailsRefID As Integer? = CType(PoleIntDetailDataRow.Item("pole_structure_id"), Integer)
-        '    If PoleIntDetailsRefID = refID Then
-        '        Me.int_ids.Add(New PoleIntDetail(PoleIntDetailDataRow))
-        '    End If
-        'Next 'Add Interference Details to CCIpole Object
 
         For Each PoleReinfResultsDataRow As DataRow In ds.Tables("CCIpole Pole Reinf Results SQL").Rows
             Dim PoleReinfResultsRefID As Integer? = CType(PoleReinfResultsDataRow.Item("pole_structure_id"), Integer)
@@ -146,20 +156,88 @@ Public Class CCIpole
         Next 'Add Reinf Sections to CCIpole Object
 
         For Each PoleReinfGroupDataRow As DataRow In ds.Tables("CCIpole Reinf Groups EXCEL").Rows
-            Me.reinf_groups.Add(New PoleReinfGroup(PoleReinfGroupDataRow))
+            Dim NewReinfGroup As PoleReinfGroup
+            NewReinfGroup = New PoleReinfGroup(PoleReinfGroupDataRow)
+
+            Dim ReinfGroupID, DetailsGroupID As Integer?
+
+            Try
+                If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("local_group_id"), Integer)) Then
+                    ReinfGroupID = CType(PoleReinfGroupDataRow.Item("local_group_id"), Integer)
+                Else
+                    ReinfGroupID = Nothing
+                End If
+            Catch
+                ReinfGroupID = Nothing
+            End Try 'Group local_group_id
+
+            For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details EXCEL").Rows
+
+                Try
+                    If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("local_group_id"), Integer)) Then
+                        DetailsGroupID = CType(PoleReinfDetailDataRow.Item("local_group_id"), Integer)
+                    Else
+                        DetailsGroupID = Nothing
+                    End If
+                Catch
+                    DetailsGroupID = Nothing
+                End Try 'Details local_group_id
+
+                If ReinfGroupID = DetailsGroupID Then
+                    NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(PoleReinfDetailDataRow))
+                End If
+
+            Next 'Add Reinf Details to CCIpole Object
+
+            Me.reinf_groups.Add(NewReinfGroup)
+
         Next 'Add Reinf Groups to CCIpole Object
 
-        For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details EXCEL").Rows
-            Me.reinf_ids.Add(New PoleReinfDetail(PoleReinfDetailDataRow))
-        Next 'Add Reinf Details to CCIpole Object
+        'For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details EXCEL").Rows
+        '    Me.reinf_ids.Add(New PoleReinfDetail(PoleReinfDetailDataRow))
+        'Next 'Add Reinf Details to CCIpole Object
 
         For Each PoleIntGroupDataRow As DataRow In ds.Tables("CCIpole Int Groups EXCEL").Rows
-            Me.int_groups.Add(New PoleIntGroup(PoleIntGroupDataRow))
+            Dim NewIntGroup As PoleIntGroup
+            NewIntGroup = New PoleIntGroup(PoleIntGroupDataRow)
+
+            Dim IntGroupID, IntDetailsGroupID As Integer?
+
+            Try
+                If Not IsDBNull(CType(PoleIntGroupDataRow.Item("local_group_id"), Integer)) Then
+                    IntGroupID = CType(PoleIntGroupDataRow.Item("local_group_id"), Integer)
+                Else
+                    IntGroupID = Nothing
+                End If
+            Catch
+                IntGroupID = Nothing
+            End Try 'Group local_group_id
+
+            For Each PoleIntDetailDataRow As DataRow In ds.Tables("CCIpole Int Details EXCEL").Rows
+
+                Try
+                    If Not IsDBNull(CType(PoleIntDetailDataRow.Item("local_group_id"), Integer)) Then
+                        IntDetailsGroupID = CType(PoleIntDetailDataRow.Item("local_group_id"), Integer)
+                    Else
+                        IntDetailsGroupID = Nothing
+                    End If
+                Catch
+                    IntDetailsGroupID = Nothing
+                End Try 'Details local_group_id
+
+                If IntGroupID = IntDetailsGroupID Then
+                    NewIntGroup.int_ids.Add(New PoleIntDetail(PoleIntDetailDataRow))
+                End If
+
+            Next
+
+            Me.int_groups.Add(NewIntGroup)
+
         Next 'Add Interference Groups to CCIpole Object
 
-        For Each PoleIntDetailDataRow As DataRow In ds.Tables("CCIpole Int Details EXCEL").Rows
-            Me.int_ids.Add(New PoleIntDetail(PoleIntDetailDataRow))
-        Next 'Add Interference Details to CCIpole Object
+        'For Each PoleIntDetailDataRow As DataRow In ds.Tables("CCIpole Int Details EXCEL").Rows
+        '    Me.int_ids.Add(New PoleIntDetail(PoleIntDetailDataRow))
+        'Next 'Add Interference Details to CCIpole Object
 
         For Each PoleReinfResultsDataRow As DataRow In ds.Tables("CCIpole Pole Reinf Results EXCEL").Rows
             Me.reinf_section_results.Add(New PoleReinfResults(PoleReinfResultsDataRow))
@@ -575,10 +653,10 @@ Partial Public Class PoleSection
             If Not IsDBNull(CType(PoleSectionDataRow.Item("section_id"), Integer)) Then
                 Me.section_id = CType(PoleSectionDataRow.Item("section_id"), Integer)
             Else
-                Me.section_id = Nothing
+                Me.section_id = 0
             End If
         Catch
-            Me.section_id = Nothing
+            Me.section_id = 0
         End Try 'Section_Id
         Try
             If Not IsDBNull(CType(PoleSectionDataRow.Item("local_section_id"), Integer)) Then
@@ -674,10 +752,10 @@ Partial Public Class PoleSection
             If Not IsDBNull(CType(PoleSectionDataRow.Item("steel_grade_id"), Integer)) Then
                 Me.steel_grade_id = CType(PoleSectionDataRow.Item("steel_grade_id"), Integer)
             Else
-                Me.steel_grade_id = Nothing
+                Me.steel_grade_id = 0
             End If
         Catch
-            Me.steel_grade_id = Nothing
+            Me.steel_grade_id = 0
         End Try 'Steel_Grade_ID
         Try
             If Not IsDBNull(CType(PoleSectionDataRow.Item("local_matl_id"), Integer)) Then
@@ -1004,10 +1082,10 @@ Partial Public Class PoleReinfSection
             If Not IsDBNull(CType(PoleReinfSectionDataRow.Item("section_ID"), Integer)) Then
                 Me.section_id = CType(PoleReinfSectionDataRow.Item("section_ID"), Integer)
             Else
-                Me.section_id = Nothing
+                Me.section_id = 0
             End If
         Catch
-            Me.section_id = Nothing
+            Me.section_id = 0
         End Try 'Section_Id
         Try
             If Not IsDBNull(CType(PoleReinfSectionDataRow.Item("local_section_id"), Integer)) Then
@@ -1103,10 +1181,10 @@ Partial Public Class PoleReinfSection
             If Not IsDBNull(CType(PoleReinfSectionDataRow.Item("steel_grade_id"), Integer)) Then
                 Me.steel_grade_id = CType(PoleReinfSectionDataRow.Item("steel_grade_id"), Integer)
             Else
-                Me.steel_grade_id = Nothing
+                Me.steel_grade_id = 0
             End If
         Catch
-            Me.steel_grade_id = Nothing
+            Me.steel_grade_id = 0
         End Try 'Steel_Grade_Id
         Try
             If Not IsDBNull(CType(PoleReinfSectionDataRow.Item("local_matl_id"), Integer)) Then
@@ -1198,7 +1276,7 @@ End Class 'Add Reinforced Geom to CCIpole Object
 Partial Public Class PoleReinfGroup
 
 #Region "Define"
-    Private prop_reinf_group_id As Integer?
+    Private prop_group_id As Integer?
     Private prop_local_group_id As Integer?
     Private prop_elev_bot_actual As Double?
     Private prop_elev_bot_eff As Double?
@@ -1210,12 +1288,12 @@ Partial Public Class PoleReinfGroup
     Public Property reinf_ids As New List(Of PoleReinfDetail)
 
     <Category("PoleReinfGroup"), Description(""), DisplayName("Reinf_Group_Id")>
-    Public Property reinf_group_id() As Integer?
+    Public Property group_id() As Integer?
         Get
-            Return Me.prop_reinf_group_id
+            Return Me.prop_group_id
         End Get
         Set
-            Me.prop_reinf_group_id = Value
+            Me.prop_group_id = Value
         End Set
     End Property
     <Category("PoleReinfGroup"), Description(""), DisplayName("Local_Reinf_Group_Id")>
@@ -1301,14 +1379,14 @@ Partial Public Class PoleReinfGroup
 
     Public Sub New(ByVal PoleReinfGroupDataRow As DataRow)
         Try
-            If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("reinf_group_id"), Integer)) Then
-                Me.reinf_group_id = CType(PoleReinfGroupDataRow.Item("reinf_group_id"), Integer)
+            If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("group_id"), Integer)) Then
+                Me.group_id = CType(PoleReinfGroupDataRow.Item("group_id"), Integer)
             Else
-                Me.reinf_group_id = Nothing
+                Me.group_id = 0
             End If
         Catch
-            Me.reinf_group_id = Nothing
-        End Try 'Reinf_Group_Id
+            Me.group_id = 0
+        End Try 'group_id
         Try
             If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("local_group_id"), Integer)) Then
                 Me.local_group_id = CType(PoleReinfGroupDataRow.Item("local_group_id"), Integer)
@@ -1358,10 +1436,10 @@ Partial Public Class PoleReinfGroup
             If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("reinf_db_id"), Integer)) Then
                 Me.reinf_db_id = CType(PoleReinfGroupDataRow.Item("reinf_db_id"), Integer)
             Else
-                Me.reinf_db_id = Nothing
+                Me.reinf_db_id = 0
             End If
         Catch
-            Me.reinf_db_id = Nothing
+            Me.reinf_db_id = 0
         End Try 'Reinf_Db_Id
         Try
             If Not IsDBNull(CType(PoleReinfGroupDataRow.Item("local_reinf_id"), Integer)) Then
@@ -1382,7 +1460,7 @@ Partial Public Class PoleReinfGroup
             Me.qty = Nothing
         End Try 'QTY
 
-        'USE THIS
+
         'For Each PoleReinfDetailDataRow As DataRow In ds.Tables("CCIpole Reinf Details SQL").Rows
         '    Dim PoleReinfDetailRefID As Integer = CType(PoleReinfDetailDataRow.Item("pole_structure_id"), Integer)
         '    If PoleReinfDetailRefID = refID Then
@@ -1399,13 +1477,23 @@ End Class 'Add Reinf Group to CCIpole Object
 Partial Public Class PoleReinfDetail
 
 #Region "Define"
-    Private prop_local_group_id As Integer?
     Private prop_reinf_id As Integer?
+    Private prop_local_group_id As Integer?
+    Private prop_local_reinf_id As Integer?
     Private prop_pole_flat As Integer?
     Private prop_horizontal_offset As Double?
     Private prop_rotation As Double?
     Private prop_note As String
 
+    <Category("PoleReinfDetails"), Description(""), DisplayName("Reinf_Id")>
+    Public Property reinf_id() As Integer?
+        Get
+            Return Me.prop_reinf_id
+        End Get
+        Set
+            Me.prop_reinf_id = Value
+        End Set
+    End Property
     <Category("PoleReinfDetails"), Description(""), DisplayName("Local_Group_ID")>
     Public Property local_group_id() As Integer?
         Get
@@ -1415,13 +1503,13 @@ Partial Public Class PoleReinfDetail
             Me.prop_local_group_id = Value
         End Set
     End Property
-    <Category("PoleReinfDetails"), Description(""), DisplayName("Reinf_Id")>
-    Public Property reinf_id() As Integer?
+    <Category("PoleReinfDetails"), Description(""), DisplayName("Local_Reinf_ID")>
+    Public Property local_reinf_id() As Integer?
         Get
-            Return Me.prop_reinf_id
+            Return Me.prop_local_reinf_id
         End Get
         Set
-            Me.prop_reinf_id = Value
+            Me.prop_local_reinf_id = Value
         End Set
     End Property
     <Category("PoleReinfDetails"), Description(""), DisplayName("Pole_Flat")>
@@ -1470,6 +1558,15 @@ Partial Public Class PoleReinfDetail
 
     Public Sub New(ByVal PoleReinfDetailDataRow As DataRow)
         Try
+            If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("reinf_id"), Integer)) Then
+                Me.reinf_id = CType(PoleReinfDetailDataRow.Item("reinf_id"), Integer)
+            Else
+                Me.reinf_id = 0
+            End If
+        Catch
+            Me.reinf_id = 0
+        End Try 'Reinf_Id
+        Try
             If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("local_group_id"), Integer)) Then
                 Me.local_group_id = CType(PoleReinfDetailDataRow.Item("local_group_id"), Integer)
             Else
@@ -1479,14 +1576,14 @@ Partial Public Class PoleReinfDetail
             Me.local_group_id = Nothing
         End Try 'local_group_id
         Try
-            If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("reinf_id"), Integer)) Then
-                Me.reinf_id = CType(PoleReinfDetailDataRow.Item("reinf_id"), Integer)
+            If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("local_reinf_id"), Integer)) Then
+                Me.local_reinf_id = CType(PoleReinfDetailDataRow.Item("local_reinf_id"), Integer)
             Else
-                Me.reinf_id = Nothing
+                Me.local_reinf_id = Nothing
             End If
         Catch
-            Me.reinf_id = Nothing
-        End Try 'Reinf_Id
+            Me.local_reinf_id = Nothing
+        End Try 'local_reinf_id
         Try
             If Not IsDBNull(CType(PoleReinfDetailDataRow.Item("pole_flat"), Integer)) Then
                 Me.pole_flat = CType(PoleReinfDetailDataRow.Item("pole_flat"), Integer)
@@ -1528,7 +1625,7 @@ End Class 'Add Reinf Detail to CCIpole Object
 Partial Public Class PoleIntGroup
 
 #Region "Define"
-    Private prop_interference_group_id As Integer?
+    Private prop_group_id As Integer?
     Private prop_local_group_id As Integer?
     Private prop_elev_bot As Double?
     Private prop_elev_top As Double?
@@ -1538,12 +1635,12 @@ Partial Public Class PoleIntGroup
     Public Property int_ids As New List(Of PoleIntDetail)
 
     <Category("PoleIntGroup"), Description(""), DisplayName("Interference_Group_Id")>
-    Public Property interference_group_id() As Integer?
+    Public Property group_id() As Integer?
         Get
-            Return Me.prop_interference_group_id
+            Return Me.prop_group_id
         End Get
         Set
-            Me.prop_interference_group_id = Value
+            Me.prop_group_id = Value
         End Set
     End Property
     <Category("PoleIntGroup"), Description(""), DisplayName("Local_Interference_Group_Id")>
@@ -1610,14 +1707,14 @@ Partial Public Class PoleIntGroup
 
     Public Sub New(ByVal PoleIntGroupDataRow As DataRow)
         Try
-            If Not IsDBNull(CType(PoleIntGroupDataRow.Item("interference_group_id"), Integer)) Then
-                Me.interference_group_id = CType(PoleIntGroupDataRow.Item("interference_group_id"), Integer)
+            If Not IsDBNull(CType(PoleIntGroupDataRow.Item("group_id"), Integer)) Then
+                Me.group_id = CType(PoleIntGroupDataRow.Item("group_id"), Integer)
             Else
-                Me.interference_group_id = Nothing
+                Me.group_id = 0
             End If
         Catch
-            Me.interference_group_id = Nothing
-        End Try 'Interference_Group_Id
+            Me.group_id = 0
+        End Try 'group_id
         Try
             If Not IsDBNull(CType(PoleIntGroupDataRow.Item("local_group_id"), Integer)) Then
                 Me.local_group_id = CType(PoleIntGroupDataRow.Item("local_group_id"), Integer)
@@ -1686,13 +1783,23 @@ End Class 'Add Interference Group to CCIpole Object
 Partial Public Class PoleIntDetail
 
 #Region "Define"
+    Private prop_int_id As Integer?
     Private prop_local_group_id As Integer?
-    Private prop_interference_id As Integer?
+    Private prop_local_int_id As Integer?
     Private prop_pole_flat As Integer?
     Private prop_horizontal_offset As Double?
     Private prop_rotation As Double?
     Private prop_note As String
 
+    <Category("PoleIntDetail"), Description(""), DisplayName("Interference_Id")>
+    Public Property int_id() As Integer?
+        Get
+            Return Me.prop_int_id
+        End Get
+        Set
+            Me.prop_int_id = Value
+        End Set
+    End Property
     <Category("PoleIntDetail"), Description(""), DisplayName("Local_Int_Group_Id")>
     Public Property local_group_id() As Integer?
         Get
@@ -1702,13 +1809,13 @@ Partial Public Class PoleIntDetail
             Me.prop_local_group_id = Value
         End Set
     End Property
-    <Category("PoleIntDetail"), Description(""), DisplayName("Interference_Id")>
-    Public Property interference_id() As Integer?
+    <Category("PoleIntDetail"), Description(""), DisplayName("Local_Int_Detail_Id")>
+    Public Property local_int_id() As Integer?
         Get
-            Return Me.prop_interference_id
+            Return Me.prop_local_int_id
         End Get
         Set
-            Me.prop_interference_id = Value
+            Me.prop_local_int_id = Value
         End Set
     End Property
     <Category("PoleIntDetail"), Description(""), DisplayName("Pole_Flat")>
@@ -1758,14 +1865,32 @@ Partial Public Class PoleIntDetail
 
     Public Sub New(ByVal PoleIntDetailDataRow As DataRow)
         Try
-            If Not IsDBNull(CType(PoleIntDetailDataRow.Item("interference_id"), Integer)) Then
-                Me.interference_id = CType(PoleIntDetailDataRow.Item("interference_id"), Integer)
+            If Not IsDBNull(CType(PoleIntDetailDataRow.Item("int_id"), Integer)) Then
+                Me.int_id = CType(PoleIntDetailDataRow.Item("int_id"), Integer)
             Else
-                Me.interference_id = Nothing
+                Me.int_id = 0
             End If
         Catch
-            Me.interference_id = Nothing
+            Me.int_id = 0
         End Try 'Interference_Id
+        Try
+            If Not IsDBNull(CType(PoleIntDetailDataRow.Item("local_group_id"), Integer)) Then
+                Me.local_group_id = CType(PoleIntDetailDataRow.Item("local_group_id"), Integer)
+            Else
+                Me.local_group_id = Nothing
+            End If
+        Catch
+            Me.local_group_id = Nothing
+        End Try 'local_group_id
+        Try
+            If Not IsDBNull(CType(PoleIntDetailDataRow.Item("local_int_id"), Integer)) Then
+                Me.local_int_id = CType(PoleIntDetailDataRow.Item("local_int_id"), Integer)
+            Else
+                Me.local_int_id = Nothing
+            End If
+        Catch
+            Me.local_int_id = Nothing
+        End Try 'local_int_id
         Try
             If Not IsDBNull(CType(PoleIntDetailDataRow.Item("pole_flat"), Integer)) Then
                 Me.pole_flat = CType(PoleIntDetailDataRow.Item("pole_flat"), Integer)
@@ -1807,22 +1932,14 @@ End Class 'Add Interference Detail to CCIpole Object
 Partial Public Class PoleReinfResults
 
 #Region "Define"
-    Private prop_section_id As Integer?
     Private prop_work_order_seq_num As Double?
-    Private prop_analysis_section_id As Integer?
+    Private prop_section_id As Integer?
     Private prop_reinf_group_id As Integer?
+    Private prop_local_section_id As Integer?
+    Private prop_local_reinf_group_id As Integer?
     Private prop_result_lkup_value As Integer?
     Private prop_rating As Double?
 
-    <Category("PoleReinfResults"), Description(""), DisplayName("Section_Id")>
-    Public Property section_id() As Integer?
-        Get
-            Return Me.prop_section_id
-        End Get
-        Set
-            Me.prop_section_id = Value
-        End Set
-    End Property
     <Category("PoleReinfResults"), Description(""), DisplayName("Work_Order_Seq_Num")>
     Public Property work_order_seq_num() As Double?
         Get
@@ -1832,13 +1949,13 @@ Partial Public Class PoleReinfResults
             Me.prop_work_order_seq_num = Value
         End Set
     End Property
-    <Category("PoleReinfResults"), Description(""), DisplayName("Analysis_Section_ID")>
-    Public Property analysis_section_id() As Integer?
+    <Category("PoleReinfResults"), Description(""), DisplayName("Section_Id")>
+    Public Property section_id() As Integer?
         Get
-            Return Me.prop_analysis_section_id
+            Return Me.prop_section_id
         End Get
         Set
-            Me.prop_analysis_section_id = Value
+            Me.prop_section_id = Value
         End Set
     End Property
     <Category("PoleReinfResults"), Description(""), DisplayName("Reinf_Group_Id")>
@@ -1848,6 +1965,24 @@ Partial Public Class PoleReinfResults
         End Get
         Set
             Me.prop_reinf_group_id = Value
+        End Set
+    End Property
+    <Category("PoleReinfResults"), Description(""), DisplayName("Local_Section_ID")>
+    Public Property local_section_id() As Integer?
+        Get
+            Return Me.prop_local_section_id
+        End Get
+        Set
+            Me.prop_local_section_id = Value
+        End Set
+    End Property
+    <Category("PoleReinfResults"), Description(""), DisplayName("local_reinf_group_id")>
+    Public Property local_reinf_group_id() As Integer?
+        Get
+            Return Me.prop_local_reinf_group_id
+        End Get
+        Set
+            Me.prop_local_reinf_group_id = Value
         End Set
     End Property
     <Category("PoleReinfResults"), Description(""), DisplayName("Result_Lkup_Value")>
@@ -1878,41 +2013,50 @@ Partial Public Class PoleReinfResults
 
     Public Sub New(ByVal PoleReinfResultsDataRow As DataRow)
         Try
-            If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("section_id"), Integer)) Then
-                Me.section_id = CType(PoleReinfResultsDataRow.Item("section_id"), Integer)
-            Else
-                Me.section_id = Nothing
-            End If
-        Catch
-            Me.section_id = Nothing
-        End Try 'Section_Id
-        Try
             If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("work_order_seq_num"), Double)) Then
                 Me.work_order_seq_num = CType(PoleReinfResultsDataRow.Item("work_order_seq_num"), Double)
             Else
-                Me.work_order_seq_num = Nothing
+                Me.work_order_seq_num = 0
             End If
         Catch
-            Me.work_order_seq_num = Nothing
+            Me.work_order_seq_num = 0
         End Try 'Work_Order_Seq_Num
         Try
-            If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("analysis_section_id"), Integer)) Then
-                Me.analysis_section_id = CType(PoleReinfResultsDataRow.Item("analysis_section_id"), Integer)
+            If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("section_id"), Integer)) Then
+                Me.section_id = CType(PoleReinfResultsDataRow.Item("section_id"), Integer)
             Else
-                Me.analysis_section_id = Nothing
+                Me.section_id = 0
             End If
         Catch
-            Me.analysis_section_id = Nothing
-        End Try 'Analysis_Section_Id
+            Me.section_id = 0
+        End Try 'Section_Id
         Try
             If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("reinf_group_id"), Integer)) Then
                 Me.reinf_group_id = CType(PoleReinfResultsDataRow.Item("reinf_group_id"), Integer)
             Else
-                Me.reinf_group_id = Nothing
+                Me.reinf_group_id = 0
             End If
         Catch
-            Me.reinf_group_id = Nothing
+            Me.reinf_group_id = 0
         End Try 'Reinf_Group_Id
+        Try
+            If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("local_section_id"), Integer)) Then
+                Me.local_section_id = CType(PoleReinfResultsDataRow.Item("local_section_id"), Integer)
+            Else
+                Me.local_section_id = Nothing
+            End If
+        Catch
+            Me.local_section_id = Nothing
+        End Try 'local_section_id
+        Try
+            If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("local_reinf_group_id"), Integer)) Then
+                Me.local_reinf_group_id = CType(PoleReinfResultsDataRow.Item("local_reinf_group_id"), Integer)
+            Else
+                Me.local_reinf_group_id = Nothing
+            End If
+        Catch
+            Me.local_reinf_group_id = Nothing
+        End Try 'local_reinf_group_id
         Try
             If Not IsDBNull(CType(PoleReinfResultsDataRow.Item("result_lkup_value"), Integer)) Then
                 Me.result_lkup_value = CType(PoleReinfResultsDataRow.Item("result_lkup_value"), Integer)
@@ -1941,7 +2085,7 @@ Partial Public Class PropReinf
 
 #Region "Define"
     Private prop_reinf_db_id As Integer?
-    Private prop_reinf_id As Integer?
+    Private prop_local_id As Integer?                           'Local ID
     Private prop_name As String
     Private prop_type As String
     Private prop_b As Double?
@@ -1956,6 +2100,7 @@ Partial Public Class PropReinf
     Private prop_centroid As Double?
     Private prop_istension As Boolean
     Private prop_matl_id As Integer?
+    Private prop_local_matl_id As Integer?                       'Local ID
     Private prop_Ix As Double?
     Private prop_Iy As Double?
     Private prop_Lu As Double?
@@ -1968,7 +2113,8 @@ Partial Public Class PropReinf
     Private prop_connection_cap_revF_bot As Double?
     Private prop_connection_cap_revG_bot As Double?
     Private prop_connection_cap_revH_bot As Double?
-    Private prop_bolt_id_bot As Integer?
+    Private prop_bolt_type_id_bot As Integer?
+    Private prop_local_bolt_id_bot As Integer?                  'Local ID
     Private prop_bolt_N_or_X_bot As String
     Private prop_bolt_num_bot As Integer?
     Private prop_bolt_spacing_bot As Double?
@@ -1990,7 +2136,8 @@ Partial Public Class PropReinf
     Private prop_connection_cap_revF_top As Double?
     Private prop_connection_cap_revG_top As Double?
     Private prop_connection_cap_revH_top As Double?
-    Private prop_bolt_id_top As Integer?
+    Private prop_bolt_type_id_top As Integer?
+    Private prop_local_bolt_id_top As Integer?                  'Local ID
     Private prop_bolt_N_or_X_top As String
     Private prop_bolt_num_top As Integer?
     Private prop_bolt_spacing_top As Double?
@@ -2007,6 +2154,7 @@ Partial Public Class PropReinf
     Private prop_weld_long_length_top As Double?
     Private prop_weld_long_fillet_size_top As Double?
     Private prop_weld_long_eff_throat_top As Double?
+    Private prop_conn_length_channel As Double?
     Private prop_conn_length_bot As Double?
     Private prop_conn_length_top As Double?
     Private prop_cap_comp_xx_f As Double?
@@ -2076,12 +2224,12 @@ Partial Public Class PropReinf
             Me.prop_reinf_db_id = Value
         End Set
     End Property
-    Public Property reinf_id() As Integer?
+    Public Property local_id() As Integer?
         Get
-            Return Me.prop_reinf_id
+            Return Me.prop_local_id
         End Get
         Set
-            Me.prop_reinf_id = Value
+            Me.prop_local_id = Value
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Name")>
@@ -2210,6 +2358,15 @@ Partial Public Class PropReinf
             Me.prop_matl_id = Value
         End Set
     End Property
+    <Category("PropFlatPlate"), Description(""), DisplayName("Local_Matl_Id")>
+    Public Property local_matl_id() As Integer?
+        Get
+            Return Me.prop_local_matl_id
+        End Get
+        Set
+            Me.prop_local_matl_id = Value
+        End Set
+    End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Ix")>
     Public Property Ix() As Double?
         Get
@@ -2319,12 +2476,21 @@ Partial Public Class PropReinf
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Bolt_Id_Bot")>
-    Public Property bolt_id_bot() As Integer?
+    Public Property bolt_type_id_bot() As Integer?
         Get
-            Return Me.prop_bolt_id_bot
+            Return Me.prop_bolt_type_id_bot
         End Get
         Set
-            Me.prop_bolt_id_bot = Value
+            Me.prop_bolt_type_id_bot = Value
+        End Set
+    End Property
+    <Category("PropFlatPlate"), Description(""), DisplayName("Local_Bolt_Id_Bot")>
+    Public Property local_bolt_id_bot() As Integer?
+        Get
+            Return Me.prop_local_bolt_id_bot
+        End Get
+        Set
+            Me.prop_local_bolt_id_bot = Value
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Bolt_N_Or_X_Bot")>
@@ -2517,12 +2683,21 @@ Partial Public Class PropReinf
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Bolt_Id_Top")>
-    Public Property bolt_id_top() As Integer?
+    Public Property bolt_type_id_top() As Integer?
         Get
-            Return Me.prop_bolt_id_top
+            Return Me.prop_bolt_type_id_top
         End Get
         Set
-            Me.prop_bolt_id_top = Value
+            Me.prop_bolt_type_id_top = Value
+        End Set
+    End Property
+    <Category("PropFlatPlate"), Description(""), DisplayName("Local_Bolt_Id_Top")>
+    Public Property local_bolt_id_top() As Integer?
+        Get
+            Return Me.prop_local_bolt_id_top
+        End Get
+        Set
+            Me.prop_local_bolt_id_top = Value
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Bolt_N_Or_X_Top")>
@@ -2667,6 +2842,15 @@ Partial Public Class PropReinf
         End Get
         Set
             Me.prop_weld_long_eff_throat_top = Value
+        End Set
+    End Property
+    <Category("PropFlatPlate"), Description(""), DisplayName("conn_length_channel")>
+    Public Property conn_length_channel() As Double?
+        Get
+            Return Me.prop_conn_length_channel
+        End Get
+        Set
+            Me.prop_conn_length_channel = Value
         End Set
     End Property
     <Category("PropFlatPlate"), Description(""), DisplayName("Conn_Length_Bot")>
@@ -3213,20 +3397,20 @@ Partial Public Class PropReinf
             If Not IsDBNull(CType(PropReinfDataRow.Item("reinf_db_id"), Integer)) Then
                 Me.reinf_db_id = CType(PropReinfDataRow.Item("reinf_db_id"), Integer)
             Else
-                Me.reinf_db_id = Nothing
+                Me.reinf_db_id = 0
             End If
         Catch
-            Me.reinf_db_id = Nothing
+            Me.reinf_db_id = 0
         End Try 'Reinf_Db_Id
         Try
-            If Not IsDBNull(CType(PropReinfDataRow.Item("reinf_id"), Integer)) Then
-                Me.reinf_id = CType(PropReinfDataRow.Item("reinf_id"), Integer)
+            If Not IsDBNull(CType(PropReinfDataRow.Item("local_id"), Integer)) Then
+                Me.local_id = CType(PropReinfDataRow.Item("local_id"), Integer)
             Else
-                Me.reinf_id = Nothing
+                Me.local_id = Nothing
             End If
         Catch
-            Me.reinf_id = Nothing
-        End Try 'Reinf_Id
+            Me.local_id = Nothing
+        End Try 'local_id
         Try
             Me.name = CType(PropReinfDataRow.Item("name"), String)
         Catch
@@ -3336,11 +3520,20 @@ Partial Public Class PropReinf
             If Not IsDBNull(CType(PropReinfDataRow.Item("matl_id"), Integer)) Then
                 Me.matl_id = CType(PropReinfDataRow.Item("matl_id"), Integer)
             Else
-                Me.matl_id = Nothing
+                Me.matl_id = 0
             End If
         Catch
-            Me.matl_id = Nothing
+            Me.matl_id = 0
         End Try 'Matl_Id
+        Try
+            If Not IsDBNull(CType(PropReinfDataRow.Item("local_matl_id"), Integer)) Then
+                Me.local_matl_id = CType(PropReinfDataRow.Item("local_matl_id"), Integer)
+            Else
+                Me.local_matl_id = Nothing
+            End If
+        Catch
+            Me.local_matl_id = Nothing
+        End Try 'local_matl_id
         Try
             If Not IsDBNull(CType(PropReinfDataRow.Item("Ix"), Double)) Then
                 Me.Ix = CType(PropReinfDataRow.Item("Ix"), Double)
@@ -3446,14 +3639,23 @@ Partial Public Class PropReinf
             Me.connection_cap_revH_bot = Nothing
         End Try 'Connection_Cap_Revh_Bot
         Try
-            If Not IsDBNull(CType(PropReinfDataRow.Item("bolt_id_bot"), Integer)) Then
-                Me.bolt_id_bot = CType(PropReinfDataRow.Item("bolt_id_bot"), Integer)
+            If Not IsDBNull(CType(PropReinfDataRow.Item("bolt_type_id_bot"), Integer)) Then
+                Me.bolt_type_id_bot = CType(PropReinfDataRow.Item("bolt_type_id_bot"), Integer)
             Else
-                Me.bolt_id_bot = Nothing
+                Me.bolt_type_id_bot = 0
             End If
         Catch
-            Me.bolt_id_bot = Nothing
-        End Try 'bolt_id_Bot
+            Me.bolt_type_id_bot = 0
+        End Try 'bolt_type_id_bot
+        Try
+            If Not IsDBNull(CType(PropReinfDataRow.Item("local_bolt_id_bot"), Integer)) Then
+                Me.local_bolt_id_bot = CType(PropReinfDataRow.Item("local_bolt_id_bot"), Integer)
+            Else
+                Me.local_bolt_id_bot = Nothing
+            End If
+        Catch
+            Me.local_bolt_id_bot = Nothing
+        End Try 'local_bolt_id_bot
         Try
             Me.bolt_N_or_X_bot = CType(PropReinfDataRow.Item("bolt_N_or_X_bot"), String)
         Catch
@@ -3620,14 +3822,23 @@ Partial Public Class PropReinf
             Me.connection_cap_revH_top = Nothing
         End Try 'Connection_Cap_Revh_Top
         Try
-            If Not IsDBNull(CType(PropReinfDataRow.Item("bolt_id_top"), Integer)) Then
-                Me.bolt_id_top = CType(PropReinfDataRow.Item("bolt_id_top"), Integer)
+            If Not IsDBNull(CType(PropReinfDataRow.Item("bolt_type_id_top"), Integer)) Then
+                Me.bolt_type_id_top = CType(PropReinfDataRow.Item("bolt_type_id_top"), Integer)
             Else
-                Me.bolt_id_top = Nothing
+                Me.bolt_type_id_top = 0
             End If
         Catch
-            Me.bolt_id_top = Nothing
-        End Try 'bolt_id_Top
+            Me.bolt_type_id_top = 0
+        End Try 'bolt_type_id_top
+        Try
+            If Not IsDBNull(CType(PropReinfDataRow.Item("local_bolt_id_top"), Integer)) Then
+                Me.local_bolt_id_top = CType(PropReinfDataRow.Item("local_bolt_id_top"), Integer)
+            Else
+                Me.local_bolt_id_top = Nothing
+            End If
+        Catch
+            Me.local_bolt_id_top = Nothing
+        End Try 'local_bolt_id_top
         Try
             Me.bolt_N_or_X_top = CType(PropReinfDataRow.Item("bolt_N_or_X_top"), String)
         Catch
@@ -3756,6 +3967,15 @@ Partial Public Class PropReinf
         Catch
             Me.weld_long_eff_throat_top = Nothing
         End Try 'Weld_Long_Eff_Throat_Top
+        Try
+            If Not IsDBNull(CType(PropReinfDataRow.Item("conn_length_channel"), Double)) Then
+                Me.conn_length_channel = CType(PropReinfDataRow.Item("conn_length_channel"), Double)
+            Else
+                Me.conn_length_channel = Nothing
+            End If
+        Catch
+            Me.conn_length_channel = Nothing
+        End Try 'conn_length_channel
         Try
             If Not IsDBNull(CType(PropReinfDataRow.Item("conn_length_bot"), Double)) Then
                 Me.conn_length_bot = CType(PropReinfDataRow.Item("conn_length_bot"), Double)
@@ -4297,7 +4517,7 @@ Partial Public Class PropBolt
 
 #Region "Define"
     Private prop_bolt_db_id As Integer?
-    Private prop_bolt_id As Integer?
+    Private prop_local_id As Integer?
     Private prop_name As String
     Private prop_description As String
     Private prop_diam As Double?
@@ -4323,13 +4543,13 @@ Partial Public Class PropBolt
             Me.prop_bolt_db_id = Value
         End Set
     End Property
-    <Category("PropBolt"), Description(""), DisplayName("Bolt_Id")>
-    Public Property bolt_id() As Integer?
+    <Category("PropBolt"), Description(""), DisplayName("Local_Id")>
+    Public Property local_id() As Integer?
         Get
-            Return Me.prop_bolt_id
+            Return Me.prop_local_id
         End Get
         Set
-            Me.prop_bolt_id = Value
+            Me.prop_local_id = Value
         End Set
     End Property
     <Category("PropBolt"), Description(""), DisplayName("Name")>
@@ -4480,20 +4700,20 @@ Partial Public Class PropBolt
             If Not IsDBNull(CType(PropBoltDataRow.Item("bolt_db_id"), Integer)) Then
                 Me.bolt_db_id = CType(PropBoltDataRow.Item("bolt_db_id"), Integer)
             Else
-                Me.bolt_db_id = Nothing
+                Me.bolt_db_id = 0
             End If
         Catch
-            Me.bolt_db_id = Nothing
+            Me.bolt_db_id = 0
         End Try 'Bolt_Db_Id
         Try
-            If Not IsDBNull(CType(PropBoltDataRow.Item("bolt_id"), Integer)) Then
-                Me.bolt_id = CType(PropBoltDataRow.Item("bolt_id"), Integer)
+            If Not IsDBNull(CType(PropBoltDataRow.Item("local_id"), Integer)) Then
+                Me.local_id = CType(PropBoltDataRow.Item("local_id"), Integer)
             Else
-                Me.bolt_id = Nothing
+                Me.local_id = Nothing
             End If
         Catch
-            Me.bolt_id = Nothing
-        End Try 'Bolt_Id
+            Me.local_id = Nothing
+        End Try 'local_id
         Try
             Me.name = CType(PropBoltDataRow.Item("name"), String)
         Catch
@@ -4627,7 +4847,7 @@ Partial Public Class PropMatl
 
 #Region "Define"
     Private prop_matl_db_id As Integer?
-    Private prop_matl_id As Integer?
+    Private prop_local_id As Integer?
     Private prop_name As String
     Private prop_fy As Double?
     Private prop_fu As Double?
@@ -4641,13 +4861,13 @@ Partial Public Class PropMatl
             Me.prop_matl_db_id = Value
         End Set
     End Property
-    <Category("PropMatl"), Description(""), DisplayName("Matl_Id")>
-    Public Property matl_id() As Integer?
+    <Category("PropMatl"), Description(""), DisplayName("Local_Id")>
+    Public Property local_id() As Integer?
         Get
-            Return Me.prop_matl_id
+            Return Me.prop_local_id
         End Get
         Set
-            Me.prop_matl_id = Value
+            Me.prop_local_id = Value
         End Set
     End Property
     <Category("PropMatl"), Description(""), DisplayName("Name")>
@@ -4690,20 +4910,20 @@ Partial Public Class PropMatl
             If Not IsDBNull(CType(PropMatlDataRow.Item("matl_db_id"), Integer)) Then
                 Me.matl_db_id = CType(PropMatlDataRow.Item("matl_db_id"), Integer)
             Else
-                Me.matl_db_id = Nothing
+                Me.matl_db_id = 0
             End If
         Catch
-            Me.matl_db_id = Nothing
+            Me.matl_db_id = 0
         End Try 'Matl_Db_Id
         Try
-            If Not IsDBNull(CType(PropMatlDataRow.Item("matl_id"), Integer)) Then
-                Me.matl_id = CType(PropMatlDataRow.Item("matl_id"), Integer)
+            If Not IsDBNull(CType(PropMatlDataRow.Item("local_id"), Integer)) Then
+                Me.local_id = CType(PropMatlDataRow.Item("local_id"), Integer)
             Else
-                Me.matl_id = Nothing
+                Me.local_id = Nothing
             End If
         Catch
-            Me.matl_id = Nothing
-        End Try 'Matl_Id
+            Me.local_id = Nothing
+        End Try 'local_id
         Try
             Me.name = CType(PropMatlDataRow.Item("name"), String)
         Catch

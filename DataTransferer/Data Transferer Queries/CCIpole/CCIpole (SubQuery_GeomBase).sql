@@ -1,26 +1,30 @@
 ﻿BEGIN --Base Geom SubQuery BEGIN
-
-	--Material ID
-	BEGIN
-		IF @MatlID IS NULL
-			BEGIN
-				DELETE FROM @PropMatl
-				INSERT INTO pole.matl_prop_flat_plate OUTPUT INSERTED.ID INTO @PropMatl VALUES ('[INSERT MATL PROP]')
-				SELECT @MatlID = ID FROM @PropMatl
-			END
-	END
-
-	--Geometry Section
-	BEGIN
-		DELETE FROM @PoleSection
 	
-		--Add row with data to Geometry table
-		INSERT INTO pole.pole_section OUTPUT INSERTED.ID INTO @PoleSection VALUES ('[INSERT POLE SECTION]')
-		SELECT @PoleSectionID = PoleSectionID FROM @PoleSection
+	--Material ID	
+	SET @MatlID = '[STEEL GRADE ID]'
 
-		--Add to xref table
-		INSERT INTO pole.pole_section_xref (pole_structure_id, section_id) VALUES (@PoleID, @PoleSectionID)
-	END
+	--MatlDNU IF @MatlID IS NULL
+	--MatlDNU 	BEGIN
+	--MatlDNU 		IF EXISTS(SELECT * FROM pole.matl_prop_flat_plate WHERE local_id = '[local_id]' AND name = '[name]' AND fy = '[fy]' AND fu = '[fu]') 
+	--MatlDNU 			SELECT @MatlID = ID FROM pole.matl_prop_flat_plate WHERE local_id = '[local_id]' AND name = '[name]' AND fy = '[fy]' AND fu = '[fu]'
+	--MatlDNU 		ELSE
+	--MatlDNU 			BEGIN
+	--MatlDNU 				INSERT INTO pole.matl_prop_flat_plate OUTPUT INSERTED.ID INTO @PropMatl VALUES ('[INSERT MATL PROP]')
+	--MatlDNU 				SELECT @MatlID = MatlID FROM @PropMatl
+	--MatlDNU 			END
+	--MatlDNU 	END
+
+	--Add to Matl XREF table
+	IF NOT EXISTS (SELECT * FROM pole.matl_prop_flat_plate_xref WHERE pole_structure_id = @PoleID AND matl_id = @MatlID)
+		INSERT INTO pole.matl_prop_flat_plate_xref (pole_structure_id, matl_id) VALUES (@PoleID, @MatlID)
+
+	
+	--Geometry Section
+	INSERT INTO pole.pole_section OUTPUT INSERTED.ID INTO @PoleSection VALUES ('[INSERT SINGLE POLE SECTION]')
+	SELECT @PoleSectionID = PoleSectionID FROM @PoleSection
+
+	--Add to Geom XREF table
+	INSERT INTO pole.pole_section_xref (pole_structure_id, section_id) VALUES (@PoleID, @PoleSectionID)
 
 END --Base Geom SubQuery END
 
