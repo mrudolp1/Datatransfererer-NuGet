@@ -113,10 +113,10 @@ Partial Public Class frmMain
 
 
 #Region "Foundations"
-    Public strcXL As EDSStructure
+    Public strcLocal As EDSStructure
     Public strcEDS As EDSStructure
 
-    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportXLFnd.Click
+    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportStrcFiles.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         BUNumber = txtFndBU.Text
         StrcID = txtFndStrc.Text
@@ -126,14 +126,14 @@ Partial Public Class frmMain
         xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            strcXL = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
         End If
 
-        propgridFndXL.SelectedObject = strcXL
+        propgridFndXL.SelectedObject = strcLocal
 
     End Sub
 
-    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportXLFnds.Click
+    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
         If strcEDS Is Nothing Then Exit Sub
 
         Dim strcFBD As New FolderBrowserDialog
@@ -151,13 +151,13 @@ Partial Public Class frmMain
 
     End Sub
     Private Sub btnSaveFndToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
-        If strcXL Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        If strcLocal Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        strcXL.SavetoEDS(EDSnewId, EDSdbActive)
+        strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
     End Sub
-    Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareFnd.Click
-        If strcXL Is Nothing Or strcEDS Is Nothing Then Exit Sub
-        strcXL.CompareMe(strcEDS)
+    Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareStrc.Click
+        If strcLocal Is Nothing Or strcEDS Is Nothing Then Exit Sub
+        strcLocal.CompareMe(strcEDS)
     End Sub
 #End Region
 
@@ -359,11 +359,11 @@ Partial Public Class frmMain
         End If
 
         Dim differences As String = ""
-        Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
+        'Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
 
         My.Computer.Clipboard.SetText(differences)
 
-        MessageBox.Show(result.ToString)
+        'MessageBox.Show(result.ToString)
 
     End Sub
 

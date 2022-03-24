@@ -226,6 +226,51 @@ Partial Public Class tnxModel
 
     End Sub
 
+    <Category("Constructor"), Description("Create TNX object from DataSet")>
+    Public Sub New(ByRef StructureDS As DataSet, Optional ByRef Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        setIndInputs(StructureDS.Tables("TNX").Rows(0))
+
+        If StructureDS.Tables.Contains("Base Structure") Then
+            For Each baseSection As DataRow In StructureDS.Tables("Base Structure").Rows
+                Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Upper Structure") Then
+            For Each upperSection As DataRow In StructureDS.Tables("Upper Structure").Rows
+                Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Guys") Then
+            For Each guyLevel As DataRow In StructureDS.Tables("Guys").Rows
+                Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Materials") Then
+            For Each material As DataRow In StructureDS.Tables("Materials").Rows
+                If Not IsDBNull(material.Item("IsBolt")) Then
+                    If CBool(material.Item("IsBolt")) Then
+                        Me.database.bolts.Add(New tnxBolt(material))
+                    Else
+                        Me.database.materials.Add(New tnxMaterial(material))
+                    End If
+                End If
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Members") Then
+            For Each member As DataRow In StructureDS.Tables("Members").Rows
+                Me.database.members.Add(New tnxMember(member))
+            Next
+        End If
+
+    End Sub
+
     <Category("Constructor"), Description("Create TNX object from DataSet.")>
     Public Sub New(ByRef strDS As DataSet)
 

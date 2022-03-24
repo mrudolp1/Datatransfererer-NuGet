@@ -415,8 +415,7 @@ Public Class EXCELRngParameter
 End Class
 
 Public Class Comparison
-    Public Property DBStatus As dbStatuses
-    Public Property Changes As List(Of AnalysisChanges)
+    Public Property Differences As List(Of ObjectsComparer.Difference)
 
     Public Function CreateChangeSummary() As String
         Dim summary As String = ""
@@ -425,28 +424,22 @@ Public Class Comparison
             summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
         Next
 
+        Return summary
+
     End Function
 
-    Public Function Check1Change(ByVal categoryName As String, ByVal fieldName As String, ByVal newValue As Object, ByVal previousValue As Object, Optional ByRef previousIdentity As String = "") As Boolean
-        'If changeDt.Columns.Count = 0 Then
-        '    changeDt.Columns.Add("Variable", Type.GetType("System.String"))
-        '    changeDt.Columns.Add("New Value", Type.GetType("System.String"))
-        '    changeDt.Columns.Add("Previuos Value", Type.GetType("System.String"))
-        '    'changeDt.Columns.Add("WO", Type.GetType("System.String"))
-        'End If
+    Public Function Check1Change(ByVal memberPath As String, ByVal newValue As Object, ByVal previousValue As Object) As Boolean
 
         If newValue <> previousValue Then
-            'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            Me.Changes.Add(New AnalysisChanges(categoryName, fieldName, newValue, previousValue, previousIdentity))
+
+            If IsNothing(newValue) Then
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, "", previousValue.ToString, ObjectsComparer.DifferenceTypes.MissedElementInFirstObject))
+            ElseIf IsNothing(previousValue) Then
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, newValue.ToString, "", ObjectsComparer.DifferenceTypes.MissedElementInSecondObject))
+            Else
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, newValue.ToString, previousValue.ToString, ObjectsComparer.DifferenceTypes.ValueMismatch))
+            End If
             Return True
-            'ElseIf Not IsNothing(newValue) And IsNothing(previousValue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
-            '    'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            '    changeList.Add(New AnalysisChanges(previousValue, newValue, variable, db))
-            '    Return True
-            'ElseIf IsNothing(newValue) And Not IsNothing(previousValue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
-            '    'changeDt.Rows.Add(variable, newValue, previousValue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            '    changeList.Add(New AnalysisChanges(previousValue, newValue, variable, db))
-            '    Return True
         Else
             Return False
         End If

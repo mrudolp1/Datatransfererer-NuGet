@@ -25,18 +25,18 @@
     ''' </summary>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Me.pgFoundations = New System.Windows.Forms.TabPage()
+        Me.pgStructure = New System.Windows.Forms.TabPage()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
-        Me.btnImportXLFnd = New System.Windows.Forms.Button()
+        Me.btnImportStrcFiles = New System.Windows.Forms.Button()
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
         Me.propgridFndXL = New System.Windows.Forms.PropertyGrid()
         Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
         Me.propgridFndEDS = New System.Windows.Forms.PropertyGrid()
         Me.btnLoadFndFromEDS = New System.Windows.Forms.Button()
-        Me.btnExportXLFnds = New System.Windows.Forms.Button()
+        Me.btnExportStrcFiles = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
-        Me.btnCompareFnd = New System.Windows.Forms.Button()
+        Me.btnCompareStrc = New System.Windows.Forms.Button()
         Me.txtFndStrc = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.txtFndBU = New System.Windows.Forms.TextBox()
@@ -67,7 +67,7 @@
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.pgFoundations.SuspendLayout()
+        Me.pgStructure.SuspendLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer3.Panel1.SuspendLayout()
         Me.SplitContainer3.Panel2.SuspendLayout()
@@ -98,17 +98,17 @@
         Me.TabControl1.SuspendLayout()
         Me.SuspendLayout()
         '
-        'pgFoundations
+        'pgStructure
         '
-        Me.pgFoundations.Controls.Add(Me.SplitContainer3)
-        Me.pgFoundations.Controls.Add(Me.Panel2)
-        Me.pgFoundations.Location = New System.Drawing.Point(4, 22)
-        Me.pgFoundations.Name = "pgFoundations"
-        Me.pgFoundations.Padding = New System.Windows.Forms.Padding(3)
-        Me.pgFoundations.Size = New System.Drawing.Size(883, 461)
-        Me.pgFoundations.TabIndex = 4
-        Me.pgFoundations.Text = "Foundations"
-        Me.pgFoundations.UseVisualStyleBackColor = True
+        Me.pgStructure.Controls.Add(Me.SplitContainer3)
+        Me.pgStructure.Controls.Add(Me.Panel2)
+        Me.pgStructure.Location = New System.Drawing.Point(4, 22)
+        Me.pgStructure.Name = "pgStructure"
+        Me.pgStructure.Padding = New System.Windows.Forms.Padding(3)
+        Me.pgStructure.Size = New System.Drawing.Size(883, 461)
+        Me.pgStructure.TabIndex = 4
+        Me.pgStructure.Text = "Structure"
+        Me.pgStructure.UseVisualStyleBackColor = True
         '
         'SplitContainer3
         '
@@ -119,7 +119,7 @@
         'SplitContainer3.Panel1
         '
         Me.SplitContainer3.Panel1.Controls.Add(Me.btnSaveFndToEDS)
-        Me.SplitContainer3.Panel1.Controls.Add(Me.btnImportXLFnd)
+        Me.SplitContainer3.Panel1.Controls.Add(Me.btnImportStrcFiles)
         Me.SplitContainer3.Panel1.Controls.Add(Me.SplitContainer4)
         Me.SplitContainer3.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
         '
@@ -140,14 +140,14 @@
         Me.btnSaveFndToEDS.Text = "Save to EDS"
         Me.btnSaveFndToEDS.UseVisualStyleBackColor = True
         '
-        'btnImportXLFnd
+        'btnImportStrcFiles
         '
-        Me.btnImportXLFnd.Location = New System.Drawing.Point(3, 10)
-        Me.btnImportXLFnd.Name = "btnImportXLFnd"
-        Me.btnImportXLFnd.Size = New System.Drawing.Size(160, 21)
-        Me.btnImportXLFnd.TabIndex = 1
-        Me.btnImportXLFnd.Text = "Import Foundation Tools"
-        Me.btnImportXLFnd.UseVisualStyleBackColor = True
+        Me.btnImportStrcFiles.Location = New System.Drawing.Point(3, 10)
+        Me.btnImportStrcFiles.Name = "btnImportStrcFiles"
+        Me.btnImportStrcFiles.Size = New System.Drawing.Size(160, 21)
+        Me.btnImportStrcFiles.TabIndex = 1
+        Me.btnImportStrcFiles.Text = "Import Structure Files"
+        Me.btnImportStrcFiles.UseVisualStyleBackColor = True
         '
         'SplitContainer4
         '
@@ -185,7 +185,7 @@
         'SplitContainer5.Panel2
         '
         Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
-        Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportXLFnds)
+        Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportStrcFiles)
         Me.SplitContainer5.Size = New System.Drawing.Size(435, 410)
         Me.SplitContainer5.SplitterDistance = 275
         Me.SplitContainer5.TabIndex = 0
@@ -207,18 +207,18 @@
         Me.btnLoadFndFromEDS.Text = "Load From EDS"
         Me.btnLoadFndFromEDS.UseVisualStyleBackColor = True
         '
-        'btnExportXLFnds
+        'btnExportStrcFiles
         '
-        Me.btnExportXLFnds.Location = New System.Drawing.Point(-1, 38)
-        Me.btnExportXLFnds.Name = "btnExportXLFnds"
-        Me.btnExportXLFnds.Size = New System.Drawing.Size(160, 21)
-        Me.btnExportXLFnds.TabIndex = 5
-        Me.btnExportXLFnds.Text = "Export Foundation Tools"
-        Me.btnExportXLFnds.UseVisualStyleBackColor = True
+        Me.btnExportStrcFiles.Location = New System.Drawing.Point(-1, 38)
+        Me.btnExportStrcFiles.Name = "btnExportStrcFiles"
+        Me.btnExportStrcFiles.Size = New System.Drawing.Size(160, 21)
+        Me.btnExportStrcFiles.TabIndex = 5
+        Me.btnExportStrcFiles.Text = "Export Structure Files"
+        Me.btnExportStrcFiles.UseVisualStyleBackColor = True
         '
         'Panel2
         '
-        Me.Panel2.Controls.Add(Me.btnCompareFnd)
+        Me.Panel2.Controls.Add(Me.btnCompareStrc)
         Me.Panel2.Controls.Add(Me.txtFndStrc)
         Me.Panel2.Controls.Add(Me.Label5)
         Me.Panel2.Controls.Add(Me.txtFndBU)
@@ -229,14 +229,14 @@
         Me.Panel2.Size = New System.Drawing.Size(877, 45)
         Me.Panel2.TabIndex = 6
         '
-        'btnCompareFnd
+        'btnCompareStrc
         '
-        Me.btnCompareFnd.Location = New System.Drawing.Point(358, 12)
-        Me.btnCompareFnd.Name = "btnCompareFnd"
-        Me.btnCompareFnd.Size = New System.Drawing.Size(160, 21)
-        Me.btnCompareFnd.TabIndex = 9
-        Me.btnCompareFnd.Text = "Compare"
-        Me.btnCompareFnd.UseVisualStyleBackColor = True
+        Me.btnCompareStrc.Location = New System.Drawing.Point(358, 12)
+        Me.btnCompareStrc.Name = "btnCompareStrc"
+        Me.btnCompareStrc.Size = New System.Drawing.Size(160, 21)
+        Me.btnCompareStrc.TabIndex = 9
+        Me.btnCompareStrc.Text = "Compare"
+        Me.btnCompareStrc.UseVisualStyleBackColor = True
         '
         'txtFndStrc
         '
@@ -541,7 +541,7 @@
         '
         Me.TabControl1.Controls.Add(Me.pgSQLBackUp)
         Me.TabControl1.Controls.Add(Me.pgTNX)
-        Me.TabControl1.Controls.Add(Me.pgFoundations)
+        Me.TabControl1.Controls.Add(Me.pgStructure)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
@@ -560,7 +560,7 @@
         Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
         Me.Name = "frmMain"
         Me.Text = "EDS & Excel Testing"
-        Me.pgFoundations.ResumeLayout(False)
+        Me.pgStructure.ResumeLayout(False)
         Me.SplitContainer3.Panel1.ResumeLayout(False)
         Me.SplitContainer3.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -596,18 +596,18 @@
 
     End Sub
 
-    Friend WithEvents pgFoundations As TabPage
+    Friend WithEvents pgStructure As TabPage
     Friend WithEvents SplitContainer3 As SplitContainer
     Friend WithEvents btnSaveFndToEDS As Button
-    Friend WithEvents btnImportXLFnd As Button
+    Friend WithEvents btnImportStrcFiles As Button
     Friend WithEvents SplitContainer4 As SplitContainer
     Friend WithEvents propgridFndXL As PropertyGrid
     Friend WithEvents SplitContainer5 As SplitContainer
     Friend WithEvents propgridFndEDS As PropertyGrid
     Friend WithEvents btnLoadFndFromEDS As Button
-    Friend WithEvents btnExportXLFnds As Button
+    Friend WithEvents btnExportStrcFiles As Button
     Friend WithEvents Panel2 As Panel
-    Friend WithEvents btnCompareFnd As Button
+    Friend WithEvents btnCompareStrc As Button
     Friend WithEvents txtFndStrc As TextBox
     Friend WithEvents Label5 As Label
     Friend WithEvents txtFndBU As TextBox
