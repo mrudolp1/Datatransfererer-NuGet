@@ -11,7 +11,7 @@ Partial Public Class PierAndPad
     '''Must override these inherited properties
     Public Overrides ReadOnly Property foundationType As String = "Pier and Pad"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.pier_pad"
-    Public Overrides ReadOnly Property templatePath As String = "C:\Users\" & Environment.UserName & "\Documents\.NET Testing\Foundations\Pier and Pad\Template\Pier and Pad Foundation (4.1.2) - TEMPLATE - 10-6-2021.xlsm"
+    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)")}
@@ -1561,21 +1561,39 @@ Partial Public Class PierAndPad
             Return False
         End If
 
-        Dim comparer As New ObjectsComparer.Comparer()
-        Dim basePath As String = "Foundations " & Me.foundationType
+        Dim comparer As New ObjectsComparer.Comparer(Of PierAndPad)
+
+        'Ignore these 
+        comparer.IgnoreMember("ID")
+        comparer.IgnoreMember("activeDatabase")
+        comparer.IgnoreMember("databaseIdentity")
+        comparer.IgnoreMember("differences")
+        comparer.IgnoreMember("Insert")
+        comparer.IgnoreMember("Update")
+        comparer.IgnoreMember("Delete")
+        comparer.IgnoreMember("workBookPath")
+        comparer.IgnoreMember("templatePath")
+        comparer.IgnoreMember("fileType")
+        comparer.IgnoreMember("EDSTableName")
+        comparer.IgnoreMember("excelDTParams")
+
+        Dim basePath As String = "Foundations - " & Me.foundationType
         'Me.differences = New List(Of ObjectsComparer.Difference)
         Dim differences As IEnumerable(Of ObjectsComparer.Difference) = Nothing
 
+        CompareMe = comparer.Compare(Me, prevPierandPad, differences)
+
+
         'If the current item doesn't have an ID it wasn't created from EDS and should need to be inserted
         'If we weren't able to find a previous item in EDS we need to insert
-        If Me.ID Is Nothing Then
-            differences.Add(New ObjectsComparer.Difference(basePath, "New", "", ObjectsComparer.DifferenceTypes.MissedMemberInSecondObject))
-        End If
+        'If Me.ID Is Nothing Then
+        '    differences.Add(New ObjectsComparer.Difference(basePath, "New", "", ObjectsComparer.DifferenceTypes.MissedMemberInSecondObject))
+        'End If
 
-        CompareMe = True
+        'CompareMe = True
 
-        'Check Details
-        If Not comparer.Compare(Me.pier_shape, prevPierandPad.pier_shape, differences) Then CompareMe = False
+        ''Check Details
+        'If Not comparer.Compare(Me.pier_shape, prevPierandPad.pier_shape, basePath & " - pier shape", differences) Then CompareMe = False
         'If Me.dbComparison.Check1Change(Me.foundationType, "pier_diameter", Me.pier_diameter.ToString, previous.pier_diameter.ToString) Then changesMade = True
         'If Me.dbComparison.Check1Change(Me.foundationType, "extension_above_grade", Me.extension_above_grade.ToString, previous.extension_above_grade.ToString) Then changesMade = True
         'If Me.dbComparison.Check1Change(Me.foundationType, "pier_rebar_size", Me.pier_rebar_size.ToString, previous.pier_rebar_size.ToString) Then changesMade = True
@@ -1624,77 +1642,6 @@ Partial Public Class PierAndPad
         Return CompareMe
 
     End Function
-    'Public Overrides Function CompareMe(ByVal previous As PierAndPad) As Boolean
-    '    ''''''Customize for each foundation type'''''
-    '    '''This function "shadows" the generic CompareMe function inherited from it's grandparent class EDSObject
-    '    '''If you don't need specific change summary, you can delect this function and still use the inherited function to compare if objects are the same
-
-
-    '    'If the current item doesn't have an ID it wasn't created from EDS and should need to be inserted
-    '    'If we weren't able to find a previous item in EDS we need to insert
-    '    If Me.ID Is Nothing Or previous Is Nothing Then
-    '        'Me.dbStatus = dbStatuses.Insert
-    '        Return Me.dbComparison.Check1Change("Foundation", "Added", Me.foundationType, Nothing)
-    '    End If
-
-    '    Dim changesMade As Boolean = False
-
-    '    'Check Details
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_shape", Me.pier_shape, previous.pier_shape) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_diameter", Me.pier_diameter.ToString, previous.pier_diameter.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "extension_above_grade", Me.extension_above_grade.ToString, previous.extension_above_grade.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_rebar_size", Me.pier_rebar_size.ToString, previous.pier_rebar_size.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_tie_size", Me.pier_tie_size.ToString, previous.pier_tie_size.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_tie_quantity", Me.pier_tie_quantity.ToString, previous.pier_tie_quantity.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_reinforcement_type", Me.pier_reinforcement_type, previous.pier_reinforcement_type) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_clear_cover", Me.pier_clear_cover.ToString, previous.pier_clear_cover.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "foundation_depth", Me.foundation_depth.ToString, previous.foundation_depth.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_width_1", Me.pad_width_1.ToString, previous.pad_width_1.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_width_2", Me.pad_width_2.ToString, previous.pad_width_2.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_thickness", Me.pad_thickness.ToString, previous.pad_thickness.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_size_top_dir1", Me.pad_rebar_size_top_dir1.ToString, previous.pad_rebar_size_top_dir1.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_size_bottom_dir1", Me.pad_rebar_size_bottom_dir1.ToString, previous.pad_rebar_size_bottom_dir1.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_size_top_dir2", Me.pad_rebar_size_top_dir2.ToString, previous.pad_rebar_size_top_dir2.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_size_bottom_dir2", Me.pad_rebar_size_bottom_dir2.ToString, previous.pad_rebar_size_bottom_dir2.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_quantity_top_dir1", Me.pad_rebar_quantity_top_dir1.ToString, previous.pad_rebar_quantity_top_dir1.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_quantity_bottom_dir1", Me.pad_rebar_quantity_bottom_dir1.ToString, previous.pad_rebar_quantity_bottom_dir1.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_quantity_top_dir2", Me.pad_rebar_quantity_top_dir2.ToString, previous.pad_rebar_quantity_top_dir2.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_rebar_quantity_bottom_dir2", Me.pad_rebar_quantity_bottom_dir2.ToString, previous.pad_rebar_quantity_bottom_dir2.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pad_clear_cover", Me.pad_clear_cover.ToString, previous.pad_clear_cover.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "rebar_grade", Me.rebar_grade.ToString, previous.rebar_grade.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "concrete_compressive_strength", Me.concrete_compressive_strength.ToString, previous.concrete_compressive_strength.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "dry_concrete_density", Me.dry_concrete_density.ToString, previous.dry_concrete_density.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "total_soil_unit_weight", Me.total_soil_unit_weight.ToString, previous.total_soil_unit_weight.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "bearing_type", Me.bearing_type, previous.bearing_type) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "nominal_bearing_capacity", Me.nominal_bearing_capacity.ToString, previous.nominal_bearing_capacity.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "cohesion", Me.cohesion.ToString, previous.cohesion.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "friction_angle", Me.friction_angle.ToString, previous.friction_angle.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "spt_blow_count", Me.spt_blow_count.ToString, previous.spt_blow_count.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "base_friction_factor", Me.base_friction_factor.ToString, previous.base_friction_factor.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "neglect_depth", Me.neglect_depth.ToString, previous.neglect_depth.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "bearing_distribution_type", Me.bearing_distribution_type.ToString, previous.bearing_distribution_type.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "groundwater_depth", Me.groundwater_depth.ToString, previous.groundwater_depth.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "top_and_bottom_rebar_different", Me.top_and_bottom_rebar_different.ToString, previous.top_and_bottom_rebar_different.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "block_foundation", Me.block_foundation.ToString, previous.block_foundation.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "rectangular_foundation", Me.rectangular_foundation.ToString, previous.rectangular_foundation.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "base_plate_distance_above_foundation", Me.base_plate_distance_above_foundation.ToString, previous.base_plate_distance_above_foundation.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "bolt_circle_bearing_plate_width", Me.bolt_circle_bearing_plate_width.ToString, previous.bolt_circle_bearing_plate_width.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "pier_rebar_quantity", Me.pier_rebar_quantity.ToString, previous.pier_rebar_quantity.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "basic_soil_check", Me.basic_soil_check.ToString, previous.basic_soil_check.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "structural_check", Me.structural_check.ToString, previous.structural_check.ToString) Then changesMade = True
-    '    If Me.dbComparison.Check1Change(Me.foundationType, "tool_version", Me.tool_version, previous.tool_version) Then changesMade = True
-
-    '    'If changesMade Then
-    '    '    Me.dbStatus = dbStatuses.Update
-    '    'Else
-    '    '    Me.dbStatus = dbStatuses.NoChange
-    '    'End If
-
-    '    'CreateChangeSummary(changeDt) 'possible alternative to listing change summary
-    '    Return changesMade
-
-    'End Function
-
 #End Region
 
 End Class

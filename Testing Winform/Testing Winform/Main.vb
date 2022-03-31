@@ -139,7 +139,7 @@ Partial Public Class frmMain
         Dim strcFBD As New FolderBrowserDialog
 
         If strcFBD.ShowDialog = DialogResult.OK Then
-            strcEDS.SaveToolstoExcel(strcFBD.SelectedPath)
+            strcEDS.SaveTools(strcFBD.SelectedPath)
         End If
     End Sub
     Private Sub btnLoadFndFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click

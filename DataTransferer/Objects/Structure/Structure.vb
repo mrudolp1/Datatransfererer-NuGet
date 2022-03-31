@@ -56,42 +56,85 @@ Public Module Extensions
 
         EDSListQuery = ""
 
-        'Copy previous list into a new list which you can delete from as needed
-        Dim prevDeleteableList As New List(Of T)
-        For Each prevItem In prevList
-            prevDeleteableList.Add(prevItem)
-        Next
+        'Create a shallow copy of the lists for sorting and comparison
+        'Sort lists by ID descending with Null IDs at the bottom
+        Dim currentSortedList As List(Of T) = alist.ToList
+        currentSortedList.Sort()
+        currentSortedList.Reverse()
 
-        For Each item In alist
-            Dim IDMatch As Boolean = False
-            For Each prevItem In prevDeleteableList
-                If prevItem.ID = item.ID Then
-                    IDMatch = True
-                    If Not item.CompareMe(prevItem) Then
-                        EDSListQuery += item.Update
+        Dim prevSortedList As List(Of T) = prevList.ToList
+        prevSortedList.Sort()
+        prevSortedList.Reverse()
+
+
+        Dim i As Integer = 0
+        Do While i <= Math.Max(currentSortedList.Count, prevSortedList.Count) - 1
+
+            If i > currentSortedList.Count - 1 Then
+                'Delete items in previous list if there is nothing left in current list
+                EDSListQuery += prevSortedList(i).Delete
+            ElseIf i > prevSortedList.Count - 1 Then
+                'Insert items in current list if there is nothing left in previous list
+                EDSListQuery += currentSortedList(i).Insert
+            Else
+                'Compare IDs
+                If currentSortedList(i).ID = prevSortedList(i).ID Then
+                    If Not currentSortedList(i).CompareMe(prevSortedList(i)) Then
+                        EDSListQuery += currentSortedList(i).Update
                     End If
-                    prevDeleteableList.Remove(prevItem)
-                    Exit For
+                ElseIf currentSortedList(i).ID < prevSortedList(i).ID Then
+                    EDSListQuery += prevSortedList(i).Delete
+                    currentSortedList.Insert(i, Nothing)
+                Else
+                    'currentSortedList(i).ID > prevSortedList(i).ID
+                    EDSListQuery += currentSortedList(i).Insert
+                    prevSortedList.Insert(i, Nothing)
                 End If
-            Next
-            If Not IDMatch Then
-                'Need to add inserted items to comparison list.
-                EDSListQuery += item.Insert
             End If
-        Next
 
-        For Each prevItem In prevDeleteableList
-            'Adds items from the previous item list to the current item list with the dbstaus set to delete
-            'I don't love this approach but I don't want to manage another list for deletions
-            EDSListQuery += prevItem.Delete
-        Next
+            i += 1
+        Loop
+
+        'I don't know if this max get's reevaluated each time through the loop
+        'Us do while loop instead
+        'For i = 0 To Math.Max(currentSortedList.Count, prevSortedList.Count) - 1
+        '    Dim item As T = Nothing
+        '    Dim previtem As T = Nothing
+
+        '    'Delete items in previous list if there is nothing left in current list
+        '    If i > currentSortedList.Count - 1 Then
+        '        EDSListQuery += prevSortedList(i).Delete
+        '        Continue For
+        '    End If
+
+        '    'Insert items in current list if there is nothing left in previous list
+        '    If i > prevSortedList.Count - 1 Then
+        '        EDSListQuery += currentSortedList(i).Insert
+        '        Continue For
+        '    End If
+
+        '    'Compare IDs
+        '    If currentSortedList(i).ID = prevSortedList(i).ID Then
+        '        If Not currentSortedList(i).CompareMe(previtem) Then
+        '            EDSListQuery += currentSortedList(i).Update
+        '        End If
+        '    ElseIf currentSortedList(i).ID < prevSortedList(i).ID Then
+        '        EDSListQuery += prevSortedList(i).Delete
+        '        currentSortedList.Insert(i, Nothing)
+        '    Else
+        '        'currentSortedList(i).ID > prevSortedList(i).ID
+        '        EDSListQuery += currentSortedList(i).Insert
+        '        prevSortedList.Insert(i, Nothing)
+        '    End If
+
+        'Next
 
         Return EDSListQuery
 
     End Function
 
     <Extension()>
-    Public Iterator Function Add(Of T)(ByVal e As IEnumerable(Of T), ByVal value As T) As IEnumerable(Of T)
+    Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e As IEnumerable(Of T), ByVal value As T, Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
         'Allow you to add to an IEnumerable like it is a list.
         'Useful for working with the ObjectComparer class which stores the differences as IEnumerable(of Difference)
         'Refernce: https://stackoverflow.com/a/1210311
@@ -99,35 +142,44 @@ Public Module Extensions
             Yield cur
         Next
 
-        Yield value
+        If Path IsNot Nothing Then
+            Yield value.InsertPath(Path)
+        Else
+            Yield value
+        End If
+    End Function
+
+    <Extension()>
+    Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e1 As IEnumerable(Of T), ByVal e2 As IEnumerable(Of T), Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
+        'Allow you to add to an IEnumerable to another IEnumerable.
+
+        For Each cur In e1
+            Yield cur
+        Next
+
+        For Each cur In e2
+            If Path IsNot Nothing Then
+                Yield cur.InsertPath(Path)
+            Else
+                Yield cur
+            End If
+        Next
+
     End Function
 
     '<Extension()>
-    'Public Function CompareEDSLists(Of T As EDSObject)(List1 As List(Of T), List2 As List(Of T), Optional SetID As Boolean = False) As Boolean
-    '    'Compare lists of EDSObjects that are not in the same order.
-    '    'If SetID then items in list1 will be updated with the IDs of matching items in list2.
-    '    'Typical use case list1 would be excel tools from the current analysis, list2 would be the tools on EDS.
-    '    CompareEDSLists = True
+    'Public Function Compare(Comparer As ObjectsComparer.Comparer, obj1 As Object, obj2 As Object, path As String, ByRef differences As IEnumerable(Of ObjectsComparer.Difference)) As Boolean
+    '    'Compare and add path to all new differences 
 
-    '    If List1.Count <> List2.Count Then
-    '        CompareEDSLists = False
-    '        'If setting IDs from list2, we need to keep going even tho we no the overall lists are different
-    '        If Not SetID Then Return CompareEDSLists
-    '    End If
+    '    Dim newDifferences As IEnumerable(Of ObjectsComparer.Difference) = Nothing  '= Comparer.CalculateDifferences(obj1, obj2)
 
-    '    For Each item In List1
-    '        Dim CompareItem As Boolean
-    '        For Each item2 In List2
-    '            CompareItem = item.CompareMe(item2, SetID)
-    '            If CompareItem Then Exit For
-    '        Next
-    '        If Not CompareItem Then
-    '            CompareEDSLists = False
-    '            If Not SetID Then Exit For
-    '        End If
-    '    Next
+    '    Comparer.Compare(obj1, obj2, newDifferences)
 
-    '    Return CompareEDSLists
+    '    differences.Add(newDifferences, path)
+
+    '    MessageBox.Show(newDifferences.Any())
+
+    '    Return Not newDifferences.Any()
     'End Function
 
 End Module
@@ -217,6 +269,7 @@ Public Module myLittleHelpers
 End Module
 
 Partial Public MustInherit Class EDSObject
+    Implements IEquatable(Of EDSObject), IComparable(Of EDSObject)
 
     Public Property ID As Integer?
     Public Property bus_unit As String
@@ -237,11 +290,13 @@ Partial Public MustInherit Class EDSObject
 
     End Function
 
+
+
     Public Overridable Function CompareMe(Of T As EDSObject)(toCompare As T) As Boolean
         'Compare another EDSObject object to itself using the objects comparer.
         'Making this generic (Of T As EDSObject) allows it to work for all subclasses of EDSObject
 
-        If toCompare Is Nothing Or Me.GetType() IsNot toCompare.GetType() Then Return False
+        If toCompare Is Nothing Then Return False
 
         Dim comparer As New ObjectsComparer.Comparer(Of T)()
 
@@ -263,6 +318,24 @@ Partial Public MustInherit Class EDSObject
         Me.databaseIdentity = Parent.databaseIdentity
     End Sub
 
+    Public Function CompareTo(other As EDSObject) As Integer Implements IComparable(Of EDSObject).CompareTo
+        'This is used to sort EDSObjects
+        'They will be sorted by ID
+        If other Is Nothing Then
+            Return 1
+        Else
+            Return Nullable.Compare(Me.ID, other.ID)
+        End If
+    End Function
+
+    Public Function Equals(other As EDSObject) As Boolean Implements IEquatable(Of EDSObject).Equals
+        'Could We implement the whole compare function here
+
+        If other Is Nothing Then Return False
+
+        Return Me.CompareMe(other)
+
+    End Function
 End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
@@ -280,7 +353,22 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
     Public MustOverride Function SQLUpdate() As String
 
+    Public Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
+        EDSQuery = ""
 
+        If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
+            EDSQuery += item.Update
+        Else
+            'Need to add inserted items to comparison list.
+            EDSQuery += item.Insert
+            If prevItem IsNot Nothing Then
+                EDSQuery += prevItem.Delete
+            End If
+        End If
+
+        Return EDSQuery
+
+    End Function
 
 End Class
 
@@ -444,36 +532,36 @@ Partial Public Class EDSStructure
         Next
     End Sub
 
-    Public Sub SaveToolstoExcel(folderPath As String)
+    Public Sub SaveTools(folderPath As String)
         'Uncomment your foundation type for testing when it's ready.
         Dim i As Integer
         Dim fileNum As String = ""
 
-        Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit, ".eri"))
+        If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"))
 
-        For i = 0 To Me.PierandPads.Count
+        For i = 0 To Me.PierandPads.Count - 1
             'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
             'This works for now, just basing the name off the template name.
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            PierandPads(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(PierandPads(i).templatePath) & fileNum)
+            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
+            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & " " & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel()
         Next
-        'For i = 0 To Me.Piles.Count
+        'For i = 0 To Me.Piles.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
         '    Piles(i).SavetoExcel()
         'Next
-        'For i = 0 To Me.UnitBases.Count
+        'For i = 0 To Me.UnitBases.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    UnitBases(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(UnitBases(i).templatePath) & fileNum)
         '    UnitBases(i).SavetoExcel()
         'Next
-        'For i = 0 To Me.DrilledPiers.Count
+        'For i = 0 To Me.DrilledPiers.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    DrilledPiers(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(DrilledPiers(i).templatePath) & fileNum)
         '    DrilledPiers(i).SavetoExcel()
         'Next
-        'For i = 0 To Me.GuyAnchorBlocks.Count
+        'For i = 0 To Me.GuyAnchorBlocks.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
         '    GuyAnchorBlocks(i).SavetoExcel()
