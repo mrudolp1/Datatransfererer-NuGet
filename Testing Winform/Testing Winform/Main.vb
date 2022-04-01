@@ -50,7 +50,10 @@ Partial Public Class frmMain
     'Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
     'Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
     'Changed to Uat for testing database changes
-    Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSUat;Integrated Security=SSPI"
+    'Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSUat;Integrated Security=SSPI"
+    'Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
+    'Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
+    Public EDSdbDevelopment As String = "Server=DEVCCICSQL3.US.CROWNCASTLE.COM,58061;Database=EngEDSDev;Integrated Security=SSPI"
     Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
     Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
 
@@ -112,7 +115,7 @@ Partial Public Class frmMain
 #End Region
 
 
-#Region "Foundations"
+#Region "Structure"
     Public strcLocal As EDSStructure
     Public strcEDS As EDSStructure
 
@@ -329,8 +332,8 @@ Partial Public Class frmMain
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        'tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
     End Sub
 
@@ -340,7 +343,7 @@ Partial Public Class frmMain
         'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
         'benchmarked at 0.5 sec
 
-        tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
         'benchmarked between 1.5-2.25 sec
 
     End Sub

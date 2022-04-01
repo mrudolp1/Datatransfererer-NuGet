@@ -1,51 +1,6 @@
 ﻿
 BEGIN
-	INSERT INTO fnd.pier_pad (pier_shape
-							,pier_diameter
-							,extension_above_grade
-							,pier_rebar_size
-							,pier_tie_size
-							,pier_tie_quantity
-							,pier_reinforcement_type
-							,pier_clear_cover
-							,foundation_depth
-							,pad_width_1
-							,pad_width_2
-							,pad_thickness
-							,pad_rebar_size_top_dir1
-							,pad_rebar_size_bottom_dir1
-							,pad_rebar_size_top_dir2
-							,pad_rebar_size_bottom_dir2
-							,pad_rebar_quantity_top_dir1
-							,pad_rebar_quantity_bottom_dir1
-							,pad_rebar_quantity_top_dir2
-							,pad_rebar_quantity_bottom_dir2
-							,pad_clear_cover
-							,rebar_grade
-							,concrete_compressive_strength
-							,dry_concrete_density
-							,total_soil_unit_weight
-							,bearing_type
-							,nominal_bearing_capacity
-							,cohesion
-							,friction_angle
-							,spt_blow_count
-							,base_friction_factor
-							,neglect_depth
-							,bearing_distribution_type
-							,groundwater_depth
-							,top_and_bottom_rebar_different
-							,block_foundation
-							,rectangular_foundation
-							,base_plate_distance_above_foundation
-							,bolt_circle_bearing_plate_width
-							,pier_rebar_quantity
-							,basic_soil_check
-							,structural_check
-							,tool_version
-							--,modified
-							,bus_unit
-							,structure_id) 
+	INSERT INTO fnd.pier_pad ([FOUNDATION FIELDS]) 
 	--OUTPUT INSERTED.ID 
-	VALUES([FOUNDATION VALUES], [BU NUMBER], [STRUCTURE ID])
+	VALUES([FOUNDATION VALUES])
 END

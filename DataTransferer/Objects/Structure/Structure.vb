@@ -9,25 +9,53 @@ Imports System.Data.SqlClient
 Public Module Extensions
 
     <Extension()>
-    Public Function ToDBString(aString As String, Optional isValue As Boolean = True) As String
-        If aString = String.Empty Or aString Is Nothing Then
-            Return "NULL"
+    Public Function FormatDBValue(input As String) As String
+        'Handles nullable values and quoatations needed for DB values
+
+        If String.IsNullOrEmpty(input) Then
+            FormatDBValue = "NULL"
         Else
-            If isValue Then aString = "'" & aString & "'"
-            Return aString
+            FormatDBValue = "'" & input & "'"
         End If
+
+        Return FormatDBValue
     End Function
 
     <Extension()>
-    Public Function AddtoDBString(astring As String, ByRef newString As String, Optional isValue As Boolean = True) As String
+    Public Function AddtoDBString(startingString As String, newString As String, Optional isDBValue As Boolean = False) As String
         'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
-        If astring = String.Empty Or astring Is Nothing Then
-            astring = newString.ToDBString(isValue)
+
+        If isDBValue Then newString = newString.FormatDBValue
+
+        If String.IsNullOrEmpty(startingString) Then
+            startingString = newString
         Else
-            astring += ", " & newString.ToDBString(isValue)
+            startingString += ", " & newString
         End If
-        Return astring
+
+        Return startingString
     End Function
+
+    '<Extension()>
+    'Public Function ToDBString(aString As String, Optional isValue As Boolean = True) As String
+    '    If aString = String.Empty Or aString Is Nothing Then
+    '        Return "NULL"
+    '    Else
+    '        If isValue Then aString = "'" & aString & "'"
+    '        Return aString
+    '    End If
+    'End Function
+
+    '<Extension()>
+    'Public Function AddtoDBString(astring As String, ByRef newString As String, Optional isValue As Boolean = True) As String
+    '    'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+    '    If astring = String.Empty Or astring Is Nothing Then
+    '        astring = newString.ToDBString(isValue)
+    '    Else
+    '        astring += ", " & newString.ToDBString(isValue)
+    '    End If
+    '    Return astring
+    'End Function
 
     <Extension()>
     Public Function GetDistinct(Of T As EDSObject)(alist As List(Of T)) As List(Of T)
@@ -93,41 +121,8 @@ Public Module Extensions
             End If
 
             i += 1
+
         Loop
-
-        'I don't know if this max get's reevaluated each time through the loop
-        'Us do while loop instead
-        'For i = 0 To Math.Max(currentSortedList.Count, prevSortedList.Count) - 1
-        '    Dim item As T = Nothing
-        '    Dim previtem As T = Nothing
-
-        '    'Delete items in previous list if there is nothing left in current list
-        '    If i > currentSortedList.Count - 1 Then
-        '        EDSListQuery += prevSortedList(i).Delete
-        '        Continue For
-        '    End If
-
-        '    'Insert items in current list if there is nothing left in previous list
-        '    If i > prevSortedList.Count - 1 Then
-        '        EDSListQuery += currentSortedList(i).Insert
-        '        Continue For
-        '    End If
-
-        '    'Compare IDs
-        '    If currentSortedList(i).ID = prevSortedList(i).ID Then
-        '        If Not currentSortedList(i).CompareMe(previtem) Then
-        '            EDSListQuery += currentSortedList(i).Update
-        '        End If
-        '    ElseIf currentSortedList(i).ID < prevSortedList(i).ID Then
-        '        EDSListQuery += prevSortedList(i).Delete
-        '        currentSortedList.Insert(i, Nothing)
-        '    Else
-        '        'currentSortedList(i).ID > prevSortedList(i).ID
-        '        EDSListQuery += currentSortedList(i).Insert
-        '        prevSortedList.Insert(i, Nothing)
-        '    End If
-
-        'Next
 
         Return EDSListQuery
 
@@ -353,7 +348,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
     Public MustOverride Function SQLUpdate() As String
 
-    Public Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
+    Public Overridable Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
         EDSQuery = ""
 
         If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
@@ -456,7 +451,7 @@ Partial Public Class EDSStructure
 #Region "EDS"
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
-        Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.ToDBString).Replace("[STRID]", structureID.ToDBString)
+        Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole"}
 
 
@@ -470,7 +465,7 @@ Partial Public Class EDSStructure
             Next
 
             'Load TNX Model
-            Me.tnx = New tnxModel(strDS, Me)
+            'Me.tnx = New tnxModel(strDS, Me)
 
             'Pier and Pad
             For Each dr As DataRow In strDS.Tables("Pier and Pad").Rows

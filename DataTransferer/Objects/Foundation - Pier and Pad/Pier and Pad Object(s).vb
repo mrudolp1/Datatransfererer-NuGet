@@ -7,7 +7,7 @@ Imports DevExpress.Spreadsheet
 Partial Public Class PierAndPad
     Inherits EDSFoundation
 
-#Region "Override"
+#Region "Inheritted"
     '''Must override these inherited properties
     Public Overrides ReadOnly Property foundationType As String = "Pier and Pad"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.pier_pad"
@@ -26,9 +26,10 @@ Partial Public Class PierAndPad
                 _Insert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (INSERT).sql")
             End If
             Dim InsertString As String = _Insert
-            InsertString = InsertString.Replace("[BU NUMBER]", Me.bus_unit.ToDBString)
-            InsertString = InsertString.Replace("[STRUCTURE ID]", Me.structure_id.ToDBString)
+            InsertString = InsertString.Replace("[BU NUMBER]", Me.bus_unit.FormatDBValue)
+            InsertString = InsertString.Replace("[STRUCTURE ID]", Me.structure_id.FormatDBValue)
             InsertString = InsertString.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
+            InsertString = InsertString.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
             Return InsertString
         End Get
     End Property
@@ -39,7 +40,7 @@ Partial Public Class PierAndPad
                 _Update = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (UPDATE).sql")
             End If
             Dim UpdateString As String = _Update
-            UpdateString = UpdateString.Replace("[ID]", Me.ID.ToString.ToDBString)
+            UpdateString = UpdateString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
             UpdateString = UpdateString.Replace("[UPDATE]", Me.SQLUpdate)
             Return UpdateString
         End Get
@@ -51,7 +52,7 @@ Partial Public Class PierAndPad
                 _Delete = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (DELETE).sql")
             End If
             Dim DeleteString As String = _Delete
-            DeleteString = DeleteString.Replace("[ID]", Me.ID.ToString.ToDBString)
+            DeleteString = DeleteString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
             Return DeleteString
         End Get
     End Property
@@ -63,13 +64,13 @@ Partial Public Class PierAndPad
     Private prop_concrete_compressive_strength As Double?
     Private prop_dry_concrete_density As Double?
     Private prop_rebar_grade As Double?
-    Private prop_top_and_bottom_rebar_different As Boolean
-    Private prop_block_foundation As Boolean
-    Private prop_rectangular_foundation As Boolean
+    Private prop_top_and_bottom_rebar_different As Boolean?
+    Private prop_block_foundation As Boolean?
+    Private prop_rectangular_foundation As Boolean?
     Private prop_base_plate_distance_above_foundation As Double?
     Private prop_bolt_circle_bearing_plate_width As Double?
-    Private prop_basic_soil_check As Boolean
-    Private prop_structural_check As Boolean
+    Private prop_basic_soil_check As Boolean?
+    Private prop_structural_check As Boolean?
 
     Private prop_pier_shape As String
     Private prop_pier_diameter As Double?
@@ -101,11 +102,11 @@ Partial Public Class PierAndPad
     Private prop_spt_blow_count As Double?
     Private prop_base_friction_factor As Double?
     Private prop_neglect_depth As Double?
-    Private prop_bearing_distribution_type As Boolean
+    Private prop_bearing_distribution_type As Boolean?
     Private prop_groundwater_depth As Double?
 
     Private prop_tool_version As String
-    Private prop_modified As Boolean
+    Private prop_modified As Boolean?
 
     <Category("Pier and Pad Details"), Description(""), DisplayName("Extension Above Grade")>
     Public Property extension_above_grade() As Double?
@@ -153,7 +154,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Top and Bottom Rebar Different")>
-    Public Property top_and_bottom_rebar_different() As Boolean
+    Public Property top_and_bottom_rebar_different() As Boolean?
         Get
             Return Me.prop_top_and_bottom_rebar_different
         End Get
@@ -162,7 +163,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Block Foundation")>
-    Public Property block_foundation() As Boolean
+    Public Property block_foundation() As Boolean?
         Get
             Return Me.prop_block_foundation
         End Get
@@ -171,7 +172,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Rectangular Foundation")>
-    Public Property rectangular_foundation() As Boolean
+    Public Property rectangular_foundation() As Boolean?
         Get
             Return Me.prop_rectangular_foundation
         End Get
@@ -453,7 +454,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Bearing Distribution Type")>
-    Public Property bearing_distribution_type() As Boolean
+    Public Property bearing_distribution_type() As Boolean?
         Get
             Return Me.prop_bearing_distribution_type
         End Get
@@ -471,7 +472,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Basic Soil Interaction up to 110% Acceptable1?")>
-    Public Property basic_soil_check() As Boolean
+    Public Property basic_soil_check() As Boolean?
         Get
             Return Me.prop_basic_soil_check
         End Get
@@ -480,7 +481,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Structural Checks up to 105% Acceptable?")>
-    Public Property structural_check() As Boolean
+    Public Property structural_check() As Boolean?
         Get
             Return Me.prop_structural_check
         End Get
@@ -498,7 +499,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad Details"), Description(""), DisplayName("Modified")>
-    Public Property modified() As Boolean
+    Public Property modified() As Boolean?
         Get
             Return Me.prop_modified
         End Get
@@ -1393,157 +1394,175 @@ Partial Public Class PierAndPad
 #Region "Save to EDS"
 
     Public Overrides Function SQLInsertValues() As String
-        Dim insertString As String = ""
+        SQLInsertValues = ""
 
-        'Update to use AddtoDBString extension method
-        insertString += If(IsNothing(Me.pier_shape), "Null", "'" & Me.pier_shape.ToString & "'")
-        insertString += "," & If(IsNothing(Me.pier_diameter), "Null", Me.pier_diameter.ToString)
-        insertString += "," & If(IsNothing(Me.extension_above_grade), "Null", Me.extension_above_grade.ToString)
-        insertString += "," & If(IsNothing(Me.pier_rebar_size), "Null", Me.pier_rebar_size.ToString)
-        insertString += "," & If(IsNothing(Me.pier_tie_size), "Null", Me.pier_tie_size.ToString)
-        insertString += "," & If(IsNothing(Me.pier_tie_quantity), "Null", Me.pier_tie_quantity.ToString)
-        insertString += "," & If(IsNothing(Me.pier_reinforcement_type), "Null", "'" & Me.pier_reinforcement_type.ToString & "'")
-        insertString += "," & If(IsNothing(Me.pier_clear_cover), "Null", Me.pier_clear_cover.ToString)
-        insertString += "," & If(IsNothing(Me.foundation_depth), "Null", Me.foundation_depth.ToString)
-        insertString += "," & If(IsNothing(Me.pad_width_1), "Null", Me.pad_width_1.ToString)
-        insertString += "," & If(IsNothing(Me.pad_width_2), "Null", Me.pad_width_2.ToString)
-        insertString += "," & If(IsNothing(Me.pad_thickness), "Null", Me.pad_thickness.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_size_top_dir1), "Null", Me.pad_rebar_size_top_dir1.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_size_bottom_dir1), "Null", Me.pad_rebar_size_bottom_dir1.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_size_top_dir2), "Null", Me.pad_rebar_size_top_dir2.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_size_bottom_dir2), "Null", Me.pad_rebar_size_bottom_dir2.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_top_dir1), "Null", Me.pad_rebar_quantity_top_dir1.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_bottom_dir1), "Null", Me.pad_rebar_quantity_bottom_dir1.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_top_dir2), "Null", Me.pad_rebar_quantity_top_dir2.ToString)
-        insertString += "," & If(IsNothing(Me.pad_rebar_quantity_bottom_dir2), "Null", Me.pad_rebar_quantity_bottom_dir2.ToString)
-        insertString += "," & If(IsNothing(Me.pad_clear_cover), "Null", Me.pad_clear_cover.ToString)
-        insertString += "," & If(IsNothing(Me.rebar_grade), "Null", Me.rebar_grade.ToString)
-        insertString += "," & If(IsNothing(Me.concrete_compressive_strength), "Null", Me.concrete_compressive_strength.ToString)
-        insertString += "," & If(IsNothing(Me.dry_concrete_density), "Null", Me.dry_concrete_density.ToString)
-        insertString += "," & If(IsNothing(Me.total_soil_unit_weight), "Null", Me.total_soil_unit_weight.ToString)
-        insertString += "," & If(IsNothing(Me.bearing_type), "Null", "'" & Me.bearing_type.ToString & "'")
-        insertString += "," & If(IsNothing(Me.nominal_bearing_capacity), "Null", Me.nominal_bearing_capacity.ToString)
-        insertString += "," & If(IsNothing(Me.cohesion), "Null", Me.cohesion.ToString)
-        insertString += "," & If(IsNothing(Me.friction_angle), "Null", Me.friction_angle.ToString)
-        insertString += "," & If(IsNothing(Me.spt_blow_count), "Null", Me.spt_blow_count.ToString)
-        insertString += "," & If(IsNothing(Me.base_friction_factor), "Null", Me.base_friction_factor.ToString)
-        insertString += "," & If(IsNothing(Me.neglect_depth), "Null", Me.neglect_depth.ToString)
-        insertString += "," & If(IsNothing(Me.bearing_distribution_type), "Null", "'" & Me.bearing_distribution_type.ToString & "'")
-        insertString += "," & If(IsNothing(Me.groundwater_depth), "Null", Me.groundwater_depth.ToString)
-        insertString += "," & If(IsNothing(Me.top_and_bottom_rebar_different), "Null", "'" & Me.top_and_bottom_rebar_different.ToString & "'")
-        insertString += "," & If(IsNothing(Me.block_foundation), "Null", "'" & Me.block_foundation.ToString & "'")
-        insertString += "," & If(IsNothing(Me.rectangular_foundation), "Null", "'" & Me.rectangular_foundation.ToString & "'")
-        insertString += "," & If(IsNothing(Me.base_plate_distance_above_foundation), "Null", Me.base_plate_distance_above_foundation.ToString)
-        insertString += "," & If(IsNothing(Me.bolt_circle_bearing_plate_width), "Null", Me.bolt_circle_bearing_plate_width.ToString)
-        insertString += "," & If(IsNothing(Me.pier_rebar_quantity), "Null", Me.pier_rebar_quantity.ToString)
-        insertString += "," & If(IsNothing(Me.basic_soil_check), "Null", "'" & Me.basic_soil_check.ToString & "'")
-        insertString += "," & If(IsNothing(Me.structural_check), "Null", "'" & Me.structural_check.ToString & "'")
-        insertString += "," & If(IsNothing(Me.tool_version), "Null", "'" & Me.tool_version.ToString & "'")
-        'insertString += "," & If(IsNothing(Me.modified), "Null", "'" & Me.modified.ToString & "'")
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_shape.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_diameter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.extension_above_grade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_rebar_size.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_tie_size.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_tie_quantity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_reinforcement_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_clear_cover.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.foundation_depth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_width_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_width_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_thickness.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_size_top_dir1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_size_bottom_dir1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_size_top_dir2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_size_bottom_dir2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_quantity_top_dir1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_quantity_bottom_dir1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_quantity_top_dir2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_rebar_quantity_bottom_dir2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pad_clear_cover.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rebar_grade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.concrete_compressive_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.dry_concrete_density.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.total_soil_unit_weight.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bearing_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.nominal_bearing_capacity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.cohesion.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.friction_angle.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.spt_blow_count.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.base_friction_factor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.neglect_depth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bearing_distribution_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.groundwater_depth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.top_and_bottom_rebar_different.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.block_foundation.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rectangular_foundation.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.base_plate_distance_above_foundation.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bolt_circle_bearing_plate_width.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_rebar_quantity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.valid_from.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.valid_to.ToString.FormatDBValue)
 
-        Return insertString
+        Return SQLInsertValues
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        Throw New NotImplementedException()
+        SQLInsertFields = ""
 
-        '    Return "pier_shape
-        '   ,pier_diameter
-        ',extension_above_grade
-        ',pier_rebar_size
-        ',pier_tie_size
-        ',pier_tie_quantity
-        ',pier_reinforcement_type
-        ',pier_clear_cover
-        ',foundation_depth
-        ',pad_width_1
-        ',pad_width_2
-        ',pad_thickness
-        ',pad_rebar_size_top_dir1
-        ',pad_rebar_size_bottom_dir1
-        ',pad_rebar_size_top_dir2
-        ',pad_rebar_size_bottom_dir2
-        ',pad_rebar_quantity_top_dir1
-        ',pad_rebar_quantity_bottom_dir1
-        ',pad_rebar_quantity_top_dir2
-        ',pad_rebar_quantity_bottom_dir2
-        ',pad_clear_cover
-        ',rebar_grade
-        ',concrete_compressive_strength
-        ',dry_concrete_density
-        ',total_soil_unit_weight
-        ',bearing_type
-        ',nominal_bearing_capacity
-        ',cohesion
-        ',friction_angle
-        ',spt_blow_count
-        ',base_friction_factor
-        ',neglect_depth
-        ',bearing_distribution_type
-        ',groundwater_depth
-        ',top_and_bottom_rebar_different
-        ',block_foundation
-        ',rectangular_foundation
-        ',base_plate_distance_above_foundation
-        ',bolt_circle_bearing_plate_width
-        ',pier_rebar_quantity
-        ',basic_soil_check
-        ',structural_check
-        ',tool_version
-        '            ,modified"
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_shape")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_diameter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("extension_above_grade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_rebar_size")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_tie_size")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_tie_quantity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_reinforcement_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_clear_cover")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("foundation_depth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_width_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_width_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_thickness")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_size_top_dir1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_size_bottom_dir1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_size_top_dir2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_size_bottom_dir2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_quantity_top_dir1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_quantity_bottom_dir1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_quantity_top_dir2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_rebar_quantity_bottom_dir2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pad_clear_cover")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rebar_grade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("concrete_compressive_strength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("dry_concrete_density")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("total_soil_unit_weight")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bearing_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("nominal_bearing_capacity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("cohesion")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("friction_angle")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("spt_blow_count")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("base_friction_factor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("neglect_depth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bearing_distribution_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("groundwater_depth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("top_and_bottom_rebar_different")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("block_foundation")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rectangular_foundation")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("base_plate_distance_above_foundation")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bolt_circle_bearing_plate_width")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_rebar_quantity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("basic_soil_check")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structural_check")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("valid_from")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("valid_to")
+
+        Return SQLInsertFields
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        Dim insertString As String = ""
+        SQLUpdate = ""
 
-        'insertString = insertString.AddtoDBString("ID = " & Me.ID.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_shape = " & Me.pier_shape.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_diameter = " & Me.pier_diameter.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("extension_above_grade = " & Me.extension_above_grade.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_rebar_size = " & Me.pier_rebar_size.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_tie_size = " & Me.pier_tie_size.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_tie_quantity = " & Me.pier_tie_quantity.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_reinforcement_type = " & Me.pier_reinforcement_type.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_clear_cover = " & Me.pier_clear_cover.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("foundation_depth = " & Me.foundation_depth.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_width_1 = " & Me.pad_width_1.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_width_2 = " & Me.pad_width_2.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_thickness = " & Me.pad_thickness.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_size_top_dir1 = " & Me.pad_rebar_size_top_dir1.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_size_bottom_dir1 = " & Me.pad_rebar_size_bottom_dir1.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_size_top_dir2 = " & Me.pad_rebar_size_top_dir2.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_size_bottom_dir2 = " & Me.pad_rebar_size_bottom_dir2.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_quantity_top_dir1 = " & Me.pad_rebar_quantity_top_dir1.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_quantity_bottom_dir1 = " & Me.pad_rebar_quantity_bottom_dir1.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_quantity_top_dir2 = " & Me.pad_rebar_quantity_top_dir2.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_rebar_quantity_bottom_dir2 = " & Me.pad_rebar_quantity_bottom_dir2.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pad_clear_cover = " & Me.pad_clear_cover.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("rebar_grade = " & Me.rebar_grade.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("dry_concrete_density = " & Me.dry_concrete_density.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("total_soil_unit_weight = " & Me.total_soil_unit_weight.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("bearing_type = " & Me.bearing_type.ToDBString, False)
-        insertString = insertString.AddtoDBString("nominal_bearing_capacity = " & Me.nominal_bearing_capacity.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("cohesion = " & Me.cohesion.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("base_friction_factor = " & Me.base_friction_factor.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("bearing_distribution_type = " & Me.bearing_distribution_type.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("top_and_bottom_rebar_different = " & Me.top_and_bottom_rebar_different.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("block_foundation = " & Me.block_foundation.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("rectangular_foundation = " & Me.rectangular_foundation.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("base_plate_distance_above_foundation = " & Me.base_plate_distance_above_foundation.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("bolt_circle_bearing_plate_width = " & Me.bolt_circle_bearing_plate_width.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("structural_check = " & Me.structural_check.ToString.ToDBString, False)
-        insertString = insertString.AddtoDBString("tool_version = " & Me.tool_version.ToDBString, False)
-        'insertString = insertString.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.ToDBString, False)
-        'insertString = insertString.AddtoDBString("process_stage = " & Me.process_stage.ToString.ToDBString, False)
+        'SQLUpdate = SQLUpdate.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_shape = " & Me.pier_shape.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_diameter = " & Me.pier_diameter.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("extension_above_grade = " & Me.extension_above_grade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_rebar_size = " & Me.pier_rebar_size.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_tie_size = " & Me.pier_tie_size.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_tie_quantity = " & Me.pier_tie_quantity.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_reinforcement_type = " & Me.pier_reinforcement_type.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_clear_cover = " & Me.pier_clear_cover.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("foundation_depth = " & Me.foundation_depth.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_width_1 = " & Me.pad_width_1.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_width_2 = " & Me.pad_width_2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_thickness = " & Me.pad_thickness.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_top_dir1 = " & Me.pad_rebar_size_top_dir1.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_bottom_dir1 = " & Me.pad_rebar_size_bottom_dir1.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_top_dir2 = " & Me.pad_rebar_size_top_dir2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_bottom_dir2 = " & Me.pad_rebar_size_bottom_dir2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_top_dir1 = " & Me.pad_rebar_quantity_top_dir1.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_bottom_dir1 = " & Me.pad_rebar_quantity_bottom_dir1.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_top_dir2 = " & Me.pad_rebar_quantity_top_dir2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_bottom_dir2 = " & Me.pad_rebar_quantity_bottom_dir2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pad_clear_cover = " & Me.pad_clear_cover.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("rebar_grade = " & Me.rebar_grade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("dry_concrete_density = " & Me.dry_concrete_density.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("total_soil_unit_weight = " & Me.total_soil_unit_weight.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("bearing_type = " & Me.bearing_type.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("nominal_bearing_capacity = " & Me.nominal_bearing_capacity.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("base_friction_factor = " & Me.base_friction_factor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("bearing_distribution_type = " & Me.bearing_distribution_type.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("top_and_bottom_rebar_different = " & Me.top_and_bottom_rebar_different.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("block_foundation = " & Me.block_foundation.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("rectangular_foundation = " & Me.rectangular_foundation.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("base_plate_distance_above_foundation = " & Me.base_plate_distance_above_foundation.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("bolt_circle_bearing_plate_width = " & Me.bolt_circle_bearing_plate_width.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("structural_check = " & Me.structural_check.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        'SQLUpdate = SQLUpdate.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        'SQLUpdate = SQLUpdate.AddtoDBString("valid_from = " & Me.valid_from.ToString.FormatDBValue)
+        'SQLUpdate = SQLUpdate.AddtoDBString("valid_to = " & Me.valid_to.ToString.FormatDBValue)
 
-        Return insertString
+
+        Return SQLUpdate
     End Function
 
 #End Region
