@@ -1,0 +1,4 @@
+﻿
+BEGIN
+	DELETE FROM fnd.pier_pad WHERE ID = [ID]
+END

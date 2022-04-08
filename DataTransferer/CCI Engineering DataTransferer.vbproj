@@ -20,101 +20,101 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
-    <None Remove="Data Transferer Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT General).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Int Details).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Int Groups).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Pole Reinf Results).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Pole Reinf Sections).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Pole Sections).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Prop Bolts).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Prop Matls).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Prop Reinfs).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Reinf Details).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SELECT Reinf Groups).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_GeomBase).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_GeomReinf).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
-    <None Remove="Data Transferer Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Embedded%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
-    <None Remove="Data Transferer Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Existing Model %28IN_UP%29.sql" />
-    <None Remove="Data Transferer Queries\Existing Model %28SELECT%29.sql" />
-    <None Remove="Data Transferer Queries\Foundation Group\Foundation (IN_UP Partial) DNU.sql" />
-    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (IN_UP) with Model.sql" />
-    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (SELECT ID Active).sql" />
-    <None Remove="Data Transferer Queries\Foundation Group\Foundation Group (SELECT ID WO).sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP) - dnu.sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details) - Copy.sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
-    <None Remove="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP SUB).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP) - DNU.sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details Grp).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details Grp).sql" />
-    <None Remove="Data Transferer Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (IN_UP) - DNU.sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details Grp).sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Details).sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Location).sql" />
-    <None Remove="Data Transferer Queries\Pile\Pile (SELECT Soil Layers).sql" />
-    <None Remove="Data Transferer Queries\Structure\Structure (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\Structure\Structure (SELECT).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (INSERT Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query Params.sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query.sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Guys).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Materials).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Members).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP Upper Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP) - Sub Query Test.sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Details).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Guys).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Material Matching).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Materials).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Member Matching).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Members).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (SELECT Upper Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\Backup\TNX (UPDATE Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (INSERT Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (INSERT).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (IN_UP).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (SELECT Base Structure).sql" />
-    <None Remove="Data Transferer Queries\TNX\TNX (UPDATE Base Structure).sql" />
-    <None Remove="Data Transferer Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
-    <None Remove="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
-    <None Remove="Data Transferer Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
+    <None Remove="Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
+    <None Remove="Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
+    <None Remove="Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
+    <None Remove="Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
+    <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
+    <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT General).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Int Details).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Int Groups).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Reinf Results).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Reinf Sections).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Sections).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Bolts).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Matls).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Reinfs).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Reinf Details).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Reinf Groups).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomBase).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomReinf).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Embedded%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
+    <None Remove="Queries\Existing Model %28IN_UP%29.sql" />
+    <None Remove="Queries\Existing Model %28SELECT%29.sql" />
+    <None Remove="Queries\Foundation Group\Foundation (IN_UP Partial) DNU.sql" />
+    <None Remove="Queries\Foundation Group\Foundation Group (IN_UP) with Model.sql" />
+    <None Remove="Queries\Foundation Group\Foundation Group (IN_UP).sql" />
+    <None Remove="Queries\Foundation Group\Foundation Group (SELECT ID Active).sql" />
+    <None Remove="Queries\Foundation Group\Foundation Group (SELECT ID WO).sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP) - dnu.sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details) - Copy.sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
+    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
+    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql" />
+    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql" />
+    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql" />
+    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details Grp).sql" />
+    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details).sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (SELECT Details Grp).sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
+    <None Remove="Queries\Pile\Pile (IN_UP) - DNU.sql" />
+    <None Remove="Queries\Pile\Pile (IN_UP).sql" />
+    <None Remove="Queries\Pile\Pile (SELECT Details Grp).sql" />
+    <None Remove="Queries\Pile\Pile (SELECT Details).sql" />
+    <None Remove="Queries\Pile\Pile (SELECT Location).sql" />
+    <None Remove="Queries\Pile\Pile (SELECT Soil Layers).sql" />
+    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (DELETE).sql" />
+    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (INSERT).sql" />
+    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
+    <None Remove="Queries\Structure\Structure (IN_UP).sql" />
+    <None Remove="Queries\Structure\Structure (SELECT).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query Params.sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query.sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Guys).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Materials).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Members).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Upper Structure).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP) - Sub Query Test.sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Base Structure).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Details).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Guys).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Material Matching).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Materials).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Member Matching).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Members).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Upper Structure).sql" />
+    <None Remove="Queries\TNX\This is the backup\TNX (UPDATE Base Structure).sql" />
+    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
+    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
+    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
+    <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
+    <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
+    <None Remove="Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -130,292 +130,292 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Connections%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28SELECT Plate Connections%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Plate Details%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28SELECT Plate Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate (IN_UP).sql">
+    <Content Include="Queries\CCIplate\CCIplate (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Connection Group%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28SELECT Connection Group%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate %28SELECT Base Plate Options%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28SELECT Base Plate Options%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIplate\CCIplate (SUB QUERY).sql">
+    <Content Include="Queries\CCIplate\CCIplate (SUB QUERY).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28IN_UP%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Pole Sections%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Pole Sections%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Pole Reinf Sections%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Pole Reinf Sections%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Reinf Groups%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Reinf Groups%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Reinf Details%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Reinf Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Int Groups%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Int Groups%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Int Details%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Int Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Pole Reinf Results%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Pole Reinf Results%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Prop Reinfs%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Prop Reinfs%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Prop Bolts%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Prop Bolts%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Prop Matls%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Prop Matls%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT Criteria%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT Criteria%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SELECT General%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SELECT General%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubQuery_ReinfGroups%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_ReinfGroups%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubQuery_IntGroups%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_IntGroups%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubQuery_GeomBase%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomBase%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubQuery_GeomReinf%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomReinf%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
+    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Belled).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Belled).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers %28SELECT Profile%29.sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers %28SELECT Profile%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Details).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Embedded).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Embedded).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Rebar).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Rebar).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Section).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Section).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers Sections %28IN_UP%29.sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers Sections %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Drilled Pier\Drilled Piers (SELECT Soil Layers).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Soil Layers).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Existing Model (IN_UP).sql">
+    <Content Include="Queries\Existing Model (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Existing Model (SELECT).sql">
+    <Content Include="Queries\Existing Model (SELECT).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28SELECT ID Active%29.sql">
+    <Content Include="Queries\Foundation Group\Foundation Group %28SELECT ID Active%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Foundation Group\Foundation %28IN_UP Partial%29 DNU.sql">
+    <Content Include="Queries\Foundation Group\Foundation %28IN_UP Partial%29 DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28IN_UP%29 with Model.sql">
+    <Content Include="Queries\Foundation Group\Foundation Group %28IN_UP%29 with Model.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29.sql">
+    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Details%29.sql">
+    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Soil Layers%29.sql">
+    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Soil Layers%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Profile%29.sql">
+    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Profile%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29 - dnu.sql">
+    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29 - dnu.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
+    <Content Include="Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28IN_UP%29.sql">
+    <Content Include="Queries\Foundation Group\Foundation Group %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
+    <Content Include="Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP SUB).sql">
+    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP) - DNU.sql">
+    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (IN_UP).sql">
+    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details Grp).sql">
+    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details Grp).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Backup\Pier and Pad (SELECT Details).sql">
+    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28DELETE%29.sql">
+    <Content Include="Queries\Pier and Pad\Pier and Pad %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
+    <Content Include="Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28SELECT Details Grp%29.sql">
+    <Content Include="Queries\Pier and Pad\Pier and Pad %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
+    <Content Include="Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
+    <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Details Grp%29.sql">
+    <Content Include="Queries\Pile\Pile %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile %28IN_UP%29 - DNU.sql">
+    <Content Include="Queries\Pile\Pile %28IN_UP%29 - DNU.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile (IN_UP).sql">
+    <Content Include="Queries\Pile\Pile (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Soil Layers%29.sql">
+    <Content Include="Queries\Pile\Pile %28SELECT Soil Layers%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile (SELECT Details).sql">
+    <Content Include="Queries\Pile\Pile (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Pile\Pile %28SELECT Location%29.sql">
+    <Content Include="Queries\Pile\Pile %28SELECT Location%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Structure\Structure %28IN_UP%29.sql">
+    <Content Include="Queries\Structure\Generic Sub Table\Generic %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Structure\Structure %28SELECT%29.sql">
+    <Content Include="Queries\Structure\Generic Sub Table\Generic %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (INSERT Base Structure).sql">
+    <Content Include="Queries\Structure\Generic Sub Table\Generic %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query Params.sql">
+    <Content Include="Queries\Structure\Structure %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Full Query.sql">
+    <Content Include="Queries\Structure\Structure %28SELECT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure) - Sub Query Test.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query Params.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Base Structure).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Guys).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Materials).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Members).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP Upper Structure).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Guys).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP) - Sub Query Test.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Materials).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (IN_UP).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Members).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Base Structure).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Upper Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Details).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP) - Sub Query Test.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Guys).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Material Matching).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Base Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Materials).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Member Matching).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Guys).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Members).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Material Matching).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (SELECT Upper Structure).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Materials).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\Backup\TNX (UPDATE Base Structure).sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Member Matching).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP%29.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Members).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28SELECT Base Structure%29.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Upper Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28IN_UP Base Structure%29.sql">
+    <Content Include="Queries\TNX\This is the backup\TNX (UPDATE Base Structure).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28UPDATE Base Structure%29.sql">
+    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28INSERT Base Structure%29.sql">
+    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\TNX\TNX %28INSERT%29.sql">
+    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
+    <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Unit Base\Unit Base (IN_UP).sql">
+    <Content Include="Queries\Unit Base\Unit Base (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data Transferer Queries\Unit Base\Unit Base (SELECT Details).sql">
+    <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

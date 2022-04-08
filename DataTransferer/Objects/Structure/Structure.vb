@@ -336,9 +336,44 @@ End Class
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
 
-    Public MustOverride ReadOnly Property Insert() As String
-    Public MustOverride ReadOnly Property Update() As String
-    Public MustOverride ReadOnly Property Delete() As String
+    Public MustOverride ReadOnly Property EDSTableName As String
+    Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    Public Overridable ReadOnly Property Insert() As String
+        Get
+            Insert = "BEGIN" & vbCrLf &
+                     "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                     "  VALUES([VALUES])" & vbCrLf &
+                     "END"
+            Insert = Insert.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
+            Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
+            Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+            Return Insert
+        End Get
+    End Property
+
+    Public Overridable ReadOnly Property Update() As String
+        Get
+            Update = "BEGIN" & vbCrLf &
+                      "  Update [Table]" &
+                      "  SET [UPDATE]" & vbCrLf &
+                      "  WHERE ID = [ID]" & vbCrLf &
+                      "END"
+            Update = Update.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
+            Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
+            Update = Update.Replace("[ID]", Me.ID)
+            Return Update
+        End Get
+    End Property
+    Public Overridable ReadOnly Property Delete() As String
+        Get
+            Delete = "BEGIN" & vbCrLf &
+                     "  Delete FROM [TABLE] WHERE ID = [ID]" & vbCrLf &
+                     "END"
+            Delete = Delete.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
+            Delete = Delete.Replace("[ID]", Me.ID)
+            Return Delete
+        End Get
+    End Property
 
     'Public MustOverride Function SQLInsertUpdateDelete() As String
 
@@ -349,6 +384,8 @@ Partial Public MustInherit Class EDSObjectWithQueries
     Public MustOverride Function SQLUpdate() As String
 
     Public Overridable Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
+        'Compare the ID of the current EDS item to the existing item and determine if the Insert, Update, or Delete query should be used
+
         EDSQuery = ""
 
         If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
@@ -374,7 +411,6 @@ Partial Public MustInherit Class EDSExcelObject
     Public Property workBookPath As String
     Public MustOverride ReadOnly Property templatePath As String
     Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
-    Public MustOverride ReadOnly Property EDSTableName As String
     Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
 
 #Region "Save to Excel"
