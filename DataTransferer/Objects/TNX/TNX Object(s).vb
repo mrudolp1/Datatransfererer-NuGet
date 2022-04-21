@@ -14241,7 +14241,7 @@ Partial Public Class tnxTowerRecord
     Private _TowerKbraceOffsetPEX As Double?
 
     <Category("TNX Base Structure"), Description(""), DisplayName("tnx_id")>
-    Public Property tnx_id() As Integer
+    Public Property tnx_id() As Integer?
         Get
             Return Me._tnx_id
         End Get

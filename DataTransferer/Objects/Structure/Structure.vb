@@ -267,6 +267,7 @@ Partial Public MustInherit Class EDSObject
     Implements IEquatable(Of EDSObject), IComparable(Of EDSObject)
 
     Public Property ID As Integer?
+    Public Overridable Property ParentStructure As EDSStructure
     Public Property bus_unit As String
     Public Property structure_id As String
     'Public Property work_order_seq_num As String
@@ -305,12 +306,13 @@ Partial Public MustInherit Class EDSObject
 
     End Function
 
-    Public Overridable Sub Absorb(ByRef Parent As EDSObject)
-        Me.bus_unit = Parent.bus_unit
-        Me.structure_id = Parent.structure_id
+    Public Overridable Sub Absorb(ByRef Host As EDSObject)
+        Me.ParentStructure = If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
+        Me.bus_unit = Host.bus_unit
+        Me.structure_id = Host.structure_id
         'Me.work_order_seq_num = Parent.work_order_seq_num
-        Me.activeDatabase = Parent.activeDatabase
-        Me.databaseIdentity = Parent.databaseIdentity
+        Me.activeDatabase = Host.activeDatabase
+        Me.databaseIdentity = Host.databaseIdentity
     End Sub
 
     Public Function CompareTo(other As EDSObject) As Integer Implements IComparable(Of EDSObject).CompareTo
@@ -324,7 +326,7 @@ Partial Public MustInherit Class EDSObject
     End Function
 
     Public Function Equals(other As EDSObject) As Boolean Implements IEquatable(Of EDSObject).Equals
-        'Could We implement the whole compare function here
+        'Not currently using this but we could implement the whole compare function here
 
         If other Is Nothing Then Return False
 
@@ -454,7 +456,7 @@ Partial Public Class EDSStructure
     Inherits EDSObject
 
     Public Property tnx As tnxModel
-    'Public Property foundations As EDSFoundationGroup
+    Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of SST_Unit_Base)
@@ -462,6 +464,18 @@ Partial Public Class EDSStructure
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property connections As DataTransfererCCIplate
     Public Property pole As DataTransfererCCIpole
+
+    'The structure class should return itself if the parent is requested
+    Private _ParentStructure As EDSStructure
+    Public Overrides Property ParentStructure As EDSStructure
+        Get
+            Return Me
+        End Get
+        Set(value As EDSStructure)
+            _ParentStructure = value
+        End Set
+    End Property
+
 
 #Region "Constructors"
     Public Sub New()
@@ -482,6 +496,10 @@ Partial Public Class EDSStructure
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
+
+    Public Overrides Function ToString() As String
+        Return Me.bus_unit & " - " & Me.structure_id
+    End Function
 #End Region
 
 #Region "EDS"
@@ -603,6 +621,242 @@ Partial Public Class EDSStructure
 #Region "Check Changes"
 
 #End Region
+End Class
+
+Partial Public Class SiteCodeCriteria
+
+    Private _ID As Integer?
+    Private _bus_unit As Integer?
+    Private _ibc_current As String
+    Private _asce_current As String
+    Private _tia_current As String
+    Private _rev_h_accepted As Boolean?
+    Private _rev_h_section_15_5 As Boolean?
+    Private _seismic_design_category As String
+    Private _frost_depth_tia_g As Double?
+    Private _elev_agl As Double?
+    Private _topo_category As Integer?
+    Private _expo_category As String
+    Private _crest_height As Double?
+    Private _slope_distance As Double?
+    Private _distance_from_crest As Double?
+    Private _downwind As Boolean?
+    Private _topo_feature As String
+    Private _crest_point_elev As Double?
+    Private _base_point_elev As Double?
+    Private _mid_height_elev As Double?
+    Private _crest_to_mid_height_distance As Double?
+    Private _tower_point_elev As Double?
+    Private _base_kzt As Double?
+
+    <Category(""), Description(""), DisplayName("ID")>
+    Public Property ID() As Integer?
+        Get
+            Return Me._ID
+        End Get
+        Set
+            Me._ID = Value
+        End Set
+    End Property
+    <Category(""), Description("Member Type"), DisplayName("bus_unit")>
+    Public Property bus_unit() As Integer?
+        Get
+            Return Me._bus_unit
+        End Get
+        Set
+            Me._bus_unit = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("ibc_current")>
+    Public Property ibc_current() As String
+        Get
+            Return Me._ibc_current
+        End Get
+        Set
+            Me._ibc_current = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("asce_current")>
+    Public Property asce_current() As String
+        Get
+            Return Me._asce_current
+        End Get
+        Set
+            Me._asce_current = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("tia_current")>
+    Public Property tia_current() As String
+        Get
+            Return Me._tia_current
+        End Get
+        Set
+            Me._tia_current = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("rev_h_accepted")>
+    Public Property rev_h_accepted() As Boolean?
+        Get
+            Return Me._rev_h_accepted
+        End Get
+        Set
+            Me._rev_h_accepted = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("rev_h_section_15_5")>
+    Public Property rev_h_section_15_5() As Boolean?
+        Get
+            Return Me._rev_h_section_15_5
+        End Get
+        Set
+            Me._rev_h_section_15_5 = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("seismic_design_category")>
+    Public Property seismic_design_category() As String
+        Get
+            Return Me._seismic_design_category
+        End Get
+        Set
+            Me._seismic_design_category = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("frost_depth_tia_g")>
+    Public Property frost_depth_tia_g() As Double?
+        Get
+            Return Me._frost_depth_tia_g
+        End Get
+        Set
+            Me._frost_depth_tia_g = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("elev_agl")>
+    Public Property elev_agl() As Double?
+        Get
+            Return Me._elev_agl
+        End Get
+        Set
+            Me._elev_agl = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("topo_category")>
+    Public Property topo_category() As Integer?
+        Get
+            Return Me._topo_category
+        End Get
+        Set
+            Me._topo_category = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("expo_category")>
+    Public Property expo_category() As String
+        Get
+            Return Me._expo_category
+        End Get
+        Set
+            Me._expo_category = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("crest_height")>
+    Public Property crest_height() As Double?
+        Get
+            Return Me._crest_height
+        End Get
+        Set
+            Me._crest_height = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("slope_distance")>
+    Public Property slope_distance() As Double?
+        Get
+            Return Me._slope_distance
+        End Get
+        Set
+            Me._slope_distance = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("distance_from_crest")>
+    Public Property distance_from_crest() As Double?
+        Get
+            Return Me._distance_from_crest
+        End Get
+        Set
+            Me._distance_from_crest = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("downwind")>
+    Public Property downwind() As Boolean?
+        Get
+            Return Me._downwind
+        End Get
+        Set
+            Me._downwind = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("topo_feature")>
+    Public Property topo_feature() As String
+        Get
+            Return Me._topo_feature
+        End Get
+        Set
+            Me._topo_feature = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("crest_point_elev")>
+    Public Property crest_point_elev() As Double?
+        Get
+            Return Me._crest_point_elev
+        End Get
+        Set
+            Me._crest_point_elev = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("base_point_elev")>
+    Public Property base_point_elev() As Double?
+        Get
+            Return Me._base_point_elev
+        End Get
+        Set
+            Me._base_point_elev = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("mid_height_elev")>
+    Public Property mid_height_elev() As Double?
+        Get
+            Return Me._mid_height_elev
+        End Get
+        Set
+            Me._mid_height_elev = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("crest_to_mid_height_distance")>
+    Public Property crest_to_mid_height_distance() As Double?
+        Get
+            Return Me._crest_to_mid_height_distance
+        End Get
+        Set
+            Me._crest_to_mid_height_distance = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("tower_point_elev")>
+    Public Property tower_point_elev() As Double?
+        Get
+            Return Me._tower_point_elev
+        End Get
+        Set
+            Me._tower_point_elev = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("base_kzt")>
+    Public Property base_kzt() As Double?
+        Get
+            Return Me._base_kzt
+        End Get
+        Set
+            Me._base_kzt = Value
+        End Set
+    End Property
+
 End Class
 
 

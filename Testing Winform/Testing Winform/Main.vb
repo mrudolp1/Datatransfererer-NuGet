@@ -132,6 +132,11 @@ Partial Public Class frmMain
             strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
         End If
 
+        'Test Parents
+        'For Each pp In strcLocal.PierandPads
+        '    MessageBox.Show("My parent structure is " & pp.ParentStructure.ToString)
+        'Next
+
         propgridFndXL.SelectedObject = strcLocal
 
     End Sub
