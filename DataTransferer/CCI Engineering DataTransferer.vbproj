@@ -112,9 +112,14 @@
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
+    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql" />
+    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql" />
     <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
+    <None Remove="Queries\Unit Base\Unit Base (DELETE).sql" />
+    <None Remove="Queries\Unit Base\Unit Base (INSERT).sql" />
     <None Remove="Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
+    <None Remove="Queries\Unit Base\Unit Base (UPDATE).sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -409,10 +414,25 @@
     <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Unit Base %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Unit Base\Unit Base %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Unit Base (IN_UP).sql">
+    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">

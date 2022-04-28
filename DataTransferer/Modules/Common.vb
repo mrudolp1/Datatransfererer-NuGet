@@ -80,7 +80,46 @@ Public Class SQLTemplates
 
 #End Region
 
+#Region "Unit Base"
+    Private _UnitBaseInsert As String
+    Public ReadOnly Property UnitBaseInsert() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (INSERT).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
 
+    Public ReadOnly Property UnitBaseUpdate() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Update).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property UnitBaseDelete() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Delete).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Private _UnitBaseSelect As String
+    Public ReadOnly Property UnitBaseSelect() As String
+        Get
+            If _UnitBaseSelect = "" Then
+                _UnitBaseSelect = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (SELECT Details).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+#End Region
 
 
 End Class

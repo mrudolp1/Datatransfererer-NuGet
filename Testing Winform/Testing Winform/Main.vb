@@ -395,7 +395,7 @@ Partial Public Class frmMain
                 tappy = 0
             Else
                 pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
-                If pwd = "DanIsTheBest" Then
+                If pwd = "DanSmellowitz" Then
                     'If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
                     MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
                     tappy = 3

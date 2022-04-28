@@ -1,12 +1,10 @@
-﻿[EXISTING MODEL]
-
-SELECT 
-	fd.foundation_type --might need to remove/adjust
+﻿SELECT 
+	--fd.foundation_type --might need to remove/adjust
     --,smx.ID
-    ,sm.ID model_id
-    ,fg.ID foundation_group_id
-    ,fd.ID foundation_id
-    ,ub.ID unit_base_id
+    --,sm.ID model_id
+    --,fg.ID foundation_group_id
+    --,fd.ID foundation_id
+    ub.ID unit_base_id
     ,ub.pier_shape
     ,ub.pier_diameter
     ,ub.extension_above_grade
@@ -53,14 +51,16 @@ SELECT
     ,ub.tool_version
     ,ub.modified
 FROM
-    gen.structure_model_xref smx
-    ,gen.structure_model sm
-    ,fnd.foundation_group fg
-    ,fnd.foundation_details fd
-    ,fnd.unit_base_details ub
+    --gen.structure_model_xref smx
+    --,gen.structure_model sm
+    --,fnd.foundation_group fg
+    --,fnd.foundation_details fd
+    fnd.unit_base ub
 WHERE
-    smx.model_id=@ModelID
-    AND smx.model_id=sm.ID
-    AND sm.foundation_group_id=fg.ID
-    AND fg.ID=fd.foundation_group_id
-    AND fd.details_id=ub.ID
+    --smx.model_id=@ModelID
+    --AND smx.model_id=sm.ID
+    --AND sm.foundation_group_id=fg.ID
+    --AND fg.ID=fd.foundation_group_id
+    --AND fd.details_id=ub.ID
+    ub.bus_unit=[BU]
+    AND ub.structure_id=[STRC ID]
