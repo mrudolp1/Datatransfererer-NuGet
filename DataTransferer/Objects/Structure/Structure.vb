@@ -462,7 +462,7 @@ Partial Public Class EDSStructure
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
-    Public Property UnitBases As New List(Of SST_Unit_Base)
+    Public Property UnitBases As New List(Of UnitBase)
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property connections As DataTransfererCCIplate
@@ -529,6 +529,11 @@ Partial Public Class EDSStructure
                 Me.PierandPads.Add(New PierAndPad(dr, Me))
             Next
 
+            'Unit Base
+            For Each dr As DataRow In strDS.Tables("Unit Base").Rows
+                Me.UnitBases.Add(New UnitBase(dr, Me))
+            Next
+
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
             'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
@@ -550,7 +555,7 @@ Partial Public Class EDSStructure
         Dim structureQuery As String = ""
         'structureQuery += Me.tnx.EDSQuery(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
-        'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
@@ -575,7 +580,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New UnitBase(item))
+                Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
@@ -595,7 +600,7 @@ Partial Public Class EDSStructure
             'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
             'This works for now, just basing the name off the template name.
             fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
-            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & " " & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & fileNum & Path.GetExtension(PierandPads(i).templatePath))
+            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel()
         Next
         'For i = 0 To Me.Piles.Count - 1
@@ -603,11 +608,11 @@ Partial Public Class EDSStructure
         '    Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
         '    Piles(i).SavetoExcel()
         'Next
-        'For i = 0 To Me.UnitBases.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    UnitBases(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(UnitBases(i).templatePath) & fileNum)
-        '    UnitBases(i).SavetoExcel()
-        'Next
+        For i = 0 To Me.UnitBases.Count - 1
+            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
+            UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
+            UnitBases(i).SavetoExcel()
+        Next
         'For i = 0 To Me.DrilledPiers.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    DrilledPiers(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(DrilledPiers(i).templatePath) & fileNum)

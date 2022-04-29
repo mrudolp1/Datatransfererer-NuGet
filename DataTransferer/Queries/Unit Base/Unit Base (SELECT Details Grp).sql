@@ -51,7 +51,7 @@
     ,det.modified
 FROM
     fnd.foundation_details fd
-    ,fnd.pier_pad_details det
+    ,fnd.unit_base_details det
 WHERE
     fd.foundation_group_id=[FNDGRPID]
     AND fd.foundation_type ='Unit Base'
