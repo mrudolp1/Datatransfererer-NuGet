@@ -14,7 +14,8 @@ Partial Public Class PierAndPad
     Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)")}
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)"),
+                                                        New EXCELDTParameter("Pier and Pad General Results EXCEL", "A2:C16", "Results (SAPI)")}
         End Get
     End Property
     Private _Insert As String
@@ -902,7 +903,7 @@ Partial Public Class PierAndPad
             Try
                 Me.ID = CType(dr.Item("pp_id"), Integer)
             Catch
-                Me.ID = 0
+                Me.ID = Nothing
             End Try 'Pier and Pad ID
             Try
                 Me.extension_above_grade = CType(dr.Item("extension_above_grade"), Double)
@@ -1137,6 +1138,18 @@ Partial Public Class PierAndPad
             'For Each ModifiedRangeDataRow As DataRow In ds.Tables("Pier and Pad Modified Ranges EXCEL").Rows
             '    Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
             'Next 'Add Modified Ranges to Modified Range Object
+
+        End If
+
+        If excelDS.Tables.Contains("Pier and Pad General Results EXCEL") Then
+
+            For Each Row As DataRow In excelDS.Tables("Pier and Pad General Results EXCEL").Rows
+
+                'For Tools with multiple foundation or sub items, use Row.Item("ID") or add a local_ID column to filter which results should be associated with each foundation
+
+                Me.Results.Add(New EDSResult(Row, Me))
+
+            Next
 
         End If
 
@@ -1564,6 +1577,7 @@ Partial Public Class PierAndPad
 
         Return SQLUpdate
     End Function
+
 
 #End Region
 

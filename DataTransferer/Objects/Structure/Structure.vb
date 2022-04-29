@@ -267,10 +267,11 @@ Partial Public MustInherit Class EDSObject
     Implements IEquatable(Of EDSObject), IComparable(Of EDSObject)
 
     Public Property ID As Integer?
+    Public Overridable Property Parent As EDSObject
     Public Overridable Property ParentStructure As EDSStructure
     Public Property bus_unit As String
     Public Property structure_id As String
-    'Public Property work_order_seq_num As String
+    Public Property work_order_seq_num As String
     Public Property activeDatabase As String
     Public Property databaseIdentity As WindowsIdentity
     Public Property differences As List(Of ObjectsComparer.Difference)
@@ -307,10 +308,11 @@ Partial Public MustInherit Class EDSObject
     End Function
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
+        Me.Parent = Host
         Me.ParentStructure = If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
         Me.bus_unit = Host.bus_unit
         Me.structure_id = Host.structure_id
-        'Me.work_order_seq_num = Parent.work_order_seq_num
+        Me.work_order_seq_num = Host.work_order_seq_num
         Me.activeDatabase = Host.activeDatabase
         Me.databaseIdentity = Host.databaseIdentity
     End Sub
@@ -414,6 +416,7 @@ Partial Public MustInherit Class EDSExcelObject
     Public MustOverride ReadOnly Property templatePath As String
     Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
     Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Property Results As New List(Of EDSResult)
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
@@ -621,6 +624,100 @@ Partial Public Class EDSStructure
 #Region "Check Changes"
 
 #End Region
+End Class
+
+Partial Public Class EDSResult
+    Inherits EDSObject
+
+    Private _foreign_key As Integer?
+    Private _result_lkup As String
+    Private _rating As Double?
+    Private _Insert As String
+    'modified_person_id
+    'process_stage
+    'modified_date
+
+    <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Foreign Key Reference")>
+    Public Property foreign_key() As Integer?
+        Get
+            Return If(Me._foreign_key, Me.Parent.ID)
+        End Get
+        Set
+            Me._foreign_key = Value
+        End Set
+    End Property
+    <Category("Results"), Description(""), DisplayName("Result Type")>
+    Public Property result_lkup() As String
+        Get
+            Return Me._result_lkup
+        End Get
+        Set
+            Me._result_lkup = Value
+        End Set
+    End Property
+    <Category("Results"), Description(""), DisplayName("Rating (%)")>
+    Public Property rating() As Double?
+        Get
+            Return Me._rating
+        End Get
+        Set
+            Me._rating = Value
+        End Set
+    End Property
+
+    Public Property Result_Table_Name() As String 'Need to set this from parent object (i.e. pier_pad_results)
+    Public Property Result_ID_Name() As String 'Need to set this from parent object (i.e. pier_pad_id)
+
+    Public ReadOnly Property Insert() As String
+        Get
+            Insert =
+                "BEGIN" & vbCrLf &
+                     "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                     "  VALUES([VALUES])" & vbCrLf &
+                     "END"
+            Insert = Insert.Replace("[TABLE]", Me.Result_Table_Name)
+            Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+            Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
+            Return Insert
+        End Get
+    End Property
+
+
+    Public Function SQLInsertValues() As String
+        SQLInsertValues = ""
+
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.foreign_key.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Function SQLInsertFields() As String
+        SQLInsertFields = ""
+
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString(Result_ID_Name)
+        SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+
+        Return SQLInsertFields
+    End Function
+
+    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObject)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        Me.result_lkup = DBtoStr(resultDr("result_lkup"))
+        Me.rating = DBtoNullableDbl(resultDr("rating"))
+
+    End Sub
+
 End Class
 
 Partial Public Class SiteCodeCriteria
