@@ -80,7 +80,46 @@ Public Class SQLTemplates
 
 #End Region
 
+#Region "Unit Base"
+    Private _UnitBaseInsert As String
+    Public ReadOnly Property UnitBaseInsert() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (INSERT).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
 
+    Public ReadOnly Property UnitBaseUpdate() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Update).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property UnitBaseDelete() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Delete).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Private _UnitBaseSelect As String
+    Public ReadOnly Property UnitBaseSelect() As String
+        Get
+            If _UnitBaseSelect = "" Then
+                _UnitBaseSelect = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (SELECT Details).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+#End Region
 
 
 End Class
@@ -169,19 +208,12 @@ Public Module Common
 
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource
         'DevExpress specific process to fill an excel data source with information from a range in excel
-        Dim exDS As New ExcelDataSource()
-        Dim options As New ExcelSourceOptions()
-        Dim importSettings = New ExcelWorksheetSettings()
-        importSettings.WorksheetName = ws
-        importSettings.CellRange = rng
-        options.ImportSettings = importSettings
-        With exDS
-            .FileName = path
-            .SourceOptions = options
-            .Fill()
-        End With
+        Dim importSettings As New ExcelWorksheetSettings() With {.WorksheetName = ws, .CellRange = rng}
+        Dim options As New ExcelSourceOptions() With {.ImportSettings = importSettings}
+        GetExcelDataSource = New ExcelDataSource() With {.FileName = path, .SourceOptions = options}
+        GetExcelDataSource.Fill()
 
-        Return exDS
+        Return GetExcelDataSource
     End Function
 
     Public Function ExcelDatasourceToDataTable(ByVal excelDataSource As ExcelDataSource, ByVal datasourcename As String) As DataTable
