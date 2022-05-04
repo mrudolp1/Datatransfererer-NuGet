@@ -46,6 +46,9 @@
     <ApplicationIcon>wanda_LjA_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CciSites.Utils, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CciSites.Utils.1.1.0\lib\net452\CciSites.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Data.Desktop.21.2.5\lib\net452\DevExpress.Data.Desktop.v21.2.dll</HintPath>
     </Reference>
