@@ -20,6 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Queries\Unit Base\Backup - MRR\**" />
+    <EmbeddedResource Remove="Queries\Unit Base\Backup - MRR\**" />
+    <None Remove="Queries\Unit Base\Backup - MRR\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
@@ -67,6 +73,8 @@
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT) - Copy.sql" />
+    <None Remove="Queries\Pier and Pad\Pier and Pad (RESULT).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql" />
@@ -86,6 +94,7 @@
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
+    <None Remove="Queries\Structure\Generic Sub Table\Generic (RESULT).sql" />
     <None Remove="Queries\Structure\Structure (IN_UP).sql" />
     <None Remove="Queries\Structure\Structure (SELECT).sql" />
     <None Remove="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql" />
@@ -112,8 +121,6 @@
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql" />
     <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base (DELETE).sql" />
@@ -279,6 +286,12 @@
     <Content Include="Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Queries\Pier and Pad\Pier and Pad %28RESULT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pier and Pad\Pier and Pad (INSERT) - Copy.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -334,6 +347,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Structure\Generic Sub Table\Generic %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Structure\Generic Sub Table\Generic %28RESULT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Structure\Structure %28IN_UP%29.sql">
@@ -414,12 +430,6 @@
     <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -430,9 +440,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">

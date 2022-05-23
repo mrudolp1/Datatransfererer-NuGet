@@ -27,10 +27,9 @@ Partial Public Class PierAndPad
                 _Insert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (INSERT).sql")
             End If
             Dim InsertString As String = _Insert
-            InsertString = InsertString.Replace("[BU NUMBER]", Me.bus_unit.FormatDBValue)
-            InsertString = InsertString.Replace("[STRUCTURE ID]", Me.structure_id.FormatDBValue)
             InsertString = InsertString.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
             InsertString = InsertString.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
+            InsertString = InsertString.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
             Return InsertString
         End Get
     End Property
@@ -43,6 +42,7 @@ Partial Public Class PierAndPad
             Dim UpdateString As String = _Update
             UpdateString = UpdateString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
             UpdateString = UpdateString.Replace("[UPDATE]", Me.SQLUpdate)
+            UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
             Return UpdateString
         End Get
     End Property
@@ -1600,6 +1600,9 @@ Partial Public Class PierAndPad
         comparer.IgnoreMember("ID")
         comparer.IgnoreMember("activeDatabase")
         comparer.IgnoreMember("databaseIdentity")
+        comparer.IgnoreMember("Parent")
+        comparer.IgnoreMember("ParentStructure")
+        comparer.IgnoreMember("Results")
         comparer.IgnoreMember("differences")
         comparer.IgnoreMember("Insert")
         comparer.IgnoreMember("Update")
