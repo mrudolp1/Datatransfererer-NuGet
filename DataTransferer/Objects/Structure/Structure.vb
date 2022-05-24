@@ -108,7 +108,11 @@ Public Module Extensions
                 'Compare IDs
                 If currentSortedList(i).ID = prevSortedList(i).ID Then
                     If Not currentSortedList(i).CompareMe(prevSortedList(i)) Then
+                        'Update existing
                         EDSListQuery += currentSortedList(i).Update
+                    Else
+                        'Save Results Only
+                        EDSListQuery += currentSortedList(i).Results.EDSResultQuery
                     End If
                 ElseIf currentSortedList(i).ID < prevSortedList(i).ID Then
                     EDSListQuery += prevSortedList(i).Delete
@@ -125,6 +129,19 @@ Public Module Extensions
         Loop
 
         Return EDSListQuery
+
+    End Function
+
+    <Extension()>
+    Public Function EDSResultQuery(alist As List(Of EDSResult), Optional ByVal ResultsParentIDKnown As Boolean = True) As String
+
+        EDSResultQuery = ""
+
+        For Each result In alist
+            EDSResultQuery += result.Insert(ResultsParentIDKnown) & vbCrLf
+        Next
+
+        Return EDSResultQuery
 
     End Function
 
@@ -267,10 +284,11 @@ Partial Public MustInherit Class EDSObject
     Implements IEquatable(Of EDSObject), IComparable(Of EDSObject)
 
     Public Property ID As Integer?
+    Public Overridable Property Parent As EDSObject
     Public Overridable Property ParentStructure As EDSStructure
     Public Property bus_unit As String
     Public Property structure_id As String
-    'Public Property work_order_seq_num As String
+    Public Property work_order_seq_num As String
     Public Property activeDatabase As String
     Public Property databaseIdentity As WindowsIdentity
     Public Property differences As List(Of ObjectsComparer.Difference)
@@ -307,10 +325,11 @@ Partial Public MustInherit Class EDSObject
     End Function
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
+        Me.Parent = Host
         Me.ParentStructure = If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
         Me.bus_unit = Host.bus_unit
         Me.structure_id = Host.structure_id
-        'Me.work_order_seq_num = Parent.work_order_seq_num
+        Me.work_order_seq_num = Host.work_order_seq_num
         Me.activeDatabase = Host.activeDatabase
         Me.databaseIdentity = Host.databaseIdentity
     End Sub
@@ -337,35 +356,46 @@ End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
-
+    <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
     Public MustOverride ReadOnly Property EDSTableName As String
+    <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    Public Property Results As New List(Of EDSResult)
+    <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable ReadOnly Property Insert() As String
         Get
             Insert = "BEGIN" & vbCrLf &
                      "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                     "  OUTPUT INSERTED.ID INTO @Prev" & vbCrLf &
                      "  VALUES([VALUES])" & vbCrLf &
-                     "END"
+                     "  Select @PrevID=ID FROM @Prev" & vbCrLf &
+                     "   [RESULTS]" & vbCrLf &
+                     "  Delete FROM @Prev" & vbCrLf &
+                     "END" & vbCrLf
             Insert = Insert.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
             Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+            Insert = Insert.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
             Return Insert
         End Get
     End Property
-
+    <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable ReadOnly Property Update() As String
         Get
             Update = "BEGIN" & vbCrLf &
                       "  Update [Table]" &
                       "  SET [UPDATE]" & vbCrLf &
                       "  WHERE ID = [ID]" & vbCrLf &
-                      "END"
+                      "  [RESULTS]" & vbCrLf &
+                      "END" & vbCrLf
             Update = Update.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
             Update = Update.Replace("[ID]", Me.ID)
+            Update = Update.Replace("[RESULTS]", Me.Results.EDSResultQuery)
             Return Update
         End Get
     End Property
+    <Category("EDS Queries"), Description("Delete this object and results from EDS. For use in whole structure query."), DisplayName("SQL Delete Query")>
     Public Overridable ReadOnly Property Delete() As String
         Get
             Delete = "BEGIN" & vbCrLf &
@@ -414,6 +444,7 @@ Partial Public MustInherit Class EDSExcelObject
     Public MustOverride ReadOnly Property templatePath As String
     Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
     Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    'Public Property Results As New List(Of EDSResult)
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
@@ -588,7 +619,11 @@ Partial Public Class EDSStructure
 
         Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.databaseIdentity, Me.activeDatabase)
 
-        Dim structureQuery As String = ""
+        Dim structureQuery As String =
+            "DECLARE @Prev TABLE(ID INT)" & vbCrLf &
+            "DECLARE @PrevID INT" & vbCrLf &
+            "BEGIN TRANSACTION" & vbCrLf
+
         'structureQuery += Me.tnx.EDSQuery(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
@@ -598,7 +633,9 @@ Partial Public Class EDSStructure
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
         'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
 
-        MessageBox.Show(structureQuery)
+        structureQuery += "COMMIT"
+
+        'MessageBox.Show(structureQuery)
 
         sqlSender(structureQuery, ActiveDatabase, LogOnUser, 0.ToString)
 
@@ -616,6 +653,8 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
+                'Me.UnitBases.Add(New UnitBase(item))
+                'Me.UnitBases.Add(New SST_Unit_Base(item, Me))
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))
@@ -665,6 +704,147 @@ Partial Public Class EDSStructure
 #Region "Check Changes"
 
 #End Region
+End Class
+
+Partial Public Class EDSResult
+    Inherits EDSObject
+
+    Private _foreign_key As Integer?
+    Private _result_lkup As String
+    Private _rating As Double?
+    Private _Insert As String
+    Private _EDSTableName As String
+    Private _ForeignKeyName As String
+    'modified_person_id
+    'process_stag
+    'modified_date
+
+    'Public Shadows Property Parent As EDSObjectWithQueries
+
+    <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Result ID")>
+    Public Property foreign_key() As Integer?
+        Get
+            Return Me._foreign_key
+        End Get
+        Set
+            Me._foreign_key = Value
+        End Set
+    End Property
+    <Category("Results"), Description(""), DisplayName("Result Type")>
+    Public Property result_lkup() As String
+        Get
+            Return Me._result_lkup
+        End Get
+        Set
+            Me._result_lkup = Value
+        End Set
+    End Property
+    <Category("Results"), Description(""), DisplayName("Rating (%)")>
+    Public Property rating() As Double?
+        Get
+            Return Me._rating
+        End Get
+        Set
+            Me._rating = Value
+        End Set
+    End Property
+
+    <Category("Results"), Description(""), DisplayName("Result Table Name")>
+    Public Property EDSTableName() As String
+        Get
+            Return Me._EDSTableName
+        End Get
+        Set
+            Me._EDSTableName = Value
+        End Set
+    End Property
+
+    <Category("Results"), Description(""), DisplayName("Result ID Name")>
+    Public Property ForeignKeyName() As String
+        Get
+            Return Me._ForeignKeyName
+        End Get
+        Set
+            Me._ForeignKeyName = Value
+        End Set
+    End Property
+
+
+    Public ReadOnly Property Insert(Optional ByVal ResultsParentIDKnown As Boolean = True) As String
+        Get
+            Insert =
+                "BEGIN" & vbCrLf &
+                "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                "  VALUES([VALUES])" & vbCrLf &
+                "END" & vbCrLf
+            Insert = Insert.Replace("[TABLE]", Me.EDSTableName)
+            Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues(ResultsParentIDKnown))
+            Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
+            Return Insert
+        End Get
+    End Property
+
+    'Public ReadOnly Property InsertQuery() As String
+    '    Get
+    '        InsertQuery =
+    '            "BEGIN" & vbCrLf &
+    '            "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+    '            "  VALUES([VALUES])" & vbCrLf &
+    '            "END" & vbCrLf
+    '        InsertQuery = InsertQuery.Replace("[TABLE]", Me.EDSTableName)
+    '        InsertQuery = InsertQuery.Replace("[VALUES]", Me.SQLInsertValues(True))
+    '        InsertQuery = InsertQuery.Replace("[FIELDS]", Me.SQLInsertFields)
+    '        Return InsertQuery
+    '    End Get
+    'End Property
+
+
+    Public Function SQLInsertValues(Optional ByVal ResultsParentIDKnown As Boolean = True) As String
+        SQLInsertValues = ""
+
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(If(ResultsParentIDKnown, Me.foreign_key.ToString.FormatDBValue, "@PrevID"))
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Function SQLInsertFields() As String
+        SQLInsertFields = ""
+
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString(Me.ForeignKeyName)
+        SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+
+        Return SQLInsertFields
+    End Function
+
+    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+            Me._foreign_key = Parent.ID
+            'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results)
+            Me.EDSTableName = Parent.EDSTableName & "_results"
+            'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
+            'Seperate the table name from the schema then add _id
+            'MessageBox.Show("Start:" & (Parent.EDSTableName.IndexOf(".") + 1).ToString)
+            'MessageBox.Show("Length:" & (Parent.EDSTableName.Length - Parent.EDSTableName.IndexOf(".") - 1).ToString)
+            Me.ForeignKeyName = If(Parent.EDSTableName.Contains("."),
+                                    Parent.EDSTableName.Substring(Parent.EDSTableName.IndexOf(".") + 1, Parent.EDSTableName.Length - Parent.EDSTableName.IndexOf(".") - 1) & "_id",
+                                    Parent.EDSTableName & "_id")
+        End If
+
+        Me.result_lkup = DBtoStr(resultDr.Item("result_lkup"))
+        Me.rating = DBtoNullableDbl(resultDr.Item("rating"))
+    End Sub
+
 End Class
 
 Partial Public Class SiteCodeCriteria

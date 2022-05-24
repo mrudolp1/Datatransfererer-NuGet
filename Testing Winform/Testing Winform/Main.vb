@@ -8,7 +8,7 @@ Imports Oracle.ManagedDataAccess.Client
 
 Partial Public Class frmMain
 #Region "Object Declarations"
-    Public myUnitBases As New DataTransfererUnitBase
+    'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
@@ -407,8 +407,6 @@ Partial Public Class frmMain
             End If
         End If
     End Sub
-
-
 #End Region
 
 End Class
