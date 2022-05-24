@@ -356,36 +356,46 @@ End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
-
+    <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
     Public MustOverride ReadOnly Property EDSTableName As String
+    <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
     Public Property Results As New List(Of EDSResult)
+    <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable ReadOnly Property Insert() As String
         Get
             Insert = "BEGIN" & vbCrLf &
                      "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                     "  OUTPUT INSERTED.ID INTO @Prev" & vbCrLf &
                      "  VALUES([VALUES])" & vbCrLf &
-                     "END"
+                     "  Select @PrevID=ID FROM @Prev" & vbCrLf &
+                     "   [RESULTS]" & vbCrLf &
+                     "  Delete FROM @Prev" & vbCrLf &
+                     "END" & vbCrLf
             Insert = Insert.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
             Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+            Insert = Insert.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
             Return Insert
         End Get
     End Property
-
+    <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable ReadOnly Property Update() As String
         Get
             Update = "BEGIN" & vbCrLf &
                       "  Update [Table]" &
                       "  SET [UPDATE]" & vbCrLf &
                       "  WHERE ID = [ID]" & vbCrLf &
-                      "END"
+                      "  [RESULTS]" & vbCrLf &
+                      "END" & vbCrLf
             Update = Update.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
             Update = Update.Replace("[ID]", Me.ID)
+            Update = Update.Replace("[RESULTS]", Me.Results.EDSResultQuery)
             Return Update
         End Get
     End Property
+    <Category("EDS Queries"), Description("Delete this object and results from EDS. For use in whole structure query."), DisplayName("SQL Delete Query")>
     Public Overridable ReadOnly Property Delete() As String
         Get
             Delete = "BEGIN" & vbCrLf &
@@ -573,7 +583,6 @@ Partial Public Class EDSStructure
         Dim structureQuery As String =
             "DECLARE @Prev TABLE(ID INT)" & vbCrLf &
             "DECLARE @PrevID INT" & vbCrLf &
-            "DECLARE @IncResults BIT" & vbCrLf &
             "BEGIN TRANSACTION" & vbCrLf
 
         'structureQuery += Me.tnx.EDSQuery(existingStructure.tnx)

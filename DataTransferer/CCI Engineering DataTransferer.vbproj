@@ -73,7 +73,6 @@
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT) - Copy.sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (RESULT).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql" />
@@ -287,9 +286,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28RESULT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad (INSERT) - Copy.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql">
