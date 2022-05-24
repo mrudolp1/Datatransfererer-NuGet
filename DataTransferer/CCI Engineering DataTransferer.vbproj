@@ -112,8 +112,8 @@
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql" />
+    <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details Grp).sql" />
+    <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details).sql" />
     <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base (DELETE).sql" />
@@ -131,6 +131,14 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Excel.dll">
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
     </COMReference>
   </ItemGroup>
 
@@ -414,10 +422,10 @@
     <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql">
+    <Content Include="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details Grp).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql">
+    <Content Include="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
@@ -432,7 +440,7 @@
     <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base %28IN_UP%29.sql">
+    <Content Include="Queries\Unit Base\MRR Backup\Unit Base %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">
@@ -457,6 +465,7 @@
     <PackageReference Include="DevExpress.Win" Version="21.2.5" />
     <PackageReference Include="DevExpress.Win.Spreadsheet" Version="21.2.5" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="19.9.0" />
   </ItemGroup>
 
   <ItemGroup>

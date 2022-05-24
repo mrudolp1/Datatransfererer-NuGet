@@ -4,6 +4,7 @@ Imports CCI_Engineering_Templates
 Imports System.Data.SqlClient
 Imports System.Security.Principal
 Imports System.IO
+Imports Oracle.ManagedDataAccess.Client
 
 Partial Public Class frmMain
 #Region "Object Declarations"
@@ -411,3 +412,4 @@ Partial Public Class frmMain
 #End Region
 
 End Class
+
