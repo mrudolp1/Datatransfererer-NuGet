@@ -2,13 +2,13 @@
 
 Imports DevExpress.Spreadsheet
 Imports System.Security.Principal
-Imports Microsoft.Office.Interop.Excel
-Imports Microsoft.Office.Interop
+'Imports Microsoft.Office.Interop.Excel
+'Imports Microsoft.Office.Interop
 
 Partial Public Class DataTransfererGuyedAnchorBlock
 
 #Region "Define"
-    Private NewGuyedAnchorBlockWb As New Workbook
+    Private NewGuyedAnchorBlockWb As New DevExpress.Spreadsheet.Workbook
     Private prop_ExcelFilePath As String
 
     Public Property GuyedAnchorBlocks As New List(Of GuyedAnchorBlock)

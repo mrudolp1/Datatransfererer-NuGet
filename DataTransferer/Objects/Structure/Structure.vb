@@ -108,7 +108,11 @@ Public Module Extensions
                 'Compare IDs
                 If currentSortedList(i).ID = prevSortedList(i).ID Then
                     If Not currentSortedList(i).CompareMe(prevSortedList(i)) Then
+                        'Update existing
                         EDSListQuery += currentSortedList(i).Update
+                    Else
+                        'Save Results Only
+                        EDSListQuery += currentSortedList(i).Results.EDSResultQuery
                     End If
                 ElseIf currentSortedList(i).ID < prevSortedList(i).ID Then
                     EDSListQuery += prevSortedList(i).Delete
@@ -125,6 +129,19 @@ Public Module Extensions
         Loop
 
         Return EDSListQuery
+
+    End Function
+
+    <Extension()>
+    Public Function EDSResultQuery(alist As List(Of EDSResult), Optional ByVal ResultsParentIDKnown As Boolean = True) As String
+
+        EDSResultQuery = ""
+
+        For Each result In alist
+            EDSResultQuery += result.Insert(ResultsParentIDKnown) & vbCrLf
+        Next
+
+        Return EDSResultQuery
 
     End Function
 
@@ -339,35 +356,46 @@ End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
-
+    <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
     Public MustOverride ReadOnly Property EDSTableName As String
+    <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    Public Property Results As New List(Of EDSResult)
+    <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable ReadOnly Property Insert() As String
         Get
             Insert = "BEGIN" & vbCrLf &
                      "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                     "  OUTPUT INSERTED.ID INTO @Prev" & vbCrLf &
                      "  VALUES([VALUES])" & vbCrLf &
-                     "END"
+                     "  Select @PrevID=ID FROM @Prev" & vbCrLf &
+                     "   [RESULTS]" & vbCrLf &
+                     "  Delete FROM @Prev" & vbCrLf &
+                     "END" & vbCrLf
             Insert = Insert.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
             Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+            Insert = Insert.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
             Return Insert
         End Get
     End Property
-
+    <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable ReadOnly Property Update() As String
         Get
             Update = "BEGIN" & vbCrLf &
                       "  Update [Table]" &
                       "  SET [UPDATE]" & vbCrLf &
                       "  WHERE ID = [ID]" & vbCrLf &
-                      "END"
+                      "  [RESULTS]" & vbCrLf &
+                      "END" & vbCrLf
             Update = Update.Replace("[TABLE]", Me.EDSTableName.FormatDBValue)
             Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
             Update = Update.Replace("[ID]", Me.ID)
+            Update = Update.Replace("[RESULTS]", Me.Results.EDSResultQuery)
             Return Update
         End Get
     End Property
+    <Category("EDS Queries"), Description("Delete this object and results from EDS. For use in whole structure query."), DisplayName("SQL Delete Query")>
     Public Overridable ReadOnly Property Delete() As String
         Get
             Delete = "BEGIN" & vbCrLf &
@@ -416,7 +444,7 @@ Partial Public MustInherit Class EDSExcelObject
     Public MustOverride ReadOnly Property templatePath As String
     Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
     Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    Public Property Results As New List(Of EDSResult)
+    'Public Property Results As New List(Of EDSResult)
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
@@ -460,7 +488,7 @@ Partial Public Class EDSStructure
     Inherits EDSObject
 
     Public Property tnx As tnxModel
-    Public Property structureCodeCriteria As SiteCodeCriteria
+    Public Property structureCodeCriteria As New SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
@@ -511,7 +539,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
 
 
         Using strDS As New DataSet
@@ -522,6 +550,45 @@ Partial Public Class EDSStructure
             For i = 0 To strDS.Tables.Count - 1
                 strDS.Tables(i).TableName = tableNames(i)
             Next
+
+            'If no site code criteria exists, fetch data from ORACLE to use for the first analysis. 
+            'Still need to find all Topo inputs
+            'Just set other parameters as default values 
+            If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                OracleLoader("
+                    SELECT
+                            str.bus_unit
+                            ,str.structure_id
+                            ,tr.standard_code tia_current
+                            ,tr.bldg_code ibc_current
+                            ,str.ground_elev elev_agl
+                            ,str.hgt_no_appurt
+                            ,str.crest_height
+                            ,str.distance_from_crest
+                            ,sit.site_name
+                            ,'False' rev_h_section_15_5
+                            ,0 tower_point_elev
+                            --,pi.eng_app_id
+                            --,pi.crrnt_rvsn_num
+                        FROM
+                            isit_aim.structure                      str
+                            ,isit_aim.site                          sit
+                            ,rpt_appl.eng_tower_rating_vw           tr
+                            --,isit_aim.work_orders                 wo
+                            --,isit_isite.project_info              pi
+                        WHERE
+                            --wo.work_order_seqnum = 'XXXXXXX'
+                            str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+                            AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
+                            AND str.bus_unit = sit.bus_unit
+                            AND str.bus_unit = tr.bus_unit
+                            --AND wo.bus_unit = str.bus_unit
+                            --AND wo.structure_id = str.structure_id
+                            --AND pi.eng_app_id = wo.eng_app_id(+)
+
+                    ", "Site Code Criteria", strDS, 3000, "ords")
+            End If
+            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
 
             'Load TNX Model
             'Me.tnx = New tnxModel(strDS, Me)
@@ -559,7 +626,11 @@ Partial Public Class EDSStructure
 
         Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.databaseIdentity, Me.activeDatabase)
 
-        Dim structureQuery As String = ""
+        Dim structureQuery As String =
+            "DECLARE @Prev TABLE(ID INT)" & vbCrLf &
+            "DECLARE @PrevID INT" & vbCrLf &
+            "BEGIN TRANSACTION" & vbCrLf
+
         'structureQuery += Me.tnx.EDSQuery(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
@@ -569,7 +640,9 @@ Partial Public Class EDSStructure
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
         'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
 
-        MessageBox.Show(structureQuery)
+        structureQuery += "COMMIT"
+
+        'MessageBox.Show(structureQuery)
 
         sqlSender(structureQuery, ActiveDatabase, LogOnUser, 0.ToString)
 
@@ -587,7 +660,8 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New SST_Unit_Base(item, Me))
+                'Me.UnitBases.Add(New UnitBase(item))
+                Me.UnitBases.Add(New SST_Unit_Base(item, Me))
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))
@@ -607,8 +681,8 @@ Partial Public Class EDSStructure
         For i = 0 To Me.PierandPads.Count - 1
             'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
             'This works for now, just basing the name off the template name.
-            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
-            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & fileNum & Path.GetExtension(PierandPads(i).templatePath))
+            fileNum = String.Format(" ({0})", i.ToString)
+            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel()
         Next
         'For i = 0 To Me.Piles.Count - 1
@@ -617,7 +691,7 @@ Partial Public Class EDSStructure
         '    Piles(i).SavetoExcel()
         'Next
         For i = 0 To Me.UnitBases.Count - 1
-            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
+            fileNum = String.Format(" ({0})", i.ToString)
             UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
             UnitBases(i).SavetoExcel()
         Next
@@ -646,14 +720,18 @@ Partial Public Class EDSResult
     Private _result_lkup As String
     Private _rating As Double?
     Private _Insert As String
+    Private _EDSTableName As String
+    Private _ForeignKeyName As String
     'modified_person_id
-    'process_stage
+    'process_stag
     'modified_date
 
-    <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Foreign Key Reference")>
+    'Public Shadows Property Parent As EDSObjectWithQueries
+
+    <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Result ID")>
     Public Property foreign_key() As Integer?
         Get
-            Return If(Me._foreign_key, Me.Parent.ID)
+            Return Me._foreign_key
         End Get
         Set
             Me._foreign_key = Value
@@ -678,29 +756,61 @@ Partial Public Class EDSResult
         End Set
     End Property
 
-    Public Property Result_Table_Name() As String 'Need to set this from parent object (i.e. pier_pad_results)
-    Public Property Result_ID_Name() As String 'Need to set this from parent object (i.e. pier_pad_id)
+    <Category("Results"), Description(""), DisplayName("Result Table Name")>
+    Public Property EDSTableName() As String
+        Get
+            Return Me._EDSTableName
+        End Get
+        Set
+            Me._EDSTableName = Value
+        End Set
+    End Property
 
-    Public ReadOnly Property Insert() As String
+    <Category("Results"), Description(""), DisplayName("Result ID Name")>
+    Public Property ForeignKeyName() As String
+        Get
+            Return Me._ForeignKeyName
+        End Get
+        Set
+            Me._ForeignKeyName = Value
+        End Set
+    End Property
+
+
+    Public ReadOnly Property Insert(Optional ByVal ResultsParentIDKnown As Boolean = True) As String
         Get
             Insert =
                 "BEGIN" & vbCrLf &
-                     "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
-                     "  VALUES([VALUES])" & vbCrLf &
-                     "END"
-            Insert = Insert.Replace("[TABLE]", Me.Result_Table_Name)
-            Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues)
+                "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+                "  VALUES([VALUES])" & vbCrLf &
+                "END" & vbCrLf
+            Insert = Insert.Replace("[TABLE]", Me.EDSTableName)
+            Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues(ResultsParentIDKnown))
             Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
             Return Insert
         End Get
     End Property
 
+    'Public ReadOnly Property InsertQuery() As String
+    '    Get
+    '        InsertQuery =
+    '            "BEGIN" & vbCrLf &
+    '            "  INSERT INTO [TABLE] ([FIELDS])" & vbCrLf &
+    '            "  VALUES([VALUES])" & vbCrLf &
+    '            "END" & vbCrLf
+    '        InsertQuery = InsertQuery.Replace("[TABLE]", Me.EDSTableName)
+    '        InsertQuery = InsertQuery.Replace("[VALUES]", Me.SQLInsertValues(True))
+    '        InsertQuery = InsertQuery.Replace("[FIELDS]", Me.SQLInsertFields)
+    '        Return InsertQuery
+    '    End Get
+    'End Property
 
-    Public Function SQLInsertValues() As String
+
+    Public Function SQLInsertValues(Optional ByVal ResultsParentIDKnown As Boolean = True) As String
         SQLInsertValues = ""
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.foreign_key.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(If(ResultsParentIDKnown, Me.foreign_key.ToString.FormatDBValue, "@PrevID"))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
@@ -713,7 +823,7 @@ Partial Public Class EDSResult
         SQLInsertFields = ""
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        SQLInsertFields = SQLInsertFields.AddtoDBString(Result_ID_Name)
+        SQLInsertFields = SQLInsertFields.AddtoDBString(Me.ForeignKeyName)
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
@@ -722,13 +832,24 @@ Partial Public Class EDSResult
         Return SQLInsertFields
     End Function
 
-    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObject)
+    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+            Me._foreign_key = Parent.ID
+            'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results)
+            Me.EDSTableName = Parent.EDSTableName & "_results"
+            'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
+            'Seperate the table name from the schema then add _id
+            'MessageBox.Show("Start:" & (Parent.EDSTableName.IndexOf(".") + 1).ToString)
+            'MessageBox.Show("Length:" & (Parent.EDSTableName.Length - Parent.EDSTableName.IndexOf(".") - 1).ToString)
+            Me.ForeignKeyName = If(Parent.EDSTableName.Contains("."),
+                                    Parent.EDSTableName.Substring(Parent.EDSTableName.IndexOf(".") + 1, Parent.EDSTableName.Length - Parent.EDSTableName.IndexOf(".") - 1) & "_id",
+                                    Parent.EDSTableName & "_id")
+        End If
 
-        Me.result_lkup = DBtoStr(resultDr("result_lkup"))
-        Me.rating = DBtoNullableDbl(resultDr("rating"))
-
+        Me.result_lkup = DBtoStr(resultDr.Item("result_lkup"))
+        Me.rating = DBtoNullableDbl(resultDr.Item("rating"))
     End Sub
 
 End Class
@@ -736,7 +857,7 @@ End Class
 Partial Public Class SiteCodeCriteria
 
     Private _ID As Integer?
-    Private _bus_unit As Integer?
+    Private _bus_unit As String
     Private _ibc_current As String
     Private _asce_current As String
     Private _tia_current As String
@@ -769,7 +890,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description("Member Type"), DisplayName("bus_unit")>
-    Public Property bus_unit() As Integer?
+    Public Property bus_unit() As String
         Get
             Return Me._bus_unit
         End Get
@@ -966,6 +1087,215 @@ Partial Public Class SiteCodeCriteria
             Me._base_kzt = Value
         End Set
     End Property
+
+#Region "Constructors"
+    Public Sub New()
+        'Variables need to be passed into another constructor
+        'Using this just as an example and assuming BU & structure ID exist
+    End Sub
+
+    Public Sub New(ByVal SiteCodeDataRow As DataRow)
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("bus_unit"), String)) Then
+                Me.bus_unit = CType(SiteCodeDataRow.Item("bus_unit"), String)
+            Else
+                Me.bus_unit = Nothing
+            End If
+        Catch ex As Exception
+            Me.bus_unit = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("ibc_current"), String)) Then
+                Me.ibc_current = CType(SiteCodeDataRow.Item("ibc_current"), String)
+            Else
+                Me.ibc_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.ibc_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("asce_current"), String)) Then
+                Me.asce_current = CType(SiteCodeDataRow.Item("asce_current"), String)
+            Else
+                Me.asce_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.asce_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("tia_current"), String)) Then
+                Me.tia_current = CType(SiteCodeDataRow.Item("tia_current"), String)
+            Else
+                Me.tia_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.tia_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("rev_h_accepted"), Boolean)) Then
+                Me.rev_h_accepted = CType(SiteCodeDataRow.Item("rev_h_accepted"), Boolean)
+            Else
+                Me.rev_h_accepted = Nothing
+            End If
+        Catch ex As Exception
+            Me.rev_h_accepted = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("rev_h_section_15_5"), Boolean)) Then
+                Me.rev_h_section_15_5 = CType(SiteCodeDataRow.Item("rev_h_section_15_5"), Boolean)
+            Else
+                Me.rev_h_section_15_5 = Nothing
+            End If
+        Catch ex As Exception
+            Me.rev_h_section_15_5 = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("seismic_design_category"), Boolean)) Then
+                Me.seismic_design_category = CType(SiteCodeDataRow.Item("seismic_design_category"), Boolean)
+            Else
+                Me.seismic_design_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.seismic_design_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("frost_depth_tia_g"), Double)) Then
+                Me.frost_depth_tia_g = CType(SiteCodeDataRow.Item("frost_depth_tia_g"), Double)
+            Else
+                Me.frost_depth_tia_g = Nothing
+            End If
+        Catch ex As Exception
+            Me.frost_depth_tia_g = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("elev_agl"), Double)) Then
+                Me.elev_agl = CType(SiteCodeDataRow.Item("elev_agl"), Double)
+            Else
+                Me.elev_agl = Nothing
+            End If
+        Catch ex As Exception
+            Me.elev_agl = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("topo_category"), Integer)) Then
+                Me.topo_category = CType(SiteCodeDataRow.Item("topo_category"), Integer)
+            Else
+                Me.topo_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.topo_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("expo_category"), String)) Then
+                Me.expo_category = CType(SiteCodeDataRow.Item("expo_category"), String)
+            Else
+                Me.expo_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.expo_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_height"), Double)) Then
+                Me.crest_height = CType(SiteCodeDataRow.Item("crest_height"), Double)
+            Else
+                Me.crest_height = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_height = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("slope_distance"), Double)) Then
+                Me.slope_distance = CType(SiteCodeDataRow.Item("slope_distance"), Double)
+            Else
+                Me.slope_distance = Nothing
+            End If
+        Catch ex As Exception
+            Me.slope_distance = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("distance_from_crest"), Double)) Then
+                Me.distance_from_crest = CType(SiteCodeDataRow.Item("distance_from_crest"), Double)
+            Else
+                Me.distance_from_crest = Nothing
+            End If
+        Catch ex As Exception
+            Me.distance_from_crest = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("downwind"), Boolean)) Then
+                Me.downwind = CType(SiteCodeDataRow.Item("downwind"), Boolean)
+            Else
+                Me.downwind = Nothing
+            End If
+        Catch ex As Exception
+            Me.downwind = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("topo_feature"), String)) Then
+                Me.topo_feature = CType(SiteCodeDataRow.Item("topo_feature"), String)
+            Else
+                Me.topo_feature = Nothing
+            End If
+        Catch ex As Exception
+            Me.topo_feature = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_point_elev"), Double)) Then
+                Me.crest_point_elev = CType(SiteCodeDataRow.Item("crest_point_elev"), Double)
+            Else
+                Me.crest_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("base_point_elev"), Double)) Then
+                Me.base_point_elev = CType(SiteCodeDataRow.Item("base_point_elev"), Double)
+            Else
+                Me.base_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.base_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("mid_height_elev"), Double)) Then
+                Me.mid_height_elev = CType(SiteCodeDataRow.Item("mid_height_elev"), Double)
+            Else
+                Me.mid_height_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.mid_height_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_to_mid_height_distance"), Double)) Then
+                Me.crest_to_mid_height_distance = CType(SiteCodeDataRow.Item("crest_to_mid_height_distance"), Double)
+            Else
+                Me.crest_to_mid_height_distance = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_to_mid_height_distance = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("tower_point_elev"), Double)) Then
+                Me.tower_point_elev = CType(SiteCodeDataRow.Item("tower_point_elev"), Double)
+            Else
+                Me.tower_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.tower_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("base_kzt"), Double)) Then
+                Me.base_kzt = CType(SiteCodeDataRow.Item("base_kzt"), Double)
+            Else
+                Me.base_kzt = Nothing
+            End If
+        Catch ex As Exception
+            Me.base_kzt = Nothing
+        End Try
+
+    End Sub
+#End Region
 
 End Class
 

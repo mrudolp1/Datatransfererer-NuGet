@@ -2,13 +2,13 @@
 
 Imports DevExpress.Spreadsheet
 Imports System.Security.Principal
-Imports Microsoft.Office.Interop.Excel
-Imports Microsoft.Office.Interop
+'Imports Microsoft.Office.Interop.Excel
+'Imports Microsoft.Office.Interop
 
 Public Class DataTransfererLegReinforcement
 
 #Region "Define"
-    Private NewLegReinforcementWb As New Workbook
+    Private NewLegReinforcementWb As New DevExpress.Spreadsheet.Workbook 'Excel.Workbook
     Private prop_ExcelFilePath As String
 
     Public Property LegReinforcements As New List(Of LegReinforcement)

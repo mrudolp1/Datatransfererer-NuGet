@@ -3,6 +3,7 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
+Imports Microsoft.Office.Interop
 
 Partial Public Class UnitBase
     Inherits EDSFoundation
@@ -14,7 +15,7 @@ Partial Public Class UnitBase
     Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "SST Unit Base Foundation.xlsm")
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Unit Base General Details EXCEL", "A1:AT2", "Details (SAPI)")}
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Unit Base General Details EXCEL", "A1:AU2", "Details (SAPI)")}
         End Get
     End Property
     Private _Insert As String
@@ -58,6 +59,7 @@ Partial Public Class UnitBase
     End Property
 
 #End Region
+
 #Region "Define"
     'General
     Private prop_extension_above_grade As Double?
@@ -108,19 +110,19 @@ Partial Public Class UnitBase
     Private prop_neglect_depth As Double?
     Private prop_bearing_distribution_type As Boolean?
     Private prop_groundwater_depth As Double?
-    'Non FND Specific Inputs
-    'BU
-    'Site Name
-    'App Number
-    'Private prop_tia_current As String ' TIA
-    'Section 15.5
-    'Load Z
-    'Tower Height
-    'Base Face Width
-    'BP Dist Above FND?
-    'AR Bolt Circle?
-    'Extension Above Grade? - FND can be source
-    'SDC
+    ''Non FND Specific Inputs
+    'Private prop_bus_unit As String
+    'Private prop_site_name As String
+    'Private prop_app_number As Integer?
+    Private prop_tia_current As String
+    Private prop_rev_h_section_15_5 As Boolean?
+    'Private prop_load_z As Boolean?
+    'Private prop_overall_tower_height As Double? 'TNX
+    'Private prop_base_face_width As Double? 'TNX
+    'Private prop_bp_dist_above_fnd As Double? 'CCIplate
+    'Private prop_ar_bolt_circle As Double? 'CCIplate
+    Private prop_seismic_design_category As String 'Seismic Tool?
+
 
     <Category("Unit Base Details"), Description(""), DisplayName("Extension Above Grade")>
     Public Property extension_above_grade() As Double?
@@ -531,26 +533,49 @@ Partial Public Class UnitBase
     End Property
 
     'Non FND Specific Inputs
-    'BU
-    'Site Name
-    'App Number
-    '<Category("Unit Base Details"), Description(""), DisplayName("TIA")>
-    'Public Property tia_current() As String
+    '<Category("Unit Base Details"), Description(""), DisplayName("BU")>
+    'Public Property bus_unit() As String
     '    Get
-    '        Return If(Me.ParentStructure.structureCodeCriteria.tia_current, Me.prop_tia_current)
+    '        Return If(Me.ParentStructure.structureCodeCriteria.bus_unit, Me.prop_bus_unit)
     '    End Get
     '    Set
-    '        Me.prop_tia_current = Value
+    '        Me.prop_bus_unit = Value
     '    End Set
     'End Property
-    'Section 15.5
+    'Site Name
+    'App Number
+    <Category("Unit Base Details"), Description(""), DisplayName("TIA")>
+    Public Property tia_current() As String
+        Get
+            Return If(Me.ParentStructure.structureCodeCriteria.tia_current, Me.prop_tia_current)
+        End Get
+        Set
+            Me.prop_tia_current = Value
+        End Set
+    End Property
+    <Category("Unit Base Details"), Description(""), DisplayName("Rev H Section 15.5")>
+    Public Property rev_h_section_15_5() As Boolean?
+        Get
+            Return If(Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5, Me.prop_rev_h_section_15_5)
+        End Get
+        Set
+            Me.prop_rev_h_section_15_5 = Value
+        End Set
+    End Property
     'Load Z
     'Tower Height
     'Base Face Width
     'BP Dist Above FND?
     'AR Bolt Circle?
-    'Extension Above Grade? - FND can be source
-    'SDC
+    <Category("Unit Base Details"), Description(""), DisplayName("SDC")>
+    Public Property seismic_design_category() As String
+        Get
+            Return Me.prop_seismic_design_category
+        End Get
+        Set
+            Me.prop_seismic_design_category = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -925,6 +950,23 @@ Partial Public Class UnitBase
             Me.tool_version = ""
         End Try 'Tool Version
 
+        'Non FND Specific Inputs
+        Try
+            Me.tia_current = Me.ParentStructure.structureCodeCriteria.tia_current
+        Catch
+            Me.tia_current = Nothing
+        End Try
+        Try
+            Me.rev_h_section_15_5 = Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5
+        Catch
+            Me.rev_h_section_15_5 = Nothing
+        End Try
+        Try
+            Me.seismic_design_category = CType(ubDr.Item("seismic_design_category"), String)
+        Catch
+            Me.seismic_design_category = ""
+        End Try 'SDC
+
         'If Me.modified = True Then
         '    For Each ModifiedRangeDataRow As DataRow In ds.Tables("Unit Base Modified Ranges SQL").Rows
         '        Dim modRefID As Integer = CType(ModifiedRangeDataRow.Item("modified_id"), Integer)
@@ -1194,13 +1236,19 @@ Partial Public Class UnitBase
             '    Me.modified = False
             'End Try 'Modified
 
+            Try
+                Me.seismic_design_category = CType(dr.Item("seismic_design_category"), String)
+            Catch
+                Me.seismic_design_category = ""
+            End Try 'SDC
+
             'For Each ModifiedRangeDataRow As DataRow In ds.Tables("Unit Base Modified Ranges EXCEL").Rows
             '    Me.ModifiedRanges.Add(New ModifiedRange(ModifiedRangeDataRow))
             'Next 'Add Modified Ranges to Modified Range Object
 
         End If
 
-    End Sub
+    End Sub 'Generate a ub from Excel
 
 #End Region
 
@@ -1453,12 +1501,69 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(Me.structural_check, Boolean)
             End If
 
-            'If Not IsNothing(Me.tia_current) Then
-            '    .Worksheets("Input").Range("TIA").Value = CType(Me.tia_current, String)
-            'End If
+            If Not IsNothing(Me.bus_unit) Then
+                .Worksheets("Input").Range("C3").Value = CType(Me.bus_unit, Integer)
+            End If
+            If Not IsNothing(Me.tia_current) Then
+                .Worksheets("Input").Range("TIA_Input").Value = CType(Right(Me.tia_current, 1), String)
+            End If
+            If Not IsNothing(Me.rev_h_section_15_5) Then
+                .Worksheets("Input").Range("Section15.5Boolean").Value = CType(Me.rev_h_section_15_5, Boolean)
+            End If
+            If Not IsNothing(Me.seismic_design_category) Then
+                .Worksheets("Input").Range("SDC").Value = CType(Me.seismic_design_category, String)
+            End If
         End With
 
     End Sub
+
+    'Sub UnitBaseRunPrint()
+    '    Dim xlApp As New Excel.Application
+    '    Dim xlWb As Excel.Workbook
+    '    Dim xlSheet As Excel.Worksheet
+    '    Dim xlRange As Excel.Range
+
+    '    Dim piernpadtemplateloc As String = workBookPath
+
+    '    Try
+    '        With xlApp
+
+    '            xlApp.Visible = False
+    '            xlApp.DisplayAlerts = False
+
+    '            xlWb = xlApp.Workbooks.Add(piernpadtemplateloc)
+    '            xlSheet = CType(xlWb.Sheets("Data"), Excel.Worksheet)
+    '            'xlRange = xlSheet.Range("C4")
+    '            xlSheet.Range("C4").Value = "X"
+
+    '            xlApp.Run("Module1.RunAnalysis")
+
+    '        End With
+    '    Catch ex As Exception
+    '        Try
+    '            xlWb.Close(False)
+    '            xlApp.Quit()
+    '        Catch
+    '            MsgBox("Something didn't close. Figure it out yourself")
+    '        End Try
+    '    End Try
+
+    '    releaseObject(xlSheet)
+    '    releaseObject(xlWb)
+    '    releaseObject(xlApp)
+
+    'End Sub
+
+    'Private Sub releaseObject(ByVal obj As Object) 'This should probably be in Common module - MRR
+    '    Try
+    '        System.Runtime.InteropServices.Marshal.ReleaseComObject(obj)
+    '        obj = Nothing
+    '    Catch ex As Exception
+    '        obj = Nothing
+    '    Finally
+    '        GC.Collect()
+    '    End Try
+    'End Sub
 
 #End Region
 
@@ -1514,6 +1619,7 @@ Partial Public Class UnitBase
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.valid_from.ToString.FormatDBValue)
@@ -1572,6 +1678,7 @@ Partial Public Class UnitBase
         SQLInsertFields = SQLInsertFields.AddtoDBString("basic_soil_check")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structural_check")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("seismic_design_category")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("valid_from")
@@ -1630,6 +1737,7 @@ Partial Public Class UnitBase
         SQLUpdate = SQLUpdate.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.AddtoDBString("structural_check = " & Me.structural_check.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.ToString.FormatDBValue)
         'SQLUpdate = SQLUpdate.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         'SQLUpdate = SQLUpdate.AddtoDBString("valid_from = " & Me.valid_from.ToString.FormatDBValue)

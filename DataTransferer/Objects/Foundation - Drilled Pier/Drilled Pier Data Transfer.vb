@@ -2,13 +2,14 @@
 
 Imports DevExpress.Spreadsheet
 Imports System.Security.Principal
-Imports Microsoft.Office.Interop.Excel
-Imports Microsoft.Office.Interop
+'Imports Microsoft.Office.Interop.Excel
+'Imports Microsoft.Office.Interop
+
 
 Partial Public Class DataTransfererDrilledPier
 
 #Region "Define"
-    Private NewDrilledPierWb As New Workbook
+    Private NewDrilledPierWb As New DevExpress.Spreadsheet.Workbook
     Private prop_ExcelFilePath As String
 
     Public Property DrilledPiers As New List(Of DrilledPier)
