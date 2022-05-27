@@ -439,6 +439,7 @@ Partial Public MustInherit Class EDSExcelObject
             wb.Calculate()
             wb.EndUpdate()
             wb.SaveDocument(workBookPath, fileType)
+
         Catch ex As Exception
             Debug.Print("Error Saving Workbook: " & ex.Message)
         End Try
@@ -463,6 +464,7 @@ Partial Public Class EDSStructure
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
+    'Public Property UnitBases As New List(Of SST_Unit_Base)
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property connections As DataTransfererCCIplate
@@ -530,9 +532,9 @@ Partial Public Class EDSStructure
             Next
 
             'Unit Base
-            For Each dr As DataRow In strDS.Tables("Unit Base").Rows
-                Me.UnitBases.Add(New SST_Unit_Base(dr, Me))
-            Next
+            'For Each dr As DataRow In strDS.Tables("Unit Base").Rows
+            '    Me.UnitBases.Add(New SST_Unit_Base(dr, Me))
+            'Next
 
             'Unit Base
             For Each dr As DataRow In strDS.Tables("Unit Base").Rows
@@ -585,8 +587,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New UnitBase(item))
-                Me.UnitBases.Add(New SST_Unit_Base(item, Me))
+                'Me.UnitBases.Add(New SST_Unit_Base(item, Me))
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))

@@ -3,6 +3,7 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
+'Imports Excel = Microsoft.Office.Interop.Excel
 
 Public Class SST_Unit_Base
     Inherits EDSFoundation
@@ -1494,11 +1495,76 @@ Public Class SST_Unit_Base
                 .Worksheets("Plastic Bearing & Overturn (2)").Visible = True
                 .Worksheets("Elastic Bearing & Overturn (2)").Visible = True
             End If
+
+
+
         End With
 
 
     End Sub
+    'Sub test()
 
+    '    Dim xlApp As New excel.Application
+    '    Dim xlWb As excel.Workbook
+    '    'Dim xlSheet As excel.Worksheet
+    '    Dim piernpadtemplateloc As String = ""
+    '    Try
+    '        With xlApp
+    '            xlApp.Visible = False
+    '            xlApp.DisplayAlerts = False
+    '            xlWb = .Workbooks.Add(piernpadtemplateloc)
+    '            'xlSheet = xlWb.Sheets("Data")
+    '            'xlSheet.Range("C4").Value = "X"
+    '            xlApp.Run("Module1.RunAnalysis")
+    '        End With
+    '    Catch ex As Exception
+    '        Try
+    '            xlWb.Close(False)
+    '            xlApp.Quit()
+    '        Catch
+    '            MsgBox("Something didn't close. Figure it out yourself")
+    '        End Try
+    '    End Try
+    '    releaseObject(xlSheet)
+    '    releaseObject(xlWb)
+    '    releaseObject(xlApp)
+    'End Sub
+    'Sub UnitBaseRunnPrint(templatepath As String)
+    '    Dim xlApp As New Excel.Application
+    '    Dim xlWb As Excel.Workbook
+    '    Dim xlSheet As Excel.Worksheet
+    '    Dim unitbasetemplateloc As String = templatepath
+    '    Try
+    '        With xlApp
+    '            xlApp.Visible = False
+    '            xlApp.DisplayAlerts = False
+    '            xlWb = xlApp.Workbooks.Add(unitbasetemplateloc)
+    '            xlSheet = xlWb.Worksheets("Data")
+    '            xlSheet.Range("C4").Value = "X"
+    '            xlApp.Run("Module1.RunAnalysis")
+    '        End With
+    '    Catch ex As Exception
+    '        Try
+    '            xlWb.Close(False)
+    '            xlApp.Quit()
+    '        Catch
+    '            MsgBox("Something didn't close. Figure it out yourself")
+    '        End Try
+    '    End Try
+    '    releaseObject(xlSheet)
+    '    releaseObject(xlWb)
+    '    releaseObject(xlApp)
+    'End Sub
+    'Private Sub releaseObject(ByVal obj As Object)
+    '    Try
+    '        System.Runtime.InteropServices.Marshal.ReleaseComObject(obj)
+    '        obj = Nothing
+    '    Catch ex As Exception
+    '        obj = Nothing
+    '    Finally
+    '        GC.Collect()
+    '    End Try
+    'End Sub
 
 #End Region
 

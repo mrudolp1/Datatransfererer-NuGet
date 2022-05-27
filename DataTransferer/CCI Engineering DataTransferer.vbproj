@@ -20,6 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Queries\Unit Base\Backup - MRR\**" />
+    <EmbeddedResource Remove="Queries\Unit Base\Backup - MRR\**" />
+    <None Remove="Queries\Unit Base\Backup - MRR\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
@@ -112,8 +118,6 @@
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql" />
-    <None Remove="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql" />
     <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
     <None Remove="Queries\Unit Base\Unit Base (DELETE).sql" />
@@ -129,6 +133,15 @@
       <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>9</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <Lcid>0</Lcid>
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
@@ -414,12 +427,6 @@
     <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -430,9 +437,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">
