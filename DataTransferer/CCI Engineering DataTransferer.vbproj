@@ -445,12 +445,6 @@
     <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details Grp).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -461,9 +455,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Backup - MRR\Unit Base %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">

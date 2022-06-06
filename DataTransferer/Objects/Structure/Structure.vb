@@ -492,7 +492,7 @@ Partial Public Class EDSStructure
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
-    'Public Property UnitBases As New List(Of SST_Unit_Base)
+    'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
     Public Property connections As DataTransfererCCIplate
@@ -598,7 +598,7 @@ Partial Public Class EDSStructure
                 Me.PierandPads.Add(New PierAndPad(dr, Me))
             Next
 
-            'Unit Base
+            'Unit Base (CHall - DNU)
             'For Each dr As DataRow In strDS.Tables("Unit Base").Rows
             '    Me.UnitBases.Add(New SST_Unit_Base(dr, Me))
             'Next
@@ -660,8 +660,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New UnitBase(item))
-                Me.UnitBases.Add(New SST_Unit_Base(item, Me))
+                'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))
