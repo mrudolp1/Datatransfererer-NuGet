@@ -57,27 +57,27 @@ Public Module Extensions
     '    Return astring
     'End Function
 
-    <Extension()>
-    Public Function GetDistinct(Of T As EDSObject)(alist As List(Of T)) As List(Of T)
-        'Notes: Removes duplicates from list of tnxDatabaseEntry by using their CompareMe function
-        'Making this generic (Of T As tnxDatabaseEntry) allows it to work for all subclasses of tnxDatabaseEntry
+    '<Extension()>
+    'Public Function GetDistinct(Of T As EDSObject)(alist As List(Of T)) As List(Of T)
+    '    'Notes: Removes duplicates from list of tnxDatabaseEntry by using their CompareMe function
+    '    'Making this generic (Of T As tnxDatabaseEntry) allows it to work for all subclasses of tnxDatabaseEntry
 
-        Dim distinctList As New List(Of T)
+    '    Dim distinctList As New List(Of T)
 
-        For Each item In alist
-            Dim addToList As Boolean = True
-            For Each distinctItem In distinctList
-                If item.CompareMe(distinctItem) Then
-                    'Not distinct
-                    addToList = False
-                    Exit For
-                End If
-            Next
-            If addToList Then distinctList.Add(item)
-        Next
+    '    For Each item In alist
+    '        Dim addToList As Boolean = True
+    '        For Each distinctItem In distinctList
+    '            If item.CompareMe(distinctItem) Then
+    '                'Not distinct
+    '                addToList = False
+    '                Exit For
+    '            End If
+    '        Next
+    '        If addToList Then distinctList.Add(item)
+    '    Next
 
-        Return distinctList
-    End Function
+    '    Return distinctList
+    'End Function
 
     <Extension()>
     Public Function EDSListQuery(Of T As EDSObjectWithQueries)(alist As List(Of T), prevList As List(Of T)) As String
@@ -107,7 +107,7 @@ Public Module Extensions
             Else
                 'Compare IDs
                 If currentSortedList(i).ID = prevSortedList(i).ID Then
-                    If Not currentSortedList(i).CompareMe(prevSortedList(i)) Then
+                    If Not currentSortedList(i).Equals(prevSortedList(i)) Then
                         'Update existing
                         EDSListQuery += currentSortedList(i).Update
                     Else
@@ -146,38 +146,123 @@ Public Module Extensions
     End Function
 
     <Extension()>
-    Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e As IEnumerable(Of T), ByVal value As T, Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
-        'Allow you to add to an IEnumerable like it is a list.
-        'Useful for working with the ObjectComparer class which stores the differences as IEnumerable(of Difference)
-        'Refernce: https://stackoverflow.com/a/1210311
-        For Each cur In e
-            Yield cur
-        Next
+    Public Function CheckChange(Of T)(value1 As T, value2 As T, ByRef changes As List(Of AnalysisChange), Optional categoryName As String = Nothing, Optional fieldName As String = Nothing) As Boolean
 
-        If Path IsNot Nothing Then
-            Yield value.InsertPath(Path)
-        Else
-            Yield value
+        'Check if this is an EDSObject
+        Dim EDSValue1 As EDSObject = TryCast(value1, EDSObject)
+        Dim EDSValue2 As EDSObject = TryCast(value2, EDSObject)
+        If EDSValue1 IsNot Nothing AndAlso EDSValue2 IsNot Nothing Then
+            Return EDSValue1.Equals(EDSValue2, changes)
         End If
-    End Function
 
-    <Extension()>
-    Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e1 As IEnumerable(Of T), ByVal e2 As IEnumerable(Of T), Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
-        'Allow you to add to an IEnumerable to another IEnumerable.
-
-        For Each cur In e1
-            Yield cur
-        Next
-
-        For Each cur In e2
-            If Path IsNot Nothing Then
-                Yield cur.InsertPath(Path)
+        'Check if this is a collection (list), iterate through if needed
+        Dim CollectionValue1 As IEnumerable(Of Object) = TryCast(value1, IEnumerable(Of Object))
+        Dim CollectionValue2 As IEnumerable(Of Object) = TryCast(value2, IEnumerable(Of Object))
+        If CollectionValue1 IsNot Nothing AndAlso CollectionValue2 IsNot Nothing Then
+            If CollectionValue1.Count <> CollectionValue2.Count Then
+                changes.Add(New AnalysisChange(categoryName, fieldName & "Quantity", CollectionValue1.Count.ToString, CollectionValue2.Count.ToString))
+                Return False
             Else
-                Yield cur
+                For i As Integer = 0 To CollectionValue1.Count - 1
+                    CollectionValue1(i).CheckChange(CollectionValue2(i), changes, categoryName, If(fieldName Is Nothing, Nothing, fieldName & " (" & i & ")"))
+                Next
             End If
-        Next
+        End If
+
+        'Try to compare values directly
+        Try
+            If Not value1.Equals(value2) Then
+                changes.Add(New AnalysisChange(categoryName, fieldName, value1.ToString, value2.ToString))
+                Return False
+            Else
+                Return True
+            End If
+        Catch ex As Exception
+            changes.Add(New AnalysisChange(categoryName, fieldName, "Comparison Failed", ""))
+            Return False
+        End Try
 
     End Function
+    '<Extension()>
+    'Public Function CheckChange(Of T)(value1 As T, value2 As T, ByRef changes As List(Of AnalysisChange), Optional ParentChange As AnalysisChange = Nothing) As Boolean
+    '    Dim Change As AnalysisChange
+    '    If ParentChange Is Nothing Then
+    '        ParentChange = New AnalysisChange()
+    '    Else
+    '        Change = ParentChange.
+    '    End If
+
+    '    'Check if this is an EDSObject
+    '    Dim EDSValue1 As EDSObject = TryCast(value1, EDSObject)
+    '    Dim EDSValue2 As EDSObject = TryCast(value2, EDSObject)
+    '    If EDSValue1 IsNot Nothing AndAlso EDSValue2 IsNot Nothing Then
+    '        Return EDSValue1.Equals(EDSValue2, changes)
+    '    End If
+
+    '    'Check if this is a collection (list), iterate through if needed
+    '    Dim CollectionValue1 As IEnumerable(Of Object) = TryCast(value1, IEnumerable(Of Object))
+    '    Dim CollectionValue2 As IEnumerable(Of Object) = TryCast(value2, IEnumerable(Of Object))
+    '    If CollectionValue1 IsNot Nothing AndAlso CollectionValue2 IsNot Nothing Then
+    '        If CollectionValue1.Count <> CollectionValue2.Count Then
+    '            ParentChange.NewValue = CollectionValue1.Count.ToString
+    '            ParentChange.PreviousValue = CollectionValue2.Count.ToString
+    '            changes.Add(New AnalysisChange(categoryName, fieldName & "Quantity", CollectionValue1.Count.ToString, CollectionValue2.Count.ToString))
+    '            Return False
+    '        Else
+    '            For i As Integer = 0 To CollectionValue1.Count - 1
+    '                CollectionValue1(i).CheckChange(CollectionValue2(i), changes, categoryName, fieldName & "(" & i & ")")
+    '            Next
+    '        End If
+    '    End If
+
+    '    'Try to compare values directly
+    '    Try
+    '        If Not value1.Equals(value2) Then
+    '            changes.Add(New AnalysisChange(categoryName, fieldName, value1.ToString, value2.ToString))
+    '            Return False
+    '        Else
+    '            Return True
+    '        End If
+    '    Catch ex As Exception
+    '        changes.Add(New AnalysisChange(categoryName, fieldName, "Comparison Failed", ""))
+    '        Return False
+    '    End Try
+
+    'End Function
+
+    '<Extension()>
+    'Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e As IEnumerable(Of T), ByVal value As T, Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
+    '    'Allow you to add to an IEnumerable like it is a list.
+    '    'Useful for working with the ObjectComparer class which stores the differences as IEnumerable(of Difference)
+    '    'Refernce: https://stackoverflow.com/a/1210311
+    '    For Each cur In e
+    '        Yield cur
+    '    Next
+
+    '    If Path IsNot Nothing Then
+    '        Yield value.InsertPath(Path)
+    '    Else
+    '        Yield value
+    '    End If
+    'End Function
+
+    '<Extension()>
+    'Public Iterator Function Add(Of T As ObjectsComparer.Difference)(ByVal e1 As IEnumerable(Of T), ByVal e2 As IEnumerable(Of T), Optional ByVal Path As String = Nothing) As IEnumerable(Of T)
+    '    'Allow you to add to an IEnumerable to another IEnumerable.
+
+    '    For Each cur In e1
+    '        Yield cur
+    '    Next
+
+    '    For Each cur In e2
+    '        If Path IsNot Nothing Then
+    '            Yield cur.InsertPath(Path)
+    '        Else
+    '            Yield cur
+    '        End If
+    '    Next
+
+    'End Function
 
     '<Extension()>
     'Public Function Compare(Comparer As ObjectsComparer.Comparer, obj1 As Object, obj2 As Object, path As String, ByRef differences As IEnumerable(Of ObjectsComparer.Difference)) As Boolean
@@ -281,9 +366,15 @@ Public Module myLittleHelpers
 End Module
 
 Partial Public MustInherit Class EDSObject
-    Implements IEquatable(Of EDSObject), IComparable(Of EDSObject)
+    Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
 
     Public Property ID As Integer?
+    Public MustOverride ReadOnly Property EDSObjectName As String
+    Public Overridable ReadOnly Property EDSObjectFullName As String
+        Get
+            Return If(Me.Parent Is Nothing, Me.EDSObjectName, Me.Parent.EDSObjectFullName & " - " & Me.EDSObjectName)
+        End Get
+    End Property
     Public Overridable Property Parent As EDSObject
     Public Overridable Property ParentStructure As EDSStructure
     Public Property bus_unit As String
@@ -291,12 +382,12 @@ Partial Public MustInherit Class EDSObject
     Public Property work_order_seq_num As String
     Public Property activeDatabase As String
     Public Property databaseIdentity As WindowsIdentity
-    Public Property differences As List(Of ObjectsComparer.Difference)
+    'Public Property differences As List(Of ObjectsComparer.Difference)
 
     Public Overridable Function CreateChangeSummary() As String
         Dim summary As String = ""
 
-        For Each chng As AnalysisChanges In changeList
+        For Each chng As AnalysisChange In changeList
             summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
         Next
 
@@ -306,23 +397,23 @@ Partial Public MustInherit Class EDSObject
 
 
 
-    Public Overridable Function CompareMe(Of T As EDSObject)(toCompare As T) As Boolean
-        'Compare another EDSObject object to itself using the objects comparer.
-        'Making this generic (Of T As EDSObject) allows it to work for all subclasses of EDSObject
+    'Public Overridable Function CompareMe(Of T As EDSObject)(toCompare As T) As Boolean
+    '    'Compare another EDSObject object to itself using the objects comparer.
+    '    'Making this generic (Of T As EDSObject) allows it to work for all subclasses of EDSObject
 
-        If toCompare Is Nothing Then Return False
+    '    If toCompare Is Nothing Then Return False
 
-        Dim comparer As New ObjectsComparer.Comparer(Of T)()
+    '    Dim comparer As New ObjectsComparer.Comparer(Of T)()
 
-        Dim differences As IEnumerable(Of ObjectsComparer.Difference) = Nothing
+    '    Dim differences As IEnumerable(Of ObjectsComparer.Difference) = Nothing
 
-        CompareMe = comparer.Compare(CType(Me, T), toCompare, differences)
+    '    CompareMe = comparer.Compare(CType(Me, T), toCompare, differences)
 
-        Me.differences = differences.ToList
+    '    Me.differences = differences.ToList
 
-        Return CompareMe
+    '    Return CompareMe
 
-    End Function
+    'End Function
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
@@ -344,14 +435,73 @@ Partial Public MustInherit Class EDSObject
         End If
     End Function
 
-    Public Function Equals(other As EDSObject) As Boolean Implements IEquatable(Of EDSObject).Equals
-        'Not currently using this but we could implement the whole compare function here
+    'Reference for implementing IEquatable: https://www.codeproject.com/Articles/20592/Implementing-IEquatable-Properly
+    Public Overloads Function Equals(other As EDSObject) As Boolean Implements IEquatable(Of EDSObject).Equals
 
-        If other Is Nothing Then Return False
-
-        Return Me.CompareMe(other)
+        If other Is Nothing Then
+            Return False
+        Else
+            'Call Equals(other As EDSObject, ByRef changes As List(Of AnalysisChanges))
+            Return Me.Equals(other, Nothing)
+        End If
 
     End Function
+    Public Overloads Overrides Function Equals(other As Object) As Boolean
+        'This will be called if an object other than an EDS object is passed in
+        Dim EDSOther As EDSObject = TryCast(other, EDSObject)
+
+        If EDSOther Is Nothing Then
+            Return False
+        Else
+            'Call Equals(other As EDSObject) 
+            Return Me.Equals(other)
+        End If
+
+    End Function
+    Public Overrides Function GetHashCode() As Integer
+        'Fun Story about hash codes: https://stackoverflow.com/questions/7425142/what-is-hashcode-used-for-is-it-unique
+        'Creating hash codes: https://thomaslevesque.com/2020/05/15/things-every-csharp-developer-should-know-1-hash-codes/
+        Dim HashTuple As Tuple(Of String, String) = New Tuple(Of String, String)(Me.bus_unit, Me.structure_id)
+        Return HashTuple.GetHashCode
+    End Function
+
+    Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+
+    'Moved to extension of object
+    'Private Function CheckChange(value1 As Object, value2 As Object, ByRef changes As List(Of AnalysisChanges), Optional categoryName As String = Nothing, Optional fieldName As String = Nothing) As Boolean
+
+    '    'Check if this is an EDSObject
+    '    Dim EDSValue1 As EDSObject = TryCast(value1, EDSObject)
+    '    Dim EDSValue2 As EDSObject = TryCast(value1, EDSObject)
+    '    If EDSValue1 IsNot Nothing AndAlso EDSValue2 IsNot Nothing Then
+    '        Return EDSValue1.Equals(EDSValue2, changes)
+    '    End If
+
+    '    'Check if this is a collection (list), iterate through if needed
+    '    Dim CollectionValue1 As IEnumerable(Of Object) = TryCast(value1, IEnumerable(Of Object))
+    '    Dim CollectionValue2 As IEnumerable(Of Object) = TryCast(value2, IEnumerable(Of Object))
+    '    If CollectionValue1 IsNot Nothing AndAlso CollectionValue2 IsNot Nothing Then
+    '        If CollectionValue1.Count <> CollectionValue2.Count Then
+    '            changes.Add(New AnalysisChanges(categoryName, fieldName & "Quantity", CollectionValue1.Count.ToString, CollectionValue2.Count.ToString))
+    '            Return False
+    '        Else
+    '            For i As Integer = 0 To CollectionValue1.Count - 1
+    '                value1.GetType.Name
+    '            Next
+    '        End If
+
+
+    '        Return EDSValue1.Equals(EDSValue2, changes)
+    '    End If
+
+    '    If Not value1 = value2 Then
+    '        changes.Add(New AnalysisChanges(categoryName, fieldName, value1.ToString, value2.ToString))
+    '        Return False
+    '    Else
+    '        Return True
+    '    End If
+    'End Function
+
 End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
@@ -420,7 +570,8 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
         EDSQuery = ""
 
-        If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
+        'If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
+        If prevItem.ID = item.ID And Not item.Equals(prevItem) Then
             EDSQuery += item.Update
         Else
             'Need to add inserted items to comparison list.
@@ -486,15 +637,17 @@ End Class
 Partial Public Class EDSStructure
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "Structure Model"
+
     Public Property tnx As tnxModel
+    Public Property connections As DataTransfererCCIplate
+    Public Property pole As DataTransfererCCIpole
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
-    Public Property connections As DataTransfererCCIplate
-    Public Property pole As DataTransfererCCIpole
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
@@ -538,7 +691,6 @@ Partial Public Class EDSStructure
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole"}
-
 
         Using strDS As New DataSet
 
@@ -663,12 +815,21 @@ Partial Public Class EDSStructure
 #End Region
 
 #Region "Check Changes"
+    Public Function CompareEDS(other As EDSObject, Optional ByRef changes As List(Of AnalysisChange) = Nothing) As Boolean
+
+    End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 
 #End Region
 End Class
 
 Partial Public Class EDSResult
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "Result"
 
     Private _foreign_key As Integer?
     Private _result_lkup As String
@@ -805,6 +966,10 @@ Partial Public Class EDSResult
         Me.result_lkup = DBtoStr(resultDr.Item("result_lkup"))
         Me.rating = DBtoNullableDbl(resultDr.Item("rating"))
     End Sub
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 
 End Class
 
@@ -1043,6 +1208,8 @@ Partial Public Class SiteCodeCriteria
     End Property
 
 End Class
+
+
 
 
 

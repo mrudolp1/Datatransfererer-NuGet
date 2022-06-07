@@ -8,6 +8,7 @@ Public Class SST_Unit_Base
     Inherits EDSFoundation
 
 #Region "Inheritted"
+    Public Overrides ReadOnly Property EDSObjectName As String = "SST Unit Base"
     '''Must override these inherited properties
     Public Overrides ReadOnly Property foundationType As String = "SST Unit Base"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.unit_base"
@@ -1687,4 +1688,18 @@ Public Class SST_Unit_Base
 
 #End Region
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As SST_Unit_Base = TryCast(other, SST_Unit_Base)
+        If otherToCompare Is Nothing Then Return False
+
+        Dim CategoryName As String = "Foundation - Unit Base"
+
+        Equals = If(Me.pier_diameter.CheckChange(otherToCompare.pier_diameter, changes, CategoryName, "Pier Diameter"), Equals, False)
+
+    End Function
 End Class

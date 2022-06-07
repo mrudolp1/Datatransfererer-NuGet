@@ -12,6 +12,7 @@ Imports System.Data.SqlClient
 Partial Public Class tnxModel
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Model"
 #Region "Define"
     Private _filePath As String
     Private _database As New tnxDatabase()
@@ -9539,11 +9540,17 @@ Partial Public Class tnxModel
     End Sub
 #End Region
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 #Region "Database"
 Partial Public Class tnxDatabase
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database"
 
     Private _members As New List(Of tnxMember)
     Private _materials As New List(Of tnxMaterial)
@@ -9622,10 +9629,16 @@ Partial Public Class tnxDatabase
 
     End Sub
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 Partial Public Class tnxDatabaseFile
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database File"
 
     Private _USName As String
     Private _SIName As String
@@ -9658,10 +9671,16 @@ Partial Public Class tnxDatabaseFile
             Me._values = Value
         End Set
     End Property
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxMember
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Member"
 
     Private _File As String
     Private _USName As String
@@ -9731,10 +9750,16 @@ Partial Public Class tnxMember
 
         Return insertString
     End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxMaterial
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Material"
 
     Private _MemberMatFile As String
     Private _MatName As String
@@ -9795,10 +9820,15 @@ Partial Public Class tnxMaterial
         Return insertString
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxBolt
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Bolt"
 
     Private _BoltMatFile As String
     Private _MatName As String
@@ -9856,6 +9886,10 @@ Partial Public Class tnxBolt
         insertString = insertString.AddtoDBString(Me.MatValues.ToString)
 
         Return insertString
+    End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
     End Function
 End Class
 
@@ -10133,6 +10167,8 @@ End Class
 Partial Public Class tnxAntennaRecord
     Inherits EDSObject
     'upper structure
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "Upper Structure Section"
 
 #Region "Define"
     Private _AntennaRec As Integer?
@@ -13181,11 +13217,17 @@ Partial Public Class tnxAntennaRecord
         Return insertString
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 Partial Public Class tnxTowerRecord
     Inherits EDSObjectWithQueries
     'base structure
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "Base Structure Section"
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSTableName As String = "tnx.base_structure_sections"
@@ -13989,6 +14031,7 @@ Partial Public Class tnxTowerRecord
 
         Return SQLUpdate
     End Function
+
 
 #End Region
 
@@ -17979,11 +18022,16 @@ Partial Public Class tnxTowerRecord
 
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 Partial Public Class tnxGuyRecord
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level"
 #Region "Define"
     Private _GuyRec As Integer?
     Private _GuyHeight As Double?
@@ -19043,6 +19091,10 @@ Partial Public Class tnxGuyRecord
 
         Return "Guy Level: " & Me.GuyRec.ToString
 
+    End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
     End Function
 End Class
 #End Region
@@ -22614,6 +22666,8 @@ End Class
 Partial Public Class tnxNote
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "Note"
+
     Private _Note As String
 
     <Category("TNX Note"), Description(""), DisplayName("Note")>
@@ -22625,6 +22679,10 @@ Partial Public Class tnxNote
             Me._Note = Value
         End Set
     End Property
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxProjectInfo

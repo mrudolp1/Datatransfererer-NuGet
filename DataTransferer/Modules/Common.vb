@@ -33,7 +33,7 @@ Module IDoDeclare
     'Pole
 
     Public changeDt As New DataTable
-    Public changeList As New List(Of AnalysisChanges)
+    Public changeList As New List(Of AnalysisChange)
 
 End Module
 
@@ -352,7 +352,7 @@ Public Module Common
         Dim summary As String
         Dim counter As Integer = 0
 
-        For Each chng As AnalysisChanges In changeList
+        For Each chng As AnalysisChange In changeList
             If counter = 0 Then
                 summary += chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             Else
@@ -374,15 +374,15 @@ Public Module Common
 
         If newValue <> oldvalue Then
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         Else
             Return False
@@ -452,7 +452,7 @@ Public Class Comparison
     Public Function CreateChangeSummary() As String
         Dim summary As String = ""
 
-        For Each chng As AnalysisChanges In changeList
+        For Each chng As AnalysisChange In changeList
             summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
         Next
 
@@ -478,12 +478,16 @@ Public Class Comparison
 
     End Function
 End Class
-Public Class AnalysisChanges
+Public Class AnalysisChange
     Property PreviousValue As String
     Property NewValue As String
     Property FieldName As String
     Property CategoryName As String
     Property PreviousIdentity As String
+
+    Public Sub New()
+
+    End Sub
 
     Public Sub New(categoryName As String, fieldName As String, newValue As String, previousValue As String, Optional previousIdentity As String = "")
         Me.PreviousValue = previousValue

@@ -126,7 +126,7 @@ Partial Public Class frmMain
 
         Dim xlFd As New OpenFileDialog
         xlFd.Multiselect = True
-        xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
+        'xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
             strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
@@ -165,7 +165,8 @@ Partial Public Class frmMain
     End Sub
     Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareStrc.Click
         If strcLocal Is Nothing Or strcEDS Is Nothing Then Exit Sub
-        strcLocal.CompareMe(strcEDS)
+        'strcLocal.CompareMe(strcEDS)
+        strcLocal.Equals(strcEDS)
     End Sub
 #End Region
 
