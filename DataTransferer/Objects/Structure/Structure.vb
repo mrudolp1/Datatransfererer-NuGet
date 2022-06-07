@@ -618,6 +618,7 @@ Partial Public MustInherit Class EDSExcelObject
             wb.Calculate()
             wb.EndUpdate()
             wb.SaveDocument(workBookPath, fileType)
+
         Catch ex As Exception
             Debug.Print("Error Saving Workbook: " & ex.Message)
         End Try
@@ -646,6 +647,7 @@ Partial Public Class EDSStructure
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
+    'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
 
@@ -690,7 +692,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -701,6 +703,45 @@ Partial Public Class EDSStructure
                 strDS.Tables(i).TableName = tableNames(i)
             Next
 
+            'If no site code criteria exists, fetch data from ORACLE to use for the first analysis. 
+            'Still need to find all Topo inputs
+            'Just set other parameters as default values 
+            If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                OracleLoader("
+                    SELECT
+                            str.bus_unit
+                            ,str.structure_id
+                            ,tr.standard_code tia_current
+                            ,tr.bldg_code ibc_current
+                            ,str.ground_elev elev_agl
+                            ,str.hgt_no_appurt
+                            ,str.crest_height
+                            ,str.distance_from_crest
+                            ,sit.site_name
+                            ,'False' rev_h_section_15_5
+                            ,0 tower_point_elev
+                            --,pi.eng_app_id
+                            --,pi.crrnt_rvsn_num
+                        FROM
+                            isit_aim.structure                      str
+                            ,isit_aim.site                          sit
+                            ,rpt_appl.eng_tower_rating_vw           tr
+                            --,isit_aim.work_orders                 wo
+                            --,isit_isite.project_info              pi
+                        WHERE
+                            --wo.work_order_seqnum = 'XXXXXXX'
+                            str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+                            AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
+                            AND str.bus_unit = sit.bus_unit
+                            AND str.bus_unit = tr.bus_unit
+                            --AND wo.bus_unit = str.bus_unit
+                            --AND wo.structure_id = str.structure_id
+                            --AND pi.eng_app_id = wo.eng_app_id(+)
+
+                    ", "Site Code Criteria", strDS, 3000, "ords")
+            End If
+            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
+
             'Load TNX Model
             'Me.tnx = New tnxModel(strDS, Me)
 
@@ -708,6 +749,11 @@ Partial Public Class EDSStructure
             For Each dr As DataRow In strDS.Tables("Pier and Pad").Rows
                 Me.PierandPads.Add(New PierAndPad(dr, Me))
             Next
+
+            'Unit Base (CHall - DNU)
+            'For Each dr As DataRow In strDS.Tables("Unit Base").Rows
+            '    Me.UnitBases.Add(New SST_Unit_Base(dr, Me))
+            'Next
 
             'Unit Base
             For Each dr As DataRow In strDS.Tables("Unit Base").Rows
@@ -766,8 +812,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 'Me.Piles.Add(New Pile(item))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New UnitBase(item))
-                'Me.UnitBases.Add(New SST_Unit_Base(item, Me))
+                'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))
@@ -787,8 +832,8 @@ Partial Public Class EDSStructure
         For i = 0 To Me.PierandPads.Count - 1
             'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
             'This works for now, just basing the name off the template name.
-            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
-            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & fileNum & Path.GetExtension(PierandPads(i).templatePath))
+            fileNum = String.Format(" ({0})", i.ToString)
+            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel()
         Next
         'For i = 0 To Me.Piles.Count - 1
@@ -797,7 +842,7 @@ Partial Public Class EDSStructure
         '    Piles(i).SavetoExcel()
         'Next
         For i = 0 To Me.UnitBases.Count - 1
-            fileNum = If(i = 0, "", String.Format(" ({0})", i.ToString))
+            fileNum = String.Format(" ({0})", i.ToString)
             UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
             UnitBases(i).SavetoExcel()
         Next
@@ -976,7 +1021,7 @@ End Class
 Partial Public Class SiteCodeCriteria
 
     Private _ID As Integer?
-    Private _bus_unit As Integer?
+    Private _bus_unit As String
     Private _ibc_current As String
     Private _asce_current As String
     Private _tia_current As String
@@ -1009,7 +1054,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description("Member Type"), DisplayName("bus_unit")>
-    Public Property bus_unit() As Integer?
+    Public Property bus_unit() As String
         Get
             Return Me._bus_unit
         End Get
@@ -1206,6 +1251,215 @@ Partial Public Class SiteCodeCriteria
             Me._base_kzt = Value
         End Set
     End Property
+
+#Region "Constructors"
+    Public Sub New()
+        'Variables need to be passed into another constructor
+        'Using this just as an example and assuming BU & structure ID exist
+    End Sub
+
+    Public Sub New(ByVal SiteCodeDataRow As DataRow)
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("bus_unit"), String)) Then
+                Me.bus_unit = CType(SiteCodeDataRow.Item("bus_unit"), String)
+            Else
+                Me.bus_unit = Nothing
+            End If
+        Catch ex As Exception
+            Me.bus_unit = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("ibc_current"), String)) Then
+                Me.ibc_current = CType(SiteCodeDataRow.Item("ibc_current"), String)
+            Else
+                Me.ibc_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.ibc_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("asce_current"), String)) Then
+                Me.asce_current = CType(SiteCodeDataRow.Item("asce_current"), String)
+            Else
+                Me.asce_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.asce_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("tia_current"), String)) Then
+                Me.tia_current = CType(SiteCodeDataRow.Item("tia_current"), String)
+            Else
+                Me.tia_current = Nothing
+            End If
+        Catch ex As Exception
+            Me.tia_current = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("rev_h_accepted"), Boolean)) Then
+                Me.rev_h_accepted = CType(SiteCodeDataRow.Item("rev_h_accepted"), Boolean)
+            Else
+                Me.rev_h_accepted = Nothing
+            End If
+        Catch ex As Exception
+            Me.rev_h_accepted = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("rev_h_section_15_5"), Boolean)) Then
+                Me.rev_h_section_15_5 = CType(SiteCodeDataRow.Item("rev_h_section_15_5"), Boolean)
+            Else
+                Me.rev_h_section_15_5 = Nothing
+            End If
+        Catch ex As Exception
+            Me.rev_h_section_15_5 = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("seismic_design_category"), Boolean)) Then
+                Me.seismic_design_category = CType(SiteCodeDataRow.Item("seismic_design_category"), Boolean)
+            Else
+                Me.seismic_design_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.seismic_design_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("frost_depth_tia_g"), Double)) Then
+                Me.frost_depth_tia_g = CType(SiteCodeDataRow.Item("frost_depth_tia_g"), Double)
+            Else
+                Me.frost_depth_tia_g = Nothing
+            End If
+        Catch ex As Exception
+            Me.frost_depth_tia_g = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("elev_agl"), Double)) Then
+                Me.elev_agl = CType(SiteCodeDataRow.Item("elev_agl"), Double)
+            Else
+                Me.elev_agl = Nothing
+            End If
+        Catch ex As Exception
+            Me.elev_agl = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("topo_category"), Integer)) Then
+                Me.topo_category = CType(SiteCodeDataRow.Item("topo_category"), Integer)
+            Else
+                Me.topo_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.topo_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("expo_category"), String)) Then
+                Me.expo_category = CType(SiteCodeDataRow.Item("expo_category"), String)
+            Else
+                Me.expo_category = Nothing
+            End If
+        Catch ex As Exception
+            Me.expo_category = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_height"), Double)) Then
+                Me.crest_height = CType(SiteCodeDataRow.Item("crest_height"), Double)
+            Else
+                Me.crest_height = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_height = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("slope_distance"), Double)) Then
+                Me.slope_distance = CType(SiteCodeDataRow.Item("slope_distance"), Double)
+            Else
+                Me.slope_distance = Nothing
+            End If
+        Catch ex As Exception
+            Me.slope_distance = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("distance_from_crest"), Double)) Then
+                Me.distance_from_crest = CType(SiteCodeDataRow.Item("distance_from_crest"), Double)
+            Else
+                Me.distance_from_crest = Nothing
+            End If
+        Catch ex As Exception
+            Me.distance_from_crest = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("downwind"), Boolean)) Then
+                Me.downwind = CType(SiteCodeDataRow.Item("downwind"), Boolean)
+            Else
+                Me.downwind = Nothing
+            End If
+        Catch ex As Exception
+            Me.downwind = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("topo_feature"), String)) Then
+                Me.topo_feature = CType(SiteCodeDataRow.Item("topo_feature"), String)
+            Else
+                Me.topo_feature = Nothing
+            End If
+        Catch ex As Exception
+            Me.topo_feature = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_point_elev"), Double)) Then
+                Me.crest_point_elev = CType(SiteCodeDataRow.Item("crest_point_elev"), Double)
+            Else
+                Me.crest_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("base_point_elev"), Double)) Then
+                Me.base_point_elev = CType(SiteCodeDataRow.Item("base_point_elev"), Double)
+            Else
+                Me.base_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.base_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("mid_height_elev"), Double)) Then
+                Me.mid_height_elev = CType(SiteCodeDataRow.Item("mid_height_elev"), Double)
+            Else
+                Me.mid_height_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.mid_height_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("crest_to_mid_height_distance"), Double)) Then
+                Me.crest_to_mid_height_distance = CType(SiteCodeDataRow.Item("crest_to_mid_height_distance"), Double)
+            Else
+                Me.crest_to_mid_height_distance = Nothing
+            End If
+        Catch ex As Exception
+            Me.crest_to_mid_height_distance = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("tower_point_elev"), Double)) Then
+                Me.tower_point_elev = CType(SiteCodeDataRow.Item("tower_point_elev"), Double)
+            Else
+                Me.tower_point_elev = Nothing
+            End If
+        Catch ex As Exception
+            Me.tower_point_elev = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("base_kzt"), Double)) Then
+                Me.base_kzt = CType(SiteCodeDataRow.Item("base_kzt"), Double)
+            Else
+                Me.base_kzt = Nothing
+            End If
+        Catch ex As Exception
+            Me.base_kzt = Nothing
+        End Try
+
+    End Sub
+#End Region
 
 End Class
 

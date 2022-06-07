@@ -60,6 +60,7 @@ Partial Public Class PierAndPad
     End Property
 
 #End Region
+
 #Region "Define"
     Private prop_extension_above_grade As Double?
     Private prop_foundation_depth As Double?

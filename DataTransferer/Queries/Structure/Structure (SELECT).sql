@@ -109,5 +109,7 @@ Begin
 	--CCIPole
 	Select * From pole.pole WHERE bus_unit=@BU AND structure_id=@strID
 
+	--Site code criteria
+	SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU
 
 END
