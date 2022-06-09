@@ -4,10 +4,11 @@ Imports CCI_Engineering_Templates
 Imports System.Data.SqlClient
 Imports System.Security.Principal
 Imports System.IO
+Imports Oracle.ManagedDataAccess.Client
 
 Partial Public Class frmMain
 #Region "Object Declarations"
-    Public myUnitBases As New DataTransfererUnitBase
+    'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
@@ -46,7 +47,14 @@ Partial Public Class frmMain
 #End Region
 
 #Region "Other Required Declarations"
-    Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSDev;Integrated Security=SSPI"
+    'Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSDev;Integrated Security=SSPI"
+    'Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
+    'Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
+    'Changed to Uat for testing database changes
+    'Public EDSdbDevelopment As String = "Server=DEVCCICSQL2.US.CROWNCASTLE.COM,60113;Database=EDSUat;Integrated Security=SSPI"
+    'Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
+    'Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
+    Public EDSdbDevelopment As String = "Server=DEVCCICSQL3.US.CROWNCASTLE.COM,58061;Database=EngEDSDev;Integrated Security=SSPI"
     Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
     Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
 
@@ -108,53 +116,58 @@ Partial Public Class frmMain
 #End Region
 
 
-#Region "Foundations"
-    Public fndGroupXL As EDSFoundationGroup
-    Public fndGroupEDS As EDSFoundationGroup
+#Region "Structure"
+    Public strcLocal As EDSStructure
+    Public strcEDS As EDSStructure
 
-    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportXLFnd.Click
+    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportStrcFiles.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         BUNumber = txtFndBU.Text
         StrcID = txtFndStrc.Text
 
         Dim xlFd As New OpenFileDialog
         xlFd.Multiselect = True
-        xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
+        'xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            fndGroupXL = New EDSFoundationGroup(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
         End If
 
-        propgridFndXL.SelectedObject = fndGroupXL
+        'Test Parents
+        'For Each pp In strcLocal.PierandPads
+        '    MessageBox.Show("My parent structure is " & pp.ParentStructure.ToString)
+        'Next
+
+        propgridFndXL.SelectedObject = strcLocal
 
     End Sub
 
-    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportXLFnds.Click
-        If fndGroupEDS Is Nothing Then Exit Sub
+    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
+        If strcEDS Is Nothing Then Exit Sub
 
-        Dim eriFd As New FolderBrowserDialog
+        Dim strcFBD As New FolderBrowserDialog
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            fndGroupEDS.SaveAllFoundationstoExcel(eriFd.SelectedPath)
+        If strcFBD.ShowDialog = DialogResult.OK Then
+            strcEDS.SaveTools(strcFBD.SelectedPath)
         End If
     End Sub
     Private Sub btnLoadFndFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        fndGroupEDS = New EDSFoundationGroup(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridFndEDS.SelectedObject = fndGroupEDS
+        propgridFndEDS.SelectedObject = strcEDS
 
     End Sub
     Private Sub btnSaveFndToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
-        If fndGroupXL Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
+        If strcLocal Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        fndGroupXL.SaveAllFoundationsEDS(EDSnewId, EDSdbActive)
-
+        strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
     End Sub
-    Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareFnd.Click
-        If fndGroupXL Is Nothing Or fndGroupEDS Is Nothing Then Exit Sub
-        fndGroupXL.CompareMe(fndGroupEDS)
+    Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareStrc.Click
+        If strcLocal Is Nothing Or strcEDS Is Nothing Then Exit Sub
+        'strcLocal.CompareMe(strcEDS)
+        strcLocal.Equals(strcEDS)
     End Sub
 #End Region
 
@@ -326,6 +339,7 @@ Partial Public Class frmMain
     Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
         If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
+        'tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
         tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
     End Sub
@@ -336,7 +350,7 @@ Partial Public Class frmMain
         'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
         'benchmarked at 0.5 sec
 
-        tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+        'tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
         'benchmarked between 1.5-2.25 sec
 
     End Sub
@@ -355,11 +369,11 @@ Partial Public Class frmMain
         End If
 
         Dim differences As String = ""
-        Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
+        'Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
 
         My.Computer.Clipboard.SetText(differences)
 
-        MessageBox.Show(result.ToString)
+        'MessageBox.Show(result.ToString)
 
     End Sub
 
@@ -383,7 +397,7 @@ Partial Public Class frmMain
                 tappy = 0
             Else
                 pwd = InputBox("COD dang it! Fine, I'll tell you what. If by some miracle you can guess my super secret password, I will let you tap as much as you want and I won't say another word.", "ENTER PASSWORD")
-                If pwd = "DanIsTheBest" Then
+                If pwd = "DanSmellowitz" Then
                     'If pwd = "Password" Or pwd = "password" Or pwd = "PASSWORD" Then
                     MessageBox.Show("What?! HOW?!! Okay fine, I am a fish of my word. You BETTA believe that I won't stop you from tapping on the glass as much as you want now", "GO AHEAD AND TAP ON GLASS, JERK")
                     tappy = 3
@@ -394,8 +408,7 @@ Partial Public Class frmMain
             End If
         End If
     End Sub
-
-
 #End Region
 
 End Class
+

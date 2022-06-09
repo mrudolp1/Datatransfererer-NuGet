@@ -12,6 +12,7 @@ Imports System.Data.SqlClient
 Partial Public Class tnxModel
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Model"
 #Region "Define"
     Private _filePath As String
     Private _database As New tnxDatabase()
@@ -177,12 +178,12 @@ Partial Public Class tnxModel
         Dim tableNames As New List(Of String)({"tnxDetails", "tnxBaseStructure", "tnxUpperStructure", "tnxGuys", "tnxMaterials", "tnxMembers"})
         Dim queries As New List(Of String)
 
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Details).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Base Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Upper Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Guys).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Materials).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
-        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Members).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.ToDBString))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Details).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Base Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Upper Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Guys).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Materials).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
+        queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Members).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
 
         sqlLoader(queries, tableNames, tnxDS, ActiveDatabase, LogOnUser, 500)
 
@@ -226,9 +227,108 @@ Partial Public Class tnxModel
 
     End Sub
 
+    <Category("Constructor"), Description("Create TNX object from DataSet")>
+    Public Sub New(ByRef StructureDS As DataSet, Optional ByRef Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        setIndInputs(StructureDS.Tables("TNX").Rows(0))
+
+        If StructureDS.Tables.Contains("Base Structure") Then
+            For Each baseSection As DataRow In StructureDS.Tables("Base Structure").Rows
+                Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Upper Structure") Then
+            For Each upperSection As DataRow In StructureDS.Tables("Upper Structure").Rows
+                Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Guys") Then
+            For Each guyLevel As DataRow In StructureDS.Tables("Guys").Rows
+                Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Materials") Then
+            For Each material As DataRow In StructureDS.Tables("Materials").Rows
+                If Not IsDBNull(material.Item("IsBolt")) Then
+                    If CBool(material.Item("IsBolt")) Then
+                        Me.database.bolts.Add(New tnxBolt(material))
+                    Else
+                        Me.database.materials.Add(New tnxMaterial(material))
+                    End If
+                End If
+            Next
+        End If
+
+        If StructureDS.Tables.Contains("Members") Then
+            For Each member As DataRow In StructureDS.Tables("Members").Rows
+                Me.database.members.Add(New tnxMember(member))
+            Next
+        End If
+
+    End Sub
+
+    <Category("Constructor"), Description("Create TNX object from DataSet.")>
+    Public Sub New(ByRef strDS As DataSet)
+
+        If strDS.Tables("TNX").Rows.Count = 1 Then
+            Me.bus_unit = DBtoStr(strDS.Tables("TNX").Rows(0).Item("bus_unit"))
+            Me.structure_id = DBtoStr(strDS.Tables("TNX").Rows(0).Item("structure_id"))
+            setIndInputs(strDS.Tables("TNX").Rows(0))
+        Else
+            If strDS.Tables("TNX").Rows.Count = 0 Then
+                Debug.WriteLine("No TNX model found.")
+            Else
+                Debug.WriteLine("More than one TNX model found.")
+            End If
+            Exit Sub
+        End If
+
+        If strDS.Tables.Contains("Base Structure") Then
+            For Each baseSection As DataRow In strDS.Tables("Base Structure").Rows
+                Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
+            Next
+        End If
+
+        If strDS.Tables.Contains("Upper Structure") Then
+            For Each upperSection As DataRow In strDS.Tables("Upper Structure").Rows
+                Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
+            Next
+        End If
+
+        If strDS.Tables.Contains("Guys") Then
+            For Each guyLevel As DataRow In strDS.Tables("Guys").Rows
+                Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
+            Next
+        End If
+
+        If strDS.Tables.Contains("Materials") Then
+            For Each material As DataRow In strDS.Tables("Materials").Rows
+                If Not IsDBNull(material.Item("IsBolt")) Then
+                    If CBool(material.Item("IsBolt")) Then
+                        Me.database.bolts.Add(New tnxBolt(material))
+                    Else
+                        Me.database.materials.Add(New tnxMaterial(material))
+                    End If
+                End If
+            Next
+        End If
+
+        If strDS.Tables.Contains("Members") Then
+            For Each member As DataRow In strDS.Tables("Members").Rows
+                Me.database.members.Add(New tnxMember(member))
+            Next
+        End If
+
+    End Sub
+
     Public Sub setIndInputs(Data As DataRow)
 
-        Me.ID = DBtoNullableInt(Data.Item("tnx_id"))
+        Me.ID = DBtoNullableInt(Data.Item("ID"))
         Me.settings.projectInfo.DesignStandardSeries = DBtoStr(Data.Item("DesignStandardSeries"))
         Me.settings.projectInfo.UnitsSystem = DBtoStr(Data.Item("UnitsSystem"))
         Me.settings.projectInfo.ClientName = DBtoStr(Data.Item("ClientName"))
@@ -7332,131 +7432,174 @@ Partial Public Class tnxModel
 #Region "Save Data"
     Sub SaveToEDS(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
-        Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP).sql")
+        Using New Benchmark("Save to EDS One Query")
 
-        tnxUpQuery = tnxUpQuery.Replace("[BU NUMBER]", BUNumber.ToDBString)
-        tnxUpQuery = tnxUpQuery.Replace("[STRUCTURE ID]", STR_ID.ToDBString)
-        tnxUpQuery = tnxUpQuery.Replace("[TNX ID]", Me.ID.ToString.ToDBString)
+            Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP).sql")
 
-        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT ID]", "Null")
-        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT COLUMNS]", Me.GenerateIndInputSqlColumns)
-        tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT VALUES]", Me.GenerateIndInputSqlValues)
+            tnxUpQuery = tnxUpQuery.Replace("[BU NUMBER]", BUNumber.FormatDBValue)
+            tnxUpQuery = tnxUpQuery.Replace("[STRUCTURE ID]", STR_ID.FormatDBValue)
+            tnxUpQuery = tnxUpQuery.Replace("[TNX ID]", Me.ID.ToString.FormatDBValue)
 
-        tnxUpQuery = tnxUpQuery.Replace("[TNX FILE PATH]", Me.filePath.ToDBString)
+            tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT ID]", "Null")
+            tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT COLUMNS]", Me.GenerateIndInputSqlColumns)
+            tnxUpQuery = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT VALUES]", Me.GenerateIndInputSqlValues)
 
-        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure).sql")
-        Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Upper Structure).sql")
-        Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Guys).sql")
-        Dim tnxMemberSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Members).sql")
-        Dim tnxMaterialSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Materials).sql")
+            tnxUpQuery = tnxUpQuery.Replace("[TNX FILE PATH]", Me.filePath.FormatDBValue)
 
-        Dim tnxAllBaseSectionQuery As String = ""
-        Dim tnxAllUpperSectionQuery As String = ""
-        Dim tnxAllGuyQuery As String = ""
-        Dim tnxAllMemberQuery As String = ""
-        Dim tnxAllMaterialQuery As String = ""
-
-        For Each base In Me.geometry.baseStructure
-            Dim baseString As String = tnxBaseSectionSubQuery
-
-            baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
-            baseString = baseString.Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL)
-
-            tnxAllBaseSectionQuery += baseString & vbNewLine
-        Next
-
-        tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
-
-        For Each upper In Me.geometry.upperStructure
-            Dim upperString As String = tnxUpperSectionSubQuery
-
-            upperString = upperString.Replace("[UPPER SECTION ID]", upper.ID.ToString.ToDBString)
-            upperString = upperString.Replace("[ALL UPPER SECTION VALUES]", upper.GenerateSQL)
-
-            tnxAllUpperSectionQuery += upperString & vbNewLine
-        Next
-
-        tnxUpQuery = tnxUpQuery.Replace("[UPPER STRUCTURE]", tnxAllUpperSectionQuery)
-
-        For Each guy In Me.geometry.guyWires
-            Dim guyString As String = tnxGuySubQuery
-
-            guyString = guyString.Replace("[GUY ID]", guy.ID.ToString.ToDBString)
-            guyString = guyString.Replace("[ALL GUY VALUES]", guy.GenerateSQL)
-
-            tnxAllGuyQuery += guyString & vbNewLine
-        Next
-
-        tnxUpQuery = tnxUpQuery.Replace("[GUY LEVELS]", tnxAllGuyQuery)
-
-        'There are often duplicate members within the TNX file database, especially guy wires. This should remove duplicated to avoid adding them to the database.
-        'Dim members As List(Of tnxMember) = Me.database.members.Distinct().ToList
-        Me.database.members = Me.database.members.GetDistinct
-        Me.database.GetIDs(LogOnUser, ActiveDatabase)
-
-        For Each member In Me.database.members
-            Dim memberString As String = tnxMemberSubQuery
-
-            memberString = memberString.Replace("[MEMBER ID]", member.ID.ToString.ToDBString)
-            memberString = memberString.Replace("[ALL MEMBER VALUES]", member.GenerateSQL)
-
-            tnxAllMemberQuery += memberString & vbNewLine
-        Next
-
-        tnxUpQuery = tnxUpQuery.Replace("[MEMBERS]", tnxAllMemberQuery)
-
-        For Each material In Me.database.materials
-            Dim materialString As String = tnxMaterialSubQuery
-
-            materialString = materialString.Replace("[MATERIAL ID]", material.ID.ToString.ToDBString)
-            materialString = materialString.Replace("[ALL MATERIAL VALUES]", material.GenerateSQL)
-
-            tnxAllMaterialQuery += materialString & vbNewLine
-        Next
-
-        'Note: Materials and Bolts use the same database, there is an  "IsBolt" field to differentiate them. They use the same subquery.
-
-        For Each bolt In Me.database.bolts
-            Dim boltString As String = tnxMaterialSubQuery
-
-            boltString = boltString.Replace("[MATERIAL ID]", bolt.ID.ToString.ToDBString)
-            boltString = boltString.Replace("[ALL MATERIAL VALUES]", bolt.GenerateSQL)
-
-            tnxAllMaterialQuery += boltString & vbNewLine
-        Next
-
-        tnxUpQuery = tnxUpQuery.Replace("[MATERIALS]", tnxAllMaterialQuery)
-
-        sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
-
-    End Sub
-
-    Sub SaveBaseToEDSSub(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-
-        Using New Benchmark("SaveBasetoEDS With Subquery")
-            Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP) - Sub Query Test.sql")
-
-
-            Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Sub Query Test.sql")
+            Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure).sql")
+            'Dim tnxUpperSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Upper Structure).sql")
+            'Dim tnxGuySubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Guys).sql")
+            'Dim tnxMemberSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Members).sql")
+            'Dim tnxMaterialSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Materials).sql")
 
             Dim tnxAllBaseSectionQuery As String = ""
+            Dim tnxAllUpperSectionQuery As String = ""
+            Dim tnxAllGuyQuery As String = ""
+            Dim tnxAllMemberQuery As String = ""
+            Dim tnxAllMaterialQuery As String = ""
 
             For Each base In Me.geometry.baseStructure
                 Dim baseString As String = tnxBaseSectionSubQuery
 
-                baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
+                'baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
+                baseString = baseString.Replace("[BASE SECTION COLUMNS]", base.GenerateSQLColumns)
                 baseString = baseString.Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL)
 
                 tnxAllBaseSectionQuery += baseString & vbNewLine
             Next
 
-
             tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
 
+            'For Each upper In Me.geometry.upperStructure
+            '    Dim upperString As String = tnxUpperSectionSubQuery
+
+            '    upperString = upperString.Replace("[UPPER SECTION ID]", upper.ID.ToString.ToDBString)
+            '    upperString = upperString.Replace("[ALL UPPER SECTION VALUES]", upper.GenerateSQL)
+
+            '    tnxAllUpperSectionQuery += upperString & vbNewLine
+            'Next
+
+            'tnxUpQuery = tnxUpQuery.Replace("[UPPER STRUCTURE]", tnxAllUpperSectionQuery)
+
+            'For Each guy In Me.geometry.guyWires
+            '    Dim guyString As String = tnxGuySubQuery
+
+            '    guyString = guyString.Replace("[GUY ID]", guy.ID.ToString.ToDBString)
+            '    guyString = guyString.Replace("[ALL GUY VALUES]", guy.GenerateSQL)
+
+            '    tnxAllGuyQuery += guyString & vbNewLine
+            'Next
+
+            'tnxUpQuery = tnxUpQuery.Replace("[GUY LEVELS]", tnxAllGuyQuery)
+
+            ''There are often duplicate members within the TNX file database, especially guy wires. This should remove duplicated to avoid adding them to the database.
+            ''Dim members As List(Of tnxMember) = Me.database.members.Distinct().ToList
+            'Me.database.members = Me.database.members.GetDistinct
+            'Me.database.GetIDs(LogOnUser, ActiveDatabase)
+
+            'For Each member In Me.database.members
+            '    Dim memberString As String = tnxMemberSubQuery
+
+            '    memberString = memberString.Replace("[MEMBER ID]", member.ID.ToString.ToDBString)
+            '    memberString = memberString.Replace("[ALL MEMBER VALUES]", member.GenerateSQL)
+
+            '    tnxAllMemberQuery += memberString & vbNewLine
+            'Next
+
+            'tnxUpQuery = tnxUpQuery.Replace("[MEMBERS]", tnxAllMemberQuery)
+
+            'For Each material In Me.database.materials
+            '    Dim materialString As String = tnxMaterialSubQuery
+
+            '    materialString = materialString.Replace("[MATERIAL ID]", material.ID.ToString.ToDBString)
+            '    materialString = materialString.Replace("[ALL MATERIAL VALUES]", material.GenerateSQL)
+
+            '    tnxAllMaterialQuery += materialString & vbNewLine
+            'Next
+
+            ''Note: Materials and Bolts use the same database, there is an  "IsBolt" field to differentiate them. They use the same subquery.
+
+            'For Each bolt In Me.database.bolts
+            '    Dim boltString As String = tnxMaterialSubQuery
+
+            '    boltString = boltString.Replace("[MATERIAL ID]", bolt.ID.ToString.ToDBString)
+            '    boltString = boltString.Replace("[ALL MATERIAL VALUES]", bolt.GenerateSQL)
+
+            '    tnxAllMaterialQuery += boltString & vbNewLine
+            'Next
+
+            'tnxUpQuery = tnxUpQuery.Replace("[MATERIALS]", tnxAllMaterialQuery)
+
             sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
+
         End Using
 
     End Sub
+
+    'Sub SaveBaseToEDSSub(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+
+    '    Using New Benchmark("SaveBasetoEDS With Subquery")
+    '        Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP) - Sub Query Test.sql")
+
+
+    '        Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Sub Query Test.sql")
+
+    '        Dim tnxAllBaseSectionQuery As String = ""
+
+    '        For Each base In Me.geometry.baseStructure
+    '            Dim baseString As String = tnxBaseSectionSubQuery
+
+    '            baseString = baseString.Replace("[BASE SECTION ID]", base.ID.ToString.ToDBString)
+    '            baseString = baseString.Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL)
+
+    '            tnxAllBaseSectionQuery += baseString & vbNewLine
+    '        Next
+
+
+    '        tnxUpQuery = tnxUpQuery.Replace("[BASE STRUCTURE]", tnxAllBaseSectionQuery)
+
+    '        sqlSender(tnxUpQuery, ActiveDatabase, LogOnUser, "0")
+    '    End Using
+
+    'End Sub
+
+    'Sub SaveBaseToEDSInd(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+
+    '    Using New Benchmark("SaveBasetoEDS With Individual Queryies")
+    '        Dim tnxUpQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (INSERT).sql")
+    '        Dim tnxBaseSectionQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (INSERT Base Structure).sql")
+
+    '        Dim tnxAllBaseSectionQuery As String = ""
+
+    '        Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
+    '            Using sqlCon As New SqlConnection(ActiveDatabase)
+    '                sqlCon.Open()
+    '                Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
+
+
+    '                sqlCmd.CommandText = tnxUpQuery.Replace("[TNX INDIVIDUAL INPUT COLUMNS]", Me.GenerateIndInputSqlColumns) _
+    '                                                .Replace("[TNX INDIVIDUAL INPUT VALUES]", Me.GenerateIndInputSqlValues) _
+    '                                                .Replace("[BU NUMBER]", BUNumber.ToDBString) _
+    '                                                .Replace("[STRUCTURE ID]", STR_ID.ToDBString)
+
+    '                Dim tnxID As Integer = CInt(sqlCmd.ExecuteScalar())
+
+    '                For Each base In Me.geometry.baseStructure
+    '                    sqlCmd.CommandText = tnxBaseSectionQuery.Replace("[BASE SECTION COLUMNS]", base.GenerateSQLColumns) _
+    '                                                .Replace("[ALL BASE SECTION VALUES]", base.GenerateSQL) _
+    '                                                .Replace("[TNX ID]", tnxID.ToString.ToDBString)
+
+    '                    'base.ID = CInt(sqlCmd.ExecuteScalar())
+    '                    sqlCmd.ExecuteNonQuery()
+    '                Next
+    '                'unchangedDT.Clear()
+    '                'unchangedDT.
+
+    '            End Using
+    '        End Using
+    '    End Using
+
+    'End Sub
 
     'Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
     'BULK UPLOAD
@@ -7517,51 +7660,51 @@ Partial Public Class tnxModel
 
     'End Sub
 
-    Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-        'Individual parameters
-        Using New Benchmark("SaveBasetoEDS With Full Individual Query")
+    'Sub SaveBaseToEDSFull(ByVal BUNumber As String, ByVal STR_ID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    '    'Individual parameters
+    '    Using New Benchmark("SaveBasetoEDS With Full Individual Query")
 
-            'Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Full Query Params.sql")
+    '        'Dim tnxBaseSectionSubQuery As String = QueryBuilderFromFile(queryPath & "TNX\TNX (IN_UP Base Structure) - Full Query Params.sql")
 
-            Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
-                Using sqlCon As New SqlConnection(ActiveDatabase)
-                    sqlCon.Open()
-                    Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
-                    sqlCmd.CommandText = "tnx.insert_base_structure_data"
-                    sqlCmd.CommandType = CommandType.StoredProcedure
-                    Dim ds As New DataSet
-                    Dim DT As DataTable
-                    Dim unchangedDT As New DataTable()
-                    unchangedDT.Columns.Add("ID", GetType(Integer))
-                    Dim i As Integer = 477
-                    For Each base In Me.geometry.baseStructure
-                        If DT Is Nothing Then
-                            DT = base.GenerateDataTable
-                            base.TowerBraceType = "z-brace"
-                            base.GenerateDataRow(DT)
-                        Else
-                            base.ID = i
-                        End If
+    '        Using impersonatedUser As WindowsImpersonationContext = LogOnUser.Impersonate()
+    '            Using sqlCon As New SqlConnection(ActiveDatabase)
+    '                sqlCon.Open()
+    '                Dim sqlCmd As SqlCommand = sqlCon.CreateCommand()
+    '                sqlCmd.CommandText = "tnx.insert_base_structure_data"
+    '                sqlCmd.CommandType = CommandType.StoredProcedure
+    '                Dim ds As New DataSet
+    '                Dim DT As DataTable
+    '                Dim unchangedDT As New DataTable()
+    '                unchangedDT.Columns.Add("ID", GetType(Integer))
+    '                Dim i As Integer = 477
+    '                For Each base In Me.geometry.baseStructure
+    '                    If DT Is Nothing Then
+    '                        DT = base.GenerateDataTable
+    '                        base.TowerBraceType = "z-brace"
+    '                        base.GenerateDataRow(DT)
+    '                    Else
+    '                        base.ID = i
+    '                    End If
 
-                        If base.ID Is Nothing Then
-                            'base.GenerateDataRow(DT)
-                        Else
-                            unchangedDT.Rows.Add(base.ID)
-                        End If
-                        i += 1
-                    Next
-                    sqlCmd.Parameters.Clear()
-                    sqlCmd.Parameters.AddWithValue("@tnx_structure_id", 15)
-                    sqlCmd.Parameters.AddWithValue("@base_structure", DT)
-                    sqlCmd.Parameters.AddWithValue("@unchanged_records", unchangedDT)
-                    'unchangedDT.Clear()
-                    'unchangedDT.
-                    sqlCmd.ExecuteNonQuery()
-                End Using
-            End Using
-        End Using
+    '                    If base.ID Is Nothing Then
+    '                        'base.GenerateDataRow(DT)
+    '                    Else
+    '                        unchangedDT.Rows.Add(base.ID)
+    '                    End If
+    '                    i += 1
+    '                Next
+    '                sqlCmd.Parameters.Clear()
+    '                sqlCmd.Parameters.AddWithValue("@tnx_structure_id", 15)
+    '                sqlCmd.Parameters.AddWithValue("@base_structure", DT)
+    '                sqlCmd.Parameters.AddWithValue("@unchanged_records", unchangedDT)
+    '                'unchangedDT.Clear()
+    '                'unchangedDT.
+    '                sqlCmd.ExecuteNonQuery()
+    '            End Using
+    '        End Using
+    '    End Using
 
-    End Sub
+    'End Sub
 
     Function GenerateIndInputSqlColumns() As String
         Dim insertString As String = ""
@@ -8899,7 +9042,6 @@ Partial Public Class tnxModel
                         newERIList.Add("AntennaKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetNEX))
                         newERIList.Add("AntennaKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEY))
                         newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEX))
-
                     Next i
                 Case line(0).Equals("NumTowerRecs")
                     newERIList.Add(line(0) & "=" & Me.geometry.baseStructure.Count)
@@ -9398,10 +9540,18 @@ Partial Public Class tnxModel
     End Sub
 #End Region
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 #Region "Database"
 Partial Public Class tnxDatabase
+    Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database"
+
     Private _members As New List(Of tnxMember)
     Private _materials As New List(Of tnxMaterial)
     Private _bolts As New List(Of tnxBolt)
@@ -9443,17 +9593,17 @@ Partial Public Class tnxDatabase
         Dim matBoltQuery As String = QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Material Matching).sql")
 
         For Each member In Me.members
-            queries.Add(memberQuery.Replace("[FILE]", member.File.ToDBString).Replace("[USNAME]", member.USName.ToDBString).Replace("[SINAME]", member.SIName.ToDBString).Replace("[VALUES]", member.values.ToDBString).Replace("[INDEX]", Me.members.IndexOf(member).ToString))
+            queries.Add(memberQuery.Replace("[FILE]", member.File.FormatDBValue).Replace("[USNAME]", member.USName.FormatDBValue).Replace("[SINAME]", member.SIName.FormatDBValue).Replace("[VALUES]", member.values.FormatDBValue).Replace("[INDEX]", Me.members.IndexOf(member).ToString))
             tableNames.Add("tnxMembers")
         Next
 
         For Each material In Me.materials
-            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", material.MemberMatFile.ToDBString).Replace("[MATNAME]", material.MatName.ToDBString).Replace("[MATVALUES]", material.MatValues.ToDBString).Replace("[ISBOLT]", "'False'").Replace("[INDEX]", Me.materials.IndexOf(material).ToString))
+            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", material.MemberMatFile.FormatDBValue).Replace("[MATNAME]", material.MatName.FormatDBValue).Replace("[MATVALUES]", material.MatValues.FormatDBValue).Replace("[ISBOLT]", "'False'").Replace("[INDEX]", Me.materials.IndexOf(material).ToString))
             tableNames.Add("tnxMaterials")
         Next
 
         For Each bolt In Me.bolts
-            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", bolt.BoltMatFile.ToDBString).Replace("[MATNAME]", bolt.MatName.ToDBString).Replace("[MATVALUES]", bolt.MatValues.ToDBString).Replace("[ISBOLT]", "'True'").Replace("[INDEX]", Me.bolts.IndexOf(bolt).ToString))
+            queries.Add(matBoltQuery.Replace("[MEMBERMATFILE]", bolt.BoltMatFile.FormatDBValue).Replace("[MATNAME]", bolt.MatName.FormatDBValue).Replace("[MATVALUES]", bolt.MatValues.FormatDBValue).Replace("[ISBOLT]", "'True'").Replace("[INDEX]", Me.bolts.IndexOf(bolt).ToString))
             tableNames.Add("tnxBolts")
         Next
 
@@ -9479,10 +9629,16 @@ Partial Public Class tnxDatabase
 
     End Sub
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 Partial Public Class tnxDatabaseFile
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database File"
 
     Private _USName As String
     Private _SIName As String
@@ -9515,10 +9671,16 @@ Partial Public Class tnxDatabaseFile
             Me._values = Value
         End Set
     End Property
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxMember
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Member"
 
     Private _File As String
     Private _USName As String
@@ -9588,10 +9750,16 @@ Partial Public Class tnxMember
 
         Return insertString
     End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxMaterial
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Material"
 
     Private _MemberMatFile As String
     Private _MatName As String
@@ -9652,10 +9820,15 @@ Partial Public Class tnxMaterial
         Return insertString
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxBolt
     Inherits EDSObject
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Bolt"
 
     Private _BoltMatFile As String
     Private _MatName As String
@@ -9713,6 +9886,10 @@ Partial Public Class tnxBolt
         insertString = insertString.AddtoDBString(Me.MatValues.ToString)
 
         Return insertString
+    End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
     End Function
 End Class
 
@@ -9990,6 +10167,9 @@ End Class
 Partial Public Class tnxAntennaRecord
     Inherits EDSObject
     'upper structure
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "Upper Structure Section"
+
 #Region "Define"
     Private _AntennaRec As Integer?
     Private _AntennaBraceType As String
@@ -13034,22 +13214,829 @@ Partial Public Class tnxAntennaRecord
         insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEY.ToString)
         insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEX.ToString)
 
-
         Return insertString
     End Function
 
-    Public Function GetIdentity() As String
-
-        Return "Upper Section: " & Me.AntennaRec.ToString
-
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
     End Function
 
 End Class
 
 Partial Public Class tnxTowerRecord
-    Inherits EDSObject
+    Inherits EDSObjectWithQueries
     'base structure
+
+    Public Overrides ReadOnly Property EDSObjectName As String = "Base Structure Section"
+
+#Region "Inheritted"
+    Public Overrides ReadOnly Property EDSTableName As String = "tnx.base_structure_sections"
+    Public Overrides ReadOnly Property EDSQueryPath As String = IO.Path.Combine(Me.EDSQueryPath, "Generic Sub Table")
+    Private _Insert As String
+    Private _Update As String
+    Private _Delete As String
+    Public Overrides ReadOnly Property Insert() As String
+        Get
+            If _Insert = "" Then
+                _Insert = QueryBuilderFromFile(IO.Path.Combine(Me.EDSQueryPath, "Generic (INSERT)"))
+            End If
+            Dim InsertString As String = _Insert
+            InsertString = InsertString.Replace("[TABLE]", Me.bus_unit.FormatDBValue)
+            InsertString = InsertString.Replace("[FIELDS]", Me.structure_id.FormatDBValue)
+            InsertString = InsertString.Replace("[VALUES]", Me.SQLInsertValues)
+            Return InsertString
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property Update() As String
+        Get
+            If _Update = "" Then
+                _Update = QueryBuilderFromFile(IO.Path.Combine(Me.EDSQueryPath, "Generic (UPDATE)"))
+            End If
+            Dim UpdateString As String = _Update
+            UpdateString = UpdateString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+            UpdateString = UpdateString.Replace("[UPDATE]", Me.SQLUpdate)
+            Return UpdateString
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property Delete() As String
+        Get
+            If _Delete = "" Then
+                _Delete = QueryBuilderFromFile(IO.Path.Combine(Me.EDSQueryPath, "Generic (DELETE)"))
+            End If
+            Dim DeleteString As String = _Delete
+            DeleteString = DeleteString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+            Return DeleteString
+        End Get
+    End Property
+
+    Public Overrides Function SQLInsertValues() As String
+        SQLInsertValues = ""
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRec.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDatabase.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerName.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHeight.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFaceWidth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerNumSections.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerSectionLength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalSpacing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalSpacingEx.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBraceType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFaceBevel.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHasKBraceEndPanels.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHasHorizontals.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerBracingGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerBracingMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLongHorizontalGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLongHorizontalMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerBracingType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerBracingSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerNumInnerGirts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLongHorizontalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLongHorizontalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalSize2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalSize3.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalSize4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalSize2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalSize3.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalSize4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerSubDiagLocation.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipSize2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipSize3.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipSize4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalSize2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalSize3.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalSize4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerSWMult.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerWPMult.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAutoCalcKSingleAngle.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAutoCalcKSolidRound.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAfGusset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTfGusset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerGussetBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerGussetGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerGussetMatlGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAfMult.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerArMult.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFlatIPAPole.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRoundIPAPole.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFlatIPALeg.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRoundIPALeg.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFlatIPAHorizontal.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRoundIPAHorizontal.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerFlatIPADiagonal.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRoundIPADiagonal.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerCSA_S37_SpeedUpFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKLegs.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKXBracedDiags.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKKBracedDiags.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKZBracedDiags.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKHorzs.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKSecHorzs.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKGirts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKInners.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKXBracedDiagsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKKBracedDiagsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKZBracedDiagsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKHorzsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKSecHorzsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKGirtsY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKInnersY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedHorz.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedDiag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedSubDiag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedSubHorz.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedVert.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedHip.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKRedHipDiag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKTLX.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKTLZ.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKTLLeg.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerKTLX.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerKTLZ.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerKTLLeg.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchBoltLocationHoriz.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchBoltLocationDiag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchBoltLocationRed.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchSpacing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchSpacingDiag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchSpacingHorz.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerStitchSpacingRed.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegConnType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerInnerGirtGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerShortHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagonalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerTopGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBottomGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerMidGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHorizontalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerSecondaryHorizontalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerUniqueFlag.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagOffsetNEY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagOffsetNEX.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagOffsetPEY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerDiagOffsetPEX.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetNEY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetNEX.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetPEY.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetPEX.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRec")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDatabase")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerName")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHeight")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFaceWidth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerNumSections")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerSectionLength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalSpacing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalSpacingEx")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBraceType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFaceBevel")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHasKBraceEndPanels")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHasHorizontals")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerBracingGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerBracingMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLongHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLongHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerBracingType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerBracingSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerNumInnerGirts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLongHorizontalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLongHorizontalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerSubDiagLocation")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerSWMult")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerWPMult")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAutoCalcKSingleAngle")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAutoCalcKSolidRound")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAfGusset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTfGusset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerGussetBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerGussetGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerGussetMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAfMult")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerArMult")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFlatIPAPole")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRoundIPAPole")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFlatIPALeg")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRoundIPALeg")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFlatIPAHorizontal")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRoundIPAHorizontal")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerFlatIPADiagonal")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRoundIPADiagonal")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerCSA_S37_SpeedUpFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKLegs")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKXBracedDiags")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKKBracedDiags")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKZBracedDiags")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKHorzs")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKSecHorzs")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKGirts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKInners")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKXBracedDiagsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKKBracedDiagsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKZBracedDiagsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKHorzsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKSecHorzsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKGirtsY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKInnersY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedHorz")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedDiag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedSubDiag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedSubHorz")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedVert")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedHip")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKRedHipDiag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKTLX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKTLZ")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKTLLeg")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerKTLX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerKTLZ")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerKTLLeg")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchBoltLocationHoriz")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchBoltLocationDiag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchBoltLocationRed")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchSpacing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchSpacingDiag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchSpacingHorz")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerStitchSpacingRed")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegConnType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerInnerGirtGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerShortHorizontalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagonalOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerTopGirtOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBottomGirtOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerMidGirtOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHorizontalOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerSecondaryHorizontalOutOfPlaneRestraint")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerUniqueFlag")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagOffsetNEY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagOffsetNEX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagOffsetPEY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerDiagOffsetPEX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetNEY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetNEX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetPEY")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetPEX")
+
+        Return SQLInsertFields
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+        SQLUpdate = ""
+
+        'SQLUpdate = SQLUpdate.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("tnx_id = " & Me.tnx_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRec = " & Me.TowerRec.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDatabase = " & Me.TowerDatabase.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerName = " & Me.TowerName.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHeight = " & Me.TowerHeight.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFaceWidth = " & Me.TowerFaceWidth.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerNumSections = " & Me.TowerNumSections.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerSectionLength = " & Me.TowerSectionLength.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalSpacing = " & Me.TowerDiagonalSpacing.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalSpacingEx = " & Me.TowerDiagonalSpacingEx.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBraceType = " & Me.TowerBraceType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFaceBevel = " & Me.TowerFaceBevel.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtOffset = " & Me.TowerTopGirtOffset.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtOffset = " & Me.TowerBotGirtOffset.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHasKBraceEndPanels = " & Me.TowerHasKBraceEndPanels.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHasHorizontals = " & Me.TowerHasHorizontals.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegType = " & Me.TowerLegType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegSize = " & Me.TowerLegSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegGrade = " & Me.TowerLegGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegMatlGrade = " & Me.TowerLegMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalGrade = " & Me.TowerDiagonalGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalMatlGrade = " & Me.TowerDiagonalMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerBracingGrade = " & Me.TowerInnerBracingGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerBracingMatlGrade = " & Me.TowerInnerBracingMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtGrade = " & Me.TowerTopGirtGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtMatlGrade = " & Me.TowerTopGirtMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtGrade = " & Me.TowerBotGirtGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtMatlGrade = " & Me.TowerBotGirtMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtGrade = " & Me.TowerInnerGirtGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtMatlGrade = " & Me.TowerInnerGirtMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLongHorizontalGrade = " & Me.TowerLongHorizontalGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLongHorizontalMatlGrade = " & Me.TowerLongHorizontalMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalGrade = " & Me.TowerShortHorizontalGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalMatlGrade = " & Me.TowerShortHorizontalMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalType = " & Me.TowerDiagonalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalSize = " & Me.TowerDiagonalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerBracingType = " & Me.TowerInnerBracingType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerBracingSize = " & Me.TowerInnerBracingSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtType = " & Me.TowerTopGirtType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtSize = " & Me.TowerTopGirtSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtType = " & Me.TowerBotGirtType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtSize = " & Me.TowerBotGirtSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerNumInnerGirts = " & Me.TowerNumInnerGirts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtType = " & Me.TowerInnerGirtType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtSize = " & Me.TowerInnerGirtSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLongHorizontalType = " & Me.TowerLongHorizontalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLongHorizontalSize = " & Me.TowerLongHorizontalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalType = " & Me.TowerShortHorizontalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalSize = " & Me.TowerShortHorizontalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantGrade = " & Me.TowerRedundantGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantMatlGrade = " & Me.TowerRedundantMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantType = " & Me.TowerRedundantType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagType = " & Me.TowerRedundantDiagType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalType = " & Me.TowerRedundantSubDiagonalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalType = " & Me.TowerRedundantSubHorizontalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalType = " & Me.TowerRedundantVerticalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipType = " & Me.TowerRedundantHipType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalType = " & Me.TowerRedundantHipDiagonalType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalSize = " & Me.TowerRedundantHorizontalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalSize2 = " & Me.TowerRedundantHorizontalSize2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalSize3 = " & Me.TowerRedundantHorizontalSize3.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalSize4 = " & Me.TowerRedundantHorizontalSize4.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalSize = " & Me.TowerRedundantDiagonalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalSize2 = " & Me.TowerRedundantDiagonalSize2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalSize3 = " & Me.TowerRedundantDiagonalSize3.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalSize4 = " & Me.TowerRedundantDiagonalSize4.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalSize = " & Me.TowerRedundantSubHorizontalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalSize = " & Me.TowerRedundantSubDiagonalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerSubDiagLocation = " & Me.TowerSubDiagLocation.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalSize = " & Me.TowerRedundantVerticalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipSize = " & Me.TowerRedundantHipSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipSize2 = " & Me.TowerRedundantHipSize2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipSize3 = " & Me.TowerRedundantHipSize3.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipSize4 = " & Me.TowerRedundantHipSize4.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalSize = " & Me.TowerRedundantHipDiagonalSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalSize2 = " & Me.TowerRedundantHipDiagonalSize2.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalSize3 = " & Me.TowerRedundantHipDiagonalSize3.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalSize4 = " & Me.TowerRedundantHipDiagonalSize4.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerSWMult = " & Me.TowerSWMult.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerWPMult = " & Me.TowerWPMult.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerAutoCalcKSingleAngle = " & Me.TowerAutoCalcKSingleAngle.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerAutoCalcKSolidRound = " & Me.TowerAutoCalcKSolidRound.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerAfGusset = " & Me.TowerAfGusset.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTfGusset = " & Me.TowerTfGusset.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerGussetBoltEdgeDistance = " & Me.TowerGussetBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerGussetGrade = " & Me.TowerGussetGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerGussetMatlGrade = " & Me.TowerGussetMatlGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerAfMult = " & Me.TowerAfMult.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerArMult = " & Me.TowerArMult.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFlatIPAPole = " & Me.TowerFlatIPAPole.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRoundIPAPole = " & Me.TowerRoundIPAPole.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFlatIPALeg = " & Me.TowerFlatIPALeg.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRoundIPALeg = " & Me.TowerRoundIPALeg.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFlatIPAHorizontal = " & Me.TowerFlatIPAHorizontal.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRoundIPAHorizontal = " & Me.TowerRoundIPAHorizontal.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerFlatIPADiagonal = " & Me.TowerFlatIPADiagonal.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRoundIPADiagonal = " & Me.TowerRoundIPADiagonal.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerCSA_S37_SpeedUpFactor = " & Me.TowerCSA_S37_SpeedUpFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKLegs = " & Me.TowerKLegs.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKXBracedDiags = " & Me.TowerKXBracedDiags.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKKBracedDiags = " & Me.TowerKKBracedDiags.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKZBracedDiags = " & Me.TowerKZBracedDiags.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKHorzs = " & Me.TowerKHorzs.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKSecHorzs = " & Me.TowerKSecHorzs.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKGirts = " & Me.TowerKGirts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKInners = " & Me.TowerKInners.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKXBracedDiagsY = " & Me.TowerKXBracedDiagsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKKBracedDiagsY = " & Me.TowerKKBracedDiagsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKZBracedDiagsY = " & Me.TowerKZBracedDiagsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKHorzsY = " & Me.TowerKHorzsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKSecHorzsY = " & Me.TowerKSecHorzsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKGirtsY = " & Me.TowerKGirtsY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKInnersY = " & Me.TowerKInnersY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedHorz = " & Me.TowerKRedHorz.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedDiag = " & Me.TowerKRedDiag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedSubDiag = " & Me.TowerKRedSubDiag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedSubHorz = " & Me.TowerKRedSubHorz.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedVert = " & Me.TowerKRedVert.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedHip = " & Me.TowerKRedHip.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKRedHipDiag = " & Me.TowerKRedHipDiag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKTLX = " & Me.TowerKTLX.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKTLZ = " & Me.TowerKTLZ.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKTLLeg = " & Me.TowerKTLLeg.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerKTLX = " & Me.TowerInnerKTLX.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerKTLZ = " & Me.TowerInnerKTLZ.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerKTLLeg = " & Me.TowerInnerKTLLeg.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchBoltLocationHoriz = " & Me.TowerStitchBoltLocationHoriz.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchBoltLocationDiag = " & Me.TowerStitchBoltLocationDiag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchBoltLocationRed = " & Me.TowerStitchBoltLocationRed.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchSpacing = " & Me.TowerStitchSpacing.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchSpacingDiag = " & Me.TowerStitchSpacingDiag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchSpacingHorz = " & Me.TowerStitchSpacingHorz.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerStitchSpacingRed = " & Me.TowerStitchSpacingRed.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegNetWidthDeduct = " & Me.TowerLegNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegUFactor = " & Me.TowerLegUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalNetWidthDeduct = " & Me.TowerDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtNetWidthDeduct = " & Me.TowerTopGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtNetWidthDeduct = " & Me.TowerBotGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtNetWidthDeduct = " & Me.TowerInnerGirtNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalNetWidthDeduct = " & Me.TowerHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalNetWidthDeduct = " & Me.TowerShortHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalUFactor = " & Me.TowerDiagonalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtUFactor = " & Me.TowerTopGirtUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtUFactor = " & Me.TowerBotGirtUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtUFactor = " & Me.TowerInnerGirtUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalUFactor = " & Me.TowerHorizontalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalUFactor = " & Me.TowerShortHorizontalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegConnType = " & Me.TowerLegConnType.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegNumBolts = " & Me.TowerLegNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalNumBolts = " & Me.TowerDiagonalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtNumBolts = " & Me.TowerTopGirtNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtNumBolts = " & Me.TowerBotGirtNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtNumBolts = " & Me.TowerInnerGirtNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalNumBolts = " & Me.TowerHorizontalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalNumBolts = " & Me.TowerShortHorizontalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegBoltGrade = " & Me.TowerLegBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegBoltSize = " & Me.TowerLegBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalBoltGrade = " & Me.TowerDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalBoltSize = " & Me.TowerDiagonalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtBoltGrade = " & Me.TowerTopGirtBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtBoltSize = " & Me.TowerTopGirtBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtBoltGrade = " & Me.TowerBotGirtBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtBoltSize = " & Me.TowerBotGirtBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtBoltGrade = " & Me.TowerInnerGirtBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtBoltSize = " & Me.TowerInnerGirtBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalBoltGrade = " & Me.TowerHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalBoltSize = " & Me.TowerHorizontalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalBoltGrade = " & Me.TowerShortHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalBoltSize = " & Me.TowerShortHorizontalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerLegBoltEdgeDistance = " & Me.TowerLegBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalBoltEdgeDistance = " & Me.TowerDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtBoltEdgeDistance = " & Me.TowerTopGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtBoltEdgeDistance = " & Me.TowerBotGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtBoltEdgeDistance = " & Me.TowerInnerGirtBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalBoltEdgeDistance = " & Me.TowerHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalBoltEdgeDistance = " & Me.TowerShortHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalGageG1Distance = " & Me.TowerDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtGageG1Distance = " & Me.TowerTopGirtGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBotGirtGageG1Distance = " & Me.TowerBotGirtGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerInnerGirtGageG1Distance = " & Me.TowerInnerGirtGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalGageG1Distance = " & Me.TowerHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerShortHorizontalGageG1Distance = " & Me.TowerShortHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalBoltGrade = " & Me.TowerRedundantHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalBoltSize = " & Me.TowerRedundantHorizontalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalNumBolts = " & Me.TowerRedundantHorizontalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance = " & Me.TowerRedundantHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalGageG1Distance = " & Me.TowerRedundantHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct = " & Me.TowerRedundantHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHorizontalUFactor = " & Me.TowerRedundantHorizontalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalBoltGrade = " & Me.TowerRedundantDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalBoltSize = " & Me.TowerRedundantDiagonalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalNumBolts = " & Me.TowerRedundantDiagonalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance = " & Me.TowerRedundantDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalGageG1Distance = " & Me.TowerRedundantDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct = " & Me.TowerRedundantDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantDiagonalUFactor = " & Me.TowerRedundantDiagonalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalBoltGrade = " & Me.TowerRedundantSubDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalBoltSize = " & Me.TowerRedundantSubDiagonalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalNumBolts = " & Me.TowerRedundantSubDiagonalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalBoltEdgeDistance = " & Me.TowerRedundantSubDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalGageG1Distance = " & Me.TowerRedundantSubDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalNetWidthDeduct = " & Me.TowerRedundantSubDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubDiagonalUFactor = " & Me.TowerRedundantSubDiagonalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalBoltGrade = " & Me.TowerRedundantSubHorizontalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalBoltSize = " & Me.TowerRedundantSubHorizontalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalNumBolts = " & Me.TowerRedundantSubHorizontalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalBoltEdgeDistance = " & Me.TowerRedundantSubHorizontalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalGageG1Distance = " & Me.TowerRedundantSubHorizontalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalNetWidthDeduct = " & Me.TowerRedundantSubHorizontalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantSubHorizontalUFactor = " & Me.TowerRedundantSubHorizontalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalBoltGrade = " & Me.TowerRedundantVerticalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalBoltSize = " & Me.TowerRedundantVerticalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalNumBolts = " & Me.TowerRedundantVerticalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalBoltEdgeDistance = " & Me.TowerRedundantVerticalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalGageG1Distance = " & Me.TowerRedundantVerticalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalNetWidthDeduct = " & Me.TowerRedundantVerticalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantVerticalUFactor = " & Me.TowerRedundantVerticalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipBoltGrade = " & Me.TowerRedundantHipBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipBoltSize = " & Me.TowerRedundantHipBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipNumBolts = " & Me.TowerRedundantHipNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipBoltEdgeDistance = " & Me.TowerRedundantHipBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipGageG1Distance = " & Me.TowerRedundantHipGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipNetWidthDeduct = " & Me.TowerRedundantHipNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipUFactor = " & Me.TowerRedundantHipUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalBoltGrade = " & Me.TowerRedundantHipDiagonalBoltGrade.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalBoltSize = " & Me.TowerRedundantHipDiagonalBoltSize.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalNumBolts = " & Me.TowerRedundantHipDiagonalNumBolts.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance = " & Me.TowerRedundantHipDiagonalGageG1Distance.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct = " & Me.TowerRedundantHipDiagonalNetWidthDeduct.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerRedundantHipDiagonalUFactor = " & Me.TowerRedundantHipDiagonalUFactor.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagonalOutOfPlaneRestraint = " & Me.TowerDiagonalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerTopGirtOutOfPlaneRestraint = " & Me.TowerTopGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerBottomGirtOutOfPlaneRestraint = " & Me.TowerBottomGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerMidGirtOutOfPlaneRestraint = " & Me.TowerMidGirtOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerHorizontalOutOfPlaneRestraint = " & Me.TowerHorizontalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerSecondaryHorizontalOutOfPlaneRestraint = " & Me.TowerSecondaryHorizontalOutOfPlaneRestraint.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerUniqueFlag = " & Me.TowerUniqueFlag.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagOffsetNEY = " & Me.TowerDiagOffsetNEY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagOffsetNEX = " & Me.TowerDiagOffsetNEX.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagOffsetPEY = " & Me.TowerDiagOffsetPEY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerDiagOffsetPEX = " & Me.TowerDiagOffsetPEX.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKbraceOffsetNEY = " & Me.TowerKbraceOffsetNEY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKbraceOffsetNEX = " & Me.TowerKbraceOffsetNEX.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKbraceOffsetPEY = " & Me.TowerKbraceOffsetPEY.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.AddtoDBString("TowerKbraceOffsetPEX = " & Me.TowerKbraceOffsetPEX.ToString.FormatDBValue)
+
+        Return SQLUpdate
+    End Function
+
+
+#End Region
+
 #Region "Define"
+    Private _tnx_id As Integer?
     Private _TowerRec As Integer?
     Private _TowerDatabase As String
     Private _TowerName As String
@@ -13295,6 +14282,16 @@ Partial Public Class tnxTowerRecord
     Private _TowerKbraceOffsetNEX As Double?
     Private _TowerKbraceOffsetPEY As Double?
     Private _TowerKbraceOffsetPEX As Double?
+
+    <Category("TNX Base Structure"), Description(""), DisplayName("tnx_id")>
+    Public Property tnx_id() As Integer?
+        Get
+            Return Me._tnx_id
+        End Get
+        Set
+            Me._tnx_id = Value
+        End Set
+    End Property
 
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerrec")>
     Public Property TowerRec() As Integer?
@@ -15511,6 +16508,7 @@ Partial Public Class tnxTowerRecord
     Public Sub New(data As DataRow)
 
         Me.ID = DBtoNullableInt(data.Item("ID"))
+        Me.tnx_id = DBtoNullableInt(data.Item("tnx_id"))
         Me.TowerRec = DBtoNullableInt(data.Item("TowerRec"))
         Me.TowerDatabase = DBtoStr(data.Item("TowerDatabase"))
         Me.TowerName = DBtoStr(data.Item("TowerName"))
@@ -16766,6 +17764,257 @@ Partial Public Class tnxTowerRecord
 
         Return insertString
     End Function
+    Public Function GenerateSQLColumns() As String
+        Dim insertString As String = ""
+
+        insertString = insertString.AddtoDBString("TowerRec", False)
+        insertString = insertString.AddtoDBString("TowerDatabase", False)
+        insertString = insertString.AddtoDBString("TowerName", False)
+        insertString = insertString.AddtoDBString("TowerHeight", False)
+        insertString = insertString.AddtoDBString("TowerFaceWidth", False)
+        insertString = insertString.AddtoDBString("TowerNumSections", False)
+        insertString = insertString.AddtoDBString("TowerSectionLength", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalSpacing", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalSpacingEx", False)
+        insertString = insertString.AddtoDBString("TowerBraceType", False)
+        insertString = insertString.AddtoDBString("TowerFaceBevel", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtOffset", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtOffset", False)
+        insertString = insertString.AddtoDBString("TowerHasKBraceEndPanels", False)
+        insertString = insertString.AddtoDBString("TowerHasHorizontals", False)
+        insertString = insertString.AddtoDBString("TowerLegType", False)
+        insertString = insertString.AddtoDBString("TowerLegSize", False)
+        insertString = insertString.AddtoDBString("TowerLegGrade", False)
+        insertString = insertString.AddtoDBString("TowerLegMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalGrade", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerInnerBracingGrade", False)
+        insertString = insertString.AddtoDBString("TowerInnerBracingMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtGrade", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtGrade", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtGrade", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerLongHorizontalGrade", False)
+        insertString = insertString.AddtoDBString("TowerLongHorizontalMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalGrade", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalType", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalSize", False)
+        insertString = insertString.AddtoDBString("TowerInnerBracingType", False)
+        insertString = insertString.AddtoDBString("TowerInnerBracingSize", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtType", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtSize", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtType", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtSize", False)
+        insertString = insertString.AddtoDBString("TowerNumInnerGirts", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtType", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtSize", False)
+        insertString = insertString.AddtoDBString("TowerLongHorizontalType", False)
+        insertString = insertString.AddtoDBString("TowerLongHorizontalSize", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalType", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalType", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalSize2", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalSize3", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalSize4", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalSize2", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalSize3", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalSize4", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalSize", False)
+        insertString = insertString.AddtoDBString("TowerSubDiagLocation", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipSize2", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipSize3", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipSize4", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalSize2", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalSize3", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalSize4", False)
+        insertString = insertString.AddtoDBString("TowerSWMult", False)
+        insertString = insertString.AddtoDBString("TowerWPMult", False)
+        insertString = insertString.AddtoDBString("TowerAutoCalcKSingleAngle", False)
+        insertString = insertString.AddtoDBString("TowerAutoCalcKSolidRound", False)
+        insertString = insertString.AddtoDBString("TowerAfGusset", False)
+        insertString = insertString.AddtoDBString("TowerTfGusset", False)
+        insertString = insertString.AddtoDBString("TowerGussetBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerGussetGrade", False)
+        insertString = insertString.AddtoDBString("TowerGussetMatlGrade", False)
+        insertString = insertString.AddtoDBString("TowerAfMult", False)
+        insertString = insertString.AddtoDBString("TowerArMult", False)
+        insertString = insertString.AddtoDBString("TowerFlatIPAPole", False)
+        insertString = insertString.AddtoDBString("TowerRoundIPAPole", False)
+        insertString = insertString.AddtoDBString("TowerFlatIPALeg", False)
+        insertString = insertString.AddtoDBString("TowerRoundIPALeg", False)
+        insertString = insertString.AddtoDBString("TowerFlatIPAHorizontal", False)
+        insertString = insertString.AddtoDBString("TowerRoundIPAHorizontal", False)
+        insertString = insertString.AddtoDBString("TowerFlatIPADiagonal", False)
+        insertString = insertString.AddtoDBString("TowerRoundIPADiagonal", False)
+        insertString = insertString.AddtoDBString("TowerCSA_S37_SpeedUpFactor", False)
+        insertString = insertString.AddtoDBString("TowerKLegs", False)
+        insertString = insertString.AddtoDBString("TowerKXBracedDiags", False)
+        insertString = insertString.AddtoDBString("TowerKKBracedDiags", False)
+        insertString = insertString.AddtoDBString("TowerKZBracedDiags", False)
+        insertString = insertString.AddtoDBString("TowerKHorzs", False)
+        insertString = insertString.AddtoDBString("TowerKSecHorzs", False)
+        insertString = insertString.AddtoDBString("TowerKGirts", False)
+        insertString = insertString.AddtoDBString("TowerKInners", False)
+        insertString = insertString.AddtoDBString("TowerKXBracedDiagsY", False)
+        insertString = insertString.AddtoDBString("TowerKKBracedDiagsY", False)
+        insertString = insertString.AddtoDBString("TowerKZBracedDiagsY", False)
+        insertString = insertString.AddtoDBString("TowerKHorzsY", False)
+        insertString = insertString.AddtoDBString("TowerKSecHorzsY", False)
+        insertString = insertString.AddtoDBString("TowerKGirtsY", False)
+        insertString = insertString.AddtoDBString("TowerKInnersY", False)
+        insertString = insertString.AddtoDBString("TowerKRedHorz", False)
+        insertString = insertString.AddtoDBString("TowerKRedDiag", False)
+        insertString = insertString.AddtoDBString("TowerKRedSubDiag", False)
+        insertString = insertString.AddtoDBString("TowerKRedSubHorz", False)
+        insertString = insertString.AddtoDBString("TowerKRedVert", False)
+        insertString = insertString.AddtoDBString("TowerKRedHip", False)
+        insertString = insertString.AddtoDBString("TowerKRedHipDiag", False)
+        insertString = insertString.AddtoDBString("TowerKTLX", False)
+        insertString = insertString.AddtoDBString("TowerKTLZ", False)
+        insertString = insertString.AddtoDBString("TowerKTLLeg", False)
+        insertString = insertString.AddtoDBString("TowerInnerKTLX", False)
+        insertString = insertString.AddtoDBString("TowerInnerKTLZ", False)
+        insertString = insertString.AddtoDBString("TowerInnerKTLLeg", False)
+        insertString = insertString.AddtoDBString("TowerStitchBoltLocationHoriz", False)
+        insertString = insertString.AddtoDBString("TowerStitchBoltLocationDiag", False)
+        insertString = insertString.AddtoDBString("TowerStitchBoltLocationRed", False)
+        insertString = insertString.AddtoDBString("TowerStitchSpacing", False)
+        insertString = insertString.AddtoDBString("TowerStitchSpacingDiag", False)
+        insertString = insertString.AddtoDBString("TowerStitchSpacingHorz", False)
+        insertString = insertString.AddtoDBString("TowerStitchSpacingRed", False)
+        insertString = insertString.AddtoDBString("TowerLegNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerLegUFactor", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtUFactor", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtUFactor", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtUFactor", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerLegConnType", False)
+        insertString = insertString.AddtoDBString("TowerLegNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerLegBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerLegBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerLegBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerBotGirtGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerInnerGirtGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerShortHorizontalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHorizontalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantDiagonalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubDiagonalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantSubHorizontalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantVerticalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipUFactor", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalBoltGrade", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalBoltSize", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalNumBolts", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct", False)
+        insertString = insertString.AddtoDBString("TowerRedundantHipDiagonalUFactor", False)
+        insertString = insertString.AddtoDBString("TowerDiagonalOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerTopGirtOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerBottomGirtOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerMidGirtOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerHorizontalOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerSecondaryHorizontalOutOfPlaneRestraint", False)
+        insertString = insertString.AddtoDBString("TowerUniqueFlag", False)
+        insertString = insertString.AddtoDBString("TowerDiagOffsetNEY", False)
+        insertString = insertString.AddtoDBString("TowerDiagOffsetNEX", False)
+        insertString = insertString.AddtoDBString("TowerDiagOffsetPEY", False)
+        insertString = insertString.AddtoDBString("TowerDiagOffsetPEX", False)
+        insertString = insertString.AddtoDBString("TowerKbraceOffsetNEY", False)
+        insertString = insertString.AddtoDBString("TowerKbraceOffsetNEX", False)
+        insertString = insertString.AddtoDBString("TowerKbraceOffsetPEY", False)
+        insertString = insertString.AddtoDBString("TowerKbraceOffsetPEX", False)
+
+        Return insertString
+    End Function
 
     Public Function GetIdentity() As String
 
@@ -16773,11 +18022,16 @@ Partial Public Class tnxTowerRecord
 
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+
 End Class
 
 Partial Public Class tnxGuyRecord
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level"
 #Region "Define"
     Private _GuyRec As Integer?
     Private _GuyHeight As Double?
@@ -17837,6 +19091,10 @@ Partial Public Class tnxGuyRecord
 
         Return "Guy Level: " & Me.GuyRec.ToString
 
+    End Function
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
     End Function
 End Class
 #End Region
@@ -21408,6 +22666,8 @@ End Class
 Partial Public Class tnxNote
     Inherits EDSObject
 
+    Public Overrides ReadOnly Property EDSObjectName As String = "Note"
+
     Private _Note As String
 
     <Category("TNX Note"), Description(""), DisplayName("Note")>
@@ -21419,6 +22679,10 @@ Partial Public Class tnxNote
             Me._Note = Value
         End Set
     End Property
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 Partial Public Class tnxProjectInfo

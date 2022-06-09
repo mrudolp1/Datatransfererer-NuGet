@@ -1,0 +1,6 @@
+﻿
+BEGIN
+	UPDATE [TABLE] 
+	SET [UPDATE] 
+	WHERE ID = [ID]
+END

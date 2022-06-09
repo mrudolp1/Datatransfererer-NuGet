@@ -1,6 +1,7 @@
 ﻿
 Imports System.Data.SqlClient
 Imports System.Security.Principal
+Imports Oracle.ManagedDataAccess.Client
 
 Module DoDaSQL
     Private SQLAdapter As SqlDataAdapter
@@ -8,15 +9,15 @@ Module DoDaSQL
 
 #Region "Main SQL Functions"
     <DebuggerStepThrough()>
-    Public Function sqlLoader(ByVal SQLCommand As String, ByVal SQLSource As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
-        ClearDataTable(SQLSource, SaveToDataSet)
+    Public Function sqlLoader(ByVal SQLCommand As String, ByVal SaveToTableName As String, ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+        ClearDataTable(SaveToTableName, SaveToDataSet)
         Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
             sqlCon = New SqlConnection(ActiveDatabase)
             sqlCon.Open()
 
             Try
                 SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
-                SQLAdapter.Fill(SaveToDataSet, SQLSource)
+                SQLAdapter.Fill(SaveToDataSet, SaveToTableName)
             Catch ex As Exception
                 sqlCon.Close()
                 Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo)
@@ -30,11 +31,7 @@ Module DoDaSQL
         Return True
     End Function
 
-    Public Function sqlLoader(ByVal SQLCommand As List(Of String), ByVal tableName As List(Of String), ByVal SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByVal erNo As Integer, Optional ByVal ClearExistingDataTable As Boolean = True) As Boolean
-
-        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
-
-        If SQLCommand.Count <> tableName.Count Then Return False
+    Public Function sqlLoader(ByVal SQLCommand As String, ByRef SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, Optional ByVal erNo As Integer = 0, Optional ByVal ClearSaveToDataSet As Boolean = True) As Boolean
 
         Dim errors As Boolean = False
 
@@ -42,15 +39,41 @@ Module DoDaSQL
             Using sqlCon As New SqlConnection(ActiveDatabase)
                 sqlCon.Open()
 
-                For i = 0 To SQLCommand.Count - 1
+                Try
+                    If ClearSaveToDataSet Then SaveToDataSet.Reset()
+                    SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
+                    SQLAdapter.Fill(SaveToDataSet)
+                Catch ex As Exception
+                    Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                    errors = True
+                End Try
+            End Using
+        End Using
+
+        Return True
+    End Function
+
+    Public Function sqlLoader(ByVal SQLCommands As List(Of String), ByVal SaveToDataTables As List(Of String), ByRef SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, Optional ByVal erNo As Integer = 0, Optional ByVal ClearSaveToDataTable As Boolean = True) As Boolean
+
+        'This overload accepts a list of SQL commands and table names and only opens the SQL connection one time to execute all commands. - DHS
+
+        If SQLCommands.Count <> SaveToDataTables.Count Then Return False
+
+        Dim errors As Boolean = False
+
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            Using sqlCon As New SqlConnection(ActiveDatabase)
+                sqlCon.Open()
+
+                For i = 0 To SQLCommands.Count - 1
                     Try
-                        If ClearExistingDataTable Then ClearDataTable(tableName(i), SaveToDataSet)
-                        Using SQLAdapter As New SqlDataAdapter(SQLCommand(i), sqlCon)
-                            SQLAdapter.Fill(SaveToDataSet, tableName(i))
+                        If ClearSaveToDataTable Then ClearDataTable(SaveToDataTables(i), SaveToDataSet)
+                        Using SQLAdapter As New SqlDataAdapter(SQLCommands(i), sqlCon)
+                            SQLAdapter.Fill(SaveToDataSet, SaveToDataTables(i))
                         End Using
                     Catch ex As Exception
                         erNo = erNo + i
-                        Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+                        Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
                         errors = True
                     End Try
                 Next
@@ -134,4 +157,49 @@ Module DoDaSQL
         Catch
         End Try
     End Sub
+End Module
+
+
+Module DoDaORACLE
+    Private Const ordsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = ordsprd_batch.crowncastle.com)    )  )"
+    Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isitprd_utl.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    Private Const odsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = odsprd_app.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    'Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = uat-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isituat_batch.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    Private Const ntoken = "270:207:234:213:204:207:258"
+    Private Const wtoken = "366:264:339:216:357:159:192:297:171:216"
+    Public Function OracleLoader(ByVal SQLCommand As String, ByVal SaveToTableName As String, ByRef SaveToDataSet As DataSet, ByVal erNo As Integer, ByVal db As String) As Boolean
+        Dim oraDatasource As String
+        Dim dt As New DataTable
+        Select Case db
+            Case "isit"
+                oraDatasource = isitDataSource
+            Case "ods"
+                oraDatasource = odsDataSource
+            Case Else
+                'ORDS is the catch-all because it has links to the other DBs
+                oraDatasource = ordsDataSource
+        End Select
+        dtClearer(SaveToTableName)
+        Dim sb As OracleConnectionStringBuilder = New OracleConnectionStringBuilder()
+        sb.DataSource = oraDatasource
+        sb.UserID = token(ntoken)
+        sb.Password = token(wtoken)
+        'By default pooling = true which means that oracle moves connections to an inactive pool when they are closed by the program.
+        'This makes reconnecting faster but was causing issues with the connection idle_time being exceeded.
+        sb.Pooling = False
+        Dim bOraSuccess As Boolean = True
+        Using oraCon As New OracleConnection(sb.ToString())
+            Try
+                Dim oDa = New OracleDataAdapter(SQLCommand, oraCon)
+                oDa.Fill(SaveToDataSet, SaveToTableName)
+
+            Catch ex As Exception
+                bOraSuccess = False
+                Console.WriteLine(SQLCommand)
+                'sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
+            End Try
+            oraCon.Close()
+        End Using
+        Return bOraSuccess
+    End Function
 End Module

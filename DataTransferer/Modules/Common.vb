@@ -4,10 +4,10 @@ Imports DevExpress.DataAccess.Excel
 
 Module IDoDeclare
     Public ds As New DataSet
-    Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Data Transferer Queries\"
-    Public BUNumber As String = "678901"
+    Public queryPath As String = System.Windows.Forms.Application.StartupPath & "\Queries\"
+    Public BUNumber As String = "1809534"
     Public STR_ID As String = "A"
-    Public CurWO As String = "1234567"
+    Public CurWO As String = "2345678"
     Public isModelNeeded As Boolean = False 'Update structure model & structure model xref
     Public isfndGroupNeeded As Boolean = False 'Update foundation details, foundation group & structure model
     Public isPileNeeded As Boolean = False 'Update pile details, pile location, pile soil layer & foundation details
@@ -18,6 +18,10 @@ Module IDoDeclare
     Public isPoleNeeded As Boolean = False 'Update CCIpole structure, criteria, pole section, reinf pole section, reinf group, reinf details, int group, int details, reinf results, reinforcement prop, bolt prop, matl prop
     Public isconGroupNeeded As Boolean = False 'CCIplate
     Public isConnectionNeeded As Boolean = False 'CCIplate
+    Public SQLQueryTemplates As New SQLTemplates()
+
+    'SQL templates
+    Public PierandPadInsert As String
 
     'if changes were made, we need to ask the user if they want to set this as the ACTIVE model?
     Public overrideActiveModel As Boolean = True 'Structure model xref active (Potentially a boolean column or seperate table)
@@ -29,9 +33,96 @@ Module IDoDeclare
     'Pole
 
     Public changeDt As New DataTable
-    Public changeList As New List(Of AnalysisChanges)
+    Public changeList As New List(Of AnalysisChange)
 
 End Module
+
+Public Class SQLTemplates
+
+#Region "Pier and Pad"
+    Private _PierandPadInsert As String
+    Public ReadOnly Property PierandPadInsert() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (INSERT).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property PierandPadUpdate() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (Update).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property PierandPadDelete() As String
+        Get
+            If _PierandPadInsert = "" Then
+                _PierandPadInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (Delete).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+    Private _PierandPadSelect As String
+    Public ReadOnly Property PierandPadSelect() As String
+        Get
+            If _PierandPadSelect = "" Then
+                _PierandPadSelect = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (SELECT Details).sql")
+            End If
+            Return _PierandPadInsert
+        End Get
+    End Property
+
+#End Region
+
+#Region "Unit Base"
+    Private _UnitBaseInsert As String
+    Public ReadOnly Property UnitBaseInsert() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (INSERT).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property UnitBaseUpdate() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Update).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Public ReadOnly Property UnitBaseDelete() As String
+        Get
+            If _UnitBaseInsert = "" Then
+                _UnitBaseInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (Delete).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+    Private _UnitBaseSelect As String
+    Public ReadOnly Property UnitBaseSelect() As String
+        Get
+            If _UnitBaseSelect = "" Then
+                _UnitBaseSelect = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (SELECT Details).sql")
+            End If
+            Return _UnitBaseInsert
+        End Get
+    End Property
+
+#End Region
+
+
+End Class
 
 Public Module Common
 
@@ -117,19 +208,12 @@ Public Module Common
 
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource
         'DevExpress specific process to fill an excel data source with information from a range in excel
-        Dim exDS As New ExcelDataSource()
-        Dim options As New ExcelSourceOptions()
-        Dim importSettings = New ExcelWorksheetSettings()
-        importSettings.WorksheetName = ws
-        importSettings.CellRange = rng
-        options.ImportSettings = importSettings
-        With exDS
-            .FileName = path
-            .SourceOptions = options
-            .Fill()
-        End With
+        Dim importSettings As New ExcelWorksheetSettings() With {.WorksheetName = ws, .CellRange = rng}
+        Dim options As New ExcelSourceOptions() With {.ImportSettings = importSettings}
+        GetExcelDataSource = New ExcelDataSource() With {.FileName = path, .SourceOptions = options}
+        GetExcelDataSource.Fill()
 
-        Return exDS
+        Return GetExcelDataSource
     End Function
 
     Public Function ExcelDatasourceToDataTable(ByVal excelDataSource As ExcelDataSource, ByVal datasourcename As String) As DataTable
@@ -268,11 +352,11 @@ Public Module Common
         Dim summary As String
         Dim counter As Integer = 0
 
-        For Each chng As AnalysisChanges In changeList
+        For Each chng As AnalysisChange In changeList
             If counter = 0 Then
-                summary += chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+                summary += chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             Else
-                summary += vbNewLine & chng.Name & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
+                summary += vbNewLine & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue
             End If
 
             counter += 1
@@ -290,15 +374,15 @@ Public Module Common
 
         If newValue <> oldvalue Then
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         ElseIf Not IsNothing(newValue) And IsNothing(oldvalue) Then 'accounts for when new rows are added. New rows from excel=0 where sql=nothing
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         ElseIf IsNothing(newValue) And Not IsNothing(oldvalue) Then 'accounts for when rows are removed. Rows from excel=nothing where sql=value
             changeDt.Rows.Add(variable, newValue, oldvalue, CurWO) 'Need to determine what we want to store in this datatable or list (Foundation Type, Foundation ID)?
-            changeList.Add(New AnalysisChanges(oldvalue, newValue, variable, db))
+            changeList.Add(New AnalysisChange(oldvalue, newValue, variable, db))
             Return True
         Else
             Return False
@@ -362,17 +446,55 @@ Public Class EXCELRngParameter
     End Sub
 End Class
 
-Public Class AnalysisChanges
+Public Class Comparison
+    Public Property Differences As List(Of ObjectsComparer.Difference)
+
+    Public Function CreateChangeSummary() As String
+        Dim summary As String = ""
+
+        For Each chng As AnalysisChange In changeList
+            summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
+        Next
+
+        Return summary
+
+    End Function
+
+    Public Function Check1Change(ByVal memberPath As String, ByVal newValue As Object, ByVal previousValue As Object) As Boolean
+
+        If newValue <> previousValue Then
+
+            If IsNothing(newValue) Then
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, "", previousValue.ToString, ObjectsComparer.DifferenceTypes.MissedElementInFirstObject))
+            ElseIf IsNothing(previousValue) Then
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, newValue.ToString, "", ObjectsComparer.DifferenceTypes.MissedElementInSecondObject))
+            Else
+                Me.Differences.Add(New ObjectsComparer.Difference(memberPath, newValue.ToString, previousValue.ToString, ObjectsComparer.DifferenceTypes.ValueMismatch))
+            End If
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
+End Class
+Public Class AnalysisChange
     Property PreviousValue As String
     Property NewValue As String
-    Property Name As String
-    Property PartofDatabase As String
+    Property FieldName As String
+    Property CategoryName As String
+    Property PreviousIdentity As String
 
-    Public Sub New(prev As String, Newval As String, name As String, db As String)
-        Me.PreviousValue = prev
-        Me.NewValue = Newval
-        Me.Name = name
-        Me.PartofDatabase = db
+    Public Sub New()
+
+    End Sub
+
+    Public Sub New(categoryName As String, fieldName As String, newValue As String, previousValue As String, Optional previousIdentity As String = "")
+        Me.PreviousValue = previousValue
+        Me.NewValue = newValue
+        Me.FieldName = fieldName
+        Me.CategoryName = categoryName
+        Me.PreviousIdentity = previousIdentity
     End Sub
 End Class
 <Description("Use this class to time parts of the code and record it to the console.")>
