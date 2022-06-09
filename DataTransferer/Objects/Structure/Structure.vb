@@ -367,53 +367,36 @@ End Module
 
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
-
+    <Category("EDS"), Description(""), DisplayName("ID")>
     Public Property ID As Integer?
+    <Category("EDS"), Description(""), DisplayName("Name")>
     Public MustOverride ReadOnly Property EDSObjectName As String
+    <Category("EDS"), Description(""), DisplayName("Full Name")>
     Public Overridable ReadOnly Property EDSObjectFullName As String
         Get
             Return If(Me.Parent Is Nothing, Me.EDSObjectName, Me.Parent.EDSObjectFullName & " - " & Me.EDSObjectName)
         End Get
     End Property
+    <Category("EDS"), Description(""), Browsable(False)>
     Public Overridable Property Parent As EDSObject
+    <Category("EDS"), Description(""), Browsable(False)>
     Public Overridable Property ParentStructure As EDSStructure
+    <Category("EDS"), Description(""), DisplayName("BU")>
     Public Property bus_unit As String
+    <Category("EDS"), Description(""), DisplayName("Structure ID")>
     Public Property structure_id As String
+    <Category("EDS"), Description(""), DisplayName("Work Order")>
     Public Property work_order_seq_num As String
+    <Category("EDS"), Description(""), Browsable(False)>
     Public Property activeDatabase As String
+    <Category("EDS"), Description(""), Browsable(False)>
     Public Property databaseIdentity As WindowsIdentity
+    <Category("EDS"), Description(""), Browsable(False)>
+    Public Property modified_person_id As Integer?
+    <Category("EDS"), Description(""), Browsable(False)>
+    Public Property process_stage As String
+
     'Public Property differences As List(Of ObjectsComparer.Difference)
-
-    Public Overridable Function CreateChangeSummary() As String
-        Dim summary As String = ""
-
-        For Each chng As AnalysisChange In changeList
-            summary += chng.CategoryName & " " & chng.FieldName & " = " & chng.NewValue & " | Previously: " & chng.PreviousValue & vbNewLine
-        Next
-
-        Return summary
-
-    End Function
-
-
-
-    'Public Overridable Function CompareMe(Of T As EDSObject)(toCompare As T) As Boolean
-    '    'Compare another EDSObject object to itself using the objects comparer.
-    '    'Making this generic (Of T As EDSObject) allows it to work for all subclasses of EDSObject
-
-    '    If toCompare Is Nothing Then Return False
-
-    '    Dim comparer As New ObjectsComparer.Comparer(Of T)()
-
-    '    Dim differences As IEnumerable(Of ObjectsComparer.Difference) = Nothing
-
-    '    CompareMe = comparer.Compare(CType(Me, T), toCompare, differences)
-
-    '    Me.differences = differences.ToList
-
-    '    Return CompareMe
-
-    'End Function
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
@@ -423,6 +406,8 @@ Partial Public MustInherit Class EDSObject
         Me.work_order_seq_num = Host.work_order_seq_num
         Me.activeDatabase = Host.activeDatabase
         Me.databaseIdentity = Host.databaseIdentity
+        Me.modified_person_id = Host.modified_person_id
+        Me.process_stage = Host.process_stage
     End Sub
 
     Public Function CompareTo(other As EDSObject) As Integer Implements IComparable(Of EDSObject).CompareTo
@@ -467,41 +452,6 @@ Partial Public MustInherit Class EDSObject
 
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
-    'Moved to extension of object
-    'Private Function CheckChange(value1 As Object, value2 As Object, ByRef changes As List(Of AnalysisChanges), Optional categoryName As String = Nothing, Optional fieldName As String = Nothing) As Boolean
-
-    '    'Check if this is an EDSObject
-    '    Dim EDSValue1 As EDSObject = TryCast(value1, EDSObject)
-    '    Dim EDSValue2 As EDSObject = TryCast(value1, EDSObject)
-    '    If EDSValue1 IsNot Nothing AndAlso EDSValue2 IsNot Nothing Then
-    '        Return EDSValue1.Equals(EDSValue2, changes)
-    '    End If
-
-    '    'Check if this is a collection (list), iterate through if needed
-    '    Dim CollectionValue1 As IEnumerable(Of Object) = TryCast(value1, IEnumerable(Of Object))
-    '    Dim CollectionValue2 As IEnumerable(Of Object) = TryCast(value2, IEnumerable(Of Object))
-    '    If CollectionValue1 IsNot Nothing AndAlso CollectionValue2 IsNot Nothing Then
-    '        If CollectionValue1.Count <> CollectionValue2.Count Then
-    '            changes.Add(New AnalysisChanges(categoryName, fieldName & "Quantity", CollectionValue1.Count.ToString, CollectionValue2.Count.ToString))
-    '            Return False
-    '        Else
-    '            For i As Integer = 0 To CollectionValue1.Count - 1
-    '                value1.GetType.Name
-    '            Next
-    '        End If
-
-
-    '        Return EDSValue1.Equals(EDSValue2, changes)
-    '    End If
-
-    '    If Not value1 = value2 Then
-    '        changes.Add(New AnalysisChanges(categoryName, fieldName, value1.ToString, value2.ToString))
-    '        Return False
-    '    Else
-    '        Return True
-    '    End If
-    'End Function
-
 End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
@@ -510,6 +460,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
     Public MustOverride ReadOnly Property EDSTableName As String
     <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    <Category("Results"), Description("List of results."), DisplayName("Results")>
     Public Property Results As New List(Of EDSResult)
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable ReadOnly Property Insert() As String
@@ -565,37 +516,43 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
     Public MustOverride Function SQLUpdate() As String
 
-    Public Overridable Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
-        'Compare the ID of the current EDS item to the existing item and determine if the Insert, Update, or Delete query should be used
+    'Public Overridable Function EDSQuery(Of T As EDSObjectWithQueries)(item As T, prevItem As T) As String
+    '    'Compare the ID of the current EDS item to the existing item and determine if the Insert, Update, or Delete query should be used
 
-        EDSQuery = ""
+    '    EDSQuery = ""
 
-        'If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
-        If prevItem.ID = item.ID And Not item.Equals(prevItem) Then
-            EDSQuery += item.Update
-        Else
-            'Need to add inserted items to comparison list.
-            EDSQuery += item.Insert
-            If prevItem IsNot Nothing Then
-                EDSQuery += prevItem.Delete
-            End If
-        End If
+    '    'If prevItem.ID = item.ID And Not item.CompareMe(prevItem) Then
+    '    If prevItem.ID = item.ID And Not item.Equals(prevItem) Then
+    '        EDSQuery += item.Update
+    '    Else
+    '        'Need to add inserted items to comparison list.
+    '        EDSQuery += item.Insert
+    '        If prevItem IsNot Nothing Then
+    '            EDSQuery += prevItem.Delete
+    '        End If
+    '    End If
 
-        Return EDSQuery
+    '    Return EDSQuery
 
-    End Function
+    'End Function
 
 End Class
 
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
     Inherits EDSObjectWithQueries
-
+    <Category("Tool"), Description("Local path to query templates."), DisplayName("Tool Path")>
     Public Property workBookPath As String
+    <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
     Public MustOverride ReadOnly Property templatePath As String
+    <Category("Tool"), Description("Local path to query templates."), DisplayName("File Type")>
     Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
+    <Category("Tool"), Description("Data transfer parameters, a list of ranges to import from excel."), DisplayName("Import Ranges")>
     Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    'Public Property Results As New List(Of EDSResult)
+    <Category("Tool"), Description("Version number of tool."), DisplayName("Tool Version")>
+    Public Property tool_version As String
+    <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
+    Public Property modified As Boolean?
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
@@ -628,12 +585,13 @@ Partial Public MustInherit Class EDSExcelObject
 
 End Class
 
-Partial Public MustInherit Class EDSFoundation
-    Inherits EDSExcelObject
+'I don't think this is needed at the moment. Added the EDSObjectname property to the EDSObject class which can replace the foundationType
+'Partial Public MustInherit Class EDSFoundation
+'    Inherits EDSExcelObject
 
-    Public MustOverride ReadOnly Property foundationType As String
+'    Public MustOverride ReadOnly Property foundationType As String
 
-End Class
+'End Class
 
 Partial Public Class EDSStructure
     Inherits EDSObject
