@@ -22,6 +22,8 @@ Partial Public Class EDSStructure
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
 
+    Public Property reportOptions As ReportOptions
+
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
     Public Overrides Property ParentStructure As EDSStructure
