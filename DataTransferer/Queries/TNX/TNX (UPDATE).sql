@@ -1,0 +1,6 @@
+﻿
+BEGIN
+	UPDATE tnx.tnx 
+	SET [UPDATE] 
+	WHERE ID = [ID]
+END

@@ -1,0 +1,4 @@
+﻿
+BEGIN
+	DELETE FROM tnx.tnx WHERE ID = [ID]
+END

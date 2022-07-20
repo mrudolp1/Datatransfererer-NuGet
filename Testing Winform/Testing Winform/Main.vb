@@ -120,7 +120,7 @@ Partial Public Class frmMain
     Public strcLocal As EDSStructure
     Public strcEDS As EDSStructure
 
-    Private Sub btnImportXLFnd_Click(sender As Object, e As EventArgs) Handles btnImportStrcFiles.Click
+    Private Sub btnImportStrcFiles_Click(sender As Object, e As EventArgs) Handles btnImportStrcFiles.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         BUNumber = txtFndBU.Text
         StrcID = txtFndStrc.Text
@@ -142,7 +142,7 @@ Partial Public Class frmMain
 
     End Sub
 
-    Private Sub btnExportXLFnds_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
+    Private Sub btnExportStrcFiles_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
         If strcEDS Is Nothing Then Exit Sub
 
         Dim strcFBD As New FolderBrowserDialog
@@ -151,7 +151,7 @@ Partial Public Class frmMain
             strcEDS.SaveTools(strcFBD.SelectedPath)
         End If
     End Sub
-    Private Sub btnLoadFndFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
+    Private Sub btnLoadStrcFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
         strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, EDSnewId, EDSdbActive)
@@ -159,7 +159,7 @@ Partial Public Class frmMain
         propgridFndEDS.SelectedObject = strcEDS
 
     End Sub
-    Private Sub btnSaveFndToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
+    Private Sub btnSaveStrcToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
         If strcLocal Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
         strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
@@ -308,74 +308,74 @@ Partial Public Class frmMain
 
 #Region "tnx"
 
-    Public tnxFromERI As tnxModel
-    Public tnxFromDB As tnxModel
-    Private Sub btnImportERI_Click(sender As Object, e As EventArgs) Handles btnImportERI.Click
-        Dim eriFd As New OpenFileDialog
-        eriFd.Multiselect = False
-        eriFd.Filter = "TNX File|*.eri"
+    'Public tnxFromERI As tnxModel
+    'Public tnxFromDB As tnxModel
+    'Private Sub btnImportERI_Click(sender As Object, e As EventArgs) Handles btnImportERI.Click
+    '    Dim eriFd As New OpenFileDialog
+    '    eriFd.Multiselect = False
+    '    eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxFromERI = New tnxModel(eriFd.FileName)
+    '    If eriFd.ShowDialog = DialogResult.OK Then
+    '        tnxFromERI = New tnxModel(eriFd.FileName)
 
-            propgridTNXERI.SelectedObject = tnxFromERI
-        End If
-    End Sub
+    '        propgridTNXERI.SelectedObject = tnxFromERI
+    '    End If
+    'End Sub
 
-    Private Sub btnExportERI_Click(sender As Object, e As EventArgs) Handles btnExportERI.Click
-        If tnxFromDB Is Nothing Then
-            MessageBox.Show("Import a file first.")
-            Exit Sub
-        End If
+    'Private Sub btnExportERI_Click(sender As Object, e As EventArgs) Handles btnExportERI.Click
+    '    If tnxFromDB Is Nothing Then
+    '        MessageBox.Show("Import a file first.")
+    '        Exit Sub
+    '    End If
 
-        Dim eriFd As New SaveFileDialog
-        eriFd.Filter = "TNX File|*.eri"
+    '    Dim eriFd As New SaveFileDialog
+    '    eriFd.Filter = "TNX File|*.eri"
 
-        If eriFd.ShowDialog = DialogResult.OK Then
-            tnxFromDB.GenerateERI(eriFd.FileName)
-        End If
-    End Sub
+    '    If eriFd.ShowDialog = DialogResult.OK Then
+    '        tnxFromDB.GenerateERI(eriFd.FileName)
+    '    End If
+    'End Sub
 
-    Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+    'Private Sub btnSavetoEDS_Click(sender As Object, e As EventArgs) Handles btnSavetoEDS.Click
+    '    If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        'tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    'tnxFromERI.SaveBaseToEDSInd(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    tnxFromERI.SaveToEDS(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-    End Sub
+    'End Sub
 
-    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
+    'Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
+    '    If txtBU.Text = "" Or txtStrc.Text = "" Or tnxFromERI Is Nothing Then Exit Sub
 
-        'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        'benchmarked at 0.5 sec
+    '    'tnxFromERI.SaveBaseToEDSSub(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    'benchmarked at 0.5 sec
 
-        'tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
-        'benchmarked between 1.5-2.25 sec
+    '    'tnxFromERI.SaveBaseToEDSFull(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    'benchmarked between 1.5-2.25 sec
 
-    End Sub
+    'End Sub
 
-    Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
-        If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
+    'Private Sub btnLoadfromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadfromEDS.Click
+    '    If txtBU.Text = "" Or txtStrc.Text = "" Then Exit Sub
 
-        tnxFromDB = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
+    '    tnxFromDB = New tnxModel(txtBU.Text, txtStrc.Text, EDSnewId, EDSdbActive)
 
-        propgridTNXEDS.SelectedObject = tnxFromDB
-    End Sub
+    '    propgridTNXEDS.SelectedObject = tnxFromDB
+    'End Sub
 
-    Private Sub btnCompare_Click(sender As Object, e As EventArgs) Handles btnCompare.Click
-        If tnxFromDB Is Nothing Or tnxFromERI Is Nothing Then
-            MessageBox.Show("Import both models to compare.")
-        End If
+    'Private Sub btnCompare_Click(sender As Object, e As EventArgs) Handles btnCompare.Click
+    '    If tnxFromDB Is Nothing Or tnxFromERI Is Nothing Then
+    '        MessageBox.Show("Import both models to compare.")
+    '    End If
 
-        Dim differences As String = ""
-        'Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
+    '    Dim differences As String = ""
+    '    'Dim result As Boolean = tnxFromDB.CompareMe(Of tnxModel)(tnxFromERI, , differences)
 
-        My.Computer.Clipboard.SetText(differences)
+    '    My.Computer.Clipboard.SetText(differences)
 
-        'MessageBox.Show(result.ToString)
+    '    'MessageBox.Show(result.ToString)
 
-    End Sub
+    'End Sub
 
 
 #End Region
