@@ -51,6 +51,7 @@ Partial Public MustInherit Class EDSObject
         Me.process_stage = Host.process_stage
     End Sub
 
+
     Public Function CompareTo(other As EDSObject) As Integer Implements IComparable(Of EDSObject).CompareTo
         'This is used to sort EDSObjects
         'They will be sorted by ID by default.
@@ -119,7 +120,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
         SQLInsert = SQLInsert.Replace("[TABLE]", Me.EDSTableName)
         SQLInsert = SQLInsert.Replace("[FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.Replace("[VALUES]", Me.SQLInsertValues)
-        SQLInsert = SQLInsert.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
+        SQLInsert = SQLInsert.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLInsert
     End Function
     Public Overridable Function SQLSetID(Optional ID As Integer? = Nothing) As String
@@ -317,25 +318,24 @@ Partial Public Class EDSResult
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
     Public Overridable Property EDSTableDepth As Integer = 1
 
+#End Region
+
     Public Function Insert(Optional ByVal ParentID As Integer? = Nothing) As String
-        Insert =
-            "BEGIN" & vbCrLf &
-            "  INSERT INTO " & Me.EDSTableName & "(" & Me.SQLInsertFields & ")" & vbCrLf &
-            "  VALUES([VALUES])" & vbCrLf &
-            "END" & vbCrLf
+        Insert = "BEGIN" & vbCrLf &
+                "  INSERT INTO " & Me.EDSTableName & "(" & Me.SQLInsertFields & ")" & vbCrLf &
+                "  VALUES([VALUES])" & vbCrLf &
+                "END" & vbCrLf
         Insert = Insert.Replace("[TABLE]", Me.EDSTableName)
         Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues(ParentID))
         Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
         Return Insert
     End Function
 
-#End Region
-
     Public Function SQLInsertValues(Optional ByVal ParentID As Integer? = Nothing) As String
         SQLInsertValues = ""
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryTableVar(Me.EDSTableDepth), Me.foreign_key.ToString.FormatDBValue))
+        SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)

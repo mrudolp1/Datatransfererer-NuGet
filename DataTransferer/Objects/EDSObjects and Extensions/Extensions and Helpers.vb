@@ -9,6 +9,22 @@ Imports System.Data.SqlClient
 Public Module Extensions
 
     <Extension()>
+    Public Function NullableToString(input As Object) As String
+        'Extensions of objects are handled differently than all other extensions. This extension will be applicable to all type except object.
+        'Reference: https://devblogs.microsoft.com/vbteam/extension-methods-and-late-binding-extension-methods-part-4/
+        Dim inputString As String = ""
+        If input IsNot Nothing Then
+            Try
+                inputString = input.ToString
+            Catch ex As Exception
+                Debug.Print("Failed to convert object to string.")
+            End Try
+        End If
+
+        Return inputString
+    End Function
+
+    <Extension()>
     Public Function FormatDBValue(input As String) As String
         'Handles nullable values and quoatations needed for DB values
 
@@ -24,6 +40,37 @@ Public Module Extensions
     <Extension()>
     Public Function AddtoDBString(startingString As String, newString As String, Optional isDBValue As Boolean = False) As String
         'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+        If isDBValue Then newString = newString.FormatDBValue
+
+        If String.IsNullOrEmpty(startingString) Then
+            startingString = newString
+        Else
+            startingString += ", " & newString
+        End If
+
+        Return startingString
+    End Function
+
+    '<Extension()>
+    'Public Function AddtoDBString(startingString As String, newObject As Object, Optional isDBValue As Boolean = False) As String
+    '    'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+    '    Dim newString As String = ""
+
+    '    If isDBValue Then newString = newString.FormatDBValue
+
+    '    If String.IsNullOrEmpty(startingString) Then
+    '        startingString = newString
+    '    Else
+    '        startingString += ", " & newString
+    '    End If
+
+    '    Return startingString
+    'End Function
+
+    <Extension()>
+    Public Function AddtoDBStringOG(startingString As String, newString As String, Optional isDBValue As Boolean = False) As String
+        'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+        'If String.IsNullOrEmpty(newString) Then Return startingString
 
         If isDBValue Then newString = newString.FormatDBValue
 
@@ -138,12 +185,12 @@ Public Module Extensions
     End Function
 
     <Extension()>
-    Public Function EDSResultQuery(alist As List(Of EDSResult), Optional ByVal ResultsParentIDKnown As Boolean = True) As String
+    Public Function EDSResultQuery(alist As List(Of EDSResult), Optional ByVal ResultsParentID As Integer? = Nothing) As String
 
         EDSResultQuery = ""
 
         For Each result In alist
-            EDSResultQuery += result.Insert(ResultsParentIDKnown) & vbCrLf
+            EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
         Next
 
         Return EDSResultQuery

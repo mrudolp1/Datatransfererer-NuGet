@@ -170,7 +170,7 @@ Partial Public Class EDSStructure
         'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
 
-        structureQuery += Me.tnx.EDSQueryBuilder(existingStructure.tnx)
+        structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQueryBuilder(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQueryBuilder(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
