@@ -181,9 +181,19 @@ Partial Public Class EDSStructure
 
         structureQuery += "COMMIT"
 
-        'MessageBox.Show(structureQuery)
+        Try
+            My.Computer.Clipboard.SetText(structureQuery)
+        Catch ex As Exception
+            Debug.WriteLine("Failed to copy query to clipboard.")
+        End Try
 
-        sqlSender(structureQuery, ActiveDatabase, LogOnUser, 0.ToString)
+        If MessageBox.Show("Structure query copied to clipboard. Would you like to send the structure to EDS?", "Save Structure to EDS?", MessageBoxButtons.YesNo) = vbYes Then
+            Try
+                sqlSender(structureQuery, ActiveDatabase, LogOnUser, 0.ToString)
+            Catch ex As Exception
+                Debug.WriteLine("Failed to send sql query.")
+            End Try
+        End If
 
     End Sub
 #End Region
