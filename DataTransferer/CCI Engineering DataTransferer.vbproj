@@ -79,10 +79,8 @@
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details Grp).sql" />
     <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad %28SELECT Details%29.sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (SELECT Details Grp).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
     <None Remove="Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Queries\Pile\Pile (IN_UP).sql" />
@@ -120,6 +118,9 @@
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
+    <None Remove="Queries\TNX\TNX (DELETE).sql" />
+    <None Remove="Queries\TNX\TNX (INSERT).sql" />
+    <None Remove="Queries\TNX\TNX (UPDATE).sql" />
     <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details Grp).sql" />
     <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details).sql" />
     <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
@@ -328,12 +329,6 @@
     <Content Include="Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -371,6 +366,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Structure\Structure %28SELECT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\TNX\TNX %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\TNX\TNX %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\TNX\TNX %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql">
@@ -511,6 +515,11 @@
     <None Update="Templates\SST Unit Base Foundation.xlsm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\TNX\Guys %28GuyRec%29\" />
+    <Folder Include="Queries\TNX\Upper Structure %28AntennaRec%29\" />
   </ItemGroup>
 
 </Project>

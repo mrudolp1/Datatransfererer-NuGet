@@ -55,14 +55,14 @@ Begin
 	--Materials
 	Select mt.* 
 	From 
-		tnx.members mt
-		,tnx.members_xref xmt
+		tnx.materials mt
+		,tnx.materials_xref xmt
 		,tnx.tnx tnx
 	WHERE
 		tnx.bus_unit = @BU
 		AND tnx.structure_id = @strID
 		AND tnx.ID = xmt.tnx_ID
-		AND xmt.member_id = mt.ID
+		AND xmt.material_id = mt.ID
 
 	--Pier and Pad
 	Select * From fnd.pier_pad WHERE bus_unit=@BU AND structure_id=@strID
