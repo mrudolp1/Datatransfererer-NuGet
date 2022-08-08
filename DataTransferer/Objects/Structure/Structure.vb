@@ -174,11 +174,14 @@ Partial Public Class EDSStructure
         Next
         'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
-
+        Next
         structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQueryBuilder(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQueryBuilder(existingStructure.UnitBases)
         structureQuery += Me.Piles.EDSListQuery(existingStructure.Piles)
+        structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
+        'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
@@ -322,9 +325,6 @@ End Class
 
 '#Region "Constructors"
 '    Public Sub New()
-'        'Leave Method Empty
-'    End Sub
-
 '    Public Sub New(ByVal Row As DataRow)
 '        Try
 '            If Not IsDBNull(CType(Row.Item("groundwater_depth"), Double)) Then
@@ -346,8 +346,11 @@ End Class
 '        End Try 'Pile_Y_Coordinate
 '    End Sub 'Add a pile location to a pile
 '#End Region
-
+'        'Leave Method Empty
 'End Class
+'    End Sub
+
+
 
 
 
