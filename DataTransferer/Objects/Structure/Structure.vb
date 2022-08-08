@@ -462,6 +462,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
     <Category("Results"), Description("List of results."), DisplayName("Results")>
     Public Property Results As New List(Of EDSResult)
+    'Public Property SoilProfiles As New List(Of SoilProfile)
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable ReadOnly Property Insert() As String
         Get
@@ -599,7 +600,7 @@ Partial Public Class EDSStructure
     Public Overrides ReadOnly Property EDSObjectName As String = "Structure Model"
 
     Public Property tnx As tnxModel
-    Public Property connections As DataTransfererCCIplate
+    'Public Property connections As DataTransfererCCIplate
     Public Property pole As DataTransfererCCIpole
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
@@ -718,6 +719,11 @@ Partial Public Class EDSStructure
                 Me.UnitBases.Add(New UnitBase(dr, Me))
             Next
 
+            'Pile
+            For Each dr As DataRow In strDS.Tables("Pile").Rows
+                Me.Piles.Add(New Pile(dr, Me))
+            Next
+
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
             'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
@@ -737,14 +743,18 @@ Partial Public Class EDSStructure
         Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.databaseIdentity, Me.activeDatabase)
 
         Dim structureQuery As String =
-            "DECLARE @Prev TABLE(ID INT)" & vbCrLf &
-            "DECLARE @PrevID INT" & vbCrLf &
+            "--DECLARE @Prev TABLE(ID INT)" & vbCrLf &
+            "--DECLARE @PrevID INT" & vbCrLf &
+            "DECLARE @Top TABLE(TopID INT)" & vbCrLf &
+            "DECLARE @TopID INT" & vbCrLf &
+            "DECLARE @Sub1 TABLE(Sub1ID INT)" & vbCrLf &
+            "DECLARE @Sub1ID INT" & vbCrLf &
             "BEGIN TRANSACTION" & vbCrLf
 
         'structureQuery += Me.tnx.EDSQuery(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
-        'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.Piles.EDSListQuery(existingStructure.Piles)
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
@@ -768,7 +778,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pier and Pad Foundation") Then
                 Me.PierandPads.Add(New PierAndPad(item, Me))
             ElseIf item.Contains("Pile Foundation") Then
-                'Me.Piles.Add(New Pile(item))
+                Me.Piles.Add(New Pile(item, Me))
             ElseIf item.Contains("SST Unit Base Foundation") Then
                 'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
@@ -794,11 +804,12 @@ Partial Public Class EDSStructure
             PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel()
         Next
-        'For i = 0 To Me.Piles.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
-        '    Piles(i).SavetoExcel()
-        'Next
+        For i = 0 To Me.Piles.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            'Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
+            Piles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Piles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Piles(i).templatePath))
+            Piles(i).SavetoExcel()
+        Next
         For i = 0 To Me.UnitBases.Count - 1
             fileNum = String.Format(" ({0})", i.ToString)
             UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
@@ -1421,7 +1432,61 @@ Partial Public Class SiteCodeCriteria
 
 End Class
 
+'Partial Public Class SoilProfile
+'Inherits EDSObject
 
+'Public Overrides ReadOnly Property EDSObjectName As String = "Soil Profile"
+
+'Private _groundwater_depth As Double?
+'    Private _neglect_depth As Double?
+
+'    <Category("Soil Profile"), Description(""), DisplayName("Groundwater Depth")>
+'    Public Property groundwater_depth() As Double?
+'        Get
+'            Return Me._groundwater_depth
+'        End Get
+'        Set
+'            Me._groundwater_depth = Value
+'        End Set
+'    End Property
+'    <Category("Soil Profile"), Description(""), DisplayName("Neglect Depth")>
+'    Public Property neglect_depth() As Double?
+'        Get
+'            Return Me._neglect_depth
+'        End Get
+'        Set
+'            Me._neglect_depth = Value
+'        End Set
+'    End Property
+
+'#Region "Constructors"
+'    Public Sub New()
+'        'Leave Method Empty
+'    End Sub
+
+'    Public Sub New(ByVal Row As DataRow)
+'        Try
+'            If Not IsDBNull(CType(Row.Item("groundwater_depth"), Double)) Then
+'                Me.groundwater_depth = CType(Row.Item("groundwater_depth"), Double)
+'            Else
+'                Me.groundwater_depth = Nothing
+'            End If
+'        Catch
+'            Me.groundwater_depth = Nothing
+'        End Try 'Pile_X_Coordinate
+'        Try
+'            If Not IsDBNull(CType(Row.Item("neglect_depth"), Double)) Then
+'                Me.neglect_depth = CType(Row.Item("neglect_depth"), Double)
+'            Else
+'                Me.neglect_depth = Nothing
+'            End If
+'        Catch
+'            Me.neglect_depth = Nothing
+'        End Try 'Pile_Y_Coordinate
+'    End Sub 'Add a pile location to a pile
+'#End Region
+
+'End Class
 
 
 
