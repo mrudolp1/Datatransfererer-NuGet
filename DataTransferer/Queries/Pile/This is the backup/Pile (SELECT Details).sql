@@ -3,11 +3,11 @@
 SELECT
 
 
-    --fd.foundation_type --might need to remove/adjust
-    --,sm.ID model_id
-    --,fg.ID foundation_group_id
-    --,fd.ID foundation_id
-    pd.ID pile_id
+    fd.foundation_type --might need to remove/adjust
+    ,sm.ID model_id
+    ,fg.ID foundation_group_id
+    ,fd.ID foundation_id
+    ,pd.ID pile_id
     ,pd.load_eccentricity
     ,pd.bolt_circle_bearing_plate_width
     ,pd.pile_shape
@@ -63,22 +63,19 @@ SELECT
     ,pd.pile_spacing_min_asymmetric
     ,pd.quantity_piles_surrounding
     ,pd.pile_cap_reference
+    ,pd.tool_version
     ,pd.Soil_110
     ,pd.Structural_105
-    ,pd.tool_version
-    --,pd.modified
 
 FROM
-    --gen.structure_model_xref smx
-    --,gen.structure_model sm
-    --,fnd.foundation_group fg
-    --,fnd.foundation_details fd
-    fnd.pile pd
+    gen.structure_model_xref smx
+    ,gen.structure_model sm
+    ,fnd.foundation_group fg
+    ,fnd.foundation_details fd
+    ,fnd.pile_details pd
 WHERE
-    --smx.model_id=@ModelID
-    --AND smx.model_id=sm.ID
-    --AND sm.foundation_group_id=fg.ID
-    --AND fg.ID=fd.foundation_group_id
-    --AND fd.details_id=pd.ID
-    pd.bus_unit=[BU]
-    AND pd.structure_id=[STRC ID]
+    smx.model_id=@ModelID
+    AND smx.model_id=sm.ID
+    AND sm.foundation_group_id=fg.ID
+    AND fg.ID=fd.foundation_group_id
+    AND fd.details_id=pd.ID

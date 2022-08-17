@@ -73,6 +73,14 @@ Begin
 	--Pile
 	Select * From fnd.pile WHERE bus_unit=@BU AND structure_id=@strID
 
+	--Pile Location
+	Select pl.* 
+	From 
+		fnd.pile_location pl
+		,fnd.pile fnd
+	WHERE
+		fnd.ID = pl.pile_id
+
 	--Drilled Pier
 	Select * From fnd.drilled_pier WHERE bus_unit=@BU AND structure_id=@strID
 

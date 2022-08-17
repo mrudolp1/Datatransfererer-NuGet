@@ -59,14 +59,12 @@
     ,det.pile_spacing_min_asymmetric
     ,det.quantity_piles_surrounding
     ,det.pile_cap_reference
+    ,det.tool_version
     ,det.Soil_110
     ,det.Structural_105
-    ,det.tool_version
-    --,det.modified
-
 FROM
     fnd.foundation_details fd
-    ,fnd.pile_details det
+    ,fnd.pier_pad_details det
 WHERE
     fd.foundation_group_id=[FNDGRPID]
     AND fd.foundation_type ='Pile'

@@ -12,9 +12,9 @@ Partial Public Class frmMain
     'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
-    Public myPiles As New DataTransfererPile
+    'Public myPiles As New DataTransfererPile
     Public MyCCIpoles As New DataTransfererCCIpole
-    Public MyCCIplates As New DataTransfererCCIplate
+    'Public MyCCIplates As New DataTransfererCCIplate
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
