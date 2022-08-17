@@ -6,59 +6,50 @@ Imports DevExpress.Spreadsheet
 Imports Microsoft.Office.Interop
 
 
-Partial Public Class SoilLayers
+Partial Public Class SoilLayer
     Inherits EDSObjectWithQueries
     'Inherits EDSObject
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String = "Soil Layer"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.soil_layer"
-    'Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
-    'Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    '    Get
-    '        Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BG2", "Details (SAPI)"),
-    '                                                    New EXCELDTParameter("Pile Soil Profile EXCEL", "BI1:BJ2", "Details (SAPI)")}
-    '        '***Add additional table references here****
-    '    End Get
-    'End Property
-    Private _Insert As String
-    Private _Update As String
-    Private _Delete As String
 
-    Public Overrides ReadOnly Property Insert() As String
-        Get
-            Insert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
-            Insert = Insert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
-            Insert = Insert.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
-            Insert = Insert.TrimEnd() 'Removes empty rows that generate within query for each record
+    Public Overrides Function SQLInsert() As String
 
-            Return Insert
-        End Get
-    End Property
+        SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
+        SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
-    Public Overrides ReadOnly Property Update() As String
-        Get
-            Update = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (UPDATE).sql")
-            Update = Update.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-            Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
-            'UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
-            Return Update
-        End Get
-    End Property
+        Return SQLInsert
 
-    Public Overrides ReadOnly Property Delete() As String
-        Get
-            Delete = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (DELETE).sql")
-            Delete = Delete.Replace("[ID]", Me.Soil_Profile_id.ToString.FormatDBValue)
-            Delete = Delete.TrimEnd() 'Removes empty rows that generate within query for each record
-            Return Delete
-        End Get
-    End Property
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+
+        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (UPDATE).sql")
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLUpdate
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        SQLDelete = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (DELETE).sql")
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLDelete
+
+    End Function
 
 #End Region
 #Region "Define"
 
-    'Private _ID As Integer?
+    Private _ID As Integer?
     Private _soil_profile_id As Integer?
     Private _bottom_depth As Double?
     Private _effective_soil_density As Double?
@@ -68,15 +59,15 @@ Partial Public Class SoilLayers
     Private _skin_friction_override_uplift As Double?
     Private _nominal_bearing_capacity As Double? 'Does not apply to Piles
     Private _spt_blow_count As Integer?
-    '<Category("Soil Layer"), Description(""), DisplayName("Id")>
-    'Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
+    <Category("Soil Layer"), Description(""), DisplayName("Id")>
+    Public Property ID() As Integer?
+        Get
+            Return Me._ID
+        End Get
+        Set
+            Me._ID = Value
+        End Set
+    End Property
     <Category("Soil Layer"), Description(""), DisplayName("Soil Profile ID")>
     Public Property Soil_Profile_id() As Integer?
         Get
@@ -173,7 +164,7 @@ Partial Public Class SoilLayers
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         Dim dr = Row
-        'Me.ID = DBtoNullableInt(dr.Item("ID"))
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
         Me.bottom_depth = DBtoNullableDbl(dr.Item("bottom_depth"))
         Me.effective_soil_density = DBtoNullableDbl(dr.Item("effective_soil_density"))
         Me.cohesion = DBtoNullableDbl(dr.Item("cohesion"))
@@ -192,7 +183,7 @@ Partial Public Class SoilLayers
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString("@Sub1ID")
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bottom_depth.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.effective_soil_density.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.cohesion.ToString.FormatDBValue)
@@ -223,27 +214,45 @@ Partial Public Class SoilLayers
         Return SQLInsertFields
     End Function
 
-    Public Overrides Function SQLUpdate() As String
-        SQLUpdate = ""
-        'SQLUpdate = SQLUpdate.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("bottom_depth = " & Me.bottom_depth.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("effective_soil_density = " & Me.effective_soil_density.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("skin_friction_override_comp = " & Me.skin_friction_override_comp.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("skin_friction_override_uplift = " & Me.skin_friction_override_uplift.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("nominal_bearing_capacity = " & Me.nominal_bearing_capacity.ToString.FormatDBValue) 'Does not apply to Piles
-        SQLUpdate = SQLUpdate.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.FormatDBValue)
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bottom_depth = " & Me.bottom_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("effective_soil_density = " & Me.effective_soil_density.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("skin_friction_override_comp = " & Me.skin_friction_override_comp.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("skin_friction_override_uplift = " & Me.skin_friction_override_uplift.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("nominal_bearing_capacity = " & Me.nominal_bearing_capacity.ToString.FormatDBValue) 'Does not apply to Piles
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.FormatDBValue)
 
 
-        Return SQLUpdate
+        Return SQLUpdateFieldsandValues
     End Function
 #End Region
 
 
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Throw New NotImplementedException()
-    End Function
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
 
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As SoilLayer = TryCast(other, SoilLayer)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.bottom_depth.CheckChange(otherToCompare.bottom_depth, changes, categoryName, "Bottom Depth"), Equals, False)
+        Equals = If(Me.effective_soil_density.CheckChange(otherToCompare.effective_soil_density, changes, categoryName, "Effective Soil Density"), Equals, False)
+        Equals = If(Me.cohesion.CheckChange(otherToCompare.cohesion, changes, categoryName, "Cohesion"), Equals, False)
+        Equals = If(Me.friction_angle.CheckChange(otherToCompare.friction_angle, changes, categoryName, "Friction Angle"), Equals, False)
+        Equals = If(Me.skin_friction_override_comp.CheckChange(otherToCompare.skin_friction_override_comp, changes, categoryName, "Skin Friction Override Comp"), Equals, False)
+        Equals = If(Me.skin_friction_override_uplift.CheckChange(otherToCompare.skin_friction_override_uplift, changes, categoryName, "Skin Friction Override Uplift"), Equals, False)
+        Equals = If(Me.nominal_bearing_capacity.CheckChange(otherToCompare.nominal_bearing_capacity, changes, categoryName, "Nominal Bearing Capacity"), Equals, False)
+        Equals = If(Me.spt_blow_count.CheckChange(otherToCompare.spt_blow_count, changes, categoryName, "Spt Blow Count"), Equals, False)
+
+
+    End Function
 
 End Class

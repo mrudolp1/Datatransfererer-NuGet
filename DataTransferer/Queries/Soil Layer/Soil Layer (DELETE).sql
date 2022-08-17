@@ -1,5 +1,3 @@
-﻿
---BEGIN
-	DELETE FROM fnd.soil_layer WHERE ID = [ID]
-	--[SOILD LAYER INSERT]
---END
+﻿	DELETE FROM fnd.soil_layer WHERE ID = [ID]
+
+	--[SOIL LAYER INSERT]

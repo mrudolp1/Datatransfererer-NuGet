@@ -3,11 +3,11 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
-Imports Microsoft.Office.Interop
+'Imports Microsoft.Office.Interop
 
 Partial Public Class Pile
     Inherits EDSExcelObject
-    'Inherits EDSObjectWithQueries
+
 
 #Region "Inheritted"
     '''Must override these inherited properties
@@ -17,109 +17,164 @@ Partial Public Class Pile
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BG2", "Details (SAPI)"),
-                                                        New EXCELDTParameter("Pile Soil Profile EXCEL", "BI1:BJ2", "Details (SAPI)"),
-                                                        New EXCELDTParameter("Pile Soil Layer EXCEL", "A3:I17", "SAPI")}
+                                                        New EXCELDTParameter("Pile Soil Profile EXCEL", "B3:D4", "Sub Tables (SAPI)"),
+                                                        New EXCELDTParameter("Pile Soil Layer EXCEL", "G3:O17", "Sub Tables (SAPI)"),
+                                                        New EXCELDTParameter("Pile Location EXCEL", "R3:T103", "Sub Tables (SAPI)"),
+                                                        New EXCELDTParameter("Pile Results EXCEL", "A1:C17", "Results (SAPI)")}
             '***Add additional table references here****
         End Get
     End Property
+
     Private _Insert As String
     Private _Update As String
-    Private _Delete As String
-    Public Overrides ReadOnly Property Insert() As String
-        Get
-            If _Insert = "" Then
-                _Insert = QueryBuilderFromFile(queryPath & "Pile\Pile (INSERT).sql")
-            End If
-            Insert = _Insert
-            'InsertString = InsertString.Replace("[BU NUMBER]", Me.bus_unit.FormatDBValue)
-            'InsertString = InsertString.Replace("[STRUCTURE ID]", Me.structure_id.FormatDBValue)
-            Insert = Insert.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
-            Insert = Insert.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
-            'currentSortedList.Insert(i, Nothing)
-            'InsertString = InsertString.Replace("[SOIL PROFILE]", Me.SQLInsertValues)
-            'InsertString = InsertString.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
-            'InsertString = InsertString.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
-            'InsertString = InsertString.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
-            'InsertString = InsertString.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
-            'InsertString = InsertString.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
-            '***Add additional table references here****
+    'Private _Delete As String
 
-            'If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-pile" Then
+    Public Overrides Function SQLInsert() As String
 
-            'End If
+        If _Insert = "" Then
+            _Insert = QueryBuilderFromFile(queryPath & "Pile\Pile (INSERT).sql")
+        End If
+        SQLInsert = _Insert
 
-            'Dim SoilProfileQuery As String = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
-            'SoilProfileQuery = SoilProfileQuery.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
-            'SoilProfileQuery = SoilProfileQuery.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertValues)
+        'Details
+        SQLInsert = SQLInsert.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
 
-            Insert = Insert.Replace("--[SOIL PROFILE INSERT]", SoilProfile.Insert)
+        'Soil Profile
+        'SQLInsert = SQLInsert.Replace("--[SOIL PROFILE INSERT]", SoilProfile.SQLInsert)
+        SQLInsert = SQLInsert.Replace("--BEGIN --[SOIL PROFILE INSERT BEGIN]", "BEGIN --[SOIL PROFILE INSERT BEGIN]")
+        SQLInsert = SQLInsert.Replace("--END --[SOIL PROFILE INSERT END]", "END --[SOIL PROFILE INSERT END]")
+        For Each row As SoilProfile In SoilProfiles
+            SQLInsert = SQLInsert.Replace("--[SOIL PROFILE INSERT]", row.SQLInsert)
+        Next
 
-            'If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
-            '    For Each pfsl As DataRow In strDS.Tables("Pile").Rows
-            '        'For Each pfsl As PileSoilLayer In pf.soil_layers
-            '        'line added below to avoid adding blank rows to tables when rows are removed. 
-            '        If Not IsNothing(pfsl.bottom_depth) Or Not IsNothing(pfsl.effective_soil_density) Or Not IsNothing(pfsl.cohesion) Or Not IsNothing(pfsl.friction_angle) Or Not IsNothing(pfsl.spt_blow_count) Or Not IsNothing(pfsl.ultimate_skin_friction_comp) Or Not IsNothing(pfsl.ultimate_skin_friction_uplift) Then
-            '            Dim tempSoilLayer As String = InsertPileSoilLayer(pfsl)
+        'Soil Layer
+        SQLInsert = SQLInsert.Replace("--BEGIN --[SOIL LAYER INSERT BEGIN]", "BEGIN --[SOIL LAYER INSERT BEGIN]")
+        SQLInsert = SQLInsert.Replace("--END --[SOIL LAYER INSERT END]", "END --[SOIL LAYER INSERT END]")
+        For Each row As SoilLayer In SoilLayers
+            SQLInsert = SQLInsert.Replace("--[SOIL LAYER INSERT]", row.SQLInsert)
+        Next
 
-            '            If Not firstOne Then
-            '                mySoils += ",(" & tempSoilLayer & ")"
-            '            Else
-            '                mySoils += "(" & tempSoilLayer & ")"
-            '            End If
+        'Pile Location
+        If Me.pile_group_config = "Asymmetric" Then
+            SQLInsert = SQLInsert.Replace("--BEGIN --[PILE LOCATION INSERT BEGIN]", "BEGIN --[PILE LOCATION INSERT BEGIN]")
+            SQLInsert = SQLInsert.Replace("--END --[PILE LOCATION INSERT END]", "END --[PILE LOCATION INSERT END]")
+            For Each row As PileLocation In PileLocations
+                SQLInsert = SQLInsert.Replace("--[PILE LOCATION INSERT]", row.SQLInsert)
+            Next
+        End If
 
-            '            firstOne = False
-            '        End If
-            '    Next 'Add Soil Layer INSERT statments
+        'Results
+        SQLInsert = SQLInsert.Replace("--BEGIN --[RESULTS INSERT BEGIN]", "BEGIN --[RESULTS INSERT BEGIN]")
+        SQLInsert = SQLInsert.Replace("--END --[RESULTS INSERT END]", "END --[RESULTS INSERT END]")
+        SQLInsert = SQLInsert.Replace("--[RESULTS INSERT]", Me.Results.EDSResultQuery)
 
-            'Insert = Insert.Replace("--[SOIL LAYER INSERT]", SoilLayers.Insert)
-            '    firstOne = True
-            ''Else
-            '    PileSaver = PileSaver.Replace("INSERT INTO fnd.pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])", "--INSERT INTO fnd.pile_soil_layer VALUES ([INSERT ALL SOIL LAYERS])")
-            'End If
+        Return SQLInsert
 
-            Insert = Insert.Replace("--BEGIN --[SOIL LAYER INSERT BEGIN]", "BEGIN --[SOIL LAYER INSERT BEGIN]")
-            Insert = Insert.Replace("--END --[SOIL LAYER INSERT END]", "END --[SOIL LAYER INSERT END]")
-            For Each row As SoilLayers In SoilLayers
-                'For Each row In SoilLayers
-                'SoilLayers.Insert()
-                'Piles(row)
-                '.Insert.
-                Insert = Insert.Replace("--[SOIL LAYER INSERT]", row.Insert)
-                'Dim SoilLayer As String = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (SUB QUERY Bolt Group).sql")
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+        'This section not only needs to call update commands but also needs to call insert and delete commands since subtables may involve adding or deleting records
+
+        If _Update = "" Then
+            _Update = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
+        End If
+        SQLUpdate = _Update
+
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
+
+        'Details
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+
+        'Soil Profile - For piles, soil profile always required even if there is no soil layers. Shouldn't be a time where ID does not exist
+        SQLUpdate = SQLUpdate.Replace("--BEGIN --[SOIL PROFILE UPDATE BEGIN]", "BEGIN --[SOIL PROFILE UPDATE BEGIN]")
+        SQLUpdate = SQLUpdate.Replace("--END --[SOIL PROFILE UPDATE END]", "END --[SOIL PROFILE UPDATE END]")
+        For Each row As SoilProfile In SoilProfiles
+            SQLUpdate = SQLUpdate.Replace("--[SOIL PROFILE INSERT]", row.SQLUpdate)
+        Next
+
+        'Soil Layer
+        If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
+            SQLUpdate = SQLUpdate.Replace("--BEGIN --[SOIL LAYER UPDATE BEGIN]", "BEGIN --[SOIL LAYER UPDATE BEGIN]")
+            SQLUpdate = SQLUpdate.Replace("--END --[SOIL LAYER UPDATE END]", "END --[SOIL LAYER UPDATE END]")
+            For Each row As SoilLayer In SoilLayers
+                If IsSomething(row.ID) Then
+                    If IsSomething(row.bottom_depth) Or IsSomething(row.effective_soil_density) Or IsSomething(row.cohesion) Or IsSomething(row.friction_angle) Or IsSomething(row.spt_blow_count) Or IsSomething(row.skin_friction_override_comp) Or IsSomething(row.skin_friction_override_uplift) Then
+                        SQLUpdate = SQLUpdate.Replace("--[SOIL LAYER INSERT]", row.SQLUpdate)
+                    Else
+                        SQLUpdate = SQLUpdate.Replace("--[SOIL LAYER INSERT]", row.SQLDelete)
+                    End If
+                Else
+                        SQLUpdate = SQLUpdate.Replace("--[SOIL LAYER INSERT]", row.SQLInsert)
+                End If
+            Next
+        End If
+
+        'Pile Location
+        If Me.pile_group_config = "Asymmetric" Then
+            SQLUpdate = SQLUpdate.Replace("--BEGIN --[PILE LOCATION UPDATE BEGIN]", "BEGIN --[PILE LOCATION UPDATE BEGIN]")
+            SQLUpdate = SQLUpdate.Replace("--END --[PILE LOCATION UPDATE END]", "END --[PILE LOCATION UPDATE END]")
+            For Each row As PileLocation In PileLocations
+                If IsSomething(row.ID) Then
+                    If IsSomething(row.pile_x_coordinate) Or IsSomething(row.pile_y_coordinate) Then
+                        SQLUpdate = SQLUpdate.Replace("--[PILE LOCATION INSERT]", row.SQLUpdate)
+                    Else
+                        SQLUpdate = SQLUpdate.Replace("--[PILE LOCATION INSERT]", row.SQLDelete)
+                    End If
+                Else
+                        SQLUpdate = SQLUpdate.Replace("--[PILE LOCATION INSERT]", row.SQLInsert)
+                End If
+
+            Next
+        End If
+
+        'Results
+        SQLUpdate = SQLUpdate.Replace("--BEGIN --[RESULTS UPDATE BEGIN]", "BEGIN --[RESULTS UPDATE BEGIN]")
+        SQLUpdate = SQLUpdate.Replace("--END --[RESULTS UPDATE END]", "END --[RESULTS UPDATE END]")
+        SQLUpdate = SQLUpdate.Replace("--[RESULTS INSERT]", Me.Results.EDSResultQuery)
+
+        Return SQLUpdate
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        'If _Delete = "" Then
+        '    _Delete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql") 'ran into errors with Me.ID when this was turned on
+        'End If
+        'SQLDelete = _Delete
+        SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql")
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+
+        'Soil Profile
+        'SQLDelete = SQLDelete.Replace("--[SOIL PROFILE INSERT]", SoilProfile.SQLDelete)
+        SQLDelete = SQLDelete.Replace("--BEGIN --[SOIL PROFILE DELETE BEGIN]", "BEGIN --[SOIL PROFILE DELETE BEGIN]")
+        SQLDelete = SQLDelete.Replace("--END --[SOIL PROFILE DELETE END]", "END --[SOIL PROFILE DELETE END]")
+        For Each row As SoilProfile In SoilProfiles
+            SQLDelete = SQLDelete.Replace("--[SOIL PROFILE INSERT]", row.SQLDelete)
+        Next
+
+        'Soil Layer
+        'DeleteString = DeleteString.Replace("--[SOIL LAYER INSERT]", SoilLayers.Delete)
+        SQLDelete = SQLDelete.Replace("--BEGIN --[SOIL LAYER DELETE BEGIN]", "BEGIN --[SOIL LAYER DELETE BEGIN]")
+        SQLDelete = SQLDelete.Replace("--END --[SOIL LAYER DELETE END]", "END --[SOIL LAYER DELETE END]")
+        For Each row As SoilLayer In SoilLayers
+            SQLDelete = SQLDelete.Replace("--[SOIL LAYER INSERT]", row.SQLDelete)
+        Next
+
+        'Pile Location
+        If Me.pile_group_config = "Asymmetric" Then
+            SQLDelete = SQLDelete.Replace("--BEGIN --[PILE LOCATION DELETE BEGIN]", "BEGIN --[PILE LOCATION DELETE BEGIN]")
+            SQLDelete = SQLDelete.Replace("--END --[PILE LOCATION DELETE END]", "END --[PILE LOCATION DELETE END]")
+            For Each row As PileLocation In PileLocations
+                SQLDelete = SQLDelete.Replace("--[PILE LOCATION INSERT]", row.SQLDelete)
             Next
 
-            Return Insert
-        End Get
-    End Property
+            Return SQLDelete
+        End If
 
-    Public Overrides ReadOnly Property Update() As String
-        Get
-            If _Update = "" Then
-                _Update = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
-            End If
-            Dim UpdateString As String = _Update
-            UpdateString = UpdateString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-            UpdateString = UpdateString.Replace("[UPDATE]", Me.SQLUpdate)
-            'UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
-            Return UpdateString
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property Delete() As String
-        Get
-            If _Delete = "" Then
-                _Delete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql")
-            End If
-            Dim DeleteString As String = _Delete
-            DeleteString = DeleteString.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-            DeleteString = DeleteString.Replace("--[SOIL PROFILE INSERT]", SoilProfile.Delete)
-            'DeleteString = DeleteString.Replace("--[SOIL LAYER INSERT]", SoilLayers.Delete)
-            For Each row As SoilLayers In SoilLayers
-                DeleteString = DeleteString.Replace("--[SOIL LAYER INSERT]", row.Delete)
-            Next
-            Return DeleteString
-        End Get
-    End Property
+    End Function
 
 #End Region
 
@@ -206,11 +261,14 @@ Partial Public Class Pile
     'Private _ar_bolt_circle As Double? 'CCIplate *not in piles
     'Private _seismic_design_category As String 'Seismic Tool? *not in piles
 
-    'Public Property SoilProfiles As New List(Of SoilProfile)
-    Public Property SoilProfile As SoilProfile
-    'Public Property SoilLayer As SoilLayer
-    Public Property SoilLayers As New List(Of SoilLayers)
+    Public Property SoilProfiles As New List(Of SoilProfile)
+    'Public Property SoilProfiles As SoilProfile
 
+    Public Property SoilLayers As New List(Of SoilLayer)
+    'Public Property SoilLayers As SoilLayer
+
+    Public Property PileLocations As New List(Of PileLocation)
+    'Public Property PileLocations As SoilLayer
 
     '<Category("Pile"), Description(""), DisplayName("Id")>
     'Public Property ID() As Integer?
@@ -814,7 +872,7 @@ Partial Public Class Pile
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -835,7 +893,11 @@ Partial Public Class Pile
         Me.pile_length = DBtoNullableDbl(dr.Item("pile_length"))
         Me.pile_diameter_width = DBtoNullableDbl(dr.Item("pile_diameter_width"))
         Me.pile_pipe_thickness = DBtoNullableDbl(dr.Item("pile_pipe_thickness"))
+
         Me.pile_soil_capacity_given = DBtoNullableBool(dr.Item("pile_soil_capacity_given"))
+        'Me.pile_soil_capacity_given = trueFalseYesNo(dr.Item("pile_soil_capacity_given"))
+        'Me.pile_soil_capacity_given = If(DBtoNullableBool(dr.Item("pile_soil_capacity_given")), True)
+
         Me.steel_yield_strength = DBtoNullableDbl(dr.Item("steel_yield_strength"))
         Me.pile_type_option = DBtoStr(dr.Item("pile_type_option"))
         Me.rebar_quantity = DBtoNullableDbl(dr.Item("rebar_quantity"))
@@ -890,34 +952,45 @@ Partial Public Class Pile
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
-        If ds.Tables.Contains("PILE SOIL PROFILE EXCEL") Then
+        'Sub Tables (as defined within Structure.VB LoadFromEDS
+        For Each row As DataRow In strDS.Tables("Soil Profiles").Rows
+            Me.SoilProfiles.Add(New SoilProfile(row))
+            'Me.SoilProfile = New SoilProfile(strDS.Tables("Soil Profiles").Rows(0))
+        Next
 
-            Me.SoilProfile = New SoilProfile(excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0))
-
+        If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
+            For Each row As DataRow In strDS.Tables("Soil Layers").Rows
+                Me.SoilLayers.Add(New SoilLayer(row))
+                'Me.SoilLayers.Sort()
+            Next
         End If
 
-        For Each Row As DataRow In ds.Tables.Contains
-
-            'Need to add in information for soil profile and soil layers here
-            If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
-            For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
-                Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("pile_fnd_id"), Integer)
-                If soilRefID = refID Then
-                    Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
-                End If
-            Next 'Add Soild Layers to to Pile Soil Layer Object
+        If Me.pile_group_config = "Asymmetric" Then
+            For Each row As DataRow In strDS.Tables("Pile Locations").Rows
+                Me.PileLocations.Add(New PileLocation(row))
+            Next
         End If
 
-        'If Me.pile_group_config = "Asymmetric" Then
-        '    For Each LocationDataRow As DataRow In ds.Tables("Pile Location SQL").Rows
-        '        Dim locRefID As Integer = CType(LocationDataRow.Item("pile_fnd_id"), Integer)
-        '        If locRefID = refID Then
-        '            Me.pile_locations.Add(New PileLocation(LocationDataRow))
+        '    'Need to add in information for soil profile and soil layers here
+        '    If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
+        '    For Each SoilLayerDataRow As DataRow In ds.Tables("Pile Soil SQL").Rows
+        '        Dim soilRefID As Integer = CType(SoilLayerDataRow.Item("pile_fnd_id"), Integer)
+        '        If soilRefID = refID Then
+        '            Me.soil_layers.Add(New PileSoilLayer(SoilLayerDataRow))
         '        End If
-        '    Next 'Add Soild Layers to to Pile Location Object
+        '    Next 'Add Soild Layers to to Pile Soil Layer Object
         'End If
 
-    End Sub 'Generate a pf from EDS
+        ''If Me.pile_group_config = "Asymmetric" Then
+        ''    For Each LocationDataRow As DataRow In ds.Tables("Pile Location SQL").Rows
+        ''        Dim locRefID As Integer = CType(LocationDataRow.Item("pile_fnd_id"), Integer)
+        ''        If locRefID = refID Then
+        ''            Me.pile_locations.Add(New PileLocation(LocationDataRow))
+        ''        End If
+        ''    Next 'Add Soild Layers to to Pile Location Object
+        ''End If
+
+    End Sub 'Generate a pile from EDS
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
     Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
@@ -941,8 +1014,8 @@ Partial Public Class Pile
             'Need to dimension DataRow from GenStructure/TNX and anywhere else inputs may come from as well - MRR
 
             Me.ID = DBtoNullableInt(dr.Item("pile_id"))
-            'Me.bus_unit = DBtoStr(dr.Item("bus_unit"))
-            'Me.structure_id = DBtoStr(dr.Item("structure_id"))
+            'Me.bus_unit = DBtoStr(dr.Item("bus_unit")) 'don't pull from tool
+            'Me.structure_id = DBtoStr(dr.Item("structure_id")) 'don't pull from tool
             Me.load_eccentricity = DBtoNullableDbl(dr.Item("load_eccentricity"))
             Me.bolt_circle_bearing_plate_width = DBtoNullableDbl(dr.Item("bolt_circle_bearing_plate_width"))
             Me.pile_shape = DBtoStr(dr.Item("pile_shape"))
@@ -950,9 +1023,11 @@ Partial Public Class Pile
             Me.pile_length = DBtoNullableDbl(dr.Item("pile_length"))
             Me.pile_diameter_width = DBtoNullableDbl(dr.Item("pile_diameter_width"))
             Me.pile_pipe_thickness = DBtoNullableDbl(dr.Item("pile_pipe_thickness"))
-            Me.pile_soil_capacity_given = DBtoNullableBool(dr.Item("pile_soil_capacity_given"))
-            'Me.pile_soil_capacity_given = If(DBtoStr(dr.Item("pile_soil_capacity_given")) = "yes", True)
+
+            'Me.pile_soil_capacity_given = DBtoNullableBool(dr.Item("pile_soil_capacity_given"))
+            Me.pile_soil_capacity_given = If(DBtoStr(dr.Item("pile_soil_capacity_given")) = "Yes", True, False) 'Listed as a sting and need to convert to Boolean
             'Me.pile_soil_capacity_given = trueFalseYesNo(dr.Item("pile_soil_capacity_given"))
+
             Me.steel_yield_strength = DBtoNullableDbl(dr.Item("steel_yield_strength"))
             Me.pile_type_option = DBtoStr(dr.Item("pile_type_option"))
             Me.rebar_quantity = DBtoNullableDbl(dr.Item("rebar_quantity"))
@@ -986,14 +1061,20 @@ Partial Public Class Pile
             Me.pile_ultimate_tension = DBtoNullableDbl(dr.Item("pile_ultimate_tension"))
             Me.top_and_bottom_rebar_different = DBtoNullableBool(dr.Item("top_and_bottom_rebar_different"))
             Me.ultimate_gross_end_bearing = DBtoNullableDbl(dr.Item("ultimate_gross_end_bearing"))
-            Me.skin_friction_given = DBtoNullableBool(dr.Item("skin_friction_given"))
-            Me.pile_quantity_circular = DBtoNullableDbl(dr.Item("pile_quantity_circular"))
-            Me.group_diameter_circular = DBtoNullableDbl(dr.Item("group_diameter_circular"))
-            Me.pile_column_quantity = DBtoNullableDbl(dr.Item("pile_column_quantity"))
-            Me.pile_row_quantity = DBtoNullableDbl(dr.Item("pile_row_quantity"))
+            'Me.skin_friction_given = DBtoNullableBool(dr.Item("skin_friction_given"))
+            Me.skin_friction_given = If(DBtoStr(dr.Item("skin_friction_given")) = "Yes", True, False) 'Listed as a sting and need to convert to Boolean
+            If Me.pile_group_config = "Circular" Then
+                Me.pile_quantity_circular = DBtoNullableDbl(dr.Item("pile_quantity_circular"))
+                Me.group_diameter_circular = DBtoNullableDbl(dr.Item("group_diameter_circular"))
+            End If
+            If Me.pile_group_config = "Rectangular" Then
+                Me.pile_column_quantity = DBtoNullableDbl(dr.Item("pile_column_quantity"))
+                Me.pile_row_quantity = DBtoNullableDbl(dr.Item("pile_row_quantity"))
+            End If
             Me.pile_columns_spacing = DBtoNullableDbl(dr.Item("pile_columns_spacing"))
             Me.pile_row_spacing = DBtoNullableDbl(dr.Item("pile_row_spacing"))
-            Me.group_efficiency_factor_given = DBtoNullableBool(dr.Item("group_efficiency_factor_given"))
+            'Me.group_efficiency_factor_given = DBtoNullableBool(dr.Item("group_efficiency_factor_given"))
+            Me.group_efficiency_factor_given = If(DBtoStr(dr.Item("group_efficiency_factor_given")) = "Yes", True, False) 'Listed as a sting and need to convert to Boolean
             Me.group_efficiency_factor = DBtoNullableDbl(dr.Item("group_efficiency_factor"))
             Me.cap_type = DBtoStr(dr.Item("cap_type"))
             Me.pile_quantity_asymmetric = DBtoNullableDbl(dr.Item("pile_quantity_asymmetric"))
@@ -1003,55 +1084,52 @@ Partial Public Class Pile
             Me.Soil_110 = DBtoNullableBool(dr.Item("Soil_110"))
             Me.Structural_105 = DBtoNullableBool(dr.Item("Structural_105"))
             Me.tool_version = DBtoStr(dr.Item("tool_version"))
-            'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
-            'Me.process_stage = DBtoStr(dr.Item("process_stage"))
+            'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id")) 'don't pull from tool
+            'Me.process_stage = DBtoStr(dr.Item("process_stage")) 'don't pull from tool
 
         End If
 
         If excelDS.Tables.Contains("PILE SOIL PROFILE EXCEL") Then
 
-            Me.SoilProfile = New SoilProfile(excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0))
+            For Each Row As DataRow In excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows
+                Me.SoilProfiles.Add(New SoilProfile(Row))
+            Next
+
+            'Me.SoilProfile = New SoilProfile(excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0))
             'SoilProfile(SoilProfile(Row, 0))
-
-            'For Each Row As DataRow In excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows
-
-            '    'For Tools with multiple foundation or sub items, use Row.Item("ID") or add a local_ID column to filter which results should be associated with each foundation
-
-            '    Me.SoilProfile.Add(New SoilProfile(Row))
-
-            'Next
 
         End If
 
         If excelDS.Tables.Contains("PILE SOIL LAYER EXCEL") Then
 
-            For Each Row As DataRow In excelDS.Tables("Pile Soil Layer EXCEL").Rows
-                'For Each dr As DataRow In ds.Tables("Pile Soil EXCEL").Rows
-                Me.SoilLayers.Add(New SoilLayers(Row))
+            For Each Row As DataRow In excelDS.Tables("PILE SOIL LAYER EXCEL").Rows
+                Me.SoilLayers.Add(New SoilLayer(Row))
             Next 'Add Soil Layers to to Pile Soil Layer Object
 
+        End If
 
-            'Me.SoilLayer = New SoilLayer(excelDS.Tables("PILE SOIL LAYER EXCEL").Rows(0))
+        If excelDS.Tables.Contains("PILE LOCATION EXCEL") Then
 
+            For Each Row As DataRow In excelDS.Tables("PILE LOCATION EXCEL").Rows
+                Me.PileLocations.Add(New PileLocation(Row))
+            Next
 
         End If
 
 
+        If excelDS.Tables.Contains("Pile Results EXCEL") Then
 
+            For Each Row As DataRow In excelDS.Tables("Pile Results EXCEL").Rows
 
-        'If excelDS.Tables.Contains("Pier and Pad General Results EXCEL") Then
+                'For Tools with multiple foundation or sub items, use Row.Item("ID") or add a local_ID column to filter which results should be associated with each foundation
 
-        '    For Each Row As DataRow In excelDS.Tables("Pier and Pad General Results EXCEL").Rows
+                Me.Results.Add(New EDSResult(Row, Me))
 
-        '        'For Tools with multiple foundation or sub items, use Row.Item("ID") or add a local_ID column to filter which results should be associated with each foundation
+            Next
 
-        '        Me.Results.Add(New EDSResult(Row, Me))
+        End If
 
-        '    Next
-
-        'End If
-
-    End Sub 'Generate a ub from Excel
+    End Sub 'Generate a pile from Excel
 
 #End Region
 
@@ -1061,26 +1139,27 @@ Partial Public Class Pile
         '''''Customize for each excel tool'''''
 
         With wb
-            If Not IsNothing(Me.ID) Then
-                .Worksheets("Input").Range("ID").Value = CType(Me.ID, Integer)
-            Else
-                .Worksheets("Input").Range("ID").ClearContents
-            End If
-            If Not IsNothing(Me.bus_unit) Then
-                .Worksheets("").Range("").Value = CType(Me.bus_unit, String)
-            End If
-            If Not IsNothing(Me.structure_id) Then
-                .Worksheets("").Range("").Value = CType(Me.structure_id, String)
-            End If
+            .Worksheets("Input").Range("ID").Value = CType(Me.ID, Integer)
+            'If Not IsNothing(Me.ID) Then
+            '    .Worksheets("Input").Range("ID").Value = CType(Me.ID, Integer)
+            'Else
+            '    .Worksheets("Input").Range("ID").ClearContents
+            'End If
+            'If Not IsNothing(Me.bus_unit) Then
+            '    .Worksheets("").Range("").Value = CType(Me.bus_unit, String)
+            'End If
+            'If Not IsNothing(Me.structure_id) Then
+            '    .Worksheets("").Range("").Value = CType(Me.structure_id, String)
+            'End If
             If Not IsNothing(Me.load_eccentricity) Then
-                .Worksheets("Input").Range("").Value = CType(Me.load_eccentricity, Double)
+                .Worksheets("Input").Range("Ecc").Value = CType(Me.load_eccentricity, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Ecc").ClearContents
             End If
             If Not IsNothing(Me.bolt_circle_bearing_plate_width) Then
-                .Worksheets("Input").Range("").Value = CType(Me.bolt_circle_bearing_plate_width, Double)
+                .Worksheets("Input").Range("BC").Value = CType(Me.bolt_circle_bearing_plate_width, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("BC").ClearContents
             End If
             If Not IsNothing(Me.pile_shape) Then
                 .Worksheets("Input").Range("D23").Value = CType(Me.pile_shape, String)
@@ -1089,9 +1168,9 @@ Partial Public Class Pile
                 .Worksheets("Input").Range("D24").Value = CType(Me.pile_material, String)
             End If
             If Not IsNothing(Me.pile_length) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pile_length, Double)
+                .Worksheets("Input").Range("Lpile").Value = CType(Me.pile_length, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Lpile").ClearContents
             End If
             If Not IsNothing(Me.pile_diameter_width) Then
                 .Worksheets("Input").Range("D26").Value = CType(Me.pile_diameter_width, Double)
@@ -1103,10 +1182,10 @@ Partial Public Class Pile
             Else
                 .Worksheets("Input").Range("D27").ClearContents
             End If
-            If Me.pile_soil_capacity_given = False Then
-                .Worksheets("Input").Range("D29").Value = "No"
-            Else
+            If Me.pile_soil_capacity_given = True Then
                 .Worksheets("Input").Range("D29").Value = "Yes"
+            Else
+                .Worksheets("Input").Range("D29").Value = "No"
             End If
             'If Not IsNothing(Me.pile_soil_capacity_given) Then
             '    .Worksheets("Input").Range("D29").Value = CType(Me.pile_soil_capacity_given, Boolean)
@@ -1117,143 +1196,149 @@ Partial Public Class Pile
                 .Worksheets("Input").Range("D30").ClearContents
             End If
             If Not IsNothing(Me.pile_type_option) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pile_type_option, String)
+                If Me.pile_material = "Concrete" Then
+                    .Worksheets("Input").Range("Psize").Value = CType(Me.pile_type_option, Integer)
+                Else
+                    .Worksheets("Input").Range("Psize").Value = CType(Me.pile_type_option, String)
+                End If
             End If
             If Not IsNothing(Me.rebar_quantity) Then
-                .Worksheets("Input").Range("").Value = CType(Me.rebar_quantity, Double)
+                .Worksheets("Input").Range("Pquan").Value = CType(Me.rebar_quantity, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Pquan").ClearContents
             End If
             If Not IsNothing(Me.pile_group_config) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pile_group_config, String)
+                .Worksheets("Input").Range("Config").Value = CType(Me.pile_group_config, String)
             End If
             If Not IsNothing(Me.foundation_depth) Then
-                .Worksheets("Input").Range("").Value = CType(Me.foundation_depth, Double)
+                .Worksheets("Input").Range("D").Value = CType(Me.foundation_depth, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("D").ClearContents
             End If
             If Not IsNothing(Me.pad_thickness) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_thickness, Double)
+                .Worksheets("Input").Range("T").Value = CType(Me.pad_thickness, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("T").ClearContents
             End If
             If Not IsNothing(Me.pad_width_dir1) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_width_dir1, Double)
+                .Worksheets("Input").Range("Wx").Value = CType(Me.pad_width_dir1, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Wx").ClearContents
             End If
             If Not IsNothing(Me.pad_width_dir2) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_width_dir2, Double)
+                .Worksheets("Input").Range("Wy").Value = CType(Me.pad_width_dir2, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Wy").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_size_bottom) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_size_bottom, Integer)
+                .Worksheets("Input").Range("Spad").Value = CType(Me.pad_rebar_size_bottom, Integer)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Spad").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_size_top) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_size_top, Integer)
+                .Worksheets("Input").Range("Spad_top").Value = CType(Me.pad_rebar_size_top, Integer)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Spad_top").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_quantity_bottom_dir1) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_quantity_bottom_dir1, Double)
+                .Worksheets("Input").Range("Mpad").Value = CType(Me.pad_rebar_quantity_bottom_dir1, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Mpad").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_quantity_top_dir1) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_quantity_top_dir1, Double)
+                .Worksheets("Input").Range("Mpad_top").Value = CType(Me.pad_rebar_quantity_top_dir1, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Mpad_top").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_quantity_bottom_dir2) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_quantity_bottom_dir2, Double)
+                .Worksheets("Input").Range("Mpad_y").Value = CType(Me.pad_rebar_quantity_bottom_dir2, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Mpad_y").ClearContents
             End If
             If Not IsNothing(Me.pad_rebar_quantity_top_dir2) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pad_rebar_quantity_top_dir2, Double)
+                .Worksheets("Input").Range("Mpad_y_top").Value = CType(Me.pad_rebar_quantity_top_dir2, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Mpad_y_top").ClearContents
             End If
             If Not IsNothing(Me.pier_shape) Then
                 .Worksheets("Input").Range("D57").Value = CType(Me.pier_shape, String)
             End If
             If Not IsNothing(Me.pier_diameter) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pier_diameter, Double)
+                .Worksheets("Input").Range("di").Value = CType(Me.pier_diameter, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("di").ClearContents
             End If
             If Not IsNothing(Me.extension_above_grade) Then
-                .Worksheets("Input").Range("").Value = CType(Me.extension_above_grade, Double)
+                .Worksheets("Input").Range("E").Value = CType(Me.extension_above_grade, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("E").ClearContents
             End If
             If Not IsNothing(Me.pier_rebar_size) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pier_rebar_size, Integer)
+                .Worksheets("Input").Range("Rs").Value = CType(Me.pier_rebar_size, Integer)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Rs").ClearContents
             End If
             If Not IsNothing(Me.pier_rebar_quantity) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pier_rebar_quantity, Double)
+                .Worksheets("Input").Range("mc").Value = CType(Me.pier_rebar_quantity, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("mc").ClearContents
             End If
             If Not IsNothing(Me.pier_tie_size) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pier_tie_size, Integer)
+                .Worksheets("Input").Range("St").Value = CType(Me.pier_tie_size, Integer)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("St").ClearContents
             End If
             If Not IsNothing(Me.rebar_grade) Then
-                .Worksheets("Input").Range("").Value = CType(Me.rebar_grade, Double)
+                .Worksheets("Input").Range("Fy").Value = CType(Me.rebar_grade, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Fy").ClearContents
             End If
             If Not IsNothing(Me.concrete_compressive_strength) Then
-                .Worksheets("Input").Range("").Value = CType(Me.concrete_compressive_strength, Double)
+                .Worksheets("Input").Range("Fc").Value = CType(Me.concrete_compressive_strength, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Fc").ClearContents
             End If
-            If Me.groundwater_depth = -1 Then
-                .Worksheets("Input").Range("D69").Value = "N/A"
-            Else
-                .Worksheets("Input").Range("D69").Value = CType(Me.groundwater_depth, Double)
-            End If
+            'Groundwater added to SoilProfile Below
+            'If Me.groundwater_depth = -1 Then
+            '    .Worksheets("Input").Range("D69").Value = "N/A"
+            'Else
+            '    .Worksheets("Input").Range("D69").Value = CType(Me.groundwater_depth, Double)
+            'End If
             'If Not IsNothing(Me.groundwater_depth) Then
             '    .Worksheets("Input").Range("D69").Value = CType(Me.groundwater_depth, Double)
             'Else
             '    .Worksheets("Input").Range("D69").ClearContents
             'End If
             If Not IsNothing(Me.total_soil_unit_weight) Then
-                .Worksheets("Input").Range("").Value = CType(Me.total_soil_unit_weight, Double)
+                .Worksheets("Input").Range("γsoil_dry").Value = CType(Me.total_soil_unit_weight, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("γsoil_dry").ClearContents
             End If
             If Not IsNothing(Me.cohesion) Then
-                .Worksheets("Input").Range("").Value = CType(Me.cohesion, Double)
+                .Worksheets("Input").Range("Co").Value = CType(Me.cohesion, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Co").ClearContents
             End If
             If Not IsNothing(Me.friction_angle) Then
-                .Worksheets("Input").Range("").Value = CType(Me.friction_angle, Double)
+                .Worksheets("Input").Range("ɸ").Value = CType(Me.friction_angle, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("ɸ").ClearContents
             End If
-            If Not IsNothing(Me.neglect_depth) Then
-                .Worksheets("Input").Range("").Value = CType(Me.neglect_depth, Double)
-            Else
-                .Worksheets("Input").Range("").ClearContents
-            End If
+            'Neglect Depth added to SoilProfile Below
+            'If Not IsNothing(Me.neglect_depth) Then
+            '    .Worksheets("Input").Range("ND").Value = CType(Me.neglect_depth, Double)
+            'Else
+            '    .Worksheets("Input").Range("ND").ClearContents
+            'End If
             If Not IsNothing(Me.spt_blow_count) Then
-                .Worksheets("Input").Range("").Value = CType(Me.spt_blow_count, Double)
+                .Worksheets("Input").Range("N_blows").Value = CType(Me.spt_blow_count, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("N_blows").ClearContents
             End If
             If Not IsNothing(Me.pile_negative_friction_force) Then
-                .Worksheets("Input").Range("").Value = CType(Me.pile_negative_friction_force, Double)
+                .Worksheets("Input").Range("Sw").Value = CType(Me.pile_negative_friction_force, Double)
             Else
-                .Worksheets("Input").Range("").ClearContents
+                .Worksheets("Input").Range("Sw").ClearContents
             End If
             If Not IsNothing(Me.pile_ultimate_compression) Then
                 .Worksheets("Input").Range("K45").Value = CType(Me.pile_ultimate_compression, Double)
@@ -1273,33 +1358,37 @@ Partial Public Class Pile
             Else
                 .Worksheets("Input").Range("M71").ClearContents
             End If
-            If Me.skin_friction_given = False Then
-                .Worksheets("Input").Range("N54").Value = "No"
-            Else
+            If Me.skin_friction_given = True Then
                 .Worksheets("Input").Range("N54").Value = "Yes"
+            Else
+                .Worksheets("Input").Range("N54").Value = "No"
             End If
             'If Not IsNothing(Me.skin_friction_given) Then
             '    .Worksheets("Input").Range("N54").Value = CType(Me.skin_friction_given, Boolean)
             'End If
-            If Not IsNothing(Me.pile_quantity_circular) Then
-                .Worksheets("Input").Range("D36").Value = CType(Me.pile_quantity_circular, Double)
-            Else
-                .Worksheets("Input").Range("D36").ClearContents
+            If Me.pile_group_config = "Circular" Then
+                If Not IsNothing(Me.pile_quantity_circular) Then
+                    .Worksheets("Input").Range("D36").Value = CType(Me.pile_quantity_circular, Double)
+                Else
+                    .Worksheets("Input").Range("D36").ClearContents
+                End If
+                If Not IsNothing(Me.group_diameter_circular) Then
+                    .Worksheets("Input").Range("D37").Value = CType(Me.group_diameter_circular, Double)
+                Else
+                    .Worksheets("Input").Range("D37").ClearContents
+                End If
             End If
-            If Not IsNothing(Me.group_diameter_circular) Then
-                .Worksheets("Input").Range("D37").Value = CType(Me.group_diameter_circular, Double)
-            Else
-                .Worksheets("Input").Range("D37").ClearContents
-            End If
-            If Not IsNothing(Me.pile_column_quantity) Then
-                .Worksheets("Input").Range("D36").Value = CType(Me.pile_column_quantity, Double)
-            Else
-                .Worksheets("Input").Range("D36").ClearContents
-            End If
-            If Not IsNothing(Me.pile_row_quantity) Then
-                .Worksheets("Input").Range("D37").Value = CType(Me.pile_row_quantity, Double)
-            Else
-                .Worksheets("Input").Range("D37").ClearContents
+            If Me.pile_group_config = "Rectangular" Then
+                If Not IsNothing(Me.pile_column_quantity) Then
+                    .Worksheets("Input").Range("D36").Value = CType(Me.pile_column_quantity, Double)
+                Else
+                    .Worksheets("Input").Range("D36").ClearContents
+                End If
+                If Not IsNothing(Me.pile_row_quantity) Then
+                    .Worksheets("Input").Range("D37").Value = CType(Me.pile_row_quantity, Double)
+                Else
+                    .Worksheets("Input").Range("D37").ClearContents
+                End If
             End If
             If Not IsNothing(Me.pile_columns_spacing) Then
                 .Worksheets("Input").Range("D38").Value = CType(Me.pile_columns_spacing, Double)
@@ -1311,10 +1400,10 @@ Partial Public Class Pile
             Else
                 .Worksheets("Input").Range("D39").ClearContents
             End If
-            If Me.group_efficiency_factor_given = False Then
-                .Worksheets("Input").Range("D41").Value = "No"
-            Else
+            If Me.group_efficiency_factor_given = True Then
                 .Worksheets("Input").Range("D41").Value = "Yes"
+            Else
+                .Worksheets("Input").Range("D41").Value = "No"
             End If
             'If Not IsNothing(Me.group_efficiency_factor_given) Then
             '    .Worksheets("Input").Range("D41").Value = CType(Me.group_efficiency_factor_given, Boolean)
@@ -1351,21 +1440,137 @@ Partial Public Class Pile
             If Not IsNothing(Me.Structural_105) Then
                 .Worksheets("Input").Range("Z14").Value = CType(Me.Structural_105, Boolean)
             End If
-            If Not IsNothing(Me.tool_version) Then
-                .Worksheets("Revision History").Range("").Value = CType(Me.tool_version, String)
+            'If Not IsNothing(Me.tool_version) Then
+            '    .Worksheets("Revision History").Range("Revision").Value = CType(Me.tool_version, String)
+            'End If
+            'If Not IsNothing(Me.modified_person_id) Then
+            '    .Worksheets("").Range("").Value = CType(Me.modified_person_id, Integer)
+            'Else
+            '    .Worksheets("").Range("").ClearContents
+            'End If
+            'If Not IsNothing(Me.process_stage) Then
+            '    .Worksheets("").Range("").Value = CType(Me.process_stage, String)
+            'End If
+
+            For Each row As SoilProfile In SoilProfiles 'Only one profile for piles
+                If Not IsNothing(row.ID) Then
+                    .Worksheets("Sub Tables (SAPI)").Range("E4").Value = CType(row.ID, Integer)
+                Else
+                    .Worksheets("Sub Tables (SAPI)").Range("E4").ClearContents
+                End If
+                If row.groundwater_depth = -1 Then
+                    .Worksheets("Input").Range("D69").Value = "N/A"
+                Else
+                    .Worksheets("Input").Range("D69").Value = CType(row.groundwater_depth, Double)
+                End If
+                'If Not IsNothing(row.groundwater_depth) Then
+                '    .Worksheets("Input").Range("D69").Value = CType(row.groundwater_depth, Double)
+                'Else
+                '    .Worksheets("Input").Range("D69").ClearContents
+                'End If
+                If Not IsNothing(row.neglect_depth) Then
+                    .Worksheets("Input").Range("ND").Value = CType(row.neglect_depth, Double)
+                Else
+                    .Worksheets("Input").Range("ND").ClearContents
+                End If
+
+            Next
+
+            If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
+                Dim soilRow As Integer = 57 'identify first row to copy data into Excel Sheet
+                For Each row As SoilLayer In SoilLayers
+                    '**** Section Below eliminates workbook open events ****
+                    If Not IsNothing(row.ID) Then
+                        .Worksheets("Sub Tables (SAPI)").Range("P" & soilRow - 53).Value = CType(row.ID, Integer)
+                        'Else .Worksheets("SAPI").Range("J" & soilRow - 53).ClearContents
+                    End If
+                    If Not IsNothing(row.bottom_depth) Then
+                        .Worksheets("Input").Range("H" & soilRow).Value = CType(row.bottom_depth, Double)
+                        'Else .Worksheets("Input").Range("H" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(row.effective_soil_density) Then
+                        .Worksheets("Input").Range("K" & soilRow).Value = CType(row.effective_soil_density, Double)
+                        'Else .Worksheets("Input").Range("K" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(row.cohesion) Then
+                        .Worksheets("Input").Range("I" & soilRow).Value = CType(row.cohesion, Double)
+                        'Else .Worksheets("Input").Range("I" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(row.friction_angle) Then
+                        .Worksheets("Input").Range("J" & soilRow).Value = CType(row.friction_angle, Double)
+                        'Else .Worksheets("Input").Range("J" & soilRow).ClearContents
+                    End If
+                    'If Not IsNothing(row.skin_friction_override_uplift) Then
+                    '    .Worksheets("Input").Range("N54").Value = CType(row.skin_friction_override_uplift, Double)
+                    'Else .Worksheets("Input").Range("N54").ClearContents
+                    'End If
+                    If Not IsNothing(row.spt_blow_count) Then
+                        .Worksheets("Input").Range("L" & soilRow).Value = CType(row.spt_blow_count, Double)
+                        'Else .Worksheets("Input").Range("L" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(row.skin_friction_override_comp) Then
+                        .Worksheets("Input").Range("M" & soilRow).Value = CType(row.skin_friction_override_comp, Double)
+                        'Else .Worksheets("Input").Range("M" & soilRow).ClearContents
+                    End If
+                    If Not IsNothing(row.skin_friction_override_uplift) Then
+                        .Worksheets("Input").Range("N" & soilRow).Value = CType(row.skin_friction_override_uplift, Double)
+                        'Else .Worksheets("Input").Range("N" & soilRow).ClearContents
+                    End If
+                    '******
+
+                    soilRow += 1
+
+                Next
             End If
-            If Not IsNothing(Me.modified_person_id) Then
-                .Worksheets("").Range("").Value = CType(Me.modified_person_id, Integer)
+
+            If Me.pile_group_config = "Asymmetric" Then
+                Dim locRow As Integer = 5 'identify first row to copy data into Excel Sheet
+                For Each row As PileLocation In PileLocations
+                    '**** Section Below eliminates workbook open events ****
+                    If Not IsNothing(row.ID) Then
+                        .Worksheets("Sub Tables (SAPI)").Range("U" & locRow - 1).Value = CType(row.ID, Integer)
+                        'Else .Worksheets("Sub Tables (SAPI)").Range("U" & locRow - 1).ClearContents
+                    End If
+                    If Not IsNothing(row.pile_x_coordinate) Then
+                        .Worksheets("Moment of Inertia").Range("K" & locRow).Value = CType(row.pile_x_coordinate, Double)
+                        'Else .Worksheets("Moment of Inertia").Range("K" & locRow).ClearContents
+                    End If
+                    If Not IsNothing(row.pile_y_coordinate) Then
+                        .Worksheets("Moment of Inertia").Range("L" & locRow).Value = CType(row.pile_y_coordinate, Double)
+                        'Else .Worksheets("Moment of Inertia").Range("L" & locRow).ClearContents
+                    End If
+                    '******
+
+                    locRow += 1
+
+                Next
+            End If
+
+            'Worksheet Change Events
+            'Hiding/unhiding specific tabs
+            If Me.pile_group_config = "Circular" Then
+                .Worksheets("Moment of Inertia").Visible = False
+                .Worksheets("Moment of Inertia (Circle)").Visible = True
             Else
-                .Worksheets("").Range("").ClearContents
+                .Worksheets("Moment of Inertia").Visible = True
+                .Worksheets("Moment of Inertia (Circle)").Visible = False
             End If
-            If Not IsNothing(Me.process_stage) Then
-                .Worksheets("").Range("").Value = CType(Me.process_stage, String)
-            End If
+
+            'Resizing Image
+            'Try
+            '    With .Worksheets("Input").Charts(0)
+            '        .Width = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir1, Double) * 4.19 '4.19 multiplier determined through trial and error. 
+            '        .Height = (300 / Math.Max(CType(pf.pad_width_dir1, Double), CType(pf.pad_width_dir2, Double))) * CType(pf.pad_width_dir2, Double) * 4.19
+            '    End With
+            'Catch
+            '    'error handling to avoid dividing by zero
+            'End Try
+
 
         End With
 
     End Sub
+
 
 
     'Sub UnitBaseRunPrint()
@@ -1500,7 +1705,7 @@ Partial Public Class Pile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Structural_105.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString("@Sub1ID")
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString("@PrevID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
@@ -1578,74 +1783,75 @@ Partial Public Class Pile
         Return SQLInsertFields
     End Function
 
-    Public Overrides Function SQLUpdate() As String
-        SQLUpdate = ""
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
 
         'SQLUpdate = SQLUpdate.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("load_eccentricity = " & Me.load_eccentricity.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("bolt_circle_bearing_plate_width = " & Me.bolt_circle_bearing_plate_width.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_shape = " & Me.pile_shape.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_material = " & Me.pile_material.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_length = " & Me.pile_length.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_diameter_width = " & Me.pile_diameter_width.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_pipe_thickness = " & Me.pile_pipe_thickness.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_soil_capacity_given = " & Me.pile_soil_capacity_given.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("steel_yield_strength = " & Me.steel_yield_strength.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_type_option = " & Me.pile_type_option.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("rebar_quantity = " & Me.rebar_quantity.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_group_config = " & Me.pile_group_config.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("foundation_depth = " & Me.foundation_depth.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_thickness = " & Me.pad_thickness.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_width_dir1 = " & Me.pad_width_dir1.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_width_dir2 = " & Me.pad_width_dir2.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_bottom = " & Me.pad_rebar_size_bottom.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_size_top = " & Me.pad_rebar_size_top.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_bottom_dir1 = " & Me.pad_rebar_quantity_bottom_dir1.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_top_dir1 = " & Me.pad_rebar_quantity_top_dir1.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_bottom_dir2 = " & Me.pad_rebar_quantity_bottom_dir2.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pad_rebar_quantity_top_dir2 = " & Me.pad_rebar_quantity_top_dir2.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pier_shape = " & Me.pier_shape.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pier_diameter = " & Me.pier_diameter.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("extension_above_grade = " & Me.extension_above_grade.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pier_rebar_size = " & Me.pier_rebar_size.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pier_tie_size = " & Me.pier_tie_size.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("rebar_grade = " & Me.rebar_grade.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("total_soil_unit_weight = " & Me.total_soil_unit_weight.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_negative_friction_force = " & Me.pile_negative_friction_force.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_ultimate_compression = " & Me.pile_ultimate_compression.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_ultimate_tension = " & Me.pile_ultimate_tension.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("top_and_bottom_rebar_different = " & Me.top_and_bottom_rebar_different.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("ultimate_gross_end_bearing = " & Me.ultimate_gross_end_bearing.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("skin_friction_given = " & Me.skin_friction_given.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_quantity_circular = " & Me.pile_quantity_circular.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("group_diameter_circular = " & Me.group_diameter_circular.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_column_quantity = " & Me.pile_column_quantity.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_row_quantity = " & Me.pile_row_quantity.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_columns_spacing = " & Me.pile_columns_spacing.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_row_spacing = " & Me.pile_row_spacing.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("group_efficiency_factor_given = " & Me.group_efficiency_factor_given.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("group_efficiency_factor = " & Me.group_efficiency_factor.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("cap_type = " & Me.cap_type.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_quantity_asymmetric = " & Me.pile_quantity_asymmetric.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_spacing_min_asymmetric = " & Me.pile_spacing_min_asymmetric.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("quantity_piles_surrounding = " & Me.quantity_piles_surrounding.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("pile_cap_reference = " & Me.pile_cap_reference.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("Soil_110 = " & Me.Soil_110.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("load_eccentricity = " & Me.load_eccentricity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_circle_bearing_plate_width = " & Me.bolt_circle_bearing_plate_width.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_shape = " & Me.pile_shape.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_material = " & Me.pile_material.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_length = " & Me.pile_length.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_diameter_width = " & Me.pile_diameter_width.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_pipe_thickness = " & Me.pile_pipe_thickness.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_soil_capacity_given = " & Me.pile_soil_capacity_given.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("steel_yield_strength = " & Me.steel_yield_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_type_option = " & Me.pile_type_option.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rebar_quantity = " & Me.rebar_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_group_config = " & Me.pile_group_config.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("foundation_depth = " & Me.foundation_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_thickness = " & Me.pad_thickness.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_width_dir1 = " & Me.pad_width_dir1.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_width_dir2 = " & Me.pad_width_dir2.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_size_bottom = " & Me.pad_rebar_size_bottom.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_size_top = " & Me.pad_rebar_size_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_quantity_bottom_dir1 = " & Me.pad_rebar_quantity_bottom_dir1.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_quantity_top_dir1 = " & Me.pad_rebar_quantity_top_dir1.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_quantity_bottom_dir2 = " & Me.pad_rebar_quantity_bottom_dir2.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pad_rebar_quantity_top_dir2 = " & Me.pad_rebar_quantity_top_dir2.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_shape = " & Me.pier_shape.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_diameter = " & Me.pier_diameter.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("extension_above_grade = " & Me.extension_above_grade.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_rebar_size = " & Me.pier_rebar_size.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_tie_size = " & Me.pier_tie_size.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rebar_grade = " & Me.rebar_grade.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("total_soil_unit_weight = " & Me.total_soil_unit_weight.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("friction_angle = " & Me.friction_angle.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("spt_blow_count = " & Me.spt_blow_count.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_negative_friction_force = " & Me.pile_negative_friction_force.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_ultimate_compression = " & Me.pile_ultimate_compression.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_ultimate_tension = " & Me.pile_ultimate_tension.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("top_and_bottom_rebar_different = " & Me.top_and_bottom_rebar_different.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ultimate_gross_end_bearing = " & Me.ultimate_gross_end_bearing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("skin_friction_given = " & Me.skin_friction_given.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_quantity_circular = " & Me.pile_quantity_circular.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_diameter_circular = " & Me.group_diameter_circular.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_column_quantity = " & Me.pile_column_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_row_quantity = " & Me.pile_row_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_columns_spacing = " & Me.pile_columns_spacing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_row_spacing = " & Me.pile_row_spacing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_efficiency_factor_given = " & Me.group_efficiency_factor_given.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_efficiency_factor = " & Me.group_efficiency_factor.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("cap_type = " & Me.cap_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_quantity_asymmetric = " & Me.pile_quantity_asymmetric.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_spacing_min_asymmetric = " & Me.pile_spacing_min_asymmetric.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("quantity_piles_surrounding = " & Me.quantity_piles_surrounding.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_cap_reference = " & Me.pile_cap_reference.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Soil_110 = " & Me.Soil_110.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = @SubLevel1ID")
         'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
-        Return SQLUpdate
+        Return SQLUpdateFieldsandValues
     End Function
 
 #End Region
@@ -1725,10 +1931,164 @@ Partial Public Class Pile
         'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
         'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
 
+        'Pile Location
+        If Me.pile_group_config = "Asymmetric" Then
+            Equals = If(Me.PileLocations.CheckChange(otherToCompare.PileLocations, changes, categoryName, "Pile Locations"), Equals, False)
+        End If
+
+        'Soil Profile
+        Equals = If(Me.SoilProfiles.CheckChange(otherToCompare.SoilProfiles, changes, categoryName, "Soil Profiles"), Equals, False)
+
+        'Soil Layer
+        If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Then
+            Equals = If(Me.SoilLayers.CheckChange(otherToCompare.SoilLayers, changes, categoryName, "Soil Layers"), Equals, False)
+        End If
 
         Return Equals
 
     End Function
 #End Region
+
+End Class
+
+Partial Public Class PileLocation
+    Inherits EDSObjectWithQueries
+
+#Region "Inheritted"
+    Public Overrides ReadOnly Property EDSObjectName As String = "Pile Location"
+    Public Overrides ReadOnly Property EDSTableName As String = "fnd.pile_location"
+
+    Public Overrides Function SQLInsert() As String
+
+        SQLInsert = QueryBuilderFromFile(queryPath & "Pile\Pile Location (INSERT).sql")
+        SQLInsert = SQLInsert.Replace("[PILE LOCATION VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[PILE LOCATION FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLInsert
+
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+
+        SQLUpdate = QueryBuilderFromFile(queryPath & "Pile\Pile Location (UPDATE).sql")
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLUpdate
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile Location (DELETE).sql")
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLDelete
+
+    End Function
+
+#End Region
+
+#Region "Define"
+    Private _ID As Integer?
+    Private _pile_x_coordinate As Double?
+    Private _pile_y_coordinate As Double?
+    <Category("Pile Location"), Description(""), DisplayName("Id")>
+    Public Property ID() As Integer?
+        Get
+            Return Me._ID
+        End Get
+        Set
+            Me._ID = Value
+        End Set
+    End Property
+    <Category("Pile Location"), Description(""), DisplayName("Pile X Coordinate")>
+    Public Property pile_x_coordinate() As Double?
+        Get
+            Return Me._pile_x_coordinate
+        End Get
+        Set
+            Me._pile_x_coordinate = Value
+        End Set
+    End Property
+    <Category("Pile Location"), Description(""), DisplayName("Pile Y Coordinate")>
+    Public Property pile_y_coordinate() As Double?
+        Get
+            Return Me._pile_y_coordinate
+        End Get
+        Set
+            Me._pile_y_coordinate = Value
+        End Set
+    End Property
+
+#End Region
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Method Empty
+    End Sub
+
+    Public Sub New(ByVal Row As DataRow)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        'If Parent IsNot Nothing Then Me.Absorb(Parent)
+        ''''''Customize for each foundation type'''''
+        Dim excelDS As New DataSet
+        Dim dr = Row
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
+        Me.pile_x_coordinate = DBtoNullableDbl(dr.Item("pile_x_coordinate"))
+        Me.pile_y_coordinate = DBtoNullableDbl(dr.Item("pile_y_coordinate"))
+    End Sub
+
+#End Region
+
+#Region "Save to EDS"
+    Public Overrides Function SQLInsertValues() As String
+        SQLInsertValues = ""
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pile_x_coordinate.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pile_y_coordinate.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pile_x_coordinate")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pile_y_coordinate")
+
+        Return SQLInsertFields
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_x_coordinate = " & Me.pile_x_coordinate.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_y_coordinate = " & Me.pile_y_coordinate.ToString.FormatDBValue)
+
+        Return SQLUpdateFieldsandValues
+    End Function
+#End Region
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As PileLocation = TryCast(other, PileLocation)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.pile_x_coordinate.CheckChange(otherToCompare.pile_x_coordinate, changes, categoryName, "Pile X Coordinate"), Equals, False)
+        Equals = If(Me.pile_y_coordinate.CheckChange(otherToCompare.pile_y_coordinate, changes, categoryName, "Pile Y Coordinate"), Equals, False)
+
+    End Function
 
 End Class

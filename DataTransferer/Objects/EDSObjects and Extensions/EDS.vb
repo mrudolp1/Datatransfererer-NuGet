@@ -328,6 +328,7 @@ Partial Public Class EDSResult
         Insert = Insert.Replace("[TABLE]", Me.EDSTableName)
         Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues(ParentID))
         Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
+        Insert = Insert.TrimEnd()
         Return Insert
     End Function
 

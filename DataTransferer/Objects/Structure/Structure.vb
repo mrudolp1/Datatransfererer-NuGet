@@ -74,7 +74,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -146,7 +146,7 @@ Partial Public Class EDSStructure
 
             'Pile
             For Each dr As DataRow In strDS.Tables("Pile").Rows
-                Me.Piles.Add(New Pile(dr, Me))
+                Me.Piles.Add(New Pile(dr, strDS, Me))
             Next
 
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
@@ -174,13 +174,12 @@ Partial Public Class EDSStructure
         Next
         'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
-        Next
         structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
         structureQuery += Me.PierandPads.EDSListQueryBuilder(existingStructure.PierandPads)
         structureQuery += Me.UnitBases.EDSListQueryBuilder(existingStructure.UnitBases)
-        structureQuery += Me.Piles.EDSListQuery(existingStructure.Piles)
-        structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
-        structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
+        structureQuery += Me.Piles.EDSListQueryBuilder(existingStructure.Piles)
+        'structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
+        'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
@@ -281,7 +280,7 @@ Partial Public Class EDSStructure
         If otherToCompare Is Nothing Then Return False
 
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
-        Equals = If(Me.connections.CheckChange(otherToCompare.connections, changes, categoryName, "Connections"), Equals, False)
+        'Equals = If(Me.connections.CheckChange(otherToCompare.connections, changes, categoryName, "Connections"), Equals, False)
         Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
         Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False)
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
@@ -289,7 +288,9 @@ Partial Public Class EDSStructure
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
         Equals = If(Me.DrilledPiers.CheckChange(otherToCompare.DrilledPiers, changes, categoryName, "Drilled Piers"), Equals, False)
         Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
+
         Return Equals
+
     End Function
 
 #End Region

@@ -86,10 +86,14 @@
     <None Remove="Queries\Pile\Pile (INSERT).sql" />
     <None Remove="Queries\Pile\Pile (IN_UP) - DNU.sql" />
     <None Remove="Queries\Pile\Pile (IN_UP).sql" />
+    <None Remove="Queries\Pile\Pile (RESULT).sql" />
     <None Remove="Queries\Pile\Pile (SELECT Details).sql" />
     <None Remove="Queries\Pile\Pile (SELECT Location).sql" />
     <None Remove="Queries\Pile\Pile (SELECT Soil Layers).sql" />
     <None Remove="Queries\Pile\Pile (UPDATE).sql" />
+    <None Remove="Queries\Pile\Pile Location (DELETE).sql" />
+    <None Remove="Queries\Pile\Pile Location (INSERT).sql" />
+    <None Remove="Queries\Pile\Pile Location (UPDATE).sql" />
     <None Remove="Queries\Pile\This is the backup\Pile (SELECT Details Grp) - Copy.sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (DELETE).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (INSERT).sql" />
@@ -341,6 +345,9 @@
     <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Queries\Pile\Pile %28RESULT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Queries\Pile\Pile %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -351,6 +358,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pile\Pile (SELECT Details).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pile\Pile Location %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pile\Pile Location %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Pile\Pile Location %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Details Grp%29.sql">

@@ -8,7 +8,6 @@ Imports Microsoft.Office.Interop
 
 Partial Public Class SoilProfile
     Inherits EDSObjectWithQueries
-    'Inherits EDSObject
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String = "Soil Profile"
@@ -21,37 +20,68 @@ Partial Public Class SoilProfile
     '        '***Add additional table references here****
     '    End Get
     'End Property
-    Private _Insert As String
-    Private _Update As String
-    Private _Delete As String
 
-    Public Overrides ReadOnly Property Insert() As String
-        Get
-            Insert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
-            Insert = Insert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
-            Insert = Insert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
+    Public Overrides Function SQLInsert() As String
 
-            Return Insert
-        End Get
-    End Property
+        SQLInsert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
+        SQLInsert = SQLInsert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
-    Public Overrides ReadOnly Property Update() As String
-        Get
-            Update = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
-            Update = Update.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-            Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
-            'UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
-            Return Update
-        End Get
-    End Property
+        Return SQLInsert
+    End Function
 
-    Public Overrides ReadOnly Property Delete() As String
-        Get
-            Delete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
-            Delete = Delete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-            Return Delete
-        End Get
-    End Property
+    Public Overrides Function SQLUpdate() As String
+
+        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLUpdate
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        SQLDelete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLDelete
+    End Function
+
+
+    'Private _Insert As String
+    'Private _Update As String
+    'Private _Delete As String
+
+    'Public Overrides ReadOnly Property Insert() As String
+    '    Get
+    '        Insert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
+    '        Insert = Insert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
+    '        Insert = Insert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
+
+    '        Return Insert
+    '    End Get
+    'End Property
+
+    'Public Overrides ReadOnly Property Update() As String
+    '    Get
+    '        Update = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+    '        Update = Update.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+    '        Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
+    '        'UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
+    '        Return Update
+    '    End Get
+    'End Property
+
+    'Public Overrides ReadOnly Property Delete() As String
+    '    Get
+    '        Delete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
+    '        Delete = Delete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+    '        Return Delete
+    '    End Get
+    'End Property
 
 #End Region
 #Region "Define"
@@ -113,7 +143,7 @@ Partial Public Class SoilProfile
         Dim excelDS As New DataSet
         'Dim dr = excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0)
         Dim dr = Row
-        'Me.ID = DBtoNullableInt(dr.Item("ID"))
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
         Me.groundwater_depth = DBtoNullableDbl(dr.Item("groundwater_depth"))
         Me.neglect_depth = DBtoNullableDbl(dr.Item("neglect_depth"))
     End Sub
@@ -140,20 +170,31 @@ Partial Public Class SoilProfile
         Return SQLInsertFields
     End Function
 
-    Public Overrides Function SQLUpdate() As String
-        SQLUpdate = ""
-        'SQLUpdate = SQLUpdate.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.FormatDBValue)
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("groundwater_depth = " & Me.groundwater_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("neglect_depth = " & Me.neglect_depth.ToString.FormatDBValue)
 
-        Return SQLUpdate
+        Return SQLUpdateFieldsandValues
     End Function
 #End Region
 
 
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Throw New NotImplementedException()
-    End Function
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
 
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As SoilProfile = TryCast(other, SoilProfile)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.groundwater_depth.CheckChange(otherToCompare.groundwater_depth, changes, categoryName, "Groundwater Depth"), Equals, False)
+        Equals = If(Me.neglect_depth.CheckChange(otherToCompare.neglect_depth, changes, categoryName, "Neglect Depth"), Equals, False)
+
+    End Function
 
 End Class
