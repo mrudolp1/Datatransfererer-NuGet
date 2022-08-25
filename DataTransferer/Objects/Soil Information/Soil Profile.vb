@@ -12,14 +12,6 @@ Partial Public Class SoilProfile
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String = "Soil Profile"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.soil_profile"
-    'Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
-    'Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    '    Get
-    '        Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BG2", "Details (SAPI)"),
-    '                                                    New EXCELDTParameter("Pile Soil Profile EXCEL", "BI1:BJ2", "Details (SAPI)")}
-    '        '***Add additional table references here****
-    '    End Get
-    'End Property
 
     Public Overrides Function SQLInsert() As String
 
@@ -49,39 +41,6 @@ Partial Public Class SoilProfile
 
         Return SQLDelete
     End Function
-
-
-    'Private _Insert As String
-    'Private _Update As String
-    'Private _Delete As String
-
-    'Public Overrides ReadOnly Property Insert() As String
-    '    Get
-    '        Insert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
-    '        Insert = Insert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
-    '        Insert = Insert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
-
-    '        Return Insert
-    '    End Get
-    'End Property
-
-    'Public Overrides ReadOnly Property Update() As String
-    '    Get
-    '        Update = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
-    '        Update = Update.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '        Update = Update.Replace("[UPDATE]", Me.SQLUpdate)
-    '        'UpdateString = UpdateString.Replace("[RESULTS]", Me.Results.EDSResultQuery)
-    '        Return Update
-    '    End Get
-    'End Property
-
-    'Public Overrides ReadOnly Property Delete() As String
-    '    Get
-    '        Delete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
-    '        Delete = Delete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '        Return Delete
-    '    End Get
-    'End Property
 
 #End Region
 #Region "Define"
@@ -115,27 +74,6 @@ Partial Public Class SoilProfile
         'Leave Method Empty
     End Sub
 
-    'Public Sub New(ByVal Row As DataRow)
-    '    Try
-    '        If Not IsDBNull(CType(Row.Item("groundwater_depth"), Double)) Then
-    '            Me.groundwater_depth = CType(Row.Item("groundwater_depth"), Double)
-    '        Else
-    '            Me.groundwater_depth = Nothing
-    '        End If
-    '    Catch
-    '        Me.groundwater_depth = Nothing
-    '    End Try 'Pile_X_Coordinate
-    '    Try
-    '        If Not IsDBNull(CType(Row.Item("neglect_depth"), Double)) Then
-    '            Me.neglect_depth = CType(Row.Item("neglect_depth"), Double)
-    '        Else
-    '            Me.neglect_depth = Nothing
-    '        End If
-    '    Catch
-    '        Me.neglect_depth = Nothing
-    '    End Try 'Pile_Y_Coordinate
-    'End Sub 'Add a pile location to a pile
-
     Public Sub New(ByVal Row As DataRow)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         'If Parent IsNot Nothing Then Me.Absorb(Parent)
@@ -144,10 +82,10 @@ Partial Public Class SoilProfile
         'Dim dr = excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0)
         Dim dr = Row
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.groundwater_depth = DBtoNullableDbl(dr.Item("groundwater_depth"))
+        'Me.groundwater_depth = DBtoNullableDbl(dr.Item("groundwater_depth"))
+        Me.groundwater_depth = If(DBtoStr(dr.Item("groundwater_depth")) = "N/A", -1, DBtoNullableDbl(dr.Item("groundwater_depth")))
         Me.neglect_depth = DBtoNullableDbl(dr.Item("neglect_depth"))
     End Sub
-
 
 #End Region
 

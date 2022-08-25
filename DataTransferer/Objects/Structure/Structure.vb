@@ -88,41 +88,42 @@ Partial Public Class EDSStructure
             'If no site code criteria exists, fetch data from ORACLE to use for the first analysis. 
             'Still need to find all Topo inputs
             'Just set other parameters as default values 
-            'If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
-            '    OracleLoader("
-            '        SELECT
-            '                str.bus_unit
-            '                ,str.structure_id
-            '                ,tr.standard_code tia_current
-            '                ,tr.bldg_code ibc_current
-            '                ,str.ground_elev elev_agl
-            '                ,str.hgt_no_appurt
-            '                ,str.crest_height
-            '                ,str.distance_from_crest
-            '                ,sit.site_name
-            '                ,'False' rev_h_section_15_5
-            '                ,0 tower_point_elev
-            '                --,pi.eng_app_id
-            '                --,pi.crrnt_rvsn_num
-            '            FROM
-            '                isit_aim.structure                      str
-            '                ,isit_aim.site                          sit
-            '                ,rpt_appl.eng_tower_rating_vw           tr
-            '                --,isit_aim.work_orders                 wo
-            '                --,isit_isite.project_info              pi
-            '            WHERE
-            '                --wo.work_order_seqnum = 'XXXXXXX'
-            '                str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
-            '                AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
-            '                AND str.bus_unit = sit.bus_unit
-            '                AND str.bus_unit = tr.bus_unit
-            '                --AND wo.bus_unit = str.bus_unit
-            '                --AND wo.structure_id = str.structure_id
-            '                --AND pi.eng_app_id = wo.eng_app_id(+)
+            If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                OracleLoader("
+                    SELECT
+                            str.bus_unit
+                            ,str.structure_id
+                            ,tr.standard_code tia_current
+                            ,tr.bldg_code ibc_current
+                            ,str.ground_elev elev_agl
+                            ,str.hgt_no_appurt
+                            ,str.crest_height
+                            ,str.distance_from_crest
+                            ,sit.site_name
+                            ,'True' rev_h_section_15_5
+                            ,0 tower_point_elev
+                            --,pi.eng_app_id
+                            --,pi.crrnt_rvsn_num
+                            ,str.structure_type
+                        FROM
+                            isit_aim.structure                      str
+                            ,isit_aim.site                          sit
+                            ,rpt_appl.eng_tower_rating_vw           tr
+                            --,isit_aim.work_orders                 wo
+                            --,isit_isite.project_info              pi
+                        WHERE
+                            --wo.work_order_seqnum = 'XXXXXXX'
+                            str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+                            AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
+                            AND str.bus_unit = sit.bus_unit
+                            AND str.bus_unit = tr.bus_unit
+                            --AND wo.bus_unit = str.bus_unit
+                            --AND wo.structure_id = str.structure_id
+                            --AND pi.eng_app_id = wo.eng_app_id(+)
 
-            '        ", "Site Code Criteria", strDS, 3000, "ords")
-            'End If
-            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
+                    ", "Site Code Criteria", strDS, 3000, "ords")
+            End If
+            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
@@ -282,7 +283,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
         'Equals = If(Me.connections.CheckChange(otherToCompare.connections, changes, categoryName, "Connections"), Equals, False)
         Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
-        Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False)
+        'Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False) 'Deactivated since causes errors
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
