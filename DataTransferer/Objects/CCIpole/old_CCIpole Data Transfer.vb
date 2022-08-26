@@ -167,7 +167,7 @@ Partial Public Class DataTransfererCCIpole
         End If
 
         'POLE CRITERIA
-        For Each cppc As PoleCriteria In cp.criteria
+        For Each cppc As PoleCriteria_old In cp.criteria
             Dim tempPoleCriteria As String = InsertPoleCriteria(cppc)
 
             myCriteria = tempPoleCriteria
@@ -566,7 +566,7 @@ Partial Public Class DataTransfererCCIpole
                 If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Macro References").Range("A135").Value = CType(cp.pole_structure_id, Integer)
 
                 'Analysis Criteria
-                For Each pc As PoleCriteria In cp.criteria
+                For Each pc As PoleCriteria_old In cp.criteria
 
                     If Not IsNothing(cp.pole_structure_id) Then .Worksheets("Analysis Criteria (SAPI)").Cells(row, col).Value = CType(cp.pole_structure_id, Integer)
                     col += 1
@@ -1263,7 +1263,7 @@ Partial Public Class DataTransfererCCIpole
 #End Region
 
 #Region "SQL Insert Statements"
-    Private Function InsertPoleCriteria(ByVal pc As PoleCriteria) As String
+    Private Function InsertPoleCriteria(ByVal pc As PoleCriteria_old) As String
         Dim insertString As String = ""
 
         'insertString += "@PoleID"
@@ -1586,7 +1586,7 @@ Partial Public Class DataTransfererCCIpole
 #End Region
 
 #Region "SQL Update Statements"
-    Private Function UpdatePoleCriteria(ByVal pc As PoleCriteria) As String
+    Private Function UpdatePoleCriteria(ByVal pc As PoleCriteria_old) As String
         Dim updateString As String = ""
 
         updateString += "UPDATE pole_analysis_criteria SET "
@@ -1984,8 +1984,8 @@ Partial Public Class DataTransfererCCIpole
         Dim changesMade As Boolean = False
 
         'Check Pole Analysis Criteria
-        For Each pac As PoleCriteria In xlPole.criteria
-            For Each sqlpac As PoleCriteria In sqlPole.criteria
+        For Each pac As PoleCriteria_old In xlPole.criteria
+            For Each sqlpac As PoleCriteria_old In sqlPole.criteria
                 If pac.criteria_id = sqlpac.criteria_id Then
                     If Check1Change(pac.upper_structure_type, sqlpac.upper_structure_type, "CCIpole", "Upper_Structure_Type") Then changesMade = True
                     If Check1Change(pac.analysis_deg, sqlpac.analysis_deg, "CCIpole", "Analysis_Deg") Then changesMade = True
