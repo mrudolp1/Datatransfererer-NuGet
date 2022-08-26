@@ -79,7 +79,9 @@ Begin
 		fnd.pile_location pl
 		,fnd.pile fnd
 	WHERE
-		fnd.ID = pl.pile_id
+		fnd.bus_unit = @BU
+		AND fnd.structure_id = @strID
+		AND fnd.ID = pl.pile_id
 
 	--Drilled Pier
 	Select * From fnd.drilled_pier WHERE bus_unit=@BU AND structure_id=@strID

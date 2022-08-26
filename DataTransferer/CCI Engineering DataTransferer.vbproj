@@ -345,7 +345,7 @@
     <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Pile\Pile %28RESULT%29.sql">
+    <Content Include="Queries\Pile\DNU\Pile %28RESULT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pile\Pile %28DELETE%29.sql">
@@ -357,7 +357,7 @@
     <Content Include="Queries\Pile\Pile %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Pile\Pile (SELECT Details).sql">
+    <Content Include="Queries\Pile\DNU\Pile %28SELECT Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pile\Pile Location %28INSERT%29.sql">
@@ -387,7 +387,7 @@
     <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Location%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Pile\Pile %28SELECT Details Grp%29.sql">
+    <Content Include="Queries\Pile\DNU\Pile %28SELECT Details Grp%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Soil Layer\Soil Layer %28DELETE%29.sql">
