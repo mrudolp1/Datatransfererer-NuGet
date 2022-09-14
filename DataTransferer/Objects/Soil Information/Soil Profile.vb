@@ -45,6 +45,8 @@ Partial Public Class SoilProfile
 #End Region
 #Region "Define"
 
+    Public Property SoilLayers As New List(Of SoilLayer)
+
     Private _groundwater_depth As Double?
     Private _neglect_depth As Double?
 
