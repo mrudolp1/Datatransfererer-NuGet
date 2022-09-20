@@ -14,10 +14,11 @@ Partial Public Class EDSStructure
     Public Property tnx As tnxModel
     'Public Property connections As DataTransfererCCIplate
     Public Property CCIplates As New List(Of CCIplate)
-    Public Property pole As DataTransfererCCIpole
+    'Public Property pole As DataTransfererCCIpole
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
+    Public Property Poles As New List(Of Pole)
     Public Property UnitBases As New List(Of UnitBase)
     'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
     Public Property DrilledPiers As New List(Of DrilledPier)
@@ -75,7 +76,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole General", "Pole Unreinforced Sections", "Pole Reinforced Sections", "Pole Reinforcement Groups", "Pole Reinforcement Details", "Pole Interference Groups", "Pole Interference Details", "Pole Results", "Pole Custom Matls", "Pole Custom Bolts", "Pole Custom Reinfs", "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -156,6 +157,11 @@ Partial Public Class EDSStructure
                 Me.CCIplates.Add(New CCIplate(dr, strDS, Me))
             Next
 
+            'CCIpole
+            For Each dr As DataRow In strDS.Tables("Pole General").Rows
+                Me.Poles.Add(New Pole(dr, strDS, Me))
+            Next
+
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
             'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
@@ -191,7 +197,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
-        'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
+        structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
 
         structureQuery += "COMMIT"
 
@@ -231,6 +237,8 @@ Partial Public Class EDSStructure
                 'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
             ElseIf item.Contains("CCIplate") Then
                 Me.CCIplates.Add(New CCIplate(item, Me))
+            ElseIf item.Contains("CCIpole") Then
+                Me.Poles.Add(New Pole(item, Me))
             End If
         Next
     End Sub
@@ -275,6 +283,11 @@ Partial Public Class EDSStructure
             CCIplates(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).templatePath))
             CCIplates(i).SavetoExcel()
         Next
+        For i = 0 To Me.Poles.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
+            Poles(i).SavetoExcel()
+        Next
     End Sub
 #End Region
 
@@ -295,7 +308,7 @@ Partial Public Class EDSStructure
 
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
         Equals = If(Me.CCIplates.CheckChange(otherToCompare.CCIplates, changes, categoryName, "Connections"), Equals, False)
-        Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
+        Equals = If(Me.Poles.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
         'Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False) 'Deactivated since causes errors
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)

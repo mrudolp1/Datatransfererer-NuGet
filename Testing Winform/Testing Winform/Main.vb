@@ -13,7 +13,7 @@ Partial Public Class frmMain
     Public myDrilledPiers As New DataTransfererDrilledPier
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     'Public myPiles As New DataTransfererPile
-    Public MyCCIpoles As New DataTransfererCCIpole
+    'Public MyCCIpoles As New DataTransfererCCIpole
     'Public MyCCIplates As New DataTransfererCCIplate
 
     Public BUNumber As String = ""
