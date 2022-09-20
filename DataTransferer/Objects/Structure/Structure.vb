@@ -13,10 +13,11 @@ Partial Public Class EDSStructure
 
     Public Property tnx As tnxModel
     'Public Property connections As DataTransfererCCIplate
-    Public Property pole As DataTransfererCCIpole
+    ' Public Property pole As DataTransfererCCIpole
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
     Public Property Piles As New List(Of Pile)
+    Public Property Poles As New List(Of Pole)
     Public Property UnitBases As New List(Of UnitBase)
     'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
     Public Property DrilledPiers As New List(Of DrilledPier)
@@ -74,7 +75,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole General", "Pole Unreinforced Sections", "Pole Reinforced Sections", "Pole Reinforcement Groups", "Pole Reinforcement Details", "Pole Interference Groups", "Pole Interference Details", "Pole Results", "Pole Custom Matls", "Pole Custom Bolts", "Pole Custom Reinfs", "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -148,6 +149,11 @@ Partial Public Class EDSStructure
             'Pile
             For Each dr As DataRow In strDS.Tables("Pile").Rows
                 Me.Piles.Add(New Pile(dr, strDS, Me))
+            Next
+
+            'CCIpole
+            For Each dr As DataRow In strDS.Tables("Pole General").Rows
+                Me.Poles.Add(New Pole(dr, strDS, Me))
             Next
 
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
@@ -282,7 +288,7 @@ Partial Public Class EDSStructure
 
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
         'Equals = If(Me.connections.CheckChange(otherToCompare.connections, changes, categoryName, "Connections"), Equals, False)
-        Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
+        'Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
         'Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False) 'Deactivated since causes errors
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)

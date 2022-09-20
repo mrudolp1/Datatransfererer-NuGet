@@ -1,0 +1,35 @@
+﻿
+BEGIN
+
+	INSERT INTO pole.pole ([GENERAL POLE FIELDS]) 
+		OUTPUT INSERTED.ID INTO @TopLevel
+		VALUES([GENERAL POLE VALUES])
+		SELECT @TopLevelID=ID FROM @TopLevel
+
+		--UnreinfSectionDNU	BEGIN --[UNREINF SECTION INSERT BEGIN]
+		--UnreinfSectionDNU		[UNREINF SECTION INSERT]
+		--UnreinfSectionDNU	END --[UNREINF SECTION INSERT END]
+
+		--ReinfSectionDNU	BEGIN --[REINF SECTION INSERT BEGIN]
+		--ReinfSectionDNU		[REINF SECTION INSERT]
+		--ReinfSectionDNU	END --[REINF SECTION INSERT END]
+
+		--ReinfGroupDNU	BEGIN --[REINF GROUP INSERT BEGIN]
+		--ReinfGroupDNU		[REINF GROUP INSERT]
+		--ReinfGroupDNU	END --[REINF GROUP INSERT END]
+
+		--IntGroupDNU	BEGIN --[INT GROUP INSERT BEGIN]
+		--IntGroupDNU		[INT GROUP INSERT]
+		--IntGroupDNU	END --[INT GROUP INSERT END]
+
+		--ResultsDNU	BEGIN --[RESULTS INSERT BEGIN]
+		--ResultsDNU		[RESULTS INSERT]
+		--ResultsDNU	END --[RESULTS INSERT END]
+
+	DELETE FROM @TopLevel	--CCIpole General
+	DELETE FROM @SubLevel1	--Unreinf Sections / Reinf Sections / Reinf Groups / Int Groups
+	DELETE FROM @SubLevel2	--Reinf DB
+	DELETE FROM @SubLevel3	--Bolt DB
+	DELETE FROM @SubLevel4	--Matl DB
+
+END
