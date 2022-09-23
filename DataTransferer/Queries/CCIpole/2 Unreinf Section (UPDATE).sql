@@ -1,0 +1,10 @@
+﻿
+BEGIN
+
+	UPDATE pole.sections
+	SET [UPDATE] 
+	WHERE ID = [ID]
+
+END
+
+--[UNREINF SECTION UPDATE]

@@ -46,64 +46,33 @@ Partial Public Class Pole
 
 
         'Unreinforced Sections
-        SQLInsert = SQLInsert.Replace("--UnreinfSectionDNU", "")
         For Each row As PoleSection In unreinf_sections
-
-            Dim SQLSubQueryInsert As String = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (INSERT).sql")
-
-            If IsSomething(row.matl_id) And row.matl_id <> 0 Then
-                SQLSubQueryInsert = SQLSubQueryInsert.Replace("[MATL ID]", row.matl_id.ToString.FormatDBValue)
-            Else
-                SQLSubQueryInsert = SQLSubQueryInsert.Replace("[MATL ID]", "NULL")
-                SQLSubQueryInsert = SQLSubQueryInsert.Replace("--MatlDNU", "")
-
-                For Each dbrow As PoleMatlProp In matls
-                    If row.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[local_matl_id]", dbrow.local_matl_id.ToString.FormatDBValue)
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[name]", dbrow.name.ToString.FormatDBValue)
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[fy]", dbrow.fy.ToString.FormatDBValue)
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[fu]", dbrow.fu.ToString.FormatDBValue)
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[ind_default]", dbrow.ind_default.ToString.FormatDBValue)
-
-                        SQLSubQueryInsert = SQLSubQueryInsert.Replace("[MATL PROP VALUES]", dbrow.SQLInsertValues)
-                    End If
-                Next
-
-            End If
-
-            SQLSubQueryInsert = SQLSubQueryInsert.Replace("[UNREINF SECTION VALUES]", row.SQLInsertValues)
-            SQLSubQueryInsert = SQLSubQueryInsert.Replace("[UNREINF SECTION FIELDS]", row.SQLInsertFields)
-
-            SQLInsert = SQLInsert.Replace("--UnreinfSectionDNU", "")
+            SQLInsert = SQLInsert.Replace("--[UNREINF SECTION INSERT]", row.SQLInsert)
         Next
 
         'Reinf Sections
-        SQLInsert = SQLInsert.Replace("--ReinfSectionDNU", "")
         For Each row As PoleReinfSection In reinf_sections
-            SQLInsert = SQLInsert.Replace("[REINF SECTION INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[REINF SECTION INSERT]", row.SQLInsert)
         Next
 
         'Reinforcement Groups
-        SQLInsert = SQLInsert.Replace("--ReinfGroupDNU", "")
         For Each row As PoleReinfGroup In reinf_groups
-            SQLInsert = SQLInsert.Replace("[REINF GROUP INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[REINF GROUP INSERT]", row.SQLInsert)
         Next
         'Details are done in query for Groups
 
         'Interference Groups
-        SQLInsert = SQLInsert.Replace("--IntGroupDNU", "")
         For Each row As PoleIntGroup In int_groups
-            SQLInsert = SQLInsert.Replace("[INT GROUP INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[INT GROUP INSERT]", row.SQLInsert)
         Next
         'Details are done in query for Groups
 
         'Results
-        SQLInsert = SQLInsert.Replace("--ResultsDNU", "")
         For Each row As PoleReinfResults In reinf_section_results
-            SQLInsert = SQLInsert.Replace("[RESULTS INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[RESULT INSERT]", row.SQLInsert)
         Next
 
-        'Reinf/Bolt/Matl DBs are done within sections/group queries
+        'Reinf/Bolt/Matl DBs are done within sections/group queries - No its not - Yes it is.
 
         Return SQLInsert
     End Function
@@ -427,7 +396,7 @@ Partial Public Class Pole
         For Each row As DataRow In strDS.Tables("Pole Sections").Rows
             Dim PoleSectionRefID As Integer? = CType(row.Item("pole_id"), Integer)
             If PoleSectionRefID = Me.pole_id Then
-                Me.unreinf_sections.Add(New PoleSection(row))
+                Me.unreinf_sections.Add(New PoleSection(row)) 'Chall has 'Add(New PoleSection(row, srtDS))' - apparently keeping the datasource tied in allows the UI to show relationships correctly - Not sure if necessary yet - MRR
             End If
         Next 'Add Unreinf Sections to CCIpole Object
 
@@ -490,7 +459,7 @@ Partial Public Class Pole
             If PropMatlRefID = Me.pole_id Then
                 Me.matls.Add(New PoleMatlProp(row))
             End If
-        Next 'Add Custom Matl Properties to CCIpole Object
+        Next 'Add Custom Matl Properties to Section Object
 
         For Each row As DataRow In strDS.Tables("Pole Bolt Prop").Rows
             Dim PropBoltRefID As Integer? = CType(row.Item("pole_id"), Integer)
@@ -1526,6 +1495,23 @@ Partial Public Class PoleSection
 
     Public Overrides Function SQLInsert() As String
         SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (INSERT).sql")
+
+        If IsSomething(Me.matl_id) And Me.matl_id <> 0 Then
+            SQLInsert = SQLInsert.Replace("[MATL ID]", Me.matl_id.ToString.FormatDBValue)
+        Else
+            SQLInsert = SQLInsert.Replace("[MATL ID]", "NULL")
+
+            For Each dbrow As PoleMatlProp In matls
+                If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
+                    SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                    'SQLInsert = SQLInsert.Replace("[MATL DB FIELDS AND VALUES]", dbrow.SQLUpdateFieldsandValues)
+                    'SQLInsert = SQLInsert.Replace("[MATL DB FIELDS]", dbrow.SQLInsertFields)
+                    'SQLInsert = SQLInsert.Replace("[MATL DB VALUES]", dbrow.SQLInsertValues)
+                End If
+            Next
+
+        End If
+
         SQLInsert = SQLInsert.Replace("[UNREINF SECTION VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[UNREINF SECTION FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1534,7 +1520,8 @@ Partial Public Class PoleSection
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Unreinf Sections (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1543,7 +1530,8 @@ Partial Public Class PoleSection
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Unreinf Sections (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -1575,6 +1563,7 @@ Partial Public Class PoleSection
     Private _ar_factor As Double?
     Private _round_area_ratio As Double?
     Private _flat_area_ratio As Double?
+    Public Property matls As New List(Of PoleMatlProp)
 
     <Category("CCIpole Sections"), Description(""), DisplayName("Section Id")>
     Public Property section_id() As Integer?
@@ -1966,7 +1955,21 @@ Partial Public Class PoleReinfSection
     Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforced_sections"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Unreinf Sections (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\3 Unreinf Section (INSERT).sql")
+
+        If IsSomething(Me.matl_id) And Me.matl_id <> 0 Then
+            SQLInsert = SQLInsert.Replace("[MATL ID]", Me.matl_id.ToString.FormatDBValue)
+        Else
+            SQLInsert = SQLInsert.Replace("[MATL ID]", "NULL")
+
+            For Each dbrow As PoleMatlProp In matls
+                If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
+                    SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                End If
+            Next
+
+        End If
+
         SQLInsert = SQLInsert.Replace("[REINF SECTION VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[REINF SECTION FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1975,7 +1978,8 @@ Partial Public Class PoleReinfSection
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Sections (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\3 Reinf Section (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1984,7 +1988,8 @@ Partial Public Class PoleReinfSection
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Sections (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\3 Reinf Section (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2016,6 +2021,7 @@ Partial Public Class PoleReinfSection
     Private _ar_factor As Double?
     Private _round_area_ratio As Double?
     Private _flat_area_ratio As Double?
+    Public Property matls As New List(Of PoleMatlProp)
 
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Section Id")>
     Public Property section_id() As Integer?
@@ -2408,16 +2414,35 @@ Partial Public Class PoleReinfGroup
     Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcements"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Groups (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (INSERT).sql")
+
+        If IsSomething(Me.reinf_id) And Me.reinf_id <> 0 Then 'Default Reinf Used - no need to pull in subqueries in order to create Reinf Group
+            SQLInsert = SQLInsert.Replace("--[REINF DB INSTERT]", "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        Else ' Custom Reinf/Matl/Bolt used
+            For Each dbrow As PoleReinfProp In reinfs
+                If Me.local_reinf_id = dbrow.local_reinf_id Then
+                    SQLInsert = SQLInsert.Replace("--[REINF DB INSERT]", dbrow.SQLInsert)
+                End If
+            Next
+        End If
+
         SQLInsert = SQLInsert.Replace("[REINF GROUP VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[REINF GROUP FIELDS]", Me.SQLInsertFields)
+
+        For Each detailrow As PoleReinfDetail In reinf_ids
+            If Me.local_group_id = detailrow.local_group_id Then
+                SQLInsert = SQLInsert.Replace("--[REINF DETAIL INSERT]", detailrow.SQLInsert)
+            End If
+        Next
+
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Groups (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2426,7 +2451,8 @@ Partial Public Class PoleReinfGroup
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Groups (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2445,6 +2471,7 @@ Partial Public Class PoleReinfGroup
     Private _reinf_id As Integer?
     Private _local_reinf_id As Integer?
     Private _qty As Integer?
+    Public Property reinfs As New List(Of PoleReinfProp)
     Public Property reinf_ids As New List(Of PoleReinfDetail)
 
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Group Id")>
@@ -2657,7 +2684,8 @@ Partial Public Class PoleReinfDetail
     Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcement_details"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Details (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (INSERT).sql")
+
         SQLInsert = SQLInsert.Replace("[REINF DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[REINF DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2666,7 +2694,8 @@ Partial Public Class PoleReinfDetail
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Details (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[GROUP ID]", Me.group_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2675,7 +2704,8 @@ Partial Public Class PoleReinfDetail
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Details (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[GROUP ID]", Me.group_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2873,16 +2903,25 @@ Partial Public Class PoleIntGroup
     Public Overrides ReadOnly Property EDSTableName As String = "pole.interferences"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Int Groups (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (INSERT).sql")
+
         SQLInsert = SQLInsert.Replace("[INT GROUP VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[INT GROUP FIELDS]", Me.SQLInsertFields)
+
+        For Each detailrow As PoleIntDetail In int_ids
+            If Me.local_group_id = detailrow.local_group_id Then
+                SQLInsert = SQLInsert.Replace("--[INT DETAIL INSERT]", detailrow.SQLInsert)
+            End If
+        Next
+
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Int Groups (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2891,7 +2930,8 @@ Partial Public Class PoleIntGroup
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Int Groups (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3092,7 +3132,8 @@ Partial Public Class PoleIntDetail
     Public Overrides ReadOnly Property EDSTableName As String = "pole.interference_details"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Int Details (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (INSERT).sql")
+
         SQLInsert = SQLInsert.Replace("[INT DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[INT DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3101,7 +3142,8 @@ Partial Public Class PoleIntDetail
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Int Details (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3110,7 +3152,8 @@ Partial Public Class PoleIntDetail
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Int Details (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3309,16 +3352,18 @@ Partial Public Class PoleReinfResults
     Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcement_results"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Results (INSERT).sql")
-        SQLInsert = SQLInsert.Replace("[REINF RESULTS VALUES]", Me.SQLInsertValues)
-        SQLInsert = SQLInsert.Replace("[REINF RESULTS FIELDS]", Me.SQLInsertFields)
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (INSERT).sql")
+
+        SQLInsert = SQLInsert.Replace("[REINF RESULT VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[REINF RESULT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
     End Function
 
     Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Results (UPDATE).sql")
+        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (UPDATE).sql")
+
         SQLUpdate = SQLUpdate.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3327,7 +3372,8 @@ Partial Public Class PoleReinfResults
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\Reinf Results (DELETE).sql")
+        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (DELETE).sql")
+
         SQLDelete = SQLDelete.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3555,9 +3601,11 @@ Partial Public Class PoleMatlProp
     Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_matls"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Prop Matl (INSERT).sql")
-        SQLInsert = SQLInsert.Replace("[MATL PROP VALUES]", Me.SQLInsertValues)
-        SQLInsert = SQLInsert.Replace("[MATL PROP FIELDS]", Me.SQLInsertFields)
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Matl (INSERT).sql")
+
+        SQLInsert = SQLInsert.Replace("[MATL DB FIELDS AND VALUES]", Me.SQLUpdateFieldsandValues)
+        SQLInsert = SQLInsert.Replace("[MATL DB VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[MATL DB FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
@@ -3745,9 +3793,11 @@ Partial Public Class PoleBoltProp
     Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_bolts"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Prop Bolt (INSERT).sql")
-        SQLInsert = SQLInsert.Replace("[BOLT PROP VALUES]", Me.SQLInsertValues)
-        SQLInsert = SQLInsert.Replace("[BOLT PROP FIELDS]", Me.SQLInsertFields)
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Bolt (INSERT).sql")
+
+        SQLInsert = SQLInsert.Replace("[BOLT DB FIELDS AND VALUES]", Me.SQLUpdateFieldsandValues)
+        SQLInsert = SQLInsert.Replace("[BOLT DB VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[BOLT DB FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
@@ -4117,9 +4167,81 @@ Partial Public Class PoleReinfProp
     Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_reinforcements"
 
     Public Overrides Function SQLInsert() As String
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\Prop Reinf (INSERT).sql")
-        SQLInsert = SQLInsert.Replace("[REINF PROP VALUES]", Me.SQLInsertValues)
-        SQLInsert = SQLInsert.Replace("[REINF PROP FIELDS]", Me.SQLInsertFields)
+        SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Reinf (INSERT).sql")
+
+        'Matl
+        If IsSomething(Me.matl_id) And Me.matl_id <> 0 Then
+            SQLInsert = SQLInsert.Replace("[MATL ID]", Me.matl_id.ToString.FormatDBValue)
+        Else
+            SQLInsert = SQLInsert.Replace("[MATL ID]", "NULL")
+
+            For Each dbrow As PoleMatlProp In matls
+                If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
+                    SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                End If
+            Next
+
+        End If
+
+        'Top Bolt
+        If IsSomething(Me.bolt_id_top) And Me.bolt_id_top <> 0 Then
+            SQLInsert = SQLInsert.Replace("[TOP BOLT ID]", Me.bolt_id_top.ToString.FormatDBValue)
+        Else
+            SQLInsert = SQLInsert.Replace("[TOP BOLT ID]", "NULL")
+
+            For Each dbrow As PoleBoltProp In bolts
+                If Me.local_bolt_id_top = dbrow.local_bolt_id Then '
+                    SQLInsert = SQLInsert.Replace("--[TOP BOLT DB INSERT]", dbrow.SQLInsert)
+                    SQLInsert = SQLInsert.Replace("@BoltID", "@TopBoltID")
+                End If
+            Next
+
+        End If
+
+        'Bot Bolt
+        If IsSomething(Me.bolt_id_bot) And Me.bolt_id_bot <> 0 Then
+            SQLInsert = SQLInsert.Replace("[BOT BOLT ID]", Me.bolt_id_bot.ToString.FormatDBValue)
+        Else
+            SQLInsert = SQLInsert.Replace("[BOT BOLT ID]", "NULL")
+
+            For Each dbrow As PoleBoltProp In bolts
+                If Me.local_bolt_id_bot = dbrow.local_bolt_id Then '
+                    SQLInsert = SQLInsert.Replace("--[BOT BOLT DB INSERT]", dbrow.SQLInsert)
+                    SQLInsert = SQLInsert.Replace("@BoltID", "@BotBoltID")
+                End If
+            Next
+
+        End If
+
+        'If IsSomething(Me.reinf_id) And Me.reinf_id <> 0 And Me.reinf_id <= 10 Then 'Default Reinf Used - no need to pull in subqueries in order to create Reinf Group
+        '    SQLInsert = SQLInsert.Replace("--[REINF DB INSTERT]",
+        '                                  "SET @SubLevel4ID = 6" & vbNewLine &
+        '                                  "SET @TopBoltID = 1" & vbNewLine &
+        '                                  "SET @BotBoltID = 1" & vbNewLine &
+        '                                  "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        'ElseIf IsSomething(Me.reinf_id) And Me.reinf_id <> 0 And Me.reinf_id > 10 And Me.reinf_id < 25 Then
+        '    SQLInsert = SQLInsert.Replace("--[REINF DB INSTERT]",
+        '                                  "SET @SubLevel4ID = 12" & vbNewLine &
+        '                                  "SET @TopBoltID = 1" & vbNewLine &
+        '                                  "SET @BotBoltID = 1" & vbNewLine &
+        '                                  "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        'ElseIf IsSomething(Me.reinf_id) And Me.reinf_id <> 0 And Me.reinf_id >= 25 And Me.reinf_id <= 38 Then
+        '    SQLInsert = SQLInsert.Replace("--[REINF DB INSTERT]",
+        '                                  "SET @SubLevel4ID = 12" & vbNewLine &
+        '                                  "SET @TopBoltID = 1" & vbNewLine &
+        '                                  "SET @BotBoltID = NULL" & vbNewLine &
+        '                                  "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        'ElseIf IsSomething(Me.reinf_id) And Me.reinf_id <> 0 And Me.reinf_id > 38 And Me.reinf_id < 58 Then
+        '    SQLInsert = SQLInsert.Replace("--[REINF DB INSTERT]",
+        '                                  "SET @SubLevel4ID = 12" & vbNewLine &
+        '                                  "SET @TopBoltID = 1" & vbNewLine &
+        '                                  "SET @BotBoltID = 1" & vbNewLine &
+        '                                  "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        'End If
+
+        SQLInsert = SQLInsert.Replace("[REINF DB FIELDS AND VALUES]", Me.SQLUpdateFieldsandValues)
+        SQLInsert = SQLInsert.Replace("[REINF DB VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[REINF DB FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
@@ -4275,6 +4397,8 @@ Partial Public Class PoleReinfProp
     Private _cap_weld_trans_top_h As Double?
     Private _cap_weld_long_top_h As Double?
     Private _ind_default As Boolean?
+    Public Property matls As New List(Of PoleMatlProp)
+    Public Property bolts As New List(Of PoleBoltProp)
 
     <Category("CCIpole Reinf DB"), Description(""), DisplayName("Reinf Id")>
     Public Property reinf_id() As Integer?

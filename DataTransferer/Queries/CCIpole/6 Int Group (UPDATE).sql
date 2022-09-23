@@ -1,0 +1,13 @@
+﻿
+BEGIN
+
+	UPDATE pole.interferences
+	SET [UPDATE] 
+	WHERE ID = [ID]
+
+
+	--[INT DETAIL UPDATE]
+
+END
+
+--[INT GROUP UPDATE]
