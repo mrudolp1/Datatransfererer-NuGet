@@ -116,6 +116,31 @@ Begin
 	--CCIPlate
 	Select * From conn.connections WHERE bus_unit=@BU AND structure_id=@strID
 
+	--Connections
+	Select pl.* 
+	From 
+		conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+
+	--Plate Details
+	Select pd.* 
+	From 
+		conn.plate_details pd
+		,conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID=pd.plate_id
+
+	--CCIplate Materials
+	Select * From gen.connection_material_properties
+
 	--CCIPole
 	Select * From pole.pole WHERE bus_unit=@BU AND structure_id=@strID
 

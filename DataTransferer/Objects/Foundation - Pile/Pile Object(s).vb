@@ -174,9 +174,9 @@ Partial Public Class Pile
             For Each row As PileLocation In PileLocations
                 SQLDelete = SQLDelete.Replace("--[PILE LOCATION INSERT]", row.SQLDelete)
             Next
-
-            Return SQLDelete
         End If
+
+        Return SQLDelete
 
     End Function
 

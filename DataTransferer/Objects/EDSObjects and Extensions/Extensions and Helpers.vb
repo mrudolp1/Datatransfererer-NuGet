@@ -51,6 +51,20 @@ Public Module Extensions
         Return startingString
     End Function
 
+    <Extension()>
+    Public Function SelectDBString(startingString As String, newString As String, Optional isDBValue As Boolean = False) As String
+        'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.
+        If isDBValue Then newString = newString.FormatDBValue
+
+        If String.IsNullOrEmpty(startingString) Then
+            startingString = newString
+        Else
+            startingString += "AND " & newString
+        End If
+
+        Return startingString
+    End Function
+
     '<Extension()>
     'Public Function AddtoDBString(startingString As String, newObject As Object, Optional isDBValue As Boolean = False) As String
     '    'isValue should be false if you're creating a string of column names. They should not be in single quotes like the values.

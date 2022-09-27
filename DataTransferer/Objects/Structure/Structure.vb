@@ -13,6 +13,7 @@ Partial Public Class EDSStructure
 
     Public Property tnx As tnxModel
     'Public Property connections As DataTransfererCCIplate
+    Public Property CCIplates As New List(Of CCIplate)
     Public Property pole As DataTransfererCCIpole
     Public Property structureCodeCriteria As SiteCodeCriteria
     Public Property PierandPads As New List(Of PierAndPad)
@@ -74,7 +75,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole", "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -150,6 +151,11 @@ Partial Public Class EDSStructure
                 Me.Piles.Add(New Pile(dr, strDS, Me))
             Next
 
+            'CCIplate
+            For Each dr As DataRow In strDS.Tables("CCIplates").Rows
+                Me.CCIplates.Add(New CCIplate(dr, strDS, Me))
+            Next
+
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
             'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
@@ -184,7 +190,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
-        'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
+        structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
 
         structureQuery += "COMMIT"
@@ -223,6 +229,8 @@ Partial Public Class EDSStructure
                 'Me.DrilledPiers.Add(New DrilledPier(item))
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
+            ElseIf item.Contains("CCIplate") Then
+                Me.CCIplates.Add(New CCIplate(item, Me))
             End If
         Next
     End Sub
@@ -262,6 +270,11 @@ Partial Public Class EDSStructure
         '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
         '    GuyAnchorBlocks(i).SavetoExcel()
         'Next
+        For i = 0 To Me.CCIplates.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            CCIplates(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).templatePath))
+            CCIplates(i).SavetoExcel()
+        Next
     End Sub
 #End Region
 
@@ -281,7 +294,7 @@ Partial Public Class EDSStructure
         If otherToCompare Is Nothing Then Return False
 
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
-        'Equals = If(Me.connections.CheckChange(otherToCompare.connections, changes, categoryName, "Connections"), Equals, False)
+        Equals = If(Me.CCIplates.CheckChange(otherToCompare.CCIplates, changes, categoryName, "Connections"), Equals, False)
         Equals = If(Me.pole.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
         'Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False) 'Deactivated since causes errors
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
