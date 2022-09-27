@@ -28,10 +28,20 @@
   <ItemGroup>
     <None Remove="Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
+    <None Remove="Queries\CCIplate\CCIplate (DELETE).sql" />
+    <None Remove="Queries\CCIplate\CCIplate (INSERT).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Base Plate Options).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
+    <None Remove="Queries\CCIplate\CCIplate (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\CCIplate Material (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Connection (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Connection (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Connection (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Plate Detail (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Plate Detail (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Plate Detail (UPDATE).sql" />
     <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -174,22 +184,52 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Queries\CCIplate\CCIplate %28SELECT Plate Connections%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIplate\CCIplate %28SELECT Plate Details%29.sql">
+    <Content Include="Queries\CCIplate\CCIplate %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIplate\CCIplate (IN_UP).sql">
+    <Content Include="Queries\CCIplate\CCIplate %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIplate\CCIplate %28SELECT Connection Group%29.sql">
+    <Content Include="Queries\CCIplate\Connection %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIplate\CCIplate %28SELECT Base Plate Options%29.sql">
+    <Content Include="Queries\CCIplate\Connection %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIplate\CCIplate (SUB QUERY).sql">
+    <Content Include="Queries\CCIplate\Connection %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Plate Detail %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Plate Detail %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Plate Detail %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\CCIplate Material %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SELECT Plate Connections%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SELECT Plate Details%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28IN_UP%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SELECT Connection Group%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SELECT Base Plate Options%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SUB QUERY%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\CCIpole %28IN_UP%29.sql">
@@ -561,6 +601,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Templates\CCIplate.xlsm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\CCIpole.xlsm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
