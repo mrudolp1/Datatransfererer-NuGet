@@ -77,6 +77,32 @@ Partial Public Class EDSStructure
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole General", "Pole Unreinforced Sections", "Pole Reinforced Sections", "Pole Reinforcement Groups", "Pole Reinforcement Details", "Pole Interference Groups", "Pole Interference Details", "Pole Results", "Pole Custom Matls", "Pole Custom Bolts", "Pole Custom Reinfs", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX",
+                        "Base Structure",
+                        "Upper Structure",
+                        "Guys",
+                        "Members",
+                        "Materials",
+                        "Pier and Pad",
+                        "Unit Base",
+                        "Pile",
+                        "Pile Locations",
+                        "Drilled Pier",
+                        "Anchor Block",
+                        "Soil Profiles",
+                        "Soil Layers",
+                        "Connections",
+                        "Pole General",
+                        "Pole Unreinforced Sections",
+                        "Pole Reinforced Sections",
+                        "Pole Reinforcement Groups",
+                        "Pole Reinforcement Details",
+                        "Pole Interference Groups",
+                        "Pole Interference Details", '"Pole Results",
+                        "Pole Custom Matls",
+                        "Pole Custom Bolts",
+                        "Pole Custom Reinfs",
+                        "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -185,6 +211,9 @@ Partial Public Class EDSStructure
             structureQuery += "DECLARE " & level & " TABLE(ID INT)" & vbCrLf
             structureQuery += "DECLARE " & level & "ID INT" & vbCrLf
         Next
+        If Me.Poles.Count > 0 Then
+            structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
+        End If
         'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
         structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
