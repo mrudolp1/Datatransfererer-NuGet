@@ -75,7 +75,32 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole General", "Pole Unreinforced Sections", "Pole Reinforced Sections", "Pole Reinforcement Groups", "Pole Reinforcement Details", "Pole Interference Groups", "Pole Interference Details", "Pole Results", "Pole Custom Matls", "Pole Custom Bolts", "Pole Custom Reinfs", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX",
+                        "Base Structure",
+                        "Upper Structure",
+                        "Guys",
+                        "Members",
+                        "Materials",
+                        "Pier and Pad",
+                        "Unit Base",
+                        "Pile",
+                        "Pile Locations",
+                        "Drilled Pier",
+                        "Anchor Block",
+                        "Soil Profiles",
+                        "Soil Layers",
+                        "Connections",
+                        "Pole General",
+                        "Pole Unreinforced Sections",
+                        "Pole Reinforced Sections",
+                        "Pole Reinforcement Groups",
+                        "Pole Reinforcement Details",
+                        "Pole Interference Groups",
+                        "Pole Interference Details", '"Pole Results",
+                        "Pole Custom Matls",
+                        "Pole Custom Bolts",
+                        "Pole Custom Reinfs",
+                        "Site Code Criteria"}
 
         Using strDS As New DataSet
 
@@ -124,7 +149,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
+            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) - Need to uncomment out once using real BU - MRR
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
@@ -179,6 +204,9 @@ Partial Public Class EDSStructure
             structureQuery += "DECLARE " & level & " TABLE(ID INT)" & vbCrLf
             structureQuery += "DECLARE " & level & "ID INT" & vbCrLf
         Next
+        If Me.Poles.Count > 0 Then
+            structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
+        End If
         'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
         structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
@@ -191,7 +219,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
-        'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
+        structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
 
         structureQuery += "COMMIT"
 
@@ -229,6 +257,8 @@ Partial Public Class EDSStructure
                 'Me.DrilledPiers.Add(New DrilledPier(item))
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
+            ElseIf item.Contains("CCIpole") Then
+                Me.Poles.Add(New Pole(item, Me))
             End If
         Next
     End Sub
@@ -268,6 +298,11 @@ Partial Public Class EDSStructure
         '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
         '    GuyAnchorBlocks(i).SavetoExcel()
         'Next
+        For i = 0 To Me.Poles.Count - 1
+            fileNum = String.Format(" ({0})", i.ToString)
+            Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
+            Poles(i).SavetoExcel()
+        Next
     End Sub
 #End Region
 

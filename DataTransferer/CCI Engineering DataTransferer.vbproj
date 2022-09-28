@@ -56,12 +56,6 @@
     <None Remove="Queries\CCIpole\8 Reinf Result (DELETE).sql" />
     <None Remove="Queries\CCIpole\8 Reinf Result (INSERT).sql" />
     <None Remove="Queries\CCIpole\8 Reinf Result (UPDATE).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomBase).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomReinf).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
-    <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
     <None Remove="Queries\CCIpole\DB Bolt (INSERT).sql" />
     <None Remove="Queries\CCIpole\DB Matl (INSERT).sql" />
     <None Remove="Queries\CCIpole\DB Reinf (INSERT).sql" />
@@ -305,27 +299,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\DB Matl %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_ReinfGroups%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_IntGroups%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomBase%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomReinf%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\DNU\CCIpole (IN_UP).sql">

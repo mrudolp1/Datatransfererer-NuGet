@@ -1,10 +1,12 @@
 ﻿
 BEGIN --Result SubQuery BEGIN
 	
+	
+	SELECT @SubLevel1ID = ID FROM pole.reinforced_sections WHERE pole_id = @TopLevelID AND local_section_id = [local_section_id]
+	SELECT @SubLevel2ID = ID FROM pole.reinforcements WHERE pole_id = @TopLevelID AND local_group_id = [local_group_id]
+
 	INSERT INTO pole.reinforcement_results ([REINF RESULT FIELDS]) 
-		--OUTPUT INSERTED.ID INTO @SubLevel2
 		VALUES([REINF RESULT VALUES])
-		--SELECT @SubLevel1ID = ID FROM @SubLevel1
 
 END --Result SubQuery END
 
