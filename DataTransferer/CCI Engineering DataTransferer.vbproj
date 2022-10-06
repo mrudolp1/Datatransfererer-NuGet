@@ -50,6 +50,9 @@
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Pier (INSERT).sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Pier Profile (INSERT).sql" />
+    <None Remove="Queries\Drilled Pier\Drilled Pier Section (INSERT).sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
@@ -60,8 +63,11 @@
     <None Remove="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
+    <None Remove="Queries\Drilled Pier\General (INSERT).sql" />
+    <None Remove="Queries\Drilled Pier\General (UPDATE).sql" />
     <None Remove="Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Queries\Existing Model %28SELECT%29.sql" />
+    <None Remove="Queries\File Upload (INSERT).sql" />
     <None Remove="Queries\Foundation Group\Foundation (IN_UP Partial) DNU.sql" />
     <None Remove="Queries\Foundation Group\Foundation Group (IN_UP) with Model.sql" />
     <None Remove="Queries\Foundation Group\Foundation Group (IN_UP).sql" />
@@ -249,34 +255,52 @@
     <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
+    <Content Include="Queries\Drilled Pier\General %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
+    <Content Include="Queries\File Upload %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Belled).sql">
+    <Content Include="Queries\Drilled Pier\Drilled Pier Section %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers %28SELECT Profile%29.sql">
+    <Content Include="Queries\Drilled Pier\General %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Details).sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28IN_UP%29 - Copy.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Embedded).sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Rebar).sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Belled%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Section).sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Profile%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers Sections %28IN_UP%29.sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Details%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Soil Layers).sql">
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Embedded%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Rebar%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Section%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers Sections %28IN_UP%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Soil Layers%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Pier %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\Drilled Pier\Drilled Pier Profile %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Existing Model (IN_UP).sql">

@@ -27,9 +27,9 @@
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.pgStructure = New System.Windows.Forms.TabPage()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
-        Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
         Me.btnImportStrcFiles = New System.Windows.Forms.Button()
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
+        Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
         Me.propgridFndXL = New System.Windows.Forms.PropertyGrid()
         Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
         Me.propgridFndEDS = New System.Windows.Forms.PropertyGrid()
@@ -73,6 +73,7 @@
         Me.SplitContainer3.Panel2.SuspendLayout()
         Me.SplitContainer3.SuspendLayout()
         CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer4.Panel1.SuspendLayout()
         Me.SplitContainer4.Panel2.SuspendLayout()
         Me.SplitContainer4.SuspendLayout()
         CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -118,7 +119,6 @@
         '
         'SplitContainer3.Panel1
         '
-        Me.SplitContainer3.Panel1.Controls.Add(Me.btnSaveFndToEDS)
         Me.SplitContainer3.Panel1.Controls.Add(Me.btnImportStrcFiles)
         Me.SplitContainer3.Panel1.Controls.Add(Me.SplitContainer4)
         Me.SplitContainer3.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -130,15 +130,6 @@
         Me.SplitContainer3.Size = New System.Drawing.Size(877, 410)
         Me.SplitContainer3.SplitterDistance = 438
         Me.SplitContainer3.TabIndex = 7
-        '
-        'btnSaveFndToEDS
-        '
-        Me.btnSaveFndToEDS.Location = New System.Drawing.Point(3, 40)
-        Me.btnSaveFndToEDS.Name = "btnSaveFndToEDS"
-        Me.btnSaveFndToEDS.Size = New System.Drawing.Size(160, 21)
-        Me.btnSaveFndToEDS.TabIndex = 3
-        Me.btnSaveFndToEDS.Text = "Save to EDS"
-        Me.btnSaveFndToEDS.UseVisualStyleBackColor = True
         '
         'btnImportStrcFiles
         '
@@ -156,6 +147,10 @@
         Me.SplitContainer4.Location = New System.Drawing.Point(0, 0)
         Me.SplitContainer4.Name = "SplitContainer4"
         '
+        'SplitContainer4.Panel1
+        '
+        Me.SplitContainer4.Panel1.Controls.Add(Me.btnSaveFndToEDS)
+        '
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
@@ -163,6 +158,15 @@
         Me.SplitContainer4.Size = New System.Drawing.Size(438, 410)
         Me.SplitContainer4.SplitterDistance = 164
         Me.SplitContainer4.TabIndex = 4
+        '
+        'btnSaveFndToEDS
+        '
+        Me.btnSaveFndToEDS.Location = New System.Drawing.Point(3, 38)
+        Me.btnSaveFndToEDS.Name = "btnSaveFndToEDS"
+        Me.btnSaveFndToEDS.Size = New System.Drawing.Size(160, 21)
+        Me.btnSaveFndToEDS.TabIndex = 3
+        Me.btnSaveFndToEDS.Text = "Save to EDS"
+        Me.btnSaveFndToEDS.UseVisualStyleBackColor = True
         '
         'propgridFndXL
         '
@@ -565,6 +569,7 @@
         Me.SplitContainer3.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer3.ResumeLayout(False)
+        Me.SplitContainer4.Panel1.ResumeLayout(False)
         Me.SplitContainer4.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer4.ResumeLayout(False)

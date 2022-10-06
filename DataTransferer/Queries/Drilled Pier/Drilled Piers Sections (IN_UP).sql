@@ -1,7 +1,0 @@
-﻿BEGIN
-		INSERT INTO fnd.drilled_pier_section OUTPUT INSERTED.ID INTO @DrilledPierSection VALUES ([SINGLE PIER SECTION])
-		SELECT @SecID=SecID FROM @DrilledPierSection
-
-		INSERT INTO fnd.drilled_pier_rebar VALUES ([DRILLED PIER SECTION REBAR])
-END
---*[DRILLED PIER SECTIONS]*--

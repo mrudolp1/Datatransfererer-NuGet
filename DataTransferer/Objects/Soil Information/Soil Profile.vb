@@ -1,4 +1,5 @@
-﻿Option Strict On
+﻿Option Strict Off
+Option Compare Binary
 
 Imports System.ComponentModel
 Imports System.Data
@@ -18,7 +19,14 @@ Partial Public Class SoilProfile
         SQLInsert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
-        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Dim _layerInsert As String
+        For Each layer In Me.SoilLayers
+            _layerInsert += layer.SQLInsert + vbCrLf
+        Next
+
+        SQLInsert = SQLInsert.Replace("--[SOIL LAYER INSERT]", _layerInsert + vbCrLf)
+        SQLInsert = SQLInsert.TrimEnd
 
         Return SQLInsert
     End Function
@@ -76,9 +84,13 @@ Partial Public Class SoilProfile
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow)
+    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+        ConstructMe(Row, Parent)
+    End Sub
+
+    Public Sub ConstructMe(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        'If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         'Dim dr = excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0)

@@ -19,8 +19,9 @@ Partial Public Class EDSStructure
     Public Property Piles As New List(Of Pile)
     Public Property UnitBases As New List(Of UnitBase)
     'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
-    Public Property DrilledPiers As New List(Of DrilledPier)
+    Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
+    Public Property FileUploads As New List(Of FileUpload)
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
@@ -74,7 +75,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria", "File Upload"}
 
         Using strDS As New DataSet
 
@@ -125,6 +126,12 @@ Partial Public Class EDSStructure
             End If
             Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
 
+            'If ds.Tables("File Upload").Rows.Count > 0 Then
+            '    For Each dr As DataRow In ds.Tables("File Upload").Rows
+            '        Me.FileUploads.Add(New FileUpload(dr, Me))
+            '    Next
+            'End If
+
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
                 Me.tnx = New tnxModel(strDS, Me)
@@ -152,9 +159,20 @@ Partial Public Class EDSStructure
 
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
-            'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
-            '    Me.DrilledPiers.Add(New DrilledPier(dr, strDS))
-            'Next
+
+
+            'If a datarow is passed into the drilled pier foundation tool object then it will create new tools for every drilled pier that exists. 
+            'Otherwise it will put all drilled piers into the same too. 
+            'Basically all guyed towers would be in 1 tool.
+            For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
+                If Me.structureCodeCriteria.structure_type <> "GUYED" Then
+                    Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
+                Else
+                    Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me))
+                End If
+            Next
+
+
 
         End Using
 
@@ -182,7 +200,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
-        'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(existingStructure.DrilledPierTools)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.connections.EDSQuery(existingStructure.PierandPads)
         'structureQuery += Me.pole.EDSQuery(existingStructure.PierandPads)
@@ -210,6 +228,9 @@ Partial Public Class EDSStructure
     Public Sub LoadFromFiles(filePaths As String())
 
         For Each item As String In filePaths
+            Dim myFile As New FileUpload
+
+            myFile = New FileUpload(item, Me)
             If item.EndsWith(".eri") Then
                 Me.tnx = New tnxModel(item, Me)
             ElseIf item.Contains("Pier and Pad Foundation") Then
@@ -220,7 +241,8 @@ Partial Public Class EDSStructure
                 'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
-                'Me.DrilledPiers.Add(New DrilledPier(item))
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
+                FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
             End If
@@ -252,11 +274,13 @@ Partial Public Class EDSStructure
             UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
             UnitBases(i).SavetoExcel()
         Next
-        'For i = 0 To Me.DrilledPiers.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    DrilledPiers(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(DrilledPiers(i).templatePath) & fileNum)
-        '    DrilledPiers(i).SavetoExcel()
-        'Next
+
+        For Each drilledpiertool In Me.DrilledPierTools
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            DrilledPierTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileName(DrilledPierTools(i).templatePath) & fileNum)
+            DrilledPierTools(i).SavetoExcel()
+        Next
+
         'For i = 0 To Me.GuyAnchorBlocks.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
@@ -287,7 +311,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
-        Equals = If(Me.DrilledPiers.CheckChange(otherToCompare.DrilledPiers, changes, categoryName, "Drilled Piers"), Equals, False)
+        Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
         Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
 
         Return Equals
