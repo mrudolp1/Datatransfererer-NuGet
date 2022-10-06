@@ -76,7 +76,6 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole General", "Pole Unreinforced Sections", "Pole Reinforced Sections", "Pole Reinforcement Groups", "Pole Reinforcement Details", "Pole Interference Groups", "Pole Interference Details", "Pole Results", "Pole Custom Matls", "Pole Custom Bolts", "Pole Custom Reinfs", "Site Code Criteria"}
         Dim tableNames() As String = {"TNX",
                         "Base Structure",
                         "Upper Structure",
@@ -91,18 +90,22 @@ Partial Public Class EDSStructure
                         "Anchor Block",
                         "Soil Profiles",
                         "Soil Layers",
+                        "CCIplates",
                         "Connections",
+                        "Plate Details",
+                        "CCIplate Materials",
                         "Pole General",
                         "Pole Unreinforced Sections",
                         "Pole Reinforced Sections",
                         "Pole Reinforcement Groups",
                         "Pole Reinforcement Details",
                         "Pole Interference Groups",
-                        "Pole Interference Details", '"Pole Results",
+                        "Pole Interference Details", ' "Pole Results",
                         "Pole Custom Matls",
                         "Pole Custom Bolts",
                         "Pole Custom Reinfs",
                         "Site Code Criteria"}
+
 
         Using strDS As New DataSet
 
@@ -337,7 +340,7 @@ Partial Public Class EDSStructure
 
         Equals = If(Me.tnx.CheckChange(otherToCompare.tnx, changes, categoryName, "TNX"), Equals, False)
         Equals = If(Me.CCIplates.CheckChange(otherToCompare.CCIplates, changes, categoryName, "Connections"), Equals, False)
-        Equals = If(Me.Poles.CheckChange(otherToCompare.pole, changes, categoryName, "Pole"), Equals, False)
+        Equals = If(Me.Poles.CheckChange(otherToCompare.Poles, changes, categoryName, "Pole"), Equals, False)
         'Equals = If(Me.structureCodeCriteria.CheckChange(otherToCompare.structureCodeCriteria, changes, categoryName, "Structure Code Criteria"), Equals, False) 'Deactivated since causes errors
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)

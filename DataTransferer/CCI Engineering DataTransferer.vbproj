@@ -255,27 +255,6 @@
     <Content Include="Queries\CCIpole\2 Unreinf Section %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_ReinfGroups%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_IntGroups%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomBase%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubQuery_GeomReinf%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_ReinfDetails%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\CCIpole\CCIpole (IN_UP).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\CCIpole\DNU\CCIpole (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
