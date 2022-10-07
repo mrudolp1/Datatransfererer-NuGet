@@ -3,8 +3,8 @@ BEGIN
 
 	UPDATE pole.reinforcement_details
 	SET [UPDATE] 
-	WHERE group_id = [ID]
+	WHERE ID = [ID]
 
 END
 
---[REINF DETAIL UPDATE]
+--[REINF DETAIL SUBQUERY]

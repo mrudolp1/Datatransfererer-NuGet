@@ -7,9 +7,9 @@ BEGIN --Interference Group SubQuery BEGIN
 		SELECT @SubLevel1ID = ID FROM @SubLevel1
 
 
-    --[INT DETAIL INSERT]
+    --[INT DETAIL SUBQUERY]
 
 
 END --Interference Group SubQuery END
 
---[INT GROUP INSERT]
+--[INT GROUP SUBQUERY]

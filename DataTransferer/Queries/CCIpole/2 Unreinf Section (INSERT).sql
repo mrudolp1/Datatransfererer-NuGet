@@ -4,7 +4,7 @@ BEGIN --Unreinf Section SubQuery BEGIN
 	--Material DB ID
 	SET @SubLevel4ID = [MATL ID]
 
-    --[MATL DB INSERT]
+    --[MATL DB SUBQUERY]
 
 
 	--Section ID	
@@ -15,4 +15,4 @@ BEGIN --Unreinf Section SubQuery BEGIN
 
 END --Unreinf Section SubQuery END
 
---[UNREINF SECTION INSERT]
+--[UNREINF SECTION SUBQUERY]

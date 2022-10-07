@@ -1,7 +1,7 @@
 ﻿
 BEGIN
 
-	--[INT DETAIL DELETE]
+	--[INT DETAIL SUBQUERY]
 
 	DELETE FROM pole.interferences WHERE ID = [ID]
 

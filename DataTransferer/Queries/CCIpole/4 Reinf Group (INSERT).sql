@@ -1,7 +1,7 @@
 ﻿
 BEGIN --Reinf Group SubQuery BEGIN
 
-    --[REINF DB INSERT]
+    --[REINF DB SUBQUERY]
 
 
 	--Group ID	
@@ -11,9 +11,9 @@ BEGIN --Reinf Group SubQuery BEGIN
 		SELECT @SubLevel1ID = ID FROM @SubLevel1
 
 
-    --[REINF DETAIL INSERT]
+    --[REINF DETAIL SUBQUERY]
 
 
 END --Reinf Group SubQuery END
 
---[REINF GROUP INSERT]
+--[REINF GROUP SUBQUERY]

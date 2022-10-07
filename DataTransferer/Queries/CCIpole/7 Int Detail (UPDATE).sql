@@ -3,8 +3,8 @@ BEGIN
 
 	UPDATE pole.interference_details
 	SET [UPDATE] 
-	WHERE group_id = [ID]
+	WHERE ID = [ID]
 
 END
 
---[INT DETAIL UPDATE]
+--[INT DETAIL SUBQUERY]

@@ -10,4 +10,4 @@ BEGIN --Result SubQuery BEGIN
 
 END --Result SubQuery END
 
---[RESULT INSERT]
+--[RESULT SUBQUERY]

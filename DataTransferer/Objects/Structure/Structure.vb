@@ -154,7 +154,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
+            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then

@@ -4,18 +4,18 @@ BEGIN --Custom Reinf DB SubQuery BEGIN
     --Material DB ID
 	SET @SubLevel4ID = [MATL ID]
 
-    --[MATL DB INSERT]
+    --[MATL DB SUBQUERY]
     
 
     --Bolt DB ID
     SET @TopBoltID = [TOP BOLT ID]
 
-	--[TOP BOLT DB INSERT]
+	--[TOP BOLT DB SUBQUERY]
 
 
     SET @BotBoltID = [BOT BOLT ID]
 
-	--[BOT BOLT DB INSERT]
+	--[BOT BOLT DB SUBQUERY]
 
    
     --Reinforcement DB ID

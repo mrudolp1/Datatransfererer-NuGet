@@ -1,7 +1,7 @@
 ﻿
 BEGIN
 
-	--[REINF DETAIL DELETE]
+	--[REINF DETAIL SUBQUERY]
 
 	DELETE FROM pole.reinforcements WHERE ID = [ID]
 

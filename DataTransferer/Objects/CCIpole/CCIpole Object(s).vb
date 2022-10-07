@@ -47,29 +47,29 @@ Partial Public Class Pole
 
         'Unreinforced Sections
         For Each row As PoleSection In unreinf_sections
-            SQLInsert = SQLInsert.Replace("--[UNREINF SECTION INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLInsert)
         Next
 
         'Reinf Sections
         For Each row As PoleReinfSection In reinf_sections
-            SQLInsert = SQLInsert.Replace("--[REINF SECTION INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[REINF SECTION SUBQUERY]", row.SQLInsert)
         Next
 
         'Reinforcement Groups
         For Each row As PoleReinfGroup In reinf_groups
-            SQLInsert = SQLInsert.Replace("--[REINF GROUP INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[REINF GROUP SUBQUERY]", row.SQLInsert)
         Next
         'Details are done in query for Groups
 
         'Interference Groups
         For Each row As PoleIntGroup In int_groups
-            SQLInsert = SQLInsert.Replace("--[INT GROUP INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[INT GROUP SUBQUERY]", row.SQLInsert)
         Next
         'Details are done in query for Groups
 
         'Results
         For Each row As PoleReinfResults In reinf_section_results
-            SQLInsert = SQLInsert.Replace("--[RESULT INSERT]", row.SQLInsert)
+            SQLInsert = SQLInsert.Replace("--[RESULT SUBQUERY]", row.SQLInsert)
         Next
 
         'Reinf/Bolt/Matl DBs are done within sections/group queries - No its not - Yes it is.
@@ -90,74 +90,69 @@ Partial Public Class Pole
 
 
         'Unreinforced Sections
-        SQLUpdate = SQLUpdate.Replace("--UnreinfSectionDNU", "")
         For Each row As PoleSection In unreinf_sections
             If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_section_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION UPDATE]", row.SQLUpdate)
+                    SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLUpdate)
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION UPDATE]", row.SQLDelete)
+                    SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLDelete)
                 End If
             Else
-                SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION UPDATE]", row.SQLInsert)
+                SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLInsert)
             End If
         Next
 
         'Reinf Sections
-        SQLUpdate = SQLUpdate.Replace("--ReinfSectionDNU", "")
         For Each row As PoleReinfSection In reinf_sections
             If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_section_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[REINF SECTION UPDATE]", row.SQLUpdate)
+                    SQLUpdate = SQLUpdate.Replace("--[REINF SECTION SUBQUERY]", row.SQLUpdate)
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[REINF SECTION UPDATE]", row.SQLDelete)
+                    SQLUpdate = SQLUpdate.Replace("--[REINF SECTION SUBQUERY]", row.SQLDelete)
                 End If
             Else
-                SQLUpdate = SQLUpdate.Replace("--[REINF SECTION UPDATE]", row.SQLInsert)
+                SQLUpdate = SQLUpdate.Replace("--[REINF SECTION SUBQUERY]", row.SQLInsert)
             End If
         Next
 
         'Reinforcement Groups
-        SQLUpdate = SQLUpdate.Replace("--ReinfGroupDNU", "")
         For Each row As PoleReinfGroup In reinf_groups
             If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_group_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[REINF GROUP UPDATE]", row.SQLUpdate)
+                    SQLUpdate = SQLUpdate.Replace("--[REINF GROUP SUBQUERY]", row.SQLUpdate)
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[REINF GROUP UPDATE]", row.SQLDelete)
+                    SQLUpdate = SQLUpdate.Replace("--[REINF GROUP SUBQUERY]", row.SQLDelete)
                 End If
             Else
-                SQLUpdate = SQLUpdate.Replace("--[REINF GROUP UPDATE]", row.SQLInsert)
+                SQLUpdate = SQLUpdate.Replace("--[REINF GROUP SUBQUERY]", row.SQLInsert)
             End If
         Next
         'Details are done in query for Groups
 
         'Interference Groups
-        SQLUpdate = SQLUpdate.Replace("--IntGroupDNU", "")
         For Each row As PoleIntGroup In int_groups
             If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_group_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[INT GROUP UPDATE]", row.SQLUpdate)
+                    SQLUpdate = SQLUpdate.Replace("--[INT GROUP SUBQUERY]", row.SQLUpdate)
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[INT GROUP UPDATE]", row.SQLDelete)
+                    SQLUpdate = SQLUpdate.Replace("--[INT GROUP SUBQUERY]", row.SQLDelete)
                 End If
             Else
-                SQLUpdate = SQLUpdate.Replace("--[INT GROUP UPDATE]", row.SQLInsert)
+                SQLUpdate = SQLUpdate.Replace("--[INT GROUP SUBQUERY]", row.SQLInsert)
             End If
         Next
         'Details are done in query for Groups
 
         'Results
-        SQLUpdate = SQLUpdate.Replace("--ResultDNU", "")
         For Each row As PoleReinfResults In reinf_section_results
             If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_section_id) Or IsSomething(row.local_group_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[RESULTS UPDATE]", row.SQLUpdate)
+                    SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLUpdate)
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[RESULTS UPDATE]", row.SQLDelete)
+                    SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLDelete)
                 End If
             Else
-                SQLUpdate = SQLUpdate.Replace("--[RESULTS UPDATE]", row.SQLInsert)
+                SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLInsert)
             End If
             'SQLUpdate = SQLUpdate.Replace("--[RESULTS UPDATE]", Me.Results.EDSResultQuery) 'Chall using EDSResultQuery. Not sure if necessary in CCIpole...we will see - MRR
         Next
@@ -178,38 +173,33 @@ Partial Public Class Pole
 
 
         'Unreinforced Sections
-        SQLDelete = SQLDelete.Replace("--UnreinfSectionDNU", "")
         For Each row As PoleSection In unreinf_sections
-            SQLDelete = SQLDelete.Replace("[UNREINF SECTION DELETE]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("[UNREINF SECTION SUBQUERY]", row.SQLDelete)
         Next
 
         'Reinf Sections
-        SQLDelete = SQLDelete.Replace("--ReinfSectionDNU", "")
         For Each row As PoleReinfSection In reinf_sections
-            SQLDelete = SQLDelete.Replace("[REINF SECTION DELETE]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("[REINF SECTION SUBQUERY]", row.SQLDelete)
         Next
 
         'Reinforcement Groups
-        SQLDelete = SQLDelete.Replace("--ReinfGroupDNU", "")
         For Each row As PoleReinfGroup In reinf_groups
-            SQLDelete = SQLDelete.Replace("[REINF GROUP DELETE]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("[REINF GROUP SUBQUERY]", row.SQLDelete)
         Next
         'Details are done in query for Groups
 
         'Interference Groups
-        SQLDelete = SQLDelete.Replace("--IntGroupDNU", "")
         For Each row As PoleIntGroup In int_groups
-            SQLDelete = SQLDelete.Replace("[INT GROUP DELETE]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("[INT GROUP SUBQUERY]", row.SQLDelete)
         Next
         'Details are done in query for Groups
 
         'Results
-        SQLDelete = SQLDelete.Replace("--ResultDNU", "")
         For Each row As PoleReinfResults In reinf_section_results
-            SQLDelete = SQLDelete.Replace("[RESULTS DELETE]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("[RESULTS SUBQUERY]", row.SQLDelete)
         Next
 
-        'Reinf/Bolt/Matl DBs are done within sections/group queries
+        'Reinf/Bolt/Matl DBs should not be deleted from the DB except for manual cases
 
     End Function
 #End Region
@@ -1513,7 +1503,7 @@ Partial Public Class PoleSection
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleMatlProp In ParentPole.matls
                     If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
-                        SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
                         'SQLInsert = SQLInsert.Replace("[MATL DB FIELDS AND VALUES]", dbrow.SQLUpdateFieldsandValues)
                         'SQLInsert = SQLInsert.Replace("[MATL DB FIELDS]", dbrow.SQLInsertFields)
                         'SQLInsert = SQLInsert.Replace("[MATL DB VALUES]", dbrow.SQLInsertValues)
@@ -1532,6 +1522,22 @@ Partial Public Class PoleSection
 
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (UPDATE).sql")
+
+        If IsSomething(Me.matl_id) And Me.matl_id <> 0 Then
+            SQLUpdate = SQLUpdate.Replace("[MATL ID]", Me.matl_id.ToString.FormatDBValue)
+        Else
+            SQLUpdate = SQLUpdate.Replace("[MATL ID]", "NULL")
+
+            Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+            If IsSomething(ParentPole) Then
+                For Each dbrow As PoleMatlProp In ParentPole.matls
+                    If Me.local_matl_id = dbrow.local_matl_id Then
+                        SQLUpdate = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
+                    End If
+                Next
+            End If
+
+        End If
 
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
@@ -1977,7 +1983,7 @@ Partial Public Class PoleReinfSection
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleMatlProp In ParentPole.matls
                     If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
-                        SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
                     End If
                 Next
             End If
@@ -1994,7 +2000,23 @@ Partial Public Class PoleReinfSection
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\3 Reinf Section (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        If IsSomething(Me.matl_id) And Me.matl_id <> 0 Then
+            SQLUpdate = SQLUpdate.Replace("[MATL ID]", Me.matl_id.ToString.FormatDBValue)
+        Else
+            SQLUpdate = SQLUpdate.Replace("[MATL ID]", "NULL")
+
+            Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+            If IsSomething(ParentPole) Then
+                For Each dbrow As PoleMatlProp In ParentPole.matls
+                    If Me.local_matl_id = dbrow.local_matl_id Then
+                        SQLUpdate = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
+                    End If
+                Next
+            End If
+
+        End If
+
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.section_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2431,13 +2453,13 @@ Partial Public Class PoleReinfGroup
         SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (INSERT).sql")
 
         If IsSomething(Me.reinf_id) And Me.reinf_id <> 0 Then 'Default Reinf Used - no need to pull in subqueries in order to create Reinf Group
-            SQLInsert = SQLInsert.Replace("--[REINF DB INSERT]", "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+            SQLInsert = SQLInsert.Replace("--[REINF DB SUBQUERY]", "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
         Else ' Custom Reinf/Matl/Bolt used
             Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleReinfProp In ParentPole.reinfs
                     If Me.local_reinf_id = dbrow.local_reinf_id Then
-                        SQLInsert = SQLInsert.Replace("--[REINF DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[REINF DB SUBQUERY]", dbrow.SQLInsert)
                     End If
                 Next
             End If
@@ -2449,7 +2471,7 @@ Partial Public Class PoleReinfGroup
 
         For Each detailrow As PoleReinfDetail In reinf_ids
             If Me.local_group_id = detailrow.local_group_id Then
-                SQLInsert = SQLInsert.Replace("--[REINF DETAIL INSERT]", detailrow.SQLInsert)
+                SQLInsert = SQLInsert.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLInsert)
             End If
         Next
 
@@ -2461,8 +2483,35 @@ Partial Public Class PoleReinfGroup
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        If IsSomething(Me.reinf_id) And Me.reinf_id <> 0 Then 'Default Reinf Used - no need to pull in subqueries in order to create Reinf Group
+            SQLUpdate = SQLUpdate.Replace("--[REINF DB SUBQUERY]", "SET @SubLevel2ID = " & Me.reinf_id.ToString.FormatDBValue)
+        Else ' Custom Reinf/Matl/Bolt used
+            Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+            If IsSomething(ParentPole) Then
+                For Each dbrow As PoleReinfProp In ParentPole.reinfs
+                    If Me.local_reinf_id = dbrow.local_reinf_id Then
+                        SQLUpdate = SQLUpdate.Replace("--[REINF DB SUBQUERY]", dbrow.SQLInsert)
+                    End If
+                Next
+            End If
+
+        End If
+
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+
+        For Each detailrow As PoleReinfDetail In reinf_ids
+            If IsSomething(detailrow.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                If IsSomething(detailrow.local_group_id) Then
+                    SQLUpdate = SQLUpdate.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLUpdate)
+                Else
+                    SQLUpdate = SQLUpdate.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLDelete)
+                End If
+            Else
+                SQLUpdate = SQLUpdate.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLInsert)
+            End If
+        Next
+
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLUpdate
@@ -2471,7 +2520,14 @@ Partial Public Class PoleReinfGroup
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
+
+        For Each detailrow As PoleReinfDetail In reinf_ids
+            If Me.local_group_id = detailrow.local_group_id Then
+                SQLDelete = SQLInsert.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLDelete)
+            End If
+        Next
+
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -2714,7 +2770,7 @@ Partial Public Class PoleReinfDetail
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[GROUP ID]", Me.group_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.reinforcement_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2724,7 +2780,7 @@ Partial Public Class PoleReinfDetail
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[GROUP ID]", Me.group_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.reinforcement_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -2928,7 +2984,7 @@ Partial Public Class PoleIntGroup
 
         For Each detailrow As PoleIntDetail In int_ids
             If Me.local_group_id = detailrow.local_group_id Then
-                SQLInsert = SQLInsert.Replace("--[INT DETAIL INSERT]", detailrow.SQLInsert)
+                SQLInsert = SQLInsert.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLInsert)
             End If
         Next
 
@@ -2940,8 +2996,21 @@ Partial Public Class PoleIntGroup
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+
+        For Each detailrow As PoleIntDetail In int_ids
+            If IsSomething(detailrow.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                If IsSomething(detailrow.local_group_id) Then
+                    SQLUpdate = SQLUpdate.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLUpdate)
+                Else
+                    SQLUpdate = SQLUpdate.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLDelete)
+                End If
+            Else
+                SQLUpdate = SQLUpdate.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLInsert)
+            End If
+        Next
+
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLUpdate
@@ -2950,7 +3019,14 @@ Partial Public Class PoleIntGroup
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
+
+        For Each detailrow As PoleIntDetail In int_ids
+            If Me.local_group_id = detailrow.local_group_id Then
+                SQLDelete = SQLInsert.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLDelete)
+            End If
+        Next
+
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -3162,7 +3238,7 @@ Partial Public Class PoleIntDetail
     Public Overrides Function SQLUpdate() As String
         SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.interference_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3172,7 +3248,7 @@ Partial Public Class PoleIntDetail
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.interference_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -3386,24 +3462,24 @@ Partial Public Class PoleReinfResults
         Return SQLInsert
     End Function
 
-    Public Overrides Function SQLUpdate() As String
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (UPDATE).sql")
+    'Public Overrides Function SQLUpdate() As String
+    '    SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (UPDATE).sql")
 
-        SQLUpdate = SQLUpdate.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+    '    SQLUpdate = SQLUpdate.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
+    '    SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+    '    SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
-        Return SQLUpdate
-    End Function
+    '    Return SQLUpdate
+    'End Function
 
-    Public Overrides Function SQLDelete() As String
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (DELETE).sql")
+    'Public Overrides Function SQLDelete() As String
+    '    SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
+    '    SQLDelete = SQLDelete.Replace("[WO]", Me.work_order_seq_num.ToString.FormatDBValue)
+    '    SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
-        Return SQLDelete
-    End Function
+    '    Return SQLDelete
+    'End Function
 #End Region
 
 #Region "Define"
@@ -4237,7 +4313,7 @@ Partial Public Class PoleReinfProp
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleMatlProp In ParentPole.matls
                     If Me.local_matl_id = dbrow.local_matl_id Then 'And Me.local_matl_id > 17 Then 'Matching, Non-Standard Materials
-                        SQLInsert = SQLInsert.Replace("--[MATL DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
                     End If
                 Next
             End If
@@ -4251,7 +4327,7 @@ Partial Public Class PoleReinfProp
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleBoltProp In ParentPole.bolts
                     If Me.local_bolt_id_top = dbrow.local_bolt_id Then '
-                        SQLInsert = SQLInsert.Replace("--[TOP BOLT DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[TOP BOLT DB SUBQUERY]", dbrow.SQLInsert)
                         SQLInsert = SQLInsert.Replace("@BoltID", "@TopBoltID")
                     End If
                 Next
@@ -4266,7 +4342,7 @@ Partial Public Class PoleReinfProp
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleBoltProp In ParentPole.bolts
                     If Me.local_bolt_id_bot = dbrow.local_bolt_id Then '
-                        SQLInsert = SQLInsert.Replace("--[BOT BOLT DB INSERT]", dbrow.SQLInsert)
+                        SQLInsert = SQLInsert.Replace("--[BOT BOLT DB SUBQUERY]", dbrow.SQLInsert)
                         SQLInsert = SQLInsert.Replace("@BoltID", "@BotBoltID")
                     End If
                 Next
