@@ -199,7 +199,7 @@ Public Module Extensions
     End Function
 
     <Extension()>
-    Public Function EDSResultQuery(alist As List(Of EDSResult), Optional ByVal ResultsParentID As Integer? = Nothing) As String
+    Public Function EDSResultQuery(Of T As EDSResult)(alist As List(Of T), Optional ByVal ResultsParentID As Integer? = Nothing) As String
 
         EDSResultQuery = ""
 

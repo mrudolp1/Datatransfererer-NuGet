@@ -383,7 +383,7 @@ Partial Public Class frmMain
 #Region "Shame"
 
     Dim tappy As Integer
-    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs)
         Dim pwd As String
         If tappy = 0 Then
             MessageBox.Show("Stop touching me. GAR it makes me so mad!", "DO NOT TAP ON GLASS")
