@@ -823,6 +823,78 @@ Partial Public Class tnxGeometry
 
         Return Equals
     End Function
+
+    ''' <summary>
+    ''' Converts from XML report section numbering to upper/base geometry record numbers
+    ''' </summary>
+    ''' <param name="SectionNumber">1 as top section.</param>
+    ''' <returns></returns>
+    Public Function tnxSectionSelector(SectionNumber As Integer) As tnxGeometryRec
+        If SectionNumber <= Me.upperStructure.Count Then
+            Return Me.upperStructure(SectionNumber - 1)
+        Else
+            Return Me.baseStructure(SectionNumber - Me.upperStructure.Count - 1)
+        End If
+    End Function
+
+End Class
+
+Public Class tnxResult
+    Inherits EDSResult
+
+    <Category("Loads"), Description(""), DisplayName("Design Load")>
+    Public Property DesignLoad As Double?
+    <Category("Loads"), Description(""), DisplayName("Applied Load")>
+    Public Property AppliedLoad As Double?
+    <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
+    Public Property LoadRatioLimit As Double?
+    <Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
+    Public Property RequiredSafteyFactor As Double?
+    <Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
+    Public Property UseSFInsteadofRatio As Boolean = False
+
+
+    Public Sub New()
+        'Leave Blank
+    End Sub
+    ''' <summary>
+    ''' Create result object with result_lkup and rating
+    ''' </summary>
+    ''' <param name="result_lkup"></param>
+    ''' <param name="rating"></param>
+    ''' <param name="designLoad"></param>
+    ''' <param name="appliedLoad"></param>
+    ''' <param name="Parent"></param>
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioorSafteyFactor As Double?, ByVal UseSafetyFactor As Boolean, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+
+        Me.result_lkup = result_lkup
+        Me.rating = rating
+        Me.DesignLoad = designLoad
+        Me.AppliedLoad = appliedLoad
+        Me.UseSFInsteadofRatio = UseSafetyFactor
+        If UseSafetyFactor Then
+            Me.RequiredSafteyFactor = RatioorSafteyFactor
+        Else
+            Me.LoadRatioLimit = RatioorSafteyFactor
+        End If
+
+    End Sub
+
+    Public Function NormalizedRatio() As Double
+        If rating.HasValue Then
+            If UseSFInsteadofRatio And RequiredSafteyFactor.HasValue Then
+                Return rating.Value / RequiredSafteyFactor.Value
+            ElseIf Not UseSFInsteadofRatio And LoadRatioLimit.HasValue Then
+                Return rating.Value / LoadRatioLimit.Value
+            End If
+        End If
+        Return 0
+    End Function
+
 End Class
 
 Partial Public MustInherit Class tnxGeometryRec
@@ -831,6 +903,8 @@ Partial Public MustInherit Class tnxGeometryRec
     'Use this type to allow sorting by Record instead of ID and provide a custom version of EDSListQueryBuilder for tnx geometry records
     Public Property Rec As Integer?
     Public Overrides ReadOnly Property EDSTableDepth As Integer = 1
+    'This cannot override the Results list from the EDSObjectWithQueries because it is a different type, instead we can shadow
+    Public Shadows Property Results As New List(Of tnxResult)
 
     Public Overloads Function CompareTo(other As tnxGeometryRec) As Integer Implements IComparable(Of tnxGeometryRec).CompareTo
         'Sorted by Rec
@@ -9969,7 +10043,7 @@ Partial Public Class tnxGuyRecord
 #Region "Inheritted"
 
     Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.upper_structure_sections"
+    Public Overrides ReadOnly Property EDSTableName As String = "tnx.guys"
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
