@@ -48,52 +48,46 @@ Partial Public Class tnxTowerOutputMemberCompressionComponentType
     Public Sub AddMaxComponentResultstoSection(tnxSection As tnxGeometryRec)
         Dim controllingMember As tnxTowerOutputMemberCompressionMember = Me.MaxMember()
         'Compression
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_p", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_p", Me.Name.ToLower),
                                              controllingMember.Compression.PDCRatio,
                                              controllingMember.Compression.phiPn,
                                              controllingMember.Compression.Pu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Bending X
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_mx", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_mx", Me.Name.ToLower),
                                              controllingMember.Bending.MxDCRatio,
                                              controllingMember.Bending.phiMnx,
                                              controllingMember.Bending.Mux,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Bending Y
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_my", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_my", Me.Name.ToLower),
                                              controllingMember.Bending.MyDCRatio,
                                              controllingMember.Bending.phiMny,
                                              controllingMember.Bending.Muy,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Shear
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_v", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_v", Me.Name.ToLower),
                                              controllingMember.Shear.VDCRatio,
                                              controllingMember.Shear.phiVn,
                                              controllingMember.Shear.Vu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Torsion
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_t", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_t", Me.Name.ToLower),
                                              controllingMember.Shear.TDCRatio,
                                              controllingMember.Shear.phiTn,
                                              controllingMember.Shear.Tu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Interaction
-        tnxSection.Results.Add(New tnxResult(String.Format("comp_{0}_int", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_int", Me.Name.ToLower),
                                              controllingMember.Interaction.CombinedDCRatio,
                                              Nothing,
                                              Nothing,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
     End Sub
 End Class
@@ -124,52 +118,46 @@ Partial Public Class tnxTowerOutputMemberTensionComponentType
     Public Sub AddMaxComponentResultstoSection(tnxSection As tnxGeometryRec)
         Dim controllingMember As tnxTowerOutputMemberTensionMember = Me.MaxMember()
         'Compression
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_p", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_p", Me.Name.ToLower),
                                              controllingMember.Tension.PDCRatio,
                                              controllingMember.Tension.phiPn,
                                              controllingMember.Tension.Pu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Bending X
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_mx", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_mx", Me.Name.ToLower),
                                              controllingMember.Bending.MxDCRatio,
                                              controllingMember.Bending.phiMnx,
                                              controllingMember.Bending.Mux,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Bending Y
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_my", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_my", Me.Name.ToLower),
                                              controllingMember.Bending.MyDCRatio,
                                              controllingMember.Bending.phiMny,
                                              controllingMember.Bending.Muy,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Shear
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_v", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_v", Me.Name.ToLower),
                                              controllingMember.Shear.VDCRatio,
                                              controllingMember.Shear.phiVn,
                                              controllingMember.Shear.Vu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Torsion
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_t", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_t", Me.Name.ToLower),
                                              controllingMember.Shear.TDCRatio,
                                              controllingMember.Shear.phiTn,
                                              controllingMember.Shear.Tu,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
         'Interaction
-        tnxSection.Results.Add(New tnxResult(String.Format("ten_{0}_int", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_int", Me.Name.ToLower),
                                              controllingMember.Interaction.CombinedDCRatio,
                                              Nothing,
                                              Nothing,
                                              Me.ComponentDesignParameters.DCRatioLimit,
-                                             False,
                                              tnxSection))
     End Sub
 End Class
@@ -210,12 +198,11 @@ Partial Public Class tnxTowerOutputGuyMember
     Public Sub AddGuyResultstoGuyRec(guyRec As tnxGuyRecord)
         If guyRec Is Nothing Then Exit Sub
         'Tension
-        guyRec.Results.Add(New tnxResult(String.Format("guy_{0}_tu", Me.GuyLeg.ToLower),
-                                             Me.ActualSF,
+        guyRec.TNXResults.Add(New tnxResult(String.Format("guy_{0}_tu", Me.GuyLeg.ToLower),
+                                             1 / Me.ActualSF,
                                              Me.phiTn,
                                              Me.Tu,
-                                             Me.RequiredSF,
-                                             True,
+                                             1 / Me.RequiredSF,
                                              guyRec))
 
     End Sub
@@ -267,12 +254,11 @@ Partial Public Class tnxTowerOutputBoltDesignComponentType
         Dim controllingBolt As tnxTowerOutputBoltDesignMember = Me.MaxMember()
         Dim tensionRatioLimit As Double = memberTension.ComponentType.Where(Function(x) x.Name = Me.Name).FirstOrDefault.ComponentDesignParameters.DCRatioLimit
         'Bolt
-        tnxSection.Results.Add(New tnxResult(String.Format("bolt_{0}_max", Me.Name.ToLower),
+        tnxSection.TNXResults.Add(New tnxResult(String.Format("bolt_{0}_max", Me.Name.ToLower),
                                              controllingBolt.BoltRatio,
                                              controllingBolt.BoltCapacity,
                                              controllingBolt.BoltLoad,
                                              tensionRatioLimit,
-                                             False,
                                              tnxSection))
     End Sub
 End Class

@@ -25,13 +25,13 @@ Partial Public Class EDSStructure
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
-    Public Overrides Property ParentStructure As EDSStructure
+    Public Overrides ReadOnly Property ParentStructure As EDSStructure
         Get
             Return Me
         End Get
-        Set(value As EDSStructure)
-            _ParentStructure = value
-        End Set
+        'Set(value As EDSStructure)
+        '    _ParentStructure = value
+        'End Set
     End Property
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}

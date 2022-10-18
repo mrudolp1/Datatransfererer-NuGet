@@ -40,6 +40,23 @@ Partial Public Class tnxModel
     Private _otherLines As New List(Of String())
     Private _ConsiderLoadingEquality As Boolean = True
     Private _ConsiderGeometryEquality As Boolean = True
+    'Private _filePath As String
+    'Private _database As tnxDatabase
+    'Private _settings As tnxSettings
+    'Private _solutionSettings As tnxSolutionSettings
+    'Private _MTOSettings As tnxMTOSettings
+    'Private _reportSettings As tnxReportSettings
+    'Private _CCIReport As tnxCCIReport
+    'Private _code As tnxCode
+    'Private _options As tnxOptions
+    'Private _geometry As tnxGeometry
+    'Private _feedLines As New List(Of tnxFeedLine)
+    'Private _discreteLoads As New List(Of tnxDiscreteLoad)
+    'Private _dishes As New List(Of tnxDish)
+    'Private _userForces As New List(Of tnxUserForce)
+    'Private _otherLines As New List(Of String())
+    'Private _ConsiderLoadingEquality As Boolean = True
+    'Private _ConsiderGeometryEquality As Boolean = True
 
     <Category("TNX"), Description(""), DisplayName("filePath")>
     Public Property filePath() As String
