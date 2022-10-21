@@ -374,8 +374,10 @@ Partial Public Class EDSResult
         MyBase.Absorb(Host)
         'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableDepth = Host.EDSTableDepth + 1
-        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results)
-        Me.EDSTableName = Host.EDSTableName & "_results"
+        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
+        Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
+                             Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
+                             Host.EDSTableName) & "_results"
         'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
         'Seperate the table name from the schema then add _id
         Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
@@ -383,8 +385,30 @@ Partial Public Class EDSResult
                                 Host.EDSTableName & "_id")
     End Sub
 
-    Public Sub New()
-        'Leave Blank
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="Parent"></param>
+    Public Sub New(Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Create result object with result_lkup and rating
+    ''' </summary>
+    ''' <param name="result_lkup"></param>
+    ''' <param name="rating"></param>
+    ''' <param name="Parent"></param>
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+        Me.result_lkup = result_lkup
+        Me.rating = rating
     End Sub
 
     Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
