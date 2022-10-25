@@ -132,6 +132,59 @@ Module DoDaSQL
 
         Return True
     End Function
+
+    Public Function safeSqlSender(ByVal SQLCommand As SQLCommand, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            sqlCon = New SqlConnection(ActiveDatabase)
+            Dim sqlCmd = SQLCommand
+            sqlCmd.Connection = sqlCon
+            sqlCon.Open()
+
+            Try
+                sqlCmd.ExecuteNonQuery()
+            Catch ex As Exception
+                sqlCon.Close()
+                Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo)
+                erNo = "Error: " & erNo & vbNewLine & ex.Message
+                Return False
+            End Try
+
+            sqlCon.Close()
+        End Using
+
+        Return True
+    End Function
+    Public Function safeSqlTransactionSender(ByVal SQLCommands As List(of SQLCommand), ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
+        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
+            sqlCon = New SqlConnection(ActiveDatabase)
+            sqlCon.Open()
+            Dim transaction = sqlCon.BeginTransaction()
+
+            For Each cmd In SQLCommands
+                Try
+                    cmd.Connection = sqlCon
+                    cmd.Transaction = transaction
+                    cmd.ExecuteNonQuery()
+                Catch ex As Exception
+                    Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo)
+                    Try
+                        transaction.Rollback()
+                    Catch ex2 As Exception
+                        'TODO set error num
+                        Return False
+                    Finally
+                        sqlCon.Close()
+                    End Try
+                
+                    Return False
+                End Try
+            Next
+            transaction.commit()
+            sqlCon.Close()
+        End Using
+
+        Return True
+    End Function
 #End Region
 
     <DebuggerStepThrough()>

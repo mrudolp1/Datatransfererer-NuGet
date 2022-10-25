@@ -1,5 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
+'Imports Microsoft.Data.SqlClient
+
 Imports System.Security.Principal
 
 Public Class ReportOptions
@@ -67,6 +69,17 @@ Public Class ReportOptions
 
     'Appendixes
     Public AppendixDocuments As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+
+    'Documents (for Table 4)
+    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument)
+
+    'Equipment (Tables 1,2,3)
+    Public ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
+    Public OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
+
+    'Temporary place to put LMP data, to eventually be merged with the Equipment Tables in the Report Class Library...
+    Public temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
+
 
     'Helper Variables
     Public Property IsFromDB As Boolean
@@ -144,6 +157,7 @@ Public Class ReportOptions
         structure_id = SID
         AttemptedWO = WO
 
+        'Try to load in-progress report
         Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & WO & "'"
         Using strDS As New DataSet
             sqlLoader(query1, strDS, ActiveDatabase, LogOnUser, 500)
@@ -155,6 +169,7 @@ Public Class ReportOptions
             End If
         End Using
 
+        'Try to load default options
         Dim query2 = "SELECT * FROM report.report_options WHERE bus_unit='" & BU & "' AND structure_id='" & SID & "' AND is_default = 1"
         Using strDS As New DataSet
             sqlLoader(query2, strDS, ActiveDatabase, LogOnUser, 500)
@@ -166,7 +181,11 @@ Public Class ReportOptions
             End If
         End Using
 
+        'If can't load anything from EDS: Clean slate, bring in normal stuff that every report needs.
         IsFromDB = False
+        IsFromDefault = False
+        LoadDocumentsFromOracle()
+        LoadFeedLinesFromOracle()
 
     End Sub
 
@@ -540,7 +559,7 @@ Public Class ReportOptions
         End Try
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("EngName"), String)) Then
-                Me.EngName= CType(SiteCodeDataRow.Item("EngName"), String)
+                Me.EngName = CType(SiteCodeDataRow.Item("EngName"), String)
             Else
                 Me.EngName = Nothing
             End If
@@ -574,12 +593,12 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.EngStampTitle = Nothing
         End Try
-
+        Console.WriteLine("ATTEMPT5000")
 #End Region
 
 #Region "Load related report lists"
         'Load list items
-        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & wo & "'"
+        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & AttemptedWO & "'"
         'Console.WriteLine(ActiveDatabase)
         'Console.WriteLine(LogOnUser.AccessToken)
         Using strDS As New DataSet
@@ -605,7 +624,7 @@ Public Class ReportOptions
 #End Region
 #Region "Load related report appendixes"
         'Load list items
-        query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & wo & "'"
+        query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & AttemptedWO & "'"
         'Console.WriteLine(ActiveDatabase)
         'Console.WriteLine(LogOnUser.AccessToken)
 
@@ -614,12 +633,12 @@ Public Class ReportOptions
             If (strDS.Tables(0).Rows.Count > 0) Then
                 AppendixDocuments.Clear()
                 AppendixDocuments.Add("rtf", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("A",   New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("B",   New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("C",   New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("D",   New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("Y",   New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("Z",   New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("A", New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("B", New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("C", New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("D", New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("Y", New List(Of FilepathWithPriority))
+                AppendixDocuments.Add("Z", New List(Of FilepathWithPriority))
                 AppendixDocuments.Add("Extra", New List(Of FilepathWithPriority))
             End If
 
@@ -639,97 +658,539 @@ Public Class ReportOptions
 
         End Using
 #End Region
+#Region "Load related report documents (for table 4)"
+        'Load doc items
+        query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & AttemptedWO & "'"
 
+        Using strDS As New DataSet
+            TableDocuments.Clear()
+            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            If (strDS.Tables(0).Rows.Count > 0) Then
+                For Each item In strDS.Tables(0).Rows
+                    Dim t As TableDocument = New TableDocument(
+                            CType(item.Item("doc_name"), String),
+                            CType(item.Item("doc_id"), String),
+                            CType(item.Item("source"), String),
+                            CType(item.Item("valid"), Boolean))
+                    t.Enabled = CType(item.Item("checked"), Boolean)
+                    TableDocuments.Add(t)
+
+                Next
+            Else
+                'LoadDocumentsFromOracle()
+            End If
+
+        End Using
+#End Region
+#Region "Load related report equipment (for table 1-3)"
+        Console.WriteLine("LMP>>1")
+        'Load list items
+        query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & AttemptedWO & "'"
+
+        Using strDS As New DataSet
+            ProposedEquipment.Clear()
+            OtherEquipment.Clear()
+            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+
+            If (strDS.Tables(0).Rows.Count > 0) Then
+                For Each item In strDS.Tables(0).Rows
+                    Dim t As Equipment = New Equipment(
+                        CType(item.Item("mounting_level"), String),
+                        CType(item.Item("center_line_elevation"), String),
+                        CType(item.Item("num_antennas"), String),
+                        CType(item.Item("antenna_manufacturer"), String),
+                        CType(item.Item("antenna_model"), String),
+                        CType(item.Item("num_feed_lines"), String),
+                        CType(item.Item("feed_line_size"), String)
+                    )
+                    't.enabled = CType(item.Item("checked"), Boolean)
+
+                    If (CType(item.Item("table_num"), Integer) = 1) Then
+                        ProposedEquipment.Add(t)
+                    ElseIf (CType(item.Item("table_num"), Integer) = 3) Then
+                        OtherEquipment.Add(t)
+                    End If
+
+                Next
+            
+            End If
+
+        End Using
+#End Region
     End Sub
 
 #End Region
 
+    Private Sub LoadFeedLinesFromOracle()
+         Using strDS As New DataSet
+                'Console.WriteLine("LMP>>"+queryPath)
+                'Dim lmp_query As String = QueryBuilderFromFile(queryPath & "Report\LMP.sql").Replace("[WO]", AttemptedWO.FormatDBValue())
+                'Console.WriteLine("LMP>>",lmp_query)
+                'Dim result = sqlLoader(lmp_query, strDS, ActiveDatabase, LogOnUser, 500)
+                
+            Dim lmp_query = "WITH  
+                vars AS 
+                    --Dual is an empty dummy table. Use this CTE to pull in variables.
+                    --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
+                    --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
+                    (SELECT "+AttemptedWO+" AS work_order_seq_num FROM DUAL), 
+
+                wo AS (
+                    SELECT  wos.work_order_seq_num 
+                            ,wos.bus_unit 
+                            ,wos.structure_id
+                            ,wos.eng_app_id
+                            ,wos.crrnt_prjct_rvsn_num
+                            ,str.bearing_angle
+                            ,str.structure_type
+                            ,ord.org_seq_num
+                    FROM
+                            vars
+                            ,aim.work_orders wos
+                            ,aim.structure str 
+                            ,isite.eng_application ord
+                    WHERE 
+                        wos.work_order_seq_num = vars.work_order_seq_num
+                        AND wos.bus_unit = str.bus_unit (+)
+                        AND wos.structure_id = str.structure_id (+)
+                        AND wos.eng_app_id = ord.eng_app_id (+)
+                    ), 
+                eCom As
+                    (
+                        SELECT 
+                            c.mount_level 
+                            ,c.position
+                            ,c.cmpnt_equipment_catalog_id equipment_catalog_id
+                            ,c.bus_unit
+                            ,c.structure_id                             
+                            ,c.status
+                            ,'Installed' config
+                            ,c.elvtn_num component_cl
+                            ,c.cust_org_seq_num
+                            ,NULL eng_app_id
+                            ,c.quantity_installed_per_antenna quantity
+                        FROM aim.installed_component c
+                            ,wo
+                        WHERE c.bus_unit = wo.bus_unit
+                        AND c.structure_id = wo.structure_id
+                    ),
+                pCom As
+                    (
+                        SELECT 
+                            pc.mount_level 
+                            ,pc.position                
+                            ,pc.cmpnt_equipment_catalog_id equipment_catalog_id
+                            ,pc.bus_unit
+                            ,pc.structure_id
+                            ,pc.status
+                            ,'Proposed' config
+                            ,pc.elvtn_num component_cl
+                            ,pc.cust_org_seq_num
+                            ,pc.eng_app_id
+                            ,pc.quantity_installed_per_antenna quantity
+                        FROM aim.proposed_component pc
+                            ,wo
+                        WHERE pc.bus_unit = wo.bus_unit
+                        AND pc.structure_id = wo.structure_id
+                        AND pc.merged_ind = 'N'
+                    ),
+                lmp AS    
+                    (SELECT * FROM eCom UNION ALL (SELECT * FROM pCom)),    
+                linear AS
+                    (
+                        SELECT   
+                            mfg.org_name database
+                            ,ec.model_number || '(' || es.size_text || ')' USName    
+                            ,ec.model_number SIName
+                            ,CASE
+                                --disable equipment with status other than I, P, or A - this will include Not Installed, MLA, and SLA
+                                WHEN NOT (lmp.status = 'P' OR lmp.status = 'I' OR lmp.status = 'A')THEN 'FALSE' 
+                                --disable installed config when same customer has a proposed config at same mount level
+                                WHEN (lmp.config = 'Installed' 
+                                    -- customer has proposed equipment
+                                    AND lmp.cust_org_seq_num IN (SELECT DISTINCT cust_org_seq_num FROM lmp WHERE config = 'Proposed') 
+                                    -- mount centerline has proposed equipment
+                                    AND lmp.mount_level IN (SELECT DISTINCT mount_level FROM lmp WHERE config = 'Proposed')) 
+                                    THEN 'FALSE'   
+                                --disable all but the newest proposed (max order num) if there are multiple proposed apps from the same customer
+                                WHEN lmp.config = 'Proposed' AND lmp.eng_app_id NOT IN (SELECT lmp.eng_app_id 
+                                                                                        FROM lmp
+                                                                                            ,(SELECT cust_org_seq_num
+                                                                                                    ,MAX(eng_app_id) AS maxApp
+                                                                                            FROM lmp 
+                                                                                            GROUP BY cust_org_seq_num) groupedApps
+                                                                                        WHERE lmp.eng_app_id = groupedApps.maxApp) THEN 'FALSE'
+                                ELSE 'TRUE'
+                                END enabled
+                            ,lmp.status
+                            ,CASE
+                                 --delete statuses other than I, P, or A - this will import them as Unassigned and prevent them from being added to the Table 2 of the report
+                                WHEN NOT (lmp.status = 'P' OR lmp.status = 'I' OR lmp.status = 'A') THEN NULL 
+                                --unassign all but the newest proposed (max order num) if there are multiple proposed apps from the same customer
+                                WHEN lmp.config = 'Proposed' AND lmp.eng_app_id NOT IN (SELECT lmp.eng_app_id 
+                                                                                FROM lmp
+                                                                                    ,(SELECT cust_org_seq_num
+                                                                                            ,MAX(eng_app_id) AS maxApp
+                                                                                    FROM lmp 
+                                                                                    GROUP BY cust_org_seq_num) groupedApps
+                                                                                WHERE lmp.eng_app_id = groupedApps.maxApp) THEN NULL 
+                                --change proposed to reserved if it's not for the current WO customer
+                                WHEN lmp.status = 'P' AND lmp.cust_org_seq_num <> wo.org_seq_num THEN 'R'
+                                ELSE lmp.status
+                                END ccicode
+                            ,CASE WHEN ecx.equipment_category_lkup_code='RND' THEN 'Ar (Round Structural Component)' ELSE 'Af (Flat Structural Component)' END tnxtype
+                            ,lmp.quantity  count  
+                            ,cust.org_name customer
+                            ,lmp.config
+                            ,lmp.eng_app_id order_id   
+                            ,lmp.mount_level endHeight
+                            ,CAST(es.weight_ounce/16 AS DECIMAL(10,2)) selfWeight
+                            ,CAST(es.height_inch AS DECIMAL(10,2)) widthOrDiameter
+                            ,es.size_text
+                        FROM
+                            lmp
+                            ,wo
+                            ,equipment.equipment_catalog            ec
+                            ,equipment.equipment_specification      es
+                            ,aim.org                                mfg
+                            ,aim.org                                cust
+                            ,equipment.equipment_category_xref      ecx
+                            ,app_common.business_entity             be
+                            ,aim.site                               s
+                        WHERE
+                            lmp.equipment_catalog_id = ec.equipment_catalog_id
+                            AND ec.manufacturer_org_id = mfg.org_seq_num
+                            AND ec.equipment_category_id = ecx.equipment_category_id
+                            AND ec.equipment_catalog_id = es.equipment_catalog_id
+                            AND lmp.bus_unit = be.bus_unit
+                            AND be.lob_code = 'TWR'
+                            AND lmp.bus_unit = s.bus_unit
+                            AND ecx.equipment_grouping_lkup_code='FEEDLINE'
+                            AND wo.bus_unit = be.bus_unit
+                            AND wo.bus_unit = s.bus_unit
+                            AND lmp.cust_org_seq_num = cust.org_seq_num (+)
+                        ORDER BY
+                             lmp.mount_level DESC
+                            ,lmp.component_cl DESC
+                            ,mfg.org_name ASC     
+                    )
+            --SELECT *
+            --FROM pCom
+            SELECT 
+                enabled
+                --,database
+                ,usname 
+                --,siname
+                --,tnxtype 
+                ,status
+                ,ccicode
+                ,SUM(count) as count
+                ,endheight
+                --,selfweight
+                ,size_text
+                --,widthordiameter
+                --,MAX(customer)
+                --,MAX(config)
+                --,order_id
+            FROM linear 
+            GROUP BY
+                enabled
+                ,database
+                ,usname
+                ,siname
+                ,tnxtype
+                ,ccicode
+                ,status
+                ,endheight
+                ,selfweight
+                --,widthordiameter
+                ,order_id
+                ,size_text
+            HAVING enabled = 'TRUE'
+            ORDER BY 
+                endHeight DESC
+                ,MAX(config) DESC
+                ,(case ccicode 
+                    WHEN 'P' THEN 1
+                    WHEN 'R' THEN 2
+                    WHEN 'I' THEN 3
+                    WHEN 'A' THEN 4
+                    ELSE 5
+                    END) ASC
+                ,(case status 
+                    WHEN 'P' THEN 1
+                    WHEN 'I' THEN 2
+                    WHEN 'A' THEN 3
+                    ELSE 4
+                    END) ASC
+                ,order_id DESC    
+                ,database ASC
+                ,usname ASC
+                "
+
+            Dim result = OracleLoader(lmp_query, "LMP", strDS, 3000, "isit")
+            Console.WriteLine(lmp_query)
+            Console.WriteLine(">>" + result.ToString())
+
+            If result Then
+                If (strDS.Tables("LMP").Rows.Count > 0) Then
+                    For Each item In strDS.Tables("LMP").Rows
+                        Dim t As FeedLineInformation = New FeedLineInformation(
+                                CType(item.Item("enabled"), Boolean),
+                                CType(item.Item("size_text"), String),
+                                CType(item.Item("status"), String),
+                                CType(item.Item("ccicode"), String),
+                                CType(item.Item("count"), String),
+                                CType(item.Item("endheight"), String))
+                        temp_LMP.add(t)
+                    Next
+                End If
+            End If
+        End Using
+        'Dim query25 As String = QueryBuilderFromFile("")
+        'LoadDocumentsFromOracle()
+    End Sub
+    Private Sub LoadDocumentsFromOracle()
+        Dim Golden As List(Of String) = New List(Of String)({
+            "4-GEOTECHNICAL REPORTS",
+            "4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS",
+            "4-TOWER MANUFACTURER DRAWINGS",
+            "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
+            "4-POST-INSTALLATION INSPECTION"})
+
+        Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
+                from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
+                where dim.ctry_id = 'US'
+                    and dim.doc_type_num = dtm.doc_type_num
+                    and dim.otg_app_num = dtm.otg_app_num
+                    and dim.doc_id=t.doc_id
+                    and dim.bus_unit in ('" & bus_unit & "')
+                    and dtm.doc_type_name LIKE '4-%'"
+        Using strDS As New DataSet
+            OracleLoader(doc_query, "Documents", strDS, 3000, "isit")
+
+            Console.WriteLine("D1")
+            For Each item In strDS.Tables("Documents").Rows
+                Dim t As TableDocument = New TableDocument(
+                        item("doc_name"), item("doc_id"), "CCISITES", item("validity") = "VALID")
+                If (Golden.Contains(t.Document)) Then
+                    t.Enabled = True
+                End If
+
+                TableDocuments.Add(t)
+            Next
+        End Using
+    End Sub
     Public Function SaveReportOptionsToEds(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String) As Integer
+
         Try
-
-
             'If new default options, make other options not default
             If IsDefault Then 'Update bit
                 Dim x = SQLReplace_Default()
-                Console.WriteLine(SQLReplace_Default())
+                'Console.WriteLine(SQLReplace_Default())
                 sqlSender(SQLReplace_Default(), ActiveDatabase, LogOnUser, 0.ToString)
             End If
 
             'Find and update (or insert) report options
-            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & wo & "'"
+            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & AttemptedWO & "'"
             Using strDS As New DataSet
                 sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
                 If strDS.Tables(0).Rows.Count > 0 Then 'Update
-                    sqlSender(SQLUpdate(), ActiveDatabase, LogOnUser, 0.ToString)
+                    Dim opt_result = sqlSender(SQLUpdate(), ActiveDatabase, LogOnUser, 0.ToString)
+                    If (Not opt_result) Then
+                        Console.WriteLine(SQLUpdate())
+                        Return 500
+                    End If
 
-                Else 'Insert
-                    Console.WriteLine(SQLInsert())
-                    sqlSender(SQLInsert(), ActiveDatabase, LogOnUser, 0.ToString)
-                    'SQLInsert()
+                Else
+                    Dim opt_result = sqlSender(SQLInsert(), ActiveDatabase, LogOnUser, 0.ToString)
+                    If (Not opt_result) Then
+                        Console.WriteLine(SQLInsert())
+                        Return 500
+                    End If
                 End If
             End Using
 
 #Region "Deal with report option lists"
+            Dim commands = New List(Of SqlCommand)
 
             'Delete all list items associated with WO
-            query = "DELETE FROM report.report_lists WHERE work_order_seq_num ='" & wo & "'"
-            Using strDS As New DataSet
-                sqlSender(query, ActiveDatabase, LogOnUser, 500)
-            End Using
+            commands.Add(New SqlCommand("DELETE FROM report.report_lists WHERE work_order_seq_num ='" & AttemptedWO & "'"))
 
-            'Add current list items
-            Using strDS As New DataSet
-                Dim FinalQuery = "BEGIN" & vbCrLf &
-                                    "[INSERTS]" & vbCrLf &
-                                 "END" & vbCrLf
-                Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & wo & ",'[LIST]', '[VALUE]');"
-                Dim inserts = ""
-                For Each Item In Assumptions
-                    inserts += queryTemplate.Replace("[LIST]", "assumptions").Replace("[VALUE]", Item)
-                Next
-                For Each Item In Notes
-                    inserts += queryTemplate.Replace("[LIST]", "notes").Replace("[VALUE]", Item)
-                Next
-                For Each Item In LoadingChanges
-                    inserts += queryTemplate.Replace("[LIST]", "loading_changes").Replace("[VALUE]", Item)
-                Next
 
-                FinalQuery = FinalQuery.Replace("[INSERTS]", inserts)
-                Console.WriteLine(FinalQuery)
-                sqlSender(FinalQuery, ActiveDatabase, LogOnUser, 500)
-            End Using
+            Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & AttemptedWO & ",@LIST, @VALUE);"
+
+            For Each Item In Assumptions
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@LIST", SqlDbType.VarChar)
+                command.Parameters.Add("@VALUE", SqlDbType.VarChar)
+
+                command.Parameters("@LIST").Value = "assumptions"
+                command.Parameters("@VALUE").Value = Item.ToString()
+                commands.Add(command)
+
+            Next
+            For Each Item In Notes
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@LIST", SqlDbType.VarChar)
+                command.Parameters.Add("@VALUE", SqlDbType.VarChar)
+
+                command.Parameters("@LIST").Value = "notes"
+                command.Parameters("@VALUE").Value = Item.ToString()
+
+                commands.Add(command)
+            Next
+            For Each Item In LoadingChanges
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@LIST", SqlDbType.VarChar)
+                command.Parameters.Add("@VALUE", SqlDbType.VarChar)
+
+                command.Parameters("@LIST").Value = "loading_changes"
+                command.Parameters("@VALUE").Value = Item.ToString()
+
+                commands.Add(command)
+            Next
+
+            Dim result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            If (Not result) Then
+                Return 500
+            End If
+
 #End Region
 #Region "Deal with report option Appendixes"
 
+            commands = New List(Of SqlCommand)
             'Delete all appendixes filepaths associated with WO
-            query = "DELETE FROM report.report_appendixes WHERE work_order_seq_num ='" & wo & "'"
-            Using strDS As New DataSet
-                sqlSender(query, ActiveDatabase, LogOnUser, 500)
-            End Using
+            commands.Add(New SqlCommand("DELETE FROM report.report_appendixes WHERE work_order_seq_num ='" & AttemptedWO & "'"))
 
             'Add current appendix filepaths
-            Using strDS As New DataSet
-                Dim FinalQuery = "BEGIN" & vbCrLf &
-                                    "[INSERTS]" & vbCrLf &
-                                 "END" & vbCrLf
-                Dim queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename, priority) VALUES(" & wo & ",'[NAME]', '[PATH]', '[FILENAME]','[PRIORITY]');"
-                Dim inserts = ""
-                For Each Item In AppendixDocuments
-                    For Each Document In Item.Value
-                        inserts += queryTemplate.Replace("[NAME]", Item.Key).Replace("[PATH]", Document.filepath).Replace("[PRIORITY]", Document.priority.ToString()).Replace("[FILENAME]", Document.filename)
-                    Next
 
+            queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename, priority) VALUES(" & AttemptedWO & ",@NAME, @PATH, @FILENAME,@PRIORITY );"
+            For Each Item In AppendixDocuments
+                For Each Document In Item.Value
+                    Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                    command.Parameters.Add("@NAME", SqlDbType.VarChar)
+                    command.Parameters.Add("@PATH", SqlDbType.VarChar)
+                    command.Parameters.Add("@PRIORITY", SqlDbType.VarChar)
+                    command.Parameters.Add("@FILENAME", SqlDbType.VarChar)
+
+                    command.Parameters("@NAME").Value = Item.Key
+                    command.Parameters("@PATH").Value = Document.filepath
+                    command.Parameters("@PRIORITY").Value = Document.priority.ToString()
+                    command.Parameters("@FILENAME").Value = Document.filename
+
+                    commands.Add(command)
                 Next
 
-                FinalQuery = FinalQuery.Replace("[INSERTS]", inserts)
-                Console.WriteLine(FinalQuery)
-                sqlSender(FinalQuery, ActiveDatabase, LogOnUser, 500)
-            End Using
-#End Region
+            Next
 
+            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            If (Not result) Then
+                Return 500
+            End If
+
+#End Region
+#Region "Deal with report documents (Table 4)"
+
+
+            commands = New List(Of SqlCommand)
+
+            'Delete all document items associated with WO
+            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+
+            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & AttemptedWO & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
+
+            For Each Item In TableDocuments
+                Dim checkedInt As Integer = 0
+                If (Item.Enabled) Then
+                    checkedInt = 1
+                End If
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@DOC_NAME", SqlDbType.VarChar)
+                command.Parameters.Add("@CHECKED", SqlDbType.VarChar)
+                command.Parameters.Add("@DOC_ID", SqlDbType.VarChar)
+                command.Parameters.Add("@VALID", SqlDbType.VarChar)
+                command.Parameters.Add("@SOURCE", SqlDbType.VarChar)
+
+                command.Parameters("@DOC_NAME").Value = Item.Document
+                command.Parameters("@CHECKED").Value = checkedInt.ToString()
+                command.Parameters("@DOC_ID").Value = Item.Reference
+                command.Parameters("@VALID").Value = Item.Valid
+                command.Parameters("@SOURCE").Value = Item.Source
+
+                commands.Add(command)
+            Next
+
+            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            If (Not result) Then
+                Return 500
+            End If
+
+#End Region
+#Region "Deal with report equipment (Table 1,2,3)"
+
+            'Delete all list items associated with WO
+            commands = New List(Of SqlCommand)
+
+            'Delete all document items associated with WO
+            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+
+
+            queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & AttemptedWO & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
+            For Each Item In ProposedEquipment
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
+                command.Parameters.Add("@center_line_elevation", SqlDbType.VarChar)
+                command.Parameters.Add("@num_antennas", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_manufacturer", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_model", SqlDbType.VarChar)
+                command.Parameters.Add("@num_feed_lines", SqlDbType.VarChar)
+                command.Parameters.Add("@feed_line_size", SqlDbType.VarChar)
+                command.Parameters.Add("@table_num", SqlDbType.VarChar)
+
+                command.Parameters("@mounting_level").Value = Item.mounting_level
+                command.Parameters("@center_line_elevation").Value = Item.center_line_elevation
+                command.Parameters("@num_antennas").Value = Item.num_antennas
+                command.Parameters("@antenna_manufacturer").Value = Item.antenna_manufacturer
+                command.Parameters("@antenna_model").Value = Item.antenna_model
+                command.Parameters("@num_feed_lines").Value = Item.num_feed_lines
+                command.Parameters("@feed_line_size").Value = Item.feed_line_size
+                command.Parameters("@table_num").Value = 1
+
+                commands.Add(command)
+            Next
+            For Each Item In OtherEquipment
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
+                command.Parameters.Add("@center_line_elevation", SqlDbType.VarChar)
+                command.Parameters.Add("@num_antennas", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_manufacturer", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_model", SqlDbType.VarChar)
+                command.Parameters.Add("@num_feed_lines", SqlDbType.VarChar)
+                command.Parameters.Add("@feed_line_size", SqlDbType.VarChar)
+                command.Parameters.Add("@table_num", SqlDbType.VarChar)
+
+                command.Parameters("@mounting_level").Value = Item.mounting_level
+                command.Parameters("@center_line_elevation").Value = Item.center_line_elevation
+                command.Parameters("@num_antennas").Value = Item.num_antennas
+                command.Parameters("@antenna_manufacturer").Value = Item.antenna_manufacturer
+                command.Parameters("@antenna_model").Value = Item.antenna_model
+                command.Parameters("@num_feed_lines").Value = Item.num_feed_lines
+                command.Parameters("@feed_line_size").Value = Item.feed_line_size
+                command.Parameters("@table_num").Value = 3
+
+                commands.Add(command)
+            Next
+
+            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            If (Not result) Then
+                Return 500
+            End If
+#End Region
 
             Return 0
         Catch ex As Exception
+            Console.WriteLine(ex)
             Return 500
         End Try
 
@@ -755,7 +1216,7 @@ Public Class ReportOptions
                   "END" & vbCrLf
         SQLUpdate = SQLUpdate.Replace("[TABLE]", Me.EDSTableName)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.Replace("[ID]", wo)
+        SQLUpdate = SQLUpdate.Replace("[ID]", AttemptedWO)
 
         SQLUpdate = SQLUpdate.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLUpdate
@@ -779,9 +1240,9 @@ Public Class ReportOptions
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.wo.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AttemptedWO.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IsDefault.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss").NullableToString.FormatDBValue)
@@ -800,8 +1261,8 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IBM.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LicenseOnly.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LC.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LCSubtype.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LC.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LCSubtype.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.MappingDocuments.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.MpSliceOption.NullableToString.FormatDBValue)
@@ -823,12 +1284,12 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UseTiltTwistWording.NullableToString.FormatDBValue)
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDate.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngName.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngQAName.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngStampName.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngStampTitle.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngStampName.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngStampTitle.NullableToString.Replace("'", "''").FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -891,8 +1352,8 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = ""
 
         'Skip wo
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit=" & Me.bus_unit.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id=" & Me.structure_id.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit=" & Me.bus_unit.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id=" & Me.structure_id.NullableToString.Replace("'", "''").FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("is_default=" & Me.IsDefault.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id=" & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("addDate=" & DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss").NullableToString.FormatDBValue)
@@ -911,8 +1372,8 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ibm=" & Me.IBM.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("importance_factor_other_than_1=" & Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("license_only=" & Me.LicenseOnly.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("load_configuration=" & Me.LC.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("load_configuration_subtype=" & Me.LCSubtype.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("load_configuration=" & Me.LC.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("load_configuration_subtype=" & Me.LCSubtype.NullableToString.Replace("'", "''").FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("mapping_documents=" & Me.MappingDocuments.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("mp_slip=" & Me.MpSliceOption.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("multiple_foundations_considered=" & Me.MultipleFoundationsConsidered.NullableToString.FormatDBValue)
@@ -933,15 +1394,15 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("use_tilt_twist=" & Me.UseTiltTwistWording.NullableToString.FormatDBValue)
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("report_date=" & Me.ReportDate.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngQAName=" & Me.EngQAName.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngQAName=" & Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampName =" & Me.EngStampName.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampName =" & Me.EngStampName.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampTitle=" & Me.EngStampTitle.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampTitle=" & Me.EngStampTitle.NullableToString.Replace("'", "''").FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -976,4 +1437,157 @@ Public Class FilepathWithPriority
     Public Overrides Function ToString() As String
         Return filename
     End Function
+End Class
+
+Public Class TableDocument
+    Public Property Enabled As Boolean
+
+    Public Property Document As String
+    Public Property Reference As String
+    Public Property Source As String
+
+    Private _valid As Boolean
+
+    Public ReadOnly Property Valid
+        Get
+            Return _valid
+        End Get
+    End Property
+
+    Public Sub New()
+        Document = ""
+        Reference = ""
+        Source = ""
+        _valid = True
+        Enabled = True
+    End Sub
+
+
+    Public Sub New(doc As String, ref As String, src As String, val As Boolean)
+        Document = doc
+        Reference = ref
+        Source = src
+        _valid = val
+
+    End Sub
+End Class
+
+Public Class Equipment
+    <Category("EDS"), Description(""), DisplayName("Mounting Level")>
+    Public Property mounting_level As String
+
+    <Category("EDS"), Description(""), DisplayName("Center Line Elevation")>
+    Public Property center_line_elevation As String
+
+    <Category("EDS"), Description(""), DisplayName("Number of Antennas")>
+    Public Property num_antennas As Long
+
+    <Category("EDS"), Description(""), DisplayName("Antenna Manufacturer")>
+    Public Property antenna_manufacturer As String
+
+    <Category("EDS"), Description(""), DisplayName("Antenna Model")>
+    Public Property antenna_model As String
+
+    <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
+    Public Property num_feed_lines As String
+
+    <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
+    Public Property feed_line_size As String
+
+    'Public Property Enabled As Boolean
+
+    Public Sub New()
+        mounting_level = " - "
+        center_line_elevation = " -  "
+        num_antennas = 0
+        antenna_manufacturer = " - "
+        antenna_model = " - "
+        num_feed_lines = " - "
+        feed_line_size = " - "
+
+        'Enabled = True
+    End Sub
+    Public Sub New(equipment As Equipment)
+        mounting_level = equipment.mounting_level
+        center_line_elevation = equipment.center_line_elevation
+        num_antennas = equipment.num_antennas
+        antenna_manufacturer = equipment.antenna_manufacturer
+        antenna_model = equipment.antenna_model
+        num_feed_lines = equipment.num_feed_lines
+        feed_line_size = equipment.feed_line_size
+
+
+    End Sub
+
+
+    Public Sub New(
+            mounting As String,
+            center_line As String,
+            num_ant As Long,
+            antenna_man As String,
+            antenna_mod As String,
+            num_feed As String,
+            feed_size As String
+        )
+
+        mounting_level = mounting
+        center_line_elevation = center_line
+        num_antennas = num_ant
+        antenna_manufacturer = antenna_man
+        antenna_model = antenna_mod
+        num_feed_lines = num_feed
+        feed_line_size = feed_size
+
+
+    End Sub
+
+    Public Function ToArray() As String()
+        Return {
+            mounting_level, 
+            center_line_elevation, 
+            If(num_antennas = 0, "-", num_antennas),
+            If(antenna_manufacturer, "-"),
+            If(antenna_model, "-"),
+            num_feed_lines,
+            feed_line_size
+        }
+    End Function
+End Class
+
+Public Class FeedLineInformation
+
+    Public Property enabled As Boolean
+    Public Property size As String
+    Public Property status As String
+    Public Property ccicode As String
+    Public Property sum_count As String
+    Public Property endheight As String
+
+    Public Sub New()
+
+    End Sub
+
+    Public Sub New(
+            param_enabled As Boolean,
+            param_usname As String,
+            param_status As String,
+            param_ccicode As String,
+            param_sum_count As String,
+            param_endheight As String
+        )
+
+        enabled = param_enabled
+        size = param_usname
+        status = param_status
+        ccicode = param_ccicode
+        sum_count = param_sum_count
+        endheight = param_endheight
+
+
+    End Sub
+
+    'Public Function ToArray() As String()
+    '    Return {mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size}
+    'End Function
+
 End Class

@@ -251,28 +251,7 @@ Public Class SiteInfo
                 Me.fa_num = Nothing
             End Try
 
-            Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id
-                from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
-                where dim.ctry_id = 'US'
-                    and dim.doc_type_num = dtm.doc_type_num
-                    and dim.otg_app_num = dtm.otg_app_num
-                    and dim.doc_id=t.doc_id
-                    and dim.bus_unit in ('"& bu_num & "')
-                    and dtm.doc_type_name IN 
-                        ('4-GEOTECHNICAL REPORTS', 
-                        '4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS', 
-                        '4-TOWER MANUFACTURER DRAWINGS', 
-                        '4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA',
-                        '4-POST-INSTALLATION INSPECTION')
-                    and doc_actvy_status_lkup_code = 'VALID'"
-
-            OracleLoader(doc_query, "Documents", strDS, 3000, "isit")
-                       
-            For Each item In strDS.Tables("Documents").Rows
-                golden_documents.Add(
-                    New GoldenDocument(
-                       item("doc_name"), item("doc_id"), "CCISITES"))
-            Next
+            
                 
                 'Dim DocumentDataRow = strDS.Tables("Documents").Rows(0)
 
@@ -304,7 +283,7 @@ Public Class SiteInfo
 
     Public Property fa_num As String
 
-    Public Property golden_documents As List(of GoldenDocument) = New List(Of GoldenDocument)
+    'Public Property golden_documents As List(of GoldenDocument) = New List(Of GoldenDocument)
 
 
     Public Property lat_decimal As Double
@@ -347,17 +326,4 @@ Public Class SiteInfo
     'Public Property tower_type As String <-- From TNX
     'Public Property tower_height As String <-- From TNX
 
-End Class
-
-Public Class GoldenDocument
-    Public Property Document As String
-    Public Property Reference As String
-    Public Property Source As String
-    
-    Public Sub New(doc As String, ref As String, src As String)
-        Document = doc
-        Reference = ref
-        Source = src
-
-    End Sub
 End Class
