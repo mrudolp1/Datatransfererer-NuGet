@@ -6,6 +6,7 @@ Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 
+<TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
     <Category("EDS"), Description(""), DisplayName("ID")>
@@ -21,7 +22,14 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Overridable Property Parent As EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Overridable Property ParentStructure As EDSStructure
+    Public Overridable ReadOnly Property ParentStructure As EDSStructure
+        Get
+            Return Me.Parent?.ParentStructure
+        End Get
+        'Set(value As EDSStructure)
+
+        'End Set
+    End Property
     <Category("EDS"), Description(""), DisplayName("BU")>
     Public Property bus_unit As String
     <Category("EDS"), Description(""), DisplayName("Structure ID")>
@@ -41,7 +49,7 @@ Partial Public MustInherit Class EDSObject
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
-        Me.ParentStructure = If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
+        'Me.ParentStructure = Host.ParentStructure 'If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
         Me.bus_unit = Host.bus_unit
         Me.structure_id = Host.structure_id
         Me.work_order_seq_num = Host.work_order_seq_num
@@ -94,6 +102,10 @@ Partial Public MustInherit Class EDSObject
 
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
+    Public Overrides Function ToString() As String
+        Return Me.EDSObjectName
+    End Function
+
 End Class
 
 Partial Public MustInherit Class EDSObjectWithQueries
@@ -104,7 +116,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
     Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
     Public Overridable ReadOnly Property EDSTableDepth As Integer = 0
-    Public Property Results As New List(Of EDSResult)
+    Public Overridable Property Results As New List(Of EDSResult)
 
 
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
@@ -287,7 +299,7 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Rating (%)")>
-    Public Property rating() As Double?
+    Public Overridable Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -328,6 +340,7 @@ Partial Public Class EDSResult
         Insert = Insert.Replace("[TABLE]", Me.EDSTableName)
         Insert = Insert.Replace("[VALUES]", Me.SQLInsertValues(ParentID))
         Insert = Insert.Replace("[FIELDS]", Me.SQLInsertFields)
+        Insert = Insert.TrimEnd()
         Return Insert
     End Function
 
@@ -361,13 +374,41 @@ Partial Public Class EDSResult
         MyBase.Absorb(Host)
         'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableDepth = Host.EDSTableDepth + 1
-        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results)
-        Me.EDSTableName = Host.EDSTableName & "_results"
+        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
+        Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
+                             Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
+                             Host.EDSTableName) & "_results"
         'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
         'Seperate the table name from the schema then add _id
         Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
                                 Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
                                 Host.EDSTableName & "_id")
+    End Sub
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="Parent"></param>
+    Public Sub New(Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Create result object with result_lkup and rating
+    ''' </summary>
+    ''' <param name="result_lkup"></param>
+    ''' <param name="rating"></param>
+    ''' <param name="Parent"></param>
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+        Me.result_lkup = result_lkup
+        Me.rating = rating
     End Sub
 
     Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)

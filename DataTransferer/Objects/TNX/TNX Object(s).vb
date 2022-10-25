@@ -4,9 +4,12 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports System.IO
+Imports System.Xml
+Imports System.Xml.Serialization
 Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports MoreLinq
 
 
 Partial Public Class tnxModel
@@ -37,6 +40,23 @@ Partial Public Class tnxModel
     Private _otherLines As New List(Of String())
     Private _ConsiderLoadingEquality As Boolean = True
     Private _ConsiderGeometryEquality As Boolean = True
+    'Private _filePath As String
+    'Private _database As tnxDatabase
+    'Private _settings As tnxSettings
+    'Private _solutionSettings As tnxSolutionSettings
+    'Private _MTOSettings As tnxMTOSettings
+    'Private _reportSettings As tnxReportSettings
+    'Private _CCIReport As tnxCCIReport
+    'Private _code As tnxCode
+    'Private _options As tnxOptions
+    'Private _geometry As tnxGeometry
+    'Private _feedLines As New List(Of tnxFeedLine)
+    'Private _discreteLoads As New List(Of tnxDiscreteLoad)
+    'Private _dishes As New List(Of tnxDish)
+    'Private _userForces As New List(Of tnxUserForce)
+    'Private _otherLines As New List(Of String())
+    'Private _ConsiderLoadingEquality As Boolean = True
+    'Private _ConsiderGeometryEquality As Boolean = True
 
     <Category("TNX"), Description(""), DisplayName("filePath")>
     Public Property filePath() As String
@@ -708,6 +728,8 @@ Partial Public Class tnxModel
     <Category("Constructor"), Description("Create TNX object from TNX file.")>
     Public Sub New(ByVal tnxPath As String, Optional ByRef Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        Me.filePath = tnxPath
 
         Dim tnxVar As String
         Dim tnxValue As String
@@ -7464,6 +7486,8 @@ Partial Public Class tnxModel
 
         Next
 
+        Me.GetResults()
+
     End Sub
 
 #End Region
@@ -9743,6 +9767,27 @@ Partial Public Class tnxModel
         File.WriteAllLines(FilePath, newERIList, Text.Encoding.ASCII)
 
     End Sub
+#End Region
+
+#Region "Results"
+    Public Sub GetResults()
+
+        Dim tnxResultXMLPath = Me.filePath & ".XMLOUT.xml"
+
+        If Not FileIO.FileSystem.FileExists(tnxResultXMLPath) Then
+            Debug.WriteLine("No TNX Results XML found.")
+            Exit Sub
+        End If
+
+        Dim resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
+        Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
+
+        Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
+
+        tnxXMLResults.ConverttoEDSResults(geometry)
+
+    End Sub
+
 #End Region
 
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean

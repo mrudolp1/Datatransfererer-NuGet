@@ -94,7 +94,7 @@ Public Module TNXExtensions
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).SQLUpdate
                     Else
                         'Save Results Only
-                        TNXGeometryRecListQueryBuilder += currentSortedList(i).Results.EDSResultQuery
+                        TNXGeometryRecListQueryBuilder += currentSortedList(i).TNXResults.EDSResultQuery
                     End If
                 ElseIf currentSortedList(i).Rec < prevSortedList(i).Rec Then
                     TNXGeometryRecListQueryBuilder += prevSortedList(i).SQLDelete
@@ -823,6 +823,109 @@ Partial Public Class tnxGeometry
 
         Return Equals
     End Function
+
+    ''' <summary>
+    ''' Converts from XML report section numbering to upper/base geometry record numbers
+    ''' </summary>
+    ''' <param name="SectionNumber">1 as top section.</param>
+    ''' <returns></returns>
+    Public Function tnxSectionSelector(SectionNumber As Integer) As tnxGeometryRec
+        If SectionNumber <= Me.upperStructure.Count Then
+            Return Me.upperStructure(SectionNumber - 1)
+        Else
+            Return Me.baseStructure(SectionNumber - Me.upperStructure.Count - 1)
+        End If
+    End Function
+
+End Class
+
+Public Class tnxResult
+    Inherits EDSResult
+
+    <Category("Loads"), Description(""), DisplayName("Design Load")>
+    Public Property DesignLoad As Double?
+    <Category("Loads"), Description(""), DisplayName("Applied Load")>
+    Public Property AppliedLoad As Double?
+    <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
+    Public Property LoadRatioLimit As Double?
+    '<Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
+    'Public Property RequiredSafteyFactor As Double?
+    '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
+    'Public Property UseSFInsteadofRatio As Boolean = False
+
+    <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
+    Public Overrides Property Rating As Double?
+        Get
+            Dim designCode As String
+            Dim useAnnexS As Boolean
+            Try
+                designCode = Me.ParentStructure.tnx.code.design.DesignCode
+                useAnnexS = Me.ParentStructure.tnx.code.design.UseTIA222H_AnnexS.Value
+            Catch ex As Exception
+                designCode = ""
+                useAnnexS = False
+                Debug.Print("Design code unknown. Using nonnormailzed TNX results.")
+            End Try
+
+            If designCode = "TIA-222-H" And useAnnexS Then
+                Return Me.NormalizedRatio
+            Else
+                Return Me.Ratio
+            End If
+        End Get
+        Set(value As Double?)
+            'Do Nothing
+        End Set
+    End Property
+
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    ''' <summary>
+    ''' Create result object with result_lkup and rating
+    ''' </summary>
+    ''' <param name="result_lkup"></param>
+    ''' <param name="rating"></param>
+    ''' <param name="designLoad"></param>
+    ''' <param name="appliedLoad"></param>
+    ''' <param name="Parent"></param>
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+
+        Me.result_lkup = result_lkup
+        Me.Rating = rating
+        Me.DesignLoad = designLoad
+        Me.AppliedLoad = appliedLoad
+        Me.LoadRatioLimit = RatioLimit
+
+    End Sub
+
+    ''' <summary>
+    ''' Ratio of the applied load to the design load.
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function Ratio() As Double
+        If DesignLoad.HasValue And AppliedLoad.HasValue Then
+            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value)
+        End If
+        Return 0
+    End Function
+
+    ''' <summary>
+    ''' Ratio of the applied load to the design load and normalized with the load ratio limit (i.e. 105%).
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function NormalizedRatio() As Double
+        If DesignLoad.HasValue And AppliedLoad.HasValue And LoadRatioLimit.HasValue Then
+            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value
+        End If
+        Return 0
+    End Function
+
 End Class
 
 Partial Public MustInherit Class tnxGeometryRec
@@ -831,6 +934,18 @@ Partial Public MustInherit Class tnxGeometryRec
     'Use this type to allow sorting by Record instead of ID and provide a custom version of EDSListQueryBuilder for tnx geometry records
     Public Property Rec As Integer?
     Public Overrides ReadOnly Property EDSTableDepth As Integer = 1
+    'This cannot override the Results list from the EDSObjectWithQueries because it is a different type, instead we can shadow
+    Public Property TNXResults As New List(Of tnxResult)
+
+    Private _Results As List(Of EDSResult)
+    Public Overrides Property Results As List(Of EDSResult)
+        Get
+            Return Me.TNXResults.ConvertAll(Function(x) CType(x, EDSResult))
+        End Get
+        Set(value As List(Of EDSResult))
+            Me._Results = value
+        End Set
+    End Property
 
     Public Overloads Function CompareTo(other As tnxGeometryRec) As Integer Implements IComparable(Of tnxGeometryRec).CompareTo
         'Sorted by Rec
@@ -9969,7 +10084,7 @@ Partial Public Class tnxGuyRecord
 #Region "Inheritted"
 
     Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.upper_structure_sections"
+    Public Overrides ReadOnly Property EDSTableName As String = "tnx.guys"
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
