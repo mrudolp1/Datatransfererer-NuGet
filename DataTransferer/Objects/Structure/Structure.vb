@@ -23,6 +23,9 @@ Partial Public Class EDSStructure
     Public Property DrilledPiers As New List(Of DrilledPier)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
 
+    Public Property ReportOptions As ReportOptions
+    Public Property SiteInfo As SiteInfo
+
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
     Public Overrides ReadOnly Property ParentStructure As EDSStructure
@@ -277,7 +280,7 @@ Partial Public Class EDSStructure
         Next
     End Sub
 #End Region
-
+    
 #Region "Check Changes"
     Public Function CompareEDS(other As EDSObject, Optional ByRef changes As List(Of AnalysisChange) = Nothing) As Boolean
 
