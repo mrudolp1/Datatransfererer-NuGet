@@ -34,43 +34,24 @@
     <None Remove="Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
-    <None Remove="Queries\CCIplate\CCIplate (UPDATE).sql" />
-    <None Remove="Queries\CCIplate\CCIplate Material (INSERT).sql" />
-    <None Remove="Queries\CCIplate\Connection (DELETE).sql" />
-    <None Remove="Queries\CCIplate\Connection (INSERT).sql" />
-    <None Remove="Queries\CCIplate\Connection (UPDATE).sql" />
-    <None Remove="Queries\CCIplate\Plate Detail (DELETE).sql" />
-    <None Remove="Queries\CCIplate\Plate Detail (INSERT).sql" />
-    <None Remove="Queries\CCIplate\Plate Detail (UPDATE).sql" />
-    <None Remove="Queries\CCIpole\1 General (DELETE).sql" />
-    <None Remove="Queries\CCIpole\1 General (INSERT).sql" />
-    <None Remove="Queries\CCIpole\1 General (UPDATE).sql" />
-    <None Remove="Queries\CCIpole\2 Unreinf Section (INSERT).sql" />
     <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT General).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Int Details).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Int Groups).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Reinf Results).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Reinf Sections).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Pole Sections).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Bolts).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Matls).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Prop Reinfs).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Reinf Details).sql" />
+    <None Remove="Queries\CCIpole\CCIpole (SELECT Reinf Groups).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomBase).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_GeomReinf).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (IN_UP).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Criteria).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT General).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Int Details).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Int Groups).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Pole Reinf Results).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Pole Reinf Sections).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Pole Sections).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Prop Bolts).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Prop Matls).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Prop Reinfs).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Reinf Details).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SELECT Reinf Groups).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubQuery_GeomBase).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubQuery_GeomReinf).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubQuery_IntGroups).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubQuery_ReinfGroups).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubSubQuery_IntDetails).sql" />
-    <None Remove="Queries\CCIpole\DNU\CCIpole (SubSubQuery_ReinfDetails).sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
@@ -255,7 +236,7 @@
     <Content Include="Queries\CCIpole\2 Unreinf Section %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIpole\DNU\CCIpole (IN_UP).sql">
+    <Content Include="Queries\CCIpole\CCIpole %28IN_UP%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\DNU\CCIpole (SELECT Criteria).sql">
