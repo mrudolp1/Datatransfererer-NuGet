@@ -78,7 +78,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "CCIplate Materials", "Pole", "Site Code Criteria"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "CCIplates", "Connections", "Plate Details", "Bolt Groups", "Bolt Details", "CCIplate Materials", "Stiffener Groups", "Stiffener Details", "Bridge Stiffener Details", "Pole", "Site Code Criteria"}
 
         Using strDS As New DataSet
 

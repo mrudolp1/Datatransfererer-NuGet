@@ -26,6 +26,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Queries\CCIplate\Bolt Detail (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Bolt Detail (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Bolt Detail (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Bolt Group (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Bolt Group (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Bolt Group (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Bolt Result (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Bridge Stiffener Detail (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Bridge Stiffener Detail (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Bridge Stiffener Detail (UPDATE).sql" />
     <None Remove="Queries\CCIplate\CCIplate %28IN_UP%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate %28SUB QUERY%29.sql" />
     <None Remove="Queries\CCIplate\CCIplate (DELETE).sql" />
@@ -39,9 +49,17 @@
     <None Remove="Queries\CCIplate\Connection (DELETE).sql" />
     <None Remove="Queries\CCIplate\Connection (INSERT).sql" />
     <None Remove="Queries\CCIplate\Connection (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Connection Result (INSERT).sql" />
     <None Remove="Queries\CCIplate\Plate Detail (DELETE).sql" />
     <None Remove="Queries\CCIplate\Plate Detail (INSERT).sql" />
     <None Remove="Queries\CCIplate\Plate Detail (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Plate Result (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Detail (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Detail (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Detail (UPDATE).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Group (DELETE).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Group (INSERT).sql" />
+    <None Remove="Queries\CCIplate\Stiffener Group (UPDATE).sql" />
     <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -184,6 +202,36 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Queries\CCIplate\Bridge Stiffener Detail %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bridge Stiffener Detail %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bridge Stiffener Detail %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Connection Result %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Detail %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Detail %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Detail %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Group %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Group %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Stiffener Group %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Queries\CCIplate\CCIplate %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -212,6 +260,30 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIplate\CCIplate Material %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Group %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Group %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Group %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Detail %28DELETE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Detail %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Detail %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Plate Result %28INSERT%29.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIplate\Bolt Result %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIplate\This is the backup\CCIplate %28SELECT Plate Connections%29.sql">

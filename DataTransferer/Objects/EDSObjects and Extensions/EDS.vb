@@ -5,6 +5,7 @@ Imports System.IO
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+'Imports Microsoft.Office.Interop 'added for testing running macros
 
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 Partial Public MustInherit Class EDSObject
@@ -258,6 +259,44 @@ Partial Public MustInherit Class EDSExcelObject
         Catch ex As Exception
             Debug.Print("Error Saving Workbook: " & ex.Message)
         End Try
+
+        'Seb's Macro test (uncomment bellow)
+        'Dim xlApp As Microsoft.Office.Interop.Excel.Application
+        'Dim xlWorkBook As Excel.Workbook
+        'Dim xlVis As Boolean = False
+
+        '''set xl visibility to true if dev environment
+        ''If My.Settings.serverActive = "dbDevelopment" Then
+        ''    xlVis = True
+        ''End If
+
+        ''Try
+        'If File.Exists(workBookPath) Then
+        '    xlApp = CreateObject("Excel.Application")
+        '    xlApp.Visible = xlVis
+        '    xlApp.DisplayAlerts = xlVis
+
+        '    xlWorkBook = xlApp.Workbooks.Open(workBookPath)
+
+        '    System.Threading.Thread.Sleep(5000) 'required to allow enough time for file to open
+
+        '    'xlApp.Run("Update_Main_Screen")
+
+        '    xlWorkBook.Save()
+
+        '    xlWorkBook.Close()
+        '    xlApp.Quit()
+        'Else
+        '    'WriteLineLogLine(excelPath & " path not found!")
+        '    'Return False
+        'End If
+        ''Catch ex As Exception
+        ''    'WriteLineLogLine(ex.Message)
+        ''    'Return False
+        ''End Try
+
+
+
 
     End Sub
 #End Region
