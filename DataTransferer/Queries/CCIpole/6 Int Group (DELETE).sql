@@ -1,0 +1,10 @@
+﻿
+BEGIN
+
+	--[INT DETAIL SUBQUERY]
+
+	DELETE FROM pole.interferences WHERE ID = [ID]
+
+END
+
+--[INT GROUP SUBQUERY]

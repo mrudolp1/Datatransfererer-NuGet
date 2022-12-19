@@ -210,7 +210,131 @@ Begin
 		AND pl.ID=bsd.plate_id
 
 	--CCIPole
-	Select * From pole.pole WHERE bus_unit=@BU AND structure_id=@strID
+	SELECT * FROM pole.pole WHERE bus_unit=@BU AND structure_id=@strID
+
+	--CCIpole Unreinf Sections
+	SELECT us.* 
+	FROM 
+		pole.sections us
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = us.pole_id
+
+	--CCIpole Reinf Sections
+	SELECT rs.* 
+	FROM 
+		pole.reinforced_sections rs
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = rs.pole_id
+
+	--CCIpole Reinf Groups
+	SELECT rg.* 
+	FROM 
+		pole.reinforcements rg
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = rg.pole_id
+
+	--CCIpole Reinf Details
+	SELECT rd.* 
+	FROM 
+		pole.reinforcement_details rd
+		,pole.reinforcements rg
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = rg.pole_id
+		AND rg.ID = rd.group_id
+
+	--CCIpole Interference Groups
+	SELECT ig.* 
+	FROM 
+		pole.interferences ig
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = ig.pole_id
+
+	--CCIpole Interference Details
+	SELECT id.* 
+	FROM 
+		pole.interference_details id
+		,pole.interferences ig
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = ig.pole_id
+		AND ig.ID = id.group_id
+
+	--Create TempTables of Matls referenced in analysis
+	SELECT DISTINCT reinfs.* INTO #TempReinfs
+	FROM 
+		gen.pole_reinforcements reinfs
+		,pole.reinforcements rg
+		,pole.pole pole
+	WHERE pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = rg.pole_id
+		AND reinfs.ID = rg.reinf_id
+
+	SELECT DISTINCT matls.*  INTO #TempSection
+	FROM 
+		gen.pole_matls matls
+		,pole.sections us
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = us.pole_id
+		AND us.matl_id = matls.ID
+
+	SELECT DISTINCT matls.*  INTO #TempRSection
+	FROM 
+		gen.pole_matls matls
+		,pole.reinforced_sections rs
+		,pole.pole pole
+	WHERE
+		pole.bus_unit = @BU
+		AND pole.structure_id = @strID
+		AND pole.ID = rs.pole_id
+		AND rs.matl_id = matls.ID
+	
+	--CCIPole Matls
+	SELECT DISTINCT matls.*
+	FROM 
+		gen.pole_matls matls
+		,#TempSection sec
+		,#TempRSection rsec
+		,#TempReinfs reinfs
+	WHERE matls.ID = sec.ID
+		OR matls.ID = rsec.ID
+		Or matls.ID = reinfs.matl_id
+
+	--CCIPole Bolts
+	SELECT DISTINCT bolts.* 
+	FROM 
+		gen.pole_bolts bolts
+		,#TempReinfs reinfs
+	WHERE bolts.ID = reinfs.bolt_id_top
+		OR bolts.ID = reinfs.bolt_id_bot
+
+	--CCIPole Reinfs
+	SELECT * FROM #TempReinfs
+
+	Drop Table #TempReinfs
+	Drop Table #TempSection
+	Drop Table #TempRSection
+
 
 	--Site code criteria
 	SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU

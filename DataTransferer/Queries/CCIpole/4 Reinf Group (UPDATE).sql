@@ -1,0 +1,16 @@
+﻿
+BEGIN
+
+    --[REINF DB SUBQUERY]
+
+
+	UPDATE pole.reinforcements
+	SET [UPDATE] 
+	WHERE ID = [ID]
+
+
+	--[REINF DETAIL SUBQUERY]
+
+END
+
+--[REINF GROUP SUBQUERY]
