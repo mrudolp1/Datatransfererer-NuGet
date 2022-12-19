@@ -33,9 +33,9 @@ Partial Public Class EDSStructure
         Get
             Return Me
         End Get
-        Set(value As EDSStructure)
-            _ParentStructure = value
-        End Set
+        'Set(value As EDSStructure)
+        '    _ParentStructure = value
+        'End Set
     End Property
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}
@@ -327,7 +327,7 @@ Partial Public Class EDSStructure
         Next
     End Sub
 #End Region
-    
+
 #Region "Check Changes"
     Public Function CompareEDS(other As EDSObject, Optional ByRef changes As List(Of AnalysisChange) = Nothing) As Boolean
 
