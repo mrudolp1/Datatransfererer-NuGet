@@ -6,3 +6,5 @@ BEGIN
 	DELETE FROM pole.reinforcements WHERE ID = [ID]
 
 END
+
+--[REINF GROUP SUBQUERY]

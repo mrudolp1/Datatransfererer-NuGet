@@ -18,6 +18,7 @@ Partial Public Class frmMain
 
     Public BUNumber As String = ""
     Public StrcID As String = ""
+    Public WorkOrder As String = ""
 
     'Import to Excel
     Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_EDS_3.xlsm"}
@@ -124,13 +125,14 @@ Partial Public Class frmMain
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         BUNumber = txtFndBU.Text
         StrcID = txtFndStrc.Text
+        WorkOrder = txtFndWO.Text
 
         Dim xlFd As New OpenFileDialog
         xlFd.Multiselect = True
         'xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, xlFd.FileNames)
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, xlFd.FileNames)
         End If
 
         'Test Parents
@@ -154,7 +156,7 @@ Partial Public Class frmMain
     Private Sub btnLoadStrcFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, EDSnewId, EDSdbActive)
+        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, EDSnewId, EDSdbActive)
 
         propgridFndEDS.SelectedObject = strcEDS
 
@@ -408,6 +410,8 @@ Partial Public Class frmMain
             End If
         End If
     End Sub
+
+
 #End Region
 
 End Class

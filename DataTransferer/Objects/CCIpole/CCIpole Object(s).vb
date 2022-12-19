@@ -22,7 +22,7 @@ Partial Public Class Pole
                                                         New EXCELDTParameter("CCIpole Reinf Details EXCEL", "A2:H200", "Reinf ID (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Int Groups EXCEL", "A2:H50", "Interference Groups (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Int Details EXCEL", "A2:H200", "Interference ID (SAPI)"),
-                                                        New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:H1000", "Reinf Results (SAPI)"),
+                                                        New EXCELDTParameter("CCIpole Pole Reinf Results EXCEL", "A2:I1000", "Reinf Results (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Matl Property Details EXCEL", "A2:G20", "Materials (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Bolt Property Details EXCEL", "A2:S20", "Bolts (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Reinf Property Details EXCEL", "A2:EB50", "Reinforcements (SAPI)")}
@@ -91,7 +91,7 @@ Partial Public Class Pole
 
         'Unreinforced Sections
         For Each row As PoleSection In unreinf_sections
-            If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+            If IsSomething(row.section_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_section_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLUpdate)
                 Else
@@ -104,7 +104,7 @@ Partial Public Class Pole
 
         'Reinf Sections
         For Each row As PoleReinfSection In reinf_sections
-            If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+            If IsSomething(row.section_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_section_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[REINF SECTION SUBQUERY]", row.SQLUpdate)
                 Else
@@ -117,7 +117,7 @@ Partial Public Class Pole
 
         'Reinforcement Groups
         For Each row As PoleReinfGroup In reinf_groups
-            If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+            If IsSomething(row.group_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_group_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[REINF GROUP SUBQUERY]", row.SQLUpdate)
                 Else
@@ -131,7 +131,7 @@ Partial Public Class Pole
 
         'Interference Groups
         For Each row As PoleIntGroup In int_groups
-            If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+            If IsSomething(row.group_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                 If IsSomething(row.local_group_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[INT GROUP SUBQUERY]", row.SQLUpdate)
                 Else
@@ -144,16 +144,18 @@ Partial Public Class Pole
         'Details are done in query for Groups
 
         'Results
+        SQLUpdate = SQLUpdate.Replace("--[RESULT SUBQUERY]", "DELETE FROM pole.reinforcement_results WHERE work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue & vbNewLine & "--[RESULT SUBQUERY]")
         For Each row As PoleReinfResults In reinf_section_results
-            If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                If IsSomething(row.local_section_id) Or IsSomething(row.local_group_id) Then
-                    SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLUpdate)
-                Else
-                    SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLDelete)
-                End If
-            Else
-                SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLInsert)
-            End If
+            SQLUpdate = SQLUpdate.Replace("--[RESULT SUBQUERY]", row.SQLInsert)
+            'If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+            '    If IsSomething(row.local_section_id) Or IsSomething(row.local_group_id) Then
+            '        SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLUpdate)
+            '    Else
+            '        SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLDelete)
+            '    End If
+            'Else
+            '    SQLUpdate = SQLUpdate.Replace("--[RESULTS SUBQUERY]", row.SQLInsert)
+            'End If
             'SQLUpdate = SQLUpdate.Replace("--[RESULTS UPDATE]", Me.Results.EDSResultQuery) 'Chall using EDSResultQuery. Not sure if necessary in CCIpole...we will see - MRR
         Next
 
@@ -174,30 +176,31 @@ Partial Public Class Pole
 
         'Unreinforced Sections
         For Each row As PoleSection In unreinf_sections
-            SQLDelete = SQLDelete.Replace("[UNREINF SECTION SUBQUERY]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("--[UNREINF SECTION SUBQUERY]", row.SQLDelete)
         Next
 
         'Reinf Sections
         For Each row As PoleReinfSection In reinf_sections
-            SQLDelete = SQLDelete.Replace("[REINF SECTION SUBQUERY]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("--[REINF SECTION SUBQUERY]", row.SQLDelete)
         Next
 
         'Reinforcement Groups
         For Each row As PoleReinfGroup In reinf_groups
-            SQLDelete = SQLDelete.Replace("[REINF GROUP SUBQUERY]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("--[REINF GROUP SUBQUERY]", row.SQLDelete)
         Next
         'Details are done in query for Groups
 
         'Interference Groups
         For Each row As PoleIntGroup In int_groups
-            SQLDelete = SQLDelete.Replace("[INT GROUP SUBQUERY]", row.SQLDelete)
+            SQLDelete = SQLDelete.Replace("--[INT GROUP SUBQUERY]", row.SQLDelete)
         Next
         'Details are done in query for Groups
 
         'Results
-        For Each row As PoleReinfResults In reinf_section_results
-            SQLDelete = SQLDelete.Replace("[RESULTS SUBQUERY]", row.SQLDelete)
-        Next
+        SQLDelete = SQLDelete.Replace("--[RESULTS SUBQUERY]", "DELETE FROM pole.reinforcement_results WHERE pole_id = " & Me.pole_id)
+        'For Each row As PoleReinfResults In reinf_section_results
+        '    SQLDelete = SQLDelete.Replace("[RESULTS SUBQUERY]", row.SQLDelete)
+        'Next
 
         'Reinf/Bolt/Matl DBs should not be deleted from the DB except for manual cases
 
@@ -370,7 +373,8 @@ Partial Public Class Pole
         ''''''Customize for each foundation type'''''
         Me.bus_unit = DBtoStr(dr.Item("bus_unit"))
         Me.structure_id = DBtoStr(dr.Item("structure_id"))
-        Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
+        Me.pole_id = DBtoNullableInt(dr.Item("ID"))
+        Me.ID = Me.pole_id 'Needed for EDSListQueryBuilder Insert/Update/Delete Determination - MRR
         Me.upper_structure_type = DBtoStr(dr.Item("upper_structure_type"))
         Me.analysis_deg = DBtoNullableDbl(dr.Item("analysis_deg"))
         Me.geom_increment_length = DBtoNullableDbl(dr.Item("geom_increment_length"))
@@ -383,54 +387,59 @@ Partial Public Class Pole
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
         'Sub Tables (as defined within Structure.VB LoadFromEDS
-        For Each row As DataRow In strDS.Tables("Pole Matl Prop").Rows
-            Dim PropMatlRefID As Integer? = CType(row.Item("pole_id"), Integer)
-            If PropMatlRefID = Me.pole_id Then
-                Me.matls.Add(New PoleMatlProp(row, Me))
-            End If
-        Next 'Add Custom Matl Properties to Section Object
+        For Each dbrow As DataRow In strDS.Tables("Pole Custom Matls").Rows
+            'Dim PropMatlRefID As Integer? = CType(row.Item("pole_id"), Integer)
+            'If PropMatlRefID = Me.ID Then
+            Me.matls.Add(New PoleMatlProp(dbrow, Me))
+            'End If
+        Next 'Add Custom Matl Properties to CCIpole Object
 
-        For Each row As DataRow In strDS.Tables("Pole Bolt Prop").Rows
-            Dim PropBoltRefID As Integer? = CType(row.Item("pole_id"), Integer)
-            If PropBoltRefID = Me.pole_id Then
-                Me.bolts.Add(New PoleBoltProp(row, Me))
-            End If
+        For Each dbrow As DataRow In strDS.Tables("Pole Custom Bolts").Rows
+            Me.bolts.Add(New PoleBoltProp(dbrow, Me))
         Next 'Add Custom Bolt Properties to CCIpole Object
 
-        For Each row As DataRow In strDS.Tables("Pole Reinf Prop").Rows
-            Dim PropReinfRefID As Integer? = CType(row.Item("pole_id"), Integer)
-            If PropReinfRefID = Me.pole_id Then
-                Me.reinfs.Add(New PoleReinfProp(row, Me))
-            End If
+        For Each dbrow As DataRow In strDS.Tables("Pole Custom Reinfs").Rows
+            Me.reinfs.Add(New PoleReinfProp(dbrow, Me))
         Next 'Add Custom Reinf Properties to CCIpole Object
 
 
-        For Each row As DataRow In strDS.Tables("Pole Sections").Rows
+        For Each row As DataRow In strDS.Tables("Pole Unreinforced Sections").Rows
             Dim PoleSectionRefID As Integer? = CType(row.Item("pole_id"), Integer)
             If PoleSectionRefID = Me.pole_id Then
                 Me.unreinf_sections.Add(New PoleSection(row, Me)) 'Chall has 'Add(New PoleSection(row, srtDS))' - apparently keeping the datasource tied in allows the UI to show relationships correctly - Not sure if necessary yet - MRR
+
+                ''Add any non-default Matls from DB into Object (only pulling IDs if they were used)
+                'Dim SectionMatlID As Integer? = CType(row.Item("matl_id"), Integer)
+                'For Each dbrow As DataRow In strDS.Tables("Pole Custom Matls").Rows
+                '    Dim MatlID As Integer? = CType(dbrow.Item("ID"), Integer)
+                '    Dim MatlDefault As Boolean = CType(dbrow.Item("ind_default"), Boolean)
+                '    If SectionMatlID = MatlID And MatlDefault = False Then
+                '        Me.matls.Add(New PoleMatlProp(dbrow, Me))
+                '    End If
+                'Next
+
             End If
         Next 'Add Unreinf Sections to CCIpole Object
 
-        For Each row As DataRow In strDS.Tables("Pole Reinf Sections").Rows
+        For Each row As DataRow In strDS.Tables("Pole Reinforced Sections").Rows
             Dim PoleReinfSectionRefID As Integer? = CType(row.Item("pole_id"), Integer)
             If PoleReinfSectionRefID = Me.pole_id Then
                 Me.reinf_sections.Add(New PoleReinfSection(row, Me))
             End If
         Next 'Add Reinf Sections to CCIpole Object
 
-        For Each GroupRow As DataRow In strDS.Tables("Pole Reinf Groups").Rows
+        For Each GroupRow As DataRow In strDS.Tables("Pole Reinforcement Groups").Rows
             Dim PoleReinfGroupRefID As Integer? = CType(GroupRow.Item("pole_id"), Integer)
-            Dim PoleReinfGroupID As Integer? = CType(GroupRow.Item("group_id"), Integer)
+            Dim PoleReinfGroupID As Integer? = CType(GroupRow.Item("ID"), Integer)
 
             If PoleReinfGroupRefID = Me.pole_id Then
                 Dim NewReinfGroup As PoleReinfGroup
                 NewReinfGroup = New PoleReinfGroup(GroupRow, Me)
 
-                For Each DetailRow As DataRow In strDS.Tables("Pole Reinf Details").Rows
+                For Each DetailRow As DataRow In strDS.Tables("Pole Reinforcement Details").Rows
                     Dim PoleReinfDetailRefID As Integer? = CType(DetailRow.Item("group_id"), Integer)
                     If PoleReinfDetailRefID = PoleReinfGroupID Then
-                        NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(DetailRow))
+                        NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(DetailRow, NewReinfGroup))
                     End If
                 Next 'Add Reinf Details to Group Object
 
@@ -438,18 +447,18 @@ Partial Public Class Pole
             End If
         Next 'Add Reinf Groups to CCIpole Object
 
-        For Each GroupRow As DataRow In strDS.Tables("Pole Int Groups").Rows
+        For Each GroupRow As DataRow In strDS.Tables("Pole Interference Groups").Rows
             Dim PoleIntGroupRefID As Integer? = CType(GroupRow.Item("pole_id"), Integer)
-            Dim PoleIntGroupID As Integer? = CType(GroupRow.Item("group_id"), Integer)
+            Dim PoleIntGroupID As Integer? = CType(GroupRow.Item("ID"), Integer)
 
             If PoleIntGroupRefID = Me.pole_id Then
                 Dim NewIntGroup As PoleIntGroup
                 NewIntGroup = New PoleIntGroup(GroupRow, Me)
 
-                For Each DetailRow As DataRow In strDS.Tables("Pole Int Details").Rows
+                For Each DetailRow As DataRow In strDS.Tables("Pole Interference Details").Rows
                     Dim PoleIntDetailsRefID As Integer? = CType(DetailRow.Item("group_id"), Integer)
                     If PoleIntDetailsRefID = PoleIntGroupID Then
-                        NewIntGroup.int_ids.Add(New PoleIntDetail(DetailRow))
+                        NewIntGroup.int_ids.Add(New PoleIntDetail(DetailRow, NewIntGroup))
                     End If
                 Next 'Add Interference Details to Group Object
 
@@ -458,12 +467,12 @@ Partial Public Class Pole
         Next 'Add Interference Groups to CCIpole Object
 
 
-        For Each row As DataRow In strDS.Tables("Pole Reinf Results").Rows
-            Dim PoleReinfResultsRefID As Integer? = CType(row.Item("pole_id"), Integer)
-            If PoleReinfResultsRefID = Me.pole_id Then
-                Me.reinf_section_results.Add(New PoleReinfResults(row, Me))
-            End If
-        Next 'Add Reinf Section Results to CCIpole Object
+        'For Each row As DataRow In strDS.Tables("Pole Results").Rows
+        '    Dim PoleReinfResultsRefID As Integer? = CType(row.Item("pole_id"), Integer)
+        '    If PoleReinfResultsRefID = Me.ID Then
+        '        Me.reinf_section_results.Add(New PoleReinfResults(row, Me))
+        '    End If
+        'Next 'Add Reinf Section Results to CCIpole Object
 
 
     End Sub 'Generate Pole from EDS
@@ -490,7 +499,8 @@ Partial Public Class Pole
 
             'Me.bus_unit = DBtoStr(dr.Item("bus_unit"))
             'Me.structure_id = DBtoStr(dr.Item("structure_id"))
-            Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
+            Me.pole_id = DBtoNullableInt(dr.Item("ID"))
+            Me.ID = Me.pole_id 'Needed for EDSListQueryBuilder Insert/Update/Delete Determination - MRR
             Me.upper_structure_type = DBtoStr(dr.Item("upper_structure_type"))
             Me.analysis_deg = DBtoNullableDbl(dr.Item("analysis_deg"))
             Me.geom_increment_length = DBtoNullableDbl(dr.Item("geom_increment_length"))
@@ -565,7 +575,7 @@ Partial Public Class Pole
                     End Try 'Details local_group_id
 
                     If ReinfGroupID = DetailsGroupID Then
-                        NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(DetailRow))
+                        NewReinfGroup.reinf_ids.Add(New PoleReinfDetail(DetailRow, NewReinfGroup))
                     End If
 
                 Next
@@ -580,7 +590,7 @@ Partial Public Class Pole
         If excelDS.Tables.Contains("CCIpole Int Groups EXCEL") Then
             For Each GroupRow As DataRow In excelDS.Tables("CCIpole Int Groups EXCEL").Rows
                 Dim NewIntGroup As PoleIntGroup
-                NewIntGroup = New PoleIntGroup(GroupRow)
+                NewIntGroup = New PoleIntGroup(GroupRow, Me)
 
                 Dim IntGroupID, IntDetailsGroupID As Integer?
 
@@ -607,7 +617,7 @@ Partial Public Class Pole
                     End Try 'Details local_group_id
 
                     If IntGroupID = IntDetailsGroupID Then
-                        NewIntGroup.int_ids.Add(New PoleIntDetail(DetailRow))
+                        NewIntGroup.int_ids.Add(New PoleIntDetail(DetailRow, NewIntGroup))
                     End If
 
                 Next
@@ -620,7 +630,7 @@ Partial Public Class Pole
 
         If excelDS.Tables.Contains("CCIpole Pole Reinf Results EXCEL") Then
             For Each row As DataRow In excelDS.Tables("CCIpole Pole Reinf Results EXCEL").Rows
-                Me.reinf_section_results.Add(New PoleReinfResults(row))
+                Me.reinf_section_results.Add(New PoleReinfResults(row, Me))
             Next
         End If
 
@@ -695,13 +705,14 @@ Partial Public Class Pole
                     pole_tia_current = "F"
                 ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
                     pole_tia_current = "G"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
-                    pole_tia_current = "H"
                 Else
                     pole_tia_current = "H"
                 End If
-                .Worksheets("General (SAPI)").Range("P3").Value = CType(pole_tia_current, String)
+            Else
+                pole_tia_current = "H"
             End If
+            .Worksheets("General (SAPI)").Range("P3").Value = CType(pole_tia_current, String)
+
             'Load Z Normalization
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
             '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
@@ -713,8 +724,8 @@ Partial Public Class Pole
                 .Worksheets("General (SAPI)").Range("R3").Value = CType(pole_rev_h_section_15_5, Boolean)
             End If
             'Work Order
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.work_order_seq_num) Then
-                work_order_seq_num = Me.ParentStructure?.structureCodeCriteria?.work_order_seq_num
+            If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
+                work_order_seq_num = Me.ParentStructure?.work_order_seq_num
                 .Worksheets("General (SAPI)").Range("S3").Value = CType(work_order_seq_num, Integer)
             End If
 
@@ -726,9 +737,9 @@ Partial Public Class Pole
             For Each ps As PoleSection In unreinf_sections
                 col = 0
 
-                If Not IsNothing(Me.pole_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
-                col += 1
                 If Not IsNothing(ps.section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.section_id, Integer)
+                col += 1
+                If Not IsNothing(Me.pole_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
                 col += 1
                 If Not IsNothing(ps.local_section_id) Then .Worksheets("Unreinf Pole (SAPI)").Cells(row, col).Value = CType(ps.local_section_id, Integer)
                 col += 1
@@ -786,9 +797,9 @@ Partial Public Class Pole
 
                 col = 0
 
-                If Not IsNothing(Me.pole_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
-                col += 1
                 If Not IsNothing(prs.section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.section_id, Integer)
+                col += 1
+                If Not IsNothing(Me.pole_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
                 col += 1
                 If Not IsNothing(prs.local_section_id) Then .Worksheets("Reinf Pole (SAPI)").Cells(row, col).Value = CType(prs.local_section_id, Integer)
                 col += 1
@@ -848,9 +859,9 @@ Partial Public Class Pole
 
                 col = 0
 
-                If Not IsNothing(Me.pole_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
-                col += 1
                 If Not IsNothing(prg.group_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.group_id, Integer)
+                col += 1
+                If Not IsNothing(Me.pole_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
                 col += 1
                 If Not IsNothing(prg.local_group_id) Then .Worksheets("Reinf Groups (SAPI)").Cells(row, col).Value = CType(prg.local_group_id, Integer)
                 col += 1
@@ -876,9 +887,9 @@ Partial Public Class Pole
 
                         dcol = 0
 
-                        If Not IsNothing(prg.group_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prg.group_id, Integer)
-                        dcol += 1
                         If Not IsNothing(prd.reinforcement_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.reinforcement_id, Integer)
+                        dcol += 1
+                        If Not IsNothing(prg.group_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prg.group_id, Integer)
                         dcol += 1
                         If Not IsNothing(prd.local_group_id) Then .Worksheets("Reinf ID (SAPI)").Cells(drow, dcol).Value = CType(prd.local_group_id, Integer)
                         dcol += 1
@@ -910,9 +921,9 @@ Partial Public Class Pole
 
                 col = 0
 
-                If Not IsNothing(Me.pole_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
-                col += 1
                 If Not IsNothing(pig.group_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.group_id, Integer)
+                col += 1
+                If Not IsNothing(Me.pole_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(Me.pole_id, Integer)
                 col += 1
                 If Not IsNothing(pig.local_group_id) Then .Worksheets("Interference Groups (SAPI)").Cells(row, col).Value = CType(pig.local_group_id, Integer)
                 col += 1
@@ -934,9 +945,9 @@ Partial Public Class Pole
 
                         dcol = 0
 
-                        If Not IsNothing(pig.group_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pig.group_id, Integer)
-                        dcol += 1
                         If Not IsNothing(pid.interference_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pid.interference_id, Integer)
+                        dcol += 1
+                        If Not IsNothing(pig.group_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pig.group_id, Integer)
                         dcol += 1
                         If Not IsNothing(pig.local_group_id) Then .Worksheets("Interference ID (SAPI)").Cells(drow, dcol).Value = CType(pig.local_group_id, Integer)
                         dcol += 1
@@ -967,13 +978,17 @@ Partial Public Class Pole
 
                 col = 0
 
+                If Not IsNothing(prr.result_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.result_id, Double)
+                col += 1
                 If Not IsNothing(prr.work_order_seq_num) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.work_order_seq_num, Double)
+                col += 1
+                If Not IsNothing(prr.pole_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.pole_id, Double)
                 col += 1
                 If Not IsNothing(prr.section_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.section_id, Integer)
                 col += 1
-                If Not IsNothing(prr.group_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.group_id, Integer)
-                col += 1
                 If Not IsNothing(prr.local_section_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.local_section_id, Integer)
+                col += 1
+                If Not IsNothing(prr.group_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.group_id, Integer)
                 col += 1
                 If Not IsNothing(prr.local_group_id) Then .Worksheets("Reinf Results (SAPI)").Cells(row, col).Value = CType(prr.local_group_id, Integer)
                 col += 1
@@ -990,7 +1005,7 @@ Partial Public Class Pole
             'Custom Material Properties
             For Each pm As PoleMatlProp In matls
 
-                If pm.matl_id > 17 Then
+                If pm.ind_default = False Then
 
                     col = 0
 
@@ -1019,7 +1034,7 @@ Partial Public Class Pole
             'Custom Bolt Properties
             For Each pb As PoleBoltProp In bolts
 
-                If pb.bolt_id > 11 Then
+                If pb.ind_default = False Then
 
                     col = 0
 
@@ -1072,7 +1087,7 @@ Partial Public Class Pole
             'Custom Reinforcement Properties
             For Each pr As PoleReinfProp In reinfs
 
-                If pr.reinf_id > 58 Then
+                If pr.ind_default = False Then
 
                     col = 0
 
@@ -1445,8 +1460,8 @@ Partial Public Class Pole
         Equals = If(Me.hole_deformation.CheckChange(otherToCompare.hole_deformation, changes, categoryName, "Hole Deformation"), Equals, False)
         Equals = If(Me.ineff_mod_check.CheckChange(otherToCompare.ineff_mod_check, changes, categoryName, "Ineff Mod Check"), Equals, False)
         Equals = If(Me.modified.CheckChange(otherToCompare.modified, changes, categoryName, "Modified"), Equals, False)
-        Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
-        Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
+        'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
+        'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
 
         'Unreinforced Sections
         Equals = If(Me.unreinf_sections.CheckChange(otherToCompare.unreinf_sections, changes, categoryName, "Pole Unreinforced Sections"), Equals, False)
@@ -1470,13 +1485,13 @@ Partial Public Class Pole
         Equals = If(Me.reinf_section_results.CheckChange(otherToCompare.reinf_section_results, changes, categoryName, "Pole Reinforcement Results"), Equals, False)
 
         'Custom Materials
-        Equals = If(Me.matls.CheckChange(otherToCompare.matls, changes, categoryName, "Pole Custom Matls"), Equals, False)
+        'Equals = If(Me.matls.CheckChange(otherToCompare.matls, changes, categoryName, "Pole Custom Matls"), Equals, False)
 
         'Custom Bolts
-        Equals = If(Me.bolts.CheckChange(otherToCompare.bolts, changes, categoryName, "Pole Custom Bolts"), Equals, False)
+        'Equals = If(Me.bolts.CheckChange(otherToCompare.bolts, changes, categoryName, "Pole Custom Bolts"), Equals, False)
 
         'Custom Reinforcements
-        Equals = If(Me.reinfs.CheckChange(otherToCompare.reinfs, changes, categoryName, "Pole Custom Reinfs"), Equals, False)
+        'Equals = If(Me.reinfs.CheckChange(otherToCompare.reinfs, changes, categoryName, "Pole Custom Reinfs"), Equals, False)
 
 
     End Function
@@ -1532,14 +1547,14 @@ Partial Public Class PoleSection
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleMatlProp In ParentPole.matls
                     If Me.local_matl_id = dbrow.local_matl_id Then
-                        SQLUpdate = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
+                        SQLUpdate = SQLUpdate.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
                     End If
                 Next
             End If
 
         End If
 
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.section_id.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -1549,7 +1564,7 @@ Partial Public Class PoleSection
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.section_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -1804,7 +1819,7 @@ Partial Public Class PoleSection
         'Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.section_id = DBtoNullableInt(dr.Item("section_id"))
+        Me.section_id = DBtoNullableInt(dr.Item("ID"))
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.local_section_id = DBtoNullableInt(dr.Item("local_section_id"))
         Me.elev_bot = DBtoNullableDbl(dr.Item("elev_bot"))
@@ -1896,8 +1911,10 @@ Partial Public Class PoleSection
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
+        Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("section_id = " & Me.section_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & Me.pole_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & ParentPole.pole_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_section_id = " & Me.local_section_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_bot = " & Me.elev_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_top = " & Me.elev_top.ToString.FormatDBValue)
@@ -1908,7 +1925,7 @@ Partial Public Class PoleSection
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("diam_top = " & Me.diam_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("wall_thickness = " & Me.wall_thickness.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bend_radius = " & Me.bend_radius.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("matl_id = " & Me.matl_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("matl_id = @SubLevel4ID") '& Me.matl_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_matl_id = " & Me.local_matl_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_type = " & Me.pole_type.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("section_name = " & Me.section_name.ToString.FormatDBValue)
@@ -1947,7 +1964,7 @@ Partial Public Class PoleSection
         Equals = If(Me.diam_top.CheckChange(otherToCompare.diam_top, changes, categoryName, "Diam Top"), Equals, False)
         Equals = If(Me.wall_thickness.CheckChange(otherToCompare.wall_thickness, changes, categoryName, "Wall Thickness"), Equals, False)
         Equals = If(Me.bend_radius.CheckChange(otherToCompare.bend_radius, changes, categoryName, "Bend Radius"), Equals, False)
-        Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
+        'Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
         Equals = If(Me.local_matl_id.CheckChange(otherToCompare.local_matl_id, changes, categoryName, "Local Matl Id"), Equals, False)
         Equals = If(Me.pole_type.CheckChange(otherToCompare.pole_type, changes, categoryName, "Pole Type"), Equals, False)
         Equals = If(Me.section_name.CheckChange(otherToCompare.section_name, changes, categoryName, "Section Name"), Equals, False)
@@ -2009,7 +2026,7 @@ Partial Public Class PoleReinfSection
             If IsSomething(ParentPole) Then
                 For Each dbrow As PoleMatlProp In ParentPole.matls
                     If Me.local_matl_id = dbrow.local_matl_id Then
-                        SQLUpdate = SQLInsert.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
+                        SQLUpdate = SQLUpdate.Replace("--[MATL DB SUBQUERY]", dbrow.SQLInsert)
                     End If
                 Next
             End If
@@ -2026,7 +2043,7 @@ Partial Public Class PoleReinfSection
     Public Overrides Function SQLDelete() As String
         SQLDelete = QueryBuilderFromFile(queryPath & "CCIpole\3 Reinf Section (DELETE).sql")
 
-        SQLDelete = SQLDelete.Replace("[ID]", Me.pole_id.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.section_id.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLDelete
@@ -2281,7 +2298,7 @@ Partial Public Class PoleReinfSection
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.section_id = DBtoNullableInt(dr.Item("section_id"))
+        Me.section_id = DBtoNullableInt(dr.Item("ID"))
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.local_section_id = DBtoNullableInt(dr.Item("local_section_id"))
         Me.elev_bot = DBtoNullableDbl(dr.Item("elev_bot"))
@@ -2374,8 +2391,10 @@ Partial Public Class PoleReinfSection
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
+        Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("section_id = " & Me.section_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & Me.pole_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & ParentPole.pole_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_section_id = " & Me.local_section_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_bot = " & Me.elev_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_top = " & Me.elev_top.ToString.FormatDBValue)
@@ -2386,7 +2405,7 @@ Partial Public Class PoleReinfSection
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("diam_top = " & Me.diam_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("wall_thickness = " & Me.wall_thickness.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bend_radius = " & Me.bend_radius.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("matl_id = " & Me.matl_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("matl_id = @SubLevel4ID") '& Me.matl_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_matl_id = " & Me.local_matl_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_type = " & Me.pole_type.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("weight_mult = " & Me.weight_mult.ToString.FormatDBValue)
@@ -2425,7 +2444,7 @@ Partial Public Class PoleReinfSection
         Equals = If(Me.diam_top.CheckChange(otherToCompare.diam_top, changes, categoryName, "Diam Top"), Equals, False)
         Equals = If(Me.wall_thickness.CheckChange(otherToCompare.wall_thickness, changes, categoryName, "Wall Thickness"), Equals, False)
         Equals = If(Me.bend_radius.CheckChange(otherToCompare.bend_radius, changes, categoryName, "Bend Radius"), Equals, False)
-        Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
+        'Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
         Equals = If(Me.local_matl_id.CheckChange(otherToCompare.local_matl_id, changes, categoryName, "Local Matl Id"), Equals, False)
         Equals = If(Me.pole_type.CheckChange(otherToCompare.pole_type, changes, categoryName, "Pole Type"), Equals, False)
         Equals = If(Me.weight_mult.CheckChange(otherToCompare.weight_mult, changes, categoryName, "Weight Mult"), Equals, False)
@@ -2501,8 +2520,8 @@ Partial Public Class PoleReinfGroup
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
 
         For Each detailrow As PoleReinfDetail In reinf_ids
-            If IsSomething(detailrow.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                If IsSomething(detailrow.local_group_id) Then
+            If IsSomething(detailrow.reinforcement_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                If IsSomething(detailrow.local_reinforcement_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLUpdate)
                 Else
                     SQLUpdate = SQLUpdate.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLDelete)
@@ -2522,11 +2541,12 @@ Partial Public Class PoleReinfGroup
 
         SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
 
-        For Each detailrow As PoleReinfDetail In reinf_ids
-            If Me.local_group_id = detailrow.local_group_id Then
-                SQLDelete = SQLInsert.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLDelete)
-            End If
-        Next
+        SQLDelete = SQLDelete.Replace("--[REINF DETAIL SUBQUERY]", "DELETE From pole.reinforcement_details Where group_id = " & Me.group_id.ToString.FormatDBValue)
+        'For Each detailrow As PoleReinfDetail In reinf_ids
+        '    If Me.local_group_id = detailrow.local_group_id Then
+        '        SQLDelete = SQLDelete.Replace("--[REINF DETAIL SUBQUERY]", detailrow.SQLDelete)
+        '    End If
+        'Next
 
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2653,7 +2673,7 @@ Partial Public Class PoleReinfGroup
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.group_id = DBtoNullableInt(dr.Item("group_id"))
+        Me.group_id = DBtoNullableInt(dr.Item("ID"))
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         Me.elev_bot_actual = DBtoNullableDbl(dr.Item("elev_bot_actual"))
@@ -2706,14 +2726,16 @@ Partial Public Class PoleReinfGroup
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
+        Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & Me.pole_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & ParentPole.pole_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_bot_actual = " & Me.elev_bot_actual.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_bot_eff = " & Me.elev_bot_eff.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_top_actual = " & Me.elev_top_actual.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_top_eff = " & Me.elev_top_eff.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reinf_id = " & Me.reinf_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reinf_id = @SubLevel2ID") '& Me.reinf_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_reinf_id = " & Me.local_reinf_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("qty = " & Me.qty.ToString.FormatDBValue)
 
@@ -2739,7 +2761,7 @@ Partial Public Class PoleReinfGroup
         Equals = If(Me.elev_bot_eff.CheckChange(otherToCompare.elev_bot_eff, changes, categoryName, "Elev Bot Eff"), Equals, False)
         Equals = If(Me.elev_top_actual.CheckChange(otherToCompare.elev_top_actual, changes, categoryName, "Elev Top Actual"), Equals, False)
         Equals = If(Me.elev_top_eff.CheckChange(otherToCompare.elev_top_eff, changes, categoryName, "Elev Top Eff"), Equals, False)
-        Equals = If(Me.reinf_id.CheckChange(otherToCompare.reinf_id, changes, categoryName, "Reinf Id"), Equals, False)
+        'Equals = If(Me.reinf_id.CheckChange(otherToCompare.reinf_id, changes, categoryName, "Reinf Id"), Equals, False)
         Equals = If(Me.local_reinf_id.CheckChange(otherToCompare.local_reinf_id, changes, categoryName, "Local Reinf Id"), Equals, False)
         Equals = If(Me.qty.CheckChange(otherToCompare.qty, changes, categoryName, "Qty"), Equals, False)
 
@@ -2877,14 +2899,14 @@ Partial Public Class PoleReinfDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As PoleReinfGroup = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then Me.Absorb(DirectCast(Parent, EDSObject))
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.reinforcement_id = DBtoNullableInt(dr.Item("reinforcement_id"))
+        Me.reinforcement_id = DBtoNullableInt(dr.Item("ID"))
         Me.group_id = DBtoNullableInt(dr.Item("group_id"))
         Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         Me.local_reinforcement_id = DBtoNullableInt(dr.Item("local_reinforcement_id"))
@@ -2931,8 +2953,10 @@ Partial Public Class PoleReinfDetail
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
+        Dim ParentGroup As PoleReinfGroup = TryCast(Me.Parent, PoleReinfGroup)
+
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reinforcement_id = " & Me.reinforcement_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & ParentGroup.group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_reinforcement_id = " & Me.local_reinforcement_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_flat = " & Me.pole_flat.ToString.FormatDBValue)
@@ -3000,8 +3024,8 @@ Partial Public Class PoleIntGroup
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
 
         For Each detailrow As PoleIntDetail In int_ids
-            If IsSomething(detailrow.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                If IsSomething(detailrow.local_group_id) Then
+            If IsSomething(detailrow.interference_id) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                If IsSomething(detailrow.local_interference_id) Then
                     SQLUpdate = SQLUpdate.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLUpdate)
                 Else
                     SQLUpdate = SQLUpdate.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLDelete)
@@ -3021,11 +3045,12 @@ Partial Public Class PoleIntGroup
 
         SQLDelete = SQLDelete.Replace("[ID]", Me.group_id.ToString.FormatDBValue)
 
-        For Each detailrow As PoleIntDetail In int_ids
-            If Me.local_group_id = detailrow.local_group_id Then
-                SQLDelete = SQLInsert.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLDelete)
-            End If
-        Next
+        SQLDelete = SQLDelete.Replace("--[INT DETAIL SUBQUERY]", "DELETE From pole.interference_details Where group_id = " & Me.group_id.ToString.FormatDBValue)
+        'For Each detailrow As PoleIntDetail In int_ids
+        '    If Me.local_group_id = detailrow.local_group_id Then
+        '        SQLDelete = SQLDelete.Replace("--[INT DETAIL SUBQUERY]", detailrow.SQLDelete)
+        '    End If
+        'Next
 
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3131,7 +3156,7 @@ Partial Public Class PoleIntGroup
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.group_id = DBtoNullableInt(dr.Item("group_id"))
+        Me.group_id = DBtoNullableInt(dr.Item("ID"))
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         Me.elev_bot = DBtoNullableDbl(dr.Item("elev_bot"))
@@ -3178,8 +3203,10 @@ Partial Public Class PoleIntGroup
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & Me.pole_id.ToString.FormatDBValue)
+        Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & ParentPole.pole_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_bot = " & Me.elev_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elev_top = " & Me.elev_top.ToString.FormatDBValue)
@@ -3345,14 +3372,14 @@ Partial Public Class PoleIntDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As PoleIntGroup = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then Me.Absorb(DirectCast(Parent, EDSObject))
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.interference_id = DBtoNullableInt(dr.Item("interference_id"))
+        Me.interference_id = DBtoNullableInt(dr.Item("ID"))
         Me.group_id = DBtoNullableInt(dr.Item("group_id"))
         Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         Me.local_interference_id = DBtoNullableInt(dr.Item("local_interference_id"))
@@ -3399,8 +3426,10 @@ Partial Public Class PoleIntDetail
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
+        Dim ParentGroup As PoleIntGroup = TryCast(Me.Parent, PoleIntGroup)
+
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("interference_id = " & Me.interference_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & ParentGroup.group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_interference_id = " & Me.local_interference_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_flat = " & Me.pole_flat.ToString.FormatDBValue)
@@ -3462,6 +3491,7 @@ Partial Public Class PoleReinfResults
         Return SQLInsert
     End Function
 
+    'Results should only ever be Inserted - MRR
     'Public Overrides Function SQLUpdate() As String
     '    SQLUpdate = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (UPDATE).sql")
 
@@ -3484,6 +3514,7 @@ Partial Public Class PoleReinfResults
 
 #Region "Define"
     'Private _ID As Integer?
+    Private _result_id As Integer?
     Private _work_order_seq_num As Integer?
     Private _pole_id As Integer?
     Private _section_id As Integer?
@@ -3496,15 +3527,15 @@ Partial Public Class PoleReinfResults
     'Private _process_stage As String
     'Private _modified_date As DateTime?
 
-    '<Category("CCIpole Results"), Description(""), DisplayName("ID")>
-    'Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
+    <Category("CCIpole Results"), Description(""), DisplayName("Result Id")>
+    Public Property result_id() As Integer?
+        Get
+            Return Me._result_id
+        End Get
+        Set
+            Me._result_id = Value
+        End Set
+    End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Work Order Seq Num")>
     Public Property work_order_seq_num() As Integer?
         Get
@@ -3620,7 +3651,8 @@ Partial Public Class PoleReinfResults
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.work_order_seq_num = DBtoNullableInt(dr.Item("work_order_seq_num"))
+        Me.result_id = DBtoNullableInt(dr.Item("ID"))
+        Me.work_order_seq_num = DBtoNullableInt(dr.Item("work_order_seq_num")) 'Change to Parent WO downstream - MRR
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.section_id = DBtoNullableInt(dr.Item("section_id"))
         Me.local_section_id = DBtoNullableInt(dr.Item("local_section_id"))
@@ -3640,7 +3672,8 @@ Partial Public Class PoleReinfResults
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Parent.work_order_seq_num.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") '(Me.pole_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID") '(Me.section_id.ToString.FormatDBValue) 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_section_id.ToString.FormatDBValue)
@@ -3658,6 +3691,7 @@ Partial Public Class PoleReinfResults
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("result_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
         SQLInsertFields = SQLInsertFields.AddtoDBString("pole_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("section_id")
@@ -3676,8 +3710,11 @@ Partial Public Class PoleReinfResults
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & Me.pole_id.ToString.FormatDBValue)
+        Dim ParentPole As Pole = TryCast(Me.Parent, Pole)
+
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_id = " & Me.result_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Parent.work_order_seq_num.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_id = " & ParentPole.pole_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("section_id = " & Me.section_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_section_id = " & Me.local_section_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
@@ -3703,11 +3740,12 @@ Partial Public Class PoleReinfResults
         Dim otherToCompare As PoleReinfResults = TryCast(other, PoleReinfResults)
         If otherToCompare Is Nothing Then Return False
 
+        'Equals = If(Me.result_id.CheckChange(otherToCompare.result_id, changes, categoryName, "Result Id"), Equals, False)
         Equals = If(Me.work_order_seq_num.CheckChange(otherToCompare.work_order_seq_num, changes, categoryName, "Work Order Seq Num"), Equals, False)
         Equals = If(Me.pole_id.CheckChange(otherToCompare.pole_id, changes, categoryName, "Pole Id"), Equals, False)
-        Equals = If(Me.section_id.CheckChange(otherToCompare.section_id, changes, categoryName, "Section Id"), Equals, False)
+        'Equals = If(Me.section_id.CheckChange(otherToCompare.section_id, changes, categoryName, "Section Id"), Equals, False)
         Equals = If(Me.local_section_id.CheckChange(otherToCompare.local_section_id, changes, categoryName, "Local Section Id"), Equals, False)
-        Equals = If(Me.group_id.CheckChange(otherToCompare.group_id, changes, categoryName, "Group Id"), Equals, False)
+        'Equals = If(Me.group_id.CheckChange(otherToCompare.group_id, changes, categoryName, "Group Id"), Equals, False)
         Equals = If(Me.local_group_id.CheckChange(otherToCompare.local_group_id, changes, categoryName, "Local Group Id"), Equals, False)
         Equals = If(Me.result_lkup.CheckChange(otherToCompare.result_lkup, changes, categoryName, "Result Lkup"), Equals, False)
         Equals = If(Me.rating.CheckChange(otherToCompare.rating, changes, categoryName, "Rating"), Equals, False)
@@ -3834,7 +3872,7 @@ Partial Public Class PoleMatlProp
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.matl_id = DBtoNullableInt(dr.Item("matl_id"))
+        Me.matl_id = DBtoNullableInt(dr.Item("ID"))
         Me.local_matl_id = DBtoNullableInt(dr.Item("local_matl_id"))
         Me.name = DBtoStr(dr.Item("name"))
         Me.fy = DBtoNullableDbl(dr.Item("fy"))
@@ -4147,7 +4185,7 @@ Partial Public Class PoleBoltProp
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.bolt_id = DBtoNullableInt(dr.Item("bolt_id"))
+        Me.bolt_id = DBtoNullableInt(dr.Item("ID"))
         Me.local_bolt_id = DBtoNullableInt(dr.Item("local_bolt_id"))
         Me.name = DBtoStr(dr.Item("name"))
         Me.description = DBtoStr(dr.Item("description"))
@@ -4332,6 +4370,9 @@ Partial Public Class PoleReinfProp
                     End If
                 Next
             End If
+            If Me.local_bolt_id_top = 0 Then
+                SQLInsert = SQLInsert.Replace("bolt_id_top = @TopBoltID", "bolt_id_top IS NULL")
+            End If
         End If
 
         'Bot Bolt
@@ -4346,6 +4387,9 @@ Partial Public Class PoleReinfProp
                         SQLInsert = SQLInsert.Replace("@BoltID", "@BotBoltID")
                     End If
                 Next
+            End If
+            If Me.local_bolt_id_bot = 0 Then
+                SQLInsert = SQLInsert.Replace("bolt_id_bot = @BotBoltID", "bolt_id_bot IS NULL")
             End If
         End If
 
@@ -5728,7 +5772,7 @@ Partial Public Class PoleReinfProp
         Dim excelDS As New DataSet
         Dim dr = Row
 
-        Me.reinf_id = DBtoNullableInt(dr.Item("reinf_id"))
+        Me.reinf_id = DBtoNullableInt(dr.Item("ID"))
         Me.local_reinf_id = DBtoNullableInt(dr.Item("local_reinf_id"))
         Me.name = DBtoStr(dr.Item("name"))
         Me.type = DBtoStr(dr.Item("type"))
@@ -5759,8 +5803,8 @@ Partial Public Class PoleReinfProp
         Me.connection_cap_revH_bot = DBtoNullableDbl(dr.Item("connection_cap_revH_bot"))
         Me.bolt_id_bot = DBtoNullableInt(dr.Item("bolt_id_bot"))
         Me.local_bolt_id_bot = DBtoNullableInt(dr.Item("local_bolt_id_bot"))
-        If DBtoStr(dr.Item("bolt_N_or_X_bot")) = "-" Or DBtoStr(dr.Item("bolt_N_or_X_bot")) = "n/a" Or DBtoStr(dr.Item("bolt_N_or_X_bot")) = "" Then
-            Me.bolt_N_or_X_bot = Nothing
+        If DBtoStr(dr.Item("bolt_N_or_X_bot")) = "-" Or DBtoStr(dr.Item("bolt_N_or_X_bot")) = "n/a" Then
+            Me.bolt_N_or_X_bot = ""
         Else
             Me.bolt_N_or_X_bot = DBtoStr(dr.Item("bolt_N_or_X_bot"))
         End If
@@ -6187,7 +6231,7 @@ Partial Public Class PoleReinfProp
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("centroid = " & Me.centroid.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("istension = " & Me.istension.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("matl_id = @SubLevel4ID") '& Me.matl_id.ToString.FormatDBValue) ''''''''''
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_matl_id = " & Me.local_matl_id.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_matl_id = " & Me.local_matl_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Ix = " & Me.Ix.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Iy = " & Me.Iy.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Lu = " & Me.Lu.ToString.FormatDBValue)
@@ -6201,7 +6245,7 @@ Partial Public Class PoleReinfProp
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("connection_cap_revG_bot = " & Me.connection_cap_revG_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("connection_cap_revH_bot = " & Me.connection_cap_revH_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_id_bot = @BotBoltID") '& Me.bolt_id_bot.ToString.FormatDBValue) ''''''''''
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_bolt_id_bot = " & Me.local_bolt_id_bot.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_bolt_id_bot = " & Me.local_bolt_id_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_N_or_X_bot = " & Me.bolt_N_or_X_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_num_bot = " & Me.bolt_num_bot.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_spacing_bot = " & Me.bolt_spacing_bot.ToString.FormatDBValue)
@@ -6224,7 +6268,7 @@ Partial Public Class PoleReinfProp
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("connection_cap_revG_top = " & Me.connection_cap_revG_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("connection_cap_revH_top = " & Me.connection_cap_revH_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_id_top = @TopBoltID") '& Me.bolt_id_top.ToString.FormatDBValue) ''''''''''
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_bolt_id_top = " & Me.local_bolt_id_top.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_bolt_id_top = " & Me.local_bolt_id_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_N_or_X_top = " & Me.bolt_N_or_X_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_num_top = " & Me.bolt_num_top.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_spacing_top = " & Me.bolt_spacing_top.ToString.FormatDBValue)
@@ -6334,7 +6378,7 @@ Partial Public Class PoleReinfProp
         Equals = If(Me.area_gross.CheckChange(otherToCompare.area_gross, changes, categoryName, "Area Gross"), Equals, False)
         Equals = If(Me.centroid.CheckChange(otherToCompare.centroid, changes, categoryName, "Centroid"), Equals, False)
         Equals = If(Me.istension.CheckChange(otherToCompare.istension, changes, categoryName, "Istension"), Equals, False)
-        Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
+        'Equals = If(Me.matl_id.CheckChange(otherToCompare.matl_id, changes, categoryName, "Matl Id"), Equals, False)
         Equals = If(Me.local_matl_id.CheckChange(otherToCompare.local_matl_id, changes, categoryName, "Local Matl Id"), Equals, False)
         Equals = If(Me.Ix.CheckChange(otherToCompare.Ix, changes, categoryName, "Ix"), Equals, False)
         Equals = If(Me.Iy.CheckChange(otherToCompare.Iy, changes, categoryName, "Iy"), Equals, False)
@@ -6348,7 +6392,7 @@ Partial Public Class PoleReinfProp
         Equals = If(Me.connection_cap_revF_bot.CheckChange(otherToCompare.connection_cap_revF_bot, changes, categoryName, "Connection Cap Revf Bot"), Equals, False)
         Equals = If(Me.connection_cap_revG_bot.CheckChange(otherToCompare.connection_cap_revG_bot, changes, categoryName, "Connection Cap Revg Bot"), Equals, False)
         Equals = If(Me.connection_cap_revH_bot.CheckChange(otherToCompare.connection_cap_revH_bot, changes, categoryName, "Connection Cap Revh Bot"), Equals, False)
-        Equals = If(Me.bolt_id_bot.CheckChange(otherToCompare.bolt_id_bot, changes, categoryName, "Bolt Id Bot"), Equals, False)
+        'Equals = If(Me.bolt_id_bot.CheckChange(otherToCompare.bolt_id_bot, changes, categoryName, "Bolt Id Bot"), Equals, False)
         Equals = If(Me.local_bolt_id_bot.CheckChange(otherToCompare.local_bolt_id_bot, changes, categoryName, "Local Bolt Id Bot"), Equals, False)
         Equals = If(Me.bolt_N_or_X_bot.CheckChange(otherToCompare.bolt_N_or_X_bot, changes, categoryName, "Bolt N Or X Bot"), Equals, False)
         Equals = If(Me.bolt_num_bot.CheckChange(otherToCompare.bolt_num_bot, changes, categoryName, "Bolt Num Bot"), Equals, False)
@@ -6371,7 +6415,7 @@ Partial Public Class PoleReinfProp
         Equals = If(Me.connection_cap_revF_top.CheckChange(otherToCompare.connection_cap_revF_top, changes, categoryName, "Connection Cap Revf Top"), Equals, False)
         Equals = If(Me.connection_cap_revG_top.CheckChange(otherToCompare.connection_cap_revG_top, changes, categoryName, "Connection Cap Revg Top"), Equals, False)
         Equals = If(Me.connection_cap_revH_top.CheckChange(otherToCompare.connection_cap_revH_top, changes, categoryName, "Connection Cap Revh Top"), Equals, False)
-        Equals = If(Me.bolt_id_top.CheckChange(otherToCompare.bolt_id_top, changes, categoryName, "Bolt Id Top"), Equals, False)
+        'Equals = If(Me.bolt_id_top.CheckChange(otherToCompare.bolt_id_top, changes, categoryName, "Bolt Id Top"), Equals, False)
         Equals = If(Me.local_bolt_id_top.CheckChange(otherToCompare.local_bolt_id_top, changes, categoryName, "Local Bolt Id Top"), Equals, False)
         Equals = If(Me.bolt_N_or_X_top.CheckChange(otherToCompare.bolt_N_or_X_top, changes, categoryName, "Bolt N Or X Top"), Equals, False)
         Equals = If(Me.bolt_num_top.CheckChange(otherToCompare.bolt_num_top, changes, categoryName, "Bolt Num Top"), Equals, False)

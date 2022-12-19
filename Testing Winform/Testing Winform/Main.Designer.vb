@@ -36,6 +36,8 @@
         Me.btnLoadFndFromEDS = New System.Windows.Forms.Button()
         Me.btnExportStrcFiles = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.txtFndWO = New System.Windows.Forms.TextBox()
         Me.btnCompareStrc = New System.Windows.Forms.Button()
         Me.txtFndStrc = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
@@ -218,6 +220,8 @@
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.Label7)
+        Me.Panel2.Controls.Add(Me.txtFndWO)
         Me.Panel2.Controls.Add(Me.btnCompareStrc)
         Me.Panel2.Controls.Add(Me.txtFndStrc)
         Me.Panel2.Controls.Add(Me.Label5)
@@ -228,6 +232,23 @@
         Me.Panel2.Name = "Panel2"
         Me.Panel2.Size = New System.Drawing.Size(877, 45)
         Me.Panel2.TabIndex = 6
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(582, 16)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(29, 13)
+        Me.Label7.TabIndex = 11
+        Me.Label7.Text = "WO:"
+        '
+        'txtFndWO
+        '
+        Me.txtFndWO.Location = New System.Drawing.Point(617, 12)
+        Me.txtFndWO.Name = "txtFndWO"
+        Me.txtFndWO.Size = New System.Drawing.Size(100, 21)
+        Me.txtFndWO.TabIndex = 10
+        Me.txtFndWO.Text = "1234567"
         '
         'btnCompareStrc
         '
@@ -638,6 +659,8 @@
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents exceltosql As Button
     Friend WithEvents TabControl1 As TabControl
+    Friend WithEvents Label7 As Label
+    Friend WithEvents txtFndWO As TextBox
 
 #End Region
 

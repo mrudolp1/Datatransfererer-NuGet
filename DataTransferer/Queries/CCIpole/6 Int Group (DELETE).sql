@@ -6,3 +6,5 @@ BEGIN
 	DELETE FROM pole.interferences WHERE ID = [ID]
 
 END
+
+--[INT GROUP SUBQUERY]

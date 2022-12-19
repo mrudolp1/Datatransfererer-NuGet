@@ -26,10 +26,12 @@ BEGIN --Custom Reinf DB SubQuery BEGIN
             IF EXISTS(SELECT * FROM gen.pole_reinforcements WHERE [REINF DB FIELDS AND VALUES])
                 SELECT @SubLevel2ID = ID FROM gen.pole_reinforcements WHERE [REINF DB FIELDS AND VALUES]
             ELSE
-                INSERT INTO gen.pole_reinforcements ([REINF DB FIELDS])
-                OUTPUT INSERTED.ID INTO @SubLevel2
-                VALUES([REINF DB VALUES])
-                SELECT @SubLevel2ID = ID FROM @SubLevel2
+                BEGIN
+                    INSERT INTO gen.pole_reinforcements ([REINF DB FIELDS])
+                    OUTPUT INSERTED.ID INTO @SubLevel2
+                    VALUES([REINF DB VALUES])
+                    SELECT @SubLevel2ID = ID FROM @SubLevel2
+                END
         END
 
 END --Custom Reinf DB SubQuery END

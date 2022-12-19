@@ -34,6 +34,26 @@
     <None Remove="Queries\CCIplate\CCIplate (SELECT Connection Group).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Connections).sql" />
     <None Remove="Queries\CCIplate\CCIplate (SELECT Plate Details).sql" />
+    <None Remove="Queries\CCIpole\2 Unreinf Section %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\2 Unreinf Section %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\3 Reinf Section %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\3 Reinf Section %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\3 Reinf Section %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\4 Reinf Group %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\4 Reinf Group %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\4 Reinf Group %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\5 Reinf Detail %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\5 Reinf Detail %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\5 Reinf Detail %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\6 Int Group %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\6 Int Group %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\6 Int Group %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\7 Int Detail %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\7 Int Detail %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\7 Int Detail %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\8 Reinf Result %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\8 Reinf Result %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\8 Reinf Result %28UPDATE%29.sql" />
     <None Remove="Queries\CCIpole\CCIpole (IN_UP).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT Criteria).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SELECT General).sql" />
@@ -52,6 +72,12 @@
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
+    <None Remove="Queries\CCIpole\DB Bolt %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\DB Matl %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\DB Reinf %28INSERT%29.sql" />
+    <None Remove="Queries\CCIpole\DNU\8 Reinf Result %28DELETE%29.sql" />
+    <None Remove="Queries\CCIpole\DNU\8 Reinf Result %28UPDATE%29.sql" />
+    <None Remove="Queries\CCIpole\DNU\CCIpole %28IN_UP%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
     <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
@@ -236,7 +262,82 @@
     <Content Include="Queries\CCIpole\2 Unreinf Section %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\CCIpole\CCIpole %28IN_UP%29.sql">
+    <Content Include="Queries\CCIpole\2 Unreinf Section (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\2 Unreinf Section (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\3 Reinf Section (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\3 Reinf Section (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\3 Reinf Section (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\4 Reinf Group (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\4 Reinf Group (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\4 Reinf Group (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\5 Reinf Detail (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\5 Reinf Detail (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\5 Reinf Detail (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\6 Int Group (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\6 Int Group (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\6 Int Group (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\7 Int Detail (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\7 Int Detail (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\7 Int Detail (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\8 Reinf Result (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\8 Reinf Result (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\8 Reinf Result (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DB Bolt (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DB Matl (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DB Reinf (INSERT).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DNU\8 Reinf Result (DELETE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DNU\8 Reinf Result (UPDATE).sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Queries\CCIpole\DNU\CCIpole (IN_UP).sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\DNU\CCIpole (SELECT Criteria).sql">

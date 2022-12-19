@@ -52,15 +52,17 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, filePaths As String())
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String())
         Me.bus_unit = BU
         Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
         'Uncomment your foundation type for testing when it's ready. 
         LoadFromFiles(filePaths)
     End Sub
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
 
@@ -154,7 +156,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
@@ -207,7 +209,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
 
-        Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.databaseIdentity, Me.activeDatabase)
+        Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.work_order_seq_num, Me.databaseIdentity, Me.activeDatabase)
 
         Dim structureQuery As String = ""
         For Each level In _SQLQueryVariables
@@ -316,7 +318,7 @@ Partial Public Class EDSStructure
             CCIplates(i).SavetoExcel()
         Next
         For i = 0 To Me.Poles.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            fileNum = Format(" ({0})", i.ToString)
             Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
             Poles(i).SavetoExcel()
         Next
