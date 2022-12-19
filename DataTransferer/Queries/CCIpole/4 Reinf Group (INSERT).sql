@@ -1,0 +1,19 @@
+﻿
+BEGIN --Reinf Group SubQuery BEGIN
+
+    --[REINF DB SUBQUERY]
+
+
+	--Group ID	
+	INSERT INTO pole.reinforcements ([REINF GROUP FIELDS]) 
+		OUTPUT INSERTED.ID INTO @SubLevel1
+		VALUES([REINF GROUP VALUES])
+		SELECT @SubLevel1ID = ID FROM @SubLevel1
+
+
+    --[REINF DETAIL SUBQUERY]
+
+
+END --Reinf Group SubQuery END
+
+--[REINF GROUP SUBQUERY]

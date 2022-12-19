@@ -1,0 +1,27 @@
+﻿
+BEGIN
+
+	INSERT INTO pole.pole ([GENERAL POLE FIELDS]) 
+		OUTPUT INSERTED.ID INTO @TopLevel
+		VALUES([GENERAL POLE VALUES])
+		SELECT @TopLevelID=ID FROM @TopLevel
+
+
+		--[UNREINF SECTION SUBQUERY]
+
+		--[REINF SECTION SUBQUERY]
+
+		--[REINF GROUP SUBQUERY]
+
+		--[INT GROUP SUBQUERY]
+
+		--[RESULT SUBQUERY]
+
+
+	DELETE FROM @TopLevel	--CCIpole General
+	DELETE FROM @SubLevel1	--Reinf Groups / Int Groups
+	DELETE FROM @SubLevel2	--Reinf DB
+	DELETE FROM @SubLevel3	--Bolt DB
+	DELETE FROM @SubLevel4	--Matl DB
+
+END
