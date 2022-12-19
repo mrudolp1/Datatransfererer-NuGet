@@ -147,7 +147,7 @@ Public Class ReportOptions
                 Return "Found in-progress report options with WO " + AttemptedWO + ".  In-progress options loaded."
             End If
         Else
-            Return "No in-progress report or default options were found."
+            Return "No in-progress report or default options were found. Report populated with basic options."
         End If
     End Function
 
