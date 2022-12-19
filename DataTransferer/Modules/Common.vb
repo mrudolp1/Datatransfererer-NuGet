@@ -131,11 +131,24 @@ Public Module Common
 
     'IEM 11/4/2021 Sometimes you need a little something
     Public Function IsSomething(ByVal sender As Object) As Boolean
+
         If Not IsNothing(sender) Then Return True
 
         Return False
     End Function
+    Public Function IsSomethingString(ByVal sender As Object) As Boolean
 
+        'If GetType(sender) = String Then
+        '    If sender = "" Then
+        '        sender = Nothing
+        '    End If
+        'End If
+
+        If sender.length > 0 Then Return True
+
+        Return False
+
+    End Function
 
 
     <DebuggerStepThrough()>

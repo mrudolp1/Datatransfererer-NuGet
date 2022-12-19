@@ -73,6 +73,16 @@ Begin
 	--Pile
 	Select * From fnd.pile WHERE bus_unit=@BU AND structure_id=@strID
 
+	--Pile Location
+	Select pl.* 
+	From 
+		fnd.pile_location pl
+		,fnd.pile fnd
+	WHERE
+		fnd.bus_unit = @BU
+		AND fnd.structure_id = @strID
+		AND fnd.ID = pl.pile_id
+
 	--Drilled Pier
 	Select * From fnd.drilled_pier WHERE bus_unit=@BU AND structure_id=@strID
 
@@ -105,6 +115,99 @@ Begin
 
 	--CCIPlate
 	Select * From conn.connections WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Connections
+	Select pl.* 
+	From 
+		conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+
+	--Plate Details
+	Select pd.* 
+	From 
+		conn.plate_details pd
+		,conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID = pd.plate_id
+
+	--Bolt Groups
+	Select bg.* 
+	From 
+		conn.bolts bg
+		,conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID = bg.plate_id
+
+	--Bolt Details
+	Select bd.* 
+	From 
+		conn.bolt_details bd
+		,conn.bolts bg
+		,conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID = bg.plate_id
+		AND bg.ID = bd.bolt_id
+
+	--CCIplate Materials
+	Select * From gen.connection_material_properties
+
+	--Stiffener Groups
+	Select sg.* 
+	From 
+		conn.stiffeners sg
+		,conn.plates pl
+		,conn.connections con
+		,conn.plate_details pd
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID = pd.plate_id
+		AND pd.ID = sg.plate_details_id
+
+	--Stiffener Details
+	Select sd.* 
+	From 
+		conn.stiffener_details sd
+		,conn.stiffeners sg
+		,conn.plates pl
+		,conn.connections con
+		,conn.plate_details pd
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID=pd.plate_id
+		AND pd.ID = sg.plate_details_id
+		AND sg.ID=sd.stiffener_id
+
+	--Bridge Stiffener Details
+	Select bsd.* 
+	From 
+		conn.bridge_stiffeners bsd
+		,conn.plates pl
+		,conn.connections con
+	WHERE
+		con.bus_unit = @BU
+		AND con.structure_id = @strID
+		AND con.ID = pl.connection_id
+		AND pl.ID=bsd.plate_id
 
 	--CCIPole
 	Select * From pole.pole WHERE bus_unit=@BU AND structure_id=@strID
