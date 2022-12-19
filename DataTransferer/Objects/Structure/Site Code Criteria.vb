@@ -34,6 +34,8 @@ Partial Public Class SiteCodeCriteria
     Private _crest_to_mid_height_distance As Double?
     Private _tower_point_elev As Double?
     Private _base_kzt As Double?
+    Private _site_name As String
+    Private _structure_type As String
 
     <Category(""), Description(""), DisplayName("ibc_current")>
     Public Property ibc_current() As String
@@ -224,6 +226,24 @@ Partial Public Class SiteCodeCriteria
             Me._base_kzt = Value
         End Set
     End Property
+    <Category(""), Description(""), DisplayName("site_name")>
+    Public Property site_name() As String
+        Get
+            Return Me._site_name
+        End Get
+        Set
+            Me._site_name = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("structure_type")>
+    Public Property structure_type() As String
+        Get
+            Return Me._structure_type
+        End Get
+        Set
+            Me._structure_type = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -258,6 +278,8 @@ Partial Public Class SiteCodeCriteria
         Equals = If(Me.crest_to_mid_height_distance.CheckChange(otherToCompare.crest_to_mid_height_distance, changes, categoryName, "Crest To Mid Height Distance"), Equals, False)
         Equals = If(Me.tower_point_elev.CheckChange(otherToCompare.tower_point_elev, changes, categoryName, "Tower Point Elev"), Equals, False)
         Equals = If(Me.base_kzt.CheckChange(otherToCompare.base_kzt, changes, categoryName, "Base Kzt"), Equals, False)
+        Equals = If(Me.site_name.CheckChange(otherToCompare.site_name, changes, categoryName, "Site Name"), Equals, False)
+        Equals = If(Me.structure_type.CheckChange(otherToCompare.structure_type, changes, categoryName, "Structure Type"), Equals, False)
 
         Return Equals
     End Function
@@ -467,7 +489,24 @@ Partial Public Class SiteCodeCriteria
         Catch ex As Exception
             Me.base_kzt = Nothing
         End Try
-
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("site_name"), String)) Then
+                Me.site_name = CType(SiteCodeDataRow.Item("site_name"), String)
+            Else
+                Me.site_name = Nothing
+            End If
+        Catch ex As Exception
+            Me.site_name = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("structure_type"), String)) Then
+                Me.structure_type = CType(SiteCodeDataRow.Item("structure_type"), String)
+            Else
+                Me.structure_type = Nothing
+            End If
+        Catch ex As Exception
+            Me.structure_type = Nothing
+        End Try
     End Sub
 #End Region
 

@@ -1,0 +1,3 @@
+﻿DELETE FROM conn.bridge_stiffeners WHERE ID = [ID]
+
+	--[BRIDGE STIFFENER DETAIL INSERT]
