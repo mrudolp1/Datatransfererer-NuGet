@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
+Imports System.IO
 'Imports Microsoft.Data.SqlClient
 
 Imports System.Security.Principal
@@ -7,10 +8,11 @@ Imports System.Security.Principal
 Public Class ReportOptions
     Inherits EDSObjectWithQueries
 
+#Region "Properties"
+    
     'Required overriden Properties
     Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
     Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
-
     Public Property wo As String
 
     'Properties: Store in SQL report.report_options table (PK = WO)
@@ -30,7 +32,7 @@ Public Class ReportOptions
     Public Property ProposedExtension As Boolean
     Public Property ExtensionHeight As Double
     Public Property CanisterExtension As Boolean
-    Public Property NumModifications As Integer
+    Public Property IsModified As Boolean
     Public Property RohnPirodFlangePlates As Boolean
     Public Property FlangeFEA As Boolean
     Public Property MpSliceOption As Integer '0,1,2
@@ -47,8 +49,6 @@ Public Class ReportOptions
     Public Property TopographicCategoryOtherThan1 As Boolean
     Public Property ImportanceFactorOtherThan1 As Boolean
     Public Property PrevWO As Integer
-
-
     Public Property IsDefault As Boolean
 
     'Properties: Get from EDS based on WO(???)
@@ -67,18 +67,22 @@ Public Class ReportOptions
     Public Property Notes As BindingList(Of String) = New BindingList(Of String)
     Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
-    'Appendixes
-    Public AppendixDocuments As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
-
-    'Documents (for Table 4)
-    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument)
-
     'Equipment (Tables 1,2,3)
     Public ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
+    Public ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
     Public OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
+
+    'Documents (for Table 4)
+    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
 
     'Temporary place to put LMP data, to eventually be merged with the Equipment Tables in the Report Class Library...
     Public temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
+
+    'File management
+    Public RootDir As DirectoryInfo
+
+    'Appendixes
+    Public AppendixDocuments As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
@@ -86,8 +90,9 @@ Public Class ReportOptions
     Public Property IsFromDefault As Boolean
     Public Property AttemptedWO As String
 
+#End Region
 
-    'Helper Functions
+#Region "ToString functions"
     Public Function AssumptionsString() As String
         Dim result As String = ""
 
@@ -142,11 +147,13 @@ Public Class ReportOptions
                 Return "Found in-progress report options with WO " + AttemptedWO + ".  In-progress options loaded."
             End If
         Else
-            Return "No in-progress report or default options were found."
+            Return "No in-progress report or default options were found. Report populated with basic options."
         End If
     End Function
 
-#Region "Constructors"
+#End Region
+
+#Region "Constructors (loading from EDS)"
 
     Public Sub New() 'Default
 
@@ -162,9 +169,10 @@ Public Class ReportOptions
         Using strDS As New DataSet
             sqlLoader(query1, strDS, ActiveDatabase, LogOnUser, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
-                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
                 IsFromDB = True
                 IsFromDefault = False
+
+                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
                 Return
             End If
         End Using
@@ -174,9 +182,10 @@ Public Class ReportOptions
         Using strDS As New DataSet
             sqlLoader(query2, strDS, ActiveDatabase, LogOnUser, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
-                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
                 IsFromDB = True
                 IsFromDefault = True
+
+                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
                 Return
             End If
         End Using
@@ -189,6 +198,7 @@ Public Class ReportOptions
 
     End Sub
 
+    'Load everything from EDS data tables (in progress report)
     Public Sub Generate(ByVal SiteCodeDataRow As DataRow, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
 #Region "Items"
@@ -366,13 +376,13 @@ Public Class ReportOptions
         End Try
 
         Try
-            If Not IsDBNull(CType(SiteCodeDataRow.Item("num_modifications"), String)) Then
-                Me.NumModifications = CType(SiteCodeDataRow.Item("num_modifications"), String)
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("is_modified"), String)) Then
+                Me.IsModified = CType(SiteCodeDataRow.Item("is_modified"), String)
             Else
-                Me.NumModifications = Nothing
+                Me.IsModified = Nothing
             End If
         Catch ex As Exception
-            Me.NumModifications = Nothing
+            Me.IsModified = Nothing
         End Try
 
         Try
@@ -557,6 +567,18 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.JurisdictionWording = Nothing
         End Try
+        If Not Me.IsFromDefault Then
+            Try
+                If Not IsDBNull(CType(SiteCodeDataRow.Item("root_dir"), String)) Then
+                    Me.RootDir = New DirectoryInfo(CType(SiteCodeDataRow.Item("root_dir"), String))
+                Else
+                    Me.RootDir = Nothing
+                End If
+            Catch ex As Exception
+                Me.RootDir = Nothing
+            End Try
+        End If
+
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("EngName"), String)) Then
                 Me.EngName = CType(SiteCodeDataRow.Item("EngName"), String)
@@ -593,14 +615,11 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.EngStampTitle = Nothing
         End Try
-        Console.WriteLine("ATTEMPT5000")
 #End Region
 
 #Region "Load related report lists"
         'Load list items
         Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & AttemptedWO & "'"
-        'Console.WriteLine(ActiveDatabase)
-        'Console.WriteLine(LogOnUser.AccessToken)
         Using strDS As New DataSet
             sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
@@ -622,42 +641,46 @@ Public Class ReportOptions
 
         End Using
 #End Region
+
 #Region "Load related report appendixes"
-        'Load list items
-        query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & AttemptedWO & "'"
-        'Console.WriteLine(ActiveDatabase)
-        'Console.WriteLine(LogOnUser.AccessToken)
+        If Not IsFromDefault Then
 
-        Using strDS As New DataSet
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
-            If (strDS.Tables(0).Rows.Count > 0) Then
-                AppendixDocuments.Clear()
-                AppendixDocuments.Add("rtf", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("A", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("B", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("C", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("D", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("Y", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("Z", New List(Of FilepathWithPriority))
-                AppendixDocuments.Add("Extra", New List(Of FilepathWithPriority))
-            End If
+            'Load list items
+            query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & AttemptedWO & "'"
 
-            For Each item In strDS.Tables(0).Rows
-                Dim appendix As String = CType(item.Item("appendix_name"), String)
-                If Not AppendixDocuments.ContainsKey(appendix) Then
-                    AppendixDocuments.Add(appendix, New List(Of FilepathWithPriority))
+            Using strDS As New DataSet
+                sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                If (strDS.Tables(0).Rows.Count > 0) Then
+                    AppendixDocuments.Clear()
+                    AppendixDocuments.Add("CCIPole", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("rtf", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("A", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("B", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("C", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("D", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("Y", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("Z", New List(Of FilepathWithPriority))
+                    AppendixDocuments.Add("Extra", New List(Of FilepathWithPriority))
                 End If
 
-                AppendixDocuments(appendix).Add(New FilepathWithPriority(
-                    Integer.Parse(item.Item("priority")),
+                For Each item In strDS.Tables(0).Rows
+                    Dim appendix As String = CType(item.Item("appendix_name"), String)
+                    If Not AppendixDocuments.ContainsKey(appendix) Then
+                        AppendixDocuments.Add(appendix, New List(Of FilepathWithPriority))
+                    End If
+
+                    AppendixDocuments(appendix).Add(New FilepathWithPriority(
+                    -1,
                     item.Item("filepath").ToString(),
                     item.Item("filename").ToString()
                     ))
 
-            Next
+                Next
 
-        End Using
+            End Using
+        End If
 #End Region
+
 #Region "Load related report documents (for table 4)"
         'Load doc items
         query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & AttemptedWO & "'"
@@ -682,13 +705,14 @@ Public Class ReportOptions
 
         End Using
 #End Region
+
 #Region "Load related report equipment (for table 1-3)"
-        Console.WriteLine("LMP>>1")
         'Load list items
         query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & AttemptedWO & "'"
 
         Using strDS As New DataSet
             ProposedEquipment.Clear()
+            ConditionalEquipment.Clear()
             OtherEquipment.Clear()
             sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
 
@@ -707,33 +731,33 @@ Public Class ReportOptions
 
                     If (CType(item.Item("table_num"), Integer) = 1) Then
                         ProposedEquipment.Add(t)
+                    ElseIf (CType(item.Item("table_num"), Integer) = 2) Then
+                        ConditionalEquipment.Add(t)
                     ElseIf (CType(item.Item("table_num"), Integer) = 3) Then
                         OtherEquipment.Add(t)
                     End If
 
                 Next
-            
+
             End If
 
         End Using
 #End Region
+
     End Sub
 
 #End Region
 
+#Region "Loading Oracle Stuff"
     Private Sub LoadFeedLinesFromOracle()
-         Using strDS As New DataSet
-                'Console.WriteLine("LMP>>"+queryPath)
-                'Dim lmp_query As String = QueryBuilderFromFile(queryPath & "Report\LMP.sql").Replace("[WO]", AttemptedWO.FormatDBValue())
-                'Console.WriteLine("LMP>>",lmp_query)
-                'Dim result = sqlLoader(lmp_query, strDS, ActiveDatabase, LogOnUser, 500)
-                
+        Using strDS As New DataSet
+
             Dim lmp_query = "WITH  
                 vars AS 
                     --Dual is an empty dummy table. Use this CTE to pull in variables.
                     --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
                     --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
-                    (SELECT "+AttemptedWO+" AS work_order_seq_num FROM DUAL), 
+                    (SELECT " + AttemptedWO + " AS work_order_seq_num FROM DUAL), 
 
                 wo AS (
                     SELECT  wos.work_order_seq_num 
@@ -929,8 +953,6 @@ Public Class ReportOptions
                 "
 
             Dim result = OracleLoader(lmp_query, "LMP", strDS, 3000, "isit")
-            Console.WriteLine(lmp_query)
-            Console.WriteLine(">>" + result.ToString())
 
             If result Then
                 If (strDS.Tables("LMP").Rows.Count > 0) Then
@@ -942,7 +964,7 @@ Public Class ReportOptions
                                 CType(item.Item("ccicode"), String),
                                 CType(item.Item("count"), String),
                                 CType(item.Item("endheight"), String))
-                        temp_LMP.add(t)
+                        temp_LMP.Add(t)
                     Next
                 End If
             End If
@@ -956,7 +978,8 @@ Public Class ReportOptions
             "4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS",
             "4-TOWER MANUFACTURER DRAWINGS",
             "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
-            "4-POST-INSTALLATION INSPECTION"})
+            "4-POST-INSTALLATION INSPECTION",
+            "4-POST-MODIFICATION INSPECTION"})
 
         Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
                 from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
@@ -969,11 +992,10 @@ Public Class ReportOptions
         Using strDS As New DataSet
             OracleLoader(doc_query, "Documents", strDS, 3000, "isit")
 
-            Console.WriteLine("D1")
             For Each item In strDS.Tables("Documents").Rows
-                Dim t As TableDocument = New TableDocument(
-                        item("doc_name"), item("doc_id"), "CCISITES", item("validity") = "VALID")
-                If (Golden.Contains(t.Document)) Then
+                Dim t As TableDocument =
+                    New TableDocument(item("doc_name"), item("doc_id"), "CCISITES", item("validity") = "VALID")
+                If (Golden.Contains(t.Document) And t.Valid) Then
                     t.Enabled = True
                 End If
 
@@ -981,13 +1003,16 @@ Public Class ReportOptions
             Next
         End Using
     End Sub
+
+#End Region
+
+#Region "Saving"
     Public Function SaveReportOptionsToEds(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String) As Integer
 
         Try
             'If new default options, make other options not default
             If IsDefault Then 'Update bit
                 Dim x = SQLReplace_Default()
-                'Console.WriteLine(SQLReplace_Default())
                 sqlSender(SQLReplace_Default(), ActiveDatabase, LogOnUser, 0.ToString)
             End If
 
@@ -1057,7 +1082,7 @@ Public Class ReportOptions
             End If
 
 #End Region
-#Region "Deal with report option Appendixes"
+#Region "Save report option Appendixes"
 
             commands = New List(Of SqlCommand)
             'Delete all appendixes filepaths associated with WO
@@ -1065,18 +1090,18 @@ Public Class ReportOptions
 
             'Add current appendix filepaths
 
-            queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename, priority) VALUES(" & AttemptedWO & ",@NAME, @PATH, @FILENAME,@PRIORITY );"
+            queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename) VALUES(" & AttemptedWO & ",@NAME, @PATH, @FILENAME);"
             For Each Item In AppendixDocuments
                 For Each Document In Item.Value
                     Dim command As SqlCommand = New SqlCommand(queryTemplate)
                     command.Parameters.Add("@NAME", SqlDbType.VarChar)
                     command.Parameters.Add("@PATH", SqlDbType.VarChar)
-                    command.Parameters.Add("@PRIORITY", SqlDbType.VarChar)
+                    'command.Parameters.Add("@PRIORITY", SqlDbType.VarChar)
                     command.Parameters.Add("@FILENAME", SqlDbType.VarChar)
 
                     command.Parameters("@NAME").Value = Item.Key
                     command.Parameters("@PATH").Value = Document.filepath
-                    command.Parameters("@PRIORITY").Value = Document.priority.ToString()
+                    'command.Parameters("@PRIORITY").Value = Document.priority.ToString()
                     command.Parameters("@FILENAME").Value = Document.filename
 
                     commands.Add(command)
@@ -1127,7 +1152,7 @@ Public Class ReportOptions
             End If
 
 #End Region
-#Region "Deal with report equipment (Table 1,2,3)"
+#Region "Save report equipment (Table 1,2,3)"
 
             'Delete all list items associated with WO
             commands = New List(Of SqlCommand)
@@ -1159,6 +1184,31 @@ Public Class ReportOptions
 
                 commands.Add(command)
             Next
+
+            For Each Item In ConditionalEquipment
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
+                command.Parameters.Add("@center_line_elevation", SqlDbType.VarChar)
+                command.Parameters.Add("@num_antennas", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_manufacturer", SqlDbType.VarChar)
+                command.Parameters.Add("@antenna_model", SqlDbType.VarChar)
+                command.Parameters.Add("@num_feed_lines", SqlDbType.VarChar)
+                command.Parameters.Add("@feed_line_size", SqlDbType.VarChar)
+                command.Parameters.Add("@table_num", SqlDbType.VarChar)
+
+
+                command.Parameters("@mounting_level").Value = Item.mounting_level
+                command.Parameters("@center_line_elevation").Value = Item.center_line_elevation
+                command.Parameters("@num_antennas").Value = Item.num_antennas
+                command.Parameters("@antenna_manufacturer").Value = Item.antenna_manufacturer
+                command.Parameters("@antenna_model").Value = Item.antenna_model
+                command.Parameters("@num_feed_lines").Value = Item.num_feed_lines
+                command.Parameters("@feed_line_size").Value = Item.feed_line_size
+                command.Parameters("@table_num").Value = 2
+
+                commands.Add(command)
+            Next
+
             For Each Item In OtherEquipment
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
                 command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
@@ -1237,6 +1287,7 @@ Public Class ReportOptions
         Return SQLReplace_Default
     End Function
 
+    'report.reportOptions insert values (for saving new report) (to be used with SQLInsertFields)
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
@@ -1268,7 +1319,7 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.MpSliceOption.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.MultipleFoundationsConsidered.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.NewBuildInNewCode.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.NumModifications.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IsModified.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.OnlySuperStructureAnalyzed.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.PrevWO.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ProposedExtension.NullableToString.FormatDBValue)
@@ -1286,6 +1337,8 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDate.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngStampName.NullableToString.Replace("'", "''").FormatDBValue)
@@ -1294,6 +1347,7 @@ Public Class ReportOptions
         Return SQLInsertValues
     End Function
 
+    'report.reportOptions insert fields (for saving new report)  (to be used with SQLInsertValues)
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
@@ -1323,7 +1377,7 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("mp_slip")
         SQLInsertFields = SQLInsertFields.AddtoDBString("multiple_foundations_considered")
         SQLInsertFields = SQLInsertFields.AddtoDBString("new_build_in_new_code")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("num_modifications")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("is_modified")
         SQLInsertFields = SQLInsertFields.AddtoDBString("only_superstructure_analyzed")
         SQLInsertFields = SQLInsertFields.AddtoDBString("prev_wo")
         SQLInsertFields = SQLInsertFields.AddtoDBString("proposed_tower_extension")
@@ -1341,6 +1395,8 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("report_date")
         SQLInsertFields = SQLInsertFields.AddtoDBString("custom_jurisdiction_wording")
 
+        SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir")
+
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngName")
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngQAName")
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngStampName")
@@ -1348,6 +1404,7 @@ Public Class ReportOptions
         Return SQLInsertFields
     End Function
 
+    'report.reportOptions update field fields (for modifying existing report)
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
@@ -1378,7 +1435,7 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("mp_slip=" & Me.MpSliceOption.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("multiple_foundations_considered=" & Me.MultipleFoundationsConsidered.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("new_build_in_new_code=" & Me.NewBuildInNewCode.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("num_modifications=" & Me.NumModifications.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("is_modified=" & Me.IsModified.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("only_superstructure_analyzed=" & Me.OnlySuperStructureAnalyzed.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("prev_wo=" & Me.PrevWO.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("proposed_tower_extension=" & Me.ProposedExtension.NullableToString.FormatDBValue)
@@ -1396,6 +1453,10 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("report_date=" & Me.ReportDate.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
+
+
+
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngQAName=" & Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
@@ -1407,14 +1468,15 @@ Public Class ReportOptions
         Return SQLUpdateFieldsandValues
     End Function
 
+#End Region
 
-    '
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
         Throw New NotImplementedException
     End Function
 
 End Class
 
+#Region "Helper Classes"
 Public Class FilepathWithPriority
     Public priority As Integer
     Public filepath As String
@@ -1476,6 +1538,7 @@ Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Mounting Level")>
     Public Property mounting_level As String
 
+
     <Category("EDS"), Description(""), DisplayName("Center Line Elevation")>
     Public Property center_line_elevation As String
 
@@ -1494,18 +1557,14 @@ Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
     Public Property feed_line_size As String
 
-    'Public Property Enabled As Boolean
-
     Public Sub New()
         mounting_level = " - "
         center_line_elevation = " -  "
         num_antennas = 0
         antenna_manufacturer = " - "
         antenna_model = " - "
-        num_feed_lines = " - "
-        feed_line_size = " - "
-
-        'Enabled = True
+        num_feed_lines = ""
+        feed_line_size = ""
     End Sub
     Public Sub New(equipment As Equipment)
         mounting_level = equipment.mounting_level
@@ -1543,11 +1602,11 @@ Public Class Equipment
 
     Public Function ToArray() As String()
         Return {
-            mounting_level, 
-            center_line_elevation, 
-            If(num_antennas = 0, "-", num_antennas),
-            If(antenna_manufacturer, "-"),
-            If(antenna_model, "-"),
+            mounting_level,
+            center_line_elevation,
+            If(num_antennas = 0, " - ", num_antennas),
+            If(antenna_manufacturer, " - "),
+            If(antenna_model, " - "),
             num_feed_lines,
             feed_line_size
         }
@@ -1586,8 +1645,6 @@ Public Class FeedLineInformation
 
     End Sub
 
-    'Public Function ToArray() As String()
-    '    Return {mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size}
-    'End Function
-
 End Class
+
+#End Region

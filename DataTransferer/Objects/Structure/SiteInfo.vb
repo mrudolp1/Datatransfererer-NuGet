@@ -1,14 +1,15 @@
 ﻿Imports Microsoft.VisualBasic
 
+'All SiteInfo information comes from Oracle
 Public Class SiteInfo
-
 
 #Region "Constructors"
     Public Sub New()
 
     End Sub
-
     Public Sub New(wo As String)
+
+        'Create object from query
         Using strDS As New DataSet
             Dim query = "
                         SELECT
@@ -54,13 +55,13 @@ Public Class SiteInfo
                             AND addr.ctry_id='US'
                             AND ea.org_seq_num = org.org_seq_num
                             AND wo.work_order_seq_num='" & wo & "'"
-                       
+
 
             Dim x As Boolean = OracleLoader(query, "Site Info", strDS, 3000, "ords")
-                        
-                
+
+
             Dim SiteCodeDataRow = strDS.Tables("Site Info").Rows(0)
-                    
+
             Try
                 If Not IsDBNull(CType(SiteCodeDataRow.Item("wo"), String)) Then
                     Me.wo = CType(SiteCodeDataRow.Item("wo"), String)
@@ -251,15 +252,16 @@ Public Class SiteInfo
                 Me.fa_num = Nothing
             End Try
 
-            
-                
-                'Dim DocumentDataRow = strDS.Tables("Documents").Rows(0)
+
+
+            'Dim DocumentDataRow = strDS.Tables("Documents").Rows(0)
 
         End Using
     End Sub
 
 #End Region
 
+#Region "Properties"
     Public Property wo As String
     Public Property bu_num As Integer
     Public Property structure_id As String
@@ -282,10 +284,9 @@ Public Class SiteInfo
 
 
     Public Property fa_num As String
+#End Region
 
-    'Public Property golden_documents As List(of GoldenDocument) = New List(Of GoldenDocument)
-
-
+#Region "Lat Long calculations"
     Public Property lat_decimal As Double
     Public ReadOnly Property lat_deg As Integer
         Get
@@ -321,9 +322,6 @@ Public Class SiteInfo
         End Get
     End Property
 
-
-
-    'Public Property tower_type As String <-- From TNX
-    'Public Property tower_height As String <-- From TNX
+#End Region
 
 End Class
