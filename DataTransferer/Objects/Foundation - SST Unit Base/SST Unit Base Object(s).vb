@@ -19,29 +19,6 @@ Partial Public Class UnitBase
                                                         New EXCELDTParameter("Unit Base General Results EXCEL", "A2:C16", "Results (SAPI)")}
         End Get
     End Property
-
-    'Public Overrides Function SQLInsert() As String
-    '    SQLInsert = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (INSERT).sql")
-    '    SQLInsert = SQLInsert.Replace("[BU NUMBER]", Me.bus_unit.FormatDBValue)
-    '    SQLInsert = SQLInsert.Replace("[STRUCTURE ID]", Me.structure_id.FormatDBValue)
-    '    SQLInsert = SQLInsert.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
-    '    SQLInsert = SQLInsert.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
-    '    Return SQLInsert
-    'End Function
-
-    'Public Overrides Function SQLUpdate() As String
-    '    SQLUpdate = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (UPDATE).sql")
-    '    SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '    SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-    '    Return SQLUpdate
-    'End Function
-
-    'Public Overrides Function SQLDelete() As String
-    '    SQLDelete = QueryBuilderFromFile(queryPath & "Unit Base\Unit Base (DELETE).sql")
-    '    SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '    Return SQLDelete
-    'End Function
-
 #End Region
 
 #Region "Define"

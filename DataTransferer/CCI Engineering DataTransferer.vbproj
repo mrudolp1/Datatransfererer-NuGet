@@ -131,11 +131,6 @@
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
     <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (RESULT).sql" />
-    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql" />
-    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql" />
-    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql" />
-    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details Grp).sql" />
-    <None Remove="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
@@ -151,7 +146,6 @@
     <None Remove="Queries\Pile\Pile Location (DELETE).sql" />
     <None Remove="Queries\Pile\Pile Location (INSERT).sql" />
     <None Remove="Queries\Pile\Pile Location (UPDATE).sql" />
-    <None Remove="Queries\Pile\This is the backup\Pile (SELECT Details Grp) - Copy.sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (DELETE).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (INSERT).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (UPDATE).sql" />
@@ -161,7 +155,6 @@
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (DELETE).sql" />
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (INSERT).sql" />
     <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\Structure\Generic Sub Table\Generic (RESULT).sql" />
     <None Remove="Queries\Structure\Structure (IN_UP).sql" />
     <None Remove="Queries\Structure\Structure (SELECT).sql" />
     <None Remove="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql" />
@@ -547,77 +540,35 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28RESULT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP SUB).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP) - DNU.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (IN_UP).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details Grp).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\This is the backup\Pier and Pad (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Pile\DNU\Pile %28RESULT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\DNU\Pile %28SELECT Details%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile Location %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile Location %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\Pile Location %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28IN_UP%29 - DNU.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Soil Layers%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Details%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\This is the backup\Pile %28SELECT Location%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pile\DNU\Pile %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Queries\Pile\Pile %28DELETE%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Queries\Pile\Pile %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Queries\Pile\Pile %28INSERT%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Queries\Pile\Pile Location %28INSERT%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Queries\Pile\Pile Location %28UPDATE%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Queries\Pile\Pile Location %28DELETE%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Queries\Soil Layer\Soil Layer %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -636,24 +587,12 @@
     <Content Include="Queries\Soil Profile\Soil Profile %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Structure\Generic Sub Table\Generic %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Structure\Generic Sub Table\Generic %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Structure\Generic Sub Table\Generic %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Structure\Generic Sub Table\Generic %28RESULT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Queries\Structure\Structure %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Structure\Structure %28SELECT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Queries\Structure\Structure %28SELECT%29.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Queries\TNX\TNX %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
