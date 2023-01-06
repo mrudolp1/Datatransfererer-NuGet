@@ -2,6 +2,7 @@
 Imports System.Security.Principal
 Imports DevExpress.Spreadsheet
 Imports System.IO
+Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
@@ -291,6 +292,27 @@ Public Module Extensions
 End Module
 
 Public Module myLittleHelpers
+
+    Public Function LoadResourceFileStream(resourceName As String) As String
+        Dim assembly As Assembly = Assembly.GetExecutingAssembly()
+        Dim output As String = ""
+
+        Using stream As Stream = assembly.GetManifestResourceStream(resourceName)
+            If Not stream Is Nothing Then
+                Using reader As New StreamReader(stream)
+                    output = reader.ReadToEnd()
+                End Using
+            End If
+        End Using
+
+        Return output
+    End Function
+
+    Public Function FindResourcebyFileName(fileName As String) As String
+        Return Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(Function(str) str.EndsWith(fileName))
+    End Function
+
+
     Public Function trueFalseYesNo(input As String) As Boolean?
         If input.ToLower = "yes" Then
             Return True

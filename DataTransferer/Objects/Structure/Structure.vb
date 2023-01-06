@@ -2,6 +2,7 @@
 Imports System.Security.Principal
 Imports DevExpress.Spreadsheet
 Imports System.IO
+Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
@@ -80,7 +81,9 @@ Partial Public Class EDSStructure
 #Region "EDS"
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
-        Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
+        ''Dim resourceName As String = FindResourcebyFileName("Structure (SELECT).sql")
+        ''Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
+        Dim query As String = LoadResourceFileStream("CCI_Engineering_Templates.Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim tableNames() As String = {"TNX",
                         "Base Structure",
                         "Upper Structure",
@@ -365,60 +368,6 @@ Partial Public Class EDSStructure
 #End Region
 End Class
 
-
-'Partial Public Class SoilProfile
-'Inherits EDSObject
-
-'Public Overrides ReadOnly Property EDSObjectName As String = "Soil Profile"
-
-'Private _groundwater_depth As Double?
-'    Private _neglect_depth As Double?
-
-'    <Category("Soil Profile"), Description(""), DisplayName("Groundwater Depth")>
-'    Public Property groundwater_depth() As Double?
-'        Get
-'            Return Me._groundwater_depth
-'        End Get
-'        Set
-'            Me._groundwater_depth = Value
-'        End Set
-'    End Property
-'    <Category("Soil Profile"), Description(""), DisplayName("Neglect Depth")>
-'    Public Property neglect_depth() As Double?
-'        Get
-'            Return Me._neglect_depth
-'        End Get
-'        Set
-'            Me._neglect_depth = Value
-'        End Set
-'    End Property
-
-'#Region "Constructors"
-'    Public Sub New()
-'    Public Sub New(ByVal Row As DataRow)
-'        Try
-'            If Not IsDBNull(CType(Row.Item("groundwater_depth"), Double)) Then
-'                Me.groundwater_depth = CType(Row.Item("groundwater_depth"), Double)
-'            Else
-'                Me.groundwater_depth = Nothing
-'            End If
-'        Catch
-'            Me.groundwater_depth = Nothing
-'        End Try 'Pile_X_Coordinate
-'        Try
-'            If Not IsDBNull(CType(Row.Item("neglect_depth"), Double)) Then
-'                Me.neglect_depth = CType(Row.Item("neglect_depth"), Double)
-'            Else
-'                Me.neglect_depth = Nothing
-'            End If
-'        Catch
-'            Me.neglect_depth = Nothing
-'        End Try 'Pile_Y_Coordinate
-'    End Sub 'Add a pile location to a pile
-'#End Region
-'        'Leave Method Empty
-'End Class
-'    End Sub
 
 
 

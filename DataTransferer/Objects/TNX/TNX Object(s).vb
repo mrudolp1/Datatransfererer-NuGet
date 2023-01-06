@@ -40,23 +40,6 @@ Partial Public Class tnxModel
     Private _otherLines As New List(Of String())
     Private _ConsiderLoadingEquality As Boolean = True
     Private _ConsiderGeometryEquality As Boolean = True
-    'Private _filePath As String
-    'Private _database As tnxDatabase
-    'Private _settings As tnxSettings
-    'Private _solutionSettings As tnxSolutionSettings
-    'Private _MTOSettings As tnxMTOSettings
-    'Private _reportSettings As tnxReportSettings
-    'Private _CCIReport As tnxCCIReport
-    'Private _code As tnxCode
-    'Private _options As tnxOptions
-    'Private _geometry As tnxGeometry
-    'Private _feedLines As New List(Of tnxFeedLine)
-    'Private _discreteLoads As New List(Of tnxDiscreteLoad)
-    'Private _dishes As New List(Of tnxDish)
-    'Private _userForces As New List(Of tnxUserForce)
-    'Private _otherLines As New List(Of String())
-    'Private _ConsiderLoadingEquality As Boolean = True
-    'Private _ConsiderGeometryEquality As Boolean = True
 
     <Category("TNX"), Description(""), DisplayName("filePath")>
     Public Property filePath() As String
@@ -223,62 +206,6 @@ Partial Public Class tnxModel
         'Leave method empty
     End Sub
 
-    'Replaced this with the constructor from data set so we can query everything at once. - DHS 6/14/2022
-    '<Category("Constructor"), Description("Create TNX object from SQL.")>
-    'Public Sub New(ByVal BUNumber As String, ByVal strID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-    '    Dim tnxDS As New DataSet
-    '    Dim tableNames As New List(Of String)({"tnxDetails", "tnxBaseStructure", "tnxUpperStructure", "tnxGuys", "tnxMaterials", "tnxMembers"})
-    '    Dim queries As New List(Of String)
-
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Details).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Base Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Upper Structure).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Guys).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Materials).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-    '    queries.Add(QueryBuilderFromFile(queryPath & "TNX\" & "TNX (SELECT Members).sql").Replace("[BU]", BUNumber).Replace("[STRC ID]", strID.FormatDBValue))
-
-    '    sqlLoader(queries, tableNames, tnxDS, ActiveDatabase, LogOnUser, 500)
-
-    '    setIndInputs(tnxDS.Tables("tnxDetails").Rows(0))
-
-    '    If tnxDS.Tables.Contains("tnxBaseStructure") Then
-    '        For Each baseSection As DataRow In tnxDS.Tables("tnxBaseStructure").Rows
-    '            Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
-    '        Next
-    '    End If
-
-    '    If tnxDS.Tables.Contains("tnxUpperStructure") Then
-    '        For Each upperSection As DataRow In tnxDS.Tables("tnxUpperStructure").Rows
-    '            Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
-    '        Next
-    '    End If
-
-    '    If tnxDS.Tables.Contains("tnxGuys") Then
-    '        For Each guyLevel As DataRow In tnxDS.Tables("tnxGuys").Rows
-    '            Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
-    '        Next
-    '    End If
-
-    '    If tnxDS.Tables.Contains("tnxMaterials") Then
-    '        For Each material As DataRow In tnxDS.Tables("tnxMaterials").Rows
-    '            If Not IsDBNull(material.Item("IsBolt")) Then
-    '                If CBool(material.Item("IsBolt")) Then
-    '                    Me.database.bolts.Add(New tnxBolt(material))
-    '                Else
-    '                    Me.database.materials.Add(New tnxMaterial(material))
-    '                End If
-    '            End If
-    '        Next
-    '    End If
-
-    '    If tnxDS.Tables.Contains("tnxMembers") Then
-    '        For Each member As DataRow In tnxDS.Tables("tnxMembers").Rows
-    '            Me.database.members.Add(New tnxMember(member))
-    '        Next
-    '    End If
-
-    'End Sub
-
     <Category("Constructor"), Description("Create TNX object from DataSet")>
     Public Sub New(ByRef StructureDS As DataSet, Optional ByRef Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
@@ -327,60 +254,6 @@ Partial Public Class tnxModel
 
         End If
     End Sub
-
-    '<Category("Constructor"), Description("Create TNX object from DataSet.")>
-    'Public Sub New(ByRef strDS As DataSet)
-
-    '    If strDS.Tables("TNX").Rows.Count = 1 Then
-    '        Me.bus_unit = DBtoStr(strDS.Tables("TNX").Rows(0).Item("bus_unit"))
-    '        Me.structure_id = DBtoStr(strDS.Tables("TNX").Rows(0).Item("structure_id"))
-    '        setIndInputs(strDS.Tables("TNX").Rows(0))
-    '    Else
-    '        If strDS.Tables("TNX").Rows.Count = 0 Then
-    '            Debug.WriteLine("No TNX model found.")
-    '        Else
-    '            Debug.WriteLine("More than one TNX model found.")
-    '        End If
-    '        Exit Sub
-    '    End If
-
-    '    If strDS.Tables.Contains("Base Structure") Then
-    '        For Each baseSection As DataRow In strDS.Tables("Base Structure").Rows
-    '            Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection))
-    '        Next
-    '    End If
-
-    '    If strDS.Tables.Contains("Upper Structure") Then
-    '        For Each upperSection As DataRow In strDS.Tables("Upper Structure").Rows
-    '            Me.geometry.upperStructure.Add(New tnxAntennaRecord(upperSection))
-    '        Next
-    '    End If
-
-    '    If strDS.Tables.Contains("Guys") Then
-    '        For Each guyLevel As DataRow In strDS.Tables("Guys").Rows
-    '            Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel))
-    '        Next
-    '    End If
-
-    '    If strDS.Tables.Contains("Materials") Then
-    '        For Each material As DataRow In strDS.Tables("Materials").Rows
-    '            If Not IsDBNull(material.Item("IsBolt")) Then
-    '                If CBool(material.Item("IsBolt")) Then
-    '                    Me.database.bolts.Add(New tnxMaterial(material))
-    '                Else
-    '                    Me.database.materials.Add(New tnxMaterial(material))
-    '                End If
-    '            End If
-    '        Next
-    '    End If
-
-    '    If strDS.Tables.Contains("Members") Then
-    '        For Each member As DataRow In strDS.Tables("Members").Rows
-    '            Me.database.members.Add(New tnxMember(member))
-    '        Next
-    '    End If
-
-    'End Sub
 
     Public Sub setIndInputs(Data As DataRow)
 
