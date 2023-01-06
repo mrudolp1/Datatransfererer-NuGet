@@ -42,7 +42,8 @@ Partial Public Class CCIplate
     Public Overrides Function SQLInsert() As String
 
         If _Insert = "" Then
-            _Insert = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (INSERT).sql")
+            '_Insert = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (INSERT).sql")
+            _Insert = CCI_Engineering_Templates.My.Resources.CCIplate_INSERT
         End If
         SQLInsert = _Insert
 
@@ -77,7 +78,8 @@ Partial Public Class CCIplate
         'This section not only needs to call update commands but also needs to call insert and delete commands since subtables may involve adding or deleting records
 
         If _Update = "" Then
-            _Update = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (UPDATE).sql")
+            '_Update = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (UPDATE).sql")
+            _Update = CCI_Engineering_Templates.My.Resources.CCIplate_UPDATE
         End If
         SQLUpdate = _Update
 
@@ -119,7 +121,8 @@ Partial Public Class CCIplate
     Public Overrides Function SQLDelete() As String
 
         If _Delete = "" Then
-            _Delete = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (DELETE).sql")
+            '_Delete = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate (DELETE).sql")
+            _Delete = CCI_Engineering_Templates.My.Resources.CCIplate_DELETE
         End If
         SQLDelete = _Delete
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
@@ -1726,7 +1729,8 @@ Partial Public Class Connection
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Connection (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Connection (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Connection_INSERT
         SQLInsert = SQLInsert.Replace("[CONNECTION VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[CONNECTION FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1771,7 +1775,8 @@ Partial Public Class Connection
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Connection (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Connection (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Connection_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -1848,7 +1853,8 @@ Partial Public Class Connection
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Connection (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Connection (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Connection_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2063,7 +2069,8 @@ Partial Public Class PlateDetail
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Plate_Detail_INSERT
         SQLInsert = SQLInsert.Replace("[PLATE DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[PLATE DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2097,7 +2104,8 @@ Partial Public Class PlateDetail
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Plate_Detail_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2143,7 +2151,8 @@ Partial Public Class PlateDetail
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Plate Detail (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Plate_Detail_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2433,7 +2442,8 @@ Partial Public Class BoltGroup
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Group_INSERT
         SQLInsert = SQLInsert.Replace("[BOLT GROUP VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[BOLT GROUP FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2460,7 +2470,8 @@ Partial Public Class BoltGroup
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Group_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2494,7 +2505,8 @@ Partial Public Class BoltGroup
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Group (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Group_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -2738,7 +2750,8 @@ Partial Public Class BoltDetail
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Detail_INSERT
         SQLInsert = SQLInsert.Replace("[BOLT DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[BOLT DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2754,7 +2767,8 @@ Partial Public Class BoltDetail
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Detail_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2770,7 +2784,8 @@ Partial Public Class BoltDetail
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Detail (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Detail_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3061,7 +3076,8 @@ Partial Public Class CCIplateMaterial
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate Material (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\CCIplate Material (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Material_INSERT
         SQLInsert = SQLInsert.Replace("[MATERIAL PROPERTY ID]", Me.ID.ToString.FormatDBValue)
         SQLInsert = SQLInsert.Replace("[SELECT]", Me.SQLUpdateFieldsandValues)
         SQLInsert = SQLInsert.Replace("[CCIPLATE MATERIAL VALUES]", Me.SQLInsertValues)
@@ -3361,7 +3377,8 @@ Partial Public Class PlateResults
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Plate Result (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Plate Result (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Plate_Result_INSERT
         SQLInsert = SQLInsert.Replace("[PLATE RESULT VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[PLATE RESULT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3555,7 +3572,8 @@ Partial Public Class BoltResults
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Result (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bolt Result (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Bolt_Result_INSERT
         SQLInsert = SQLInsert.Replace("[BOLT RESULT VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[BOLT RESULT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3760,7 +3778,8 @@ Partial Public Class StiffenerGroup
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Group_INSERT
         SQLInsert = SQLInsert.Replace("[STIFFENER GROUP VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[STIFFENER GROUP FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3787,7 +3806,8 @@ Partial Public Class StiffenerGroup
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Group_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -3825,7 +3845,8 @@ Partial Public Class StiffenerGroup
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Group (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Group_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -3993,7 +4014,8 @@ Partial Public Class StiffenerDetail
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Detail_INSERT
         SQLInsert = SQLInsert.Replace("[STIFFENER DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[STIFFENER DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -4004,7 +4026,8 @@ Partial Public Class StiffenerDetail
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Detail_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -4015,7 +4038,8 @@ Partial Public Class StiffenerDetail
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Detail (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Stiffener_Detail_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -4358,7 +4382,8 @@ Partial Public Class StiffenerResults
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Result (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Stiffener Result (INSERT).sql")
+        'SQLInsert = CCI_Engineering_Templates.My.Resources.Stiffener_Result_INSERT
         SQLInsert = SQLInsert.Replace("[STIFFENER RESULT VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[STIFFENER RESULT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -4584,7 +4609,8 @@ Partial Public Class BridgeStiffenerDetail
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Bridge_Stiffener_Detail_INSERT
         SQLInsert = SQLInsert.Replace("[BRIDGE STIFFENER DETAIL VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[BRIDGE STIFFENER DETAIL FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -4607,7 +4633,8 @@ Partial Public Class BridgeStiffenerDetail
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.CCIplate_Bridge_Stiffener_Detail_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -4623,7 +4650,8 @@ Partial Public Class BridgeStiffenerDetail
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "CCIplate\Bridge Stiffener Detail (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.CCIplate_Bridge_Stiffener_Detail_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
@@ -5172,7 +5200,8 @@ Partial Public Class ConnectionResults
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Connection Result (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "CCIplate\Connection Result (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.CCIplate_Connection_Result_INSERT
         SQLInsert = SQLInsert.Replace("[CONNECTION RESULT VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[CONNECTION RESULT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record

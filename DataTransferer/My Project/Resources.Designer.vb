@@ -61,6 +61,521 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to 	DELETE FROM conn.bolt_details WHERE ID = [ID]
+        '''
+        '''	--[BOLT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Detail_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Detail_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]
+        '''
+        '''	INSERT INTO conn.bolt_details ([BOLT DETAIL FIELDS]) 
+        '''	VALUES([BOLT DETAIL VALUES])
+        '''
+        '''	--[BOLT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Detail_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Detail_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]
+        '''
+        '''	UPDATE conn.bolt_details
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[BOLT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Detail_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Detail_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	--BEGIN --[BOLT DETAIL DELETE BEGIN]
+        '''	--[BOLT DETAIL INSERT]
+        '''	--END --[BOLT DETAIL DELETE END]
+        '''
+        '''DELETE FROM conn.bolts WHERE ID = [ID]
+        '''
+        '''	--[BOLT GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Group_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Group_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.bolts ([BOLT GROUP FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel2
+        '''	VALUES([BOLT GROUP VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''	--BEGIN --[BOLT DETAIL INSERT BEGIN]
+        '''	--[BOLT DETAIL INSERT]
+        '''	--END --[BOLT DETAIL INSERT END]
+        '''
+        '''	--BEGIN --[BOLT RESULTS INSERT BEGIN]
+        '''	--[BOLT RESULTS INSERT]
+        '''	--END --[BOLT RESULTS INSERT END]
+        '''
+        '''	--[BOLT GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Group_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Group_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE conn.bolts
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel2ID=[ID]
+        '''
+        '''	--BEGIN --[BOLT DETAIL UPDATE BEGIN]
+        '''	--[BOLT DETAIL INSERT]
+        '''	--END --[BOLT DETAIL UPDATE END]
+        '''
+        '''	--BEGIN --[BOLT RESULTS INSERT BEGIN]
+        '''	--[BOLT RESULTS INSERT]
+        '''	--END --[BOLT RESULTS INSERT END]
+        '''
+        '''	--[BOLT GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Group_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Group_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.bolt_results ([BOLT RESULT FIELDS]) 
+        '''	VALUES([BOLT RESULT VALUES])
+        '''
+        '''	--[BOLT RESULTS INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bolt_Result_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bolt_Result_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to DELETE FROM conn.bridge_stiffeners WHERE ID = [ID]
+        '''
+        '''	--[BRIDGE STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bridge_Stiffener_Detail_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bridge_Stiffener_Detail_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]	
+        '''
+        '''	INSERT INTO conn.bridge_stiffeners ([BRIDGE STIFFENER DETAIL FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel2
+        '''	VALUES([BRIDGE STIFFENER DETAIL VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''	--[BRIDGE STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bridge_Stiffener_Detail_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bridge_Stiffener_Detail_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]
+        '''
+        '''	UPDATE conn.bridge_stiffeners
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel2ID=[ID]
+        '''
+        '''	--[BRIDGE STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Bridge_Stiffener_Detail_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Bridge_Stiffener_Detail_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	--BEGIN --[BRIDGE STIFFENER DETAIL DELETE BEGIN]
+        '''	--[BRIDGE STIFFENER DETAIL INSERT]
+        '''	--END --[BRIDGE STIFFENER DETAIL DELETE END]
+        '''
+        '''	--BEGIN --[BOLT GROUP DELETE BEGIN]
+        '''	--[BOLT GROUP INSERT]
+        '''	--END --[BOLT GROUP DELETE END]
+        '''
+        '''	--BEGIN --[PLATE DETAIL DELETE BEGIN]
+        '''	--[PLATE DETAIL INSERT]
+        '''	--END --[PLATE DETAIL DELETE END]
+        '''
+        '''DELETE FROM conn.plates WHERE ID = [ID]
+        '''
+        '''	--[CONNECTION INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Connection_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Connection_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.plates ([CONNECTION FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel1
+        '''	VALUES([CONNECTION VALUES])
+        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''
+        '''	--BEGIN --[PLATE DETAIL INSERT BEGIN]
+        '''	--[PLATE DETAIL INSERT]
+        '''	--END --[PLATE DETAIL INSERT END]
+        '''
+        '''	--BEGIN --[BOLT GROUP INSERT BEGIN]
+        '''	--[BOLT GROUP INSERT]
+        '''	--END --[BOLT GROUP INSERT END]
+        '''
+        '''	--BEGIN --[BRIDGE STIFFENER DETAIL INSERT BEGIN]
+        '''	--[BRIDGE STIFFENER DETAIL INSERT]
+        '''	--END --[BRIDGE STIFFENER DETAIL INSERT END]
+        '''
+        '''	--BEGIN --[CO [rest of string was truncated]&quot;;.
+        '''</summary>
+        Public ReadOnly Property CCIplate_Connection_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Connection_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.connection_results ([CONNECTION RESULT FIELDS]) 
+        '''	VALUES([CONNECTION RESULT VALUES])
+        '''
+        '''	--[CONNECTION RESULTS INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Connection_Result_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Connection_Result_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE conn.plates
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel1ID=[ID]
+        '''
+        '''	--BEGIN --[PLATE DETAIL UPDATE BEGIN]
+        '''	--[PLATE DETAIL INSERT]
+        '''	--END --[PLATE DETAIL UPDATE END]
+        '''
+        '''	--BEGIN --[BOLT GROUP UPDATE BEGIN]
+        '''	--[BOLT GROUP INSERT]
+        '''	--END --[BOLT GROUP UPDATE END]
+        '''
+        '''	--BEGIN --[BRIDGE STIFFENER DETAIL UPDATE BEGIN]
+        '''	--[BRIDGE STIFFENER DETAIL INSERT]
+        '''	--END --[BRIDGE STIFFENER DETAIL UPDATE END]
+        '''
+        '''	--[CONNECTION INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Connection_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Connection_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	--BEGIN --[CONNECTION DELETE BEGIN]
+        '''	--[CONNECTION INSERT]
+        '''	--END --[CONNECTION DELETE END]
+        '''
+        '''DELETE FROM conn.connections WHERE ID = [ID]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCIplate_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''INSERT INTO conn.connections ([CCIPLATE FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @TopLevel
+        '''	VALUES([CCIPLATE VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--BEGIN --[CONNECTION INSERT BEGIN]
+        '''	--[CONNECTION INSERT]
+        '''	--END --[CONNECTION INSERT END]
+        '''
+        '''	--BEGIN --[RESULTS INSERT BEGIN]
+        '''	--[RESULTS INSERT]
+        '''	--END --[RESULTS INSERT END]
+        '''
+        '''	DELETE FROM @TopLevel
+        '''	DELETE FROM @SubLevel1
+        '''	DELETE FROM @SubLevel2
+        '''	DELETE FROM @SubLevel3
+        '''	DELETE FROM @SubLevel4
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCIplate_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	SET @SubLevel3ID = [MATERIAL PROPERTY ID]
+        '''	IF @SubLevel3ID IS NULL
+        '''	BEGIN
+        '''		IF EXISTS(SELECT * FROM gen.connection_material_properties WHERE [SELECT])
+        '''			BEGIN
+        '''				SELECT @SubLevel3ID = ID FROM gen.connection_material_properties WHERE [SELECT]
+        '''			END
+        '''		ELSE
+        '''			BEGIN
+        '''				INSERT INTO gen.connection_material_properties ([CCIPLATE MATERIAL FIELDS]) 
+        '''				OUTPUT INSERTED.ID INTO @SubLevel3
+        '''				VALUES([CCIPLATE MATERIAL VALUES])
+        '''				SELECT @SubLevel3ID=ID FROM @SubLevel3
+        '''			END
+        '''	END.
+        '''</summary>
+        Public ReadOnly Property CCIplate_Material_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Material_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	--BEGIN --[STIFFENER GROUP DELETE BEGIN]
+        '''	--[STIFFENER GROUP INSERT]
+        '''	--END --[STIFFENER GROUP DELETE END]
+        '''
+        '''	DELETE FROM conn.plate_details WHERE ID = [ID]
+        '''
+        '''	--[PLATE DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Plate_Detail_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Plate_Detail_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]
+        '''
+        '''	INSERT INTO conn.plate_details ([PLATE DETAIL FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel2
+        '''	VALUES([PLATE DETAIL VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''	--BEGIN --[PLATE RESULTS INSERT BEGIN]
+        '''	--[PLATE RESULTS INSERT]
+        '''	--END --[PLATE RESULTS INSERT END]
+        '''
+        '''	--BEGIN --[STIFFENER GROUP INSERT BEGIN]
+        '''	--[STIFFENER GROUP INSERT]
+        '''	--END --[STIFFENER GROUP INSERT END]
+        '''
+        '''	--[PLA [rest of string was truncated]&quot;;.
+        '''</summary>
+        Public ReadOnly Property CCIplate_Plate_Detail_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Plate_Detail_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	BEGIN --[CCIPLATE MATERIAL INSERT BEGIN]
+        '''	--[CCIPLATE MATERIAL INSERT]
+        '''	END --[CCIPLATE MATERIAL INSERT END]
+        '''
+        '''	UPDATE conn.plate_details
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel2ID=[ID]
+        '''
+        '''	--BEGIN --[PLATE RESULTS INSERT BEGIN]
+        '''	--[PLATE RESULTS INSERT]
+        '''	--END --[PLATE RESULTS INSERT END]
+        '''
+        '''	--BEGIN --[STIFFENER GROUP UPDATE BEGIN]
+        '''	--[STIFFENER GROUP INSERT]
+        '''	--END --[STIFFENER GROUP UPDATE END]
+        '''
+        '''	--[PLATE DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Plate_Detail_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Plate_Detail_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.plate_results ([PLATE RESULT FIELDS]) 
+        '''	VALUES([PLATE RESULT VALUES])
+        '''
+        '''	--[PLATE RESULTS INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Plate_Result_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Plate_Result_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	DELETE FROM conn.stiffener_details WHERE ID = [ID]
+        '''
+        '''	--[STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Detail_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Detail_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.stiffener_details ([STIFFENER DETAIL FIELDS]) 
+        '''	VALUES([STIFFENER DETAIL VALUES])
+        '''
+        '''	--[STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Detail_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Detail_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE conn.stiffener_details
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[STIFFENER DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Detail_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Detail_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to --BEGIN --[STIFFENER DETAIL DELETE BEGIN]
+        '''--[STIFFENER DETAIL INSERT]
+        '''--END --[STIFFENER DETAIL DELETE END]
+        '''
+        '''DELETE FROM conn.stiffeners WHERE ID = [ID]
+        '''
+        '''--[STIFFENER GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Group_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Group_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO conn.stiffeners ([STIFFENER GROUP FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel3
+        '''	VALUES([STIFFENER GROUP VALUES])
+        '''	SELECT @SubLevel3ID=ID FROM @SubLevel3
+        '''
+        '''	--BEGIN --[STIFFENER DETAIL INSERT BEGIN]
+        '''	--[STIFFENER DETAIL INSERT]
+        '''	--END --[STIFFENER DETAIL INSERT END]
+        '''
+        '''	--BEGIN --[STIFFENER RESULTS INSERT BEGIN]
+        '''	--[STIFFENER RESULTS INSERT]
+        '''	--END --[STIFFENER RESULTS INSERT END]
+        '''
+        '''	--[STIFFENER GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Group_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Group_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE conn.stiffeners
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel3ID=[ID]
+        '''
+        '''	--BEGIN --[STIFFENER DETAIL UPDATE BEGIN]
+        '''	--[STIFFENER DETAIL INSERT]
+        '''	--END --[STIFFENER DETAIL UPDATE END]
+        '''
+        '''	--BEGIN --[STIFFENER RESULTS INSERT BEGIN]
+        '''	--[STIFFENER RESULTS INSERT]
+        '''	--END --[STIFFENER RESULTS INSERT END]
+        '''
+        '''	--[STIFFENER GROUP INSERT].
+        '''</summary>
+        Public ReadOnly Property CCIplate_Stiffener_Group_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_Stiffener_Group_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	UPDATE conn.connections
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--BEGIN --[CONNECTION UPDATE BEGIN]
+        '''	--[CONNECTION INSERT]
+        '''	--END --[CONNECTION UPDATE END]
+        '''
+        '''	--BEGIN --[RESULTS UPDATE BEGIN]
+        '''	--[RESULTS INSERT]
+        '''	--END --[RESULTS UPDATE END]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCIplate_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCIplate_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to 
         '''BEGIN
         '''	--BEGIN --[PILE LOCATION DELETE BEGIN]
@@ -186,6 +701,7 @@ Namespace My.Resources
         
         '''<summary>
         '''  Looks up a localized string similar to --Structure Info Declarations
+        '''--This line is a test. Did you pass?
         '''DECLARE @BU VARCHAR(10)
         '''DECLARE @strID VARCHAR(10)
         '''DECLARE @SoilProfileIDs TABLE(soil_profile_id INT)
@@ -208,9 +724,7 @@ Namespace My.Resources
         '''		AND tnx.ID = bs.tnx_ID
         '''
         '''	--Upper Structure
-        '''	Select us.* 
-        '''	From 
-        '''		tnx.upper_structure_se [rest of string was truncated]&quot;;.
+        '''	Select u [rest of string was truncated]&quot;;.
         '''</summary>
         Public ReadOnly Property Structure_SELECT() As String
             Get
