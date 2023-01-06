@@ -1,4 +1,5 @@
 ﻿--Structure Info Declarations
+--This line is a test. Did you pass?
 DECLARE @BU VARCHAR(10)
 DECLARE @strID VARCHAR(10)
 DECLARE @SoilProfileIDs TABLE(soil_profile_id INT)

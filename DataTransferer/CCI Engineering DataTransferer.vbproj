@@ -14,14 +14,20 @@
     <StartupObject></StartupObject>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <AssemblyVersion>1.0.0.10</AssemblyVersion>
     <FileVersion>1.0.0.10</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Queries\Pile\**" />
+    <Compile Remove="Queries\Structure\**" />
     <Compile Remove="Queries\Unit Base\Backup - MRR\**" />
+    <EmbeddedResource Remove="Queries\Pile\**" />
+    <EmbeddedResource Remove="Queries\Structure\**" />
     <EmbeddedResource Remove="Queries\Unit Base\Backup - MRR\**" />
+    <None Remove="Queries\Pile\**" />
+    <None Remove="Queries\Structure\**" />
     <None Remove="Queries\Unit Base\Backup - MRR\**" />
   </ItemGroup>
 
@@ -134,29 +140,12 @@
     <None Remove="Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
     <None Remove="Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
-    <None Remove="Queries\Pile\Pile (DELETE).sql" />
-    <None Remove="Queries\Pile\Pile (INSERT).sql" />
-    <None Remove="Queries\Pile\Pile (IN_UP) - DNU.sql" />
-    <None Remove="Queries\Pile\Pile (IN_UP).sql" />
-    <None Remove="Queries\Pile\Pile (RESULT).sql" />
-    <None Remove="Queries\Pile\Pile (SELECT Details).sql" />
-    <None Remove="Queries\Pile\Pile (SELECT Location).sql" />
-    <None Remove="Queries\Pile\Pile (SELECT Soil Layers).sql" />
-    <None Remove="Queries\Pile\Pile (UPDATE).sql" />
-    <None Remove="Queries\Pile\Pile Location (DELETE).sql" />
-    <None Remove="Queries\Pile\Pile Location (INSERT).sql" />
-    <None Remove="Queries\Pile\Pile Location (UPDATE).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (DELETE).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (INSERT).sql" />
     <None Remove="Queries\Soil Layer\Soil Layer (UPDATE).sql" />
     <None Remove="Queries\Soil Profile\Soil Profile (DELETE).sql" />
     <None Remove="Queries\Soil Profile\Soil Profile (INSERT).sql" />
     <None Remove="Queries\Soil Profile\Soil Profile (UPDATE).sql" />
-    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (DELETE).sql" />
-    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (INSERT).sql" />
-    <None Remove="Queries\Structure\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\Structure\Structure (IN_UP).sql" />
-    <None Remove="Queries\Structure\Structure (SELECT).sql" />
     <None Remove="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql" />
     <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query Params.sql" />
     <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query.sql" />
@@ -551,24 +540,6 @@
     <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Queries\Pile\Pile %28DELETE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Queries\Pile\Pile %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Queries\Pile\Pile %28INSERT%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Queries\Pile\Pile Location %28INSERT%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Queries\Pile\Pile Location %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Queries\Pile\Pile Location %28DELETE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
     <Content Include="Queries\Soil Layer\Soil Layer %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -587,12 +558,6 @@
     <Content Include="Queries\Soil Profile\Soil Profile %28UPDATE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Queries\Structure\Structure %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Queries\Structure\Structure %28SELECT%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
     <Content Include="Queries\TNX\TNX %28DELETE%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -723,7 +688,7 @@
   <ItemGroup>
     <EmbeddedResource Update="My Project\Resources.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <Generator>PublicVbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
