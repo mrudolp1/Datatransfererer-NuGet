@@ -118,6 +118,90 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CCIplate_Bolt_Detail_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Detail (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Detail_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Detail (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Detail_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Detail (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Group_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Group (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Group_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Group (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Group_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Group (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bolt_Result_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bolt Result (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bridge_Stiffener_Detail_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bridge Stiffener Detail (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bridge_Stiffener_Detail_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bridge Stiffener Detail (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Bridge_Stiffener_Detail_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Bridge Stiffener Detail (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Connection_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Connection (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Connection_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Connection (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Connection_Result_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Connection Result (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Connection_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Connection (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\CCIplate (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\CCIplate (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Material_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\CCIplate Material (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Plate_Detail_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Plate Detail (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Plate_Detail_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Plate Detail (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Plate_Detail_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Plate Detail (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Plate_Result_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Plate Result (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Detail_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Detail (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Detail_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Detail (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Detail_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Detail (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Group_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Group (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Group_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Group (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_Stiffener_Group_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\Stiffener Group (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CCIplate_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\CCIplate\CCIplate (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Pile_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Pile\Pile (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
