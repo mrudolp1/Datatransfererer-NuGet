@@ -26,7 +26,7 @@ Namespace My.Resources
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
-    Friend Module Resources
+    Public Module Resources
         
         Private resourceMan As Global.System.Resources.ResourceManager
         
@@ -36,7 +36,7 @@ Namespace My.Resources
         '''  Returns the cached ResourceManager instance used by this class.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
+        Public ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
                     Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("CCI_Engineering_Templates.Resources", GetType(Resources).Assembly)
@@ -51,7 +51,7 @@ Namespace My.Resources
         '''  resource lookups using this strongly typed resource class.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend Property Culture() As Global.System.Globalization.CultureInfo
+        Public Property Culture() As Global.System.Globalization.CultureInfo
             Get
                 Return resourceCulture
             End Get
@@ -61,42 +61,160 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized resource of type System.Byte[].
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	--BEGIN --[PILE LOCATION DELETE BEGIN]
+        '''	--[PILE LOCATION INSERT]
+        '''	--END --[PILE LOCATION DELETE END]	
+        '''
+        '''DELETE FROM fnd.pile WHERE ID = [ID]
+        '''
+        '''	--BEGIN --[SOIL LAYER DELETE BEGIN]
+        '''	--[SOIL LAYER INSERT]
+        '''	--END --[SOIL LAYER DELETE END]
+        '''
+        '''	--BEGIN --[SOIL PROFILE DELETE BEGIN]
+        '''	--[SOIL PROFILE INSERT]
+        '''	--END --[SOIL PROFILE DELETE END]
+        '''
+        '''
+        '''END.
         '''</summary>
-        Friend ReadOnly Property CCIpole() As Byte()
+        Public ReadOnly Property Pile_DELETE() As String
             Get
-                Dim obj As Object = ResourceManager.GetObject("CCIpole", resourceCulture)
-                Return CType(obj,Byte())
+                Return ResourceManager.GetString("Pile_DELETE", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Looks up a localized resource of type System.Byte[].
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	
+        '''	--BEGIN --[SOIL PROFILE INSERT BEGIN]
+        '''	--[SOIL PROFILE INSERT]
+        '''	--END --[SOIL PROFILE INSERT END]
+        '''
+        '''INSERT INTO fnd.pile ([FOUNDATION FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @TopLevel
+        '''	VALUES([FOUNDATION VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--BEGIN --[SOIL LAYER INSERT BEGIN]
+        '''	--[SOIL LAYER INSERT]
+        '''	--END --[SOIL LAYER INSERT END]
+        '''
+        '''	--BEGIN --[PILE LOCATION INSERT BEGIN]
+        '''	--[PILE LOCATION INSERT]
+        '''	--END --[PILE LOCATION INSERT END]
+        '''
+        '''	--BEGIN --[RESULTS INSERT BEGIN]
+        '''	--[ [rest of string was truncated]&quot;;.
         '''</summary>
-        Friend ReadOnly Property Drilled_Pier_Foundation() As Byte()
+        Public ReadOnly Property Pile_INSERT() As String
             Get
-                Dim obj As Object = ResourceManager.GetObject("Drilled_Pier_Foundation", resourceCulture)
-                Return CType(obj,Byte())
+                Return ResourceManager.GetString("Pile_INSERT", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Looks up a localized resource of type System.Byte[].
+        '''  Looks up a localized string similar to 	DELETE FROM fnd.pile_location WHERE ID = [ID]
+        '''
+        '''	--[PILE LOCATION INSERT].
         '''</summary>
-        Friend ReadOnly Property Pier_and_Pad_Foundation() As Byte()
+        Public ReadOnly Property Pile_Location_DELETE() As String
             Get
-                Dim obj As Object = ResourceManager.GetObject("Pier_and_Pad_Foundation", resourceCulture)
-                Return CType(obj,Byte())
+                Return ResourceManager.GetString("Pile_Location_DELETE", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Looks up a localized resource of type System.Byte[].
+        '''  Looks up a localized string similar to 	INSERT INTO fnd.pile_location ([PILE LOCATION FIELDS]) 
+        '''	VALUES([PILE LOCATION VALUES])
+        '''
+        '''	--[PILE LOCATION INSERT].
         '''</summary>
-        Friend ReadOnly Property SST_Unit_Base_Foundation() As Byte()
+        Public ReadOnly Property Pile_Location_INSERT() As String
             Get
-                Dim obj As Object = ResourceManager.GetObject("SST_Unit_Base_Foundation", resourceCulture)
-                Return CType(obj,Byte())
+                Return ResourceManager.GetString("Pile_Location_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE fnd.pile_location
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[PILE LOCATION INSERT].
+        '''</summary>
+        Public ReadOnly Property Pile_Location_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Pile_Location_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''
+        '''	--BEGIN --[SOIL PROFILE UPDATE BEGIN]
+        '''	--[SOIL PROFILE INSERT]
+        '''	--END --[SOIL PROFILE UPDATE END]
+        '''
+        '''	UPDATE fnd.pile
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--BEGIN --[SOIL LAYER UPDATE BEGIN]
+        '''	--[SOIL LAYER INSERT]
+        '''	--END --[SOIL LAYER UPDATE END]
+        '''
+        '''	--BEGIN --[PILE LOCATION UPDATE BEGIN]
+        '''	--[PILE LOCATION INSERT]
+        '''	--END --[PILE LOCATION UPDATE END]
+        '''
+        '''	--BEGIN --[RESULTS UPDATE BEGIN]
+        '''	--[RESULTS INSERT]
+        '''	--END --[RESULTS UPDATE END]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Pile_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Pile_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to --Structure Info Declarations
+        '''DECLARE @BU VARCHAR(10)
+        '''DECLARE @strID VARCHAR(10)
+        '''DECLARE @SoilProfileIDs TABLE(soil_profile_id INT)
+        '''
+        '''SET @BU = [BU]
+        '''SET @strID = [STRID]
+        '''
+        '''Begin
+        '''	--TNX
+        '''	Select * From tnx.tnx WHERE bus_unit=@BU AND structure_id=@strID
+        '''
+        '''	--Base Structure
+        '''	Select bs.* 
+        '''	From 
+        '''		tnx.base_structure_sections bs
+        '''		,tnx.tnx tnx
+        '''	WHERE
+        '''		tnx.bus_unit = @BU
+        '''		AND tnx.structure_id = @strID
+        '''		AND tnx.ID = bs.tnx_ID
+        '''
+        '''	--Upper Structure
+        '''	Select us.* 
+        '''	From 
+        '''		tnx.upper_structure_se [rest of string was truncated]&quot;;.
+        '''</summary>
+        Public ReadOnly Property Structure_SELECT() As String
+            Get
+                Return ResourceManager.GetString("Structure_SELECT", resourceCulture)
             End Get
         End Property
     End Module

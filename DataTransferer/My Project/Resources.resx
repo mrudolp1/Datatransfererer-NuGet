@@ -118,16 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CCIpole" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\CCIpole.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Pile_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="Drilled_Pier_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\Drilled Pier Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Pile_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="Pier_and_Pad_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\Pier and Pad Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Pile_Location_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile Location (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="SST_Unit_Base_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\SST Unit Base Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Pile_Location_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile Location (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Pile_Location_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile Location (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Pile_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Pile\Pile (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Structure_SELECT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Structure\Structure (SELECT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>
