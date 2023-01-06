@@ -18,27 +18,6 @@ Partial Public Class PierAndPad
                                                         New EXCELDTParameter("Pier and Pad General Results EXCEL", "A2:C16", "Results (SAPI)")}
         End Get
     End Property
-    'Public Overrides Function SQLInsert() As String
-    '    SQLInsert = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (INSERT).sql")
-    '    SQLInsert = SQLInsert.Replace("[FOUNDATION VALUES]", Me.SQLInsertValues)
-    '    SQLInsert = SQLInsert.Replace("[FOUNDATION FIELDS]", Me.SQLInsertFields)
-    '    SQLInsert = SQLInsert.Replace("[RESULTS]", Me.Results.EDSResultQuery(False))
-    '    Return SQLInsert
-    'End Function
-
-    'Public Overrides Function SQLUpdate() As String
-    '    SQLUpdate = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (UPDATE).sql")
-    '    SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '    SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-    '    SQLUpdate = SQLUpdate.Replace("[RESULTS]", Me.Results.EDSResultQuery)
-    '    Return SQLUpdate
-    'End Function
-
-    'Public Overrides Function SQLDelete() As String
-    '    SQLDelete = QueryBuilderFromFile(queryPath & "Pier and Pad\Pier and Pad (DELETE).sql")
-    '    SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
-    '    Return SQLDelete
-    'End Function
 
 #End Region
 

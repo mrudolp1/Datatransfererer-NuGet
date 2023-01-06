@@ -32,7 +32,8 @@ Partial Public Class Pile
     Public Overrides Function SQLInsert() As String
 
         If _Insert = "" Then
-            _Insert = QueryBuilderFromFile(queryPath & "Pile\Pile (INSERT).sql")
+            '_Insert = QueryBuilderFromFile(queryPath & "Pile\Pile (INSERT).sql")
+            _Insert = LoadResourceFileStream("CCI_Engineering_Templates.Pile (INSERT).sql")
         End If
         SQLInsert = _Insert
 
@@ -80,7 +81,8 @@ Partial Public Class Pile
         'This section not only needs to call update commands but also needs to call insert and delete commands since subtables may involve adding or deleting records
 
         If _Update = "" Then
-            _Update = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
+            '_Update = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
+            _Update = LoadResourceFileStream("CCI_Engineering_Templates.Pile (UPDATE).sql")
         End If
         SQLUpdate = _Update
         'SQLUpdate = QueryBuilderFromFile(queryPath & "Pile\Pile (UPDATE).sql")
@@ -145,7 +147,8 @@ Partial Public Class Pile
     Public Overrides Function SQLDelete() As String
 
         If _Delete = "" Then
-            _Delete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql")
+            '_Delete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql")
+            _Update = LoadResourceFileStream("CCI_Engineering_Templates.Pile (DELETE).sql")
         End If
         SQLDelete = _Delete
         'SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql") 'previously ran into issues when _Delete = String which is why this code was used. 
@@ -2046,7 +2049,8 @@ Partial Public Class PileLocation
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "Pile\Pile Location (INSERT).sql")
+        ''SQLInsert = QueryBuilderFromFile(queryPath & "Pile\Pile Location (INSERT).sql")
+        SQLInsert = LoadResourceFileStream("CCI_Engineering_Templates.Pile Location (INSERT).sql")
         SQLInsert = SQLInsert.Replace("[PILE LOCATION VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[PILE LOCATION FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2057,7 +2061,8 @@ Partial Public Class PileLocation
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "Pile\Pile Location (UPDATE).sql")
+        ''SQLUpdate = QueryBuilderFromFile(queryPath & "Pile\Pile Location (UPDATE).sql")
+        SQLUpdate = LoadResourceFileStream("CCI_Engineering_Templates.Pile Location (UPDATE).sql")
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -2068,7 +2073,8 @@ Partial Public Class PileLocation
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile Location (DELETE).sql")
+        ''SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile Location (DELETE).sql")
+        SQLDelete = LoadResourceFileStream("CCI_Engineering_Templates.Pile Location (DELETE).sql")
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
