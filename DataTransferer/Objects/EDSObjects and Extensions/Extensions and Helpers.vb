@@ -297,6 +297,8 @@ Public Module myLittleHelpers
         Dim assembly As Assembly = Assembly.GetExecutingAssembly()
         Dim output As String = ""
 
+        ''CCI_Engineering_Templates.My.Resources.Pile_DELETE
+
         Using stream As Stream = assembly.GetManifestResourceStream(resourceName)
             If Not stream Is Nothing Then
                 Using reader As New StreamReader(stream)
