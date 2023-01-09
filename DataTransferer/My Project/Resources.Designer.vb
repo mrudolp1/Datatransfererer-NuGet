@@ -1280,6 +1280,81 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to 	DELETE FROM fnd.soil_layer WHERE ID = [ID]
+        '''
+        '''	--[SOIL LAYER INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Layer_DELETE() As String
+            Get
+                Return ResourceManager.GetString("Soil_Layer_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO fnd.soil_layer ([SOIL LAYER FIELDS]) 
+        '''	VALUES([SOIL LAYER VALUES])
+        '''
+        '''	--[SOIL LAYER INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Layer_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Soil_Layer_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE fnd.soil_layer
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[SOIL LAYER INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Layer_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Soil_Layer_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	DELETE FROM fnd.soil_profile WHERE ID = [ID]
+        '''
+        '''		--[SOIL PROFILE INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Profile_DELETE() As String
+            Get
+                Return ResourceManager.GetString("Soil_Profile_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO fnd.soil_profile ([SOIL PROFILE FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel1
+        '''	VALUES([SOIL PROFILE VALUES])
+        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''
+        '''	--[SOIL PROFILE INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Profile_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Soil_Profile_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE fnd.soil_profile
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	SET @SubLevel1ID = [ID]
+        '''
+        '''	--[SOIL PROFILE INSERT].
+        '''</summary>
+        Public ReadOnly Property Soil_Profile_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Soil_Profile_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to --Structure Info Declarations
         '''--This line is a test. Did you pass?
         '''DECLARE @BU VARCHAR(10)
