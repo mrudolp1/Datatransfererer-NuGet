@@ -15,7 +15,8 @@ Partial Public Class SoilProfile
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Profile_INSERT
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -25,7 +26,8 @@ Partial Public Class SoilProfile
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.Soil_Profile_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -35,7 +37,8 @@ Partial Public Class SoilProfile
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.Soil_Profile_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 
