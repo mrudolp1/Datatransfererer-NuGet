@@ -1,9 +1,0 @@
-﻿
-BEGIN
-	UPDATE fnd.soil_profile
-	SET [UPDATE] 
-	WHERE ID = [ID]
-	--[SOIL PROFILE]
-	--[SOIL LAYER]
-	--[RESULTS]
-END

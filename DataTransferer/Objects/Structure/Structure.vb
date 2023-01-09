@@ -273,7 +273,6 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 Me.Piles.Add(New Pile(item, Me))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 'Me.DrilledPiers.Add(New DrilledPier(item))

@@ -301,6 +301,24 @@
   <data name="Pile_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Pile\Pile (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Soil_Layer_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Layer\Soil Layer (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Soil_Layer_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Layer\Soil Layer (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Soil_Layer_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Layer\Soil Layer (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Soil_Profile_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Profile\Soil Profile (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Soil_Profile_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Profile\Soil Profile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Soil_Profile_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Soil Profile\Soil Profile (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Structure_SELECT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Structure\Structure (SELECT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

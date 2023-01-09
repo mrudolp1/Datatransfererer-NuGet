@@ -16,7 +16,8 @@ Partial Public Class SoilLayer
 
     Public Overrides Function SQLInsert() As String
 
-        SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
+        'SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
+        SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -27,7 +28,8 @@ Partial Public Class SoilLayer
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.Soil_Layer_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -38,7 +40,8 @@ Partial Public Class SoilLayer
 
     Public Overrides Function SQLDelete() As String
 
-        SQLDelete = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (DELETE).sql")
+        'SQLDelete = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (DELETE).sql")
+        SQLDelete = CCI_Engineering_Templates.My.Resources.Soil_Layer_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
 

@@ -22,91 +22,47 @@
   <ItemGroup>
     <Compile Remove="Queries\CCIplate\**" />
     <Compile Remove="Queries\CCIpole\**" />
+    <Compile Remove="Queries\Drilled Pier\**" />
+    <Compile Remove="Queries\Foundation Group\**" />
+    <Compile Remove="Queries\Guyed Anchor Block\**" />
+    <Compile Remove="Queries\Leg Reinforcement\**" />
+    <Compile Remove="Queries\Pier and Pad\**" />
     <Compile Remove="Queries\Pile\**" />
+    <Compile Remove="Queries\Soil Layer\**" />
+    <Compile Remove="Queries\Soil Profile\**" />
     <Compile Remove="Queries\Structure\**" />
-    <Compile Remove="Queries\Unit Base\Backup - MRR\**" />
+    <Compile Remove="Queries\TNX\**" />
+    <Compile Remove="Queries\Unit Base\**" />
     <EmbeddedResource Remove="Queries\CCIplate\**" />
     <EmbeddedResource Remove="Queries\CCIpole\**" />
+    <EmbeddedResource Remove="Queries\Drilled Pier\**" />
+    <EmbeddedResource Remove="Queries\Foundation Group\**" />
+    <EmbeddedResource Remove="Queries\Guyed Anchor Block\**" />
+    <EmbeddedResource Remove="Queries\Leg Reinforcement\**" />
+    <EmbeddedResource Remove="Queries\Pier and Pad\**" />
     <EmbeddedResource Remove="Queries\Pile\**" />
+    <EmbeddedResource Remove="Queries\Soil Layer\**" />
+    <EmbeddedResource Remove="Queries\Soil Profile\**" />
     <EmbeddedResource Remove="Queries\Structure\**" />
-    <EmbeddedResource Remove="Queries\Unit Base\Backup - MRR\**" />
+    <EmbeddedResource Remove="Queries\TNX\**" />
+    <EmbeddedResource Remove="Queries\Unit Base\**" />
     <None Remove="Queries\CCIplate\**" />
     <None Remove="Queries\CCIpole\**" />
+    <None Remove="Queries\Drilled Pier\**" />
+    <None Remove="Queries\Foundation Group\**" />
+    <None Remove="Queries\Guyed Anchor Block\**" />
+    <None Remove="Queries\Leg Reinforcement\**" />
+    <None Remove="Queries\Pier and Pad\**" />
     <None Remove="Queries\Pile\**" />
+    <None Remove="Queries\Soil Layer\**" />
+    <None Remove="Queries\Soil Profile\**" />
     <None Remove="Queries\Structure\**" />
-    <None Remove="Queries\Unit Base\Backup - MRR\**" />
+    <None Remove="Queries\TNX\**" />
+    <None Remove="Queries\Unit Base\**" />
   </ItemGroup>
 
   <ItemGroup>
-
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Embedded%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
-    <None Remove="Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Queries\Existing Model %28SELECT%29.sql" />
-    <None Remove="Queries\Foundation Group\Foundation (IN_UP Partial) DNU.sql" />
-    <None Remove="Queries\Foundation Group\Foundation Group (IN_UP) with Model.sql" />
-    <None Remove="Queries\Foundation Group\Foundation Group (IN_UP).sql" />
-    <None Remove="Queries\Foundation Group\Foundation Group (SELECT ID Active).sql" />
-    <None Remove="Queries\Foundation Group\Foundation Group (SELECT ID WO).sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP) - dnu.sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (IN_UP).sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details) - Copy.sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Details).sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Profile).sql" />
-    <None Remove="Queries\Guyed Anchor Block\Guyed Anchor Block (SELECT Soil Layers).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (RESULT).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (DELETE).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (INSERT).sql" />
-    <None Remove="Queries\Pier and Pad\Pier and Pad (UPDATE).sql" />
-    <None Remove="Queries\Soil Layer\Soil Layer (DELETE).sql" />
-    <None Remove="Queries\Soil Layer\Soil Layer (INSERT).sql" />
-    <None Remove="Queries\Soil Layer\Soil Layer (UPDATE).sql" />
-    <None Remove="Queries\Soil Profile\Soil Profile (DELETE).sql" />
-    <None Remove="Queries\Soil Profile\Soil Profile (INSERT).sql" />
-    <None Remove="Queries\Soil Profile\Soil Profile (UPDATE).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query Params.sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query.sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test.sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Base Structure).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Guys).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Materials).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Members).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP Upper Structure).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP) - Sub Query Test.sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (IN_UP).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Base Structure).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Details).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Guys).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Material Matching).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Materials).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Member Matching).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Members).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (SELECT Upper Structure).sql" />
-    <None Remove="Queries\TNX\This is the backup\TNX (UPDATE Base Structure).sql" />
-    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (DELETE).sql" />
-    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (INSERT).sql" />
-    <None Remove="Queries\TNX\Base Structure (towerRec)\Base Structure (UPDATE).sql" />
-    <None Remove="Queries\TNX\TNX (DELETE).sql" />
-    <None Remove="Queries\TNX\TNX (INSERT).sql" />
-    <None Remove="Queries\TNX\TNX (UPDATE).sql" />
-    <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details Grp).sql" />
-    <None Remove="Queries\Unit Base\MRR Backup\Unit Base (SELECT Details).sql" />
-    <None Remove="Queries\Unit Base\Unit Base %28IN_UP%29.sql" />
-    <None Remove="Queries\Unit Base\Unit Base %28SELECT Details%29.sql" />
-    <None Remove="Queries\Unit Base\Unit Base (DELETE).sql" />
-    <None Remove="Queries\Unit Base\Unit Base (INSERT).sql" />
-    <None Remove="Queries\Unit Base\Unit Base (SELECT Details Grp).sql" />
-    <None Remove="Queries\Unit Base\Unit Base (UPDATE).sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -136,205 +92,6 @@
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
     </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
-
-    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (IN_UP).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Belled).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers %28SELECT Profile%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Embedded).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Rebar).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Section).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers Sections %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Piers (SELECT Soil Layers).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Existing Model (IN_UP).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Existing Model (SELECT).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Foundation Group\Foundation Group %28SELECT ID Active%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Foundation Group\Foundation %28IN_UP Partial%29 DNU.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Foundation Group\Foundation Group %28IN_UP%29 with Model.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Details%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Soil Layers%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28SELECT Profile%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Guyed Anchor Block\Guyed Anchor Block %28IN_UP%29 - dnu.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Leg Reinforcement\Leg Reinforcement %28SELECT Details%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Foundation Group\Foundation Group %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Foundation Group\Foundation Group %28SELECT ID WO%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad %28RESULT%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad %28DELETE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Pier and Pad\Pier and Pad %28INSERT%29.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Layer\Soil Layer %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Layer\Soil Layer %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Layer\Soil Layer %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Profile\Soil Profile %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Profile\Soil Profile %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Soil Profile\Soil Profile %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\TNX %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\TNX %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\TNX %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (INSERT Base Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query Params.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Full Query.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test Params.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure) - Sub Query Test.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Base Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Guys).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Materials).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Members).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP Upper Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP) - Sub Query Test.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (IN_UP).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Base Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Guys).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Material Matching).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Materials).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Member Matching).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Members).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (SELECT Upper Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\This is the backup\TNX (UPDATE Base Structure).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\TNX\Base Structure %28towerRec%29\Base Structure %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Unit Base %28DELETE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Unit Base %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Unit Base %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Unit Base %28SELECT Details Grp%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Unit Base\Unit Base (SELECT Details).sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -393,9 +150,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Queries\TNX\Guys %28GuyRec%29\" />
-    <Folder Include="Queries\TNX\Upper Structure %28AntennaRec%29\" />
-	<Folder Include="Queries\Soil Layer - Copy\" />
+    <Folder Include="Queries\" />
   </ItemGroup>
 
 
