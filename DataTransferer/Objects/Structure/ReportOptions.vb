@@ -13,9 +13,11 @@ Public Class ReportOptions
     'Required overriden Properties
     Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
     Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
-    Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+    Public Property wo As String
 
     'Properties: Store in SQL report.report_options table (PK = WO)
+    Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+
     Public Property ReportType As String
     Public Property ConfigurationType As String
     Public Property LC As String
@@ -82,14 +84,13 @@ Public Class ReportOptions
     'File management
     Public RootDir As DirectoryInfo
 
-    'Appendixes
-    Public AppendixDocuments As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+    'Files / Appendixes
+    Public Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
     Public Property IsFromDB As Boolean
     Public Property IsFromDefault As Boolean
-    Public Property wo As String
 
 #End Region
 
@@ -160,10 +161,16 @@ Public Class ReportOptions
 
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(BU As String, SID As String, WO As String, root As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         bus_unit = BU
         structure_id = SID
         Me.wo = WO
+        If root = Nothing Then
+            Me.RootDir = Nothing
+        Else
+            Me.RootDir = New DirectoryInfo(root)
+        End If
+
 
         'Try to load in-progress report
         Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & WO & "'"
@@ -568,17 +575,18 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.JurisdictionWording = Nothing
         End Try
-        If Not Me.IsFromDefault Then
-            Try
-                If Not IsDBNull(CType(SiteCodeDataRow.Item("root_dir"), String)) Then
-                    Me.RootDir = New DirectoryInfo(CType(SiteCodeDataRow.Item("root_dir"), String))
-                Else
-                    Me.RootDir = Nothing
-                End If
-            Catch ex As Exception
-                Me.RootDir = Nothing
-            End Try
-        End If
+
+        'If Not Me.IsFromDefault Then
+        '    Try
+        '        If Not IsDBNull(CType(SiteCodeDataRow.Item("root_dir"), String)) Then
+        '            Me.RootDir = New DirectoryInfo(CType(SiteCodeDataRow.Item("root_dir"), String))
+        '        Else
+        '            Me.RootDir = Nothing
+        '        End If
+        '    Catch ex As Exception
+        '        Me.RootDir = Nothing
+        '    End Try
+        'End If
 
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("EngName"), String)) Then
@@ -643,42 +651,44 @@ Public Class ReportOptions
         End Using
 #End Region
 
-#Region "Load related report appendixes"
+#Region "Load related report files"
         If Not IsFromDefault Then
 
             'Load list items
-            query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & wo & "'"
+            If (RootDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
+                query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & wo & "'"
 
-            Using strDS As New DataSet
-                sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
-                If (strDS.Tables(0).Rows.Count > 0) Then
-                    AppendixDocuments.Clear()
-                    AppendixDocuments.Add("CCIPole", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("rtf", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("A", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("B", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("C", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("D", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Y", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Z", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Extra", New List(Of FilepathWithPriority))
-                End If
-
-                For Each item In strDS.Tables(0).Rows
-                    Dim appendix As String = CType(item.Item("appendix_name"), String)
-                    If Not AppendixDocuments.ContainsKey(appendix) Then
-                        AppendixDocuments.Add(appendix, New List(Of FilepathWithPriority))
+                Using strDS As New DataSet
+                    sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                    If (strDS.Tables(0).Rows.Count > 0) Then
+                        Files.Clear()
+                        Files.Add("CCIPole", New List(Of FilepathWithPriority))
+                        Files.Add("rtf", New List(Of FilepathWithPriority))
+                        Files.Add("A", New List(Of FilepathWithPriority))
+                        Files.Add("B", New List(Of FilepathWithPriority))
+                        Files.Add("C", New List(Of FilepathWithPriority))
+                        Files.Add("D", New List(Of FilepathWithPriority))
+                        Files.Add("Y", New List(Of FilepathWithPriority))
+                        Files.Add("Z", New List(Of FilepathWithPriority))
+                        Files.Add("Extra", New List(Of FilepathWithPriority))
                     End If
 
-                    AppendixDocuments(appendix).Add(New FilepathWithPriority(
+                    For Each item In strDS.Tables(0).Rows
+                        Dim appendix As String = CType(item.Item("appendix_name"), String)
+                        If Not Files.ContainsKey(appendix) Then
+                            Files.Add(appendix, New List(Of FilepathWithPriority))
+                        End If
+
+                        Files(appendix).Add(New FilepathWithPriority(
                     -1,
-                    item.Item("filepath").ToString(),
+                    Me.RootDir.FullName,
                     item.Item("filename").ToString()
                     ))
 
-                Next
+                    Next
 
-            End Using
+                End Using
+            End If
         End If
 #End Region
 
@@ -1083,25 +1093,26 @@ Public Class ReportOptions
             End If
 
 #End Region
-#Region "Save report option Appendixes"
+#Region "Save report option files"
 
             commands = New List(Of SqlCommand)
             'Delete all appendixes filepaths associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_appendixes WHERE work_order_seq_num ='" & wo & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_files WHERE work_order_seq_num ='" & wo & "'"))
 
             'Add current appendix filepaths
 
-            queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename) VALUES(" & wo & ",@NAME, @PATH, @FILENAME);"
-            For Each Item In AppendixDocuments
+            queryTemplate = "INSERT INTO report.report_files (work_order_seq_num, appendix_name, filename) VALUES(" & wo & ",@NAME, @FILENAME);"
+            For Each Item In Files
                 For Each Document In Item.Value
                     Dim command As SqlCommand = New SqlCommand(queryTemplate)
                     command.Parameters.Add("@NAME", SqlDbType.VarChar)
-                    command.Parameters.Add("@PATH", SqlDbType.VarChar)
+                    'command.Parameters.Add("@PATH", SqlDbType.VarChar)
                     'command.Parameters.Add("@PRIORITY", SqlDbType.VarChar)
                     command.Parameters.Add("@FILENAME", SqlDbType.VarChar)
 
                     command.Parameters("@NAME").Value = Item.Key
-                    command.Parameters("@PATH").Value = Document.filepath
+
+                    'command.Parameters("@PATH").Value = Document.filepath
                     'command.Parameters("@PRIORITY").Value = Document.priority.ToString()
                     command.Parameters("@FILENAME").Value = Document.filename
 
@@ -1480,22 +1491,28 @@ End Class
 #Region "Helper Classes"
 Public Class FilepathWithPriority
     Public priority As Integer
-    Public filepath As String
+    Public rootDir As String
     Public filename As String
     Public enabled As Boolean = True
 
-    Public Sub New(ByVal priority As Integer, ByVal filepath As String, ByVal filename As String)
+    Public Sub New(ByVal priority As Integer, ByVal rootDir As String, ByVal filename As String)
         Me.priority = priority
-        Me.filepath = filepath
+        Me.rootDir = rootDir
         Me.filename = filename
     End Sub
 
     Public Sub New(ByVal root As String, ByVal filename As String)
         Me.priority = -1
-        Me.filepath = root & "\" & filename
+        Me.rootDir = root
         Me.filename = filename
         Me.enabled = True
     End Sub
+
+    Public ReadOnly Property filepath As String
+        Get
+            Return rootDir & "\" & filename
+        End Get
+    End Property
 
     Public Overrides Function ToString() As String
         Return filename
