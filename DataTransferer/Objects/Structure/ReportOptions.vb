@@ -16,6 +16,8 @@ Public Class ReportOptions
     Public Property wo As String
 
     'Properties: Store in SQL report.report_options table (PK = WO)
+    Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+
     Public Property ReportType As String
     Public Property ConfigurationType As String
     Public Property LC As String
@@ -62,8 +64,9 @@ Public Class ReportOptions
 
 
     'Lists: Stored in db under report.report_lists
-    Public Property Assumptions As BindingList(Of String) = New BindingList(Of String) From
-        {"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
+    Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
+    'From
+    '{"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
     Public Property Notes As BindingList(Of String) = New BindingList(Of String)
     Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
@@ -81,14 +84,13 @@ Public Class ReportOptions
     'File management
     Public RootDir As DirectoryInfo
 
-    'Appendixes
-    Public AppendixDocuments As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+    'Files / Appendixes
+    Public Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
     Public Property IsFromDB As Boolean
     Public Property IsFromDefault As Boolean
-    Public Property AttemptedWO As String
 
 #End Region
 
@@ -142,9 +144,9 @@ Public Class ReportOptions
     Public Function StatusString() As String
         If IsFromDB Then
             If IsFromDefault Then
-                Return "Default options associated with BU " + bus_unit + " and SID " + structure_id + " were loaded from previous WO " & wo & ".  No in-progress report was found."
+                Return "Default options associated with BU " + bus_unit + " and SID " + structure_id + " were loaded from previous WO " & FromDatabaseWO & ".  No in-progress report was found."
             Else
-                Return "Found in-progress report options with WO " + AttemptedWO + ".  In-progress options loaded."
+                Return "Found in-progress report options with WO " + wo + ".  In-progress options loaded."
             End If
         Else
             Return "No in-progress report or default options were found. Report populated with basic options."
@@ -159,10 +161,16 @@ Public Class ReportOptions
 
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(BU As String, SID As String, WO As String, root As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         bus_unit = BU
         structure_id = SID
-        AttemptedWO = WO
+        Me.wo = WO
+        If root = Nothing Then
+            Me.RootDir = Nothing
+        Else
+            Me.RootDir = New DirectoryInfo(root)
+        End If
+
 
         'Try to load in-progress report
         Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & WO & "'"
@@ -204,12 +212,12 @@ Public Class ReportOptions
 #Region "Items"
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("work_order_seq_num"), String)) Then
-                Me.wo = CType(SiteCodeDataRow.Item("work_order_seq_num"), String)
+                Me.FromDatabaseWO = CType(SiteCodeDataRow.Item("work_order_seq_num"), String)
             Else
-                Me.wo = Nothing
+                Me.FromDatabaseWO = Nothing
             End If
         Catch ex As Exception
-            Me.wo = Nothing
+            Me.FromDatabaseWO = Nothing
         End Try
 
         Try
@@ -567,17 +575,18 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.JurisdictionWording = Nothing
         End Try
-        If Not Me.IsFromDefault Then
-            Try
-                If Not IsDBNull(CType(SiteCodeDataRow.Item("root_dir"), String)) Then
-                    Me.RootDir = New DirectoryInfo(CType(SiteCodeDataRow.Item("root_dir"), String))
-                Else
-                    Me.RootDir = Nothing
-                End If
-            Catch ex As Exception
-                Me.RootDir = Nothing
-            End Try
-        End If
+
+        'If Not Me.IsFromDefault Then
+        '    Try
+        '        If Not IsDBNull(CType(SiteCodeDataRow.Item("root_dir"), String)) Then
+        '            Me.RootDir = New DirectoryInfo(CType(SiteCodeDataRow.Item("root_dir"), String))
+        '        Else
+        '            Me.RootDir = Nothing
+        '        End If
+        '    Catch ex As Exception
+        '        Me.RootDir = Nothing
+        '    End Try
+        'End If
 
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("EngName"), String)) Then
@@ -619,7 +628,7 @@ Public Class ReportOptions
 
 #Region "Load related report lists"
         'Load list items
-        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & AttemptedWO & "'"
+        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & wo & "'"
         Using strDS As New DataSet
             sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
@@ -642,48 +651,50 @@ Public Class ReportOptions
         End Using
 #End Region
 
-#Region "Load related report appendixes"
+#Region "Load related report files"
         If Not IsFromDefault Then
 
             'Load list items
-            query = "SELECT * FROM report.report_appendixes WHERE work_order_seq_num = '" & AttemptedWO & "'"
+            If (RootDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
+                query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & wo & "'"
 
-            Using strDS As New DataSet
-                sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
-                If (strDS.Tables(0).Rows.Count > 0) Then
-                    AppendixDocuments.Clear()
-                    AppendixDocuments.Add("CCIPole", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("rtf", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("A", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("B", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("C", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("D", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Y", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Z", New List(Of FilepathWithPriority))
-                    AppendixDocuments.Add("Extra", New List(Of FilepathWithPriority))
-                End If
-
-                For Each item In strDS.Tables(0).Rows
-                    Dim appendix As String = CType(item.Item("appendix_name"), String)
-                    If Not AppendixDocuments.ContainsKey(appendix) Then
-                        AppendixDocuments.Add(appendix, New List(Of FilepathWithPriority))
+                Using strDS As New DataSet
+                    sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                    If (strDS.Tables(0).Rows.Count > 0) Then
+                        Files.Clear()
+                        Files.Add("CCIPole", New List(Of FilepathWithPriority))
+                        Files.Add("rtf", New List(Of FilepathWithPriority))
+                        Files.Add("A", New List(Of FilepathWithPriority))
+                        Files.Add("B", New List(Of FilepathWithPriority))
+                        Files.Add("C", New List(Of FilepathWithPriority))
+                        Files.Add("D", New List(Of FilepathWithPriority))
+                        Files.Add("Y", New List(Of FilepathWithPriority))
+                        Files.Add("Z", New List(Of FilepathWithPriority))
+                        Files.Add("Extra", New List(Of FilepathWithPriority))
                     End If
 
-                    AppendixDocuments(appendix).Add(New FilepathWithPriority(
+                    For Each item In strDS.Tables(0).Rows
+                        Dim appendix As String = CType(item.Item("appendix_name"), String)
+                        If Not Files.ContainsKey(appendix) Then
+                            Files.Add(appendix, New List(Of FilepathWithPriority))
+                        End If
+
+                        Files(appendix).Add(New FilepathWithPriority(
                     -1,
-                    item.Item("filepath").ToString(),
+                    Me.RootDir.FullName,
                     item.Item("filename").ToString()
                     ))
 
-                Next
+                    Next
 
-            End Using
+                End Using
+            End If
         End If
 #End Region
 
 #Region "Load related report documents (for table 4)"
         'Load doc items
-        query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & AttemptedWO & "'"
+        query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & wo & "'"
 
         Using strDS As New DataSet
             TableDocuments.Clear()
@@ -708,7 +719,7 @@ Public Class ReportOptions
 
 #Region "Load related report equipment (for table 1-3)"
         'Load list items
-        query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & AttemptedWO & "'"
+        query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & wo & "'"
 
         Using strDS As New DataSet
             ProposedEquipment.Clear()
@@ -757,7 +768,7 @@ Public Class ReportOptions
                     --Dual is an empty dummy table. Use this CTE to pull in variables.
                     --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
                     --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
-                    (SELECT " + AttemptedWO + " AS work_order_seq_num FROM DUAL), 
+                    (SELECT " + wo + " AS work_order_seq_num FROM DUAL), 
 
                 wo AS (
                     SELECT  wos.work_order_seq_num 
@@ -1017,7 +1028,7 @@ Public Class ReportOptions
             End If
 
             'Find and update (or insert) report options
-            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & AttemptedWO & "'"
+            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & wo & "'"
             Using strDS As New DataSet
                 sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
                 If strDS.Tables(0).Rows.Count > 0 Then 'Update
@@ -1040,10 +1051,10 @@ Public Class ReportOptions
             Dim commands = New List(Of SqlCommand)
 
             'Delete all list items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_lists WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_lists WHERE work_order_seq_num ='" & wo & "'"))
 
 
-            Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & AttemptedWO & ",@LIST, @VALUE);"
+            Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & wo & ",@LIST, @VALUE);"
 
             For Each Item In Assumptions
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
@@ -1082,25 +1093,26 @@ Public Class ReportOptions
             End If
 
 #End Region
-#Region "Save report option Appendixes"
+#Region "Save report option files"
 
             commands = New List(Of SqlCommand)
             'Delete all appendixes filepaths associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_appendixes WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_files WHERE work_order_seq_num ='" & wo & "'"))
 
             'Add current appendix filepaths
 
-            queryTemplate = "INSERT INTO report.report_appendixes (work_order_seq_num, appendix_name, filepath, filename) VALUES(" & AttemptedWO & ",@NAME, @PATH, @FILENAME);"
-            For Each Item In AppendixDocuments
+            queryTemplate = "INSERT INTO report.report_files (work_order_seq_num, appendix_name, filename) VALUES(" & wo & ",@NAME, @FILENAME);"
+            For Each Item In Files
                 For Each Document In Item.Value
                     Dim command As SqlCommand = New SqlCommand(queryTemplate)
                     command.Parameters.Add("@NAME", SqlDbType.VarChar)
-                    command.Parameters.Add("@PATH", SqlDbType.VarChar)
+                    'command.Parameters.Add("@PATH", SqlDbType.VarChar)
                     'command.Parameters.Add("@PRIORITY", SqlDbType.VarChar)
                     command.Parameters.Add("@FILENAME", SqlDbType.VarChar)
 
                     command.Parameters("@NAME").Value = Item.Key
-                    command.Parameters("@PATH").Value = Document.filepath
+
+                    'command.Parameters("@PATH").Value = Document.filepath
                     'command.Parameters("@PRIORITY").Value = Document.priority.ToString()
                     command.Parameters("@FILENAME").Value = Document.filename
 
@@ -1121,9 +1133,9 @@ Public Class ReportOptions
             commands = New List(Of SqlCommand)
 
             'Delete all document items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & wo & "'"))
 
-            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & AttemptedWO & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
+            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & wo & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
 
             For Each Item In TableDocuments
                 Dim checkedInt As Integer = 0
@@ -1158,10 +1170,10 @@ Public Class ReportOptions
             commands = New List(Of SqlCommand)
 
             'Delete all document items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & AttemptedWO & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & wo & "'"))
 
 
-            queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & AttemptedWO & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
+            queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & wo & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
             For Each Item In ProposedEquipment
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
                 command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
@@ -1266,7 +1278,7 @@ Public Class ReportOptions
                   "END" & vbCrLf
         SQLUpdate = SQLUpdate.Replace("[TABLE]", Me.EDSTableName)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.Replace("[ID]", AttemptedWO)
+        SQLUpdate = SQLUpdate.Replace("[ID]", wo)
 
         SQLUpdate = SQLUpdate.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLUpdate
@@ -1291,7 +1303,7 @@ Public Class ReportOptions
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AttemptedWO.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.wo.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IsDefault.NullableToString.FormatDBValue)
@@ -1479,22 +1491,28 @@ End Class
 #Region "Helper Classes"
 Public Class FilepathWithPriority
     Public priority As Integer
-    Public filepath As String
+    Public rootDir As String
     Public filename As String
     Public enabled As Boolean = True
 
-    Public Sub New(ByVal priority As Integer, ByVal filepath As String, ByVal filename As String)
+    Public Sub New(ByVal priority As Integer, ByVal rootDir As String, ByVal filename As String)
         Me.priority = priority
-        Me.filepath = filepath
+        Me.rootDir = rootDir
         Me.filename = filename
     End Sub
 
     Public Sub New(ByVal root As String, ByVal filename As String)
         Me.priority = -1
-        Me.filepath = root & "\" & filename
+        Me.rootDir = root
         Me.filename = filename
         Me.enabled = True
     End Sub
+
+    Public ReadOnly Property filepath As String
+        Get
+            Return rootDir & "\" & filename
+        End Get
+    End Property
 
     Public Overrides Function ToString() As String
         Return filename
