@@ -71,12 +71,137 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	
+        '''	--[SOIL PROFILE INSERT]
+        '''
+        '''	--[PIER PROFILE INSERT]
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @TopLevel
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--[RESULTS]
+        '''
+        '''	DELETE FROM @TopLevel --Pier
+        '''	DELETE FROM @SubLevel1 --Soil Profile
+        '''	DELETE FROM @SubLevel2 --Pier Profile
+        '''	DELETE FROM @SubLevel3 --Section
+        '''	DELETE FROM @SubLevel4 --File Upload
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property Drilled_Pier__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
         Friend ReadOnly Property Drilled_Pier_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Drilled_Pier_Foundation", resourceCulture)
                 Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel2
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''	--[SECTION INSERT]
+        '''
+        '''	--[BELLED INSERT]
+        '''
+        '''	--[EMBEDDED INSERT]
+        '''
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property Drilled_Pier_Profile__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Profile__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel3
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel3ID=ID FROM @SubLevel3
+        '''
+        '''	--[REBAR INSERT]
+        '''
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property Drilled_Pier_Section__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Section__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO [SUBLEVEL TABLE]
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT [SUBLEVEL ID]=ID FROM [SUBLEVEL TABLE]
+        '''
+        '''	--[REQUIRED CHILDREN]
+        '''
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property Drilled_Pier_Tool__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Tool__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	DELETE FROM [TABLE] WHERE ID = [ID]
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property General__DELETE() As String
+            Get
+                Return ResourceManager.GetString("General__DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		VALUES([INSERT VALUES])
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property General__INSERT() As String
+            Get
+                Return ResourceManager.GetString("General__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''	UPDATE [TABLE NAME]
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[OPTIONAL]
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property General__UPDATE() As String
+            Get
+                Return ResourceManager.GetString("General__UPDATE", resourceCulture)
             End Get
         End Property
         

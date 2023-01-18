@@ -190,7 +190,11 @@ Public Module Extensions
         EDSResultQuery = ""
 
         For Each result In alist
-            EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
+            If result.foreign_key Is Nothing Then
+                EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
+            Else
+                EDSResultQuery += result.Insert(result.foreign_key) & vbCrLf
+            End If
         Next
 
         Return EDSResultQuery

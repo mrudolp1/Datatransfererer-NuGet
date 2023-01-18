@@ -31,7 +31,7 @@ Partial Public Class frmMain
     'Public ListOfFilesCopied As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Documents\.NET Testing\EDS - 812637 - CCIplate (4.1.2.1).xlsm"}
 
     'Import to EDS
-    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\DataTransferer\Templates\Drilled Pier Foundation (5.1.0 (version 2).xlsm"}
+    Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\source\repos\Datatransferer NuGet\DataTransferer\Templates\Drilled Pier Foundation.xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Save to EDS\806889 - Pier and Pad Foundation (4.1.2).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800011 - Pile Foundation (2.2.1.6).xlsm"}
     'Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\Pile Foundation\VB.Net Test Cases\Test Cases\800009 - Drilled Pier Foundation (5.1.0) - TEMPLATE - 8-27-2021.xlsm"}

@@ -123,10 +123,10 @@ Partial Public Class FileUpload
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        ConstructMe(filePath)
+        SetFileParameters(filePath)
     End Sub
 
-    Public Sub ConstructMe(ByVal filePath As String)
+    Public Sub SetFileParameters(ByVal filePath As String)
         Dim myFile As New IO.FileInfo(filePath)
 
         Me.file_lkup_code = "NOTSET"

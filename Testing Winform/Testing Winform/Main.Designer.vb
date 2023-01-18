@@ -563,7 +563,9 @@
         Me.Controls.Add(Me.TabControl1)
         Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
         Me.Name = "frmMain"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "EDS & Excel Testing"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.pgStructure.ResumeLayout(False)
         Me.SplitContainer3.Panel1.ResumeLayout(False)
         Me.SplitContainer3.Panel2.ResumeLayout(False)

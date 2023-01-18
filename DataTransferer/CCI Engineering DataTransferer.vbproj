@@ -20,9 +20,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Queries\Drilled Pier\**" />
     <Compile Remove="Queries\Unit Base\Backup - MRR\**" />
+    <EmbeddedResource Remove="Queries\Drilled Pier\**" />
     <EmbeddedResource Remove="Queries\Unit Base\Backup - MRR\**" />
+    <None Remove="Queries\Drilled Pier\**" />
     <None Remove="Queries\Unit Base\Backup - MRR\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer - Copy.vb" />
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer - IEM.vb" />
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer.vb" />
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Object%28s%29.vb" />
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\old_Drilled Pier Data Transfer.vb" />
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\old_Drilled Pier Object%28s%29.vb" />
+    <Compile Remove="Objects\Foundation - Pile\old_Pile Data Transfer.vb" />
+    <Compile Remove="Objects\Foundation - Pile\old_Pile Object%28s%29.vb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,21 +64,6 @@
     <None Remove="Queries\CCIpole\CCIpole (SubQuery_IntGroups).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_IntDetails).sql" />
     <None Remove="Queries\CCIpole\CCIpole (SubSubQuery_ReinfDetails).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Pier (INSERT).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Pier Profile (INSERT).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Pier Section (INSERT).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28IN_UP%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Belled%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Details%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Embedded%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Rebar%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Section%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers %28SELECT Soil Layers%29.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers (IN_UP) - Copy.sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers (SELECT Profile).sql" />
-    <None Remove="Queries\Drilled Pier\Drilled Piers Sections (IN_UP).sql" />
-    <None Remove="Queries\Drilled Pier\General (INSERT).sql" />
-    <None Remove="Queries\Drilled Pier\General (UPDATE).sql" />
     <None Remove="Queries\Existing Model %28IN_UP%29.sql" />
     <None Remove="Queries\Existing Model %28SELECT%29.sql" />
     <None Remove="Queries\File Upload (INSERT).sql" />
@@ -253,54 +252,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\CCIpole\CCIpole %28SubSubQuery_IntDetails%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\General %28UPDATE%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\File Upload %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Pier Section %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\General %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28IN_UP%29 - Copy.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Belled%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Profile%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Details%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Embedded%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Rebar%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Section%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers Sections %28IN_UP%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Old\Drilled Piers %28SELECT Soil Layers%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Pier %28INSERT%29.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Queries\Drilled Pier\Drilled Pier Profile %28INSERT%29.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Queries\Existing Model (IN_UP).sql">
@@ -603,6 +554,19 @@
     <Folder Include="Queries\TNX\Guys %28GuyRec%29\" />
     <Folder Include="Queries\TNX\Upper Structure %28AntennaRec%29\" />
 	<Folder Include="Queries\Soil Layer - Copy\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer - Copy.vb" />
+    <None Include="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer - IEM.vb" />
+    <None Include="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Data Transfer.vb" />
+    <None Include="Objects\Foundation - Drilled Pier\DNU\DNU_Drilled Pier Object(s).vb" />
+    <None Include="Objects\Foundation - Drilled Pier\DNU\old_Drilled Pier Data Transfer.vb" />
+    <None Include="Objects\Foundation - Drilled Pier\DNU\old_Drilled Pier Object(s).vb" />
+    <None Include="Objects\Foundation - Pile\old_Pile Data Transfer.vb" />
+    <None Include="Objects\Foundation - Pile\old_Pile Object(s).vb" />
+    <None Include="Queries\Drilled Pier\General %28DELETE%29.sql" />
+    <None Include="Queries\Drilled Pier\General %28UPDATE%29.sql" />
   </ItemGroup>
 
 </Project>

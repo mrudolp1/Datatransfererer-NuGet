@@ -75,7 +75,7 @@ Partial Public Class EDSStructure
     Public Sub LoadFromEDS(ByVal BU As String, ByVal structureID As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
 
         Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
-        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Drilled Pier", "Anchor Block", "Soil Profiles", "Soil Layers", "Connections", "Pole", "Site Code Criteria", "File Upload"}
+        Dim tableNames() As String = {"TNX", "Base Structure", "Upper Structure", "Guys", "Members", "Materials", "Pier and Pad", "Unit Base", "Pile", "Pile Locations", "Anchor Block", "Soil Profile", "Soil Layer", "Connections", "Pole", "Site Code Criteria", "File Upload", "Drilled Pier", "Drilled Pier Profile", "Drilled Pier Section", "Drilled Pier Rebar", "Belled Pier", "Embedded Pole", "Drilled Pier Foundation"}
 
         Using strDS As New DataSet
 
@@ -164,12 +164,8 @@ Partial Public Class EDSStructure
             'If a datarow is passed into the drilled pier foundation tool object then it will create new tools for every drilled pier that exists. 
             'Otherwise it will put all drilled piers into the same too. 
             'Basically all guyed towers would be in 1 tool.
-            For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
-                If Me.structureCodeCriteria.structure_type <> "GUYED" Then
-                    Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
-                Else
-                    Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me))
-                End If
+            For Each dr As DataRow In strDS.Tables("Drilled Pier Foundation").Rows
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
             Next
 
 
@@ -275,7 +271,7 @@ Partial Public Class EDSStructure
             UnitBases(i).SavetoExcel()
         Next
 
-        For Each drilledpiertool In Me.DrilledPierTools
+        For i = 0 To Me.DrilledPierTools.Count - 1
             fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
             DrilledPierTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileName(DrilledPierTools(i).templatePath) & fileNum)
             DrilledPierTools(i).SavetoExcel()

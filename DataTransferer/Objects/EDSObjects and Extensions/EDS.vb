@@ -237,8 +237,8 @@ Partial Public MustInherit Class EDSExcelObject
             Exit Sub
         End If
 
-        Try
-            wb.LoadDocument(templatePath, fileType)
+        'Try
+        wb.LoadDocument(templatePath, fileType)
             wb.BeginUpdate()
 
             'Put the jelly in the donut
@@ -248,9 +248,9 @@ Partial Public MustInherit Class EDSExcelObject
             wb.EndUpdate()
             wb.SaveDocument(workBookPath, fileType)
 
-        Catch ex As Exception
-            Debug.Print("Error Saving Workbook: " & ex.Message)
-        End Try
+        'Catch ex As Exception
+        '    Debug.Print("Error Saving Workbook: " & ex.Message)
+        'End Try
 
     End Sub
 #End Region

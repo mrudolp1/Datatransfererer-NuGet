@@ -958,7 +958,7 @@ Partial Public Class Pile
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
         'Sub Tables (as defined within Structure.VB LoadFromEDS
-        For Each row As DataRow In strDS.Tables("Soil Profiles").Rows
+        For Each row As DataRow In strDS.Tables("Soil Profile").Rows
             Dim soilprofRefID As Integer = CType(row.Item("ID"), Integer)
             If soilprofRefID = Me.Soil_Profile_id Then
                 Me.SoilProfiles.Add(New SoilProfile(row))
@@ -966,9 +966,9 @@ Partial Public Class Pile
             End If
         Next
 
-        If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Or strDS.Tables("Soil Layers").Rows.Count > 0 Then
+        If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Or strDS.Tables("Soil Layer").Rows.Count > 0 Then
             'If Me.pile_soil_capacity_given = False And Me.pile_shape <> "H-Pile" Or strDS.Tables("Soil Layers").DataSet > 0 Then
-            For Each row As DataRow In strDS.Tables("Soil Layers").Rows
+            For Each row As DataRow In strDS.Tables("Soil Layer").Rows
                 Dim soilRefID As Integer = CType(row.Item("soil_profile_id"), Integer)
                 If soilRefID = Me.Soil_Profile_id Then
                     Me.SoilLayers.Add(New SoilLayer(row))

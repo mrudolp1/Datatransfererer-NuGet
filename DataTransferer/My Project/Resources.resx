@@ -124,6 +124,27 @@
   <data name="Drilled_Pier_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Drilled Pier Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Drilled_Pier_Profile__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\Drilled Pier Profile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier_Section__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\Drilled Pier Section (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier_Tool__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\Drilled Pier Tool (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\Drilled Pier (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\General (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\General (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Queries\Drilled Pier\General (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Pier_and_Pad_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Pier and Pad Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

@@ -83,9 +83,6 @@ Begin
 		AND fnd.structure_id = @strID
 		AND fnd.ID = pl.pile_id
 
-	--Drilled Pier
-	Select * From fnd.drilled_pier WHERE bus_unit=@BU AND structure_id=@strID
-
 	--Anchor Block
 	Select * From fnd.anchor_block WHERE bus_unit=@BU AND structure_id=@strID
 
@@ -124,4 +121,25 @@ Begin
 
 	--File Upload
 	SELECT * FROM gen.file_upload fu, (SELECT MAX(work_order_seq_num) work_order_seq_num FROM gen.work_orders WHERE bus_unit = @BU AND structure_id = @strID) wo WHERE fu.work_order_seq_num = wo.work_order_seq_num
+
+	--Drilled Pier
+	Select dp.* From fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID)
+
+	--Drilled Pier Profile
+	SELECT dpp.* FROM fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dpp.id = dp.drilled_pier_profile_id
+	
+	--Drilled Pier Section
+	SELECT dps.* FROM fnd.drilled_pier_section dps, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+
+	--Drilled Pier Rebar
+	SELECT dpr.* FROM fnd.drilled_pier_rebar dpr, fnd.drilled_pier_section dps ,fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.id = dpr.section_id AND dps.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	
+	--Belled Pier
+	SELECT bp.* FROM fnd.belled_pier bp, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND bp.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	
+	--Embedded Pole
+	SELECT ep.* FROM fnd.embedded_pole ep, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND ep.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+
+	--Drilled Pier Tool
+	Select * From fnd.drilled_pier_tool WHERE bus_unit=@BU AND structure_id=@strID
 END
