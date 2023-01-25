@@ -186,6 +186,7 @@ Namespace My.Resources
         
         '''<summary>
         '''  Looks up a localized string similar to --Structure Info Declarations
+        '''--This line is a test. Did you pass?
         '''DECLARE @BU VARCHAR(10)
         '''DECLARE @strID VARCHAR(10)
         '''DECLARE @SoilProfileIDs TABLE(soil_profile_id INT)
@@ -208,9 +209,7 @@ Namespace My.Resources
         '''		AND tnx.ID = bs.tnx_ID
         '''
         '''	--Upper Structure
-        '''	Select us.* 
-        '''	From 
-        '''		tnx.upper_structure_se [rest of string was truncated]&quot;;.
+        '''	Select u [rest of string was truncated]&quot;;.
         '''</summary>
         Public ReadOnly Property Structure_SELECT() As String
             Get
