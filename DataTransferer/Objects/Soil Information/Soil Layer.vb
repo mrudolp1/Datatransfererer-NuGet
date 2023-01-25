@@ -1,4 +1,5 @@
 ﻿Option Strict On
+Option Compare Binary
 
 Imports System.ComponentModel
 Imports System.Data
@@ -15,11 +16,13 @@ Partial Public Class SoilLayer
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.soil_layer"
 
     Public Overrides Function SQLInsert() As String
-
-        'SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
-        SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
-        SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
+        SQLInsert = ""
+SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
         SQLInsert = SQLInsert.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
+
+
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         Return SQLInsert
@@ -27,20 +30,16 @@ Partial Public Class SoilLayer
     End Function
 
     Public Overrides Function SQLUpdate() As String
-
-        'SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (UPDATE).sql")
         SQLUpdate = CCI_Engineering_Templates.My.Resources.Soil_Layer_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
-        Return SQLUpdate
+        Return SQLUpdate & vbCrLf
 
     End Function
 
     Public Overrides Function SQLDelete() As String
-
-        'SQLDelete = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (DELETE).sql")
         SQLDelete = CCI_Engineering_Templates.My.Resources.Soil_Layer_DELETE
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
@@ -50,6 +49,7 @@ Partial Public Class SoilLayer
     End Function
 
 #End Region
+
 #Region "Define"
 
     Private _ID As Integer?
@@ -60,8 +60,9 @@ Partial Public Class SoilLayer
     Private _friction_angle As Double?
     Private _skin_friction_override_comp As Double?
     Private _skin_friction_override_uplift As Double?
-    Private _nominal_bearing_capacity As Double? 'Does not apply to Piles
+    Private _nominal_bearing_capacity As Double? 'Does not apply to Piles -- For drilled piers this is being used as ultimate and nominal. The toggle
     Private _spt_blow_count As Integer?
+
     <Category("Soil Layer"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
         Get
@@ -161,13 +162,18 @@ Partial Public Class SoilLayer
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow)
+    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+        ConstructMe(Row, Parent)
+    End Sub
+
+    Public Sub ConstructMe(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        'If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         Dim dr = Row
         Me.ID = DBtoNullableInt(dr.Item("ID"))
+        Me.Soil_Profile_id = DBtoNullableInt(dr.Item("soil_Profile_id"))
         Me.bottom_depth = DBtoNullableDbl(dr.Item("bottom_depth"))
         Me.effective_soil_density = DBtoNullableDbl(dr.Item("effective_soil_density"))
         Me.cohesion = DBtoNullableDbl(dr.Item("cohesion"))
@@ -178,7 +184,6 @@ Partial Public Class SoilLayer
         Me.spt_blow_count = DBtoNullableInt(dr.Item("spt_blow_count"))
 
     End Sub
-
 
 #End Region
 

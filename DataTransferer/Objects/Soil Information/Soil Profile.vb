@@ -1,4 +1,5 @@
-﻿Option Strict On
+﻿Option Strict Off
+Option Compare Binary
 
 Imports System.ComponentModel
 Imports System.Data
@@ -19,7 +20,14 @@ Partial Public Class SoilProfile
         SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Profile_INSERT
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE VALUES]", Me.SQLInsertValues)
         SQLInsert = SQLInsert.Replace("[SOIL PROFILE FIELDS]", Me.SQLInsertFields)
-        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Dim _layerInsert As String
+        For Each layer In Me.SoilLayers
+            _layerInsert += layer.SQLInsert + vbCrLf
+        Next
+
+        SQLInsert = SQLInsert.Replace("--[SOIL LAYER INSERT]", _layerInsert + vbCrLf)
+        SQLInsert = SQLInsert.TrimEnd
 
         Return SQLInsert
     End Function
@@ -47,6 +55,8 @@ Partial Public Class SoilProfile
 
 #End Region
 #Region "Define"
+
+    Public Property SoilLayers As New List(Of SoilLayer)
 
     Private _groundwater_depth As Double?
     Private _neglect_depth As Double?
@@ -77,9 +87,13 @@ Partial Public Class SoilProfile
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow)
+    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+        ConstructMe(Row, Parent)
+    End Sub
+
+    Public Sub ConstructMe(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        'If Parent IsNot Nothing Then Me.Absorb(Parent)
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
         'Dim dr = excelDS.Tables("PILE SOIL PROFILE EXCEL").Rows(0)
@@ -135,6 +149,11 @@ Partial Public Class SoilProfile
         'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
         Equals = If(Me.groundwater_depth.CheckChange(otherToCompare.groundwater_depth, changes, categoryName, "Groundwater Depth"), Equals, False)
         Equals = If(Me.neglect_depth.CheckChange(otherToCompare.neglect_depth, changes, categoryName, "Neglect Depth"), Equals, False)
+
+        'Soil Layers
+        Equals = If(Me.SoilLayers.CheckChange(otherToCompare.SoilLayers, changes, categoryName, "Soil Layers"), Equals, False)
+
+        Return Equals
 
     End Function
 
