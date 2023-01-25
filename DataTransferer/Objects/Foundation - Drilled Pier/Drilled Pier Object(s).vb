@@ -126,7 +126,7 @@ Partial Public Class DrilledPierFoundation
             End If
         Next
 
-        Return SQLUpdate
+        Return dpUp
     End Function
 
     Public Overrides Function SQLDelete() As String
@@ -142,10 +142,10 @@ Partial Public Class DrilledPierFoundation
             Dim dpSec As New DrilledPierSection
             Dim dpReb As New DrilledPierRebar
             Dim dpSProf As New DrilledPierSoilProfile
-            Dim dpSlay As New SoilLayer
+            Dim dpSlay As New DrilledPierSoilLayer
             Dim dpEmbed As New EmbeddedPole
             Dim dpBell As New BelledPier
-            Dim dpRes As New EDSResult
+            Dim dpRes As New DrilledPierResult
             Dim dpTool As New DrilledPierFoundation
 
             Return New List(Of EXCELDTParameter) From {
@@ -230,6 +230,7 @@ Partial Public Class DrilledPierFoundation
         Dim tia_current, site_name, structure_type As String
         Dim rev_h_section_15_5 As Boolean?
         Dim returnRow = 2
+        Dim sumRow = 10 'Actually starts on row 11 but excel uses a (0, 0) origin
 
         For Each drilledPier In Me.DrilledPiers
 
@@ -280,7 +281,7 @@ Partial Public Class DrilledPierFoundation
                     .Range("D7").Value = CType(structure_type, String)
                 End If
                 .Range("CurrentLocation").Value = 1
-                If structure_type.Contains("Guyed") Then
+                If structure_type?.Contains("Guyed") Then
                     .Range("CurrentLocation").Value = 1
                 End If
             End With
@@ -297,13 +298,12 @@ Partial Public Class DrilledPierFoundation
                 returnRow += 1
             End With
 
-            returnRow = 10 'Actually starts on row 11 but excel uses a (0, 0) origin
             With wb.Worksheets("SUMMARY")
-                If Not IsNothing(drilledPier.local_drilled_pier_profile) Then .Cells(returnRow, 3).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
-                If Not IsNothing(drilledPier.ID) Then .Cells(returnRow, 9).Value = CType(drilledPier.ID, Integer)
-                If Not IsNothing(drilledPier.reaction_location) Then .Cells(returnRow, 2).Value = CType(drilledPier.reaction_location, String)
-                If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(returnRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
-                returnRow += 1
+                If Not IsNothing(drilledPier.local_drilled_pier_profile) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
+                If Not IsNothing(drilledPier.ID) Then .Cells(sumRow, 9).Value = CType(drilledPier.ID, Integer)
+                If Not IsNothing(drilledPier.reaction_location) Then .Cells(sumRow, 2).Value = CType(drilledPier.reaction_location, String)
+                If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
+                sumRow += 1
             End With
 
             With wb.Worksheets("Database")
@@ -332,7 +332,7 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.PierProfile.shear_crit_depth_override_uplift) Then .Cells(pierProfileRow + 376, myCol).Value = CType(drilledPier.PierProfile.shear_crit_depth_override_uplift, Double)
                 If Not IsNothing(drilledPier.PierProfile.shear_override_crit_depth) Then .Cells(pierProfileRow + 99, myCol).Value = CType(drilledPier.PierProfile.shear_override_crit_depth, Boolean)
                 If Not IsNothing(drilledPier.PierProfile.tie_yield_strength) Then .Cells(pierProfileRow + 9, myCol).Value = CType(drilledPier.PierProfile.tie_yield_strength, Double)
-                .Cells(pierProfileRow + 18, myCol).Value = drilledPier.SoilProfile.SoilLayers.Count
+                .Cells(pierProfileRow + 18, myCol).Value = drilledPier.SoilProfile.DPSoilLayers.Count
                 If drilledPier.PierProfile.ultimate_gross_bearing Then
                     .Cells(pierProfileRow + 19, myCol).Value = "Ult. Gross Bearing Capacity (ksf)"
                 Else
@@ -377,15 +377,15 @@ Partial Public Class DrilledPierFoundation
 
                 'Sections
                 For Each section In drilledPier.PierProfile.Sections
-                    Dim secAdj As Integer = section.local_section_id - 1
+                    Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_drilled_pier_profile - 1) - 1
 
-                    If Not IsNothing(section.ID) Then .Cells(pierProfileRow - 55 + bump15 * secAdj, myCol).Value = CType(section.ID, Integer)
-                    If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + bump15 * secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
-                    If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + secAdj, myCol).Value = CType(section.pier_diameter, Double)
-                    If Not IsNothing(section.clear_cover) Then .Cells(pierProfileRow + 23 + secAdj, myCol).Value = CType(section.clear_cover, Double)
-                    If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 24 + secAdj, myCol).Value = CType(section.tie_size, Integer)
-                    If Not IsNothing(section.tie_spacing) Then .Cells(pierProfileRow + 25 + secAdj, myCol).Value = CType(section.tie_spacing, Double)
-                    With .Cells(pierProfileRow + 34 + secAdj, myCol)
+                    If Not IsNothing(section.ID) Then .Cells(pierProfileRow - 55 + secAdj, myCol).Value = CType(section.ID, Integer)
+                    If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
+                    If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + bump15 * secAdj, myCol).Value = CType(section.pier_diameter, Double)
+                    If Not IsNothing(section.clear_cover) Then .Cells(pierProfileRow + 23 + bump15 * secAdj, myCol).Value = CType(section.clear_cover, Double)
+                    If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
+                    If Not IsNothing(section.tie_spacing) Then .Cells(pierProfileRow + 25 + bump15 * secAdj, myCol).Value = CType(section.tie_spacing, Double)
+                    With .Cells(pierProfileRow + 34 + bump15 * secAdj, myCol)
                         If section.clear_cover_rebar_cage_option Then
                             .Value = "Clear Cover to Ties"
                         Else
@@ -395,23 +395,23 @@ Partial Public Class DrilledPierFoundation
 
                     'Rebar
                     For Each rebar In section.Rebar
-                        Select Case rebar.local_rebar_id
+                        Select Case rebar.local_rebar_id - 15 * (drilledPier.local_drilled_pier_profile - 1)
                             Case 1
                                 If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 50 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 21 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 22 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 21 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 22 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
                             Case 2
                                 If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 49 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 26 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 27 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 28 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
-                                If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 29 + secAdj, myCol).Value = CType(section.tie_size, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 26 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 27 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 28 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
+                                If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 29 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
                             Case 3
                                 If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 48 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 30 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 31 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
-                                If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 32 + secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
-                                If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 33 + secAdj, myCol).Value = CType(section.tie_size, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 30 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 31 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
+                                If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 32 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
+                                If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 33 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
                         End Select
                     Next
                 Next
@@ -421,7 +421,7 @@ Partial Public Class DrilledPierFoundation
 
                 'Soil Layers
                 Dim layAdj As Integer = 0
-                For Each layer In drilledPier.SoilProfile.SoilLayers
+                For Each layer In drilledPier.SoilProfile.DPSoilLayers
                     If Not IsNothing(layer.ID) Then .Cells(pierProfileRow + layAdj - 35, myCol).Value = CType(layer.ID, Double)
                     If Not IsNothing(layer.bottom_depth) Then .Cells(pierProfileRow + layAdj + 127, myCol).Value = CType(layer.bottom_depth, Double)
                     If Not IsNothing(layer.effective_soil_density) Then .Cells(pierProfileRow + layAdj + 158, myCol).Value = CType(layer.effective_soil_density, Double)
@@ -448,6 +448,10 @@ Partial Public Class DrilledPierFoundation
         If otherToCompare Is Nothing Then Return False
 
         Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+
+        'Drilled Piers
+        Equals = If(Me.DrilledPiers.CheckChange(otherToCompare.DrilledPiers, changes, categoryName, "Drilled Piers"), Equals, False)
+
         Return Equals
     End Function
 End Class
@@ -483,7 +487,16 @@ Partial Public Class DrilledPier
         SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
 
         SQLInsert = SQLInsert.Replace("--[PIER PROFILE INSERT]", Me.PierProfile.SQLInsert)
-        SQLInsert = SQLInsert.Replace("--[SOIL PROFILE INSERT]", Me.SoilProfile.SQLInsert)
+        Dim tempProf As New SoilProfile
+        tempProf = TryCast(Me.SoilProfile, SoilProfile)
+
+        For Each layer As DrilledPierSoilLayer In Me.SoilProfile.DPSoilLayers
+            Dim newlay As New SoilLayer
+            newlay = TryCast(layer, SoilLayer)
+            tempProf.SoilLayers.Add(newlay)
+        Next
+
+        SQLInsert = SQLInsert.Replace("--[SOIL PROFILE INSERT]", tempProf.SQLInsert)
 
         Dim resInsert As String = ""
         For Each res As EDSResult In Me.Results
@@ -509,10 +522,20 @@ Partial Public Class DrilledPier
         Dim _soilInsert As String
 
         If Me.PierProfile?.ID IsNot Nothing And Me.PierProfile?.ID > 0 Then
-            _pierInsert = Me.SoilProfile.SQLUpdate
+            _pierInsert = Me.PierProfile.SQLUpdate
         Else
             _pierInsert = Me.PierProfile.SQLInsert
         End If
+
+        'If bar.ID IsNot Nothing And bar.ID > 0 Then
+        '    If bar.local_rebar_id IsNot Nothing Then
+        '        _rebarInsert += bar.SQLUpdate + vbCrLf
+        '    Else
+        '        _rebarInsert += bar.SQLDelete + vbCrLf
+        '    End If
+        'Else
+        '    _rebarInsert += bar.SQLInsert + vbCrLf
+        'End If
 
         If Me.SoilProfile?.ID IsNot Nothing And Me.SoilProfile?.ID > 0 Then
             _soilInsert = Me.SoilProfile.SQLUpdate
@@ -529,11 +552,11 @@ Partial Public Class DrilledPier
     Public Overrides Function SQLDelete() As String
 
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
-        SQLDelete += Me.PierProfile.SQLDelete + vbCrLf
-        SQLDelete += Me.SoilProfile.SQLDelete + vbCrLf
+        SQLDelete += Me.PierProfile?.SQLDelete + vbCrLf
+        SQLDelete += Me.SoilProfile?.SQLDelete + vbCrLf
 
 
         Return SQLDelete
@@ -651,7 +674,7 @@ Partial Public Class DrilledPier
         Dim dpBelled As New BelledPier
         Dim dpEmbedded As New EmbeddedPole
         Dim dpSProfile As New DrilledPierSoilProfile
-        Dim dpLayer As New SoilLayer
+        Dim dpLayer As New DrilledPierSoilLayer
 
         ConstructMe(dr)
 
@@ -701,9 +724,9 @@ Partial Public Class DrilledPier
                 Me.SoilProfile = dpSProfile
 
                 For Each layerRow As DataRow In strDS.Tables(dpLayer.EDSObjectName).Rows
-                    dpLayer = (New SoilLayer(layerRow, dpSProfile))
-                    If dpSProfile.ID = dpLayer.Soil_Profile_id Then
-                        dpSProfile.SoilLayers.Add(dpLayer)
+                    dpLayer = (New DrilledPierSoilLayer(layerRow, dpSProfile))
+                    If If(isExcel, dpSProfile.local_drilled_pier_id = dpLayer.local_drilled_pier_id, Me.soil_profile_id = dpLayer.Soil_Profile_id) Then
+                        dpSProfile.DPSoilLayers.Add(dpLayer)
                     End If
                 Next
             End If
@@ -718,8 +741,11 @@ Partial Public Class DrilledPier
 
             For Each resRow In strDS.Tables("Drilled Pier Result").Rows
                 If DBtoNullableInt(resRow.item("local_drilled_pier_id")) = Me.local_drilled_pier_profile Then
-                    dt.Rows.Add("DPSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
-                    dt.Rows.Add("DPSTRUC", Math.Round(CType(resRow.item("Structural Rating"), Double), 3))
+                    Try
+                        dt.Rows.Add("DPSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
+                        dt.Rows.Add("DPSTRUC", Math.Round(CType(resRow.item("Structural Rating"), Double), 3))
+                    Catch
+                    End Try
                     'Exit For
                 End If
             Next
@@ -804,6 +830,13 @@ Partial Public Class DrilledPier
         Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals, False)
         Equals = If(Me.local_soil_profile.CheckChange(otherToCompare.local_soil_profile, changes, categoryName, "Local Soil Profile"), Equals, False)
         Equals = If(Me.local_drilled_pier_profile.CheckChange(otherToCompare.local_drilled_pier_profile, changes, categoryName, "Local Drilled Pier Profile"), Equals, False)
+
+        'Drilled Pier Profile
+        Equals = If(Me.PierProfile.CheckChange(otherToCompare.PierProfile, changes, categoryName, "Pier Profile"), Equals, False)
+
+        'Soil Profile
+        Equals = If(Me.SoilProfile.CheckChange(otherToCompare.SoilProfile, changes, categoryName, "Soil Profile"), Equals, False)
+
         Return Equals
 
     End Function
@@ -878,7 +911,10 @@ Partial Public Class DrilledPierProfile
             End If
         End If
 
-        SQLInsert = SQLInsert.TrimEnd
+        SQLInsert = SQLInsert.Replace("--[SECTION INSERT]", _sectionInsert + vbCrLf)
+        SQLInsert = SQLInsert.Replace("--[BELLED INSERT]", _belledInsert + vbCrLf)
+        SQLInsert = SQLInsert.Replace("--[EMBEDDED INSERT]", _embedInsert + vbCrLf)
+        SQLInsert = SQLInsert.TrimEnd()
 
         Return SQLInsert
     End Function
@@ -902,7 +938,7 @@ Partial Public Class DrilledPierProfile
                     _sectionInsert += sec.SQLDelete + vbCrLf
                 End If
             Else
-                    _sectionInsert += sec.SQLInsert + vbCrLf
+                _sectionInsert += sec.SQLInsert + vbCrLf
             End If
         Next
 
@@ -940,8 +976,8 @@ Partial Public Class DrilledPierProfile
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
         Return SQLDelete
     End Function
@@ -1176,7 +1212,7 @@ Partial Public Class DrilledPierProfile
         Me.shear_override_crit_depth = DBtoNullableBool(dr.Item("shear_override_crit_depth"))
         Me.tie_yield_strength = DBtoNullableDbl(dr.Item("tie_yield_strength"))
         Me.tool_version = DBtoStr(dr.Item("tool_version"))
-        Me.ultimate_gross_bearing = DBtoStr(dr.Item("ultimate_gross_bearing"))
+        Me.ultimate_gross_bearing = DBtoNullableBool(dr.Item("ultimate_gross_bearing"))
         Try
             Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile"))
         Catch
@@ -1285,6 +1321,11 @@ Partial Public Class DrilledPierProfile
         Equals = If(Me.tie_yield_strength.CheckChange(otherToCompare.tie_yield_strength, changes, categoryName, "Tie Yield Strength"), Equals, False)
         Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
         Equals = If(Me.ultimate_gross_bearing.CheckChange(otherToCompare.ultimate_gross_bearing, changes, categoryName, "Ultimate Bearing"), Equals, False)
+
+
+        'Sections
+        Equals = If(Me.Sections.CheckChange(otherToCompare.Sections, changes, categoryName, "Drilled Pier Sections"), Equals, False)
+
         Return Equals
 
     End Function
@@ -1367,8 +1408,8 @@ Partial Public Class DrilledPierSection
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
         Return SQLDelete
     End Function
@@ -1503,8 +1544,8 @@ Partial Public Class DrilledPierSection
         Me.rho_override = DBtoNullableDbl(dr.Item("rho_override"))
 
         Try
-                Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
-            Catch
+            Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+        Catch
         End Try
     End Sub
 #End Region
@@ -1572,6 +1613,11 @@ Partial Public Class DrilledPierSection
         Equals = If(Me.bottom_elevation.CheckChange(otherToCompare.bottom_elevation, changes, categoryName, "Bottom Elevation"), Equals, False)
         Equals = If(Me.local_section_id.CheckChange(otherToCompare.local_section_id, changes, categoryName, "Local Section Id"), Equals, False)
         Equals = If(Me.rho_override.CheckChange(otherToCompare.rho_override, changes, categoryName, "Rho Override"), Equals, False)
+
+        'Drilled Pier Rebar
+        Equals = If(Me.Rebar.CheckChange(otherToCompare.Rebar, changes, categoryName, "Drilled Pier Rebar"), Equals, False)
+
+
         Return Equals
 
     End Function
@@ -1620,8 +1666,8 @@ Partial Public Class DrilledPierRebar
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
         Return SQLDelete
     End Function
@@ -1813,8 +1859,8 @@ Partial Public Class EmbeddedPole
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
         Return SQLDelete
     End Function
@@ -2121,8 +2167,8 @@ Partial Public Class BelledPier
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLDelete = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
         Return SQLDelete
     End Function
@@ -2276,7 +2322,10 @@ Partial Public Class BelledPier
         Me.swelling_expansive_soil = DBtoNullableBool(dr.Item("swelling_expansive_soil"))
         Me.depth_of_expansive_soil = DBtoNullableDbl(dr.Item("depth_of_expansive_soil"))
         Me.expansive_soil_force = DBtoNullableDbl(dr.Item("expansive_soil_force"))
-        Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+        Try
+            Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+        Catch
+        End Try
     End Sub
 #End Region
 
@@ -2361,6 +2410,7 @@ Public Class DrilledPierSoilProfile
 
     Public Property local_soil_profile_id
     Public Property local_drilled_pier_id
+    Public Property DPSoilLayers As New List(Of DrilledPierSoilLayer)
 
     Public Sub New()
 
@@ -2376,6 +2426,38 @@ Public Class DrilledPierSoilProfile
         End Try
     End Sub
 
+
+    Public Overrides Function SQLUpdate() As String
+
+        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Dim slUp As String
+
+        For Each sl In Me.DPSoilLayers
+            Dim dpsl As DrilledPierSoilLayer = TryCast(sl, DrilledPierSoilLayer)
+
+            If dpsl.ID IsNot Nothing And dpsl?.ID > 0 Then
+                If dpsl.local_soil_layer_id IsNot Nothing Then
+                    slUp += dpsl.SQLUpdate
+                Else
+                    slUp += dpsl.SQLDelete
+                End If
+            Else
+                slUp += dpsl.SQLInsert
+            End If
+
+            slUp += vbCrLf
+        Next
+
+        SQLUpdate += vbCrLf + slUp
+
+        Return SQLUpdate
+    End Function
+
+
 End Class
 
 Public Class DrilledPierSoilLayer
@@ -2383,6 +2465,8 @@ Public Class DrilledPierSoilLayer
 
     Public Property local_soil_profile_id
     Public Property local_soil_layer_id
+    Public Property local_drilled_pier_profile
+    Public Property local_drilled_pier_id
 
     Public Sub New()
 
@@ -2392,8 +2476,10 @@ Public Class DrilledPierSoilLayer
         ConstructMe(dr, Parent)
 
         Try
-            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
+            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile"))
             Me.local_soil_layer_id = DBtoNullableDbl(dr.Item("local_soil_layer_id"))
+            Me.local_drilled_pier_profile = DBtoNullableDbl(dr.Item("local_drilled_pier_profile"))
+            Me.local_drilled_pier_id = DBtoNullableDbl(dr.Item("local_drilled_pier_id"))
         Catch
         End Try
     End Sub

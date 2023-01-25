@@ -147,6 +147,11 @@ Partial Public Class SoilProfile
         Equals = If(Me.groundwater_depth.CheckChange(otherToCompare.groundwater_depth, changes, categoryName, "Groundwater Depth"), Equals, False)
         Equals = If(Me.neglect_depth.CheckChange(otherToCompare.neglect_depth, changes, categoryName, "Neglect Depth"), Equals, False)
 
+        'Soil Layers
+        Equals = If(Me.SoilLayers.CheckChange(otherToCompare.SoilLayers, changes, categoryName, "Soil Layers"), Equals, False)
+
+        Return Equals
+
     End Function
 
 End Class

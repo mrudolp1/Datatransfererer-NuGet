@@ -124,7 +124,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
+            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0))
 
             'If ds.Tables("File Upload").Rows.Count > 0 Then
             '    For Each dr As DataRow In ds.Tables("File Upload").Rows

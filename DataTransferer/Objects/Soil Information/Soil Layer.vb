@@ -18,10 +18,10 @@ Partial Public Class SoilLayer
     Public Overrides Function SQLInsert() As String
 
         SQLInsert = ""
-        SQLInsert = QueryBuilderFromFile(queryPath & "Drilled Pier\General (INSERT).sql")
+        SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
         SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
-        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
-        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[SOIL LAYER FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
 
         'SQLInsert = QueryBuilderFromFile(queryPath & "Soil Layer\Soil Layer (INSERT).sql")
         'SQLInsert = SQLInsert.Replace("[SOIL LAYER VALUES]", Me.SQLInsertValues)
@@ -39,7 +39,7 @@ Partial Public Class SoilLayer
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
-        Return SQLUpdate
+        Return SQLUpdate & vbCrLf
 
     End Function
 
