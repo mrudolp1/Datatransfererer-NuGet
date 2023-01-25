@@ -1,0 +1,20 @@
+﻿
+BEGIN
+	
+	--[SOIL PROFILE INSERT]
+
+	--[PIER PROFILE INSERT]
+
+	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+		OUTPUT INSERTED.ID INTO @TopLevel
+		VALUES([INSERT VALUES])
+	SELECT @TopLevelID=ID FROM @TopLevel
+
+	--[RESULTS]
+
+	DELETE FROM @TopLevel --Pier
+	DELETE FROM @SubLevel1 --Soil Profile
+	DELETE FROM @SubLevel2 --Pier Profile
+	DELETE FROM @SubLevel3 --Section
+	DELETE FROM @SubLevel4 --File Upload
+END

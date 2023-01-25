@@ -283,6 +283,27 @@
   <data name="CCIpole_Unreinf_Section_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\CCIpole\2 Unreinf Section (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Drilled_Pier_Profile__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Drilled Pier Profile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier_Section__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Drilled Pier Section (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier_Tool__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Drilled Pier Tool (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Drilled_Pier__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Drilled Pier (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\General (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\General (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="General__UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\General (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Pile_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Pile\Pile (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
