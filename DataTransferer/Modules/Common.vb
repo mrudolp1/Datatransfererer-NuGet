@@ -161,18 +161,8 @@ Public Module Common
         End Try
     End Sub
 
-
-
     Function GetExistingModelQuery() As String
         Return QueryBuilderFromFile(queryPath & "Existing Model (SELECT).sql").Replace("[BU NUMBER]", BUNumber).Replace("[STRUCTURE_ID]", STR_ID)
-    End Function
-
-    Function SaveExistingModelQuery() As String
-        Return QueryBuilderFromFile(queryPath & "Existing Model (IN_UP).sql").Replace("[BU NUMBER]", BUNumber).Replace("[STRUCTURE_ID]", STR_ID)
-    End Function
-
-    Function SaveFoundationQuery(ByVal fndID As String, ByVal fndType As String) As String
-        Return QueryBuilderFromFile(queryPath & "Foundations (IN_UP).sql").Replace("'[Foundation ID]'", IIf(fndID = "", "NULL", "'" & fndID & "'")).Replace("[FOUNDATION TYPE]", fndType)
     End Function
 
     Function QueryBuilderFromFile(ByVal filetoread As String) As String

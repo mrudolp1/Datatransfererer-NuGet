@@ -36,7 +36,7 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), DisplayName("Structure ID")>
     Public Property structure_id As String
     <Category("EDS"), Description(""), DisplayName("Work Order")>
-    Public Property work_order_seq_num As String
+    Public Property work_order_seq_num As String = "1234526789"
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property activeDatabase As String
     <Category("EDS"), Description(""), Browsable(False)>
@@ -44,7 +44,7 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property modified_person_id As Integer?
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String
+    Public Property process_stage As String = "DP Test"
 
     'Public Property differences As List(Of ObjectsComparer.Difference)
 
@@ -60,6 +60,9 @@ Partial Public MustInherit Class EDSObject
         Me.process_stage = Host.process_stage
     End Sub
 
+    Public Overrides Function ToString() As String
+        Return Me.EDSObjectName
+    End Function
 
     Public Function CompareTo(other As EDSObject) As Integer Implements IComparable(Of EDSObject).CompareTo
         'This is used to sort EDSObjects
@@ -220,7 +223,8 @@ End Class
 
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
-    Inherits EDSObjectWithQueries
+    Inherits FileUpload
+
     <Category("Tool"), Description("Local path to query templates."), DisplayName("Tool Path")>
     Public Property workBookPath As String
     <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
@@ -245,8 +249,8 @@ Partial Public MustInherit Class EDSExcelObject
             Exit Sub
         End If
 
-        Try
-            wb.LoadDocument(templatePath, fileType)
+        'Try
+        wb.LoadDocument(templatePath, fileType)
             wb.BeginUpdate()
 
             'Put the jelly in the donut
@@ -256,9 +260,9 @@ Partial Public MustInherit Class EDSExcelObject
             wb.EndUpdate()
             wb.SaveDocument(workBookPath, fileType)
 
-        Catch ex As Exception
-            Debug.Print("Error Saving Workbook: " & ex.Message)
-        End Try
+        'Catch ex As Exception
+        '    Debug.Print("Error Saving Workbook: " & ex.Message)
+        'End Try
 
         'Seb's Macro test (uncomment bellow)
         'Dim xlApp As Microsoft.Office.Interop.Excel.Application
@@ -390,8 +394,8 @@ Partial Public Class EDSResult
         SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -403,8 +407,8 @@ Partial Public Class EDSResult
         SQLInsertFields = SQLInsertFields.AddtoDBString(Me.ForeignKeyName)
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -422,6 +426,9 @@ Partial Public Class EDSResult
         Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
                                 Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
                                 Host.EDSTableName & "_id")
+    End Sub
+    Public Sub New()
+
     End Sub
 
     ''' <summary>

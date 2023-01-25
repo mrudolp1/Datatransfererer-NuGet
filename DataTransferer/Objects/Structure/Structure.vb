@@ -22,9 +22,9 @@ Partial Public Class EDSStructure
     Public Property Poles As New List(Of Pole)
     Public Property UnitBases As New List(Of UnitBase)
     'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
-    Public Property DrilledPiers As New List(Of DrilledPier)
+    Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
     Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
-
+    Public Property FileUploads As New List(Of FileUpload)
     Public Property ReportOptions As ReportOptions
     Public Property SiteInfo As SiteInfo
 
@@ -116,7 +116,15 @@ Partial Public Class EDSStructure
                         "Pole Custom Matls",
                         "Pole Custom Bolts",
                         "Pole Custom Reinfs",
-                        "Site Code Criteria"}
+                        "Site Code Criteria",
+                        "File Upload", 
+                        "Drilled Pier", 
+                        "Drilled Pier Profile", 
+                        "Drilled Pier Section", 
+                        "Drilled Pier Rebar", 
+                        "Belled Pier", 
+                        "Embedded Pole", 
+                        "Drilled Pier Foundation"}
 
 
         Using strDS As New DataSet
@@ -205,9 +213,16 @@ Partial Public Class EDSStructure
 
             'For additional tools we'll need to update the constructor to use a datarow and pass through the dataset byref for sub tables (i.e. soil profiles)
             'That constructor will grab datarows from the sub data tables based on the foreign key in datarow
-            'For Each dr As DataRow In strDS.Tables("Drilled Pier").Rows
-            '    Me.DrilledPiers.Add(New DrilledPier(dr, strDS))
-            'Next
+
+
+            'If a datarow is passed into the drilled pier foundation tool object then it will create new tools for every drilled pier that exists. 
+            'Otherwise it will put all drilled piers into the same too. 
+            'Basically all guyed towers would be in 1 tool.
+            For Each dr As DataRow In strDS.Tables("Drilled Pier Foundation").Rows
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
+            Next
+
+
 
         End Using
 
@@ -238,7 +253,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
         'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
-        'structureQuery += Me.DrilledPiers.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(existingStructure.DrilledPierTools)
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
@@ -266,6 +281,9 @@ Partial Public Class EDSStructure
     Public Sub LoadFromFiles(filePaths As String())
 
         For Each item As String In filePaths
+            Dim myFile As New FileUpload
+
+            myFile = New FileUpload(item, Me)
             If item.EndsWith(".eri") Then
                 Me.tnx = New tnxModel(item, Me)
             ElseIf item.Contains("Pier and Pad Foundation") Then
@@ -273,10 +291,10 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pile Foundation") Then
                 Me.Piles.Add(New Pile(item, Me))
             ElseIf item.Contains("SST Unit Base Foundation") Then
-                'Me.UnitBases.Add(New SST_Unit_Base(item, Me)) 'Chall version - DNU
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
-                'Me.DrilledPiers.Add(New DrilledPier(item))
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
+                FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
             ElseIf item.Contains("CCIplate") Then
@@ -312,11 +330,13 @@ Partial Public Class EDSStructure
             UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
             UnitBases(i).SavetoExcel()
         Next
-        'For i = 0 To Me.DrilledPiers.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    DrilledPiers(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(DrilledPiers(i).templatePath) & fileNum)
-        '    DrilledPiers(i).SavetoExcel()
-        'Next
+
+        For i = 0 To Me.DrilledPierTools.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            DrilledPierTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileName(DrilledPierTools(i).templatePath) & fileNum)
+            DrilledPierTools(i).SavetoExcel()
+        Next
+
         'For i = 0 To Me.GuyAnchorBlocks.Count - 1
         '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
         '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
@@ -357,7 +377,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.PierandPads.CheckChange(otherToCompare.PierandPads, changes, categoryName, "Pier and Pads"), Equals, False)
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
-        Equals = If(Me.DrilledPiers.CheckChange(otherToCompare.DrilledPiers, changes, categoryName, "Drilled Piers"), Equals, False)
+        Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
         Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
 
         Return Equals
