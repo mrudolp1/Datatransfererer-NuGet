@@ -10,7 +10,7 @@ Partial Public Class frmMain
 #Region "Object Declarations"
     'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
-    Public myDrilledPiers As New DataTransfererDrilledPier
+    Public myDrilledPiers As New DrilledPierFoundation
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     'Public myPiles As New DataTransfererPile
     'Public MyCCIpoles As New DataTransfererCCIpole

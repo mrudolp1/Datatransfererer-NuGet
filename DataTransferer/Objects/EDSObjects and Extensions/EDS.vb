@@ -106,9 +106,6 @@ Partial Public MustInherit Class EDSObject
 
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
-    Public Overrides Function ToString() As String
-        Return Me.EDSObjectName
-    End Function
 
 End Class
 
@@ -427,9 +424,7 @@ Partial Public Class EDSResult
                                 Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
                                 Host.EDSTableName & "_id")
     End Sub
-    Public Sub New()
 
-    End Sub
 
     ''' <summary>
     ''' 

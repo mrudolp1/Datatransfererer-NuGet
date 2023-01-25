@@ -2502,9 +2502,7 @@ Public Class DrilledPierResult
         End Get
     End Property
 
-    Public Sub New()
 
-    End Sub
     Public Function InsertCustom() As String
         InsertCustom = "BEGIN" & vbCrLf &
                 "  INSERT INTO " & Me.EDSTableName & "(" & Me.SQLInsertFields & ")" & vbCrLf &
@@ -2516,6 +2514,9 @@ Public Class DrilledPierResult
         Return InsertCustom()
     End Function
 
+    Public Sub New()
+
+    End Sub
 
     Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
