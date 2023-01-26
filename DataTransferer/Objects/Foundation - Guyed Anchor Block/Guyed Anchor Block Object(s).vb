@@ -15,6 +15,7 @@ Partial Public Class AnchorBlockFoundation
     'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
     Private pierProfileRow As Integer = 57
 
+#Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
             Return "Anchor Block Foundation"
@@ -54,6 +55,67 @@ Partial Public Class AnchorBlockFoundation
         End Get
     End Property
 
+    Private _Insert As String
+    Private _Update As String
+    Private _Delete As String
+
+    Public Overrides Function SQLInsert() As String
+        If _Insert = "" Then
+            '_Insert = CCI_Engineering_Templates.My.Resources.CCIpole_General_INSERT
+        End If
+        SQLInsert = _Insert
+
+        'Guy Anchors
+
+        'Anchor Profiles
+
+        'Soil Profiles
+
+        'Soil Layers
+
+        'Results
+
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+        If _Update = "" Then
+            '_Update = CCI_Engineering_Templates.My.Resources.CCIpole_General_UPDATE
+        End If
+        SQLUpdate = _Update
+
+        'Guy Anchors
+
+        'Anchor Profiles
+
+        'Soil Profiles
+
+        'Soil Layers
+
+        'Results
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+        If _Delete = "" Then
+            '_Delete = CCI_Engineering_Templates.My.Resources.CCIpole_General_DELETE
+        End If
+        SQLDelete = _Delete
+
+        'Guy Anchors
+
+        'Anchor Profiles
+
+        'Soil Profiles
+
+        'Soil Layers
+
+        'Results
+
+    End Function
+
+#End Region
+
+#Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
         Throw New NotImplementedException()
     End Function
@@ -65,14 +127,20 @@ Partial Public Class AnchorBlockFoundation
     Public Overrides Function SQLUpdateFieldsandValues() As String
         Throw New NotImplementedException()
     End Function
+#End Region
 
-    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Throw New NotImplementedException()
-    End Function
-
+#Region "Save to Excel"
     Public Overrides Sub workBookFiller(ByRef wb As Workbook)
         Throw New NotImplementedException()
     End Sub
+#End Region
+
+#Region "Equals"
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Throw New NotImplementedException()
+    End Function
+#End Region
+
 End Class
 
 Partial Public Class AnchorBlock
@@ -226,6 +294,7 @@ Partial Public Class AnchorBlock
     End Function
 #End Region
 
+#Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
         Equals = True
         If changes Is Nothing Then changes = New List(Of AnalysisChange)
@@ -234,6 +303,7 @@ Partial Public Class AnchorBlock
         Return Equals
 
     End Function
+#End Region
 
 End Class
 
@@ -538,6 +608,7 @@ Partial Public Class AnchorBlockProfile
     End Function
 #End Region
 
+#Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
         Equals = True
         If changes Is Nothing Then changes = New List(Of AnalysisChange)
@@ -546,6 +617,8 @@ Partial Public Class AnchorBlockProfile
         Return Equals
 
     End Function
+#End Region
+
 End Class
 
 Partial Public Class AnchorBlockSoilProfile
