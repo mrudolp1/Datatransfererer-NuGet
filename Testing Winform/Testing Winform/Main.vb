@@ -11,7 +11,7 @@ Partial Public Class frmMain
     'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DrilledPierFoundation
-    Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
+    Public myGuyedAnchorBlocks As New AnchorBlockFoundation
     'Public myPiles As New DataTransfererPile
     'Public MyCCIpoles As New DataTransfererCCIpole
     'Public MyCCIplates As New DataTransfererCCIplate
