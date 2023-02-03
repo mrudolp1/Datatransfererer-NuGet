@@ -15,6 +15,29 @@ Partial Public Class AnchorBlockFoundation
     'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
     Private pierProfileRow As Integer = 57
 
+    Private _file_ver As String
+    Private _modified As Boolean?
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("File Ver")>
+    Public Property file_ver() As String
+        Get
+            Return Me._file_ver
+        End Get
+        Set
+            Me._file_ver = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Modified")>
+    Public Property modified() As Boolean?
+        Get
+            Return Me._modified
+        End Get
+        Set
+            Me._modified = Value
+        End Set
+    End Property
+
+
+
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
@@ -137,7 +160,14 @@ Partial Public Class AnchorBlockFoundation
 
 #Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Throw New NotImplementedException()
+        Dim otherToCompare As AnchorBlockFoundation = TryCast(other, AnchorBlockFoundation)
+        Dim categoryname = Me.EDSObjectFullName
+        If otherToCompare Is Nothing Then Return False
+        Equals = If(Me.file_ver.CheckChange(otherToCompare.file_ver, changes, categoryName, "File Ver"), Equals, False)
+        Equals = If(Me.modified.CheckChange(otherToCompare.modified, changes, categoryName, "Modified"), Equals, False)
+        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Return Equals
+
     End Function
 #End Region
 
@@ -185,29 +215,30 @@ Partial Public Class AnchorBlock
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
-    Private _anchor_block_profile_id As Integer?
+    Private _anchor_profile_id As Integer?
+    Private _anchor_block_tool_id As Integer?
     Private _soil_profile_id As Integer?
+    Private _local_anchor_id As Integer?
     Private _reaction_position As Integer?
     Private _reaction_location As String
-    Private _local_anchor_profile As Integer?
-    Private _local_soil_profile As Integer?
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    Private _local_soil_profile_id As Integer?
+    Private _local_anchor_profile_id As Integer?
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Anchor Profile Id")>
+    Public Property anchor_profile_id() As Integer?
         Get
-            Return Me._ID
+            Return Me._anchor_profile_id
         End Get
         Set
-            Me._ID = Value
+            Me._anchor_profile_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Anchor Block Profile Id")>
-    Public Property anchor_block_profile_id() As Integer?
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Anchor Block Tool Id")>
+    Public Property anchor_block_tool_id() As Integer?
         Get
-            Return Me._anchor_block_profile_id
+            Return Me._anchor_block_tool_id
         End Get
         Set
-            Me._anchor_block_profile_id = Value
+            Me._anchor_block_tool_id = Value
         End Set
     End Property
     <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Soil Profile Id")>
@@ -217,6 +248,15 @@ Partial Public Class AnchorBlock
         End Get
         Set
             Me._soil_profile_id = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Anchor Id")>
+    Public Property local_anchor_id() As Integer?
+        Get
+            Return Me._local_anchor_id
+        End Get
+        Set
+            Me._local_anchor_id = Value
         End Set
     End Property
     <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Position")>
@@ -237,25 +277,24 @@ Partial Public Class AnchorBlock
             Me._reaction_location = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Anchor Profile")>
-    Public Property local_anchor_profile() As Integer?
+    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Soil Profile Id")>
+    Public Property local_soil_profile_id() As Integer?
         Get
-            Return Me._local_anchor_profile
+            Return Me._local_soil_profile_id
         End Get
         Set
-            Me._local_anchor_profile = Value
+            Me._local_soil_profile_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Soil Profile")>
-    Public Property local_soil_profile() As Integer?
+    <Category("AnchorBlock"), Description(""), DisplayName("Local Anchor Profile Id")>
+    Public Property local_anchor_profile_id() As Integer?
         Get
-            Return Me._local_soil_profile
+            Return Me._local_anchor_profile_id
         End Get
         Set
-            Me._local_soil_profile = Value
+            Me._local_anchor_profile_id = Value
         End Set
     End Property
-
 #End Region
 
 #Region "Constructors"
@@ -268,6 +307,16 @@ Partial Public Class AnchorBlock
     End Sub
 
     Public Sub ConstructMe(ByVal dr As DataRow)
+        Me.anchor_profile_id = DBtoNullableInt(dr.Item("anchor_profile_id"))
+        Me.anchor_block_tool_id = DBtoNullableInt(dr.Item("anchor_block_tool_id"))
+        Me.soil_profile_id = DBtoNullableInt(dr.Item("soil_profile_id"))
+        Me.local_anchor_id = DBtoNullableInt(dr.Item("local_anchor_id"))
+        Me.reaction_position = DBtoNullableInt(dr.Item("reaction_position"))
+        Me.reaction_location = DBtoStr(dr.Item("reaction_location"))
+        Me.local_soil_profile_id = DBtoNullableInt(dr.Item("local_soil_profile_id"))
+        Me.local_anchor_profile_id = DBtoNullableInt(dr.Item("local_anchor_profile_id"))
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
+
     End Sub
 
     Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByRef Parent As EDSObject = Nothing)
@@ -277,30 +326,70 @@ Partial Public Class AnchorBlock
 #Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
 
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_block_tool_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.soil_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_position.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_location.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_soil_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         Return SQLInsertValues
+
 
     End Function
 
     Public Overrides Function SQLInsertFields() As String
 
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_block_tool_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("soil_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_anchor_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_position")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_location")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_soil_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_anchor_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         Return SQLInsertFields
+
 
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
 
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_profile_id = " & Me.anchor_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_block_tool_id = " & Me.anchor_block_tool_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = " & Me.soil_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_anchor_id = " & Me.local_anchor_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_position = " & Me.reaction_position.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_location = " & Me.reaction_location.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_soil_profile_id = " & Me.local_soil_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_anchor_profile_id = " & Me.local_anchor_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
+
 
     End Function
 #End Region
 
 #Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Equals = True
-        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim otherToCompare As AnchorBlock = TryCast(other, AnchorBlock)
         Dim categoryName As String = Me.EDSObjectFullName
+        If otherToCompare Is Nothing Then Return False
 
+        Equals = If(Me.anchor_profile_id.CheckChange(otherToCompare.anchor_profile_id, changes, categoryName, "Anchor Profile Id"), Equals, False)
+        Equals = If(Me.anchor_block_tool_id.CheckChange(otherToCompare.anchor_block_tool_id, changes, categoryName, "Anchor Block Tool Id"), Equals, False)
+        Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals, False)
+        Equals = If(Me.local_anchor_id.CheckChange(otherToCompare.local_anchor_id, changes, categoryName, "Local Anchor Id"), Equals, False)
+        Equals = If(Me.reaction_position.CheckChange(otherToCompare.reaction_position, changes, categoryName, "Reaction Position"), Equals, False)
+        Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals, False)
+        Equals = If(Me.local_soil_profile_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile Id"), Equals, False)
+        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals, False)
+        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
         Return Equals
+
 
     End Function
 #End Region
@@ -346,9 +435,6 @@ Partial Public Class AnchorBlockProfile
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
-    Private _anchor_location As String
-    Private _guy_anchor_radius As Double?
     Private _anchor_depth As Double?
     Private _anchor_width As Double?
     Private _anchor_thickness As Double?
@@ -356,46 +442,24 @@ Partial Public Class AnchorBlockProfile
     Private _anchor_toe_width As Double?
     Private _anchor_top_rebar_size As Integer?
     Private _anchor_top_rebar_quantity As Integer?
-    Private _anchor_bottom_rebar_size As Integer?
-    Private _anchor_bottom_rebar_quantity As Integer?
+    Private _anchor_front_rebar_size As Integer?
+    Private _anchor_front_rebar_quantity As Integer?
     Private _anchor_stirrup_size As Integer?
     Private _anchor_shaft_diameter As Double?
     Private _anchor_shaft_quantity As Integer?
     Private _anchor_shaft_area_override As Double?
     Private _anchor_shaft_shear_leg_factor As Double?
-    Private _rebar_grade As Double?
+    Private _anchor_rebar_grade As Double?
     Private _concrete_compressive_strength As Double?
     Private _clear_cover As Double?
     Private _anchor_shaft_yield_strength As Double?
     Private _anchor_shaft_ultimate_strength As Double?
-    Private _tool_version As String
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Location")>
-    Public Property anchor_location() As String
-        Get
-            Return Me._anchor_location
-        End Get
-        Set
-            Me._anchor_location = Value
-        End Set
-    End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Guy Anchor Radius")>
-    Public Property guy_anchor_radius() As Double?
-        Get
-            Return Me._guy_anchor_radius
-        End Get
-        Set
-            Me._guy_anchor_radius = Value
-        End Set
-    End Property
+    Private _rebar_known As Boolean?
+    Private _anchor_shaft_known As Boolean?
+    Private _basic_soil_check As Boolean?
+    Private _structural_check As Boolean?
+    Private _local_anchor_profile_id As Integer?
+
     <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Depth")>
     Public Property anchor_depth() As Double?
         Get
@@ -423,7 +487,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_thickness = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Length")>
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Length")>
     Public Property anchor_length() As Double?
         Get
             Return Me._anchor_length
@@ -450,7 +514,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_top_rebar_size = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Top Rebar Quantity")>
+    <Category("Guyed Anchor Block Details"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Top Rebar Quantity")>
     Public Property anchor_top_rebar_quantity() As Integer?
         Get
             Return Me._anchor_top_rebar_quantity
@@ -459,22 +523,22 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_top_rebar_quantity = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Bottom Rebar Size")>
-    Public Property anchor_bottom_rebar_size() As Integer?
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Front Rebar Size")>
+    Public Property anchor_front_rebar_size() As Integer?
         Get
-            Return Me._anchor_bottom_rebar_size
+            Return Me._anchor_front_rebar_size
         End Get
         Set
-            Me._anchor_bottom_rebar_size = Value
+            Me._anchor_front_rebar_size = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Bottom Rebar Quantity")>
-    Public Property anchor_bottom_rebar_quantity() As Integer?
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Front Rebar Quantity")>
+    Public Property anchor_front_rebar_quantity() As Integer?
         Get
-            Return Me._anchor_bottom_rebar_quantity
+            Return Me._anchor_front_rebar_quantity
         End Get
         Set
-            Me._anchor_bottom_rebar_quantity = Value
+            Me._anchor_front_rebar_quantity = Value
         End Set
     End Property
     <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Stirrup Size")>
@@ -522,13 +586,13 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_shear_leg_factor = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Rebar Grade")>
-    Public Property rebar_grade() As Double?
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Rebar Grade")>
+    Public Property anchor_rebar_grade() As Double?
         Get
-            Return Me._rebar_grade
+            Return Me._anchor_rebar_grade
         End Get
         Set
-            Me._rebar_grade = Value
+            Me._anchor_rebar_grade = Value
         End Set
     End Property
     <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Concrete Compressive Strength")>
@@ -567,13 +631,49 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_ultimate_strength = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Tool Version")>
-    Public Property tool_version() As String
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Rebar Known")>
+    Public Property rebar_known() As Boolean?
         Get
-            Return Me._tool_version
+            Return Me._rebar_known
         End Get
         Set
-            Me._tool_version = Value
+            Me._rebar_known = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Known")>
+    Public Property anchor_shaft_known() As Boolean?
+        Get
+            Return Me._anchor_shaft_known
+        End Get
+        Set
+            Me._anchor_shaft_known = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Basic Soil Check")>
+    Public Property basic_soil_check() As Boolean?
+        Get
+            Return Me._basic_soil_check
+        End Get
+        Set
+            Me._basic_soil_check = Value
+        End Set
+    End Property
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Structural Check")>
+    Public Property structural_check() As Boolean?
+        Get
+            Return Me._structural_check
+        End Get
+        Set
+            Me._structural_check = Value
+        End Set
+    End Property
+    <Category("AnchorBlockProfile"), Description(""), DisplayName("Local Anchor Profile Id")>
+    Public Property local_anchor_profile_id() As Integer?
+        Get
+            Return Me._local_anchor_profile_id
+        End Get
+        Set
+            Me._local_anchor_profile_id = Value
         End Set
     End Property
 
@@ -585,36 +685,166 @@ Partial Public Class AnchorBlockProfile
     End Sub
 
     Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+        Me.anchor_depth = DBtoNullableDbl(dr.Item("anchor_depth"))
+        Me.anchor_width = DBtoNullableDbl(dr.Item("anchor_width"))
+        Me.anchor_thickness = DBtoNullableDbl(dr.Item("anchor_thickness"))
+        Me.anchor_length = DBtoNullableDbl(dr.Item("anchor_length"))
+        Me.anchor_toe_width = DBtoNullableDbl(dr.Item("anchor_toe_width"))
+        Me.anchor_top_rebar_size = DBtoNullableInt(dr.Item("anchor_top_rebar_size"))
+        Me.anchor_top_rebar_quantity = DBtoNullableInt(dr.Item("anchor_top_rebar_quantity"))
+        Me.anchor_front_rebar_size = DBtoNullableInt(dr.Item("anchor_front_rebar_size"))
+        Me.anchor_front_rebar_quantity = DBtoNullableInt(dr.Item("anchor_front_rebar_quantity"))
+        Me.anchor_stirrup_size = DBtoNullableInt(dr.Item("anchor_stirrup_size"))
+        Me.anchor_shaft_diameter = DBtoNullableDbl(dr.Item("anchor_shaft_diameter"))
+        Me.anchor_shaft_quantity = DBtoNullableInt(dr.Item("anchor_shaft_quantity"))
+        Me.anchor_shaft_area_override = DBtoNullableDbl(dr.Item("anchor_shaft_area_override"))
+        Me.anchor_shaft_shear_leg_factor = DBtoNullableDbl(dr.Item("anchor_shaft_shear_leg_factor"))
+        Me.anchor_rebar_grade = DBtoNullableDbl(dr.Item("anchor_rebar_grade"))
+        Me.concrete_compressive_strength = DBtoNullableDbl(dr.Item("concrete_compressive_strength"))
+        Me.clear_cover = DBtoNullableDbl(dr.Item("clear_cover"))
+        Me.anchor_shaft_yield_strength = DBtoNullableDbl(dr.Item("anchor_shaft_yield_strength"))
+        Me.anchor_shaft_ultimate_strength = DBtoNullableDbl(dr.Item("anchor_shaft_ultimate_strength"))
+        Me.rebar_known = DBtoNullableBool(dr.Item("rebar_known"))
+        Me.anchor_shaft_known = DBtoNullableBool(dr.Item("anchor_shaft_known"))
+        Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
+        Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
+        Me.local_anchor_profile_id = DBtoNullableInt(dr.Item("local_anchor_profile_id"))
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
     End Sub
 #End Region
 
 #Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
 
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_depth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_width.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_thickness.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_length.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_toe_width.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_top_rebar_size.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_top_rebar_quantity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_front_rebar_size.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_front_rebar_quantity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_stirrup_size.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_diameter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_quantity.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_area_override.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_rebar_grade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.concrete_compressive_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.clear_cover.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_yield_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_ultimate_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rebar_known.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_known.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         Return SQLInsertValues
+
+
 
     End Function
 
     Public Overrides Function SQLInsertFields() As String
 
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_depth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_width")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_thickness")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_length")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_toe_width")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_top_rebar_size")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_top_rebar_quantity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_front_rebar_size")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_front_rebar_quantity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_stirrup_size")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_diameter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_quantity")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_area_override")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_shear_leg_factor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_rebar_grade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("concrete_compressive_strength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("clear_cover")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_yield_strength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_ultimate_strength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rebar_known")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_known")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("basic_soil_check")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structural_check")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_anchor_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         Return SQLInsertFields
+
 
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
 
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_depth = " & Me.anchor_depth.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_width = " & Me.anchor_width.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_thickness = " & Me.anchor_thickness.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_length = " & Me.anchor_length.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_toe_width = " & Me.anchor_toe_width.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_top_rebar_size = " & Me.anchor_top_rebar_size.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_top_rebar_quantity = " & Me.anchor_top_rebar_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_front_rebar_size = " & Me.anchor_front_rebar_size.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_front_rebar_quantity = " & Me.anchor_front_rebar_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_stirrup_size = " & Me.anchor_stirrup_size.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_diameter = " & Me.anchor_shaft_diameter.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_quantity = " & Me.anchor_shaft_quantity.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_area_override = " & Me.anchor_shaft_area_override.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_shear_leg_factor = " & Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_rebar_grade = " & Me.anchor_rebar_grade.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("clear_cover = " & Me.clear_cover.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_yield_strength = " & Me.anchor_shaft_yield_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_ultimate_strength = " & Me.anchor_shaft_ultimate_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rebar_known = " & Me.rebar_known.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_known = " & Me.anchor_shaft_known.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_anchor_profile_id = " & Me.local_anchor_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
+
 
     End Function
 #End Region
 
 #Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Equals = True
-        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim otherToCompare As AnchorBlockProfile = TryCast(other, AnchorBlockProfile)
         Dim categoryName As String = Me.EDSObjectFullName
 
+        If otherToCompare Is Nothing Then Return False
+        Equals = If(Me.anchor_depth.CheckChange(otherToCompare.anchor_depth, changes, categoryName, "Anchor Depth"), Equals, False)
+        Equals = If(Me.anchor_width.CheckChange(otherToCompare.anchor_width, changes, categoryName, "Anchor Width"), Equals, False)
+        Equals = If(Me.anchor_thickness.CheckChange(otherToCompare.anchor_thickness, changes, categoryName, "Anchor Thickness"), Equals, False)
+        Equals = If(Me.anchor_length.CheckChange(otherToCompare.anchor_length, changes, categoryName, "Anchor Length"), Equals, False)
+        Equals = If(Me.anchor_toe_width.CheckChange(otherToCompare.anchor_toe_width, changes, categoryName, "Anchor Toe Width"), Equals, False)
+        Equals = If(Me.anchor_top_rebar_size.CheckChange(otherToCompare.anchor_top_rebar_size, changes, categoryName, "Anchor Top Rebar Size"), Equals, False)
+        Equals = If(Me.anchor_top_rebar_quantity.CheckChange(otherToCompare.anchor_top_rebar_quantity, changes, categoryName, "Anchor Top Rebar Quantity"), Equals, False)
+        Equals = If(Me.anchor_front_rebar_size.CheckChange(otherToCompare.anchor_front_rebar_size, changes, categoryName, "Anchor Front Rebar Size"), Equals, False)
+        Equals = If(Me.anchor_front_rebar_quantity.CheckChange(otherToCompare.anchor_front_rebar_quantity, changes, categoryName, "Anchor Front Rebar Quantity"), Equals, False)
+        Equals = If(Me.anchor_stirrup_size.CheckChange(otherToCompare.anchor_stirrup_size, changes, categoryName, "Anchor Stirrup Size"), Equals, False)
+        Equals = If(Me.anchor_shaft_diameter.CheckChange(otherToCompare.anchor_shaft_diameter, changes, categoryName, "Anchor Shaft Diameter"), Equals, False)
+        Equals = If(Me.anchor_shaft_quantity.CheckChange(otherToCompare.anchor_shaft_quantity, changes, categoryName, "Anchor Shaft Quantity"), Equals, False)
+        Equals = If(Me.anchor_shaft_area_override.CheckChange(otherToCompare.anchor_shaft_area_override, changes, categoryName, "Anchor Shaft Area Override"), Equals, False)
+        Equals = If(Me.anchor_shaft_shear_leg_factor.CheckChange(otherToCompare.anchor_shaft_shear_leg_factor, changes, categoryName, "Anchor Shaft Shear Leg Factor"), Equals, False)
+        Equals = If(Me.anchor_rebar_grade.CheckChange(otherToCompare.anchor_rebar_grade, changes, categoryName, "Anchor Rebar Grade"), Equals, False)
+        Equals = If(Me.concrete_compressive_strength.CheckChange(otherToCompare.concrete_compressive_strength, changes, categoryName, "Concrete Compressive Strength"), Equals, False)
+        Equals = If(Me.clear_cover.CheckChange(otherToCompare.clear_cover, changes, categoryName, "Clear Cover"), Equals, False)
+        Equals = If(Me.anchor_shaft_yield_strength.CheckChange(otherToCompare.anchor_shaft_yield_strength, changes, categoryName, "Anchor Shaft Yield Strength"), Equals, False)
+        Equals = If(Me.anchor_shaft_ultimate_strength.CheckChange(otherToCompare.anchor_shaft_ultimate_strength, changes, categoryName, "Anchor Shaft Ultimate Strength"), Equals, False)
+        Equals = If(Me.rebar_known.CheckChange(otherToCompare.rebar_known, changes, categoryName, "Rebar Known"), Equals, False)
+        Equals = If(Me.anchor_shaft_known.CheckChange(otherToCompare.anchor_shaft_known, changes, categoryName, "Anchor Shaft Known"), Equals, False)
+        Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals, False)
+        Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals, False)
+        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals, False)
+        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
         Return Equals
+
 
     End Function
 #End Region
