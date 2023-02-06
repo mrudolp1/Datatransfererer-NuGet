@@ -147,8 +147,8 @@ Partial Public Class AnchorBlockFoundation
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_ver.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -161,8 +161,8 @@ Partial Public Class AnchorBlockFoundation
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("file_ver")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -175,8 +175,8 @@ Partial Public Class AnchorBlockFoundation
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_ver = " & Me.file_ver.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified = " & Me.modified.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -471,6 +471,14 @@ Partial Public Class AnchorBlock
 
     Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByRef Parent As EDSObject = Nothing)
     End Sub
+#End Region      
+
+#Region "Save to EDS"
+    Public Overrides Function SQLInsertValues() As String
+        SQLInsertValues = ""
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_block_tool_id.ToString.FormatDBValue) '@TopLevelID
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_profile_id.ToString.FormatDBValue) 'SubLevel1ID
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.soil_profile_id.ToString.FormatDBValue) 'SubLevel2ID
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_location.ToString.FormatDBValue)
@@ -478,7 +486,10 @@ Partial Public Class AnchorBlock
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_soil_profile_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-
+        Return SQLInsertValues
+    End Function
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
         'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_block_tool_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_profile_id")
@@ -489,15 +500,10 @@ Partial Public Class AnchorBlock
         SQLInsertFields = SQLInsertFields.AddtoDBString("local_soil_profile_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
-
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_profile_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_block_tool_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.soil_profile_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_position.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_location.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_soil_profile_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
+        Return SQLInsertFields
+    End Function
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_block_tool_id = " & Me.anchor_block_tool_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_profile_id = " & Me.anchor_profile_id.ToString.FormatDBValue)
@@ -508,62 +514,34 @@ Partial Public Class AnchorBlock
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_soil_profile_id = " & Me.local_soil_profile_id.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
-
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
-        Return SQLInsertValues
-
-
-    End Function
-
-    Public Overrides Function SQLInsertFields() As String
-        SQLInsertFields = ""
-
-        Return SQLInsertFields
-
-
-        Dim otherToCompare As AnchorBlock = TryCast(other, AnchorBlock)
-        If otherToCompare Is Nothing Then Return False
-
-        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals(), False)
-        Equals = If(Me.anchor_block_tool_id.CheckChange(otherToCompare.anchor_block_tool_id, changes, categoryName, "Anchor Block Tool Id"), Equals(), False)
-        Equals = If(Me.anchor_profile_id.CheckChange(otherToCompare.anchor_profile_id, changes, categoryName, "Anchor Profile Id"), Equals(), False)
-        Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals(), False)
-        Equals = If(Me.local_anchor_id.CheckChange(otherToCompare.local_anchor_id, changes, categoryName, "Local Anchor Id"), Equals(), False)
-        Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals(), False)
-        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals(), False)
-        Equals = If(Me.local_soil_profile_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile Id"), Equals(), False)
-        Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals(), False)
-        Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals(), False)
-
-        'Anchor Profile
-        Equals = If(Me.AnchorProfile.CheckChange(otherToCompare.AnchorProfile, changes, categoryName, "Pier Profile"), Equals(), False)
-
-        'Soil Profile
-        Equals = If(Me.SoilProfile.CheckChange(otherToCompare.SoilProfile, changes, categoryName, "Soil Profile"), Equals(), False)
-
-    End Function
-
-    Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = ""
-
         Return SQLUpdateFieldsandValues
-
-
     End Function
 #End Region
 
 #Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Dim otherToCompare As AnchorBlock = TryCast(other, AnchorBlock)
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
         Dim categoryName As String = Me.EDSObjectFullName
+        Dim otherToCompare As AnchorBlock = TryCast(other, AnchorBlock)
         If otherToCompare Is Nothing Then Return False
-
+        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.anchor_block_tool_id.CheckChange(otherToCompare.anchor_block_tool_id, changes, categoryName, "Anchor Block Tool Id"), Equals, False)
+        Equals = If(Me.anchor_profile_id.CheckChange(otherToCompare.anchor_profile_id, changes, categoryName, "Anchor Profile Id"), Equals, False)
+        Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals, False)
+        Equals = If(Me.local_anchor_id.CheckChange(otherToCompare.local_anchor_id, changes, categoryName, "Local Anchor Id"), Equals, False)
+        Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals, False)
+        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals, False)
+        Equals = If(Me.local_soil_profile_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile Id"), Equals, False)
+        Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
+        Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
+        'Anchor Profile
+        Equals = If(Me.AnchorProfile.CheckChange(otherToCompare.AnchorProfile, changes, categoryName, "Pier Profile"), Equals, False)
+        'Soil Profile
+        Equals = If(Me.SoilProfile.CheckChange(otherToCompare.SoilProfile, changes, categoryName, "Soil Profile"), Equals, False)
         Return Equals
-
-
     End Function
 #End Region
-
 End Class
 
 Partial Public Class AnchorBlockProfile
@@ -886,7 +864,6 @@ Partial Public Class AnchorBlockProfile
 #Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
-
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_depth.ToString.FormatDBValue)
@@ -902,10 +879,21 @@ Partial Public Class AnchorBlockProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_diameter.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_quantity.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_area_override.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_shear_lag_factor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_section.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_rebar_grade.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.concrete_compressive_strength.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.clear_cover.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_yield_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_ultimate_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rebar_known.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_known.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.ToString.FormatDBValue)
+        Return SQLInsertValues
+    End Function
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
         'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("local_anchor_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_depth")
@@ -932,32 +920,10 @@ Partial Public Class AnchorBlockProfile
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_known")
         SQLInsertFields = SQLInsertFields.AddtoDBString("basic_soil_check")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structural_check")
-
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_yield_strength.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_ultimate_strength.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rebar_known.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_known.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
-        Return SQLInsertValues
-
-
-
-    End Function
-
-    Public Overrides Function SQLInsertFields() As String
-        SQLInsertFields = ""
-
         Return SQLInsertFields
-
-
     End Function
-
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
-
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_anchor_profile_id = " & Me.local_anchor_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_depth = " & Me.anchor_depth.ToString.FormatDBValue)
@@ -973,62 +939,54 @@ Partial Public Class AnchorBlockProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_diameter = " & Me.anchor_shaft_diameter.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_quantity = " & Me.anchor_shaft_quantity.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_area_override = " & Me.anchor_shaft_area_override.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_shear_leg_factor = " & Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_shear_lag_factor = " & Me.anchor_shaft_shear_lag_factor.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_section = " & Me.anchor_shaft_section.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_rebar_grade = " & Me.anchor_rebar_grade.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("clear_cover = " & Me.clear_cover.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_yield_strength = " & Me.anchor_shaft_yield_strength.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_ultimate_strength = " & Me.anchor_shaft_ultimate_strength.ToString.FormatDBValue)
-        Dim otherToCompare As AnchorBlockProfile = TryCast(other, AnchorBlockProfile)
-        If otherToCompare Is Nothing Then Return False
-
-        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals(), False)
-        Equals = If(Me.anchor_depth.CheckChange(otherToCompare.anchor_depth, changes, categoryName, "Anchor Depth"), Equals(), False)
-        Equals = If(Me.anchor_width.CheckChange(otherToCompare.anchor_width, changes, categoryName, "Anchor Width"), Equals(), False)
-        Equals = If(Me.anchor_thickness.CheckChange(otherToCompare.anchor_thickness, changes, categoryName, "Anchor Thickness"), Equals(), False)
-        Equals = If(Me.anchor_length.CheckChange(otherToCompare.anchor_length, changes, categoryName, "Anchor Length"), Equals(), False)
-        Equals = If(Me.anchor_toe_width.CheckChange(otherToCompare.anchor_toe_width, changes, categoryName, "Anchor Toe Width"), Equals(), False)
-        Equals = If(Me.anchor_top_rebar_size.CheckChange(otherToCompare.anchor_top_rebar_size, changes, categoryName, "Anchor Top Rebar Size"), Equals(), False)
-        Equals = If(Me.anchor_top_rebar_quantity.CheckChange(otherToCompare.anchor_top_rebar_quantity, changes, categoryName, "Anchor Top Rebar Quantity"), Equals(), False)
-        Equals = If(Me.anchor_front_rebar_size.CheckChange(otherToCompare.anchor_front_rebar_size, changes, categoryName, "Anchor Front Rebar Size"), Equals(), False)
-        Equals = If(Me.anchor_front_rebar_quantity.CheckChange(otherToCompare.anchor_front_rebar_quantity, changes, categoryName, "Anchor Front Rebar Quantity"), Equals(), False)
-        Equals = If(Me.anchor_stirrup_size.CheckChange(otherToCompare.anchor_stirrup_size, changes, categoryName, "Anchor Stirrup Size"), Equals(), False)
-        Equals = If(Me.anchor_shaft_diameter.CheckChange(otherToCompare.anchor_shaft_diameter, changes, categoryName, "Anchor Shaft Diameter"), Equals(), False)
-        Equals = If(Me.anchor_shaft_quantity.CheckChange(otherToCompare.anchor_shaft_quantity, changes, categoryName, "Anchor Shaft Quantity"), Equals(), False)
-        Equals = If(Me.anchor_shaft_area_override.CheckChange(otherToCompare.anchor_shaft_area_override, changes, categoryName, "Anchor Shaft Area Override"), Equals(), False)
-        Equals = If(Me.anchor_shaft_shear_lag_factor.CheckChange(otherToCompare.anchor_shaft_shear_lag_factor, changes, categoryName, "Anchor Shaft Shear Lag Factor"), Equals(), False)
-        Equals = If(Me.anchor_shaft_section.CheckChange(otherToCompare.anchor_shaft_section, changes, categoryName, "Anchor Shaft Section"), Equals(), False)
-        Equals = If(Me.anchor_rebar_grade.CheckChange(otherToCompare.anchor_rebar_grade, changes, categoryName, "Anchor Rebar Grade"), Equals(), False)
-        Equals = If(Me.concrete_compressive_strength.CheckChange(otherToCompare.concrete_compressive_strength, changes, categoryName, "Concrete Compressive Strength"), Equals(), False)
-        Equals = If(Me.clear_cover.CheckChange(otherToCompare.clear_cover, changes, categoryName, "Clear Cover"), Equals(), False)
-        Equals = If(Me.anchor_shaft_yield_strength.CheckChange(otherToCompare.anchor_shaft_yield_strength, changes, categoryName, "Anchor Shaft Yield Strength"), Equals(), False)
-        Equals = If(Me.anchor_shaft_ultimate_strength.CheckChange(otherToCompare.anchor_shaft_ultimate_strength, changes, categoryName, "Anchor Shaft Ultimate Strength"), Equals(), False)
-        Equals = If(Me.rebar_known.CheckChange(otherToCompare.rebar_known, changes, categoryName, "Rebar Known"), Equals(), False)
-        Equals = If(Me.anchor_shaft_known.CheckChange(otherToCompare.anchor_shaft_known, changes, categoryName, "Anchor Shaft Known"), Equals(), False)
-        Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals(), False)
-        Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals(), False)
-
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rebar_known = " & Me.rebar_known.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_known = " & Me.anchor_shaft_known.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_anchor_profile_id = " & Me.local_anchor_profile_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
-
-
     End Function
 #End Region
-
 #Region "Equals"
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
-        Dim otherToCompare As AnchorBlockProfile = TryCast(other, AnchorBlockProfile)
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
         Dim categoryName As String = Me.EDSObjectFullName
-
+        Dim otherToCompare As AnchorBlockProfile = TryCast(other, AnchorBlockProfile)
+        If otherToCompare Is Nothing Then Return False
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals, False)
+        Equals = If(Me.anchor_depth.CheckChange(otherToCompare.anchor_depth, changes, categoryName, "Anchor Depth"), Equals, False)
+        Equals = If(Me.anchor_width.CheckChange(otherToCompare.anchor_width, changes, categoryName, "Anchor Width"), Equals, False)
+        Equals = If(Me.anchor_thickness.CheckChange(otherToCompare.anchor_thickness, changes, categoryName, "Anchor Thickness"), Equals, False)
+        Equals = If(Me.anchor_length.CheckChange(otherToCompare.anchor_length, changes, categoryName, "Anchor Length"), Equals, False)
+        Equals = If(Me.anchor_toe_width.CheckChange(otherToCompare.anchor_toe_width, changes, categoryName, "Anchor Toe Width"), Equals, False)
+        Equals = If(Me.anchor_top_rebar_size.CheckChange(otherToCompare.anchor_top_rebar_size, changes, categoryName, "Anchor Top Rebar Size"), Equals, False)
+        Equals = If(Me.anchor_top_rebar_quantity.CheckChange(otherToCompare.anchor_top_rebar_quantity, changes, categoryName, "Anchor Top Rebar Quantity"), Equals, False)
+        Equals = If(Me.anchor_front_rebar_size.CheckChange(otherToCompare.anchor_front_rebar_size, changes, categoryName, "Anchor Front Rebar Size"), Equals, False)
+        Equals = If(Me.anchor_front_rebar_quantity.CheckChange(otherToCompare.anchor_front_rebar_quantity, changes, categoryName, "Anchor Front Rebar Quantity"), Equals, False)
+        Equals = If(Me.anchor_stirrup_size.CheckChange(otherToCompare.anchor_stirrup_size, changes, categoryName, "Anchor Stirrup Size"), Equals, False)
+        Equals = If(Me.anchor_shaft_diameter.CheckChange(otherToCompare.anchor_shaft_diameter, changes, categoryName, "Anchor Shaft Diameter"), Equals, False)
+        Equals = If(Me.anchor_shaft_quantity.CheckChange(otherToCompare.anchor_shaft_quantity, changes, categoryName, "Anchor Shaft Quantity"), Equals, False)
+        Equals = If(Me.anchor_shaft_area_override.CheckChange(otherToCompare.anchor_shaft_area_override, changes, categoryName, "Anchor Shaft Area Override"), Equals, False)
+        Equals = If(Me.anchor_shaft_shear_lag_factor.CheckChange(otherToCompare.anchor_shaft_shear_lag_factor, changes, categoryName, "Anchor Shaft Shear Lag Factor"), Equals, False)
+        Equals = If(Me.anchor_shaft_section.CheckChange(otherToCompare.anchor_shaft_section, changes, categoryName, "Anchor Shaft Section"), Equals, False)
+        Equals = If(Me.anchor_rebar_grade.CheckChange(otherToCompare.anchor_rebar_grade, changes, categoryName, "Anchor Rebar Grade"), Equals, False)
+        Equals = If(Me.concrete_compressive_strength.CheckChange(otherToCompare.concrete_compressive_strength, changes, categoryName, "Concrete Compressive Strength"), Equals, False)
+        Equals = If(Me.clear_cover.CheckChange(otherToCompare.clear_cover, changes, categoryName, "Clear Cover"), Equals, False)
+        Equals = If(Me.anchor_shaft_yield_strength.CheckChange(otherToCompare.anchor_shaft_yield_strength, changes, categoryName, "Anchor Shaft Yield Strength"), Equals, False)
+        Equals = If(Me.anchor_shaft_ultimate_strength.CheckChange(otherToCompare.anchor_shaft_ultimate_strength, changes, categoryName, "Anchor Shaft Ultimate Strength"), Equals, False)
+        Equals = If(Me.rebar_known.CheckChange(otherToCompare.rebar_known, changes, categoryName, "Rebar Known"), Equals, False)
+        Equals = If(Me.anchor_shaft_known.CheckChange(otherToCompare.anchor_shaft_known, changes, categoryName, "Anchor Shaft Known"), Equals, False)
+        Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals, False)
+        Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals, False)
         Return Equals
-
-
     End Function
 #End Region
 
