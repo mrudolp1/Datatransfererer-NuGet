@@ -10,7 +10,7 @@ Partial Public Class AnchorBlockFoundation
     Inherits EDSExcelObject
 
     Public Property GuyedAnchorBlocks As New List(Of AnchorBlock)
-
+'Example for Rudy
     'Origin row in the driled pier database. Basically just where the profile numbers are in the database worksheet.
     'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
     Private pierProfileRow As Integer = 57
