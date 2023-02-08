@@ -84,6 +84,9 @@ Begin
 		AND fnd.structure_id = @strID
 		AND fnd.ID = pl.pile_id
 
+	--Anchor Block
+	--Select * From fnd.anchor_block WHERE bus_unit=@BU AND structure_id=@strID
+
 	--Soil
 	INSERT INTO @SoilProfileIDs 
 	SELECT soil_profile_id sp_id FROM fnd.drilled_pier WHERE bus_unit = @BU AND structure_id = @strID
@@ -382,4 +385,17 @@ Begin
 		AND fnd.structure_id = @strID
 		AND fnd.ID = gab.anchor_block_tool_id
 		AND gap.ID = gab.anchor_profile_id
+
+	--Leg Reinforcement
+	Select * From tnx.memb_leg_reinforcement WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Leg Reinforcement Details
+	Select lrdet.* 
+	From 
+		tnx.memb_leg_reinforcement lr
+		,tnx.memb_leg_reinforcement_details lrdet
+	WHERE
+		lr.bus_unit = @BU
+		AND lr.structure_id = @strID
+		AND lr.ID = lrdet.leg_reinforcement_id
 END
