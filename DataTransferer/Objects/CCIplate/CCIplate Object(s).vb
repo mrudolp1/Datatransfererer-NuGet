@@ -3370,6 +3370,7 @@ End Class
 
 Partial Public Class PlateResults
     Inherits EDSObjectWithQueries
+    'Inherits EDSResult
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String = "Plate Results"
