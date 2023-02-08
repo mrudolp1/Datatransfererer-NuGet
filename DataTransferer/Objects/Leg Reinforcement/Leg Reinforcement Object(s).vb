@@ -2001,6 +2001,35 @@ End Class
 '            Me._EDSTableName = Value
 '        End Set
 '    End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Modified Person Id")>
+'    'Public Property modified_person_id() As Integer?
+'    '    Get
+'    '        Return Me._modified_person_id
+'    '    End Get
+'    '    Set
+'    '        Me._modified_person_id = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Process Stage")>
+'    'Public Property process_stage() As String
+'    '    Get
+'    '        Return Me._process_stage
+'    '    End Get
+'    '    Set
+'    '        Me._process_stage = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Modified Date")>
+'    'Public Property modified_date() As DateTime?
+'    '    Get
+'    '        Return Me._modified_date
+'    '    End Get
+'    '    Set
+'    '        Me._modified_date = Value
+'    '    End Set
+'    'End Property
+
+'#End Region
 
 '#End Region
 
