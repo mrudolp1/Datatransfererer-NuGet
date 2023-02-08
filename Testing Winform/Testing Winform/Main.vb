@@ -411,6 +411,10 @@ Partial Public Class frmMain
         End If
     End Sub
 
+    Private Sub txtFndWO_TextChanged(sender As Object, e As EventArgs) Handles txtFndWO.TextChanged
+
+    End Sub
+
 
 #End Region
 
