@@ -23,7 +23,7 @@ Partial Public Class EDSStructure
     Public Property UnitBases As New List(Of UnitBase)
     'Public Property UnitBases As New List(Of SST_Unit_Base) 'Challs version - DNU
     Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
-    Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
+    Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
     Public Property FileUploads As New List(Of FileUpload)
     Public Property ReportOptions As ReportOptions
     Public Property SiteInfo As SiteInfo
@@ -254,7 +254,7 @@ Partial Public Class EDSStructure
         'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(existingStructure.DrilledPierTools)
-        'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(existingStructure.GuyAnchorBlockTools)
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
 
@@ -378,7 +378,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
         Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
-        Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
+        Equals = If(Me.GuyAnchorBlockTools.CheckChange(otherToCompare.GuyAnchorBlockTools, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
 
         Return Equals
 

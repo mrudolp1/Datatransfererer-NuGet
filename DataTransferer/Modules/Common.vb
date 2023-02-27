@@ -248,6 +248,7 @@ Public Module Common
         Return table
     End Function
 
+
 #Region "Get File Properties"
     'Public Function GetFileTitle(ByVal xtdProp As List(Of ShellInfo)) As String
     '    For Each s As ShellInfo In xtdProp

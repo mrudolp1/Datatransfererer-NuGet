@@ -61,6 +61,58 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	
+        '''
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @TopLevel
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--[ANCHOR BLOCKS]
+        '''
+        '''	DELETE FROM @TopLevel --Tool
+        '''	DELETE FROM @SubLevel1 --Anchor Block
+        '''	DELETE FROM @SubLevel2 --Pier Profile
+        '''	DELETE FROM @SubLevel3 --Soil Profile
+        '''	DELETE FROM @SubLevel4 --NOTHING
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Anchor_Block__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Anchor_Block__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	
+        '''
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @TopLevel
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--[ANCHOR BLOCKS]
+        '''
+        '''	DELETE FROM @TopLevel --Tool
+        '''	DELETE FROM @SubLevel1 --Anchor Block
+        '''	DELETE FROM @SubLevel2 --Pier Profile
+        '''	DELETE FROM @SubLevel3 --Soil Profile
+        '''	DELETE FROM @SubLevel4 --NOTHING
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Anchor_Block_Tool__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Anchor_Block_Tool__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to 	DELETE FROM conn.bolt_details WHERE ID = [ID]
         '''
         '''	--[BOLT DETAIL INSERT].

@@ -130,6 +130,10 @@ Partial Public Class DrilledPierFoundation
     End Function
 
     Public Overrides Function SQLDelete() As String
+        SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
+        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
+
         Return SQLDelete
     End Function
 
@@ -2462,6 +2466,12 @@ End Class
 
 Public Class DrilledPierSoilLayer
     Inherits SoilLayer
+
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Drilled Pier Soil Layer"
+        End Get
+    End Property
 
     Public Property local_soil_profile_id
     Public Property local_soil_layer_id
