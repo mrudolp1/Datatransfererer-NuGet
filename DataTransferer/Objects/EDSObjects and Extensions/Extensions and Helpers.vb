@@ -6,6 +6,7 @@ Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports Microsoft.Office.Interop
 
 Public Module Extensions
 
@@ -397,6 +398,79 @@ Public Module myLittleHelpers
         End If
     End Function
 
+#Region "Maestro Helpers"
+    'pass in Work Order [string]
+    'Public Function MessageLog(ByVal wo As String, ByVal dbError As String, ByVal logPath As String, Optional ByVal successLog As Boolean = False) As Boolean
+    '    'our log format will be: WO, Success, Error
+    '    Dim dt As DateTime = DateTime.Now
+
+
+    '    Dim catString As String
+
+    '    catString = wo & ", " & successLog & "," & dbError & "," & dt
+
+    '    If Not File.Exists(logPath) Then
+    '        File.Create(logPath).Close()
+
+    '        FileOpen(1, logPath, OpenMode.Append)
+    '        PrintLine(1, "WO, Success, Error, Time")
+    '        PrintLine(1, catString)
+
+    '        'PrintLine(1, "***************")
+    '        FileClose(1)
+    '    Else
+    '        FileOpen(1, logPath, OpenMode.Append)
+    '        PrintLine(1, catString)
+
+    '        'PrintLine(1, "***************")
+    '        FileClose(1)
+    '    End If
+    '    Return True
+    'End Function
+
+    Public Function MessageLog(ByVal wo As String, ByVal dbError As String, ByVal logPath As String, Optional ByVal successLog As Boolean = False) As Boolean
+        Dim dt As DateTime = DateTime.Now
+        Dim catString As String = wo & ", " & successLog & "," & dbError & "," & dt.ToString("yyyy-MM-dd HH:mm:ss")
+        Try
+            Using sw As New StreamWriter(logPath, True)
+                If Not File.Exists(logPath) Then
+                    sw.WriteLine("WO, Success, Error, Time")
+                End If
+                sw.WriteLine(catString)
+            End Using
+        Catch ex As Exception
+            Return False
+        End Try
+        Return True
+    End Function
+
+
+    Public Function CheckIfNull(ByRef input As Object, Optional ByRef intBool As Boolean = False) As Object
+        ' Check if the input is an integer, double, decimal or if intBool is set to True
+        If TypeOf input Is Integer Or TypeOf input Is Double Or TypeOf input Is Decimal Or intBool Then
+            ' If the input is DBNull, return 0
+            If IsDBNull(input) Then
+                Return 0
+            End If
+            ' Otherwise, return the input
+            Return input
+        Else
+            ' If the input is DBNull, return an empty string
+            If IsDBNull(input) Then
+                Return ""
+            End If
+            ' Otherwise, return the input with any double single quotes replaced with single quotes
+            Try
+                Return input.Replace("''", "'")
+            Catch ex As Exception
+                ' If there is an exception, return the input without modification
+                Return input
+            End Try
+        End If
+    End Function
+
+
+#End Region
 End Module
 
 
