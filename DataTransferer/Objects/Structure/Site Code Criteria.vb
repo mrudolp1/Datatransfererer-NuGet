@@ -36,6 +36,8 @@ Partial Public Class SiteCodeCriteria
     Private _base_kzt As Double?
     Private _site_name As String
     Private _structure_type As String
+    Private _eng_app_id As Integer?
+    Private _eng_app_id_revision As Integer?
 
     <Category(""), Description(""), DisplayName("ibc_current")>
     Public Property ibc_current() As String
@@ -244,6 +246,24 @@ Partial Public Class SiteCodeCriteria
             Me._structure_type = Value
         End Set
     End Property
+    <Category(""), Description(""), DisplayName("eng_app_id")>
+    Public Property eng_app_id() As Integer?
+        Get
+            Return Me._eng_app_id
+        End Get
+        Set
+            Me._eng_app_id = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("eng_app_id_revision")>
+    Public Property eng_app_id_revision() As Integer?
+        Get
+            Return Me._eng_app_id_revision
+        End Get
+        Set
+            Me._eng_app_id_revision = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -280,6 +300,8 @@ Partial Public Class SiteCodeCriteria
         Equals = If(Me.base_kzt.CheckChange(otherToCompare.base_kzt, changes, categoryName, "Base Kzt"), Equals, False)
         Equals = If(Me.site_name.CheckChange(otherToCompare.site_name, changes, categoryName, "Site Name"), Equals, False)
         Equals = If(Me.structure_type.CheckChange(otherToCompare.structure_type, changes, categoryName, "Structure Type"), Equals, False)
+        Equals = If(Me.eng_app_id.CheckChange(otherToCompare.structure_type, changes, categoryName, "App ID"), Equals, False)
+        Equals = If(Me.eng_app_id_revision.CheckChange(otherToCompare.structure_type, changes, categoryName, "App Revision"), Equals, False)
 
         Return Equals
     End Function
@@ -506,6 +528,24 @@ Partial Public Class SiteCodeCriteria
             End If
         Catch ex As Exception
             Me.structure_type = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("eng_app_id"), String)) Then
+                Me.eng_app_id = CType(SiteCodeDataRow.Item("eng_app_id"), String)
+            Else
+                Me.eng_app_id = Nothing
+            End If
+        Catch ex As Exception
+            Me.eng_app_id = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("eng_app_id_revision"), String)) Then
+                Me.eng_app_id_revision = CType(SiteCodeDataRow.Item("eng_app_id_revision"), String)
+            Else
+                Me.eng_app_id_revision = Nothing
+            End If
+        Catch ex As Exception
+            Me.eng_app_id_revision = Nothing
         End Try
     End Sub
 #End Region
