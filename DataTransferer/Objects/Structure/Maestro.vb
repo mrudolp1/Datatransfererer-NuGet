@@ -118,11 +118,11 @@ Partial Public Class EDSStructure
 
                 'loop through FNDs, open, input reactions & run macros
                 'drilled pier
-                If Me.DrilledPiers.Count > 0 Then
-                    WriteLineLogLine(Me.DrilledPiers.Count & " Drilled Pier Fnd(s) found..")
+                If Me.DrilledPierTools.Count > 0 Then
+                    WriteLineLogLine(Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
-                    For Each dp As DrilledPier In Me.DrilledPiers
-                        OpenExcelRunMacro(dp.workbookpath, dpMac, isDevMode)
+                    For Each dp As DrilledPierFoundation In Me.DrilledPierTools
+                        OpenExcelRunMacro(dp.workBookPath, dpMac, isDevMode)
                     Next
                 End If
                 'pier & pad
