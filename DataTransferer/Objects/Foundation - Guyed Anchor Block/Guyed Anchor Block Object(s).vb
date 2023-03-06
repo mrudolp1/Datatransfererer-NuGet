@@ -47,6 +47,8 @@ Partial Public Class AnchorBlockFoundation
         Me.modified = DBtoStr(dr.Item("modified"))
     End Sub
 
+
+    'EDS CONSTRUCTOR
     Public Sub New(ByVal strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing, Optional ByVal dr As DataRow = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
@@ -63,6 +65,8 @@ Partial Public Class AnchorBlockFoundation
         Next
     End Sub
 
+
+    'EXCEL CONSTRUCTOR
     Public Sub New(ByVal filepath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
@@ -89,6 +93,35 @@ Partial Public Class AnchorBlockFoundation
                 Me.AnchorBlocks.Add(New AnchorBlock(abrow, excelDS, True, Me))
             End If
         Next
+
+
+        'ATTEMPT AT MAKING GENERAL LISTS *salute* WORK
+        'Add a list of anchor profiles
+        'Add a list of soil profiles
+        'Add a list of soil layers
+
+        'Keep relationships in addition to these lists
+        'We still need to access properties appropriately (i.e. anchorblock.anchorprofile.datapoint)
+
+        'After all objects are created repurpose the constructor for the anchor block to assign relationships
+        'If local_soil_id = local_soil_id Then swipe_right Else swipe_left
+
+        'SQL FUNCTIONS
+        'Only have logic in tool objcet functionality?
+        'Basic insert update delete can be kept for the anchor profile and soil profile / layer
+        'Change 
+
+        ''''''''SCENARIOS''''''''
+        'Scenario 1 - New anchor profile created in tool. Needs to be referenced by existing anchor block
+        ''Profile needs inserted first and that foreign key needs to be used to UPDATE the existing anchor block
+        ''Anchor 6 exists
+        ''Profile 3 is being added
+        ''Anchor 6 no longer references profile 1 but needs to reference profile 3
+        ''INSERT profile; UPDATE anchor SET profile_id = @my_new_profile_id WHERE ID = 6;
+        ''Main question is how do we get @my_new_profile_id?
+
+        'Scenario 2 - a new anchor block was added to the tool that references existing profiles
+        ''Insert block with appropriate foreign key references. These can be set by just using the objects associated to it. 
     End Sub
 #End Region
 
@@ -228,7 +261,168 @@ Partial Public Class AnchorBlockFoundation
     End Function
 #End Region
 
-#Region "Save to Excel"
+    '#Region "Save to Excel"
+    '    Public Sub workBookFiller_original(ByRef wb As Workbook)
+    '        '''''Customize for each excel tool'''''
+    '        'Site Code Criteria
+    '        Dim tia_current, site_name, structure_type As String
+    '        Dim rev_h_section_15_5 As Boolean?
+    '        'Dim returnRow = 2
+    '        'Dim sumRow = 10 'Actually starts on row 11 but excel uses a (0, 0) origin
+
+
+    '        With wb
+
+    '            'GAB Tool
+    '            Dim gab_tia_current As String
+    '            Dim gab_rev_h_section_15_5 As Boolean?
+
+    '            If Not IsNothing(Me.ID) Then
+    '                .Worksheets("Tool (SAPI)").Range("A3").Value = CType(Me.ID, Integer)
+    '            Else
+    '                .Worksheets("Tool (SAPI)").Range("A3").ClearContents
+    '            End If
+    '            If Not IsNothing(Me.bus_unit) Then
+    '                .Worksheets("Tool (SAPI)").Range("B3").Value = CType(Me.bus_unit, Integer)
+    '            Else
+    '                .Worksheets("Tool (SAPI)").Range("B3").ClearContents
+    '            End If
+    '            If Not IsNothing(Me.structure_id) Then
+    '                .Worksheets("Tool (SAPI)").Range("C3").Value = CType(Me.structure_id, String)
+    '            End If
+    '            'If Not IsNothing(Me.file_ver) Then
+    '            '    .Worksheets("Tool (SAPI)").Range("D3").Value = CType(Me.file_ver, String)
+    '            'End If
+    '            If Not IsNothing(Me.modified) Then
+    '                .Worksheets("Tool (SAPI)").Range("E3").Value = CType(Me.modified, Boolean)
+    '            End If
+    '            'If Not IsNothing(Me.modified_person_id) Then
+    '            '    .Worksheets("Tool (SAPI)").Range("F3").Value = CType(Me.modified_person_id, Integer)
+    '            'Else
+    '            '    .Worksheets("Tool (SAPI)").Range("F3").ClearContents
+    '            'End If
+    '            'If Not IsNothing(Me.process_stage) Then
+    '            '    .Worksheets("Tool (SAPI)").Range("G3").Value = CType(Me.process_stage, String)
+    '            'End If
+
+    '            'TIA Revision- Defaulting to Rev. H if not available. 
+    '            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
+    '                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
+    '                    gab_tia_current = "F"
+    '                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
+    '                    gab_tia_current = "G"
+    '                Else
+    '                    gab_tia_current = "H"
+    '                End If
+    '            Else
+    '                gab_tia_current = "H"
+    '            End If
+    '            .Worksheets("Tool (SAPI)").Range("L3").Value = CType(gab_tia_current, String)
+    '            'Load Z Normalization
+    '            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
+    '            '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
+    '            '    .Worksheets("General (SAPI)").Range("Q3").Value = CType(load_z_norm, Boolean)
+    '            'End If
+    '            'H Section 15.5
+    '            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
+    '                gab_rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
+    '                .Worksheets("Tool (SAPI)").Range("M3").Value = CType(gab_rev_h_section_15_5, Boolean)
+    '            End If
+    '            'Work Order
+    '            If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
+    '                work_order_seq_num = Me.ParentStructure?.work_order_seq_num
+    '                .Worksheets("Tool (SAPI)").Range("K3").Value = CType(work_order_seq_num, Integer)
+    '            End If
+    '            'Site Name
+    '            If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
+    '                site_name = Me.ParentStructure?.SiteInfo.site_name
+    '                .Worksheets("Tool (SAPI)").Range("J3").Value = CType(site_name, String)
+    '            End If
+
+    '            'Anchors
+    '            Dim i As Integer = 3
+    '            For Each gab As AnchorBlock In AnchorBlocks
+    '                If Not IsNothing(gab.ID) Then .Worksheets("Anchors (SAPI").Range("A" & i).Value = CType(gab.ID, Integer)
+    '                If Not IsNothing(gab.anchor_block_tool_id) Then .Worksheets("Anchors (SAPI").Range("B" & i).Value = CType(gab.anchor_block_tool_id, Integer)
+    '                If Not IsNothing(gab.anchor_profile_id) Then .Worksheets("Anchors (SAPI").Range("C" & i).Value = CType(gab.anchor_profile_id, Integer)
+    '                If Not IsNothing(gab.soil_profile_id) Then .Worksheets("Anchors (SAPI").Range("D" & i).Value = CType(gab.soil_profile_id, Integer)
+    '                If Not IsNothing(gab.local_anchor_id) Then .Worksheets("Anchors (SAPI").Range("E" & i).Value = CType(gab.local_anchor_id, Integer)
+    '                If Not IsNothing(gab.reaction_location) Then .Worksheets("Anchors (SAPI").Range("F" & i).Value = CType(gab.reaction_location, String)
+    '                If Not IsNothing(gab.local_anchor_profile_id) Then .Worksheets("Anchors (SAPI").Range("G" & i).Value = CType(gab.local_anchor_profile_id, Integer)
+    '                If Not IsNothing(gab.local_soil_profile_id) Then .Worksheets("Anchors (SAPI").Range("H" & i).Value = CType(gab.local_soil_profile_id, Integer)
+    '                i += 1
+    '            Next
+
+    '            'Profile
+    '            i = 3
+    '            For Each ap As AnchorBlockProfile In AnchorProfiles
+    '                With .Worksheets("Anchor Profiles (SAPI)")
+    '                    If Not IsNothing(ap.ID) Then .Range("A" & i).Value = CType(ap.ID, Integer)
+    '                    If Not IsNothing(ap.local_anchor_profile_id) Then .Range("B" & i).Value = CType(ap.local_anchor_profile_id, Integer)
+    '                    If Not IsNothing(ap.anchor_depth) Then .Range("C" & i).Value = CType(ap.anchor_depth, Double)
+    '                    If Not IsNothing(ap.anchor_width) Then .Range("D" & i).Value = CType(ap.anchor_width, Double)
+    '                    If Not IsNothing(ap.anchor_thickness) Then .Range("E" & i).Value = CType(ap.anchor_thickness, Double)
+    '                    If Not IsNothing(ap.anchor_length) Then .Range("F" & i).Value = CType(ap.anchor_length, Double)
+    '                    If Not IsNothing(ap.anchor_toe_width) Then .Range("G" & i).Value = CType(ap.anchor_toe_width, Double)
+    '                    If Not IsNothing(ap.anchor_top_rebar_size) Then .Range("H" & i).Value = CType(ap.anchor_top_rebar_size, Integer)
+    '                    If Not IsNothing(ap.anchor_top_rebar_quantity) Then .Range("I" & i).Value = CType(ap.anchor_top_rebar_quantity, Integer)
+    '                    If Not IsNothing(ap.anchor_front_rebar_size) Then .Range("J" & i).Value = CType(ap.anchor_front_rebar_size, Integer)
+    '                    If Not IsNothing(ap.anchor_front_rebar_quantity) Then .Range("K" & i).Value = CType(ap.anchor_front_rebar_quantity, Integer)
+    '                    If Not IsNothing(ap.anchor_stirrup_size) Then .Range("L" & i).Value = CType(ap.anchor_stirrup_size, Integer)
+    '                    If Not IsNothing(ap.anchor_shaft_diameter) Then .Range("M" & i).Value = CType(ap.anchor_shaft_diameter, Double)
+    '                    If Not IsNothing(ap.anchor_shaft_quantity) Then .Range("N" & i).Value = CType(ap.anchor_shaft_quantity, Integer)
+    '                    If Not IsNothing(ap.anchor_shaft_area_override) Then .Range("O" & i).Value = CType(ap.anchor_shaft_area_override, Double)
+    '                    If Not IsNothing(ap.anchor_shaft_shear_leg_factor) Then .Range("P" & i).Value = CType(ap.anchor_shaft_shear_leg_factor, Double)
+    '                    If Not IsNothing(ap.anchor_shaft_section) Then .Range("Q" & i).Value = CType(ap.anchor_shaft_section, String)
+    '                    If Not IsNothing(ap.anchor_rebar_grade) Then .Range("R" & i).Value = CType(ap.anchor_rebar_grade, Double)
+    '                    If Not IsNothing(ap.concrete_compressive_strength) Then .Range("S" & i).Value = CType(ap.concrete_compressive_strength, Double)
+    '                    If Not IsNothing(ap.clear_cover) Then .Range("T" & i).Value = CType(ap.clear_cover, Double)
+    '                    If Not IsNothing(ap.anchor_shaft_yield_strength) Then .Range("U" & i).Value = CType(ap.anchor_shaft_yield_strength, Double)
+    '                    If Not IsNothing(ap.anchor_shaft_ultimate_strength) Then .Range("V" & i).Value = CType(ap.anchor_shaft_ultimate_strength, Double)
+    '                    If Not IsNothing(ap.rebar_known) Then .Range("W" & i).Value = CType(ap.rebar_known, Boolean)
+    '                    If Not IsNothing(ap.anchor_shaft_known) Then .Range("X" & i).Value = CType(ap.anchor_shaft_known, Boolean)
+    '                    If Not IsNothing(ap.basic_soil_check) Then .Range("Y" & i).Value = CType(ap.basic_soil_check, Boolean)
+    '                    If Not IsNothing(ap.structural_check) Then .Range("Z" & i).Value = CType(ap.structural_check, Boolean)
+    '                End With
+    '                i += 1
+    '            Next
+
+    '            'Soil Profile
+    '            i = 3
+    '            Dim j As Integer = 3
+    '            For Each sp As AnchorBlockSoilProfile In SoilProfiles
+    '                If Not IsNothing(sp.ID) Then .Worksheets("Soil Profiles (SAPI)").Range("A" & i).Value = CType(sp.ID, Integer)
+    '                If Not IsNothing(sp.local_soil_profile_id) Then .Worksheets("Soil Profiles (SAPI)").Range("B" & i).Value = CType(sp.local_soil_profile_id, Integer)
+    '                If Not IsNothing(sp.groundwater_depth) Then .Worksheets("Soil Profiles (SAPI)").Range("C" & i).Value = CType(sp.groundwater_depth, Double)
+    '                If Not IsNothing(sp.neglect_depth) Then .Worksheets("Soil Profiles (SAPI)").Range("D" & i).Value = CType(sp.neglect_depth, Double)
+
+    '                'Soil Layers
+    '                For Each layer In sp.SoilLayers
+    '                    If Not IsNothing(layer.ID) Then .Worksheets("Soil Layers (SAPI)").Range("A" & j).Value = CType(layer.ID, Integer)
+    '                    If Not IsNothing(layer.Soil_Profile_id) Then .Worksheets("Soil Layers (SAPI)").Range("B" & j).Value = CType(layer.Soil_Profile_id, Integer)
+    '                    If Not IsNothing(layer.local_soil_profile_id) Then .Worksheets("Soil Layers (SAPI)").Range("C" & j).Value = CType(layer.local_soil_profile_id, Integer)
+    '                    If Not IsNothing(layer.local_soil_layer_id) Then .Worksheets("Soil Layers (SAPI)").Range("D" & j).Value = CType(layer.local_soil_layer_id, Integer)
+    '                    If Not IsNothing(layer.bottom_depth) Then .Worksheets("Soil Layers (SAPI)").Range("E" & j).Value = CType(layer.bottom_depth, Double)
+    '                    If Not IsNothing(layer.effective_soil_density) Then .Worksheets("Soil Layers (SAPI)").Range("F" & j).Value = CType(layer.effective_soil_density, Double)
+    '                    If Not IsNothing(layer.cohesion) Then .Worksheets("Soil Layers (SAPI)").Range("G" & j).Value = CType(layer.cohesion, Double)
+    '                    If Not IsNothing(layer.friction_angle) Then .Worksheets("Soil Layers (SAPI)").Range("H" & j).Value = CType(layer.friction_angle, Double)
+    '                    If Not IsNothing(layer.skin_friction_override_comp) Then .Worksheets("Soil Layers (SAPI)").Range("I" & j).Value = CType(layer.skin_friction_override_comp, Double)
+    '                    If Not IsNothing(layer.skin_friction_override_uplift) Then .Worksheets("Soil Layers (SAPI)").Range("J" & j).Value = CType(layer.skin_friction_override_uplift, Double)
+    '                    If Not IsNothing(layer.nominal_bearing_capacity) Then .Worksheets("Soil Layers (SAPI)").Range("K" & j).Value = CType(layer.nominal_bearing_capacity, Double)
+    '                    If Not IsNothing(layer.spt_blow_count) Then .Worksheets("Soil Layers (SAPI)").Range("L" & j).Value = CType(layer.spt_blow_count, Double)
+
+    '                    j += 1
+    '                Next
+
+    '                i += 1
+    '            Next
+
+    '        End With
+
+    '    End Sub
+    '#End Region
+
+#Region "Save to Excel - IEM"
     Public Overrides Sub workBookFiller(ByRef wb As Workbook)
         '''''Customize for each excel tool'''''
         'Site Code Criteria
@@ -244,142 +438,173 @@ Partial Public Class AnchorBlockFoundation
             Dim gab_tia_current As String
             Dim gab_rev_h_section_15_5 As Boolean?
 
-            If Not IsNothing(Me.ID) Then
-                .Worksheets("Tool (SAPI)").Range("A3").Value = CType(Me.ID, Integer)
-            Else
-                .Worksheets("Tool (SAPI)").Range("A3").ClearContents
-            End If
-            If Not IsNothing(Me.bus_unit) Then
-                .Worksheets("Tool (SAPI)").Range("B3").Value = CType(Me.bus_unit, Integer)
-            Else
-                .Worksheets("Tool (SAPI)").Range("B3").ClearContents
-            End If
-            If Not IsNothing(Me.structure_id) Then
-                .Worksheets("Tool (SAPI)").Range("C3").Value = CType(Me.structure_id, String)
-            End If
-            'If Not IsNothing(Me.file_ver) Then
-            '    .Worksheets("Tool (SAPI)").Range("D3").Value = CType(Me.file_ver, String)
-            'End If
-            If Not IsNothing(Me.modified) Then
-                .Worksheets("Tool (SAPI)").Range("E3").Value = CType(Me.modified, Boolean)
-            End If
-            'If Not IsNothing(Me.modified_person_id) Then
-            '    .Worksheets("Tool (SAPI)").Range("F3").Value = CType(Me.modified_person_id, Integer)
-            'Else
-            '    .Worksheets("Tool (SAPI)").Range("F3").ClearContents
-            'End If
-            'If Not IsNothing(Me.process_stage) Then
-            '    .Worksheets("Tool (SAPI)").Range("G3").Value = CType(Me.process_stage, String)
-            'End If
+            With .Worksheets("Tool (SAPI)")
+                If Not IsNothing(Me.ID) Then
+                    .Range("A3").Value = CType(Me.ID, Integer)
+                Else
+                    .Range("A3").ClearContents
+                End If
+                If Not IsNothing(Me.bus_unit) Then
+                    .Range("B3").Value = CType(Me.bus_unit, Integer)
+                Else
+                    .Range("B3").ClearContents
+                End If
+                If Not IsNothing(Me.structure_id) Then
+                    .Range("C3").Value = CType(Me.structure_id, String)
+                End If
+                'If Not IsNothing(Me.file_ver) Then
+                '    .Range("D3").Value = CType(Me.file_ver, String)
+                'End If
+                If Not IsNothing(Me.modified) Then
+                    .Range("E3").Value = CType(Me.modified, Boolean)
+                End If
+                'If Not IsNothing(Me.modified_person_id) Then
+                '    .Range("F3").Value = CType(Me.modified_person_id, Integer)
+                'Else
+                '    .Range("F3").ClearContents
+                'End If
+                'If Not IsNothing(Me.process_stage) Then
+                '    .Range("G3").Value = CType(Me.process_stage, String)
+                'End If
 
-            'TIA Revision- Defaulting to Rev. H if not available. 
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    gab_tia_current = "F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    gab_tia_current = "G"
+                'TIA Revision- Defaulting to Rev. H if not available. 
+                If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
+                    If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
+                        gab_tia_current = "F"
+                    ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
+                        gab_tia_current = "G"
+                    Else
+                        gab_tia_current = "H"
+                    End If
                 Else
                     gab_tia_current = "H"
                 End If
-            Else
-                gab_tia_current = "H"
-            End If
-            .Worksheets("Tool (SAPI)").Range("L3").Value = CType(gab_tia_current, String)
-            'Load Z Normalization
-            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
-            '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
-            '    .Worksheets("General (SAPI)").Range("Q3").Value = CType(load_z_norm, Boolean)
-            'End If
-            'H Section 15.5
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
-                gab_rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
-                .Worksheets("Tool (SAPI)").Range("M3").Value = CType(gab_rev_h_section_15_5, Boolean)
-            End If
-            'Work Order
-            If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
-                work_order_seq_num = Me.ParentStructure?.work_order_seq_num
-                .Worksheets("Tool (SAPI)").Range("K3").Value = CType(work_order_seq_num, Integer)
-            End If
-            'Site Name
-            If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
-                site_name = Me.ParentStructure?.SiteInfo.site_name
-                .Worksheets("Tool (SAPI)").Range("J3").Value = CType(site_name, String)
-            End If
+                .Range("L3").Value = CType(gab_tia_current, String)
+                'Load Z Normalization
+                'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
+                '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
+                '    .Worksheets("General (SAPI)").Range("Q3").Value = CType(load_z_norm, Boolean)
+                'End If
+                'H Section 15.5
+                If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
+                    gab_rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
+                    .Range("M3").Value = CType(gab_rev_h_section_15_5, Boolean)
+                End If
+                'Work Order
+                If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
+                    work_order_seq_num = Me.ParentStructure?.work_order_seq_num
+                    .Range("K3").Value = CType(work_order_seq_num, Integer)
+                End If
+                'Site Name
+                If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
+                    site_name = Me.ParentStructure?.SiteInfo.site_name
+                    .Range("J3").Value = CType(site_name, String)
+                End If
+            End With
 
             'Anchors
-            Dim i As Integer = 3
+            Dim anchorRow As Integer = 3
+            Dim profileRow As Integer = 3
+            Dim soilProfRow As Integer = 3
+            Dim layerRow As Integer = 3
+            Dim profExists As New List(Of Integer)
+            Dim soilProfExists As New List(Of Integer)
+
+            'Loop through all anchor blocks
             For Each gab As AnchorBlock In AnchorBlocks
-                If Not IsNothing(gab.ID) Then .Worksheets("Anchors (SAPI)").Range("A" & i).Value = CType(gab.ID, Integer)
-                If Not IsNothing(gab.anchor_block_tool_id) Then .Worksheets("Anchors (SAPI").Range("B" & i).Value = CType(gab.anchor_block_tool_id, Integer)
-                If Not IsNothing(gab.anchor_profile_id) Then .Worksheets("Anchors (SAPI").Range("C" & i).Value = CType(gab.anchor_profile_id, Integer)
-                If Not IsNothing(gab.soil_profile_id) Then .Worksheets("Anchors (SAPI").Range("D" & i).Value = CType(gab.soil_profile_id, Integer)
-                If Not IsNothing(gab.local_anchor_id) Then .Worksheets("Anchors (SAPI").Range("E" & i).Value = CType(gab.local_anchor_id, Integer)
-                If Not IsNothing(gab.reaction_location) Then .Worksheets("Anchors (SAPI").Range("F" & i).Value = CType(gab.reaction_location, String)
-                If Not IsNothing(gab.local_anchor_profile_id) Then .Worksheets("Anchors (SAPI").Range("G" & i).Value = CType(gab.local_anchor_profile_id, Integer)
-                If Not IsNothing(gab.local_soil_profile_id) Then .Worksheets("Anchors (SAPI").Range("H" & i).Value = CType(gab.local_soil_profile_id, Integer)
-                i += 1
-            Next
+                With .Worksheets("Anchors (SAPI")
+                    If Not IsNothing(gab.ID) Then .Range("A" & anchorRow).Value = CType(gab.ID, Integer)
+                    If Not IsNothing(gab.anchor_block_tool_id) Then .Range("B" & anchorRow).Value = CType(gab.anchor_block_tool_id, Integer)
+                    If Not IsNothing(gab.anchor_profile_id) Then .Range("C" & anchorRow).Value = CType(gab.anchor_profile_id, Integer)
+                    If Not IsNothing(gab.soil_profile_id) Then .Range("D" & anchorRow).Value = CType(gab.soil_profile_id, Integer)
+                    If Not IsNothing(gab.local_anchor_id) Then .Range("E" & anchorRow).Value = CType(gab.local_anchor_id, Integer)
+                    If Not IsNothing(gab.reaction_location) Then .Range("F" & anchorRow).Value = CType(gab.reaction_location, String)
+                    If Not IsNothing(gab.local_anchor_profile_id) Then .Range("G" & anchorRow).Value = CType(gab.local_anchor_profile_id, Integer)
+                    If Not IsNothing(gab.local_soil_profile_id) Then .Range("H" & anchorRow).Value = CType(gab.local_soil_profile_id, Integer)
+                End With
+                'When the anchor details are added it increments the anchor row to ensure it continues down the table
+                anchorRow += 1
 
-            'Profile
-            i = 3
-            For Each ap As AnchorBlockProfile In AnchorProfiles
-                If Not IsNothing(ap.ID) Then .Worksheets("Anchor Profiles (SAPI)").Range("A" & i).Value = CType(ap.ID, Integer)
-                If Not IsNothing(ap.local_anchor_profile_id) Then .Worksheets("Anchor Profiles (SAPI)").Range("B" & i).Value = CType(ap.local_anchor_profile_id, Integer)
-                If Not IsNothing(ap.anchor_depth) Then .Worksheets("Anchor Profiles (SAPI)").Range("C" & i).Value = CType(ap.anchor_depth, Double)
-                If Not IsNothing(ap.anchor_width) Then .Worksheets("Anchor Profiles (SAPI)").Range("D" & i).Value = CType(ap.anchor_width, Double)
-                If Not IsNothing(ap.anchor_thickness) Then .Worksheets("Anchor Profiles (SAPI)").Range("E" & i).Value = CType(ap.anchor_thickness, Double)
-                If Not IsNothing(ap.anchor_length) Then .Worksheets("Anchor Profiles (SAPI)").Range("F" & i).Value = CType(ap.anchor_length, Double)
-                If Not IsNothing(ap.anchor_toe_width) Then .Worksheets("Anchor Profiles (SAPI)").Range("G" & i).Value = CType(ap.anchor_toe_width, Double)
-                If Not IsNothing(ap.anchor_top_rebar_size) Then .Worksheets("Anchor Profiles (SAPI)").Range("H" & i).Value = CType(ap.anchor_top_rebar_size, Integer)
-                If Not IsNothing(ap.anchor_top_rebar_quantity) Then .Worksheets("Anchor Profiles (SAPI)").Range("I" & i).Value = CType(ap.anchor_top_rebar_quantity, Integer)
-                If Not IsNothing(ap.anchor_front_rebar_size) Then .Worksheets("Anchor Profiles (SAPI)").Range("J" & i).Value = CType(ap.anchor_front_rebar_size, Integer)
-                If Not IsNothing(ap.anchor_front_rebar_quantity) Then .Worksheets("Anchor Profiles (SAPI)").Range("K" & i).Value = CType(ap.anchor_front_rebar_quantity, Integer)
-                If Not IsNothing(ap.anchor_stirrup_size) Then .Worksheets("Anchor Profiles (SAPI)").Range("L" & i).Value = CType(ap.anchor_stirrup_size, Integer)
-                If Not IsNothing(ap.anchor_shaft_diameter) Then .Worksheets("Anchor Profiles (SAPI)").Range("M" & i).Value = CType(ap.anchor_shaft_diameter, Double)
-                If Not IsNothing(ap.anchor_shaft_quantity) Then .Worksheets("Anchor Profiles (SAPI)").Range("N" & i).Value = CType(ap.anchor_shaft_quantity, Integer)
-                If Not IsNothing(ap.anchor_shaft_area_override) Then .Worksheets("Anchor Profiles (SAPI)").Range("O" & i).Value = CType(ap.anchor_shaft_area_override, Double)
-                If Not IsNothing(ap.anchor_shaft_shear_lag_factor) Then .Worksheets("Anchor Profiles (SAPI)").Range("P" & i).Value = CType(ap.anchor_shaft_shear_lag_factor, Double)
-                If Not IsNothing(ap.anchor_shaft_section) Then .Worksheets("Anchor Profiles (SAPI)").Range("Q" & i).Value = CType(ap.anchor_shaft_section, String)
-                If Not IsNothing(ap.anchor_rebar_grade) Then .Worksheets("Anchor Profiles (SAPI)").Range("R" & i).Value = CType(ap.anchor_rebar_grade, Double)
-                If Not IsNothing(ap.concrete_compressive_strength) Then .Worksheets("Anchor Profiles (SAPI)").Range("S" & i).Value = CType(ap.concrete_compressive_strength, Double)
-                If Not IsNothing(ap.clear_cover) Then .Worksheets("Anchor Profiles (SAPI)").Range("T" & i).Value = CType(ap.clear_cover, Double)
-                If Not IsNothing(ap.anchor_shaft_yield_strength) Then .Worksheets("Anchor Profiles (SAPI)").Range("U" & i).Value = CType(ap.anchor_shaft_yield_strength, Double)
-                If Not IsNothing(ap.anchor_shaft_ultimate_strength) Then .Worksheets("Anchor Profiles (SAPI)").Range("V" & i).Value = CType(ap.anchor_shaft_ultimate_strength, Double)
-                If Not IsNothing(ap.rebar_known) Then .Worksheets("Anchor Profiles (SAPI)").Range("W" & i).Value = CType(ap.rebar_known, Boolean)
-                If Not IsNothing(ap.anchor_shaft_known) Then .Worksheets("Anchor Profiles (SAPI)").Range("X" & i).Value = CType(ap.anchor_shaft_known, Boolean)
-                If Not IsNothing(ap.basic_soil_check) Then .Worksheets("Anchor Profiles (SAPI)").Range("Y" & i).Value = CType(ap.basic_soil_check, Boolean)
-                If Not IsNothing(ap.structural_check) Then .Worksheets("Anchor Profiles (SAPI)").Range("Z" & i).Value = CType(ap.structural_check, Boolean)
-                i += 1
-            Next
+                'Profile
+                'Add the structural properties of the anchor block to the profiles tab
+                Dim ap As AnchorBlockProfile = gab.AnchorProfile
+                If Not profExists.Contains(ap.local_anchor_profile_id) Then
+                    With .Worksheets("Anchor Profiles (SAPI)")
+                        If Not IsNothing(ap.ID) Then .Range("A" & profileRow).Value = CType(ap.ID, Integer)
+                        If Not IsNothing(ap.local_anchor_profile_id) Then .Range("B" & profileRow).Value = CType(ap.local_anchor_profile_id, Integer)
+                        If Not IsNothing(ap.anchor_depth) Then .Range("C" & profileRow).Value = CType(ap.anchor_depth, Double)
+                        If Not IsNothing(ap.anchor_width) Then .Range("D" & profileRow).Value = CType(ap.anchor_width, Double)
+                        If Not IsNothing(ap.anchor_thickness) Then .Range("E" & profileRow).Value = CType(ap.anchor_thickness, Double)
+                        If Not IsNothing(ap.anchor_length) Then .Range("F" & profileRow).Value = CType(ap.anchor_length, Double)
+                        If Not IsNothing(ap.anchor_toe_width) Then .Range("G" & profileRow).Value = CType(ap.anchor_toe_width, Double)
+                        If Not IsNothing(ap.anchor_top_rebar_size) Then .Range("H" & profileRow).Value = CType(ap.anchor_top_rebar_size, Integer)
+                        If Not IsNothing(ap.anchor_top_rebar_quantity) Then .Range("I" & profileRow).Value = CType(ap.anchor_top_rebar_quantity, Integer)
+                        If Not IsNothing(ap.anchor_front_rebar_size) Then .Range("J" & profileRow).Value = CType(ap.anchor_front_rebar_size, Integer)
+                        If Not IsNothing(ap.anchor_front_rebar_quantity) Then .Range("K" & profileRow).Value = CType(ap.anchor_front_rebar_quantity, Integer)
+                        If Not IsNothing(ap.anchor_stirrup_size) Then .Range("L" & profileRow).Value = CType(ap.anchor_stirrup_size, Integer)
+                        If Not IsNothing(ap.anchor_shaft_diameter) Then .Range("M" & profileRow).Value = CType(ap.anchor_shaft_diameter, Double)
+                        If Not IsNothing(ap.anchor_shaft_quantity) Then .Range("N" & profileRow).Value = CType(ap.anchor_shaft_quantity, Integer)
+                        If Not IsNothing(ap.anchor_shaft_area_override) Then .Range("O" & profileRow).Value = CType(ap.anchor_shaft_area_override, Double)
+                        If Not IsNothing(ap.anchor_shaft_shear_leg_factor) Then .Range("P" & profileRow).Value = CType(ap.anchor_shaft_shear_leg_factor, Double)
+                        If Not IsNothing(ap.anchor_shaft_section) Then .Range("Q" & profileRow).Value = CType(ap.anchor_shaft_section, String)
+                        If Not IsNothing(ap.anchor_rebar_grade) Then .Range("R" & profileRow).Value = CType(ap.anchor_rebar_grade, Double)
+                        If Not IsNothing(ap.concrete_compressive_strength) Then .Range("S" & profileRow).Value = CType(ap.concrete_compressive_strength, Double)
+                        If Not IsNothing(ap.clear_cover) Then .Range("T" & profileRow).Value = CType(ap.clear_cover, Double)
+                        If Not IsNothing(ap.anchor_shaft_yield_strength) Then .Range("U" & profileRow).Value = CType(ap.anchor_shaft_yield_strength, Double)
+                        If Not IsNothing(ap.anchor_shaft_ultimate_strength) Then .Range("V" & profileRow).Value = CType(ap.anchor_shaft_ultimate_strength, Double)
+                        If Not IsNothing(ap.rebar_known) Then .Range("W" & profileRow).Value = CType(ap.rebar_known, Boolean)
+                        If Not IsNothing(ap.anchor_shaft_known) Then .Range("X" & profileRow).Value = CType(ap.anchor_shaft_known, Boolean)
+                        If Not IsNothing(ap.basic_soil_check) Then .Range("Y" & profileRow).Value = CType(ap.basic_soil_check, Boolean)
+                        If Not IsNothing(ap.structural_check) Then .Range("Z" & profileRow).Value = CType(ap.structural_check, Boolean)
+                    End With
+                    'If it is added to the sheet then it needs to move on to the next row for the next structural design
+                    profileRow += 1
+                    'If it is added to the sheet then it adds it to a list of intergers containing local profile IDs
+                    'This ensures it won't be added twice.
+                    profExists.Add(ap.local_anchor_profile_id)
+                End If
 
-            'Soil Profile
-            i = 3
-            Dim j As Integer = 3
-            For Each sp As AnchorBlockSoilProfile In SoilProfiles
-                If Not IsNothing(sp.ID) Then .Worksheets("Soil Profiles (SAPI)").Range("A" & i).Value = CType(sp.ID, Integer)
-                If Not IsNothing(sp.local_soil_profile_id) Then .Worksheets("Soil Profiles (SAPI)").Range("B" & i).Value = CType(sp.local_soil_profile_id, Integer)
-                If Not IsNothing(sp.groundwater_depth) Then .Worksheets("Soil Profiles (SAPI)").Range("C" & i).Value = CType(sp.groundwater_depth, Double)
-                If Not IsNothing(sp.neglect_depth) Then .Worksheets("Soil Profiles (SAPI)").Range("D" & i).Value = CType(sp.neglect_depth, Double)
+                'Soil Profile
+                Dim sp As SoilProfile = gab.SoilProfile
+                If Not soilProfExists.Contains(gab.local_soil_profile_id) Then
+                    With .Worksheets("Soil Profiles (SAPI)")
+                        If Not IsNothing(sp.ID) Then .Range("A" & soilProfRow).Value = CType(sp.ID, Integer)
+                        If Not IsNothing(gab.local_soil_profile_id) Then .Range("B" & soilProfRow).Value = CType(gab.local_soil_profile_id, Integer)
+                        If Not IsNothing(sp.groundwater_depth) Then .Range("C" & soilProfRow).Value = CType(sp.groundwater_depth, Double)
+                        If Not IsNothing(sp.neglect_depth) Then .Range("D" & soilProfRow).Value = CType(sp.neglect_depth, Double)
+                    End With
+                    'Increment the soil profile row to ensure it goes to the next row of the table
+                    soilProfRow += 1
+                    'If it is added to the sheet then it adds it to a list of intergers containing local soil profile IDs
+                    'This ensures it won't be added twice.
+                    soilProfExists.Add(gab.local_soil_profile_id)
 
-                'Soil Layers
-                For Each layer In sp.SoilLayers
-                    If Not IsNothing(layer.ID) Then .Worksheets("Soil Layers (SAPI)").Range("A" & j).Value = CType(layer.ID, Integer)
-                    If Not IsNothing(layer.Soil_Profile_id) Then .Worksheets("Soil Layers (SAPI)").Range("B" & j).Value = CType(layer.Soil_Profile_id, Integer)
-                    If Not IsNothing(layer.local_soil_profile_id) Then .Worksheets("Soil Layers (SAPI)").Range("C" & j).Value = CType(layer.local_soil_profile_id, Integer)
-                    If Not IsNothing(layer.local_soil_layer_id) Then .Worksheets("Soil Layers (SAPI)").Range("D" & j).Value = CType(layer.local_soil_layer_id, Integer)
-                    If Not IsNothing(layer.bottom_depth) Then .Worksheets("Soil Layers (SAPI)").Range("E" & j).Value = CType(layer.bottom_depth, Double)
-                    If Not IsNothing(layer.effective_soil_density) Then .Worksheets("Soil Layers (SAPI)").Range("F" & j).Value = CType(layer.effective_soil_density, Double)
-                    If Not IsNothing(layer.cohesion) Then .Worksheets("Soil Layers (SAPI)").Range("G" & j).Value = CType(layer.cohesion, Double)
-                    If Not IsNothing(layer.friction_angle) Then .Worksheets("Soil Layers (SAPI)").Range("H" & j).Value = CType(layer.friction_angle, Double)
-                    If Not IsNothing(layer.skin_friction_override_comp) Then .Worksheets("Soil Layers (SAPI)").Range("I" & j).Value = CType(layer.skin_friction_override_comp, Double)
-                    If Not IsNothing(layer.skin_friction_override_uplift) Then .Worksheets("Soil Layers (SAPI)").Range("J" & j).Value = CType(layer.skin_friction_override_uplift, Double)
-                    If Not IsNothing(layer.nominal_bearing_capacity) Then .Worksheets("Soil Layers (SAPI)").Range("K" & j).Value = CType(layer.nominal_bearing_capacity, Double)
-                    If Not IsNothing(layer.spt_blow_count) Then .Worksheets("Soil Layers (SAPI)").Range("L" & j).Value = CType(layer.spt_blow_count, Double)
-
-                    j += 1
-                Next
-
-                i += 1
+                    'Soil Layers
+                    Dim SoilInc As Integer = 1
+                    For Each layer In sp.SoilLayers
+                        With .Worksheets("Soil Layers (SAPI)")
+                            If Not IsNothing(layer.ID) Then .Range("A" & layerRow).Value = CType(layer.ID, Integer)
+                            If Not IsNothing(layer.Soil_Profile_id) Then .Range("B" & layerRow).Value = CType(layer.Soil_Profile_id, Integer)
+                            If Not IsNothing(gab.local_soil_profile_id) Then .Range("C" & layerRow).Value = CType(gab.local_soil_profile_id, Integer)
+                            .Range("D" & layerRow).Value = CType(SoilInc, Integer)
+                            If Not IsNothing(layer.bottom_depth) Then .Range("E" & layerRow).Value = CType(layer.bottom_depth, Double)
+                            If Not IsNothing(layer.effective_soil_density) Then .Range("F" & layerRow).Value = CType(layer.effective_soil_density, Double)
+                            If Not IsNothing(layer.cohesion) Then .Range("G" & layerRow).Value = CType(layer.cohesion, Double)
+                            If Not IsNothing(layer.friction_angle) Then .Range("H" & layerRow).Value = CType(layer.friction_angle, Double)
+                            If Not IsNothing(layer.skin_friction_override_comp) Then .Range("I" & layerRow).Value = CType(layer.skin_friction_override_comp, Double)
+                            If Not IsNothing(layer.skin_friction_override_uplift) Then .Range("J" & layerRow).Value = CType(layer.skin_friction_override_uplift, Double)
+                            If Not IsNothing(layer.nominal_bearing_capacity) Then .Range("K" & layerRow).Value = CType(layer.nominal_bearing_capacity, Double)
+                            If Not IsNothing(layer.spt_blow_count) Then .Range("L" & layerRow).Value = CType(layer.spt_blow_count, Double)
+                        End With
+                        'SoilInc is used to determine the local soil layer id.
+                        'This is not a "Global" variable in the sense of the soil layer tab
+                        'It is isolated to soil profiles and will reset for each soil proile being added
+                        'This ensures soil layers will always be labeled appropriately and doesn't need to be done in tool.
+                        SoilInc += 1
+                        'Increment the soil layer row for the next layer in this profile as well as the next layer in the next profile
+                        layerRow += 1
+                    Next
+                End If
             Next
 
         End With
@@ -406,24 +631,6 @@ Partial Public Class AnchorBlockFoundation
 
         'Anchors
         Equals = If(Me.AnchorBlocks.CheckChange(otherToCompare.AnchorBlocks, changes, categoryName, "Anchor Blocks"), Equals, False)
-
-        If changes Is Nothing Then changes = New List(Of AnalysisChange)
-        Dim categoryName As String = Me.EDSObjectFullName
-
-        Dim otherToCompare As AnchorBlockFoundation = TryCast(other, AnchorBlockFoundation)
-        If otherToCompare Is Nothing Then Return False
-
-        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        'Equals = If(Me.bus_unit.CheckChange(otherToCompare.bus_unit, changes, categoryName, "Bus Unit"), Equals, False)
-        'Equals = If(Me.structure_id.CheckChange(otherToCompare.structure_id, changes, categoryName, "Structure Id"), Equals, False)
-        Equals = If(Me.file_ver.CheckChange(otherToCompare.file_ver, changes, categoryName, "File Ver"), Equals, False)
-        Equals = If(Me.modified.CheckChange(otherToCompare.modified, changes, categoryName, "Modified"), Equals, False)
-        'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
-        'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
-
-        'Anchors
-        Equals = If(Me.AnchorBlocks.CheckChange(otherToCompare.AnchorBlocks, changes, categoryName, "Anchor Blocks"), Equals, False)
-
     End Function
 #End Region
 
@@ -622,7 +829,7 @@ Partial Public Class AnchorBlock
         ConstructMe(dr)
 
         For Each profileRow As DataRow In strDS.Tables(abProfile.EDSObjectName).Rows
-            abProfile = New AnchorBlockProfile(profileRow, Me)
+            abProfile = New AnchorBlockProfile(profileRow, Me, isExcel)
             If IsSomething(abProfile.local_anchor_profile_id) Or (IsSomething(abProfile.ID) And IsNothing(abProfile.local_anchor_profile_id)) Then
                 If If(isExcel, Me.local_anchor_profile_id = abProfile.local_anchor_profile_id, Me.anchor_profile_id = abProfile.ID) Then
                     Me.AnchorProfile = abProfile
@@ -631,7 +838,7 @@ Partial Public Class AnchorBlock
         Next
 
         For Each soilRow As DataRow In strDS.Tables(abSProfile.EDSObjectName).Rows
-            abSProfile = (New AnchorBlockSoilProfile(soilRow, Me))
+            abSProfile = (New AnchorBlockSoilProfile(soilRow, Me, isExcel))
             If If(isExcel, Me.local_soil_profile_id = abSProfile.local_soil_profile_id, Me.soil_profile_id = abSProfile.ID) Then
                 Me.SoilProfile = abSProfile
 
@@ -647,30 +854,18 @@ Partial Public Class AnchorBlock
 
         If isExcel Then
             Dim res As New EDSResult
-            Dim dt As New DataTable
-            dt.Columns.Add("result_lkup", GetType(String))
-            dt.Columns.Add("rating", GetType(Double))
 
-            For Each resRow In strDS.Tables("Anchor Block Result").Rows
-                If DBtoNullableInt(resRow.item("local_anchor_block_id")) = Me.local_anchor_profile_id Then
-                    Try
-                        dt.Rows.Add("ABSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
-                        dt.Rows.Add("ABSTRUC", Math.Round(CType(resRow.item("Structural Rating"), Double), 3))
-                    Catch
-                    End Try
-                    'Exit For
+            For Each resRow As DataRow In strDS.Tables("Anchor Block Result").Rows
+                If DBtoNullableInt(resRow.Item("local_anchor_block_id")) = Me.local_anchor_profile_id Then
+                    res = New EDSResult(resRow, Me)
+                    res.EDSTableName = "fnd.anchor_block_results"
+                    res.ForeignKeyName = "anchor_block_id"
+                    res.foreign_key = Me.ID
+                    res.EDSTableDepth = 1
+                    res.modified_person_id = Me.modified_person_id
+                    Dim x As AnchorBlockFoundation = Me.Parent
+                    x.Results.Add(res)
                 End If
-            Next
-
-            For Each resRow As DataRow In dt.Rows
-                res = New EDSResult(resRow, Me)
-                res.EDSTableName = "fnd.anchor_block_results"
-                res.ForeignKeyName = "anchor_block_id"
-                res.foreign_key = Me.ID
-                res.EDSTableDepth = 1
-                res.modified_person_id = Me.modified_person_id
-                Dim x As AnchorBlockFoundation = Me.Parent
-                x.Results.Add(res)
             Next
         End If
     End Sub
@@ -813,6 +1008,7 @@ Partial Public Class AnchorBlockProfile
     Private _anchor_shaft_quantity As Integer?
     Private _anchor_shaft_area_override As Double?
     Private _anchor_shaft_shear_leg_factor As Double?
+    Private _anchor_shaft_section As String
     Private _anchor_rebar_grade As Double?
     Private _concrete_compressive_strength As Double?
     Private _clear_cover As Double?
@@ -950,6 +1146,15 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_shear_leg_factor = Value
         End Set
     End Property
+    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Section")>
+    Public Property anchor_shaft_section() As String
+        Get
+            Return Me._anchor_shaft_section
+        End Get
+        Set
+            Me._anchor_shaft_section = Value
+        End Set
+    End Property
     <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Rebar Grade")>
     Public Property anchor_rebar_grade() As Double?
         Get
@@ -1048,7 +1253,7 @@ Partial Public Class AnchorBlockProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.anchor_depth = DBtoNullableDbl(dr.Item("anchor_depth"))
@@ -1065,6 +1270,7 @@ Partial Public Class AnchorBlockProfile
         Me.anchor_shaft_quantity = DBtoNullableInt(dr.Item("anchor_shaft_quantity"))
         Me.anchor_shaft_area_override = DBtoNullableDbl(dr.Item("anchor_shaft_area_override"))
         Me.anchor_shaft_shear_leg_factor = DBtoNullableDbl(dr.Item("anchor_shaft_shear_leg_factor"))
+        Me.anchor_shaft_section = DBtoNullableDbl(dr.Item("anchor_shaft_section"))
         Me.anchor_rebar_grade = DBtoNullableDbl(dr.Item("anchor_rebar_grade"))
         Me.concrete_compressive_strength = DBtoNullableDbl(dr.Item("concrete_compressive_strength"))
         Me.clear_cover = DBtoNullableDbl(dr.Item("clear_cover"))
@@ -1075,7 +1281,15 @@ Partial Public Class AnchorBlockProfile
         Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
         Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
         Me.local_anchor_profile_id = DBtoNullableInt(dr.Item("local_anchor_profile_id"))
-        Me.ID = DBtoNullableInt(dr.Item("ID"))
+
+
+        Dim tempParent As AnchorBlock = TryCast(Me.Parent, AnchorBlock)
+        If isExcel Then
+            Me.ID = tempParent.anchor_profile_id
+        Else
+            Me.ID = DBtoNullableInt(dr.Item("ID"))
+        End If
+
     End Sub
 
 #End Region
@@ -1098,7 +1312,7 @@ Partial Public Class AnchorBlockProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_diameter.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_quantity.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_area_override.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_shear_lag_factor.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_shaft_section.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_rebar_grade.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.concrete_compressive_strength.ToString.FormatDBValue)
@@ -1128,7 +1342,7 @@ Partial Public Class AnchorBlockProfile
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_diameter")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_quantity")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_area_override")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_shear_lag_factor")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_shear_leg_factor")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_shaft_section")
         SQLInsertFields = SQLInsertFields.AddtoDBString("anchor_rebar_grade")
         SQLInsertFields = SQLInsertFields.AddtoDBString("concrete_compressive_strength")
@@ -1158,7 +1372,7 @@ Partial Public Class AnchorBlockProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_diameter = " & Me.anchor_shaft_diameter.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_quantity = " & Me.anchor_shaft_quantity.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_area_override = " & Me.anchor_shaft_area_override.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_shear_lag_factor = " & Me.anchor_shaft_shear_lag_factor.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_shear_leg_factor = " & Me.anchor_shaft_shear_leg_factor.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_shaft_section = " & Me.anchor_shaft_section.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("anchor_rebar_grade = " & Me.anchor_rebar_grade.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concrete_compressive_strength = " & Me.concrete_compressive_strength.ToString.FormatDBValue)
@@ -1195,7 +1409,7 @@ Partial Public Class AnchorBlockProfile
         Equals = If(Me.anchor_shaft_diameter.CheckChange(otherToCompare.anchor_shaft_diameter, changes, categoryName, "Anchor Shaft Diameter"), Equals, False)
         Equals = If(Me.anchor_shaft_quantity.CheckChange(otherToCompare.anchor_shaft_quantity, changes, categoryName, "Anchor Shaft Quantity"), Equals, False)
         Equals = If(Me.anchor_shaft_area_override.CheckChange(otherToCompare.anchor_shaft_area_override, changes, categoryName, "Anchor Shaft Area Override"), Equals, False)
-        Equals = If(Me.anchor_shaft_shear_lag_factor.CheckChange(otherToCompare.anchor_shaft_shear_lag_factor, changes, categoryName, "Anchor Shaft Shear Lag Factor"), Equals, False)
+        Equals = If(Me.anchor_shaft_shear_leg_factor.CheckChange(otherToCompare.anchor_shaft_shear_leg_factor, changes, categoryName, "Anchor Shaft Shear Lag Factor"), Equals, False)
         Equals = If(Me.anchor_shaft_section.CheckChange(otherToCompare.anchor_shaft_section, changes, categoryName, "Anchor Shaft Section"), Equals, False)
         Equals = If(Me.anchor_rebar_grade.CheckChange(otherToCompare.anchor_rebar_grade, changes, categoryName, "Anchor Rebar Grade"), Equals, False)
         Equals = If(Me.concrete_compressive_strength.CheckChange(otherToCompare.concrete_compressive_strength, changes, categoryName, "Concrete Compressive Strength"), Equals, False)
@@ -1234,13 +1448,20 @@ Partial Public Class AnchorBlockSoilProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
         ConstructMe(dr, Parent)
 
         Try
             Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
         Catch
         End Try
+
+        Dim tempParent As AnchorBlock = TryCast(Me.Parent, AnchorBlock)
+        If isExcel Then
+            Me.ID = tempParent.soil_profile_id
+        Else
+            Me.ID = DBtoNullableInt(dr.Item("ID"))
+        End If
     End Sub
 
 
@@ -1320,3 +1541,5 @@ Partial Public Class AnchorBlockResult
     End Property
 
 End Class
+
+
