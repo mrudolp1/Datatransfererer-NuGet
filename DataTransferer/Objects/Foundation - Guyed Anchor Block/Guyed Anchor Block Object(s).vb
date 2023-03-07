@@ -9,14 +9,12 @@ Imports DevExpress.Spreadsheet
 Partial Public Class AnchorBlockFoundation
     Inherits EDSExcelObject
 
-    Public Property AnchorBlocks As New List(Of AnchorBlock)
-    'Example for Rudy
-    'Origin row in the driled pier database. Basically just where the profile numbers are in the database worksheet.
-    'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
-    Private pierProfileRow As Integer = 57
-
+#Region "Define"
     Private _file_ver As String
     Private _modified As Boolean?
+
+    Public Property AnchorBlocks As New List(Of AnchorBlock)
+
     <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("File Ver")>
     Public Property file_ver() As String
         Get
@@ -35,7 +33,7 @@ Partial Public Class AnchorBlockFoundation
             Me._modified = Value
         End Set
     End Property
-
+#End Region
 
 #Region "Constructors"
     Public Sub New()
@@ -43,7 +41,7 @@ Partial Public Class AnchorBlockFoundation
 
     Private Sub ConstructMe(ByVal dr As DataRow)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me._file_ver = DBtoStr(dr.Item("_file_ver"))
+        Me.file_ver = DBtoStr(dr.Item("file_ver"))
         Me.modified = DBtoStr(dr.Item("modified"))
     End Sub
 
@@ -83,7 +81,7 @@ Partial Public Class AnchorBlockFoundation
             End Try
         Next
 
-        Dim dr As DataRow = excelDS.Tables("Anchor Block Foundation").Rows(0)
+        Dim dr As DataRow = excelDS.Tables("Anchor Block Tool").Rows(0)
 
         ConstructMe(dr)
 
@@ -128,7 +126,7 @@ Partial Public Class AnchorBlockFoundation
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Foundation"
+            Return "Anchor Block Tool"
         End Get
     End Property
 
@@ -154,12 +152,12 @@ Partial Public Class AnchorBlockFoundation
             Dim abTool As New AnchorBlockFoundation
 
             Return New List(Of EXCELDTParameter) From {
-                                                        New EXCELDTParameter(ab.EDSObjectName, "A2:H52", "Profiles (ENTER)"),  'It is slightly confusing but to keep naming issues consistent in the tool a drilled pier = profile and a drilled pier profile = drilled pier details
-                                                        New EXCELDTParameter(abProf.EDSObjectName, "A2:X52", "Details (ENTER)"),
-                                                        New EXCELDTParameter(abSProf.EDSObjectName, "A2:E52", "Soil Profiles (ENTER)"),
-                                                        New EXCELDTParameter(abSlay.EDSObjectName, "A2:N1502", "Soil Layers (ENTER)"),
-                                                        New EXCELDTParameter(abRes.EDSObjectName, "BD8:BV58", "Foundation Input"),
-                                                        New EXCELDTParameter(abTool.EDSObjectName, "A1:E2", "Tool (RETURN_ENTER)")
+                                                        New EXCELDTParameter(abTool.EDSObjectName, "A2:I3", "Tool (SAPI)"),  'It is slightly confusing but to keep naming issues consistent in the tool a drilled pier = profile and a drilled pier profile = drilled pier details
+                                                        New EXCELDTParameter(ab.EDSObjectName, "A2:L52", "Anchors (SAPI)"),
+                                                        New EXCELDTParameter(abProf.EDSObjectName, "A2:AB52", "Anchor Profiles (SAPI)"),
+                                                        New EXCELDTParameter(abSProf.EDSObjectName, "A2:F52", "Soil Profiles (SAPI)"),
+                                                        New EXCELDTParameter(abSlay.EDSObjectName, "A2:N452", "Soil Layers (SAPI)"),
+                                                        New EXCELDTParameter(abRes.EDSObjectName, "A2:I152", "Anchor Results (SAPI)")
                                                                                         }
             '***Add additional table references here****
         End Get
@@ -646,7 +644,7 @@ Partial Public Class AnchorBlock
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Profile"
+            Return "Anchor Block"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
@@ -718,7 +716,7 @@ Partial Public Class AnchorBlock
     Private _anchor_block_tool_id As Integer?
     Private _soil_profile_id As Integer?
     Private _local_anchor_id As Integer?
-    Private _reaction_position As Integer?
+    'Private _reaction_position As Integer?
     Private _reaction_location As String
     Private _local_soil_profile_id As Integer?
     Private _local_anchor_profile_id As Integer?
@@ -758,15 +756,15 @@ Partial Public Class AnchorBlock
             Me._local_anchor_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Position")>
-    Public Property reaction_position() As Integer?
-        Get
-            Return Me._reaction_position
-        End Get
-        Set
-            Me._reaction_position = Value
-        End Set
-    End Property
+    '<Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Position")>
+    'Public Property reaction_position() As Integer?
+    '    Get
+    '        Return Me._reaction_position
+    '    End Get
+    '    Set
+    '        Me._reaction_position = Value
+    '    End Set
+    'End Property
     <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Location")>
     Public Property reaction_location() As String
         Get
@@ -810,7 +808,7 @@ Partial Public Class AnchorBlock
         Me.anchor_block_tool_id = DBtoNullableInt(dr.Item("anchor_block_tool_id"))
         Me.soil_profile_id = DBtoNullableInt(dr.Item("soil_profile_id"))
         Me.local_anchor_id = DBtoNullableInt(dr.Item("local_anchor_id"))
-        Me.reaction_position = DBtoNullableInt(dr.Item("reaction_position"))
+        'Me.reaction_position = DBtoNullableInt(dr.Item("reaction_position"))
         Me.reaction_location = DBtoStr(dr.Item("reaction_location"))
         Me.local_soil_profile_id = DBtoNullableInt(dr.Item("local_soil_profile_id"))
         Me.local_anchor_profile_id = DBtoNullableInt(dr.Item("local_anchor_profile_id"))
@@ -844,7 +842,7 @@ Partial Public Class AnchorBlock
 
                 For Each layerRow As DataRow In strDS.Tables(abLayer.EDSObjectName).Rows
                     abLayer = (New AnchorBlockSoilLayer(layerRow, abSProfile))
-                    If If(isExcel, abSProfile.local_soil_profile_id = abLayer.local_soil_profile, Me.soil_profile_id = abLayer.Soil_Profile_id) Then
+                    If If(isExcel, abSProfile.local_soil_profile_id = abLayer.local_soil_profile_id, Me.soil_profile_id = abLayer.Soil_Profile_id) Then
                         abSProfile.ABSoilLayers.Add(abLayer)
                     End If
                 Next
@@ -950,7 +948,7 @@ Partial Public Class AnchorBlockProfile
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block"
+            Return "Anchor Block Profile"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
@@ -1270,7 +1268,7 @@ Partial Public Class AnchorBlockProfile
         Me.anchor_shaft_quantity = DBtoNullableInt(dr.Item("anchor_shaft_quantity"))
         Me.anchor_shaft_area_override = DBtoNullableDbl(dr.Item("anchor_shaft_area_override"))
         Me.anchor_shaft_shear_leg_factor = DBtoNullableDbl(dr.Item("anchor_shaft_shear_leg_factor"))
-        Me.anchor_shaft_section = DBtoNullableDbl(dr.Item("anchor_shaft_section"))
+        Me.anchor_shaft_section = DBtoStr(dr.Item("anchor_shaft_section"))
         Me.anchor_rebar_grade = DBtoNullableDbl(dr.Item("anchor_rebar_grade"))
         Me.concrete_compressive_strength = DBtoNullableDbl(dr.Item("concrete_compressive_strength"))
         Me.clear_cover = DBtoNullableDbl(dr.Item("clear_cover"))
@@ -1434,13 +1432,13 @@ Partial Public Class AnchorBlockSoilProfile
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Foundation"
+            Return "Anchor Block Soil Profile"
         End Get
     End Property
 
     Public Overrides ReadOnly Property EDSTableName As String
         Get
-            Return "fnd.anchor_block_tool"
+            Return "fnd.soil_profile"
         End Get
     End Property
 
@@ -1500,7 +1498,7 @@ End Class
 Partial Public Class AnchorBlockSoilLayer
     Inherits SoilLayer
 
-    Public Property local_soil_profile As Integer?
+    Public Property local_soil_profile_id As Integer?
     Public Property local_soil_layer_id As Integer?
 
     Public Overrides ReadOnly Property EDSObjectName As String
@@ -1517,7 +1515,7 @@ Partial Public Class AnchorBlockSoilLayer
         ConstructMe(dr, Parent)
 
         Try
-            Me.local_soil_profile = DBtoNullableDbl(dr.Item("local_soil_profile"))
+            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
             Me.local_soil_layer_id = DBtoNullableDbl(dr.Item("local_soil_layer_id"))
         Catch
         End Try
@@ -1530,13 +1528,13 @@ Partial Public Class AnchorBlockResult
 
     Public ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Foundation"
+            Return "Anchor Block Result"
         End Get
     End Property
 
     Public ReadOnly Property EDSTableName As String
         Get
-            Return "fnd.anchor_block_tool"
+            Return "fnd.anchor_block_results"
         End Get
     End Property
 

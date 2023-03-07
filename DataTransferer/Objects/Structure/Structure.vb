@@ -117,14 +117,18 @@ Partial Public Class EDSStructure
                         "Pole Custom Bolts",
                         "Pole Custom Reinfs",
                         "Site Code Criteria",
-                        "File Upload", 
-                        "Drilled Pier", 
-                        "Drilled Pier Profile", 
-                        "Drilled Pier Section", 
-                        "Drilled Pier Rebar", 
-                        "Belled Pier", 
-                        "Embedded Pole", 
-                        "Drilled Pier Foundation"}
+                        "File Upload",
+                        "Drilled Pier",
+                        "Drilled Pier Profile",
+                        "Drilled Pier Section",
+                        "Drilled Pier Rebar",
+                        "Belled Pier",
+                        "Embedded Pole",
+                        "Drilled Pier Foundation",
+                        "Guy Anchor Block Tool",
+                        "Guy Anchors",
+                        "Guy Anchor Profiles",
+                        "Guy Anchor Results"}
 
 
         Using strDS As New DataSet
@@ -222,6 +226,11 @@ Partial Public Class EDSStructure
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
             Next
 
+            'Guy Anchor Block
+            For Each dr As DataRow In strDS.Tables("Guy Anchor Block Tool").Rows
+                Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(strDS, Me, dr))
+            Next
+
 
 
         End Using
@@ -296,7 +305,7 @@ Partial Public Class EDSStructure
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
                 FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
-                'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
+                Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
             ElseIf item.Contains("CCIplate") Then
                 Me.CCIplates.Add(New CCIplate(item, Me))
             ElseIf item.Contains("CCIpole") Then
@@ -337,21 +346,24 @@ Partial Public Class EDSStructure
             DrilledPierTools(i).SavetoExcel()
         Next
 
-        'For i = 0 To Me.GuyAnchorBlocks.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
-        '    GuyAnchorBlocks(i).SavetoExcel()
-        'Next
+        For i = 0 To Me.GuyAnchorBlockTools.Count - 1
+            fileNum = Format(" ({0})", i.ToString)
+            GuyAnchorBlockTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(GuyAnchorBlockTools(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(GuyAnchorBlockTools(i).templatePath))
+            GuyAnchorBlockTools(i).SavetoExcel()
+        Next
+
         For i = 0 To Me.CCIplates.Count - 1
             fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
             CCIplates(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).templatePath))
             CCIplates(i).SavetoExcel()
         Next
+
         For i = 0 To Me.Poles.Count - 1
             fileNum = Format(" ({0})", i.ToString)
             Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
             Poles(i).SavetoExcel()
         Next
+
     End Sub
 #End Region
 
