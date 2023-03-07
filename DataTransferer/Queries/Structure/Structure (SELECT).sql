@@ -84,16 +84,13 @@ Begin
 		AND fnd.structure_id = @strID
 		AND fnd.ID = pl.pile_id
 
-	--Anchor Block
-	Select * From fnd.anchor_block WHERE bus_unit=@BU AND structure_id=@strID
-
 	--Soil
 	INSERT INTO @SoilProfileIDs 
 	SELECT soil_profile_id sp_id FROM fnd.drilled_pier WHERE bus_unit = @BU AND structure_id = @strID
 	UNION ALL
 	SELECT soil_profile_id sp_id FROM fnd.pile WHERE bus_unit = @BU AND structure_id = @strID
 	UNION ALL
-	SELECT soil_profile_id sp_id FROM fnd.anchor_block WHERE bus_unit = @BU AND structure_id = @strID
+	SELECT soil_profile_id sp_id FROM fnd.anchor_block ab, fnd.anchor_block_tool abt WHERE abt.bus_unit = @BU AND abt.structure_id = @strID AND ab.anchor_block_tool_id = abt.ID
 
 	--Soil Profiles
 	Select sp.* 
@@ -360,4 +357,29 @@ Begin
 
 	--Drilled Pier Tool
 	Select * From fnd.drilled_pier_tool WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Guy Anchor Block Tool
+	Select * From fnd.anchor_block_tool WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Guy Anchor Blocks
+	Select gab.* 
+	From 
+		fnd.anchor_block gab
+		,fnd.anchor_block_tool fnd
+	WHERE
+		fnd.bus_unit = @BU
+		AND fnd.structure_id = @strID
+		AND fnd.ID = gab.anchor_block_tool_id
+
+	--Guy Anchor Profiles
+	Select gap.* 
+	From 
+		fnd.anchor_block_profile gap
+		,fnd.anchor_block gab
+		,fnd.anchor_block_tool fnd
+	WHERE
+		fnd.bus_unit = @BU
+		AND fnd.structure_id = @strID
+		AND fnd.ID = gab.anchor_block_tool_id
+		AND gap.ID = gab.anchor_profile_id
 END

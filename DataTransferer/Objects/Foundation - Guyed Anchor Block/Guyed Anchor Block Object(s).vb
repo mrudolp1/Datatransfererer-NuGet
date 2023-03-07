@@ -173,6 +173,10 @@ Partial Public Class AnchorBlockFoundation
         SQLInsert = ""
         SQLInsert = CCI_Engineering_Templates.My.Resources.Anchor_Block_Tool__INSERT
 
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+
         'Guy Anchors
         For Each ab In Me.AnchorBlocks
             _abInsert += ab.SQLInsert + vbCrLf
@@ -660,6 +664,11 @@ Partial Public Class AnchorBlock
     Public Overrides Function SQLInsert() As String
         SQLInsert = ""
         SQLInsert = CCI_Engineering_Templates.My.Resources.Anchor_Block__INSERT
+
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+
         SQLInsert = SQLInsert.Replace("--[ANCHOR BLOCK PROFILE]", Me.AnchorProfile.SQLInsert)
         SQLInsert = SQLInsert.Replace("--[ANCHOR BLOCK SOIL PROFILE]", Me.SoilProfile.SQLInsert)
 
@@ -668,7 +677,7 @@ Partial Public Class AnchorBlock
             resInsert += res.Insert & vbCrLf
         Next
 
-        SQLInsert = SQLInsert.Replace("", resInsert)
+        SQLInsert = SQLInsert.Replace("--[ANCHOR BLOCK RESULTS]", resInsert)
         SQLInsert = SQLInsert.TrimEnd
 
         Return SQLInsert
@@ -849,12 +858,11 @@ Partial Public Class AnchorBlock
             End If
         Next
 
-
         If isExcel Then
             Dim res As New EDSResult
 
             For Each resRow As DataRow In strDS.Tables("Anchor Block Result").Rows
-                If DBtoNullableInt(resRow.Item("local_anchor_block_id")) = Me.local_anchor_profile_id Then
+                If DBtoNullableInt(resRow.Item("local_anchor_id")) = Me.local_anchor_id Then
                     res = New EDSResult(resRow, Me)
                     res.EDSTableName = "fnd.anchor_block_results"
                     res.ForeignKeyName = "anchor_block_id"
@@ -863,6 +871,7 @@ Partial Public Class AnchorBlock
                     res.modified_person_id = Me.modified_person_id
                     Dim x As AnchorBlockFoundation = Me.Parent
                     x.Results.Add(res)
+                    Me.Results.Add(res)
                 End If
             Next
         End If

@@ -7,7 +7,7 @@ BEGIN
 		VALUES([INSERT VALUES])
 	SELECT @TopLevelID=ID FROM @TopLevel
 
-	--[REQUIRED CHILDREN]
+	--[ANCHOR BLOCKS]
 
 	DELETE FROM @TopLevel --Tool
 	DELETE FROM @SubLevel1 --Anchor Block

@@ -92,9 +92,7 @@ Partial Public Class EDSStructure
                         "Pier and Pad",
                         "Unit Base",
                         "Pile",
-                        "Pile Locations",
-                        "Drilled Pier",
-                        "Anchor Block",
+                        "Pile Locations", '"Drilled Pier",'"Anchor Block",
                         "Soil Profiles",
                         "Soil Layers",
                         "CCIplates",
@@ -126,9 +124,8 @@ Partial Public Class EDSStructure
                         "Embedded Pole",
                         "Drilled Pier Foundation",
                         "Guy Anchor Block Tool",
-                        "Guy Anchors",
-                        "Guy Anchor Profiles",
-                        "Guy Anchor Results"}
+                        "Guy Anchor Blocks",
+                        "Guy Anchor Profiles"}
 
 
         Using strDS As New DataSet
@@ -178,7 +175,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
