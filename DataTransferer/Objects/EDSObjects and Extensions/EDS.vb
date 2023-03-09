@@ -27,16 +27,13 @@ Partial Public MustInherit Class EDSObject
         Get
             Return Me.Parent?.ParentStructure
         End Get
-        'Set(value As EDSStructure)
-
-        'End Set
     End Property
     <Category("EDS"), Description(""), DisplayName("BU")>
     Public Property bus_unit As String
     <Category("EDS"), Description(""), DisplayName("Structure ID")>
     Public Property structure_id As String
     <Category("EDS"), Description(""), DisplayName("Work Order")>
-    Public Property work_order_seq_num As String = "1234526789"
+    Public Property work_order_seq_num As String
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property activeDatabase As String
     <Category("EDS"), Description(""), Browsable(False)>
@@ -44,7 +41,7 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property modified_person_id As Integer?
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String = "DP Test"
+    Public Property process_stage As String
 
     'Public Property differences As List(Of ObjectsComparer.Difference)
 
@@ -248,14 +245,14 @@ Partial Public MustInherit Class EDSExcelObject
 
         'Try
         wb.LoadDocument(templatePath, fileType)
-            wb.BeginUpdate()
+        wb.BeginUpdate()
 
-            'Put the jelly in the donut
-            workBookFiller(wb)
+        'Put the jelly in the donut
+        workBookFiller(wb)
 
-            wb.Calculate()
-            wb.EndUpdate()
-            wb.SaveDocument(workBookPath, fileType)
+        wb.Calculate()
+        wb.EndUpdate()
+        wb.SaveDocument(workBookPath, fileType)
 
         'Catch ex As Exception
         '    Debug.Print("Error Saving Workbook: " & ex.Message)
