@@ -9,9 +9,9 @@ BEGIN
 
 	--[ANCHOR BLOCKS]
 
-	DELETE FROM @TopLevel --Tool
-	DELETE FROM @SubLevel1 --Anchor Block
-	DELETE FROM @SubLevel2 --Pier Profile
-	DELETE FROM @SubLevel3 --Soil Profile
-	DELETE FROM @SubLevel4 --NOTHING
+	DELETE FROM @TopLevel  --Tool
+	DELETE FROM @SubLevel1 --Soil Profile
+	DELETE FROM @SubLevel2 --Anchor
+	DELETE FROM @SubLevel3 --Anchor Profile
+	DELETE FROM @SubLevel4 --NOT USED
 END

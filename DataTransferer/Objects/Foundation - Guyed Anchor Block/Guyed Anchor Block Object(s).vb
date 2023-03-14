@@ -15,7 +15,7 @@ Partial Public Class AnchorBlockFoundation
 
     Public Property AnchorBlocks As New List(Of AnchorBlock)
 
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("File Ver")>
+    <Category("Guy Anchor Block Tool"), Description(""), DisplayName("File Ver")>
     Public Property file_ver() As String
         Get
             Return Me._file_ver
@@ -24,7 +24,7 @@ Partial Public Class AnchorBlockFoundation
             Me._file_ver = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Modified")>
+    <Category("Guy Anchor Block Tool"), Description(""), DisplayName("Modified")>
     Public Property modified() As Boolean?
         Get
             Return Me._modified
@@ -81,7 +81,7 @@ Partial Public Class AnchorBlockFoundation
             End Try
         Next
 
-        Dim dr As DataRow = excelDS.Tables("Anchor Block Tool").Rows(0)
+        Dim dr As DataRow = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
 
         ConstructMe(dr)
 
@@ -126,7 +126,7 @@ Partial Public Class AnchorBlockFoundation
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Tool"
+            Return "Guy Anchor Block Tool"
         End Get
     End Property
 
@@ -440,6 +440,10 @@ Partial Public Class AnchorBlockFoundation
             Dim gab_tia_current As String
             Dim gab_rev_h_section_15_5 As Boolean?
 
+            With .Worksheets("SUMMARY")
+                .Range("EDSReactions").Value = True
+            End With
+
             With .Worksheets("Tool (SAPI)")
                 If Not IsNothing(Me.ID) Then
                     .Range("A3").Value = CType(Me.ID, Integer)
@@ -498,10 +502,10 @@ Partial Public Class AnchorBlockFoundation
                     .Range("K3").Value = CType(work_order_seq_num, Integer)
                 End If
                 'Site Name
-                If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
-                    site_name = Me.ParentStructure?.SiteInfo.site_name
-                    .Range("J3").Value = CType(site_name, String)
-                End If
+                'If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
+                '    site_name = Me.ParentStructure?.SiteInfo.site_name
+                '    .Range("J3").Value = CType(site_name, String)
+                'End If
             End With
 
             'Anchors
@@ -514,7 +518,7 @@ Partial Public Class AnchorBlockFoundation
 
             'Loop through all anchor blocks
             For Each gab As AnchorBlock In AnchorBlocks
-                With .Worksheets("Anchors (SAPI")
+                With .Worksheets("Anchors (SAPI)")
                     If Not IsNothing(gab.ID) Then .Range("A" & anchorRow).Value = CType(gab.ID, Integer)
                     If Not IsNothing(gab.anchor_block_tool_id) Then .Range("B" & anchorRow).Value = CType(gab.anchor_block_tool_id, Integer)
                     If Not IsNothing(gab.anchor_profile_id) Then .Range("C" & anchorRow).Value = CType(gab.anchor_profile_id, Integer)
@@ -648,7 +652,7 @@ Partial Public Class AnchorBlock
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block"
+            Return "Guy Anchor Blocks"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
@@ -729,7 +733,7 @@ Partial Public Class AnchorBlock
     Private _reaction_location As String
     Private _local_soil_profile_id As Integer?
     Private _local_anchor_profile_id As Integer?
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Anchor Profile Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Profile Id")>
     Public Property anchor_profile_id() As Integer?
         Get
             Return Me._anchor_profile_id
@@ -738,7 +742,7 @@ Partial Public Class AnchorBlock
             Me._anchor_profile_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Anchor Block Tool Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Block Tool Id")>
     Public Property anchor_block_tool_id() As Integer?
         Get
             Return Me._anchor_block_tool_id
@@ -747,7 +751,7 @@ Partial Public Class AnchorBlock
             Me._anchor_block_tool_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Soil Profile Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Soil Profile Id")>
     Public Property soil_profile_id() As Integer?
         Get
             Return Me._soil_profile_id
@@ -756,7 +760,7 @@ Partial Public Class AnchorBlock
             Me._soil_profile_id = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Anchor Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Id")>
     Public Property local_anchor_id() As Integer?
         Get
             Return Me._local_anchor_id
@@ -765,7 +769,7 @@ Partial Public Class AnchorBlock
             Me._local_anchor_id = Value
         End Set
     End Property
-    '<Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Position")>
+    '<Category("Guy Anchor Blocks"), Description(""), DisplayName("Reaction Position")>
     'Public Property reaction_position() As Integer?
     '    Get
     '        Return Me._reaction_position
@@ -774,7 +778,7 @@ Partial Public Class AnchorBlock
     '        Me._reaction_position = Value
     '    End Set
     'End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Reaction Location")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Reaction Location")>
     Public Property reaction_location() As String
         Get
             Return Me._reaction_location
@@ -783,7 +787,7 @@ Partial Public Class AnchorBlock
             Me._reaction_location = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Profile"), Description(""), DisplayName("Local Soil Profile Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Soil Profile Id")>
     Public Property local_soil_profile_id() As Integer?
         Get
             Return Me._local_soil_profile_id
@@ -792,7 +796,7 @@ Partial Public Class AnchorBlock
             Me._local_soil_profile_id = Value
         End Set
     End Property
-    <Category("AnchorBlock"), Description(""), DisplayName("Local Anchor Profile Id")>
+    <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Profile Id")>
     Public Property local_anchor_profile_id() As Integer?
         Get
             Return Me._local_anchor_profile_id
@@ -853,6 +857,7 @@ Partial Public Class AnchorBlock
                     abLayer = (New AnchorBlockSoilLayer(layerRow, abSProfile))
                     If If(isExcel, abSProfile.local_soil_profile_id = abLayer.local_soil_profile_id, Me.soil_profile_id = abLayer.Soil_Profile_id) Then
                         abSProfile.ABSoilLayers.Add(abLayer)
+                        abSProfile.SoilLayers.Add(abLayer)
                     End If
                 Next
             End If
@@ -861,7 +866,7 @@ Partial Public Class AnchorBlock
         If isExcel Then
             Dim res As New EDSResult
 
-            For Each resRow As DataRow In strDS.Tables("Anchor Block Result").Rows
+            For Each resRow As DataRow In strDS.Tables("Guy Anchor Result").Rows
                 If DBtoNullableInt(resRow.Item("local_anchor_id")) = Me.local_anchor_id Then
                     res = New EDSResult(resRow, Me)
                     res.EDSTableName = "fnd.anchor_block_results"
@@ -883,9 +888,9 @@ Partial Public Class AnchorBlock
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_block_tool_id.ToString.FormatDBValue) '@TopLevelID
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.anchor_profile_id.ToString.FormatDBValue) 'SubLevel1ID
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.soil_profile_id.ToString.FormatDBValue) 'SubLevel2ID
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") 'Me.anchor_block_tool_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel3ID") 'Me.anchor_profile_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID") 'Me.soil_profile_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_location.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_anchor_profile_id.ToString.FormatDBValue)
@@ -931,10 +936,10 @@ Partial Public Class AnchorBlock
         Dim categoryName As String = Me.EDSObjectFullName
         Dim otherToCompare As AnchorBlock = TryCast(other, AnchorBlock)
         If otherToCompare Is Nothing Then Return False
-        Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.anchor_block_tool_id.CheckChange(otherToCompare.anchor_block_tool_id, changes, categoryName, "Anchor Block Tool Id"), Equals, False)
-        Equals = If(Me.anchor_profile_id.CheckChange(otherToCompare.anchor_profile_id, changes, categoryName, "Anchor Profile Id"), Equals, False)
-        Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals, False)
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        'Equals = If(Me.anchor_block_tool_id.CheckChange(otherToCompare.anchor_block_tool_id, changes, categoryName, "Anchor Block Tool Id"), Equals, False)
+        'Equals = If(Me.anchor_profile_id.CheckChange(otherToCompare.anchor_profile_id, changes, categoryName, "Anchor Profile Id"), Equals, False)
+        'Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals, False)
         Equals = If(Me.local_anchor_id.CheckChange(otherToCompare.local_anchor_id, changes, categoryName, "Local Anchor Id"), Equals, False)
         Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals, False)
         Equals = If(Me.local_anchor_profile_id.CheckChange(otherToCompare.local_anchor_profile_id, changes, categoryName, "Local Anchor Profile Id"), Equals, False)
@@ -957,7 +962,7 @@ Partial Public Class AnchorBlockProfile
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Profile"
+            Return "Guy Anchor Profiles"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
@@ -972,7 +977,7 @@ Partial Public Class AnchorBlockProfile
 
     Public Overrides Function SQLInsert() As String
         SQLInsert = ""
-        SQLInsert = CCI_Engineering_Templates.My.Resources.General__INSERT
+        SQLInsert = CCI_Engineering_Templates.My.Resources.Anchor_Block_Profile__INSERT
         SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
         SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
         SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
@@ -1027,7 +1032,7 @@ Partial Public Class AnchorBlockProfile
     Private _structural_check As Boolean?
     Private _local_anchor_profile_id As Integer?
 
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Depth")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Depth")>
     Public Property anchor_depth() As Double?
         Get
             Return Me._anchor_depth
@@ -1036,7 +1041,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_depth = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Width")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Width")>
     Public Property anchor_width() As Double?
         Get
             Return Me._anchor_width
@@ -1045,7 +1050,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_width = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Thickness")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Thickness")>
     Public Property anchor_thickness() As Double?
         Get
             Return Me._anchor_thickness
@@ -1054,7 +1059,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_thickness = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Length")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Length")>
     Public Property anchor_length() As Double?
         Get
             Return Me._anchor_length
@@ -1063,7 +1068,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_length = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Toe Width")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Toe Width")>
     Public Property anchor_toe_width() As Double?
         Get
             Return Me._anchor_toe_width
@@ -1072,7 +1077,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_toe_width = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Top Rebar Size")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Top Rebar Size")>
     Public Property anchor_top_rebar_size() As Integer?
         Get
             Return Me._anchor_top_rebar_size
@@ -1081,7 +1086,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_top_rebar_size = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Top Rebar Quantity")>
+    <Category("Guy Anchor Profiles"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Top Rebar Quantity")>
     Public Property anchor_top_rebar_quantity() As Integer?
         Get
             Return Me._anchor_top_rebar_quantity
@@ -1090,7 +1095,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_top_rebar_quantity = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Front Rebar Size")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Size")>
     Public Property anchor_front_rebar_size() As Integer?
         Get
             Return Me._anchor_front_rebar_size
@@ -1099,7 +1104,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_front_rebar_size = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Front Rebar Quantity")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Quantity")>
     Public Property anchor_front_rebar_quantity() As Integer?
         Get
             Return Me._anchor_front_rebar_quantity
@@ -1108,7 +1113,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_front_rebar_quantity = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Stirrup Size")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Stirrup Size")>
     Public Property anchor_stirrup_size() As Integer?
         Get
             Return Me._anchor_stirrup_size
@@ -1117,7 +1122,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_stirrup_size = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Diameter")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Diameter")>
     Public Property anchor_shaft_diameter() As Double?
         Get
             Return Me._anchor_shaft_diameter
@@ -1126,7 +1131,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_diameter = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Quantity")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Quantity")>
     Public Property anchor_shaft_quantity() As Integer?
         Get
             Return Me._anchor_shaft_quantity
@@ -1135,7 +1140,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_quantity = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Area Override")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Area Override")>
     Public Property anchor_shaft_area_override() As Double?
         Get
             Return Me._anchor_shaft_area_override
@@ -1144,7 +1149,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_area_override = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Shear Leg Factor")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Shear Leg Factor")>
     Public Property anchor_shaft_shear_leg_factor() As Double?
         Get
             Return Me._anchor_shaft_shear_leg_factor
@@ -1153,7 +1158,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_shear_leg_factor = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Section")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Section")>
     Public Property anchor_shaft_section() As String
         Get
             Return Me._anchor_shaft_section
@@ -1162,7 +1167,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_section = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Rebar Grade")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Rebar Grade")>
     Public Property anchor_rebar_grade() As Double?
         Get
             Return Me._anchor_rebar_grade
@@ -1171,7 +1176,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_rebar_grade = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Concrete Compressive Strength")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Concrete Compressive Strength")>
     Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
@@ -1180,7 +1185,7 @@ Partial Public Class AnchorBlockProfile
             Me._concrete_compressive_strength = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Clear Cover")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Clear Cover")>
     Public Property clear_cover() As Double?
         Get
             Return Me._clear_cover
@@ -1189,7 +1194,7 @@ Partial Public Class AnchorBlockProfile
             Me._clear_cover = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Yield Strength")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Yield Strength")>
     Public Property anchor_shaft_yield_strength() As Double?
         Get
             Return Me._anchor_shaft_yield_strength
@@ -1198,7 +1203,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_yield_strength = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Ultimate Strength")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Ultimate Strength")>
     Public Property anchor_shaft_ultimate_strength() As Double?
         Get
             Return Me._anchor_shaft_ultimate_strength
@@ -1207,7 +1212,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_ultimate_strength = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Rebar Known")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Rebar Known")>
     Public Property rebar_known() As Boolean?
         Get
             Return Me._rebar_known
@@ -1216,7 +1221,7 @@ Partial Public Class AnchorBlockProfile
             Me._rebar_known = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Anchor Shaft Known")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Known")>
     Public Property anchor_shaft_known() As Boolean?
         Get
             Return Me._anchor_shaft_known
@@ -1225,7 +1230,7 @@ Partial Public Class AnchorBlockProfile
             Me._anchor_shaft_known = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Basic Soil Check")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Basic Soil Check")>
     Public Property basic_soil_check() As Boolean?
         Get
             Return Me._basic_soil_check
@@ -1234,7 +1239,7 @@ Partial Public Class AnchorBlockProfile
             Me._basic_soil_check = Value
         End Set
     End Property
-    <Category("Guyed Anchor Block Details"), Description(""), DisplayName("Structural Check")>
+    <Category("Guy Anchor Profiles"), Description(""), DisplayName("Structural Check")>
     Public Property structural_check() As Boolean?
         Get
             Return Me._structural_check
@@ -1441,15 +1446,15 @@ Partial Public Class AnchorBlockSoilProfile
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Soil Profile"
+            Return "Soil Profiles"
         End Get
     End Property
 
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Return "fnd.soil_profile"
-        End Get
-    End Property
+    'Public Overrides ReadOnly Property EDSTableName As String
+    '    Get
+    '        Return "fnd.soil_profile"
+    '    End Get
+    'End Property
 
     Public Sub New()
 
@@ -1512,7 +1517,7 @@ Partial Public Class AnchorBlockSoilLayer
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Soil Layer"
+            Return "Soil Layers"
         End Get
     End Property
 
@@ -1537,7 +1542,7 @@ Partial Public Class AnchorBlockResult
 
     Public ReadOnly Property EDSObjectName As String
         Get
-            Return "Anchor Block Result"
+            Return "Guy Anchor Result"
         End Get
     End Property
 

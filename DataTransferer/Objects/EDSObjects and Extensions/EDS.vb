@@ -387,6 +387,10 @@ Partial Public Class EDSResult
     Public Function SQLInsertValues(Optional ByVal ParentID As Integer? = Nothing) As String
         SQLInsertValues = ""
 
+        If Me.EDSTableName = "fnd.anchor_block_results" Then
+            EDSTableDepth = 3
+        End If
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
