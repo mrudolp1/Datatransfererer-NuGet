@@ -598,9 +598,26 @@ Partial Public Class tnxModel
         Me.options.windDirections.SuppressWindPatternLoading = DBtoNullableBool(Data.Item("SuppressWindPatternLoading"))
     End Sub
 
-    <Category("Constructor"), Description("Create TNX object from TNX file.")>
-    Public Sub New(ByVal tnxPath As String, Optional ByRef Parent As EDSObject = Nothing)
+
+    <Category("Constructor"), Description("Create TNX object from TNX file. Accepts EDSObject as parent.")>
+    Public Sub New(ByVal tnxPath As String, Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        BuildFromFile(tnxPath)
+
+    End Sub
+
+    <Category("Constructor"), Description("Create TNX object from TNX file. Accepts EDSStructure as parent.")>
+    Public Sub New(ByVal tnxPath As String, Optional ByVal Parent As EDSStructure = Nothing)
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        BuildFromFile(tnxPath)
+
+    End Sub
+
+
+    <Description("Build TNX object from TNX file.")>
+    Public Sub BuildFromFile(ByVal tnxPath As String)
 
         Me.filePath = tnxPath
 
@@ -611,8 +628,6 @@ Partial Public Class tnxModel
         Dim sectionFilter As String = ""
         Dim caseFilter As String = ""
         Dim dbFileFilter As String = ""
-
-        'Dim testLines As String() = File.ReadAllLines(tnxPath)
 
         For Each line In File.ReadLines(tnxPath)
 
