@@ -1314,6 +1314,18 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details_results ([LEG REINFORCEMENT DETAILS RESULT FIELDS]) 
+        '''	VALUES([LEG REINFORCEMENT DETAILS RESULT VALUES])
+        '''
+        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Details_Results_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_Details_Results_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to BEGIN
         '''
         '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
@@ -1399,14 +1411,14 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to 	INSERT INTO conn.plates ([LEG REINFORCEMENT DETAIL FIELDS]) 
+        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details ([LEG REINFORCEMENT DETAIL FIELDS]) 
         '''	OUTPUT INSERTED.ID INTO @SubLevel1
         '''	VALUES([LEG REINFORCEMENT DETAIL VALUES])
         '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
         '''
-        '''	--BEGIN --[LEG REINFORCEMENT DETAIL RESULTS INSERT BEGIN]
-        '''	--[LEG REINFORCEMENT DETAIL RESULTS INSERT]
-        '''	--END --[LEG REINFORCEMENT DETAIL RESULTS INSERT END]
+        '''	--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]
+        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]
         '''
         '''	--[LEG REINFORCEMENT DETAIL INSERT].
         '''</summary>
