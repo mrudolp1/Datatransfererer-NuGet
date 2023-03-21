@@ -173,7 +173,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         Dim excelDS As New DataSet
         Dim dr = Row
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.Soil_Profile_id = DBtoNullableInt(dr.Item("soil_Profile_id"))
+        'Me.Soil_Profile_id = DBtoNullableInt(dr.Item("soil_Profile_id")) 'deactivating for testing a piles file. 
         Me.bottom_depth = DBtoNullableDbl(dr.Item("bottom_depth"))
         Me.effective_soil_density = DBtoNullableDbl(dr.Item("effective_soil_density"))
         Me.cohesion = DBtoNullableDbl(dr.Item("cohesion"))
