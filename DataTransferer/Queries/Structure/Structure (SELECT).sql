@@ -85,15 +85,15 @@ Begin
 		AND fnd.ID = pl.pile_id
 
 	--Anchor Block
-	Select * From fnd.anchor_block WHERE bus_unit=@BU AND structure_id=@strID
+	--Select * From fnd.anchor_block WHERE bus_unit=@BU AND structure_id=@strID
 
 	--Soil
 	INSERT INTO @SoilProfileIDs 
 	SELECT soil_profile_id sp_id FROM fnd.drilled_pier WHERE bus_unit = @BU AND structure_id = @strID
 	UNION ALL
 	SELECT soil_profile_id sp_id FROM fnd.pile WHERE bus_unit = @BU AND structure_id = @strID
-	UNION ALL
-	SELECT soil_profile_id sp_id FROM fnd.anchor_block WHERE bus_unit = @BU AND structure_id = @strID
+	--UNION ALL
+	--SELECT soil_profile_id sp_id FROM fnd.anchor_block WHERE bus_unit = @BU AND structure_id = @strID
 
 	--Soil Profiles
 	Select sp.* 
@@ -360,4 +360,17 @@ Begin
 
 	--Drilled Pier Tool
 	Select * From fnd.drilled_pier_tool WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Leg Reinforcement
+	Select * From tnx.memb_leg_reinforcement WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Leg Reinforcement Details
+	Select lrdet.* 
+	From 
+		tnx.memb_leg_reinforcement lr
+		,tnx.memb_leg_reinforcement_details lrdet
+	WHERE
+		lr.bus_unit = @BU
+		AND lr.structure_id = @strID
+		AND lr.ID = lrdet.leg_reinforcement_id
 END
