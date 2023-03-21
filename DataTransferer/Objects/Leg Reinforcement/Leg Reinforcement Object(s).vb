@@ -3,228 +3,203 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
-Public Class LegReinforcement
+'Imports Microsoft.Office.Interop
+
+Partial Public Class LegReinforcement
+    Inherits EDSExcelObject
+
+
+#Region "Inheritted"
+    '''Must override these inherited properties
+    Public Overrides ReadOnly Property EDSObjectName As String = "LegReinforcements"
+    Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement"
+    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Leg Reinforcement Tool.xlsm")
+    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+        'Add additional sub table references here. Table names should be consistent with EDS table names. 
+        Get
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Leg Reinforcements", "A1:C2", "Details (SAPI)"),
+                                            New EXCELDTParameter("Leg Reinforcement Details", "A1:AX201", "Sub Tables (SAPI)"),
+                                            New EXCELDTParameter("Leg Reinforcement Results", "A2:D202", "Results (SAPI)")}
+
+            'note: Excel table names are consistent with EDS table names to limit work required within constructors
+
+        End Get
+    End Property
+
+    Private _Insert As String
+    Private _Update As String
+    Private _Delete As String
+
+    Public Overrides Function SQLInsert() As String
+
+        If _Insert = "" Then
+            _Insert = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_INSERT
+        End If
+        SQLInsert = _Insert
+
+        'Top Level
+        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT FIELDS]", Me.SQLInsertFields)
+
+        'Details
+        If Me.LegReinforcementDetails.Count > 0 Then
+            'SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
+            'SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+            For Each row As LegReinforcementDetail In LegReinforcementDetails
+                SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
+                SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
+                SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+            Next
+        End If
+
+        'note: additional insert commands are imbedded within objects sharing similar relationships
+
+        Return SQLInsert
+
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+        'This section not only needs to call update commands but also needs to call insert and delete commands since subtables may involve adding or deleting records
+
+        If _Update = "" Then
+            _Update = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_UPDATE
+        End If
+        SQLUpdate = _Update
+
+        'Top Level
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+
+        'Details
+        If Me.LegReinforcementDetails.Count > 0 Then
+            'SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]")
+            'SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL UPDATE END]", "END --[LEG REINFORCEMENT DETAIL UPDATE END]")
+            For Each row As LegReinforcementDetail In LegReinforcementDetails
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    'following fields include default values and therefore are removed from check below: end_connection_type, applied_load_type, slenderness_ratio_type, print_bolt_on_connections, reinforcement_type
+                    If IsSomething(row.leg_load_time_mod_option) Or IsSomething(row.leg_crushing) Or IsSomethingString(row.intermeditate_connection_type) Or IsSomething(row.intermeditate_connection_spacing) Or IsSomething(row.ki_override) Or IsSomething(row.leg_diameter) Or IsSomething(row.leg_thickness) Or IsSomething(row.leg_grade) Or IsSomething(row.leg_unbraced_length) Or IsSomething(row.rein_diameter) Or IsSomething(row.rein_thickness) Or IsSomething(row.rein_grade) Or IsSomething(row.leg_length) Or IsSomething(row.rein_length) Or IsSomething(row.set_top_to_bottom) Or IsSomething(row.flange_bolt_quantity_bot) Or IsSomething(row.flange_bolt_circle_bot) Or IsSomething(row.flange_bolt_orientation_bot) Or IsSomething(row.flange_bolt_quantity_top) Or IsSomething(row.flange_bolt_circle_top) Or IsSomething(row.flange_bolt_orientation_top) Or IsSomethingString(row.threaded_rod_size_bot) Or IsSomethingString(row.threaded_rod_mat_bot) Or IsSomething(row.threaded_rod_quantity_bot) Or IsSomething(row.threaded_rod_unbraced_length_bot) Or IsSomethingString(row.threaded_rod_size_top) Or IsSomethingString(row.threaded_rod_mat_top) Or IsSomething(row.threaded_rod_quantity_top) Or IsSomething(row.threaded_rod_unbraced_length_top) Or IsSomething(row.stiffener_height_bot) Or IsSomething(row.stiffener_length_bot) Or IsSomething(row.stiffener_fillet_bot) Or IsSomething(row.stiffener_exx_bot) Or IsSomething(row.flange_thickness_bot) Or IsSomething(row.stiffener_height_top) Or IsSomething(row.stiffener_length_top) Or IsSomething(row.stiffener_fillet_top) Or IsSomething(row.stiffener_exx_top) Or IsSomething(row.flange_thickness_top) Or IsSomethingString(row.structure_ind) Or IsSomethingString(row.leg_reinforcement_name) Or IsSomething(row.top_elev) Or IsSomething(row.bot_elev) Then
+                        SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLUpdate)
+                        SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]")
+                        SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL UPDATE END]", "END --[LEG REINFORCEMENT DETAIL UPDATE END]")
+                    Else
+                        SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
+                    SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
+                    SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+                End If
+            Next
+        End If
+
+        'note: additional update commands are imbedded within objects sharing similar relationships
+
+        Return SQLUpdate
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        'Top Level
+        If _Delete = "" Then
+            _Delete = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_DELETE
+        End If
+        SQLDelete = _Delete
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+
+        'Details
+        If Me.LegReinforcementDetails.Count > 0 Then
+            SQLDelete = SQLDelete.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL DELETE BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL DELETE BEGIN]")
+            SQLDelete = SQLDelete.Replace("--END --[LEG REINFORCEMENT DETAIL DELETE END]", "END --[LEG REINFORCEMENT DETAIL DELETE END]")
+            For Each row As LegReinforcementDetail In LegReinforcementDetails
+                SQLDelete = SQLDelete.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLDelete)
+            Next
+        End If
+
+        'note: additional delete commands are imbedded within objects sharing similar relationships (e.g. plate details delete located within Connections Object)
+
+        Return SQLDelete
+
+    End Function
+
+#End Region
 
 #Region "Define"
-    Private prop_leg_rein_id As Integer
-    Private prop_local_tool_id As Integer?
-    Private prop_leg_section_el As String
-    Private prop_data_stored As Boolean
-    'Private prop_wind_load As Double?
-    'Private prop_dead_load As Double?
-    Private prop_rein_type As String
-    Private prop_leg_load_time_of_mod As Boolean
-    Private prop_end_connections As String 'string leaves potential for additional options in the future
-    Private prop_leg_crushing As Boolean
-    Private prop_applied_load_methodology As String 'string leaves potential for additional options in the future
-    Private prop_slenderness_ratio_type As String 'string leaves potential for additional options in the future
-    Private prop_intermediate_conn_type As String 'string leaves potential for additional options in the future
-    Private prop_intermediate_conn_spacing As Double?
-    Private prop_ki_override As Double?
-    Private prop_leg_dia As Double?
-    Private prop_leg_thickness As Double?
-    Private prop_leg_yield_strength As Double?
-    Private prop_leg_unbraced_length As Double?
-    Private prop_rein_dia As Double?
-    Private prop_rein_thickness As Double?
-    Private prop_rein_yield_strength As Double?
-    Private prop_print_bolton_conn_info As Boolean
-    Public Property BoltOnConnections As New List(Of BoltOnConnection)
-    Public Property ArbitraryShapes As New List(Of ArbitraryShape)
-    'Public Property tnxSectionDatabaseInfos As New List(Of tnxSectionDatabaseInfo)
-    'Public Property tnxMaterialDatabaseInfos As New List(Of tnxMaterialDatabaseInfo)
 
-    'assign inputs for leg location and location, or row,  in tool
+    'Private _ID As Integer? 'Defined in EDSObject
+    'Private _tool_version As String 'Defined in EDSExcelObject
+    'Private _bus_unit As Integer? 'Defined in EDSObject
+    'Private _structure_id As String 'Defined in EDSObject
+    'Private _modified_person_id As Integer? 'Defined in EDSExcelObject
+    'Private _process_stage As String 'Defined in EDSExcelObject
+    Private _Structural_105 As Boolean?
 
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement ID")>
-    Public Property leg_rein_id() As Integer
+    Public Property LegReinforcementDetails As New List(Of LegReinforcementDetail)
+
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Id")>
+    'Public Property ID() As Integer?
+    '    Get
+    '        Return Me._ID
+    '    End Get
+    '    Set
+    '        Me._ID = Value
+    '    End Set
+    'End Property
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Tool Version")>
+    'Public Property tool_version() As String
+    '    Get
+    '        Return Me._tool_version
+    '    End Get
+    '    Set
+    '        Me._tool_version = Value
+    '    End Set
+    'End Property
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Bus Unit")>
+    'Public Property bus_unit() As Integer?
+    '    Get
+    '        Return Me._bus_unit
+    '    End Get
+    '    Set
+    '        Me._bus_unit = Value
+    '    End Set
+    'End Property
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Structure Id")>
+    'Public Property structure_id() As String
+    '    Get
+    '        Return Me._structure_id
+    '    End Get
+    '    Set
+    '        Me._structure_id = Value
+    '    End Set
+    'End Property
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Modified Person Id")>
+    'Public Property modified_person_id() As Integer?
+    '    Get
+    '        Return Me._modified_person_id
+    '    End Get
+    '    Set
+    '        Me._modified_person_id = Value
+    '    End Set
+    'End Property
+    '<Category("Leg Reinforcements"), Description(""), DisplayName("Process Stage")>
+    'Public Property process_stage() As String
+    '    Get
+    '        Return Me._process_stage
+    '    End Get
+    '    Set
+    '        Me._process_stage = Value
+    '    End Set
+    'End Property
+    <Category("Leg Reinforcements"), Description(""), DisplayName("Structural 105")>
+    Public Property Structural_105() As Boolean?
         Get
-            Return Me.prop_leg_rein_id
+            Return Me._Structural_105
         End Get
         Set
-            Me.prop_leg_rein_id = Value
+            Me._Structural_105 = Value
         End Set
     End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Local Tool ID")>
-    Public Property local_tool_id() As Integer?
-        Get
-            Return Me.prop_local_tool_id
-        End Get
-        Set
-            Me.prop_local_tool_id = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Section Elevations")>
-    Public Property leg_section_el() As String
-        Get
-            Return Me.prop_leg_section_el
-        End Get
-        Set
-            Me.prop_leg_section_el = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Data Stored to Tool")>
-    Public Property data_stored() As Boolean
-        Get
-            Return Me.prop_data_stored
-        End Get
-        Set
-            Me.prop_data_stored = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Type")>
-    Public Property rein_type() As String
-        Get
-            Return Me.prop_rein_type
-        End Get
-        Set
-            Me.prop_rein_type = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Load at Time of Mod")>
-    Public Property leg_load_time_of_mod() As Boolean
-        Get
-            Return Me.prop_leg_load_time_of_mod
-        End Get
-        Set
-            Me.prop_leg_load_time_of_mod = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("End Connections")>
-    Public Property end_connections() As String
-        Get
-            Return Me.prop_end_connections
-        End Get
-        Set
-            Me.prop_end_connections = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Crushing")>
-    Public Property leg_crushing() As Boolean
-        Get
-            Return Me.prop_leg_crushing
-        End Get
-        Set
-            Me.prop_leg_crushing = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Applied Load Methodology")>
-    Public Property applied_load_methodology() As String
-        Get
-            Return Me.prop_applied_load_methodology
-        End Get
-        Set
-            Me.prop_applied_load_methodology = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Slenderness Ratio Type")>
-    Public Property slenderness_ratio_type() As String
-        Get
-            Return Me.prop_slenderness_ratio_type
-        End Get
-        Set
-            Me.prop_slenderness_ratio_type = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermediate Connection Type")>
-    Public Property intermediate_conn_type() As String
-        Get
-            Return Me.prop_intermediate_conn_type
-        End Get
-        Set
-            Me.prop_intermediate_conn_type = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermediate Connection Spacing")>
-    Public Property intermediate_conn_spacing() As Double?
-        Get
-            Return Me.prop_intermediate_conn_spacing
-        End Get
-        Set
-            Me.prop_intermediate_conn_spacing = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Ki, Existing Reinforcement K Factor, Override")>
-    Public Property ki_override() As Double?
-        Get
-            Return Me.prop_ki_override
-        End Get
-        Set
-            Me.prop_ki_override = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Diameter")>
-    Public Property leg_dia() As Double?
-        Get
-            Return Me.prop_leg_dia
-        End Get
-        Set
-            Me.prop_leg_dia = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Thickness")>
-    Public Property leg_thickness() As Double?
-        Get
-            Return Me.prop_leg_thickness
-        End Get
-        Set
-            Me.prop_leg_thickness = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Yield Strength, Fy")>
-    Public Property leg_yield_strength() As Double?
-        Get
-            Return Me.prop_leg_yield_strength
-        End Get
-        Set
-            Me.prop_leg_yield_strength = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Unbraced Length")>
-    Public Property leg_unbraced_length() As Double?
-        Get
-            Return Me.prop_leg_unbraced_length
-        End Get
-        Set
-            Me.prop_leg_unbraced_length = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Diameter")>
-    Public Property rein_dia() As Double?
-        Get
-            Return Me.prop_rein_dia
-        End Get
-        Set
-            Me.prop_rein_dia = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Thickness")>
-    Public Property rein_thickness() As Double?
-        Get
-            Return Me.prop_rein_thickness
-        End Get
-        Set
-            Me.prop_rein_thickness = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Yield Strength, Fy")>
-    Public Property rein_yield_strength() As Double?
-        Get
-            Return Me.prop_rein_yield_strength
-        End Get
-        Set
-            Me.prop_rein_yield_strength = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Print Bolt-On Connection Info")>
-    Public Property print_bolton_conn_info() As Boolean
-        Get
-            Return Me.prop_print_bolton_conn_info
-        End Get
-        Set
-            Me.prop_print_bolton_conn_info = Value
-        End Set
-    End Property
+
 #End Region
 
 #Region "Constructors"
@@ -232,1458 +207,1889 @@ Public Class LegReinforcement
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal LegReinforcementDataRow As DataRow, refID As Integer)
-        'General Leg Reinforcement Details
-        Try
-            Me.leg_rein_id = CType(LegReinforcementDataRow.Item("leg_rein_id"), Integer)
-        Catch
-            Me.leg_rein_id = 0
-        End Try 'Leg Reinforcement ID
-        Try
-            If Not IsDBNull(Me.local_tool_id = CType(LegReinforcementDataRow.Item("local_tool_id"), Integer)) Then
-                Me.local_tool_id = CType(LegReinforcementDataRow.Item("local_tool_id"), Integer)
-            Else
-                Me.local_tool_id = Nothing
-            End If
-        Catch
-            Me.local_tool_id = Nothing
-        End Try 'Leg Reinforcement Local Tool ID
-        Try
-            If Not IsDBNull(Me.leg_section_el = CType(LegReinforcementDataRow.Item("leg_section_el"), String)) Then
-                Me.leg_section_el = CType(LegReinforcementDataRow.Item("leg_section_el"), String)
-            Else
-                Me.leg_section_el = Nothing
-            End If
-        Catch
-            Me.leg_section_el = Nothing
-        End Try 'Leg Section Elevations
-        Try
-            If Not IsDBNull(Me.data_stored = CType(LegReinforcementDataRow.Item("data_stored"), Boolean)) Then
-                Me.data_stored = CType(LegReinforcementDataRow.Item("data_stored"), Boolean)
-            Else
-                Me.data_stored = Nothing
-            End If
-        Catch
-            Me.data_stored = Nothing
-        End Try 'Leg Reinforcement Data Stored
-        Try
-            If Not IsDBNull(Me.rein_type = CType(LegReinforcementDataRow.Item("rein_type"), String)) Then
-                Me.rein_type = CType(LegReinforcementDataRow.Item("rein_type"), String)
-            Else
-                Me.rein_type = Nothing
-            End If
-        Catch
-            Me.rein_type = Nothing
-        End Try 'Leg Reinforcement Type
-        Try
-            If Not IsDBNull(Me.leg_load_time_of_mod = CType(LegReinforcementDataRow.Item("leg_load_time_of_mod"), Boolean)) Then
-                Me.leg_load_time_of_mod = CType(LegReinforcementDataRow.Item("leg_load_time_of_mod"), Boolean)
-            Else
-                Me.leg_load_time_of_mod = Nothing
-            End If
-        Catch
-            Me.leg_load_time_of_mod = Nothing
-        End Try 'Leg Load at Time of Modification
-        Try
-            If Not IsDBNull(Me.end_connections = CType(LegReinforcementDataRow.Item("end_connections"), String)) Then
-                Me.end_connections = CType(LegReinforcementDataRow.Item("rein_type"), String)
-            Else
-                Me.end_connections = Nothing
-            End If
-        Catch
-            Me.end_connections = Nothing
-        End Try 'Leg Reinforcement End Connection Type
-        Try
-            If Not IsDBNull(Me.leg_crushing = CType(LegReinforcementDataRow.Item("leg_crushing"), Boolean)) Then
-                Me.leg_crushing = CType(LegReinforcementDataRow.Item("leg_crushing"), Boolean)
-            Else
-                Me.leg_crushing = Nothing
-            End If
-        Catch
-            Me.leg_crushing = Nothing
-        End Try 'Leg Crushing Applied
-        Try
-            If Not IsDBNull(Me.applied_load_methodology = CType(LegReinforcementDataRow.Item("applied_load_methodology"), String)) Then
-                Me.applied_load_methodology = CType(LegReinforcementDataRow.Item("applied_load_methodology"), String)
-            Else
-                Me.applied_load_methodology = Nothing
-            End If
-        Catch
-            Me.applied_load_methodology = Nothing
-        End Try 'Applied Load Methodology
-        Try
-            If Not IsDBNull(Me.slenderness_ratio_type = CType(LegReinforcementDataRow.Item("slenderness_ratio_type"), String)) Then
-                Me.slenderness_ratio_type = CType(LegReinforcementDataRow.Item("slenderness_ratio_type"), String)
-            Else
-                Me.slenderness_ratio_type = Nothing
-            End If
-        Catch
-            Me.slenderness_ratio_type = Nothing
-        End Try 'Slenderness Ratio Type
-        Try
-            If Not IsDBNull(Me.intermediate_conn_type = CType(LegReinforcementDataRow.Item("intermediate_conn_type"), String)) Then
-                Me.intermediate_conn_type = CType(LegReinforcementDataRow.Item("intermediate_conn_type"), String)
-            Else
-                Me.intermediate_conn_type = Nothing
-            End If
-        Catch
-            Me.intermediate_conn_type = Nothing
-        End Try 'Intermediate Connection Type
-        Try
-            If Not IsDBNull(Me.intermediate_conn_spacing = CType(LegReinforcementDataRow.Item("intermediate_conn_spacing"), Double)) Then
-                Me.intermediate_conn_spacing = CType(LegReinforcementDataRow.Item("intermediate_conn_spacing"), Double)
-            Else
-                Me.intermediate_conn_spacing = Nothing
-            End If
-        Catch
-            Me.intermediate_conn_spacing = Nothing
-        End Try 'Intermediate Connection Spacing
-        Try
-            If Not IsDBNull(Me.ki_override = CType(LegReinforcementDataRow.Item("ki_override"), Double)) Then
-                Me.ki_override = CType(LegReinforcementDataRow.Item("ki_override"), Double)
-            Else
-                Me.ki_override = Nothing
-            End If
-        Catch
-            Me.ki_override = Nothing
-        End Try 'Ki Override
-        Try
-            If Not IsDBNull(Me.leg_dia = CType(LegReinforcementDataRow.Item("leg_dia"), Double)) Then
-                Me.leg_dia = CType(LegReinforcementDataRow.Item("leg_dia"), Double)
-            Else
-                Me.leg_dia = Nothing
-            End If
-        Catch
-            Me.leg_dia = Nothing
-        End Try 'Leg Diameter
-        Try
-            If Not IsDBNull(Me.leg_thickness = CType(LegReinforcementDataRow.Item("leg_thickness"), Double)) Then
-                Me.leg_thickness = CType(LegReinforcementDataRow.Item("leg_thickness"), Double)
-            Else
-                Me.leg_thickness = Nothing
-            End If
-        Catch
-            Me.leg_thickness = Nothing
-        End Try 'Leg Thickness
-        Try
-            If Not IsDBNull(Me.leg_yield_strength = CType(LegReinforcementDataRow.Item("leg_yield_strength"), Double)) Then
-                Me.leg_yield_strength = CType(LegReinforcementDataRow.Item("leg_yield_strength"), Double)
-            Else
-                Me.leg_yield_strength = Nothing
-            End If
-        Catch
-            Me.leg_yield_strength = Nothing
-        End Try 'Leg Yield Strength
-        Try
-            If Not IsDBNull(Me.leg_unbraced_length = CType(LegReinforcementDataRow.Item("leg_unbraced_length"), Double)) Then
-                Me.leg_unbraced_length = CType(LegReinforcementDataRow.Item("leg_unbraced_length"), Double)
-            Else
-                Me.leg_unbraced_length = Nothing
-            End If
-        Catch
-            Me.leg_unbraced_length = Nothing
-        End Try 'Leg Unbraced Length
-        Try
-            If Not IsDBNull(Me.rein_dia = CType(LegReinforcementDataRow.Item("rein_dia"), Double)) Then
-                Me.rein_dia = CType(LegReinforcementDataRow.Item("rein_dia"), Double)
-            Else
-                Me.rein_dia = Nothing
-            End If
-        Catch
-            Me.rein_dia = Nothing
-        End Try 'Leg Reinforcement Diameter
-        Try
-            If Not IsDBNull(Me.rein_thickness = CType(LegReinforcementDataRow.Item("rein_thickness"), Double)) Then
-                Me.rein_thickness = CType(LegReinforcementDataRow.Item("rein_thickness"), Double)
-            Else
-                Me.rein_thickness = Nothing
-            End If
-        Catch
-            Me.rein_thickness = Nothing
-        End Try 'Leg Reinforcement Thickness
-        Try
-            If Not IsDBNull(Me.rein_yield_strength = CType(LegReinforcementDataRow.Item("rein_yield_strength"), Double)) Then
-                Me.rein_yield_strength = CType(LegReinforcementDataRow.Item("rein_yield_strength"), Double)
-            Else
-                Me.rein_yield_strength = Nothing
-            End If
-        Catch
-            Me.rein_yield_strength = Nothing
-        End Try 'Leg Reinforcement Yield Strength
-        Try
-            If Not IsDBNull(Me.print_bolton_conn_info = CType(LegReinforcementDataRow.Item("print_bolton_conn_info"), Boolean)) Then
-                Me.print_bolton_conn_info = CType(LegReinforcementDataRow.Item("print_bolton_conn_info"), Boolean)
-            Else
-                Me.print_bolton_conn_info = Nothing
-            End If
-        Catch
-            Me.print_bolton_conn_info = Nothing
-        End Try 'Print Bolt-On Connection Info
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        For Each BoltOnDataRow As DataRow In ds.Tables("Leg Reinforcement Bolt-On Connections SQL").Rows
-            Dim boltOnRefID As Integer = CType(BoltOnDataRow.Item("leg_rein_id"), Integer)
-
-            If boltOnRefID = refID Then
-                Me.BoltOnConnections.Add(New BoltOnConnection(BoltOnDataRow))
-            End If
-        Next 'Add Bolt-On Connection Info to Leg Reinforcement Object
-
-        For Each ArbitraryShapeDataRow As DataRow In ds.Tables("Arbitrary Shape SQL").Rows
-            Dim arbShapeRefID As Integer = CType(ArbitraryShapeDataRow.Item("arbitrary_shape_id"), Integer)
-
-            If arbShapeRefID = refID Then
-                Me.ArbitraryShapes.Add(New ArbitraryShape(ArbitraryShapeDataRow))
-            End If
-        Next 'Add Arbitrary Shape to Leg Reinforcement Object
-
-        'For Each tnxSectionDataRow As DataRow In ds.Tables("TNX Section SQL").Rows
-        '    Dim tnxSecRefID As Integer = CType(tnxSectionDataRow.Item("tnx_section_id"), Integer)
-
-        '    If tnxSecRefID = refID Then
-        '        Me.tnxSectionDatabaseInfos.Add(New tnxSectionDatabaseInfo(tnxSectionDataRow))
-        '    End If
-        'Next 'Add tnx Section to Leg Reinforcement Object
-
-        'For Each tnxMaterialDataRow As DataRow In ds.Tables("TNX Material SQL").Rows
-        '    Dim tnxMatRefID As Integer = CType(tnxMaterialDataRow.Item("tnx_mat_id"), Integer)
-
-        '    If tnxMatRefID = refID Then
-        '        Me.tnxMaterialDatabaseInfos.Add(New tnxMaterialDatabaseInfo(tnxMaterialDataRow))
-        '    End If
-        'Next 'Add tnx Material to Leg Reinforcement Object
-
+        'Following used to create dataset, regardless if source was EDS or Excel. Boolean used to identify source. EDS = True
+        BuildFromDataset(dr, strDS, True, Me)
 
     End Sub 'Generate Leg Reinforcement from EDS
 
-    Public Sub New(ByVal LegReinforcementDataRow As DataRow, ByVal refID As Integer, ByVal refcol As String)
-        Try
-            Me.leg_rein_id = CType(LegReinforcementDataRow.Item("leg_rein_id"), Integer)
-        Catch
-            Me.leg_rein_id = 0
-        End Try 'Leg Reinforcement ID
-        Try
-            Me.local_tool_id = CType(LegReinforcementDataRow.Item("local_tool_id"), Integer)
-        Catch
-            Me.local_tool_id = Nothing
-        End Try 'Leg Reinforcement Local Tool ID
-        Try
-            Me.leg_section_el = CType(LegReinforcementDataRow.Item("leg_section_el"), String)
-        Catch
-            Me.leg_section_el = Nothing
-        End Try 'Leg Section Elevations
-        Try
-            Me.data_stored = CType(LegReinforcementDataRow.Item("data_stored"), Boolean)
-        Catch
-            Me.data_stored = False
-        End Try 'Leg Reinforcement Data Stored
-        Try
-            Me.rein_type = CType(LegReinforcementDataRow.Item("rein_type"), String)
-        Catch
-            Me.rein_type = Nothing
-        End Try 'Leg Reinforcement Type
-        Try
-            Me.leg_load_time_of_mod = CType(LegReinforcementDataRow.Item("leg_load_time_of_mod"), Boolean)
-        Catch
-            Me.leg_load_time_of_mod = True
-        End Try 'Leg Load at Time of Modification
-        Try
-            Me.end_connections = CType(LegReinforcementDataRow.Item("end_connections"), String)
-        Catch
-            Me.end_connections = Nothing
-        End Try 'Leg Reinforcement End Connection Type
-        Try
-            If CType(LegReinforcementDataRow.Item("leg_crushing"), String) = "No" Then
-                Me.leg_crushing = False
-            Else
-                Me.leg_crushing = True
-            End If
-            'Me.leg_crushing = CType(LegReinforcementDataRow.Item("leg_crushing"), Boolean)
-        Catch
-            Me.leg_crushing = True
-        End Try 'Leg Crushing Applied
-        Try
-            Me.applied_load_methodology = CType(LegReinforcementDataRow.Item("applied_load_methodology"), String)
-        Catch
-            Me.applied_load_methodology = Nothing
-        End Try 'Applied Load Methodology
-        Try
-            Me.slenderness_ratio_type = CType(LegReinforcementDataRow.Item("slenderness_ratio_type"), String)
-        Catch
-            Me.slenderness_ratio_type = Nothing
-        End Try 'Slenderness Ratio Type
-        Try
-            Me.intermediate_conn_type = CType(LegReinforcementDataRow.Item("intermediate_conn_type"), String)
-        Catch
-            Me.intermediate_conn_type = Nothing
-        End Try 'Intermediate Connection Type
-        Try
-            Me.intermediate_conn_spacing = CType(LegReinforcementDataRow.Item("intermediate_conn_spacing"), Double)
-        Catch
-            Me.intermediate_conn_spacing = Nothing
-        End Try 'Intermediate Connection Spacing
-        Try
-            Me.ki_override = CType(LegReinforcementDataRow.Item("ki_override"), Double)
-        Catch
-            Me.ki_override = Nothing
-        End Try 'Ki Override
-        Try
-            Me.leg_dia = CType(LegReinforcementDataRow.Item("leg_dia"), Double)
-        Catch
-            Me.leg_dia = Nothing
-        End Try 'Leg Diameter
-        Try
-            Me.leg_thickness = CType(LegReinforcementDataRow.Item("leg_thickness"), Double)
-        Catch
-            Me.leg_thickness = Nothing
-        End Try 'Leg Thickness
-        Try
-            Me.leg_yield_strength = CType(LegReinforcementDataRow.Item("leg_yield_strength"), Double)
-        Catch
-            Me.leg_yield_strength = Nothing
-        End Try 'Leg Yield Strength
-        Try
-            Me.leg_unbraced_length = CType(LegReinforcementDataRow.Item("leg_unbraced_length"), Double)
-        Catch
-            Me.leg_unbraced_length = Nothing
-        End Try 'Leg Unbraced Length
-        Try
-            Me.rein_dia = CType(LegReinforcementDataRow.Item("rein_dia"), Double)
-        Catch
-            Me.rein_dia = Nothing
-        End Try 'Leg Reinforcement Diameter
-        Try
-            Me.rein_thickness = CType(LegReinforcementDataRow.Item("rein_thickness"), Double)
-        Catch
-            Me.rein_thickness = Nothing
-        End Try 'Leg Reinforcement Thickness
-        Try
-            Me.rein_yield_strength = CType(LegReinforcementDataRow.Item("rein_yield_strength"), Double)
-        Catch
-            Me.rein_yield_strength = Nothing
-        End Try 'Leg Reinforcement Yield Strength
-        Try
-            Me.print_bolton_conn_info = CType(LegReinforcementDataRow.Item("print_bolton_conn_info"), Boolean)
-        Catch
-            Me.print_bolton_conn_info = False
-        End Try 'Print Bolt-On Connection Info
+    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        'For Each BoltOnDataRow As DataRow In ds.Tables("Leg Reinforcement Bolt-On Connections SQL").Rows
-        '    Dim boltOnRefID As Integer = CType(BoltOnDataRow.Item("leg_rein_id"), Integer)
+        ''''''Customize for each foundation type'''''
+        Dim excelDS As New DataSet
 
-        '    If boltOnRefID = refID Then
-        '        Me.BoltOnConnections.Add(New BoltOnConnection(BoltOnDataRow))
-        '    End If
-        'Next 'Add Bolt-On Connection Info to Leg Reinforcement Object
+        For Each item As EXCELDTParameter In excelDTParams
+            'Get additional tables from excel file 
+            Try
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+            Catch ex As Exception
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(ExcelFilePath), item.xlsSheet, item.xlsRange))
+            End Try
+        Next
 
-        'For Each ArbitraryShapeDataRow As DataRow In ds.Tables("Arbitrary Shape SQL").Rows
-        '    Dim arbShapeRefID As Integer = CType(ArbitraryShapeDataRow.Item("arbitrary_shape_id"), Integer)
+        If excelDS.Tables.Contains("Leg Reinforcements") Then
+            Dim dr = excelDS.Tables("Leg Reinforcements").Rows(0)
 
-        '    If arbShapeRefID = refID Then
-        '        Me.ArbitraryShapes.Add(New ArbitraryShape(ArbitraryShapeDataRow))
-        '    End If
-        'Next 'Add Arbitrary Shape to Leg Reinforcement Object
+            'Following used to create dataset, regardless if source was EDS or Excel. Boolean used to identify source. Excel = False
+            BuildFromDataset(dr, excelDS, False, Me)
 
-        'For Each tnxSectionDataRow As DataRow In ds.Tables("TNX Section SQL").Rows
-        '    Dim tnxSecRefID As Integer = CType(tnxSectionDataRow.Item("tnx_section_id"), Integer)
-
-        '    If tnxSecRefID = refID Then
-        '        Me.tnxSectionDatabaseInfos.Add(New tnxSectionDatabaseInfo(tnxSectionDataRow))
-        '    End If
-        'Next 'Add tnx Section to Leg Reinforcement Object
-
-        'For Each tnxMaterialDataRow As DataRow In ds.Tables("TNX Material SQL").Rows
-        '    Dim tnxMatRefID As Integer = CType(tnxMaterialDataRow.Item("tnx_mat_id"), Integer)
-
-        '    If tnxMatRefID = refID Then
-        '        Me.tnxMaterialDatabaseInfos.Add(New tnxMaterialDatabaseInfo(tnxMaterialDataRow))
-        '    End If
-        'Next 'Add tnx Material to Leg Reinforcement Object
-
+        End If
 
     End Sub 'Generate Leg Reinforcement from Excel
 
+    Private Sub BuildFromDataset(ByVal dr As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+        'Dataset is pulled in from either EDS or Excel. True = EDS, False = Excel
+        'If Parent IsNot Nothing Then Me.Absorb(Parent) 'Do not double absorb!!!
+
+        'Not sure this is necessary, could just read the values from the structure code criteria when creating the Excel sheet (Added to Save to Excel Section)
+        'Me.tia_current = Me.ParentStructure?.structureCodeCriteria?.tia_current
+        'Me.rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
+        'Me.seismic_design_category = Me.ParentStructure?.structureCodeCriteria?.seismic_design_category
+
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
+        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.bus_unit = If(EDStruefalse, DBtoStr(dr.Item("bus_unit")), Me.bus_unit) 'Not provided in Excel
+        Me.work_order_seq_num = If(EDStruefalse, Me.work_order_seq_num, Me.work_order_seq_num) 'Not provided in Excel
+        Me.structure_id = If(EDStruefalse, DBtoStr(dr.Item("structure_id")), Me.structure_id) 'Not provided in Excel
+        Me.modified_person_id = If(EDStruefalse, DBtoNullableInt(dr.Item("modified_person_id")), Me.modified_person_id) 'Not provided in Excel
+        Me.process_stage = If(EDStruefalse, DBtoStr(dr.Item("process_stage")), Me.process_stage) 'Not provided in Excel
+        Me.Structural_105 = DBtoNullableBool(dr.Item("Structural_105"))
+
+        Dim lrDetails As New LegReinforcementDetail 'Leg Reinforcement Details
+        'Dim lrResult As New LegReinforcementResults2 'Leg Reinforcement Results
+        'Dim lrResult1 As New LegReinforcementResults 'Leg Reinforcement Results 'original
+
+        For Each lrrow As DataRow In ds.Tables(lrDetails.EDSObjectName).Rows
+            'create a new connection based on the datarow from above
+            lrDetails = New LegReinforcementDetail(lrrow, ds, EDStruefalse, Me)
+            'Check if the parent id, in the case leg reinforcement id is equal to the original object id (Me)                    
+            If If(EDStruefalse, lrDetails.leg_reinforcement_id = Me.ID, True) Then 'If coming from Excel, all leg reinforcement details provided will be associated to leg reinforcement. 
+                'If it is equal then add the newly created leg reinforcment detail to the list of details 
+                LegReinforcementDetails.Add(lrDetails)
+                'Results.Add(lrDetails)
+            End If
+
+            '***way implemented in CCIplate below***
+            'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
+            '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
+            '        lrResult1 = New LegReinforcementResults(lrrrow, EDStruefalse, Me)
+            '        'lrResult1 = New LegReinforcementResults(lrrrow, EDStruefalse, LegReinforcementDetails)
+            '        If If(EDStruefalse, False, lrResult1.local_id = lrDetails.local_id) Then
+            '            lrDetails.LegReinforcementResults.Add(lrResult1)
+            '            'lrDetails.Results.Add(lrResult1)
+            '        End If
+            '    Next
+            'End If
+            ''***
+            'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
+            '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
+            '        lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me)
+            '        If If(EDStruefalse, False, lrResult.local_id = lrDetails.local_id) Then
+            '            'lrDetails.LegReinforcementResults.Add(lrResult)
+            '            lrDetails.Results.Add(lrResult)
+            '        End If
+            '    Next
+            'End If
+        Next
+
+    End Sub
+
 #End Region
 
+#Region "Save to Excel"
 
-End Class
+    Public Overrides Sub workBookFiller(ByRef wb As Workbook)
+        '''''Customize for each excel tool'''''
+        Dim LegReinRow As Integer
 
+        'Site Code Criteria
+        Dim tia_current, site_name, structure_type As String
+        Dim rev_h_section_15_5 As Boolean?
 
-#Region "Leg Reinforcement Extras"
-Partial Public Class BoltOnConnection
-    Private prop_bolton_id As Integer
-    Private prop_leg_length_of_tower_section As Double?
-    Private prop_split_pipe_length As Double?
-    Private prop_set_top_to_bottom As Boolean
-    Private prop_qty_flange_bolt_bot As Integer?
-    Private prop_bolt_circle_bot As Double?
-    Private prop_bolt_orientation_bot As Integer?
-    Private prop_qty_flange_bolt_top As Integer?
-    Private prop_bolt_circle_top As Double?
-    Private prop_bolt_orientation_top As Integer?
-    Private prop_threaded_rod_dia_bot As Double?
-    Private prop_threaded_rod_mat_bot As String
-    Private prop_threaded_rod_qty_bot As Integer?
-    Private prop_threaded_rod_unbraced_length_bot As Double?
-    Private prop_threaded_rod_dia_top As Double?
-    Private prop_threaded_rod_mat_top As String
-    Private prop_threaded_rod_qty_top As Integer?
-    Private prop_threaded_rod_unbraced_length_top As Double?
-    Private prop_stiffener_height_bot As Double?
-    Private prop_stiffener_length_bot As Double?
-    Private prop_fillet_weld_size_bot As Double?
-    Private prop_exx_bot As Double?
-    Private prop_flange_thickness_bot As Double?
-    Private prop_stiffener_height_top As Double?
-    Private prop_stiffener_length_top As Double?
-    Private prop_fillet_weld_size_top As Double?
-    Private prop_exx_top As Double?
-    Private prop_flange_thickness_top As Double?
+        With wb
+            'Site Code Criteria
+            'Site Name
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.site_name) Then
+                site_name = Me.ParentStructure?.structureCodeCriteria?.site_name
+                .Worksheets("IMPORT").Range("SiteName_Import").Value = CType(site_name, String)
+            End If
+            'Order Number - currently referencing work_order_seq_num below
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.order_number) Then
+            '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
+            '    .Worksheets("IMPORT").Range("Order_Import").Value = CType(order_number, String)
+            'End If
+            'Tower Type - Defaulting to Self-Support if can't determine
+            'Tool is set up where importing tnx file determines tower type. Pulling this from the site code criteria might not be necessary since importing geometry is required.
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
+            If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then
+                structure_type = "Self Support"
+            ElseIf Me.ParentStructure?.structureCodeCriteria?.structure_type = "GUYED TOWER" Then ' ****Note sure if this is correct, need to validate****
+                structure_type = "Guyed Tower"
+            Else
+                structure_type = "Self Support"
+            End If
+            .Worksheets("TNX File").Range("A2").Value = "TowerType=" & CType(structure_type, String)
+            'End If
+            'TIA Revision- Defaulting to Rev. H if not available. Currently pulled in from TNX file
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
+                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
+                    tia_current = "TIA-222-F"
+                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
+                    tia_current = "TIA-222-G"
+                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
+                    tia_current = "TIA-222-H"
+                Else
+                    tia_current = "TIA-222-H"
+                End If
+                .Worksheets("TNX File").Range("A1").Value = "SteelCode=" & CType(tia_current, String)
+            End If
+            'H Section 15.5 - Not sure if this is a reliable source. Currently just pulling from last SA (Structural_105)
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
+            '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
+            '    .Worksheets("IMPORT").Range("U1").Value = CType(rev_h_section_15_5, Boolean)
+            'End If
+            'Load Z Normalization
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
+            '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
+            '    .Worksheets("Engine").Range("G10").Value = CType(load_z_norm, Boolean)
+            'End If
 
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Bolt-On Connection ID")>
-    Public Property bolton_id() As Integer
-        Get
-            Return Me.prop_bolton_id
-        End Get
-        Set
-            Me.prop_bolton_id = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Leg Length of Tower Section")>
-    Public Property leg_length_of_tower_section() As Double?
-        Get
-            Return Me.prop_leg_length_of_tower_section
-        End Get
-        Set
-            Me.prop_leg_length_of_tower_section = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Physical Split Pipe Length")>
-    Public Property split_pipe_length() As Double?
-        Get
-            Return Me.prop_split_pipe_length
-        End Get
-        Set
-            Me.prop_split_pipe_length = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Set Top Design Info Equal to Bottom Design Info")>
-    Public Property set_top_to_bottom() As Boolean
-        Get
-            Return Me.prop_set_top_to_bottom
-        End Get
-        Set
-            Me.prop_set_top_to_bottom = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Quantity of Bottom Flange Bolts")>
-    Public Property qty_flange_bolt_bot() As Integer?
-        Get
-            Return Me.prop_qty_flange_bolt_bot
-        End Get
-        Set
-            Me.prop_qty_flange_bolt_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Bolt Circle of Bottom Flange Bolts")>
-    Public Property bolt_circle_bot() As Double?
-        Get
-            Return Me.prop_bolt_circle_bot
-        End Get
-        Set
-            Me.prop_bolt_circle_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Bolt Orientation of Bottom Flange Bolts")>
-    Public Property bolt_orientation_bot() As Integer?
-        Get
-            Return Me.prop_bolt_orientation_bot
-        End Get
-        Set
-            Me.prop_bolt_orientation_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Quantity of Top Flange Bolts")>
-    Public Property qty_flange_bolt_top() As Integer?
-        Get
-            Return Me.prop_qty_flange_bolt_top
-        End Get
-        Set
-            Me.prop_qty_flange_bolt_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Bolt Circle of Top Flange Bolts")>
-    Public Property bolt_circle_top() As Double?
-        Get
-            Return Me.prop_bolt_circle_top
-        End Get
-        Set
-            Me.prop_bolt_circle_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Bolt Orientation of Top Flange Bolts")>
-    Public Property bolt_orientation_top() As Integer?
-        Get
-            Return Me.prop_bolt_orientation_top
-        End Get
-        Set
-            Me.prop_bolt_orientation_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Diameter, Bottom Flange Connection")>
-    Public Property threaded_rod_dia_bot() As Double?
-        Get
-            Return Me.prop_threaded_rod_dia_bot
-        End Get
-        Set
-            Me.prop_threaded_rod_dia_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Material, Bottom Flange Connection")>
-    Public Property threaded_rod_mat_bot() As String
-        Get
-            Return Me.prop_threaded_rod_mat_bot
-        End Get
-        Set
-            Me.prop_threaded_rod_mat_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Quantity, Bottom Flange Connection")>
-    Public Property threaded_rod_qty_bot() As Integer?
-        Get
-            Return Me.prop_threaded_rod_qty_bot
-        End Get
-        Set
-            Me.prop_threaded_rod_qty_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Unbraced Length, Bottom Flange Connection")>
-    Public Property threaded_rod_unbraced_length_bot() As Double?
-        Get
-            Return Me.prop_threaded_rod_unbraced_length_bot
-        End Get
-        Set
-            Me.prop_threaded_rod_unbraced_length_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Diameter, Bottom Flange Connection")>
-    Public Property threaded_rod_dia_top() As Double?
-        Get
-            Return Me.prop_threaded_rod_dia_top
-        End Get
-        Set
-            Me.prop_threaded_rod_dia_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Material, Top Flange Connection")>
-    Public Property threaded_rod_mat_top() As String
-        Get
-            Return Me.prop_threaded_rod_mat_top
-        End Get
-        Set
-            Me.prop_threaded_rod_mat_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Quantity, Top Flange Connection")>
-    Public Property threaded_rod_qty_top() As Integer?
-        Get
-            Return Me.prop_threaded_rod_qty_top
-        End Get
-        Set
-            Me.prop_threaded_rod_qty_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Threaded Rod Unbraced Length, Top Flange Connection")>
-    Public Property threaded_rod_unbraced_length_top() As Double?
-        Get
-            Return Me.prop_threaded_rod_unbraced_length_top
-        End Get
-        Set
-            Me.prop_threaded_rod_unbraced_length_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Height, Bottom Flange Connection")>
-    Public Property stiffener_height_bot() As Double?
-        Get
-            Return Me.prop_stiffener_height_bot
-        End Get
-        Set
-            Me.prop_stiffener_height_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Length, Bottom Flange Connection")>
-    Public Property stiffener_length_bot() As Double?
-        Get
-            Return Me.prop_stiffener_length_bot
-        End Get
-        Set
-            Me.prop_stiffener_length_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Fillet Weld Size, Bottom Flange Connection")>
-    Public Property fillet_weld_size_bot() As Double?
-        Get
-            Return Me.prop_fillet_weld_size_bot
-        End Get
-        Set
-            Me.prop_fillet_weld_size_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Fillet Weld Strength, Bottom Flange Connection")>
-    Public Property exx_bot() As Double?
-        Get
-            Return Me.prop_exx_bot
-        End Get
-        Set
-            Me.prop_exx_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Flange Thickness, Bottom Flange Connection")>
-    Public Property flange_thickness_bot() As Double?
-        Get
-            Return Me.prop_flange_thickness_bot
-        End Get
-        Set
-            Me.prop_flange_thickness_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Height, Top Flange Connection")>
-    Public Property stiffener_height_top() As Double?
-        Get
-            Return Me.prop_stiffener_height_top
-        End Get
-        Set
-            Me.prop_stiffener_height_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Length, Top Flange Connection")>
-    Public Property stiffener_length_top() As Double?
-        Get
-            Return Me.prop_stiffener_length_top
-        End Get
-        Set
-            Me.prop_stiffener_length_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Fillet Weld Size, Top Flange Connection")>
-    Public Property fillet_weld_size_top() As Double?
-        Get
-            Return Me.prop_fillet_weld_size_top
-        End Get
-        Set
-            Me.prop_fillet_weld_size_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Stiffener Fillet Weld Strength, Top Flange Connection")>
-    Public Property exx_top() As Double?
-        Get
-            Return Me.prop_exx_top
-        End Get
-        Set
-            Me.prop_exx_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Bolt-On Connections"), Description(""), DisplayName("Flange Thickness, Top Flange Connection")>
-    Public Property flange_thickness_top() As Double?
-        Get
-            Return Me.prop_flange_thickness_top
-        End Get
-        Set
-            Me.prop_flange_thickness_top = Value
-        End Set
-    End Property
+            'Loading
+            'If structure_type = "Self-Suppot" Then
+            '    .Worksheets("Input").Range("D13").Value = CType(uplift, Double)
+            '    .Worksheets("Input").Range("D14").Value = CType(compression, Double)
+            '    .Worksheets("Input").Range("D15").Value = CType(uplift_shear, Double)
+            '    .Worksheets("Input").Range("D16").Value = CType(compression_shear, Double)
+            'Else
+            '    .Worksheets("Input").Range("D13").Value = CType(moment, Double)
+            '    .Worksheets("Input").Range("D14").Value = CType(axial, Double)
+            '    .Worksheets("Input").Range("D15").Value = CType(shear, Double)
+            'End If
 
-    Sub New()
-        'Leave method empty
-    End Sub
+            .Worksheets("Details (SAPI)").Range("A3").Value = CType(True, Boolean) 'Flags if sheet was last touched by EDS. If true, worksheet change event upon opening tool. 
 
-    Sub New(ByVal BoltOnDataRow As DataRow)
-        Try
-            Me.bolton_id = CType(BoltOnDataRow.Item("bolton_id"), Integer)
-        Catch
-            Me.bolton_id = 0
-        End Try 'Bolt-On Connections ID
-        Try
-            Me.leg_length_of_tower_section = CType(BoltOnDataRow.Item("leg_length_of_tower_section"), Double)
-        Catch
-            Me.leg_length_of_tower_section = Nothing
-        End Try 'Leg Length of Tower Section
-        Try
-            Me.split_pipe_length = CType(BoltOnDataRow.Item("split_pipe_length"), Double)
-        Catch
-            Me.split_pipe_length = Nothing
-        End Try 'Physical Split Pipe Length
-        Try
-            Me.set_top_to_bottom = CType(BoltOnDataRow.Item("set_top_to_bottom"), Boolean)
-        Catch
-            Me.set_top_to_bottom = Nothing
-        End Try 'Set Top Design Info Equal to Bottom Design Info
-        Try
-            Me.qty_flange_bolt_bot = CType(BoltOnDataRow.Item("qty_flange_bolt_bot"), Integer)
-        Catch
-            Me.qty_flange_bolt_bot = Nothing
-        End Try 'Quantity of Bottom Flange Bolts
-        Try
-            Me.bolt_circle_bot = CType(BoltOnDataRow.Item("bolt_circle_bot"), Double)
-        Catch
-            Me.bolt_circle_bot = Nothing
-        End Try 'Bolt Circle of Bottom Flange Bolts
-        Try
-            Me.bolt_orientation_bot = CType(BoltOnDataRow.Item("bolt_orientation_bot"), Integer)
-        Catch
-            Me.bolt_orientation_bot = Nothing
-        End Try 'Bolt Orientation of Bottom Flange Bolts
-        Try
-            Me.qty_flange_bolt_top = CType(BoltOnDataRow.Item("qty_flange_bolt_top"), Integer)
-        Catch
-            Me.qty_flange_bolt_top = Nothing
-        End Try 'Quantity of Top Flange Bolts
-        Try
-            Me.bolt_circle_top = CType(BoltOnDataRow.Item("bolt_circle_top"), Double)
-        Catch
-            Me.bolt_circle_top = Nothing
-        End Try 'Bolt Circle of Top Flange Bolts
-        Try
-            Me.bolt_orientation_top = CType(BoltOnDataRow.Item("bolt_orientation_top"), Integer)
-        Catch
-            Me.bolt_orientation_top = Nothing
-        End Try 'Bolt Orientation of Top Flange Bolts
-        Try
-            Me.threaded_rod_dia_bot = CType(BoltOnDataRow.Item("threaded_rod_dia_bot"), Double)
-        Catch
-            Me.threaded_rod_dia_bot = Nothing
-        End Try 'Threaded Rod Diameter, Bottom Flange Connection
-        Try
-            Me.threaded_rod_mat_bot = CType(BoltOnDataRow.Item("threaded_rod_mat_bot"), String)
-        Catch
-            Me.threaded_rod_mat_bot = Nothing
-        End Try 'Threaded Rod Material, Bottom Flange Connection
-        Try
-            Me.threaded_rod_qty_bot = CType(BoltOnDataRow.Item("threaded_rod_qty_bot"), Integer)
-        Catch
-            Me.threaded_rod_qty_bot = Nothing
-        End Try 'Threaded Rod Quantity, Bottom Flange Connection
-        Try
-            Me.threaded_rod_unbraced_length_bot = CType(BoltOnDataRow.Item("threaded_rod_unbraced_length_bot"), Double)
-        Catch
-            Me.threaded_rod_unbraced_length_bot = Nothing
-        End Try 'Threaded Rod Unbraced Length, Bottom Flange Connection
-        Try
-            Me.threaded_rod_dia_top = CType(BoltOnDataRow.Item("threaded_rod_dia_top"), Double)
-        Catch
-            Me.threaded_rod_dia_top = Nothing
-        End Try 'Threaded Rod Diameter, Bottom Flange Connection
-        Try
-            Me.threaded_rod_mat_top = CType(BoltOnDataRow.Item("threaded_rod_mat_top"), String)
-        Catch
-            Me.threaded_rod_mat_top = Nothing
-        End Try 'Threaded Rod Material, Top Flange Connection
-        Try
-            Me.threaded_rod_qty_top = CType(BoltOnDataRow.Item("threaded_rod_qty_top"), Integer)
-        Catch
-            Me.threaded_rod_qty_top = Nothing
-        End Try 'Threaded Rod Quantity, Top Flange Connection
-        Try
-            Me.threaded_rod_unbraced_length_top = CType(BoltOnDataRow.Item("threaded_rod_unbraced_length_top"), Double)
-        Catch
-            Me.threaded_rod_unbraced_length_top = Nothing
-        End Try 'Threaded Rod Unbraced Length, Top Flange Connection
-        Try
-            Me.stiffener_height_bot = CType(BoltOnDataRow.Item("stiffener_height_bot"), Double)
-        Catch
-            Me.stiffener_height_bot = Nothing
-        End Try 'Stiffener Height, Bottom Flange Connection
-        Try
-            Me.stiffener_length_bot = CType(BoltOnDataRow.Item("stiffener_length_bot"), Double)
-        Catch
-            Me.stiffener_length_bot = Nothing
-        End Try 'Stiffener Length, Bottom Flange Connection
-        Try
-            Me.fillet_weld_size_bot = CType(BoltOnDataRow.Item("fillet_weld_size_bot"), Double)
-        Catch
-            Me.fillet_weld_size_bot = Nothing
-        End Try 'Stiffener Fillet Weld Size, Bottom Flange Connection
-        Try
-            Me.exx_bot = CType(BoltOnDataRow.Item("exx_bot"), Double)
-        Catch
-            Me.exx_bot = Nothing
-        End Try 'Stiffener Fillet Weld Strength, Bottom Flange Connection
-        Try
-            Me.flange_thickness_bot = CType(BoltOnDataRow.Item("flange_thickness_bot"), Double)
-        Catch
-            Me.flange_thickness_bot = Nothing
-        End Try 'Flange Thickness, Bottom Flange Connection
-        Try
-            Me.stiffener_height_top = CType(BoltOnDataRow.Item("stiffener_height_top"), Double)
-        Catch
-            Me.stiffener_height_top = Nothing
-        End Try 'Stiffener Height, Top Flange Connection
-        Try
-            Me.stiffener_length_top = CType(BoltOnDataRow.Item("stiffener_length_top"), Double)
-        Catch
-            Me.stiffener_length_top = Nothing
-        End Try 'Stiffener Length, Top Flange Connection
-        Try
-            Me.fillet_weld_size_top = CType(BoltOnDataRow.Item("fillet_weld_size_top"), Double)
-        Catch
-            Me.fillet_weld_size_top = Nothing
-        End Try 'Stiffener Fillet Weld Size, Top Flange Connection
-        Try
-            Me.exx_top = CType(BoltOnDataRow.Item("exx_bot"), Double)
-        Catch
-            Me.exx_top = Nothing
-        End Try 'Stiffener Fillet Weld Strength, Top Flange Connection
-        Try
-            Me.flange_thickness_top = CType(BoltOnDataRow.Item("flange_thickness_top"), Double)
-        Catch
-            Me.flange_thickness_top = Nothing
-        End Try 'Flange Thickness, Top Flange Connection
+            .Worksheets("Details (SAPI)").Range("ID").Value = CType(Me.ID, Integer)
+            ''If Not IsNothing(Me.ID) Then
+            ''    .Worksheets("Sub Tables (SAPI)").Range("ID").Value = CType(Me.ID, Integer)
+            ''Else
+            ''    .Worksheets("Sub Tables (SAPI)").Range("ID").ClearContents
+            ''End If
+            'If Not IsNothing(Me.tool_version) Then
+            '    .Worksheets("Reference").Range("C23").Value = CType(Me.tool_version, String)
+            'End If
+            If Not IsNothing(Me.bus_unit) Then
+                .Worksheets("IMPORT").Range("BU_Import").Value = CType(Me.bus_unit, Integer)
+            Else
+                .Worksheets("IMPORT").Range("BU_Import").ClearContents
+            End If
+            If Not IsNothing(Me.work_order_seq_num) Then
+                .Worksheets("IMPORT").Range("Order_Import").Value = CType(Me.work_order_seq_num, Integer)
+            Else
+                .Worksheets("IMPORT").Range("Order_Import").ClearContents
+            End If
+            'If Not IsNothing(Me.structure_id) Then
+            '    .Worksheets("").Range("").Value = CType(Me.structure_id, String)
+            'End If
+            'If Not IsNothing(Me.modified_person_id) Then
+            '    .Worksheets("").Range("").Value = CType(Me.modified_person_id, Integer)
+            'Else
+            '    .Worksheets("").Range("").ClearContents
+            'End If
+            'If Not IsNothing(Me.process_stage) Then
+            '    .Worksheets("").Range("").Value = CType(Me.process_stage, String)
+            'End If
+            If Not IsNothing(Me.Structural_105) Then
+                .Worksheets("Summary").Range("U1").Value = CType(Me.Structural_105, Boolean)
+            End If
+
+            If Me.LegReinforcementDetails.Count > 0 Then
+                'identify first row to copy data into Excel Sheet
+                'TNX File Data (Row 1 & 2 are used to save tia revision and tower type, respectively.)
+                Dim tnxdataRow As Integer = 3 'TNX File Data tab
+
+                For Each row As LegReinforcementDetail In LegReinforcementDetails
+                    LegReinRow = CType(row.local_id, Integer) + 3 'determines row to enter data in within tool
+                    'Select which rows have reinforcement on the IMPORT tab
+                    If Not IsNothing(LegReinRow) Then
+                        .Worksheets("IMPORT").Range("H" & LegReinRow + 13).Value = "Yes"
+                    Else
+                        .Worksheets("IMPORT").Range("H" & LegReinRow + 13).ClearContents
+                    End If
+                    If Not IsNothing(row.ID) Then
+                        .Worksheets("Sub Tables (SAPI)").Range("B" & LegReinRow - 2).Value = CType(row.ID, Integer)
+                    Else
+                        .Worksheets("Sub Tables (SAPI)").Range("B" & LegReinRow - 2).ClearContents
+                    End If
+                    'If Not IsNothing(row.leg_reinforcement_id) Then
+                    '    .Worksheets("Databse").Range("").Value = CType(row.leg_reinforcement_id, Integer)
+                    'Else
+                    '    .Worksheets("Databse").Range("").ClearContents
+                    'End If
+                    If Not IsNothing(row.leg_load_time_mod_option) Then
+                        If row.leg_load_time_mod_option = True Then
+                            .Worksheets("Database").Range("AB" & LegReinRow).Value = "Yes"
+                        Else
+                            .Worksheets("Database").Range("AB" & LegReinRow).Value = "No"
+                        End If
+                    End If
+                    If Not IsNothing(row.end_connection_type) Then
+                        .Worksheets("Database").Range("AC" & LegReinRow).Value = CType(row.end_connection_type, String)
+                    End If
+                    If Not IsNothing(row.leg_crushing) Then
+                        If row.leg_crushing = True Then
+                            .Worksheets("Database").Range("AD" & LegReinRow).Value = "Yes"
+                        Else
+                            .Worksheets("Database").Range("AD" & LegReinRow).Value = "No"
+                        End If
+                    End If
+                    If Not IsNothing(row.applied_load_type) Then
+                        .Worksheets("Database").Range("AE" & LegReinRow).Value = CType(row.applied_load_type, String)
+                    End If
+                    If Not IsNothing(row.slenderness_ratio_type) Then
+                        .Worksheets("Database").Range("AF" & LegReinRow).Value = CType(row.slenderness_ratio_type, String)
+                    End If
+                    If Not IsNothing(row.intermeditate_connection_type) Then
+                        .Worksheets("Database").Range("AG" & LegReinRow).Value = CType(row.intermeditate_connection_type, String)
+                    End If
+                    If Not IsNothing(row.intermeditate_connection_spacing) Then
+                        .Worksheets("Database").Range("AH" & LegReinRow).Value = CType(row.intermeditate_connection_spacing, Double)
+                    Else
+                        .Worksheets("Database").Range("AH" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.ki_override) Then
+                        .Worksheets("Database").Range("AI" & LegReinRow).Value = CType(row.ki_override, Double)
+                    Else
+                        .Worksheets("Database").Range("AI" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.leg_diameter) Then
+                        .Worksheets("Database").Range("AJ" & LegReinRow).Value = CType(row.leg_diameter, Double)
+                    Else
+                        .Worksheets("Database").Range("AJ" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.leg_thickness) Then
+                        .Worksheets("Database").Range("AK" & LegReinRow).Value = CType(row.leg_thickness, Double)
+                    Else
+                        .Worksheets("Database").Range("AK" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.leg_grade) Then
+                        .Worksheets("Database").Range("AL" & LegReinRow).Value = CType(row.leg_grade, Double)
+                    Else
+                        .Worksheets("Database").Range("AL" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.leg_unbraced_length) Then
+                        .Worksheets("Database").Range("AM" & LegReinRow).Value = CType(row.leg_unbraced_length, Double)
+                    Else
+                        .Worksheets("Database").Range("AM" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.rein_diameter) Then
+                        .Worksheets("Database").Range("AN" & LegReinRow).Value = CType(row.rein_diameter, Double)
+                    Else
+                        .Worksheets("Database").Range("AN" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.rein_thickness) Then
+                        .Worksheets("Database").Range("AO" & LegReinRow).Value = CType(row.rein_thickness, Double)
+                    Else
+                        .Worksheets("Database").Range("AO" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.rein_grade) Then
+                        .Worksheets("Database").Range("AP" & LegReinRow).Value = CType(row.rein_grade, Double)
+                    Else
+                        .Worksheets("Database").Range("AP" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.print_bolt_on_connections) Then
+                        .Worksheets("Database").Range("AS" & LegReinRow).Value = CType(row.print_bolt_on_connections, Boolean)
+                    End If
+                    If Not IsNothing(row.leg_length) Then
+                        .Worksheets("Database").Range("AT" & LegReinRow).Value = CType(row.leg_length, Double)
+                    Else
+                        .Worksheets("Database").Range("AT" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.rein_length) Then
+                        .Worksheets("Database").Range("AU" & LegReinRow).Value = CType(row.rein_length, Double)
+                    Else
+                        .Worksheets("Database").Range("AU" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.set_top_to_bottom) Then
+                        .Worksheets("Database").Range("AV" & LegReinRow).Value = CType(row.set_top_to_bottom, Boolean)
+                    End If
+                    If Not IsNothing(row.flange_bolt_quantity_bot) Then
+                        .Worksheets("Database").Range("AW" & LegReinRow).Value = CType(row.flange_bolt_quantity_bot, Integer)
+                    Else
+                        .Worksheets("Database").Range("AW" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_bolt_circle_bot) Then
+                        .Worksheets("Database").Range("AX" & LegReinRow).Value = CType(row.flange_bolt_circle_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("AX" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_bolt_orientation_bot) Then
+                        .Worksheets("Database").Range("AY" & LegReinRow).Value = CType(row.flange_bolt_orientation_bot, Integer)
+                    Else
+                        .Worksheets("Database").Range("AY" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_bolt_quantity_top) Then
+                        .Worksheets("Database").Range("AZ" & LegReinRow).Value = CType(row.flange_bolt_quantity_top, Integer)
+                    Else
+                        .Worksheets("Database").Range("AZ" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_bolt_circle_top) Then
+                        .Worksheets("Database").Range("BA" & LegReinRow).Value = CType(row.flange_bolt_circle_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BA" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_bolt_orientation_top) Then
+                        .Worksheets("Database").Range("BB" & LegReinRow).Value = CType(row.flange_bolt_orientation_top, Integer)
+                    Else
+                        .Worksheets("Database").Range("BB" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.threaded_rod_size_bot) Then
+                        .Worksheets("Database").Range("BC" & LegReinRow).Value = CType(row.threaded_rod_size_bot, String)
+                    End If
+                    If Not IsNothing(row.threaded_rod_mat_bot) Then
+                        .Worksheets("Database").Range("BD" & LegReinRow).Value = CType(row.threaded_rod_mat_bot, String)
+                    End If
+                    If Not IsNothing(row.threaded_rod_quantity_bot) Then
+                        .Worksheets("Database").Range("BE" & LegReinRow).Value = CType(row.threaded_rod_quantity_bot, Integer)
+                    Else
+                        .Worksheets("Database").Range("BE" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.threaded_rod_unbraced_length_bot) Then
+                        .Worksheets("Database").Range("BF" & LegReinRow).Value = CType(row.threaded_rod_unbraced_length_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("BF" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.threaded_rod_size_top) Then
+                        .Worksheets("Database").Range("BG" & LegReinRow).Value = CType(row.threaded_rod_size_top, String)
+                    End If
+                    If Not IsNothing(row.threaded_rod_mat_top) Then
+                        .Worksheets("Database").Range("BH" & LegReinRow).Value = CType(row.threaded_rod_mat_top, String)
+                    End If
+                    If Not IsNothing(row.threaded_rod_quantity_top) Then
+                        .Worksheets("Database").Range("BI" & LegReinRow).Value = CType(row.threaded_rod_quantity_top, Integer)
+                    Else
+                        .Worksheets("Database").Range("BI" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.threaded_rod_unbraced_length_top) Then
+                        .Worksheets("Database").Range("BJ" & LegReinRow).Value = CType(row.threaded_rod_unbraced_length_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BJ" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_height_bot) Then
+                        .Worksheets("Database").Range("BK" & LegReinRow).Value = CType(row.stiffener_height_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("BK" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_length_bot) Then
+                        .Worksheets("Database").Range("BL" & LegReinRow).Value = CType(row.stiffener_length_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("BL" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_fillet_bot) Then
+                        .Worksheets("Database").Range("BM" & LegReinRow).Value = CType(row.stiffener_fillet_bot, Integer)
+                    Else
+                        .Worksheets("Database").Range("BM" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_exx_bot) Then
+                        .Worksheets("Database").Range("BN" & LegReinRow).Value = CType(row.stiffener_exx_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("BN" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_thickness_bot) Then
+                        .Worksheets("Database").Range("BO" & LegReinRow).Value = CType(row.flange_thickness_bot, Double)
+                    Else
+                        .Worksheets("Database").Range("BO" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_height_top) Then
+                        .Worksheets("Database").Range("BP" & LegReinRow).Value = CType(row.stiffener_height_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BP" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_length_top) Then
+                        .Worksheets("Database").Range("BQ" & LegReinRow).Value = CType(row.stiffener_length_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BQ" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_fillet_top) Then
+                        .Worksheets("Database").Range("BR" & LegReinRow).Value = CType(row.stiffener_fillet_top, Integer)
+                    Else
+                        .Worksheets("Database").Range("BR" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.stiffener_exx_top) Then
+                        .Worksheets("Database").Range("BS" & LegReinRow).Value = CType(row.stiffener_exx_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BS" & LegReinRow).ClearContents
+                    End If
+                    If Not IsNothing(row.flange_thickness_top) Then
+                        .Worksheets("Database").Range("BT" & LegReinRow).Value = CType(row.flange_thickness_top, Double)
+                    Else
+                        .Worksheets("Database").Range("BT" & LegReinRow).ClearContents
+                    End If
+                    'need to see if this is necessary
+                    'If Not IsNothing(row.structure_ind) Then
+                    '    .Worksheets("").Range("").Value = CType(row.structure_ind, String)
+                    'End If
+                    If Not IsNothing(row.reinforcement_type) Then
+                        .Worksheets("Database").Range("Y" & LegReinRow).Value = CType(row.reinforcement_type, String)
+                    End If
+                    'Don't need to store back in tool since will generate based on all previous inputs. 
+                    'If Not IsNothing(row.leg_reinforcement_name) Then
+                    '    .Worksheets("Database").Range("BV" & LegReinRow).Value = CType(row.leg_reinforcement_name, String)
+                    'End If
+                    'If Not IsNothing(Me.local_id) Then
+                    '    .Worksheets("").Range("").Value = CType(Me.local_id, Integer)
+                    'Else
+                    '    .Worksheets("").Range("").ClearContents
+                    'End If
+
+                    'elevations are not required since they are pulled in with tnx import
+
+                    'Storing following in order to populate arbitrary shape info after worksheet is opened. 
+                    If Not IsNothing(row.top_elev) Then
+                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
+                        .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
+                        tnxdataRow += 2
+                        'Else
+                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+                    End If
+                    If Not IsNothing(row.bot_elev) Then
+                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
+                        tnxdataRow += 1
+                        'Else
+                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+                    End If
+                Next
+
+            End If
+
+        End With
 
     End Sub
 
+#End Region
+
+#Region "Save to EDS"
+
+    Public Overrides Function SQLInsertValues() As String
+        SQLInsertValues = ""
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Structural_105.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("Structural_105")
+
+        Return SQLInsertFields
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
+
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
+
+        Return SQLUpdateFieldsandValues
+    End Function
+
+#End Region
+
+#Region "Equals"
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As LegReinforcement = TryCast(other, LegReinforcement)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
+        'Equals = If(Me.bus_unit.CheckChange(otherToCompare.bus_unit, changes, categoryName, "Bus Unit"), Equals, False)
+        'Equals = If(Me.structure_id.CheckChange(otherToCompare.structure_id, changes, categoryName, "Structure Id"), Equals, False)
+        'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
+        'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
+        Equals = If(Me.Structural_105.CheckChange(otherToCompare.Structural_105, changes, categoryName, "Structural 105"), Equals, False)
+
+        'Details
+        If Me.LegReinforcementDetails.Count > 0 Then
+            Equals = If(Me.LegReinforcementDetails.CheckChange(otherToCompare.LegReinforcementDetails, changes, categoryName, "Leg Reinforcement Details"), Equals, False)
+        End If
+
+        Return Equals
+
+    End Function
+#End Region
+
 End Class
 
-Partial Public Class ArbitraryShape
-    Private prop_arb_shape_id As Integer
-    Private prop_us_name As String
-    Private prop_si_name As String
-    Private prop_height As Double?
-    Private prop_width As Double?
-    Private prop_wind_projected_width As Double?
-    Private prop_perimeter As Double?
-    Private prop_modulus_of_elasticity As Double?
-    Private prop_density As Double?
-    Private prop_area As Double?
-    Private prop_stress_reduction_factor As Double?
-    Private prop_warp_constant As Double?
-    Private prop_moment_of_inertia_x As Double?
-    Private prop_moment_of_inertia_y As Double?
-    Private prop_tors_constant As Double?
-    Private prop_elastic_sec_mod_x_top As Double?
-    Private prop_elastic_sec_mod_y_left As Double?
-    Private prop_elastic_sec_mod_x_bot As Double?
-    Private prop_elastic_sec_mod_y_right As Double?
-    Private prop_radius_of_gyration_x As Double?
-    Private prop_radius_of_gyration_y As Double?
-    Private prop_shear_deflection_form_factor_x As Double?
-    Private prop_shear_deflection_form_factor_y As Double?
-    Private prop_K_factor_adj As Double?
-    Private prop_sec_file As String
-    Private prop_tnx_us_name As String
-    Private prop_tnx_si_name As String
-    Private prop_sec_values As String
-    Private prop_member_mat_file As String
-    Private prop_mat_name As String
-    Private prop_mat_values As String
+Partial Public Class LegReinforcementDetail
+    Inherits EDSObjectWithQueries
 
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Arbitrary Shape ID")>
-    Public Property arb_shape_id() As Integer
-        Get
-            Return Me.prop_arb_shape_id
-        End Get
-        Set
-            Me.prop_arb_shape_id = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("US Name")>
-    Public Property us_name() As String
-        Get
-            Return Me.prop_us_name
-        End Get
-        Set
-            Me.prop_us_name = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("SI Name")>
-    Public Property si_name() As String
-        Get
-            Return Me.prop_si_name
-        End Get
-        Set
-            Me.prop_si_name = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Height")>
-    Public Property height() As Double?
-        Get
-            Return Me.prop_height
-        End Get
-        Set
-            Me.prop_height = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Width")>
-    Public Property width() As Double?
-        Get
-            Return Me.prop_width
-        End Get
-        Set
-            Me.prop_width = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Wind Projected Width")>
-    Public Property wind_projected_width() As Double?
-        Get
-            Return Me.prop_wind_projected_width
-        End Get
-        Set
-            Me.prop_wind_projected_width = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Perimeter")>
-    Public Property perimeter() As Double?
-        Get
-            Return Me.prop_perimeter
-        End Get
-        Set
-            Me.prop_perimeter = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Modulus of Elasticity")>
-    Public Property modulus_of_elasticity() As Double?
-        Get
-            Return Me.prop_modulus_of_elasticity
-        End Get
-        Set
-            Me.prop_modulus_of_elasticity = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Density")>
-    Public Property density() As Double?
-        Get
-            Return Me.prop_density
-        End Get
-        Set
-            Me.prop_density = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Cross-Sectional Area")>
-    Public Property area() As Double?
-        Get
-            Return Me.prop_area
-        End Get
-        Set
-            Me.prop_area = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("QaQs, Local Buckling Interaction Stress Reduction Factors")>
-    Public Property stress_reduction_factor() As Double?
-        Get
-            Return Me.prop_stress_reduction_factor
-        End Get
-        Set
-            Me.prop_stress_reduction_factor = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Cw, Warping Constant")>
-    Public Property warp_constant() As Double?
-        Get
-            Return Me.prop_warp_constant
-        End Get
-        Set
-            Me.prop_warp_constant = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Ix, Moment of Inertia about X-X Axis")>
-    Public Property moment_of_inertia_x() As Double?
-        Get
-            Return Me.prop_moment_of_inertia_x
-        End Get
-        Set
-            Me.prop_moment_of_inertia_x = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Iy, Moment of Inertia about Y-Y Axis")>
-    Public Property moment_of_inertia_y() As Double?
-        Get
-            Return Me.prop_moment_of_inertia_y
-        End Get
-        Set
-            Me.prop_moment_of_inertia_y = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("J, Torsional Constant")>
-    Public Property tors_constant() As Double?
-        Get
-            Return Me.prop_tors_constant
-        End Get
-        Set
-            Me.prop_tors_constant = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Sx_top, Elastic Section Modulus about X-X Axis, Top Direction")>
-    Public Property elastic_sec_mod_x_top() As Double?
-        Get
-            Return Me.prop_elastic_sec_mod_x_top
-        End Get
-        Set
-            Me.prop_elastic_sec_mod_x_top = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Sy_left, Elastic Section Modulus about Y-Y Axis, Left Direction? (TNX specifies this as top)")>
-    Public Property elastic_sec_mod_y_left() As Double?
-        Get
-            Return Me.prop_elastic_sec_mod_y_left
-        End Get
-        Set
-            Me.prop_elastic_sec_mod_y_left = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Sx_bot, Elastic Section Modulus about X-X Axis, Bottom Direction")>
-    Public Property elastic_sec_mod_x_bot() As Double?
-        Get
-            Return Me.prop_elastic_sec_mod_x_bot
-        End Get
-        Set
-            Me.prop_elastic_sec_mod_x_bot = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("Sy_right, Elastic Section Modulus about Y-Y Axis, Right Direction? (TNX specifies this as bottom)")>
-    Public Property elastic_sec_mod_y_right() As Double?
-        Get
-            Return Me.prop_elastic_sec_mod_y_right
-        End Get
-        Set
-            Me.prop_elastic_sec_mod_y_right = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("rx, Radius of Gyration about X-X Axis")>
-    Public Property radius_of_gyration_x() As Double?
-        Get
-            Return Me.prop_radius_of_gyration_x
-        End Get
-        Set
-            Me.prop_radius_of_gyration_x = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("ry, Radius of Gyration about Y-Y Axis")>
-    Public Property radius_of_gyration_y() As Double?
-        Get
-            Return Me.prop_radius_of_gyration_y
-        End Get
-        Set
-            Me.prop_radius_of_gyration_y = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("SFx, Shear Deflection Form Factor about X-X Axis")>
-    Public Property shear_deflection_form_factor_x() As Double?
-        Get
-            Return Me.prop_shear_deflection_form_factor_x
-        End Get
-        Set
-            Me.prop_shear_deflection_form_factor_x = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("SFy, Shear Deflection Form Factor about Y-Y Axis")>
-    Public Property shear_deflection_form_factor_y() As Double?
-        Get
-            Return Me.prop_shear_deflection_form_factor_y
-        End Get
-        Set
-            Me.prop_shear_deflection_form_factor_y = Value
-        End Set
-    End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("K Factor Adjustment. Allows TNX to match tool result.")>
-    Public Property K_factor_adj() As Double?
-        Get
-            Return Me.prop_K_factor_adj
-        End Get
-        Set
-            Me.prop_K_factor_adj = Value
-        End Set
-    End Property
-    '<Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("TNX Section Database Info ID")>
-    'Public Property tnx_section_db_info_id() As Integer
+#Region "Inheritted"
+    Public Overrides ReadOnly Property EDSObjectName As String = "Leg Reinforcement Details"
+    Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement_details"
+    Public Overrides ReadOnly Property EDSTableDepth As Integer = 1 'base 0 so this is first sub level
+
+    Public Overrides Function SQLInsert() As String
+
+        SQLInsert = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Detail_INSERT
+        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAIL VALUES]", Me.SQLInsertValues)
+        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAIL FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        'Leg Reinforcement Results
+        'For Each row As LegReinforcementResults2 In LegReinforcementResults2
+        '    SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]")
+        '    SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]", "END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]")
+        '    'SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAILS RESULTS INSERT]", row.SQLInsert)
+        '    SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAILS RESULTS INSERT]", Me.Results.EDSResultQuery)
+        'Next
+
+        If Me.Results.Count > 0 Then
+            SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]")
+            SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]", "END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]")
+            SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAILS RESULTS INSERT]", Me.Results.EDSResultQuery)
+        End If
+
+        Return SQLInsert
+
+    End Function
+
+    Public Overrides Function SQLUpdate() As String
+
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Detail_UPDATE
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
+        SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        'Leg Reinforcement Results
+        'For Each row As LegReinforcementResults2 In LegReinforcementResults2
+        '    SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]")
+        '    SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]", "END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]")
+        '    'SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAILS RESULTS INSERT]", row.SQLInsert)
+        'Next
+
+        If Me.Results.Count > 0 Then
+            SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]")
+            SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]", "END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]")
+            SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAILS RESULTS INSERT]", Me.Results.EDSResultQuery)
+        End If
+
+        Return SQLUpdate
+
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+
+        SQLDelete = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Detail_DELETE
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
+        SQLDelete = SQLDelete.TrimEnd() 'Removes empty rows that generate within query for each record
+
+        Return SQLDelete
+
+    End Function
+
+#End Region
+
+#Region "Define"
+    'Private _local_id As Integer?
+    Private _ID As Integer?
+    Private _leg_reinforcement_id As Integer?
+    Private _leg_load_time_mod_option As Boolean?
+    Private _end_connection_type As String
+    Private _leg_crushing As Boolean?
+    Private _applied_load_type As String
+    Private _slenderness_ratio_type As String
+    Private _intermeditate_connection_type As String
+    Private _intermeditate_connection_spacing As Double?
+    Private _ki_override As Double?
+    Private _leg_diameter As Double?
+    Private _leg_thickness As Double?
+    Private _leg_grade As Double?
+    Private _leg_unbraced_length As Double?
+    Private _rein_diameter As Double?
+    Private _rein_thickness As Double?
+    Private _rein_grade As Double?
+    Private _print_bolt_on_connections As Boolean?
+    Private _leg_length As Double?
+    Private _rein_length As Double?
+    Private _set_top_to_bottom As Boolean?
+    Private _flange_bolt_quantity_bot As Integer?
+    Private _flange_bolt_circle_bot As Double?
+    Private _flange_bolt_orientation_bot As Integer?
+    Private _flange_bolt_quantity_top As Integer?
+    Private _flange_bolt_circle_top As Double?
+    Private _flange_bolt_orientation_top As Integer?
+    Private _threaded_rod_size_bot As String
+    Private _threaded_rod_mat_bot As String
+    Private _threaded_rod_quantity_bot As Integer?
+    Private _threaded_rod_unbraced_length_bot As Double?
+    Private _threaded_rod_size_top As String
+    Private _threaded_rod_mat_top As String
+    Private _threaded_rod_quantity_top As Integer?
+    Private _threaded_rod_unbraced_length_top As Double?
+    Private _stiffener_height_bot As Double?
+    Private _stiffener_length_bot As Double?
+    Private _stiffener_fillet_bot As Integer?
+    Private _stiffener_exx_bot As Double?
+    Private _flange_thickness_bot As Double?
+    Private _stiffener_height_top As Double?
+    Private _stiffener_length_top As Double?
+    Private _stiffener_fillet_top As Integer?
+    Private _stiffener_exx_top As Double?
+    Private _flange_thickness_top As Double?
+    Private _structure_ind As String
+    Private _reinforcement_type As String
+    Private _leg_reinforcement_name As String
+    Private _local_id As Integer?
+    Private _top_elev As Double?
+    Private _bot_elev As Double?
+
+    'Public Property LegReinforcementResults As New List(Of LegReinforcementResults)
+    'Public Property LegReinforcementResults2 As New List(Of LegReinforcementResults2)
+
+    '<Category("Leg Reinforcement Details"), Description(""), DisplayName("Local Id")>
+    'Public Property local_id() As Integer?
     '    Get
-    '        Return Me.prop_tnx_section_db_info_id
+    '        Return Me._local_id
     '    End Get
     '    Set
-    '        Me.prop_tnx_section_db_info_id = Value
+    '        Me._local_id = Value
     '    End Set
     'End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("TNX Section File= (code to insert into .eri file)")>
-    Public Property sec_file() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Id")>
+    Public Property ID() As Integer?
         Get
-            Return Me.prop_sec_file
+            Return Me._ID
         End Get
         Set
-            Me.prop_sec_file = Value
+            Me._ID = Value
         End Set
     End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("TNX Section USName= (code to insert into .eri file)")>
-    Public Property tnx_us_name() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Id")>
+    Public Property leg_reinforcement_id() As Integer?
         Get
-            Return Me.prop_tnx_us_name
+            Return Me._leg_reinforcement_id
         End Get
         Set
-            Me.prop_tnx_us_name = Value
+            Me._leg_reinforcement_id = Value
         End Set
     End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("TNX Section SIName= (code to insert into .eri file)")>
-    Public Property tnx_si_name() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Load Time Mod Option")>
+    Public Property leg_load_time_mod_option() As Boolean?
         Get
-            Return Me.prop_tnx_si_name
+            Return Me._leg_load_time_mod_option
         End Get
         Set
-            Me.prop_tnx_si_name = Value
+            Me._leg_load_time_mod_option = Value
         End Set
     End Property
-    <Category("Leg Reinforcement Arbitrary Shape"), Description(""), DisplayName("TNX Section Values= (code to insert into .eri file)")>
-    Public Property sec_values() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("End Connection Type")>
+    Public Property end_connection_type() As String
         Get
-            Return Me.prop_sec_values
+            Return Me._end_connection_type
         End Get
         Set
-            Me.prop_sec_values = Value
+            Me._end_connection_type = Value
         End Set
     End Property
-    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database File= (code to insert into .eri file)")>
-    Public Property member_mat_file() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Crushing")>
+    Public Property leg_crushing() As Boolean?
         Get
-            Return Me.prop_member_mat_file
+            Return Me._leg_crushing
         End Get
         Set
-            Me.prop_member_mat_file = Value
+            Me._leg_crushing = Value
         End Set
     End Property
-    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database Name= (code to insert into .eri file)")>
-    Public Property mat_name() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Applied Load Type")>
+    Public Property applied_load_type() As String
         Get
-            Return Me.prop_mat_name
+            Return Me._applied_load_type
         End Get
         Set
-            Me.prop_mat_name = Value
+            Me._applied_load_type = Value
         End Set
     End Property
-    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database Values= (code to insert into .eri file)")>
-    Public Property mat_values() As String
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Slenderness Ratio Type")>
+    Public Property slenderness_ratio_type() As String
         Get
-            Return Me.prop_mat_values
+            Return Me._slenderness_ratio_type
         End Get
         Set
-            Me.prop_mat_values = Value
+            Me._slenderness_ratio_type = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermeditate Connection Type")>
+    Public Property intermeditate_connection_type() As String
+        Get
+            Return Me._intermeditate_connection_type
+        End Get
+        Set
+            Me._intermeditate_connection_type = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermeditate Connection Spacing")>
+    Public Property intermeditate_connection_spacing() As Double?
+        Get
+            Return Me._intermeditate_connection_spacing
+        End Get
+        Set
+            Me._intermeditate_connection_spacing = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Ki Override")>
+    Public Property ki_override() As Double?
+        Get
+            Return Me._ki_override
+        End Get
+        Set
+            Me._ki_override = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Diameter")>
+    Public Property leg_diameter() As Double?
+        Get
+            Return Me._leg_diameter
+        End Get
+        Set
+            Me._leg_diameter = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Thickness")>
+    Public Property leg_thickness() As Double?
+        Get
+            Return Me._leg_thickness
+        End Get
+        Set
+            Me._leg_thickness = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Grade")>
+    Public Property leg_grade() As Double?
+        Get
+            Return Me._leg_grade
+        End Get
+        Set
+            Me._leg_grade = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Unbraced Length")>
+    Public Property leg_unbraced_length() As Double?
+        Get
+            Return Me._leg_unbraced_length
+        End Get
+        Set
+            Me._leg_unbraced_length = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Diameter")>
+    Public Property rein_diameter() As Double?
+        Get
+            Return Me._rein_diameter
+        End Get
+        Set
+            Me._rein_diameter = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Thickness")>
+    Public Property rein_thickness() As Double?
+        Get
+            Return Me._rein_thickness
+        End Get
+        Set
+            Me._rein_thickness = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Grade")>
+    Public Property rein_grade() As Double?
+        Get
+            Return Me._rein_grade
+        End Get
+        Set
+            Me._rein_grade = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Print Bolt On Connections")>
+    Public Property print_bolt_on_connections() As Boolean?
+        Get
+            Return Me._print_bolt_on_connections
+        End Get
+        Set
+            Me._print_bolt_on_connections = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Length")>
+    Public Property leg_length() As Double?
+        Get
+            Return Me._leg_length
+        End Get
+        Set
+            Me._leg_length = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Length")>
+    Public Property rein_length() As Double?
+        Get
+            Return Me._rein_length
+        End Get
+        Set
+            Me._rein_length = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Set Top To Bottom")>
+    Public Property set_top_to_bottom() As Boolean?
+        Get
+            Return Me._set_top_to_bottom
+        End Get
+        Set
+            Me._set_top_to_bottom = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Quantity Bot")>
+    Public Property flange_bolt_quantity_bot() As Integer?
+        Get
+            Return Me._flange_bolt_quantity_bot
+        End Get
+        Set
+            Me._flange_bolt_quantity_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Circle Bot")>
+    Public Property flange_bolt_circle_bot() As Double?
+        Get
+            Return Me._flange_bolt_circle_bot
+        End Get
+        Set
+            Me._flange_bolt_circle_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Orientation Bot")>
+    Public Property flange_bolt_orientation_bot() As Integer?
+        Get
+            Return Me._flange_bolt_orientation_bot
+        End Get
+        Set
+            Me._flange_bolt_orientation_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Quantity Top")>
+    Public Property flange_bolt_quantity_top() As Integer?
+        Get
+            Return Me._flange_bolt_quantity_top
+        End Get
+        Set
+            Me._flange_bolt_quantity_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Circle Top")>
+    Public Property flange_bolt_circle_top() As Double?
+        Get
+            Return Me._flange_bolt_circle_top
+        End Get
+        Set
+            Me._flange_bolt_circle_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Orientation Top")>
+    Public Property flange_bolt_orientation_top() As Integer?
+        Get
+            Return Me._flange_bolt_orientation_top
+        End Get
+        Set
+            Me._flange_bolt_orientation_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Size Bot")>
+    Public Property threaded_rod_size_bot() As String
+        Get
+            Return Me._threaded_rod_size_bot
+        End Get
+        Set
+            Me._threaded_rod_size_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Mat Bot")>
+    Public Property threaded_rod_mat_bot() As String
+        Get
+            Return Me._threaded_rod_mat_bot
+        End Get
+        Set
+            Me._threaded_rod_mat_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Quantity Bot")>
+    Public Property threaded_rod_quantity_bot() As Integer?
+        Get
+            Return Me._threaded_rod_quantity_bot
+        End Get
+        Set
+            Me._threaded_rod_quantity_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Unbraced Length Bot")>
+    Public Property threaded_rod_unbraced_length_bot() As Double?
+        Get
+            Return Me._threaded_rod_unbraced_length_bot
+        End Get
+        Set
+            Me._threaded_rod_unbraced_length_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Size Top")>
+    Public Property threaded_rod_size_top() As String
+        Get
+            Return Me._threaded_rod_size_top
+        End Get
+        Set
+            Me._threaded_rod_size_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Mat Top")>
+    Public Property threaded_rod_mat_top() As String
+        Get
+            Return Me._threaded_rod_mat_top
+        End Get
+        Set
+            Me._threaded_rod_mat_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Quantity Top")>
+    Public Property threaded_rod_quantity_top() As Integer?
+        Get
+            Return Me._threaded_rod_quantity_top
+        End Get
+        Set
+            Me._threaded_rod_quantity_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Unbraced Length Top")>
+    Public Property threaded_rod_unbraced_length_top() As Double?
+        Get
+            Return Me._threaded_rod_unbraced_length_top
+        End Get
+        Set
+            Me._threaded_rod_unbraced_length_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Height Bot")>
+    Public Property stiffener_height_bot() As Double?
+        Get
+            Return Me._stiffener_height_bot
+        End Get
+        Set
+            Me._stiffener_height_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Length Bot")>
+    Public Property stiffener_length_bot() As Double?
+        Get
+            Return Me._stiffener_length_bot
+        End Get
+        Set
+            Me._stiffener_length_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Fillet Bot")>
+    Public Property stiffener_fillet_bot() As Integer?
+        Get
+            Return Me._stiffener_fillet_bot
+        End Get
+        Set
+            Me._stiffener_fillet_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Exx Bot")>
+    Public Property stiffener_exx_bot() As Double?
+        Get
+            Return Me._stiffener_exx_bot
+        End Get
+        Set
+            Me._stiffener_exx_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Thickness Bot")>
+    Public Property flange_thickness_bot() As Double?
+        Get
+            Return Me._flange_thickness_bot
+        End Get
+        Set
+            Me._flange_thickness_bot = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Height Top")>
+    Public Property stiffener_height_top() As Double?
+        Get
+            Return Me._stiffener_height_top
+        End Get
+        Set
+            Me._stiffener_height_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Length Top")>
+    Public Property stiffener_length_top() As Double?
+        Get
+            Return Me._stiffener_length_top
+        End Get
+        Set
+            Me._stiffener_length_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Fillet Top")>
+    Public Property stiffener_fillet_top() As Integer?
+        Get
+            Return Me._stiffener_fillet_top
+        End Get
+        Set
+            Me._stiffener_fillet_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Exx Top")>
+    Public Property stiffener_exx_top() As Double?
+        Get
+            Return Me._stiffener_exx_top
+        End Get
+        Set
+            Me._stiffener_exx_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Thickness Top")>
+    Public Property flange_thickness_top() As Double?
+        Get
+            Return Me._flange_thickness_top
+        End Get
+        Set
+            Me._flange_thickness_top = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Structure Ind")>
+    Public Property structure_ind() As String
+        Get
+            Return Me._structure_ind
+        End Get
+        Set
+            Me._structure_ind = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Reinforcement Type")>
+    Public Property reinforcement_type() As String
+        Get
+            Return Me._reinforcement_type
+        End Get
+        Set
+            Me._reinforcement_type = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Name")>
+    Public Property leg_reinforcement_name() As String
+        Get
+            Return Me._leg_reinforcement_name
+        End Get
+        Set
+            Me._leg_reinforcement_name = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Local Id")>
+    Public Property local_id() As Integer?
+        Get
+            Return Me._local_id
+        End Get
+        Set
+            Me._local_id = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Top Elev")>
+    Public Property top_elev() As Double?
+        Get
+            Return Me._top_elev
+        End Get
+        Set
+            Me._top_elev = Value
+        End Set
+    End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Bot Elev")>
+    Public Property bot_elev() As Double?
+        Get
+            Return Me._bot_elev
+        End Get
+        Set
+            Me._bot_elev = Value
         End Set
     End Property
 
-    Sub New()
-        'Leave method empty
+#End Region
+
+#Region "Constructors"
+    Public Sub New()
+        'Leave Method Empty
     End Sub
 
-    Sub New(ByVal ArbitraryShapeDataRow As DataRow)
-        Try
-            Me.arb_shape_id = CType(ArbitraryShapeDataRow.Item("arb_shape_id"), Integer)
-        Catch
-            Me.arb_shape_id = 0
-        End Try 'Arbitrary Shape ID
-        Try
-            Me.us_name = CType(ArbitraryShapeDataRow.Item("us_name"), String)
-        Catch
-            Me.us_name = Nothing
-        End Try 'US Name
-        Try
-            Me.si_name = CType(ArbitraryShapeDataRow.Item("si_name"), String)
-        Catch
-            Me.si_name = Nothing
-        End Try 'SI Name
-        Try
-            Me.height = CType(ArbitraryShapeDataRow.Item("height"), Double)
-        Catch
-            Me.height = Nothing
-        End Try 'Height
-        Try
-            Me.width = CType(ArbitraryShapeDataRow.Item("width"), Double)
-        Catch
-            Me.width = Nothing
-        End Try 'Width
-        Try
-            Me.wind_projected_width = CType(ArbitraryShapeDataRow.Item("wind_projected_width"), Double)
-        Catch
-            Me.wind_projected_width = Nothing
-        End Try 'Wind Projected Width
-        Try
-            Me.perimeter = CType(ArbitraryShapeDataRow.Item("perimeter"), Double)
-        Catch
-            Me.perimeter = Nothing
-        End Try 'Perimeter
-        Try
-            Me.modulus_of_elasticity = CType(ArbitraryShapeDataRow.Item("modulus_of_elasticity"), Double)
-        Catch
-            Me.modulus_of_elasticity = Nothing
-        End Try 'Modulus of Elasticity
-        Try
-            Me.density = CType(ArbitraryShapeDataRow.Item("density"), Double)
-        Catch
-            Me.density = Nothing
-        End Try 'Density
-        Try
-            Me.area = CType(ArbitraryShapeDataRow.Item("area"), Double)
-        Catch
-            Me.area = Nothing
-        End Try 'Cross-Sectional Area
-        Try
-            Me.stress_reduction_factor = CType(ArbitraryShapeDataRow.Item("stress_reduction_factor"), Double)
-        Catch
-            Me.stress_reduction_factor = Nothing
-        End Try 'Local Buckling Interaction Stress Reduction Factors
-        Try
-            Me.warp_constant = CType(ArbitraryShapeDataRow.Item("warp_constant"), Double)
-        Catch
-            Me.warp_constant = Nothing
-        End Try 'Warping Constant
-        Try
-            Me.moment_of_inertia_x = CType(ArbitraryShapeDataRow.Item("moment_of_inertia_x"), Double)
-        Catch
-            Me.moment_of_inertia_x = Nothing
-        End Try 'Moment of Inertia about X-X Axis
-        Try
-            Me.moment_of_inertia_y = CType(ArbitraryShapeDataRow.Item("moment_of_inertia_y"), Double)
-        Catch
-            Me.moment_of_inertia_y = Nothing
-        End Try 'Moment of Inertia about Y-Y Axis
-        Try
-            Me.tors_constant = CType(ArbitraryShapeDataRow.Item("tors_constant"), Double)
-        Catch
-            Me.tors_constant = Nothing
-        End Try 'Torsional Constant
-        Try
-            Me.elastic_sec_mod_x_top = CType(ArbitraryShapeDataRow.Item("elastic_sec_mod_x_top"), Double)
-        Catch
-            Me.elastic_sec_mod_x_top = Nothing
-        End Try 'Sx_top, Elastic Section Modulus about X-X Axis, Top Direction
-        Try
-            Me.elastic_sec_mod_y_left = CType(ArbitraryShapeDataRow.Item("elastic_sec_mod_y_left"), Double)
-        Catch
-            Me.elastic_sec_mod_y_left = Nothing
-        End Try 'Sy_left, Elastic Section Modulus about Y-Y Axis, Left Direction? (TNX specifies this as top)
-        Try
-            Me.elastic_sec_mod_x_bot = CType(ArbitraryShapeDataRow.Item("elastic_sec_mod_x_bot"), Double)
-        Catch
-            Me.elastic_sec_mod_x_bot = Nothing
-        End Try 'Sx_bot, Elastic Section Modulus about X-X Axis, Bottom Direction
-        Try
-            Me.elastic_sec_mod_y_right = CType(ArbitraryShapeDataRow.Item("elastic_sec_mod_y_right"), Double)
-        Catch
-            Me.elastic_sec_mod_y_right = Nothing
-        End Try 'Sy_right, Elastic Section Modulus about Y-Y Axis, Right Direction? (TNX specifies this as top)
-        Try
-            Me.radius_of_gyration_x = CType(ArbitraryShapeDataRow.Item("radius_of_gyration_x"), Double)
-        Catch
-            Me.radius_of_gyration_x = Nothing
-        End Try 'rx, Radius of Gyration about X-X Axis
-        Try
-            Me.radius_of_gyration_y = CType(ArbitraryShapeDataRow.Item("radius_of_gyration_y"), Double)
-        Catch
-            Me.radius_of_gyration_y = Nothing
-        End Try 'ry, Radius of Gyration about Y-Y Axis
-        Try
-            Me.shear_deflection_form_factor_x = CType(ArbitraryShapeDataRow.Item("shear_deflection_form_factor_x"), Double)
-        Catch
-            Me.shear_deflection_form_factor_x = Nothing
-        End Try 'SFx, Shear Deflection Form Factor about X-X Axis
-        Try
-            Me.shear_deflection_form_factor_y = CType(ArbitraryShapeDataRow.Item("shear_deflection_form_factor_y"), Double)
-        Catch
-            Me.shear_deflection_form_factor_y = Nothing
-        End Try 'SFy, Shear Deflection Form Factor about Y-Y Axis
-        Try
-            Me.K_factor_adj = CType(ArbitraryShapeDataRow.Item("K_factor_adj"), Double)
-        Catch
-            Me.K_factor_adj = Nothing
-        End Try 'K Factor Adjustment. Allows TNX to match tool result.
-        Try
-            Me.sec_file = CType(ArbitraryShapeDataRow.Item("sec_file"), String)
-        Catch
-            Me.sec_file = Nothing
-        End Try 'TNX Section File= (code to insert into .eri file)
-        Try
-            Me.tnx_us_name = CType(ArbitraryShapeDataRow.Item("tnx_us_name"), String)
-        Catch
-            Me.tnx_us_name = Nothing
-        End Try 'TNX Section USName= (code to insert into .eri file)
-        Try
-            Me.tnx_si_name = CType(ArbitraryShapeDataRow.Item("tnx_si_name"), String)
-        Catch
-            Me.tnx_si_name = Nothing
-        End Try 'TNX Section SIName= (code to insert into .eri file)
-        Try
-            Me.sec_values = CType(ArbitraryShapeDataRow.Item("sec_values"), String)
-        Catch
-            Me.sec_values = Nothing
-        End Try 'TNX Section Values= (code to insert into .eri file)
-        Try
-            Me.member_mat_file = CType(ArbitraryShapeDataRow.Item("member_mat_file"), String)
-        Catch
-            Me.member_mat_file = Nothing
-        End Try 'TNX Material Database File= (code to insert into .eri file)
-        Try
-            Me.mat_name = CType(ArbitraryShapeDataRow.Item("mat_name"), String)
-        Catch
-            Me.mat_name = Nothing
-        End Try 'TNX Material Database Name= (code to insert into .eri file)
-        Try
-            Me.mat_values = CType(ArbitraryShapeDataRow.Item("mat_values"), String)
-        Catch
-            Me.mat_values = Nothing
-        End Try 'TNX Material Database Values= (code to insert into .eri file)
+    'Public Sub New(ByVal row As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal row As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        Dim dr = row
+        'probably need a local id in order to pull correct results
+        'If EDStruefalse = False Then 'Only pull in local id when referencing Excel
+        '    Me.local_id = DBtoNullableInt(dr.Item("local_connection_id"))
+        'End If
+
+        Me.ID = DBtoNullableInt(dr.Item("ID"))
+        If EDStruefalse = True Then 'Only Pull in when referencing EDS
+            Me.leg_reinforcement_id = DBtoNullableInt(dr.Item("leg_reinforcement_id"))
+        End If
+        Me.leg_load_time_mod_option = If(EDStruefalse, DBtoNullableBool(dr.Item("leg_load_time_mod_option")), If(DBtoStr(dr.Item("leg_load_time_mod_option")) = "Yes", True, If(DBtoStr(dr.Item("leg_load_time_mod_option")) = "No", False, DBtoNullableBool(dr.Item("leg_load_time_mod_option"))))) 'Listed as a string and need to convert to Boolean
+        Me.end_connection_type = DBtoStr(dr.Item("end_connection_type"))
+        Me.leg_crushing = If(EDStruefalse, DBtoNullableBool(dr.Item("leg_crushing")), If(DBtoStr(dr.Item("leg_crushing")) = "Yes", True, If(DBtoStr(dr.Item("leg_crushing")) = "No", False, DBtoNullableBool(dr.Item("leg_crushing"))))) 'Listed as a string and need to convert to Boolean
+        Me.applied_load_type = DBtoStr(dr.Item("applied_load_type"))
+        Me.slenderness_ratio_type = DBtoStr(dr.Item("slenderness_ratio_type"))
+        Me.intermeditate_connection_type = DBtoStr(dr.Item("intermeditate_connection_type"))
+        Me.intermeditate_connection_spacing = DBtoNullableDbl(dr.Item("intermeditate_connection_spacing"))
+        Me.ki_override = DBtoNullableDbl(dr.Item("ki_override"))
+        Me.leg_diameter = DBtoNullableDbl(dr.Item("leg_diameter"))
+        Me.leg_thickness = DBtoNullableDbl(dr.Item("leg_thickness"))
+        Me.leg_grade = DBtoNullableDbl(dr.Item("leg_grade"))
+        Me.leg_unbraced_length = DBtoNullableDbl(dr.Item("leg_unbraced_length"))
+        Me.rein_diameter = DBtoNullableDbl(dr.Item("rein_diameter"))
+        Me.rein_thickness = DBtoNullableDbl(dr.Item("rein_thickness"))
+        Me.rein_grade = DBtoNullableDbl(dr.Item("rein_grade"))
+        Me.print_bolt_on_connections = DBtoNullableBool(dr.Item("print_bolt_on_connections"))
+        Me.leg_length = DBtoNullableDbl(dr.Item("leg_length"))
+        Me.rein_length = DBtoNullableDbl(dr.Item("rein_length"))
+        Me.set_top_to_bottom = DBtoNullableBool(dr.Item("set_top_to_bottom"))
+        Me.flange_bolt_quantity_bot = DBtoNullableInt(dr.Item("flange_bolt_quantity_bot"))
+        Me.flange_bolt_circle_bot = DBtoNullableDbl(dr.Item("flange_bolt_circle_bot"))
+        Me.flange_bolt_orientation_bot = DBtoNullableInt(dr.Item("flange_bolt_orientation_bot"))
+        Me.flange_bolt_quantity_top = DBtoNullableInt(dr.Item("flange_bolt_quantity_top"))
+        Me.flange_bolt_circle_top = DBtoNullableDbl(dr.Item("flange_bolt_circle_top"))
+        Me.flange_bolt_orientation_top = DBtoNullableInt(dr.Item("flange_bolt_orientation_top"))
+        Me.threaded_rod_size_bot = DBtoStr(dr.Item("threaded_rod_size_bot"))
+        Me.threaded_rod_mat_bot = DBtoStr(dr.Item("threaded_rod_mat_bot"))
+        Me.threaded_rod_quantity_bot = DBtoNullableInt(dr.Item("threaded_rod_quantity_bot"))
+        Me.threaded_rod_unbraced_length_bot = DBtoNullableDbl(dr.Item("threaded_rod_unbraced_length_bot"))
+        Me.threaded_rod_size_top = DBtoStr(dr.Item("threaded_rod_size_top"))
+        Me.threaded_rod_mat_top = DBtoStr(dr.Item("threaded_rod_mat_top"))
+        Me.threaded_rod_quantity_top = DBtoNullableInt(dr.Item("threaded_rod_quantity_top"))
+        Me.threaded_rod_unbraced_length_top = DBtoNullableDbl(dr.Item("threaded_rod_unbraced_length_top"))
+        Me.stiffener_height_bot = DBtoNullableDbl(dr.Item("stiffener_height_bot"))
+        Me.stiffener_length_bot = DBtoNullableDbl(dr.Item("stiffener_length_bot"))
+        Me.stiffener_fillet_bot = DBtoNullableInt(dr.Item("stiffener_fillet_bot"))
+        Me.stiffener_exx_bot = DBtoNullableDbl(dr.Item("stiffener_exx_bot"))
+        Me.flange_thickness_bot = DBtoNullableDbl(dr.Item("flange_thickness_bot"))
+        Me.stiffener_height_top = DBtoNullableDbl(dr.Item("stiffener_height_top"))
+        Me.stiffener_length_top = DBtoNullableDbl(dr.Item("stiffener_length_top"))
+        Me.stiffener_fillet_top = DBtoNullableInt(dr.Item("stiffener_fillet_top"))
+        Me.stiffener_exx_top = DBtoNullableDbl(dr.Item("stiffener_exx_top"))
+        Me.flange_thickness_top = DBtoNullableDbl(dr.Item("flange_thickness_top"))
+        Me.structure_ind = DBtoStr(dr.Item("structure_ind"))
+        Me.reinforcement_type = DBtoStr(dr.Item("reinforcement_type"))
+        Me.leg_reinforcement_name = DBtoStr(dr.Item("leg_reinforcement_name"))
+        Me.local_id = DBtoNullableInt(dr.Item("local_id"))
+        Me.top_elev = DBtoNullableDbl(dr.Item("top_elev"))
+        Me.bot_elev = DBtoNullableDbl(dr.Item("bot_elev"))
+
+        'Dim lrResult As New LegReinforcementResults
+        ''Dim lrResult As New LegReinforcementResults2 'results 2
+
+        'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
+        '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
+        '        lrResult = New LegReinforcementResults(lrrrow, EDStruefalse, Me) 'results1
+        '        'lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me) 'results2
+        '        If If(EDStruefalse, False, lrResult.local_id = Me.local_id) Then
+        '            'lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me)
+        '            'LegReinforcementResults2.Add(lrResult1)
+        '            'Me.Results.Add(lrResult)
+        '            Me.Results.Add(New EDSResult(lrrrow, Me))
+        '        End If
+        '    Next
+        'End If
+
+        'only store when populating from an Excel sheet
+        If EDStruefalse = False Then
+            For Each resrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
+                Dim local_id As Integer = CType(resrow.Item("local_id"), Integer)
+                If local_id = Me.local_id Then
+                    Me.Results.Add(New EDSResult(resrow, Me))
+                End If
+            Next
+        End If
+
+
     End Sub
+
+#End Region
+
+#Region "Save to EDS"
+    Public Overrides Function SQLInsertValues() As String
+        SQLInsertValues = ""
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_reinforcement_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_load_time_mod_option.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.end_connection_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_crushing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.applied_load_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.slenderness_ratio_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.intermeditate_connection_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.intermeditate_connection_spacing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ki_override.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_diameter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_thickness.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_grade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_unbraced_length.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rein_diameter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rein_thickness.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rein_grade.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.print_bolt_on_connections.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_length.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rein_length.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.set_top_to_bottom.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_quantity_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_circle_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_orientation_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_quantity_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_circle_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_bolt_orientation_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_size_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_mat_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_quantity_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_unbraced_length_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_size_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_mat_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_quantity_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.threaded_rod_unbraced_length_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_height_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_length_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_fillet_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_exx_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_thickness_bot.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_height_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_length_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_fillet_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.stiffener_exx_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_thickness_top.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_ind.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reinforcement_type.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_reinforcement_name.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.top_elev.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bot_elev.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        SQLInsertFields = ""
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_reinforcement_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_load_time_mod_option")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("end_connection_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_crushing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("applied_load_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("slenderness_ratio_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("intermeditate_connection_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("intermeditate_connection_spacing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("ki_override")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_diameter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_thickness")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_grade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_unbraced_length")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rein_diameter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rein_thickness")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rein_grade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("print_bolt_on_connections")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_length")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("rein_length")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("set_top_to_bottom")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_quantity_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_circle_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_orientation_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_quantity_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_circle_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_bolt_orientation_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_size_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_mat_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_quantity_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_unbraced_length_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_size_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_mat_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_quantity_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("threaded_rod_unbraced_length_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_height_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_length_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_fillet_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_exx_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_thickness_bot")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_height_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_length_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_fillet_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_exx_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_thickness_top")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_ind")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("reinforcement_type")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_reinforcement_name")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("top_elev")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bot_elev")
+
+
+        Return SQLInsertFields
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        SQLUpdateFieldsandValues = ""
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_reinforcement_id = " & "@TopLevelID")
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_load_time_mod_option = " & Me.leg_load_time_mod_option.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("end_connection_type = " & Me.end_connection_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_crushing = " & Me.leg_crushing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("applied_load_type = " & Me.applied_load_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("slenderness_ratio_type = " & Me.slenderness_ratio_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("intermeditate_connection_type = " & Me.intermeditate_connection_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("intermeditate_connection_spacing = " & Me.intermeditate_connection_spacing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ki_override = " & Me.ki_override.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_diameter = " & Me.leg_diameter.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_thickness = " & Me.leg_thickness.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_grade = " & Me.leg_grade.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_unbraced_length = " & Me.leg_unbraced_length.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rein_diameter = " & Me.rein_diameter.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rein_thickness = " & Me.rein_thickness.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rein_grade = " & Me.rein_grade.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("print_bolt_on_connections = " & Me.print_bolt_on_connections.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_length = " & Me.leg_length.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rein_length = " & Me.rein_length.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("set_top_to_bottom = " & Me.set_top_to_bottom.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_quantity_bot = " & Me.flange_bolt_quantity_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_circle_bot = " & Me.flange_bolt_circle_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_orientation_bot = " & Me.flange_bolt_orientation_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_quantity_top = " & Me.flange_bolt_quantity_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_circle_top = " & Me.flange_bolt_circle_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_bolt_orientation_top = " & Me.flange_bolt_orientation_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_size_bot = " & Me.threaded_rod_size_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_mat_bot = " & Me.threaded_rod_mat_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_quantity_bot = " & Me.threaded_rod_quantity_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_unbraced_length_bot = " & Me.threaded_rod_unbraced_length_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_size_top = " & Me.threaded_rod_size_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_mat_top = " & Me.threaded_rod_mat_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_quantity_top = " & Me.threaded_rod_quantity_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("threaded_rod_unbraced_length_top = " & Me.threaded_rod_unbraced_length_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_height_bot = " & Me.stiffener_height_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_length_bot = " & Me.stiffener_length_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_fillet_bot = " & Me.stiffener_fillet_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_exx_bot = " & Me.stiffener_exx_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_thickness_bot = " & Me.flange_thickness_bot.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_height_top = " & Me.stiffener_height_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_length_top = " & Me.stiffener_length_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_fillet_top = " & Me.stiffener_fillet_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_exx_top = " & Me.stiffener_exx_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_thickness_top = " & Me.flange_thickness_top.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_ind = " & Me.structure_ind.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reinforcement_type = " & Me.reinforcement_type.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_reinforcement_name = " & Me.leg_reinforcement_name.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_id = " & Me.local_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("top_elev = " & Me.top_elev.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bot_elev = " & Me.bot_elev.ToString.FormatDBValue)
+
+        Return SQLUpdateFieldsandValues
+    End Function
+#End Region
+
+#Region "Equals"
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As LegReinforcementDetail = TryCast(other, LegReinforcementDetail)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        'Equals = If(Me.leg_reinforcement_id.CheckChange(otherToCompare.leg_reinforcement_id, changes, categoryName, "Leg Reinforcement Id"), Equals, False)
+        Equals = If(Me.leg_load_time_mod_option.CheckChange(otherToCompare.leg_load_time_mod_option, changes, categoryName, "Leg Load Time Mod Option"), Equals, False)
+        Equals = If(Me.end_connection_type.CheckChange(otherToCompare.end_connection_type, changes, categoryName, "End Connection Type"), Equals, False)
+        Equals = If(Me.leg_crushing.CheckChange(otherToCompare.leg_crushing, changes, categoryName, "Leg Crushing"), Equals, False)
+        Equals = If(Me.applied_load_type.CheckChange(otherToCompare.applied_load_type, changes, categoryName, "Applied Load Type"), Equals, False)
+        Equals = If(Me.slenderness_ratio_type.CheckChange(otherToCompare.slenderness_ratio_type, changes, categoryName, "Slenderness Ratio Type"), Equals, False)
+        Equals = If(Me.intermeditate_connection_type.CheckChange(otherToCompare.intermeditate_connection_type, changes, categoryName, "Intermeditate Connection Type"), Equals, False)
+        Equals = If(Me.intermeditate_connection_spacing.CheckChange(otherToCompare.intermeditate_connection_spacing, changes, categoryName, "Intermeditate Connection Spacing"), Equals, False)
+        Equals = If(Me.ki_override.CheckChange(otherToCompare.ki_override, changes, categoryName, "Ki Override"), Equals, False)
+        Equals = If(Me.leg_diameter.CheckChange(otherToCompare.leg_diameter, changes, categoryName, "Leg Diameter"), Equals, False)
+        Equals = If(Me.leg_thickness.CheckChange(otherToCompare.leg_thickness, changes, categoryName, "Leg Thickness"), Equals, False)
+        Equals = If(Me.leg_grade.CheckChange(otherToCompare.leg_grade, changes, categoryName, "Leg Grade"), Equals, False)
+        Equals = If(Me.leg_unbraced_length.CheckChange(otherToCompare.leg_unbraced_length, changes, categoryName, "Leg Unbraced Length"), Equals, False)
+        Equals = If(Me.rein_diameter.CheckChange(otherToCompare.rein_diameter, changes, categoryName, "Rein Diameter"), Equals, False)
+        Equals = If(Me.rein_thickness.CheckChange(otherToCompare.rein_thickness, changes, categoryName, "Rein Thickness"), Equals, False)
+        Equals = If(Me.rein_grade.CheckChange(otherToCompare.rein_grade, changes, categoryName, "Rein Grade"), Equals, False)
+        Equals = If(Me.print_bolt_on_connections.CheckChange(otherToCompare.print_bolt_on_connections, changes, categoryName, "Print Bolt On Connections"), Equals, False)
+        Equals = If(Me.leg_length.CheckChange(otherToCompare.leg_length, changes, categoryName, "Leg Length"), Equals, False)
+        Equals = If(Me.rein_length.CheckChange(otherToCompare.rein_length, changes, categoryName, "Rein Length"), Equals, False)
+        Equals = If(Me.set_top_to_bottom.CheckChange(otherToCompare.set_top_to_bottom, changes, categoryName, "Set Top To Bottom"), Equals, False)
+        Equals = If(Me.flange_bolt_quantity_bot.CheckChange(otherToCompare.flange_bolt_quantity_bot, changes, categoryName, "Flange Bolt Quantity Bot"), Equals, False)
+        Equals = If(Me.flange_bolt_circle_bot.CheckChange(otherToCompare.flange_bolt_circle_bot, changes, categoryName, "Flange Bolt Circle Bot"), Equals, False)
+        Equals = If(Me.flange_bolt_orientation_bot.CheckChange(otherToCompare.flange_bolt_orientation_bot, changes, categoryName, "Flange Bolt Orientation Bot"), Equals, False)
+        Equals = If(Me.flange_bolt_quantity_top.CheckChange(otherToCompare.flange_bolt_quantity_top, changes, categoryName, "Flange Bolt Quantity Top"), Equals, False)
+        Equals = If(Me.flange_bolt_circle_top.CheckChange(otherToCompare.flange_bolt_circle_top, changes, categoryName, "Flange Bolt Circle Top"), Equals, False)
+        Equals = If(Me.flange_bolt_orientation_top.CheckChange(otherToCompare.flange_bolt_orientation_top, changes, categoryName, "Flange Bolt Orientation Top"), Equals, False)
+        Equals = If(Me.threaded_rod_size_bot.CheckChange(otherToCompare.threaded_rod_size_bot, changes, categoryName, "Threaded Rod Size Bot"), Equals, False)
+        Equals = If(Me.threaded_rod_mat_bot.CheckChange(otherToCompare.threaded_rod_mat_bot, changes, categoryName, "Threaded Rod Mat Bot"), Equals, False)
+        Equals = If(Me.threaded_rod_quantity_bot.CheckChange(otherToCompare.threaded_rod_quantity_bot, changes, categoryName, "Threaded Rod Quantity Bot"), Equals, False)
+        Equals = If(Me.threaded_rod_unbraced_length_bot.CheckChange(otherToCompare.threaded_rod_unbraced_length_bot, changes, categoryName, "Threaded Rod Unbraced Length Bot"), Equals, False)
+        Equals = If(Me.threaded_rod_size_top.CheckChange(otherToCompare.threaded_rod_size_top, changes, categoryName, "Threaded Rod Size Top"), Equals, False)
+        Equals = If(Me.threaded_rod_mat_top.CheckChange(otherToCompare.threaded_rod_mat_top, changes, categoryName, "Threaded Rod Mat Top"), Equals, False)
+        Equals = If(Me.threaded_rod_quantity_top.CheckChange(otherToCompare.threaded_rod_quantity_top, changes, categoryName, "Threaded Rod Quantity Top"), Equals, False)
+        Equals = If(Me.threaded_rod_unbraced_length_top.CheckChange(otherToCompare.threaded_rod_unbraced_length_top, changes, categoryName, "Threaded Rod Unbraced Length Top"), Equals, False)
+        Equals = If(Me.stiffener_height_bot.CheckChange(otherToCompare.stiffener_height_bot, changes, categoryName, "Stiffener Height Bot"), Equals, False)
+        Equals = If(Me.stiffener_length_bot.CheckChange(otherToCompare.stiffener_length_bot, changes, categoryName, "Stiffener Length Bot"), Equals, False)
+        Equals = If(Me.stiffener_fillet_bot.CheckChange(otherToCompare.stiffener_fillet_bot, changes, categoryName, "Stiffener Fillet Bot"), Equals, False)
+        Equals = If(Me.stiffener_exx_bot.CheckChange(otherToCompare.stiffener_exx_bot, changes, categoryName, "Stiffener Exx Bot"), Equals, False)
+        Equals = If(Me.flange_thickness_bot.CheckChange(otherToCompare.flange_thickness_bot, changes, categoryName, "Flange Thickness Bot"), Equals, False)
+        Equals = If(Me.stiffener_height_top.CheckChange(otherToCompare.stiffener_height_top, changes, categoryName, "Stiffener Height Top"), Equals, False)
+        Equals = If(Me.stiffener_length_top.CheckChange(otherToCompare.stiffener_length_top, changes, categoryName, "Stiffener Length Top"), Equals, False)
+        Equals = If(Me.stiffener_fillet_top.CheckChange(otherToCompare.stiffener_fillet_top, changes, categoryName, "Stiffener Fillet Top"), Equals, False)
+        Equals = If(Me.stiffener_exx_top.CheckChange(otherToCompare.stiffener_exx_top, changes, categoryName, "Stiffener Exx Top"), Equals, False)
+        Equals = If(Me.flange_thickness_top.CheckChange(otherToCompare.flange_thickness_top, changes, categoryName, "Flange Thickness Top"), Equals, False)
+        Equals = If(Me.structure_ind.CheckChange(otherToCompare.structure_ind, changes, categoryName, "Structure Ind"), Equals, False)
+        Equals = If(Me.reinforcement_type.CheckChange(otherToCompare.reinforcement_type, changes, categoryName, "Reinforcement Type"), Equals, False)
+        Equals = If(Me.leg_reinforcement_name.CheckChange(otherToCompare.leg_reinforcement_name, changes, categoryName, "Leg Reinforcement Name"), Equals, False)
+        Equals = If(Me.local_id.CheckChange(otherToCompare.local_id, changes, categoryName, "Local Id"), Equals, False)
+        Equals = If(Me.top_elev.CheckChange(otherToCompare.top_elev, changes, categoryName, "Top Elev"), Equals, False)
+        Equals = If(Me.bot_elev.CheckChange(otherToCompare.bot_elev, changes, categoryName, "Bot Elev"), Equals, False)
+
+    End Function
+#End Region
 
 End Class
 
-'Partial Public Class tnxSectionDatabaseInfo
-'    Private prop_tnx_section_db_info_id As Integer
-'    Private prop_file As String
-'    Private prop_us_name As String
-'    Private prop_si_name As String
-'    Private prop_sec_values As String
+'Partial Public Class LegReinforcementResults
+'    Inherits EDSObjectWithQueries
+'    'Inherits EDSResult
 
-'    <Category("Leg Reinforcement TNX Section Database Info"), Description(""), DisplayName("TNX Section Database Info ID")>
-'    Public Property tnx_section_db_info_id() As Integer
-'        Get
-'            Return Me.prop_tnx_section_db_info_id
-'        End Get
-'        Set
-'            Me.prop_tnx_section_db_info_id = Value
-'        End Set
-'    End Property
-'    <Category("Leg Reinforcement TNX Section Database Info"), Description(""), DisplayName("TNX Section File= (code to insert into .eri file)")>
-'    Public Property file() As String
-'        Get
-'            Return Me.prop_file
-'        End Get
-'        Set
-'            Me.prop_file = Value
-'        End Set
-'    End Property
-'    <Category("Leg Reinforcement TNX Section Database Info"), Description(""), DisplayName("TNX Section USName= (code to insert into .eri file)")>
-'    Public Property us_name() As String
-'        Get
-'            Return Me.prop_us_name
-'        End Get
-'        Set
-'            Me.prop_us_name = Value
-'        End Set
-'    End Property
-'    <Category("Leg Reinforcement TNX Section Database Info"), Description(""), DisplayName("TNX Section SIName= (code to insert into .eri file)")>
-'    Public Property si_name() As String
-'        Get
-'            Return Me.prop_si_name
-'        End Get
-'        Set
-'            Me.prop_si_name = Value
-'        End Set
-'    End Property
-'    <Category("Leg Reinforcement TNX Section Database Info"), Description(""), DisplayName("TNX Section Values= (code to insert into .eri file)")>
-'    Public Property sec_values() As String
-'        Get
-'            Return Me.prop_sec_values
-'        End Get
-'        Set
-'            Me.prop_sec_values = Value
-'        End Set
-'    End Property
+'#Region "Inheritted"
+'    Public Overrides ReadOnly Property EDSObjectName As String = "Leg Reinforcement Results"
+'    Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement_results"
+'    'Public Overrides ReadOnly Property EDSTableDepth As Integer = 2
 
-'    Sub New()
-'        'Leave method empty
+'    Public Overrides Function SQLInsert() As String
+
+'        SQLInsert = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Details_Results_INSERT
+'        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAILS RESULT VALUES]", Me.SQLInsertValues)
+'        SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAILS RESULT FIELDS]", Me.SQLInsertFields)
+'        SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+'        Return SQLInsert
+
+'    End Function
+
+'#End Region
+
+'#Region "Define"
+'    Private _leg_reinforcement_details_id As Integer?
+'    Private _local_id As Integer?
+'    'Private _work_order_seq_num As Double? 'not provided in Excel
+'    Private _rating As Double?
+'    Private _result_lkup As String
+'    'Private _modified_person_id As Integer? 'not provided in Excel
+'    'Private _process_stage As String 'not provided in Excel
+'    'Private _modified_date As DateTime? 'not provided in Excel
+
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Leg Reinforcement Details Id")>
+'    Public Property leg_reinforcement_details_id() As Integer?
+'        Get
+'            Return Me._leg_reinforcement_details_id
+'        End Get
+'        Set
+'            Me._leg_reinforcement_details_id = Value
+'        End Set
+'    End Property
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Local Id")>
+'    Public Property local_id() As Integer?
+'        Get
+'            Return Me._local_id
+'        End Get
+'        Set
+'            Me._local_id = Value
+'        End Set
+'    End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Work Order Seq Num")>
+'    'Public Property work_order_seq_num() As Double?
+'    '    Get
+'    '        Return Me._work_order_seq_num
+'    '    End Get
+'    '    Set
+'    '        Me._work_order_seq_num = Value
+'    '    End Set
+'    'End Property
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Rating")>
+'    Public Property rating() As Double?
+'        Get
+'            Return Me._rating
+'        End Get
+'        Set
+'            Me._rating = Value
+'        End Set
+'    End Property
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Result Lkup")>
+'    Public Property result_lkup() As String
+'        Get
+'            Return Me._result_lkup
+'        End Get
+'        Set
+'            Me._result_lkup = Value
+'        End Set
+'    End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Person Id")>
+'    'Public Property modified_person_id() As Integer?
+'    '    Get
+'    '        Return Me._modified_person_id
+'    '    End Get
+'    '    Set
+'    '        Me._modified_person_id = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Process Stage")>
+'    'Public Property process_stage() As String
+'    '    Get
+'    '        Return Me._process_stage
+'    '    End Get
+'    '    Set
+'    '        Me._process_stage = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Date")>
+'    'Public Property modified_date() As DateTime?
+'    '    Get
+'    '        Return Me._modified_date
+'    '    End Get
+'    '    Set
+'    '        Me._modified_date = Value
+'    '    End Set
+'    'End Property
+
+'#End Region
+
+'#Region "Constructors"
+'    Public Sub New()
+'        'Leave Method Empty
 '    End Sub
 
-'    Sub New(ByVal tnxSectionDataRow As DataRow)
-'        Try
-'            Me.tnx_section_db_info_id = CType(tnxSectionDataRow.Item("tnx_section_db_info_id"), Integer)
-'        Catch
-'            Me.tnx_section_db_info_id = 0
-'        End Try 'TNX Section Database Info ID
-'        Try
-'            Me.file = CType(tnxSectionDataRow.Item("file"), String)
-'        Catch
-'            Me.file = Nothing
-'        End Try 'TNX Section File= (code to insert into .eri file)
-'        Try
-'            Me.us_name = CType(tnxSectionDataRow.Item("us_name"), String)
-'        Catch
-'            Me.us_name = Nothing
-'        End Try 'TNX Section USName= (code to insert into .eri file)
-'        Try
-'            Me.si_name = CType(tnxSectionDataRow.Item("si_name"), String)
-'        Catch
-'            Me.si_name = Nothing
-'        End Try 'TNX Section SIName= (code to insert into .eri file)
-'        Try
-'            Me.sec_values = CType(tnxSectionDataRow.Item("sec_values"), String)
-'        Catch
-'            Me.sec_values = Nothing
-'        End Try 'TNX Section Values= (code to insert into .eri file)
+'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+'        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+'        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+'        Dim dr = lrrrow
+
+'        Me.leg_reinforcement_details_id = DBtoNullableInt(dr.Item("ID"))
+'        If EDStruefalse = False Then 'Only pull in local id when referencing Excel
+'            Me.local_id = DBtoNullableInt(dr.Item("local_id"))
+'        End If
+'        'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
+'        Me.rating = DBtoNullableDbl(dr.Item("rating"))
+'        Me.result_lkup = DBtoStr(dr.Item("result_lkup"))
+'        'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
+'        'Me.process_stage = DBtoStr(dr.Item("process_stage"))
+'        'Me.modified_date = DBtoStr(dr.Item("modified_date"))
+
 '    End Sub
+
+'#End Region
+
+'#Region "Save to EDS"
+'    Public Overrides Function SQLInsertValues() As String
+'        SQLInsertValues = ""
+
+'        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
+'        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_reinforcement_details_id.ToString.FormatDBValue)
+'        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+'        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+'        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
+'        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+'        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+'        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
+
+
+'        Return SQLInsertValues
+'    End Function
+
+'    Public Overrides Function SQLInsertFields() As String
+'        SQLInsertFields = ""
+
+'        SQLInsertFields = SQLInsertFields.AddtoDBString("leg_reinforcement_details_id")
+'        'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+'        SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
+'        SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
+'        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+'        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+'        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
+
+
+'        Return SQLInsertFields
+'    End Function
+
+'    Public Overrides Function SQLUpdateFieldsandValues() As String
+'        SQLUpdateFieldsandValues = ""
+'        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_reinforcement_details_id = " & Me.leg_reinforcement_details_id.ToString.FormatDBValue)
+'        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+'        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+'        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
+'        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+'        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+'        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
+
+'        Return SQLUpdateFieldsandValues
+'    End Function
+'#End Region
+
+'#Region "Equals"
+'    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+'        Equals = True
+'        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+'        Dim categoryName As String = Me.EDSObjectFullName
+
+'        'Makes sure you are comparing to the same object type
+'        'Customize this to the object type
+'        Dim otherToCompare As LegReinforcementResults = TryCast(other, LegReinforcementResults)
+'        If otherToCompare Is Nothing Then Return False
+
+
+'    End Function
+'#End Region
 
 'End Class
 
-'Partial Public Class tnxMaterialDatabaseInfo
-'    Private prop_tnx_mat_db_info_id As Integer
-'    Private prop_member_mat_file As String
-'    Private prop_mat_name As String
-'    Private prop_mat_values As String
+'Below used for testing will delete before SAPI release
+'Partial Public Class LegReinforcementResults2
+'    'Inherits EDSObjectWithQueries
+'    Inherits EDSResult
 
-'    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database Info ID")>
-'    Public Property tnx_mat_db_info_id() As Integer
+'#Region "Inheritted"
+'    Public Overrides ReadOnly Property EDSObjectName As String = "Leg Reinforcement Results"
+'    'Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement_details_results"
+'    'Public Overrides ReadOnly Property EDSTableDepth As Integer = 2
+
+'    'Public Overrides Function SQLInsert() As String
+
+'    '    SQLInsert = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Details_Results_INSERT
+'    '    SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAILS RESULT VALUES]", Me.SQLInsertValues)
+'    '    SQLInsert = SQLInsert.Replace("[LEG REINFORCEMENT DETAILS RESULT FIELDS]", Me.SQLInsertFields)
+'    '    SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
+
+'    '    Return SQLInsert
+
+'    'End Function
+
+'#End Region
+
+'#Region "Define"
+'    Private _leg_reinforcement_details_id As Integer?
+'    Private _local_id As Integer?
+'    'Private _work_order_seq_num As Double? 'not provided in Excel
+'    Private _rating As Double?
+'    Private _result_lkup As String
+'    'Private _modified_person_id As Integer? 'not provided in Excel
+'    'Private _process_stage As String 'not provided in Excel
+'    'Private _modified_date As DateTime? 'not provided in Excel
+'    Private _EDSTableName As String
+
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Leg Reinforcement Details Id")>
+'    Public Property leg_reinforcement_details_id() As Integer?
 '        Get
-'            Return Me.prop_tnx_mat_db_info_id
+'            Return Me._leg_reinforcement_details_id
 '        End Get
 '        Set
-'            Me.prop_tnx_mat_db_info_id = Value
+'            Me._leg_reinforcement_details_id = Value
 '        End Set
 '    End Property
-'    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database File= (code to insert into .eri file)")>
-'    Public Property member_mat_file() As String
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Local Id")>
+'    Public Property local_id() As Integer?
 '        Get
-'            Return Me.prop_member_mat_file
+'            Return Me._local_id
 '        End Get
 '        Set
-'            Me.prop_member_mat_file = Value
+'            Me._local_id = Value
 '        End Set
 '    End Property
-'    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database Name= (code to insert into .eri file)")>
-'    Public Property mat_name() As String
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Work Order Seq Num")>
+'    'Public Property work_order_seq_num() As Double?
+'    '    Get
+'    '        Return Me._work_order_seq_num
+'    '    End Get
+'    '    Set
+'    '        Me._work_order_seq_num = Value
+'    '    End Set
+'    'End Property
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Rating")>
+'    Public Property rating() As Double?
 '        Get
-'            Return Me.prop_mat_name
+'            Return Me._rating
 '        End Get
 '        Set
-'            Me.prop_mat_name = Value
+'            Me._rating = Value
 '        End Set
 '    End Property
-'    <Category("Leg Reinforcement TNX Material Database Info"), Description(""), DisplayName("TNX Material Database Values= (code to insert into .eri file)")>
-'    Public Property mat_values() As String
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Result Lkup")>
+'    Public Property result_lkup() As String
 '        Get
-'            Return Me.prop_mat_values
+'            Return Me._result_lkup
 '        End Get
 '        Set
-'            Me.prop_mat_values = Value
+'            Me._result_lkup = Value
+'        End Set
+'    End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Person Id")>
+'    'Public Property modified_person_id() As Integer?
+'    '    Get
+'    '        Return Me._modified_person_id
+'    '    End Get
+'    '    Set
+'    '        Me._modified_person_id = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Process Stage")>
+'    'Public Property process_stage() As String
+'    '    Get
+'    '        Return Me._process_stage
+'    '    End Get
+'    '    Set
+'    '        Me._process_stage = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Date")>
+'    'Public Property modified_date() As DateTime?
+'    '    Get
+'    '        Return Me._modified_date
+'    '    End Get
+'    '    Set
+'    '        Me._modified_date = Value
+'    '    End Set
+'    'End Property
+'    <Category("Leg Reinforcement Results"), Description(""), DisplayName("EDS Table Name")>
+'    Public Property EDSTableName() As String
+'        Get
+'            Return Me._EDSTableName
+'        End Get
+'        Set
+'            Me._EDSTableName = Value
 '        End Set
 '    End Property
 
-'    Sub New()
-'        'Leave method empty
+'#End Region
+
+'#Region "Constructors"
+'    Public Sub New()
+'        'Leave Method Empty
 '    End Sub
 
-'    Public Sub New(ByVal tnxMaterialDataRow As DataRow)
-'        Try
-'            Me.tnx_mat_db_info_id = CType(tnxMaterialDataRow.Item("tnx_mat_db_info_id"), Integer)
-'        Catch
-'            Me.tnx_mat_db_info_id = 0
-'        End Try 'TNX Material Database Info ID
-'        Try
-'            Me.member_mat_file = CType(tnxMaterialDataRow.Item("member_mat_file"), String)
-'        Catch
-'            Me.member_mat_file = Nothing
-'        End Try 'TNX Material Database File= (code to insert into .eri file)
-'        Try
-'            Me.mat_name = CType(tnxMaterialDataRow.Item("mat_name"), String)
-'        Catch
-'            Me.mat_name = Nothing
-'        End Try 'TNX Material Database Name= (code to insert into .eri file)
-'        Try
-'            Me.mat_values = CType(tnxMaterialDataRow.Item("mat_values"), String)
-'        Catch
-'            Me.mat_values = Nothing
-'        End Try 'TNX Material Database Values= (code to insert into .eri file)
+'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+'        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+'        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+'        Dim dr = lrrrow
+
+'        Me.leg_reinforcement_details_id = DBtoNullableInt(dr.Item("ID"))
+'        If EDStruefalse = False Then 'Only pull in local id when referencing Excel
+'            Me.local_id = DBtoNullableInt(dr.Item("local_id"))
+'        End If
+'        'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
+'        Me.rating = DBtoNullableDbl(dr.Item("rating"))
+'        Me.result_lkup = DBtoStr(dr.Item("result_lkup"))
+'        'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
+'        'Me.process_stage = DBtoStr(dr.Item("process_stage"))
+'        'Me.modified_date = DBtoStr(dr.Item("modified_date"))
+'        Me.EDSTableName = "tnx.memb_leg_reinforcement_details_results"
+
 '    End Sub
+
+'#End Region
+
+'#Region "Save to EDS"
+'    'Public Overrides Function SQLInsertValues() As String
+'    '    SQLInsertValues = ""
+
+'    '    SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
+'    '    'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.leg_reinforcement_details_id.ToString.FormatDBValue)
+'    '    'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+'    '    SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+'    '    SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
+'    '    'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+'    '    'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+'    '    'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
+
+
+'    '    Return SQLInsertValues
+'    'End Function
+
+'    'Public Overrides Function SQLInsertFields() As String
+'    '    SQLInsertFields = ""
+
+'    '    SQLInsertFields = SQLInsertFields.AddtoDBString("leg_reinforcement_details_id")
+'    '    'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+'    '    SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
+'    '    SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
+'    '    'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+'    '    'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+'    '    'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
+
+
+'    '    Return SQLInsertFields
+'    'End Function
+
+'    'Public Overrides Function SQLUpdateFieldsandValues() As String
+'    '    SQLUpdateFieldsandValues = ""
+'    '    SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("leg_reinforcement_details_id = " & Me.leg_reinforcement_details_id.ToString.FormatDBValue)
+'    '    'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+'    '    SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+'    '    SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
+'    '    'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+'    '    'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+'    '    'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
+
+'    '    Return SQLUpdateFieldsandValues
+'    'End Function
+'#End Region
+
+'#Region "Equals"
+'    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+'        Equals = True
+'        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+'        Dim categoryName As String = Me.EDSObjectFullName
+
+'        'Makes sure you are comparing to the same object type
+'        'Customize this to the object type
+'        Dim otherToCompare As LegReinforcementResults = TryCast(other, LegReinforcementResults)
+'        If otherToCompare Is Nothing Then Return False
+
+
+'    End Function
+'#End Region
 
 'End Class
-#End Region

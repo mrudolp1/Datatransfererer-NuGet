@@ -26,6 +26,8 @@ Partial Public Class EDSStructure
     Public Property SiteInfo As SiteInfo
     Public Property NotMe As EDSStructure
     Public Property WorkingDirectory As String
+    Public Property LegReinforcements As New List(Of LegReinforcement)
+
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
@@ -113,8 +115,6 @@ Partial Public Class EDSStructure
                         "Unit Base",
                         "Pile",
                         "Pile Locations",
-                        "Drilled Pier",
-                        "Anchor Block",
                         "Soil Profiles",
                         "Soil Layers",
                         "CCIplates",
@@ -144,7 +144,9 @@ Partial Public Class EDSStructure
                         "Drilled Pier Rebar",
                         "Belled Pier",
                         "Embedded Pole",
-                        "Drilled Pier Foundation"}
+                        "Drilled Pier Foundation",
+                        "Leg Reinforcements",
+                        "Leg Reinforcement Details"}
 
 
         Using strDS As New DataSet
@@ -237,6 +239,11 @@ Partial Public Class EDSStructure
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
             Next
 
+            'Leg Reinforcement
+            For Each dr As DataRow In strDS.Tables("Leg Reinforcements").Rows
+                Me.LegReinforcements.Add(New LegReinforcement(dr, strDS, Me))
+            Next
+
 
 
         End Using
@@ -272,8 +279,9 @@ Partial Public Class EDSStructure
         'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
+        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(existingStructure.LegReinforcements)
 
-        structureQuery += "COMMIT"
+        structureQuery += vbCrLf & "COMMIT"
 
         Try
             My.Computer.Clipboard.SetText(structureQuery)
@@ -333,6 +341,8 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("CCIpole") Then
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
+            ElseIf item.Contains("Leg Reinforcement") Then
+                Me.LegReinforcements.Add(New LegReinforcement(item, Me))
             End If
         Next
     End Sub
@@ -391,6 +401,11 @@ Partial Public Class EDSStructure
             Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
             Poles(i).SavetoExcel()
         Next
+        For i = 0 To Me.LegReinforcements.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            LegReinforcements(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(LegReinforcements(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(LegReinforcements(i).templatePath))
+            LegReinforcements(i).SavetoExcel()
+        Next
     End Sub
 #End Region
 
@@ -418,6 +433,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
         Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
         Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
+        Equals = If(Me.LegReinforcements.CheckChange(otherToCompare.LegReinforcements, changes, categoryName, "LegReinforcements"), Equals, False)
 
         Return Equals
 
