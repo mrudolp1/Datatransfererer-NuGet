@@ -117,13 +117,13 @@ Partial Public Class EDSStructure
                         "Pole Custom Bolts",
                         "Pole Custom Reinfs",
                         "Site Code Criteria",
-                        "File Upload", 
-                        "Drilled Pier", 
-                        "Drilled Pier Profile", 
-                        "Drilled Pier Section", 
-                        "Drilled Pier Rebar", 
-                        "Belled Pier", 
-                        "Embedded Pole", 
+                        "File Upload",
+                        "Drilled Pier",
+                        "Drilled Pier Profile",
+                        "Drilled Pier Section",
+                        "Drilled Pier Rebar",
+                        "Belled Pier",
+                        "Embedded Pole",
                         "Drilled Pier Foundation"}
 
 

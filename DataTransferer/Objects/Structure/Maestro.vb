@@ -20,37 +20,36 @@ Partial Public Class EDSStructure
     Public Sub Conduct(Optional isDevMode As Boolean = False)
         'exStruct As EDSStructure, workingAreaPath As String,
         Dim CCIPoleExists As Boolean = False
-        Dim comp As Double
-        Dim sheer As Double
-        Dim mom As Double
 
-        Dim barbCL As Double
-        Dim plateComp As Double
-        Dim plateSheer As Double
-        Dim plateMom As Double
-        Dim plateCompSeis As Double
-        Dim plateSheerSeis As Double
-        Dim plateMomSeis As Double
-        'creates TNX file
+        'MACRO VARS
+        '//pole macros
         Dim poleMacCreateTNX As String = ""
         Dim poleMacRunTNXReactions As String = ""
         Dim poleMacRunTNXReactionsBARB As String = ""
-
+        '//plate macros
         Dim plateMac As String = ""
-
+        '//splice check
         Dim spliceMacImportTNX As String = ""
         Dim spliceMacRun As String = ""
         '//
         Dim spliceCheckFile As String = ""
 
-        'fnd macros
+        '/fnd macros
+        '//monopole
         Dim dpMac As String = ""
         Dim pierPadMac As String = ""
         Dim pileMac As String = ""
         Dim guyAnchorMac As String = ""
+        '//lattice
+        Dim unitBaseMac As String = ""
+        Dim drilledPierMac As String = ""
+        Dim pierAndPadMac As String = ""
 
+        'TNX vars
         Dim tnxFullPath As String = ""
         Dim tnxFileName As String = ""
+
+        Dim excelResult As String = ""
 
         Dim strType As String = Me.SiteInfo.tower_type
         Dim poleWeUsin As Pole = Nothing
@@ -58,7 +57,7 @@ Partial Public Class EDSStructure
         Dim basePlateConnection As Connection = Nothing
         Dim basePlateBoltGroup As BoltGroup = Nothing
 
-        Dim workingAreaPath As String = Me.path 'ask Dan where this is
+        Dim workingAreaPath As String = Me.WorkingDirectory 'ask Dan where this is
 
         Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & ".txt"
 
@@ -72,10 +71,17 @@ Partial Public Class EDSStructure
             Case "MONOPOLE"
 
                 If Me.Poles.Count > 0 Then
+                    If Me.Poles.Count > 1 Then
+                        WriteLineLogLine("WARNING: " & Me.Poles.Count & " CCIPole files found! Using first or default..")
+                    End If
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
-                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacCreateTNX, isDevMode)
+                    excelResult = OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacCreateTNX, isDevMode)
+
+                    If Not excelResult = "Success" Then
+                        WriteLineLogLine("Error with running macro for CCIPole: " & poleMacCreateTNX & vbCrLf & excelResult)
+                    End If
                 End If
 
                 'not done yet
@@ -99,6 +105,9 @@ Partial Public Class EDSStructure
                 End If
 
                 If Me.CCIplates.Count > 0 Then
+                    If Me.CCIplates.Count > 1 Then
+                        WriteLineLogLine("WARNING: " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
+                    End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
                     OpenExcelRunMacro(plateWeUsin.workBookPath, plateMac)
 
@@ -117,7 +126,7 @@ Partial Public Class EDSStructure
                 'GetCompSheerMomFromTNX(comp, sheer, mom)
 
                 'loop through FNDs, open, input reactions & run macros
-                'drilled pier
+                '//drilled pier
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine(Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
@@ -125,56 +134,102 @@ Partial Public Class EDSStructure
                         OpenExcelRunMacro(dp.workBookPath, dpMac, isDevMode)
                     Next
                 End If
-                'pier & pad
+                '//pier & pad
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine(Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
                     For Each pierPad As PierAndPad In Me.PierandPads
                         OpenExcelRunMacro(pierPad.workBookPath, pierPadMac, isDevMode)
                     Next
                 End If
-                'Pile
+                '//Pile
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine(Me.Piles.Count & " Pile Fnd(s) found..")
-                    For Each pile In Me.Piles
+                    For Each pile As Pile In Me.Piles
                         OpenExcelRunMacro(pile.workBookPath, pileMac, isDevMode)
                     Next
                 End If
-                'Guy Anchor
+                '//Guy Anchor
                 If Me.GuyAnchorBlocks.Count > 0 Then
                     WriteLineLogLine(Me.GuyAnchorBlocks.Count & " Guy Anchor Block Fnd(s) found..")
                     For Each guyAnc As GuyedAnchorBlock In Me.GuyAnchorBlocks
                         OpenExcelRunMacro(guyAnc.workbookpath, guyAnchorMac, isDevMode)
                     Next
                 End If
-                'run pdf macro
+
             Case "GUYED", "SELF-SUPPORT"
 
-                'run leg reinforcement
-                If exStruct.leg Then
+                'Check if TNX has been ran. if not, run it
+                'Dan will provide a file path to check for in the working directory
+
+
+                '/run seismic macro to create eri with seismic loads if needed
+
+                If Me.seismic Then
                     OpenExcelRunMacro()
                 End If
 
-                ' run seismic macro to create eri with seismic loads if needed
-                If exStruct.seismic Then
-                    OpenExcelRunMacro()
-                End If
-
-                'run tnx
+                '/run tnx
                 tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
                 RunTNX(tnxFullPath)
 
-                'run leg reinforcement if exists
-                If exStruct.leg Then
+                '/run leg reinforcement
+                '//compare previous geometry to current geometry
+                Me.LegReinforcements
+
+                '/run leg reinforcement if exists
+                If Me.leg Then
                     OpenExcelRunMacro()
                 End If
 
-                'loop through FNDs, open, input reactions & run macros
+                '/if plate exists, run - if Chris can update plate easily
+                If Me.CCIplates.Count > 0 Then
+                    If Me.CCIplates.Count > 1 Then
+                        WriteLineLogLine("WARNING: " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
+                    End If
+                    plateWeUsin = Me.CCIplates.FirstOrDefault
+                    OpenExcelRunMacro(plateWeUsin.workBookPath, plateMac)
+                End If
 
-
+                '/loop through FNDs, open, input reactions & run macros
+                '//Run Unit Base
+                If Me.UnitBases.Count > 0 Then
+                    WriteLineLogLine(Me.UnitBases.Count & " Unit Bases found..")
+                    For Each unitbase In Me.UnitBases
+                        OpenExcelRunMacro(unitbase.workBookPath, unitBaseMac, isDevMode)
+                    Next
+                End If
+                '//Run Drilled Pier
+                If Me.DrilledPierTools.Count > 0 Then
+                    WriteLineLogLine(Me.DrilledPierTools.Count & " Drilled Piers found..")
+                    For Each drilledPier In Me.DrilledPierTools
+                        OpenExcelRunMacro(drilledPier.workBookPath, drilledPierMac, isDevMode)
+                    Next
+                End If
+                '//Run Pad/Pier
+                If Me.PierandPads.Count > 0 Then
+                    WriteLineLogLine(Me.PierandPads.Count & " Pier and Pads found..")
+                    For Each pierAndPad In Me.PierandPads
+                        OpenExcelRunMacro(pierAndPad.workBookPath, pierAndPadMac, isDevMode)
+                    Next
+                End If
+                '//Run Pile
+                If Me.Piles.Count > 0 Then
+                    WriteLineLogLine(Me.Piles.Count & " Piles found..")
+                    For Each pile In Me.Piles
+                        OpenExcelRunMacro(pile.workBookPath, pileMac, isDevMode)
+                    Next
+                End If
+                '//Run Guy Anchor
+                If Me.GuyAnchorBlocks.Count > 0 Then
+                    WriteLineLogLine(Me.GuyAnchorBlocks.Count & " Guy Anchors found..")
+                    For Each guyAnchor In Me.GuyAnchorBlocks
+                        OpenExcelRunMacro(guyAnchor.workBookPath, guyAnchorMac, isDevMode)
+                    Next
+                End If
 
             Case Else
                 'manual process
-                WriteLineLogLine("Manual process due to Tower Type: " & strType)
+                WriteLineLogLine("WARNING: Manual process due to Tower Type: " & strType)
                 Exit Sub
 
         End Select
@@ -236,10 +291,11 @@ Partial Public Class EDSStructure
             End If
             'Run TNX Reactions Macro in Pole
         ElseIf applyBarb = False Then
-                WriteLineLogLine("Apply Barb = False")
-            Else
-                WriteLineLogLine("No Plate group found..")
-
+            WriteLineLogLine("Apply Barb = False")
+            Return False
+        Else
+            WriteLineLogLine("ERROR: No Plate group found..")
+            Return False
         End If
         Return True
     End Function
@@ -255,6 +311,10 @@ Partial Public Class EDSStructure
     End Function
 
     Public Function OpenExcelRunMacro(excelPath As String, bigMac As String, Optional ByVal isDevEnv As Boolean = False) As String
+        Dim tnxFilePath As String = Me.tnx.filePath
+        Dim toolFileName As String = Path.GetFileName(excelPath)
+
+        Dim logString As String = ""
         If String.IsNullOrEmpty(excelPath) Or String.IsNullOrEmpty(bigMac) Then
             Return "Error: excelPath or bigMac parameter is null or empty"
         End If
@@ -277,11 +337,21 @@ Partial Public Class EDSStructure
 
                 xlWorkBook = xlApp.Workbooks.Open(excelPath)
 
-                xlApp.Run(bigMac)
+                WriteLineLogLine("Tool: " & toolFileName)
+                WriteLineLogLine("Running macro: " & bigMac)
+
+                If Not IsNothing(tnxFilePath) Then
+                    logString = xlApp.Run(bigMac, tnxFilePath)
+                    WriteLineLogLine("Macro result: " & logString)
+                Else
+                    WriteLineLogLine("WARNING: No TNX file path in structure..")
+                    logString = xlApp.Run(bigMac)
+                    WriteLineLogLine("Macro result: " & logString)
+                End If
 
                 xlWorkBook.Save()
-            Else
-                errorMessage = $"Error: {excelPath} path not found!"
+                Else
+                errorMessage = $"ERROR: {excelPath} path not found!"
                 WriteLineLogLine(errorMessage)
                 Return errorMessage
             End If
@@ -369,11 +439,11 @@ Partial Public Class EDSStructure
                 xlWorkBook.Close()
                 xlApp.Quit()
             Else
-                WriteLineLogLine(excelPath & " path not found!")
+                WriteLineLogLine("WARNING: " & excelPath & " CCIPole path for BARB not found!")
                 Return False
             End If
         Catch ex As Exception
-            WriteLineLogLine(ex.Message)
+            WriteLineLogLine("ERROR: Error putting BARB values into CCIPole" & ex.Message)
             Return False
         End Try
 
@@ -413,9 +483,9 @@ Partial Public Class EDSStructure
 
         Try
             WriteLineLogLine("Running TNX..")
-            WriteLineLogLine("---------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------")
+            '            WriteLineLogLine("---------------------------------------------------------------
+            '---------------------------------------------------------------
+            '---------------------------------------------------------------")
 
             Dim cmdProcess As New Process
             With cmdProcess
@@ -432,14 +502,49 @@ Partial Public Class EDSStructure
 
 
             WriteLineLogLine(ipconfigOutput)
-            WriteLineLogLine("---------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------")
+            '            WriteLineLogLine("---------------------------------------------------------------
+            '---------------------------------------------------------------
+            '---------------------------------------------------------------")
             Return True
 
         Catch ex As Exception
             WriteLineLogLine("Error Running TNX: " & ex.Message)
 
+            Return False
+        End Try
+    End Function
+
+    Public Async Function RunTNXAsync(tnxFilePath As String) As Task(Of Boolean)
+        If String.IsNullOrEmpty(tnxFilePath) Then
+            WriteLineLogLine("Error Running TNX: Invalid file path.")
+            Return False
+        End If
+
+        Try
+            WriteLineLogLine("Running TNX..")
+            WriteLineLogLine("---")
+
+            Using cmdProcess As New Process
+                cmdProcess.StartInfo = New ProcessStartInfo("TNX Tower.exe", tnxFilePath) 'ProcessStartInfo(Path.Combine(Application.StartupPath, "TNX Tower.exe"), tnxFilePath)
+                With cmdProcess.StartInfo
+                    .CreateNoWindow = True
+                    .UseShellExecute = False
+                    .RedirectStandardOutput = True
+                End With
+
+                cmdProcess.Start()
+
+                Dim ipconfigOutput As String = Await cmdProcess.StandardOutput.ReadToEndAsync()
+
+                WriteLineLogLine(ipconfigOutput)
+                WriteLineLogLine("---")
+
+                cmdProcess.WaitForExit()
+            End Using
+
+            Return True
+        Catch ex As Exception
+            WriteLineLogLine("ERROR: Exception Running TNX: " & ex.Message & vbCrLf & ex.StackTrace)
             Return False
         End Try
     End Function
@@ -467,7 +572,7 @@ Partial Public Class EDSStructure
             Return newPathWithFileName
 
         Catch ex As Exception
-            WriteLineLogLine("Error copying file '" & fileName & "': " & ex.Message)
+            WriteLineLogLine("ERROR: Error copying file '" & fileName & "': " & ex.Message)
             Return ""
         End Try
     End Function
@@ -477,7 +582,7 @@ Partial Public Class EDSStructure
 
         ' Check if the directory exists
         If Not Directory.Exists(SpliceCheckLocation) Then
-            WriteLineLogLine("Splice Check path not found!")
+            WriteLineLogLine("ERROR: Splice Check path not found!")
             Return ""
         End If
 
@@ -492,7 +597,7 @@ Partial Public Class EDSStructure
         Next
 
         ' File not found
-        WriteLineLogLine("Splice Check file not found!")
+        WriteLineLogLine("ERROR: Splice Check file not found!")
         Return ""
     End Function
 #End Region
@@ -553,7 +658,7 @@ Partial Public Class EDSStructure
             CompareRatingsBARB(plateMom, plateComp, plateSheer, plateMomSeis, plateCompSeis, plateSheerSeis, mom, comp, sheer)
 
         Catch ex As Exception
-            WriteLineLogLine("Exception finding BARB Ratings: " & ex.Message)
+            WriteLineLogLine("ERROR: Exception finding BARB Ratings: " & ex.Message)
             Return False
         End Try
 
@@ -602,13 +707,13 @@ Partial Public Class EDSStructure
 
             Else
                 'no sufficient values
-                WriteLineLogLine("No BARB values found!")
+                WriteLineLogLine("WARNING: No BARB values found!")
 
             End If
 
 
         Catch ex As Exception
-            WriteLineLogLine("Exception comparing BARB Ratings: " & ex.Message)
+            WriteLineLogLine("ERROR: Exception comparing BARB Ratings: " & ex.Message)
             Return False
         End Try
         Return True
@@ -617,7 +722,7 @@ Partial Public Class EDSStructure
     'return-1 if both vals are not numbers
     Public Function GetLarger(val1 As Double, val2 As Double) As Double
         If Double.IsNaN(val1) And Double.IsNaN(val2) Then
-            WriteLineLogLine("Null Value for comparison")
+            WriteLineLogLine("ERROR: Null Value for comparison")
             Return -1
         ElseIf Double.IsNaN(val1) Then
             Return val2
