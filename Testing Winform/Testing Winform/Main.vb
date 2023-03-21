@@ -10,7 +10,7 @@ Partial Public Class frmMain
 #Region "Object Declarations"
     'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
-    Public myDrilledPiers As New DataTransfererDrilledPier
+    Public myDrilledPiers As New DrilledPierFoundation
     Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
     'Public myPiles As New DataTransfererPile
     'Public MyCCIpoles As New DataTransfererCCIpole
@@ -409,6 +409,10 @@ Partial Public Class frmMain
                 End If
             End If
         End If
+    End Sub
+
+    Private Sub txtFndWO_TextChanged(sender As Object, e As EventArgs) Handles txtFndWO.TextChanged
+
     End Sub
 
 

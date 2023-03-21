@@ -1158,6 +1158,253 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to 
         '''BEGIN
+        '''	
+        '''	--[SOIL PROFILE INSERT]
+        '''
+        '''	--[PIER PROFILE INSERT]
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @TopLevel
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--[RESULTS]
+        '''
+        '''	DELETE FROM @TopLevel --Pier
+        '''	DELETE FROM @SubLevel1 --Soil Profile
+        '''	DELETE FROM @SubLevel2 --Pier Profile
+        '''	DELETE FROM @SubLevel3 --Section
+        '''	DELETE FROM @SubLevel4 --File Upload
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Drilled_Pier__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel2
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''	--[SECTION INSERT]
+        '''
+        '''	--[BELLED INSERT]
+        '''
+        '''	--[EMBEDDED INSERT]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Drilled_Pier_Profile__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Profile__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel3
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel3ID=ID FROM @SubLevel3
+        '''
+        '''	--[REBAR INSERT]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Drilled_Pier_Section__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Section__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO [SUBLEVEL TABLE]
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT [SUBLEVEL ID]=ID FROM [SUBLEVEL TABLE]
+        '''
+        '''	--[REQUIRED CHILDREN]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Drilled_Pier_Tool__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Drilled_Pier_Tool__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
+        '''	DELETE FROM [TABLE] WHERE ID = [ID]
+        '''END.
+        '''</summary>
+        Public ReadOnly Property General__DELETE() As String
+            Get
+                Return ResourceManager.GetString("General__DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		VALUES([INSERT VALUES])
+        '''END.
+        '''</summary>
+        Public ReadOnly Property General__INSERT() As String
+            Get
+                Return ResourceManager.GetString("General__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''	UPDATE [TABLE NAME]
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--[OPTIONAL]
+        '''END.
+        '''</summary>
+        Public ReadOnly Property General__UPDATE() As String
+            Get
+                Return ResourceManager.GetString("General__UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	--BEGIN --[LEG REINFORCEMENT DETAIL DELETE BEGIN]
+        '''	--[LEG REINFORCEMENT DETAIL INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAIL DELETE END]
+        '''
+        '''DELETE FROM tnx.memb_leg_reinforcement WHERE ID = [ID]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_DELETE() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to DELETE FROM tnx.memb_leg_reinforcement_details WHERE ID = [ID]
+        '''
+        '''	--[LEG REINFORCEMENT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Detail_DELETE() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_Detail_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details ([LEG REINFORCEMENT DETAIL FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @SubLevel1
+        '''	VALUES([LEG REINFORCEMENT DETAIL VALUES])
+        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''
+        '''	--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]
+        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]
+        '''
+        '''	--[LEG REINFORCEMENT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Detail_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_Detail_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	UPDATE tnx.memb_leg_reinforcement_details
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''	Set @SubLevel1ID=[ID]
+        '''
+        '''	--[LEG REINFORCEMENT DETAIL INSERT].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Detail_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_Detail_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details_results ([LEG REINFORCEMENT DETAILS RESULT FIELDS]) 
+        '''	VALUES([LEG REINFORCEMENT DETAILS RESULT VALUES])
+        '''
+        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Details_Results_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_Details_Results_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''INSERT INTO tnx.memb_leg_reinforcement ([LEG REINFORCEMENT FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @TopLevel
+        '''	VALUES([LEG REINFORCEMENT VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]
+        '''	--[LEG REINFORCEMENT DETAIL INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAIL INSERT END]
+        '''
+        '''	--BEGIN --[RESULTS INSERT BEGIN]
+        '''	--[RESULTS INSERT]
+        '''	--END --[RESULTS INSERT END]
+        '''
+        '''	DELETE FROM @TopLevel
+        '''	DELETE FROM @SubLevel1
+        '''	DELETE FROM @SubLevel2
+        '''	DELETE FROM @Su [rest of string was truncated]&quot;;.
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_INSERT() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	UPDATE tnx.memb_leg_reinforcement
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''	--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]
+        '''	--[LEG REINFORCEMENT DETAIL INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAIL UPDATE END]
+        '''
+        '''	--BEGIN --[RESULTS UPDATE BEGIN]
+        '''	--[RESULTS INSERT]
+        '''	--END --[RESULTS UPDATE END]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("Leg_Reinforcement_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
         '''	--BEGIN --[PILE LOCATION DELETE BEGIN]
         '''	--[PILE LOCATION INSERT]
         '''	--END --[PILE LOCATION DELETE END]	
@@ -1291,10 +1538,12 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to 	INSERT INTO fnd.soil_layer ([SOIL LAYER FIELDS]) 
+        '''  Looks up a localized string similar to BEGIN
+        '''	INSERT INTO fnd.soil_layer ([SOIL LAYER FIELDS]) 
         '''	VALUES([SOIL LAYER VALUES])
         '''
-        '''	--[SOIL LAYER INSERT].
+        '''	--[SOIL LAYER INSERT]
+        '''END.
         '''</summary>
         Public ReadOnly Property Soil_Layer_INSERT() As String
             Get
@@ -1327,12 +1576,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to 	INSERT INTO fnd.soil_profile ([SOIL PROFILE FIELDS]) 
-        '''	OUTPUT INSERTED.ID INTO @SubLevel1
-        '''	VALUES([SOIL PROFILE VALUES])
-        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''  Looks up a localized string similar to 	BEGIN
         '''
-        '''	--[SOIL PROFILE INSERT].
+        '''		INSERT INTO fnd.soil_profile ([SOIL PROFILE FIELDS]) 
+        '''			OUTPUT INSERTED.ID INTO @SubLevel1
+        '''			VALUES([SOIL PROFILE VALUES])
+        '''		SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''
+        '''		--[SOIL LAYER INSERT]
+        '''
+        '''END.
         '''</summary>
         Public ReadOnly Property Soil_Profile_INSERT() As String
             Get
