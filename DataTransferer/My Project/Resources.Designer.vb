@@ -63,21 +63,17 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to 
         '''BEGIN
-        '''	
-        '''
         '''
         '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
         '''		OUTPUT INSERTED.ID INTO @TopLevel
         '''		VALUES([INSERT VALUES])
-        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
         '''
-        '''	--[ANCHOR BLOCKS]
+        '''	--[ANCHOR BLOCK PROFILE]
         '''
-        '''	DELETE FROM @TopLevel --Tool
-        '''	DELETE FROM @SubLevel1 --Anchor Block
-        '''	DELETE FROM @SubLevel2 --Pier Profile
-        '''	DELETE FROM @SubLevel3 --Soil Profile
-        '''	DELETE FROM @SubLevel4 --NOTHING
+        '''	--[ANCHOR BLOCK SOIL PROFILE]
+        '''
+        '''	--[ANCHOR BLOCK RESULTS]
         '''END.
         '''</summary>
         Public ReadOnly Property Anchor_Block__INSERT() As String
@@ -87,9 +83,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel2
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Anchor_Block_Profile__INSERT() As String
+            Get
+                Return ResourceManager.GetString("Anchor_Block_Profile__INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to 
-        '''BEGIN
-        '''	
+        '''BEGIN	
         '''
         '''
         '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
@@ -99,11 +110,11 @@ Namespace My.Resources
         '''
         '''	--[ANCHOR BLOCKS]
         '''
-        '''	DELETE FROM @TopLevel --Tool
-        '''	DELETE FROM @SubLevel1 --Anchor Block
-        '''	DELETE FROM @SubLevel2 --Pier Profile
-        '''	DELETE FROM @SubLevel3 --Soil Profile
-        '''	DELETE FROM @SubLevel4 --NOTHING
+        '''	DELETE FROM @TopLevel  --Tool
+        '''	DELETE FROM @SubLevel1 --Soil Profile
+        '''	DELETE FROM @SubLevel2 --Anchor
+        '''	DELETE FROM @SubLevel3 --Anchor Profile
+        '''	DELETE FROM @SubLevel4 --NOT USED
         '''END.
         '''</summary>
         Public ReadOnly Property Anchor_Block_Tool__INSERT() As String
