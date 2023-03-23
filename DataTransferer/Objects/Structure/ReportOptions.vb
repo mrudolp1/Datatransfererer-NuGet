@@ -13,7 +13,6 @@ Public Class ReportOptions
     'Required overriden Properties
     Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
     Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
-    Public Property wo As String
 
     'Properties: Store in SQL report.report_options table (PK = WO)
     Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
@@ -146,7 +145,7 @@ Public Class ReportOptions
             If IsFromDefault Then
                 Return "Default options associated with BU " + bus_unit + " and SID " + structure_id + " were loaded from previous WO " & FromDatabaseWO & ".  No in-progress report was found."
             Else
-                Return "Found in-progress report options with WO " + wo + ".  In-progress options loaded."
+                Return "Found in-progress report options with WO " + work_order_seq_num + ".  In-progress options loaded."
             End If
         Else
             Return "No in-progress report or default options were found. Report populated with basic options."
@@ -161,39 +160,52 @@ Public Class ReportOptions
 
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, root As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(ReportDir As String, ByVal Parent As EDSObject)
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+
+        Me.RootDir = New DirectoryInfo(ReportDir)
+
+        Initialize()
+    End Sub
+
+    Public Sub New(BU As String, SID As String, WO As String, ReportDir As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         bus_unit = BU
         structure_id = SID
-        Me.wo = WO
-        If root = Nothing Then
+        work_order_seq_num = WO
+
+        If ReportDir = Nothing Then
             Me.RootDir = Nothing
         Else
-            Me.RootDir = New DirectoryInfo(root)
+            Me.RootDir = New DirectoryInfo(ReportDir)
         End If
 
+        Initialize()
 
+    End Sub
+
+    Public Sub Initialize()
         'Try to load in-progress report
-        Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & WO & "'"
+        Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
-            sqlLoader(query1, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query1, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 IsFromDB = True
                 IsFromDefault = False
 
-                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
+                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
                 Return
             End If
         End Using
 
         'Try to load default options
-        Dim query2 = "SELECT * FROM report.report_options WHERE bus_unit='" & BU & "' AND structure_id='" & SID & "' AND is_default = 1"
+        Dim query2 = "SELECT * FROM report.report_options WHERE bus_unit='" & bus_unit & "' AND structure_id='" & structure_id & "' AND is_default = 1"
         Using strDS As New DataSet
-            sqlLoader(query2, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query2, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 IsFromDB = True
                 IsFromDefault = True
 
-                Generate(strDS.Tables(0).Rows(0), LogOnUser, ActiveDatabase)
+                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
                 Return
             End If
         End Using
@@ -203,7 +215,6 @@ Public Class ReportOptions
         IsFromDefault = False
         LoadDocumentsFromOracle()
         LoadFeedLinesFromOracle()
-
     End Sub
 
     'Load everything from EDS data tables (in progress report)
@@ -628,7 +639,7 @@ Public Class ReportOptions
 
 #Region "Load related report lists"
         'Load list items
-        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & wo & "'"
+        Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
             sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
@@ -656,7 +667,7 @@ Public Class ReportOptions
 
             'Load list items
             If (RootDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
-                query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & wo & "'"
+                query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
                 Using strDS As New DataSet
                     sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
@@ -694,7 +705,7 @@ Public Class ReportOptions
 
 #Region "Load related report documents (for table 4)"
         'Load doc items
-        query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & wo & "'"
+        query = "SELECT * FROM report.report_documents WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
         Using strDS As New DataSet
             TableDocuments.Clear()
@@ -719,7 +730,7 @@ Public Class ReportOptions
 
 #Region "Load related report equipment (for table 1-3)"
         'Load list items
-        query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & wo & "'"
+        query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
         Using strDS As New DataSet
             ProposedEquipment.Clear()
@@ -768,9 +779,9 @@ Public Class ReportOptions
                     --Dual is an empty dummy table. Use this CTE to pull in variables.
                     --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
                     --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
-                    (SELECT " + wo + " AS work_order_seq_num FROM DUAL), 
+                    (SELECT " + work_order_seq_num + " AS work_order_seq_num FROM DUAL), 
 
-                wo AS (
+                work_order_seq_num AS (
                     SELECT  wos.work_order_seq_num 
                             ,wos.bus_unit 
                             ,wos.structure_id
@@ -1028,7 +1039,7 @@ Public Class ReportOptions
             End If
 
             'Find and update (or insert) report options
-            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & wo & "'"
+            Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
             Using strDS As New DataSet
                 sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
                 If strDS.Tables(0).Rows.Count > 0 Then 'Update
@@ -1051,10 +1062,10 @@ Public Class ReportOptions
             Dim commands = New List(Of SqlCommand)
 
             'Delete all list items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_lists WHERE work_order_seq_num ='" & wo & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_lists WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
 
-            Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & wo & ",@LIST, @VALUE);"
+            Dim queryTemplate = "INSERT INTO report.report_lists (work_order_seq_num, list_name, content) VALUES(" & work_order_seq_num & ",@LIST, @VALUE);"
 
             For Each Item In Assumptions
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
@@ -1097,11 +1108,11 @@ Public Class ReportOptions
 
             commands = New List(Of SqlCommand)
             'Delete all appendixes filepaths associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_files WHERE work_order_seq_num ='" & wo & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_files WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
             'Add current appendix filepaths
 
-            queryTemplate = "INSERT INTO report.report_files (work_order_seq_num, appendix_name, filename) VALUES(" & wo & ",@NAME, @FILENAME);"
+            queryTemplate = "INSERT INTO report.report_files (work_order_seq_num, appendix_name, filename) VALUES(" & work_order_seq_num & ",@NAME, @FILENAME);"
             For Each Item In Files
                 For Each Document In Item.Value
                     Dim command As SqlCommand = New SqlCommand(queryTemplate)
@@ -1133,9 +1144,9 @@ Public Class ReportOptions
             commands = New List(Of SqlCommand)
 
             'Delete all document items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & wo & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
-            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & wo & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
+            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & work_order_seq_num & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
 
             For Each Item In TableDocuments
                 Dim checkedInt As Integer = 0
@@ -1170,10 +1181,10 @@ Public Class ReportOptions
             commands = New List(Of SqlCommand)
 
             'Delete all document items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & wo & "'"))
+            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
 
-            queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & wo & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
+            queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & work_order_seq_num & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
             For Each Item In ProposedEquipment
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
                 command.Parameters.Add("@mounting_level", SqlDbType.VarChar)
@@ -1278,7 +1289,7 @@ Public Class ReportOptions
                   "END" & vbCrLf
         SQLUpdate = SQLUpdate.Replace("[TABLE]", Me.EDSTableName)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.Replace("[ID]", wo)
+        SQLUpdate = SQLUpdate.Replace("[ID]", work_order_seq_num)
 
         SQLUpdate = SQLUpdate.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLUpdate
@@ -1303,7 +1314,7 @@ Public Class ReportOptions
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.wo.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IsDefault.NullableToString.FormatDBValue)
