@@ -1,0 +1,17 @@
+﻿
+BEGIN	
+
+
+	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+		OUTPUT INSERTED.ID INTO @TopLevel
+		VALUES([INSERT VALUES])
+	SELECT @TopLevelID=ID FROM @TopLevel
+
+	--[ANCHOR BLOCKS]
+
+	DELETE FROM @TopLevel  --Tool
+	DELETE FROM @SubLevel1 --Soil Profile
+	DELETE FROM @SubLevel2 --Anchor
+	DELETE FROM @SubLevel3 --Anchor Profile
+	DELETE FROM @SubLevel4 --NOT USED
+END

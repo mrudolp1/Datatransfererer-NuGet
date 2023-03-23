@@ -207,7 +207,7 @@ Partial Public Class tnxModel
     End Sub
 
     <Category("Constructor"), Description("Create TNX object from DataSet")>
-    Public Sub New(ByRef StructureDS As DataSet, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByRef StructureDS As DataSet, Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         If StructureDS.Tables.Contains("TNX") And StructureDS.Tables("TNX").Rows.Count > 0 Then
