@@ -1453,7 +1453,7 @@ Namespace My.Resources
                 Return ResourceManager.GetString("Leg_Reinforcement_Details_Results_INSERT", resourceCulture)
             End Get
         End Property
-        
+
         '''<summary>
         '''  Looks up a localized string similar to BEGIN
         '''

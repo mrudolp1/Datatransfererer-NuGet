@@ -650,19 +650,19 @@ Partial Public Class LegReinforcement
 
                     'Storing following in order to populate arbitrary shape info after worksheet is opened. 
                     If Not IsNothing(row.top_elev) Then
-                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
-                        .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
-                        tnxdataRow += 2
-                        'Else
-                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-                    End If
-                    If Not IsNothing(row.bot_elev) Then
-                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
-                        tnxdataRow += 1
-                        'Else
-                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-                    End If
-                Next
+                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
+                .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
+                tnxdataRow += 2
+                'Else
+                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+            End If
+            If Not IsNothing(row.bot_elev) Then
+                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
+                tnxdataRow += 1
+                'Else
+                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+            End If
+            Next
 
             End If
 
@@ -2033,9 +2033,8 @@ End Class
 
 '#End Region
 
-'#Region "Constructors"
-'    Public Sub New()
-'        'Leave Method Empty
+'    Sub New()
+'        'Leave method empty
 '    End Sub
 
 '    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
