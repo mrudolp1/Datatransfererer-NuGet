@@ -1,10 +1,5 @@
-﻿Option Strict Off
-Option Compare Binary
-
-Imports System.ComponentModel
-Imports System.Data
+﻿Imports System.ComponentModel
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
 
 Partial Public Class DrilledPierFoundation
     Inherits EDSExcelObject
@@ -16,24 +11,6 @@ Partial Public Class DrilledPierFoundation
     'Origin row in the driled pier database. Basically just where the profile numbers are in the database worksheet.
     'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
     Private pierProfileRow As Integer = 57
-
-    Public Overrides ReadOnly Property EDSObjectName As String
-        Get
-            Return "Drilled Pier Foundation"
-        End Get
-    End Property
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Return "fnd.drilled_pier_tool"
-        End Get
-    End Property
-
-
-    Public Overrides ReadOnly Property templatePath As String
-        Get
-            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Drilled Pier Foundation.xlsm")
-        End Get
-    End Property
 
 #Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
@@ -81,6 +58,23 @@ Partial Public Class DrilledPierFoundation
 #End Region
 
 #Region "Inheritted"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Drilled Pier Foundation"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.drilled_pier_tool"
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property templatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Drilled Pier Foundation.xlsm")
+        End Get
+    End Property
+
     Private _Insert As String
     Private _Update As String
     Private _Delete As String
@@ -116,10 +110,10 @@ Partial Public Class DrilledPierFoundation
         Dim dpUp As String = ""
         For Each dp In Me.DrilledPiers
             If dp.ID IsNot Nothing And dp?.ID > 0 Then
-                If dp.local_drilled_pier_profile IsNot Nothing Then
+                If dp.local_drilled_pier_id IsNot Nothing Then
                     dpUp += dp.SQLUpdate
                 Else
-                    dpup += dp.SQLDelete
+                    dpUp += dp.SQLDelete
                 End If
             Else
                 dpUp += dp.SQLInsert
@@ -137,8 +131,6 @@ Partial Public Class DrilledPierFoundation
         Return SQLDelete
     End Function
 
-#End Region
-
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
             Dim dp As New DrilledPier
@@ -153,20 +145,21 @@ Partial Public Class DrilledPierFoundation
             Dim dpTool As New DrilledPierFoundation
 
             Return New List(Of EXCELDTParameter) From {
-                                                        New EXCELDTParameter(dp.EDSObjectName, "A2:H52", "Profiles (ENTER)"),  'It is slightly confusing but to keep naming issues consistent in the tool a drilled pier = profile and a drilled pier profile = drilled pier details
-                                                        New EXCELDTParameter(dpProf.EDSObjectName, "A2:X52", "Details (ENTER)"),
-                                                        New EXCELDTParameter(dpSec.EDSObjectName, "A2:K252", "Sections (ENTER)"),
-                                                        New EXCELDTParameter(dpReb.EDSObjectName, "A2:I702", "Rebar (ENTER)"),
-                                                        New EXCELDTParameter(dpSProf.EDSObjectName, "A2:E52", "Soil Profiles (ENTER)"),
-                                                        New EXCELDTParameter(dpSlay.EDSObjectName, "A2:N1502", "Soil Layers (ENTER)"),
-                                                        New EXCELDTParameter(dpEmbed.EDSObjectName, "A2:P52", "Embedded (ENTER)"),
+                                                        New EXCELDTParameter(dp.EDSObjectName, "A2:I52", "Profiles"),  'It is slightly confusing but to keep naming issues consistent in the tool a drilled pier = profile and a drilled pier profile = drilled pier details
+                                                        New EXCELDTParameter(dpProf.EDSObjectName, "A2:X52", "Details"),
+                                                        New EXCELDTParameter(dpSec.EDSObjectName, "A2:M252", "Section"),
+                                                        New EXCELDTParameter(dpReb.EDSObjectName, "A2:K702", "Rebar"),
+                                                        New EXCELDTParameter(dpSProf.EDSObjectName, "A2:F52", "Soil Profile"),
+                                                        New EXCELDTParameter(dpSlay.EDSObjectName, "A2:N1502", "Soil Layer"),
+                                                        New EXCELDTParameter(dpEmbed.EDSObjectName, "A2:Q52", "Embedded"),
                                                         New EXCELDTParameter(dpRes.EDSObjectName, "BD8:BV58", "Foundation Input"),
-                                                        New EXCELDTParameter(dpBell.EDSObjectName, "A2:N52", "Belled (ENTER)"),
-                                                        New EXCELDTParameter(dpTool.EDSObjectName, "A1:E2", "Tool (RETURN_ENTER)")
+                                                        New EXCELDTParameter(dpBell.EDSObjectName, "A2:P52", "Belled"),
+                                                        New EXCELDTParameter(dpTool.EDSObjectName, "A2:E3", "Tool")
                                                                                         }
             '***Add additional table references here****
         End Get
     End Property
+#End Region
 
 #Region "Constructors"
     Public Sub New()
@@ -197,7 +190,7 @@ Partial Public Class DrilledPierFoundation
         Next
     End Sub
 
-    Public Sub New(ByVal ExcelFile As FileUpload, Optional ByVal Parent As EDSObject = Nothing)
+    Public Sub New(ByVal filepath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -207,9 +200,9 @@ Partial Public Class DrilledPierFoundation
 
         For Each item As EXCELDTParameter In excelDTParams
             Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFile.file_path, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(file_path, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(ExcelFile.file_path), item.xlsSheet, item.xlsRange))
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(file_path), item.xlsSheet, item.xlsRange))
             End Try
         Next
 
@@ -240,7 +233,7 @@ Partial Public Class DrilledPierFoundation
 
             'Starting with column G
             'This will need updated if the structure of the database in the drilled pier spreadsheet ever changes
-            Dim myCol As Integer = drilledPier.local_drilled_pier_profile + 5 'Column A is an origin of 0
+            Dim myCol As Integer = drilledPier.local_pier_profile_id + 5 'Column A is an origin of 0
             'Quantity of inputs associated with sections
             Dim bump15 As Integer = 15
             Dim bump3 As Integer = 3
@@ -290,35 +283,31 @@ Partial Public Class DrilledPierFoundation
                 End If
             End With
 
-            With wb.Worksheets("Profiles (RETURN)")
-                If Not IsNothing(drilledPier.local_drilled_pier_profile) Then .Cells(returnRow, myCol).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
-                If Not IsNothing(drilledPier.reaction_position) Then .Cells(returnRow, 1).Value = CType(drilledPier.reaction_position, String)
-                If Not IsNothing(drilledPier.drilled_pier_profile_id) Then .Cells(returnRow, 2).Value = CType(drilledPier.drilled_pier_profile_id, Integer)
-                If Not IsNothing(drilledPier.soil_profile_id) Then .Cells(returnRow, 3).Value = CType(drilledPier.soil_profile_id, Integer)
-                If Not IsNothing(drilledPier.ID) Then .Cells(returnRow, 4).Value = CType(drilledPier.ID, Integer)
-                If Not IsNothing(drilledPier.reaction_location) Then .Cells(returnRow, 5).Value = CType(drilledPier.reaction_location, String)
-                If Not IsNothing(drilledPier.local_drilled_pier_profile) Then .Cells(returnRow, 6).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
-                If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(returnRow, 7).Value = CType(drilledPier.local_soil_profile, Integer)
-                returnRow += 1
-            End With
-
             With wb.Worksheets("SUMMARY")
-                If Not IsNothing(drilledPier.local_drilled_pier_profile) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
-                If Not IsNothing(drilledPier.ID) Then .Cells(sumRow, 9).Value = CType(drilledPier.ID, Integer)
+                If Not IsNothing(drilledPier.local_pier_profile_id) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_pier_profile_id, Integer)
                 If Not IsNothing(drilledPier.reaction_location) Then .Cells(sumRow, 2).Value = CType(drilledPier.reaction_location, String)
                 If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
+                .Cells(sumRow, 22).Value = CType(Me.ID, Integer)
+                .Cells(sumRow, 23).Value = CType(drilledPier.PierProfile.ID, Integer)
+                .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
+                .Cells(sumRow, 75).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
+                .Cells(sumRow, 76).Value = CType(drilledPier.SoilProfile.ID, Integer)
+                For Each sec As DrilledPierSection In drilledPier.PierProfile.Sections
+                    Dim secAdj As Integer = 4 * (sec.local_section_id - 1) + 1
+                    .Cells(sumRow, 23 + secAdj).Value = CType(sec.ID, Integer)
+                    For Each reb As DrilledPierRebar In sec.Rebar
+                        .Cells(sumRow, secAdj + reb.local_rebar_id).Value = CType(reb.ID, Integer)
+                    Next
+                Next
+                Dim slRowStart As Integer = 44
+                For Each layer In drilledPier.SoilProfile.SoilLayers
+                    .Cells(sumRow, slRowStart).Value = CType(layer.ID, Integer)
+                    slRowStart += 1
+                Next
                 sumRow += 1
             End With
 
             With wb.Worksheets("Database")
-
-                'Profile configuration
-                '.Cells(pierProfileRow - 54, myCol).Value = CType(drilledPier.ID, Integer)
-                If Not IsNothing(drilledPier.drilled_pier_profile_id) Then .Cells(pierProfileRow - 56, myCol).Value = CType(drilledPier.drilled_pier_profile_id, Integer)
-                If Not IsNothing(drilledPier.soil_profile_id) Then .Cells(pierProfileRow - 3, myCol).Value = CType(drilledPier.soil_profile_id, Integer)
-                '.Cells(pierProfileRow + 45, myCol).Value = CType(drilledPier.local_drilled_pier_profile, Integer)
-                '.Cells(pierProfileRow + 46, myCol).Value = CType(drilledPier.local_soil_profile, Integer)
-
                 'Profile
                 If Not IsNothing(drilledPier.PierProfile.foundation_depth) Then .Cells(pierProfileRow + 10, myCol).Value = CType(drilledPier.PierProfile.foundation_depth, Double)
                 If Not IsNothing(drilledPier.PierProfile.extension_above_grade) Then .Cells(pierProfileRow + 11, myCol).Value = CType(drilledPier.PierProfile.extension_above_grade, Double)
@@ -351,7 +340,6 @@ Partial Public Class DrilledPierFoundation
 
                 'Embedded pole
                 If drilledPier.PierProfile.embedded_pole Then
-                    If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.ID) Then .Cells(pierProfileRow - 4, myCol).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
                     If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.encased_in_concrete) Then .Cells(pierProfileRow + 101, myCol).Value = CType(drilledPier.PierProfile.EmbeddedPole.encased_in_concrete, Boolean)
                     If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.pole_side_quantity) Then .Cells(pierProfileRow + 102, myCol).Value = CType(drilledPier.PierProfile.EmbeddedPole.pole_side_quantity, Integer)
                     If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.pole_yield_strength) Then .Cells(pierProfileRow + 103, myCol).Value = CType(drilledPier.PierProfile.EmbeddedPole.pole_yield_strength, Double)
@@ -367,7 +355,6 @@ Partial Public Class DrilledPierFoundation
 
                 'Belled Pier
                 If drilledPier.PierProfile.belled_pier Then
-                    If Not IsNothing(drilledPier.PierProfile.BelledPier.ID) Then .Cells(pierProfileRow - 5, myCol).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
                     If Not IsNothing(drilledPier.PierProfile.BelledPier.bottom_diameter_of_bell) Then .Cells(pierProfileRow + 113, myCol).Value = CType(drilledPier.PierProfile.BelledPier.bottom_diameter_of_bell, Double)
                     If Not IsNothing(drilledPier.PierProfile.BelledPier.bell_input_type) Then .Cells(pierProfileRow + 114, myCol).Value = CType(drilledPier.PierProfile.BelledPier.bell_input_type, String)
                     If Not IsNothing(drilledPier.PierProfile.BelledPier.bell_angle) Then .Cells(pierProfileRow + 115, myCol).Value = CType(drilledPier.PierProfile.BelledPier.bell_angle, Double)
@@ -381,9 +368,8 @@ Partial Public Class DrilledPierFoundation
 
                 'Sections
                 For Each section In drilledPier.PierProfile.Sections
-                    Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_drilled_pier_profile - 1) - 1
+                    Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_pier_profile_id - 1) - 1
 
-                    If Not IsNothing(section.ID) Then .Cells(pierProfileRow - 55 + secAdj, myCol).Value = CType(section.ID, Integer)
                     If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
                     If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + bump15 * secAdj, myCol).Value = CType(section.pier_diameter, Double)
                     If Not IsNothing(section.clear_cover) Then .Cells(pierProfileRow + 23 + bump15 * secAdj, myCol).Value = CType(section.clear_cover, Double)
@@ -399,19 +385,16 @@ Partial Public Class DrilledPierFoundation
 
                     'Rebar
                     For Each rebar In section.Rebar
-                        Select Case rebar.local_rebar_id - 15 * (drilledPier.local_drilled_pier_profile - 1)
+                        Select Case rebar.local_rebar_id - 15 * (drilledPier.local_pier_profile_id - 1)
                             Case 1
-                                If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 50 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 21 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 22 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
                             Case 2
-                                If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 49 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 26 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 27 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 28 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
                                 If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 29 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
                             Case 3
-                                If Not IsNothing(rebar.ID) Then .Cells(pierProfileRow - 48 + bump3 * secAdj, myCol).Value = CType(rebar.ID, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 30 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 31 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_cage_diameter) Then .Cells(pierProfileRow + 32 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_cage_diameter, Integer)
@@ -426,7 +409,6 @@ Partial Public Class DrilledPierFoundation
                 'Soil Layers
                 Dim layAdj As Integer = 0
                 For Each layer In drilledPier.SoilProfile.DPSoilLayers
-                    If Not IsNothing(layer.ID) Then .Cells(pierProfileRow + layAdj - 35, myCol).Value = CType(layer.ID, Double)
                     If Not IsNothing(layer.bottom_depth) Then .Cells(pierProfileRow + layAdj + 127, myCol).Value = CType(layer.bottom_depth, Double)
                     If Not IsNothing(layer.effective_soil_density) Then .Cells(pierProfileRow + layAdj + 158, myCol).Value = CType(layer.effective_soil_density, Double)
                     If Not IsNothing(layer.cohesion) Then .Cells(pierProfileRow + layAdj + 189, myCol).Value = CType(layer.cohesion, Double)
@@ -462,9 +444,6 @@ End Class
 
 Partial Public Class DrilledPier
     Inherits EDSObjectWithQueries
-
-    Public Property PierProfile As DrilledPierProfile
-    Public Property SoilProfile As DrilledPierSoilProfile
 
 #Region "Inheritted"
     '''Must override these inherited properties
@@ -531,16 +510,6 @@ Partial Public Class DrilledPier
             _pierInsert = Me.PierProfile.SQLInsert
         End If
 
-        'If bar.ID IsNot Nothing And bar.ID > 0 Then
-        '    If bar.local_rebar_id IsNot Nothing Then
-        '        _rebarInsert += bar.SQLUpdate + vbCrLf
-        '    Else
-        '        _rebarInsert += bar.SQLDelete + vbCrLf
-        '    End If
-        'Else
-        '    _rebarInsert += bar.SQLInsert + vbCrLf
-        'End If
-
         If Me.SoilProfile?.ID IsNot Nothing And Me.SoilProfile?.ID > 0 Then
             _soilInsert = Me.SoilProfile.SQLUpdate
         Else
@@ -562,22 +531,24 @@ Partial Public Class DrilledPier
         SQLDelete += Me.PierProfile?.SQLDelete + vbCrLf
         SQLDelete += Me.SoilProfile?.SQLDelete + vbCrLf
 
-
         Return SQLDelete
     End Function
 
 #End Region
 
 #Region "Define"
-    Public Property drilled_pier_tool_id As Integer?
+    Public Property PierProfile As DrilledPierProfile
+    Public Property SoilProfile As DrilledPierSoilProfile
 
     Private _ID As Integer?
-    Private _drilled_pier_profile_id As Integer?
+    Private _local_drilled_pier_id
+    Private _pier_profile_id As Integer?
     Private _soil_profile_id As Integer?
     Private _reaction_position As Integer?
     Private _reaction_location As String
     Private _local_soil_profile As Integer?
-    Private _local_drilled_pier_profile As Integer?
+    Private _local_pier_profile_id As Integer?
+    Private _drilled_pier_tool_id As Integer
 
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
@@ -589,12 +560,12 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Profile Id")>
-    Public Property drilled_pier_profile_id() As Integer?
+    Public Property pier_profile_id() As Integer?
         Get
-            Return Me._drilled_pier_profile_id
+            Return Me._pier_profile_id
         End Get
         Set
-            Me._drilled_pier_profile_id = Value
+            Me._pier_profile_id = Value
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Soil Profile Id")>
@@ -634,14 +605,34 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier Profile")>
-    Public Property local_drilled_pier_profile() As Integer?
+    Public Property local_pier_profile_id() As Integer?
         Get
-            Return Me._local_drilled_pier_profile
+            Return Me._local_pier_profile_id
         End Get
         Set
-            Me._local_drilled_pier_profile = Value
+            Me._local_pier_profile_id = Value
         End Set
     End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id() As Integer?
+        Get
+            Return Me._local_drilled_pier_id
+        End Get
+        Set
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Tool ID")>
+    Public Property drilled_pier_tool_id() As Integer?
+        Get
+            Return Me._drilled_pier_tool_id
+        End Get
+        Set
+            Me._drilled_pier_tool_id = Value
+        End Set
+    End Property
+
+
 #End Region
 
 #Region "Constructors"
@@ -655,12 +646,13 @@ Partial Public Class DrilledPier
 
     Public Sub ConstructMe(ByVal dr As DataRow)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.drilled_pier_profile_id = DBtoNullableInt(dr.Item("drilled_pier_profile_id"))
+        Me.pier_profile_id = DBtoNullableInt(dr.Item("pier_profile_id"))
         Me.soil_profile_id = DBtoNullableInt(dr.Item("soil_profile_id"))
         Me.reaction_position = DBtoNullableInt(dr.Item("reaction_position"))
         Me.reaction_location = DBtoStr(dr.Item("reaction_location"))
         Me.local_soil_profile = DBtoNullableInt(dr.Item("local_soil_profile"))
-        Me.local_drilled_pier_profile = DBtoNullableInt(dr.Item("local_drilled_pier_profile"))
+        Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
+        Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
         Try
             Me.drilled_pier_tool_id = DBtoNullableInt(dr.Item("drilled_pier_tool_id"))
         Catch
@@ -684,19 +676,19 @@ Partial Public Class DrilledPier
 
         For Each profileRow As DataRow In strDS.Tables(dpProfile.EDSObjectName).Rows
             dpProfile = New DrilledPierProfile(profileRow, Me)
-            If IsSomething(dpProfile.local_drilled_pier_profile_id) Or (IsSomething(dpProfile.ID) And IsNothing(dpProfile.local_drilled_pier_profile_id)) Then
-                If If(isExcel, Me.local_drilled_pier_profile = dpProfile.local_drilled_pier_profile_id, Me.drilled_pier_profile_id = dpProfile.ID) Then
+            If IsSomething(dpProfile.local_drilled_pier_id) Or (IsSomething(dpProfile.ID) And IsNothing(dpProfile.local_drilled_pier_id)) Then
+                If If(isExcel, Me.local_pier_profile_id = dpProfile.local_pier_profile_id And Me.local_drilled_pier_id = dpProfile.local_drilled_pier_id, Me.pier_profile_id = dpProfile.ID) Then
                     Me.PierProfile = dpProfile
                     For Each sectionrow As DataRow In strDS.Tables(dpSection.EDSObjectName).Rows
                         dpSection = (New DrilledPierSection(sectionrow, dpProfile))
                         If IsSomething(dpSection.local_section_id) Or (IsSomething(dpSection.ID) And IsNothing(dpSection.local_section_id)) Then
-                            If If(isExcel, dpProfile.local_drilled_pier_profile_id = dpSection.local_drilled_pier_profile_id, dpProfile.ID = dpSection.drilled_pier_profile_id) Then
+                            If If(isExcel, dpProfile.local_drilled_pier_id = dpSection.local_drilled_pier_id, dpProfile.ID = dpSection.drilled_pier_id) Then
                                 dpProfile.Sections.Add(dpSection)
 
                                 For Each rebarRow As DataRow In strDS.Tables(dpRebar.EDSObjectName).Rows
                                     dpRebar = (New DrilledPierRebar(rebarRow, dpSection))
                                     If IsSomething(dpRebar.local_rebar_id) Or (IsSomething(dpRebar.ID) And IsNothing(dpRebar.local_rebar_id)) Then
-                                        If If(isExcel, dpSection.local_section_id = dpRebar.local_section_id, dpSection.ID = dpRebar.section_id) Then
+                                        If If(isExcel, dpSection.local_section_id = dpRebar.local_section_id And dpRebar.local_drilled_pier_id = dpSection.local_drilled_pier_id, dpSection.ID = dpRebar.section_id) Then
                                             dpSection.Rebar.Add(dpRebar)
                                         End If
                                     End If
@@ -707,14 +699,14 @@ Partial Public Class DrilledPier
 
                     For Each bellRow As DataRow In strDS.Tables(dpBelled.EDSObjectName).Rows
                         dpBelled = (New BelledPier(bellRow, dpProfile))
-                        If If(isExcel, dpProfile.local_drilled_pier_profile_id = dpBelled.local_drilled_pier_profile_id, dpProfile.ID = dpBelled.drilled_pier_profile_id) Then
+                        If If(isExcel, dpProfile.local_drilled_pier_id = dpBelled.local_drilled_pier_id, dpProfile.ID = dpBelled.pier_profile_id) Then
                             Me.PierProfile.BelledPier = dpBelled
                         End If
                     Next
 
                     For Each emedRow As DataRow In strDS.Tables(dpEmbedded.EDSObjectName).Rows
                         dpEmbedded = (New EmbeddedPole(emedRow, dpProfile))
-                        If If(isExcel, dpProfile.local_drilled_pier_profile_id = dpEmbedded.local_drilled_pier_profile_id, dpProfile.ID = dpEmbedded.drilled_pier_profile_id) Then
+                        If If(isExcel, dpProfile.local_drilled_pier_id = dpEmbedded.local_drilled_pier_id, dpProfile.ID = dpEmbedded.pier_profile_id) Then
                             Me.PierProfile.EmbeddedPole = dpEmbedded
                         End If
                     Next
@@ -724,18 +716,17 @@ Partial Public Class DrilledPier
 
         For Each soilRow As DataRow In strDS.Tables(dpSProfile.EDSObjectName).Rows
             dpSProfile = (New DrilledPierSoilProfile(soilRow, Me))
-            If If(isExcel, Me.local_soil_profile = dpSProfile.local_soil_profile_id, Me.soil_profile_id = dpSProfile.ID) Then
+            If If(isExcel, Me.local_soil_profile = dpSProfile.local_soil_profile_id And Me.local_drilled_pier_id = dpSProfile.local_drilled_pier_id, Me.soil_profile_id = dpSProfile.ID) Then
                 Me.SoilProfile = dpSProfile
 
                 For Each layerRow As DataRow In strDS.Tables(dpLayer.EDSObjectName).Rows
                     dpLayer = (New DrilledPierSoilLayer(layerRow, dpSProfile))
-                    If If(isExcel, dpSProfile.local_drilled_pier_id = dpLayer.local_drilled_pier_id, Me.soil_profile_id = dpLayer.Soil_Profile_id) Then
+                    If If(isExcel, dpSProfile.local_drilled_pier_id = dpLayer.local_drilled_pier_id And dpLayer.local_drilled_pier_id = dpSProfile.local_drilled_pier_id, Me.soil_profile_id = dpLayer.soil_profile_id) Then
                         dpSProfile.DPSoilLayers.Add(dpLayer)
                     End If
                 Next
             End If
         Next
-
 
         If isExcel Then
             Dim res As New EDSResult
@@ -744,7 +735,7 @@ Partial Public Class DrilledPier
             dt.Columns.Add("rating", GetType(Double))
 
             For Each resRow In strDS.Tables("Drilled Pier Result").Rows
-                If DBtoNullableInt(resRow.item("local_drilled_pier_id")) = Me.local_drilled_pier_profile Then
+                If DBtoNullableInt(resRow.item("local_drilled_pier_id")) = Me.local_drilled_pier_id Then
                     Try
                         dt.Rows.Add("DPSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
                         dt.Rows.Add("DPSTRUC", Math.Round(CType(resRow.item("Structural Rating"), Double), 3))
@@ -778,7 +769,7 @@ Partial Public Class DrilledPier
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_position.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.reaction_location.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_soil_profile.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_drilled_pier_profile.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_pier_profile_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel4ID")
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
@@ -789,12 +780,12 @@ Partial Public Class DrilledPier
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("soil_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_position")
         SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_location")
         SQLInsertFields = SQLInsertFields.AddtoDBString("local_soil_profile")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("local_drilled_pier_profile")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_tool_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
@@ -804,12 +795,12 @@ Partial Public Class DrilledPier
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_profile_id = " & Me.drilled_pier_profile_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_profile_id = " & Me.pier_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = " & Me.soil_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_position = " & Me.reaction_position.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_location = " & Me.reaction_location.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_soil_profile = " & Me.local_soil_profile.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_drilled_pier_profile = " & Me.local_drilled_pier_profile.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_pier_profile_id = " & Me.local_pier_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
@@ -828,12 +819,12 @@ Partial Public Class DrilledPier
         Dim otherToCompare As DrilledPier = TryCast(other, DrilledPier)
         If otherToCompare Is Nothing Then Return False
         Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.drilled_pier_profile_id.CheckChange(otherToCompare.drilled_pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
+        Equals = If(Me.pier_profile_id.CheckChange(otherToCompare.pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
         Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.soil_profile_id, changes, categoryName, "Soil Profile Id"), Equals, False)
         Equals = If(Me.reaction_position.CheckChange(otherToCompare.reaction_position, changes, categoryName, "Reaction Position"), Equals, False)
         Equals = If(Me.reaction_location.CheckChange(otherToCompare.reaction_location, changes, categoryName, "Reaction Location"), Equals, False)
         Equals = If(Me.local_soil_profile.CheckChange(otherToCompare.local_soil_profile, changes, categoryName, "Local Soil Profile"), Equals, False)
-        Equals = If(Me.local_drilled_pier_profile.CheckChange(otherToCompare.local_drilled_pier_profile, changes, categoryName, "Local Drilled Pier Profile"), Equals, False)
+        Equals = If(Me.local_pier_profile_id.CheckChange(otherToCompare.local_pier_profile_id, changes, categoryName, "Local Drilled Pier Profile"), Equals, False)
 
         'Drilled Pier Profile
         Equals = If(Me.PierProfile.CheckChange(otherToCompare.PierProfile, changes, categoryName, "Pier Profile"), Equals, False)
@@ -992,8 +983,6 @@ Partial Public Class DrilledPierProfile
     Public Property Sections As New List(Of DrilledPierSection)
     Public Property EmbeddedPole As EmbeddedPole
     Public Property BelledPier As New BelledPier
-    Public Property local_drilled_pier_profile_id As Integer?
-    Public Property local_drilled_pier_id As Integer?
 
     Private _ID As Integer?
     Private _foundation_depth As Double?
@@ -1014,8 +1003,9 @@ Partial Public Class DrilledPierProfile
     Private _tie_yield_strength As Double?
     Private _tool_version As String
     Private _ultimate_gross_bearing As Boolean?
-
-
+    Private _local_pier_profile_id As Integer?
+    Private _local_drilled_pier_id As Integer?
+    Private _drilled_pier_id As Integer?
 
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
@@ -1188,6 +1178,34 @@ Partial Public Class DrilledPierProfile
             Me._ultimate_gross_bearing = Value
         End Set
     End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
+    Public Property local_pier_profile_id As Integer?
+        Get
+            Return _local_pier_profile_id
+        End Get
+        Set()
+            Me._local_pier_profile_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id As Integer?
+        Get
+            Return _local_drilled_pier_id
+        End Get
+        Set()
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
+    Public Property drilled_pier_id As Integer?
+        Get
+            Return _drilled_pier_id
+        End Get
+        Set()
+            Me._drilled_pier_id = Value
+        End Set
+    End Property
+
 #End Region
 
 #Region "Constructors"
@@ -1218,11 +1236,15 @@ Partial Public Class DrilledPierProfile
         Me.tool_version = DBtoStr(dr.Item("tool_version"))
         Me.ultimate_gross_bearing = DBtoNullableBool(dr.Item("ultimate_gross_bearing"))
         Try
-            Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile"))
+            Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
         Catch
         End Try
         Try
-            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier"))
+            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.drilled_pier_id = DBtoNullableInt(dr.Item("drilled_pier_id"))
         Catch
         End Try
     End Sub
@@ -1420,13 +1442,10 @@ Partial Public Class DrilledPierSection
 
 #End Region
 
-
 #Region "Define"
     Public Property Rebar As New List(Of DrilledPierRebar)
-    Public Property local_drilled_pier_profile_id As Integer?
 
     Private _ID As Integer?
-    Private _drilled_pier_profile_id As Integer?
     Private _pier_diameter As Double?
     Private _clear_cover As Double?
     Private _clear_cover_rebar_cage_option As Boolean?
@@ -1435,6 +1454,11 @@ Partial Public Class DrilledPierSection
     Private _bottom_elevation As Double?
     Private _local_section_id As Integer?
     Private _rho_override As Double?
+    Private _drilled_pier_id As Integer?
+    Private _local_drilled_pier_id As Integer?
+    Private _local_pier_profile_id As Integer?
+    Private _pier_profile_id As Integer?
+
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
         Get
@@ -1442,15 +1466,6 @@ Partial Public Class DrilledPierSection
         End Get
         Set
             Me._ID = Value
-        End Set
-    End Property
-    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Profile Id")>
-    Public Property drilled_pier_profile_id() As Integer?
-        Get
-            Return Me._drilled_pier_profile_id
-        End Get
-        Set
-            Me._drilled_pier_profile_id = Value
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Diameter")>
@@ -1525,6 +1540,42 @@ Partial Public Class DrilledPierSection
             Me._rho_override = Value
         End Set
     End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
+    Public Property local_pier_profile_id As Integer?
+        Get
+            Return _local_pier_profile_id
+        End Get
+        Set()
+            Me._local_pier_profile_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id As Integer?
+        Get
+            Return _local_drilled_pier_id
+        End Get
+        Set()
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
+    Public Property drilled_pier_id As Integer?
+        Get
+            Return _drilled_pier_id
+        End Get
+        Set()
+            Me._drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
+    Public Property pier_profile_id As Integer?
+        Get
+            Return _pier_profile_id
+        End Get
+        Set()
+            Me._pier_profile_id = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -1537,7 +1588,6 @@ Partial Public Class DrilledPierSection
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.drilled_pier_profile_id = DBtoNullableInt(dr.Item("drilled_pier_profile_id"))
         Me.pier_diameter = DBtoNullableDbl(dr.Item("pier_diameter"))
         Me.clear_cover = DBtoNullableDbl(dr.Item("clear_cover"))
         Me.clear_cover_rebar_cage_option = DBtoNullableBool(dr.Item("clear_cover_rebar_cage_option"))
@@ -1548,7 +1598,19 @@ Partial Public Class DrilledPierSection
         Me.rho_override = DBtoNullableDbl(dr.Item("rho_override"))
 
         Try
-            Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+            Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
+        Catch
+        End Try
+        Try
+            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.drilled_pier_id = DBtoNullableInt(dr.Item("drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.pier_profile_id = DBtoNullableInt(dr.Item("pier_profile_id"))
         Catch
         End Try
     End Sub
@@ -1570,7 +1632,7 @@ Partial Public Class DrilledPierSection
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("pier_diameter")
         SQLInsertFields = SQLInsertFields.AddtoDBString("clear_cover")
         SQLInsertFields = SQLInsertFields.AddtoDBString("clear_cover_rebar_cage_option")
@@ -1584,7 +1646,7 @@ Partial Public Class DrilledPierSection
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_profile_id = " & "@SubLevel2ID")
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_profile_id = " & "@SubLevel2ID")
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_diameter = " & Me.pier_diameter.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("clear_cover = " & Me.clear_cover.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("clear_cover_rebar_cage_option = " & Me.clear_cover_rebar_cage_option.ToString.FormatDBValue)
@@ -1608,7 +1670,7 @@ Partial Public Class DrilledPierSection
         Dim otherToCompare As DrilledPierSection = TryCast(other, DrilledPierSection)
         If otherToCompare Is Nothing Then Return False
         Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.drilled_pier_profile_id.CheckChange(otherToCompare.drilled_pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
+        Equals = If(Me.pier_profile_id.CheckChange(otherToCompare.pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
         Equals = If(Me.pier_diameter.CheckChange(otherToCompare.pier_diameter, changes, categoryName, "Pier Diameter"), Equals, False)
         Equals = If(Me.clear_cover.CheckChange(otherToCompare.clear_cover, changes, categoryName, "Clear Cover"), Equals, False)
         Equals = If(Me.clear_cover_rebar_cage_option.CheckChange(otherToCompare.clear_cover_rebar_cage_option, changes, categoryName, "Clear Cover Rebar Cage Option"), Equals, False)
@@ -1687,6 +1749,11 @@ Partial Public Class DrilledPierRebar
     Private _longitudinal_rebar_size As Integer?
     Private _longitudinal_rebar_cage_diameter As Double?
     Private _local_rebar_id As Integer?
+    Private _drilled_pier_id As Integer?
+    Private _local_drilled_pier_id As Integer?
+    Private _local_pier_profile_id As Integer?
+    Private _pier_profile_id As Integer?
+
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
         Get
@@ -1741,6 +1808,42 @@ Partial Public Class DrilledPierRebar
             Me._local_rebar_id = Value
         End Set
     End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
+    Public Property local_pier_profile_id As Integer?
+        Get
+            Return _local_pier_profile_id
+        End Get
+        Set()
+            Me._local_pier_profile_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id As Integer?
+        Get
+            Return _local_drilled_pier_id
+        End Get
+        Set()
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
+    Public Property drilled_pier_id As Integer?
+        Get
+            Return _drilled_pier_id
+        End Get
+        Set()
+            Me._drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
+    Public Property pier_profile_id As Integer?
+        Get
+            Return _pier_profile_id
+        End Get
+        Set()
+            Me._pier_profile_id = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -1761,6 +1864,22 @@ Partial Public Class DrilledPierRebar
 
         Try
             Me.local_section_id = DBtoNullableInt(dr.Item("local_section_id"))
+        Catch
+        End Try
+        Try
+            Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
+        Catch
+        End Try
+        Try
+            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.drilled_pier_id = DBtoNullableInt(dr.Item("drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.pier_profile_id = DBtoNullableInt(dr.Item("pier_profile_id"))
         Catch
         End Try
 
@@ -1822,7 +1941,6 @@ End Class
 Partial Public Class EmbeddedPole
     Inherits EDSObjectWithQueries
 
-
 #Region "Inheritted"
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
@@ -1872,10 +1990,7 @@ Partial Public Class EmbeddedPole
 #End Region
 
 #Region "Define"
-    Public Property local_drilled_pier_profile_id As Integer?
-
     Private _ID As Integer?
-    Private _drilled_pier_profile_id As Integer?
     Private _embedded_pole_option As Boolean?
     Private _encased_in_concrete As Boolean?
     Private _pole_side_quantity As Integer?
@@ -1888,6 +2003,11 @@ Partial Public Class EmbeddedPole
     Private _pole_section_length As Double?
     Private _pole_taper_factor As Double?
     Private _pole_bend_radius_override As Double?
+    Private _drilled_pier_id As Integer?
+    Private _local_drilled_pier_id As Integer?
+    Private _local_pier_profile_id As Integer?
+    Private _pier_profile_id As Integer?
+
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
         Get
@@ -1895,15 +2015,6 @@ Partial Public Class EmbeddedPole
         End Get
         Set
             Me._ID = Value
-        End Set
-    End Property
-    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Profile Id")>
-    Public Property drilled_pier_profile_id() As Integer?
-        Get
-            Return Me._drilled_pier_profile_id
-        End Get
-        Set
-            Me._drilled_pier_profile_id = Value
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Embedded Pole Option")>
@@ -2014,6 +2125,42 @@ Partial Public Class EmbeddedPole
             Me._pole_bend_radius_override = Value
         End Set
     End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
+    Public Property local_pier_profile_id As Integer?
+        Get
+            Return _local_pier_profile_id
+        End Get
+        Set()
+            Me._local_pier_profile_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id As Integer?
+        Get
+            Return _local_drilled_pier_id
+        End Get
+        Set()
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
+    Public Property drilled_pier_id As Integer?
+        Get
+            Return _drilled_pier_id
+        End Get
+        Set()
+            Me._drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
+    Public Property pier_profile_id As Integer?
+        Get
+            Return _pier_profile_id
+        End Get
+        Set()
+            Me._pier_profile_id = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -2026,7 +2173,6 @@ Partial Public Class EmbeddedPole
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.drilled_pier_profile_id = DBtoNullableInt(dr.Item("drilled_pier_profile_id"))
         Me.embedded_pole_option = DBtoNullableBool(dr.Item("embedded_pole_option"))
         Me.encased_in_concrete = DBtoNullableBool(dr.Item("encased_in_concrete"))
         Me.pole_side_quantity = DBtoNullableInt(dr.Item("pole_side_quantity"))
@@ -2039,7 +2185,22 @@ Partial Public Class EmbeddedPole
         Me.pole_section_length = DBtoNullableDbl(dr.Item("pole_section_length"))
         Me.pole_taper_factor = DBtoNullableDbl(dr.Item("pole_taper_factor"))
         Me.pole_bend_radius_override = DBtoNullableDbl(dr.Item("pole_bend_radius_override"))
-        Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+        Try
+            Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
+        Catch
+        End Try
+        Try
+            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.drilled_pier_id = DBtoNullableInt(dr.Item("drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.pier_profile_id = DBtoNullableInt(dr.Item("pier_profile_id"))
+        Catch
+        End Try
     End Sub
 #End Region
 
@@ -2063,7 +2224,7 @@ Partial Public Class EmbeddedPole
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("embedded_pole_option")
         SQLInsertFields = SQLInsertFields.AddtoDBString("encased_in_concrete")
         SQLInsertFields = SQLInsertFields.AddtoDBString("pole_side_quantity")
@@ -2081,7 +2242,7 @@ Partial Public Class EmbeddedPole
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_profile_id = " & "@SubLevel2ID")
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_profile_id = " & "@SubLevel2ID")
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("embedded_pole_option = " & Me.embedded_pole_option.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("encased_in_concrete = " & Me.encased_in_concrete.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pole_side_quantity = " & Me.pole_side_quantity.ToString.FormatDBValue)
@@ -2109,7 +2270,7 @@ Partial Public Class EmbeddedPole
         Dim otherToCompare As EmbeddedPole = TryCast(other, EmbeddedPole)
         If otherToCompare Is Nothing Then Return False
         Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.drilled_pier_profile_id.CheckChange(otherToCompare.drilled_pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
+        Equals = If(Me.pier_profile_id.CheckChange(otherToCompare.pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
         Equals = If(Me.embedded_pole_option.CheckChange(otherToCompare.embedded_pole_option, changes, categoryName, "Embedded Pole Option"), Equals, False)
         Equals = If(Me.encased_in_concrete.CheckChange(otherToCompare.encased_in_concrete, changes, categoryName, "Encased In Concrete"), Equals, False)
         Equals = If(Me.pole_side_quantity.CheckChange(otherToCompare.pole_side_quantity, changes, categoryName, "Pole Side Quantity"), Equals, False)
@@ -2129,7 +2290,6 @@ End Class
 
 Partial Public Class BelledPier
     Inherits EDSObjectWithQueries
-
 
 #Region "Inheritted"
     '''Must override these inherited properties
@@ -2179,12 +2339,8 @@ Partial Public Class BelledPier
 
 #End Region
 
-
 #Region "Define"
-    Public Property local_drilled_pier_profile_id As Integer?
-
     Private _ID As Integer?
-    Private _drilled_pier_profile_id As Integer?
     Private _belled_pier_option As Boolean?
     Private _bottom_diameter_of_bell As Double?
     Private _bell_input_type As String
@@ -2195,6 +2351,11 @@ Partial Public Class BelledPier
     Private _swelling_expansive_soil As Boolean?
     Private _depth_of_expansive_soil As Double?
     Private _expansive_soil_force As Double?
+    Private _drilled_pier_id As Integer?
+    Private _local_drilled_pier_id As Integer?
+    Private _local_pier_profile_id As Integer?
+    Private _pier_profile_id As Integer?
+
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?
         Get
@@ -2202,15 +2363,6 @@ Partial Public Class BelledPier
         End Get
         Set
             Me._ID = Value
-        End Set
-    End Property
-    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Profile Id")>
-    Public Property drilled_pier_profile_id() As Integer?
-        Get
-            Return Me._drilled_pier_profile_id
-        End Get
-        Set
-            Me._drilled_pier_profile_id = Value
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Belled Pier Option")>
@@ -2303,7 +2455,42 @@ Partial Public Class BelledPier
             Me._expansive_soil_force = Value
         End Set
     End Property
-
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
+    Public Property local_pier_profile_id As Integer?
+        Get
+            Return _local_pier_profile_id
+        End Get
+        Set()
+            Me._local_pier_profile_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
+    Public Property local_drilled_pier_id As Integer?
+        Get
+            Return _local_drilled_pier_id
+        End Get
+        Set()
+            Me._local_drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
+    Public Property drilled_pier_id As Integer?
+        Get
+            Return _drilled_pier_id
+        End Get
+        Set()
+            Me._drilled_pier_id = Value
+        End Set
+    End Property
+    <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
+    Public Property pier_profile_id As Integer?
+        Get
+            Return _pier_profile_id
+        End Get
+        Set()
+            Me._pier_profile_id = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -2315,7 +2502,6 @@ Partial Public Class BelledPier
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.drilled_pier_profile_id = DBtoNullableInt(dr.Item("drilled_pier_profile_id"))
         Me.belled_pier_option = DBtoNullableBool(dr.Item("belled_pier_option"))
         Me.bottom_diameter_of_bell = DBtoNullableDbl(dr.Item("bottom_diameter_of_bell"))
         Me.bell_input_type = DBtoStr(dr.Item("bell_input_type"))
@@ -2327,7 +2513,19 @@ Partial Public Class BelledPier
         Me.depth_of_expansive_soil = DBtoNullableDbl(dr.Item("depth_of_expansive_soil"))
         Me.expansive_soil_force = DBtoNullableDbl(dr.Item("expansive_soil_force"))
         Try
-            Me.local_drilled_pier_profile_id = DBtoNullableInt(dr.Item("local_drilled_pier_profile_id"))
+            Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
+        Catch
+        End Try
+        Try
+            Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.drilled_pier_id = DBtoNullableInt(dr.Item("drilled_pier_id"))
+        Catch
+        End Try
+        Try
+            Me.pier_profile_id = DBtoNullableInt(dr.Item("pier_profile_id"))
         Catch
         End Try
     End Sub
@@ -2351,7 +2549,7 @@ Partial Public Class BelledPier
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_profile_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("belled_pier_option")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bottom_diameter_of_bell")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bell_input_type")
@@ -2367,7 +2565,7 @@ Partial Public Class BelledPier
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_profile_id = " & "@SubLevel2ID")
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_profile_id = " & "@SubLevel2ID")
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("belled_pier_option = " & Me.belled_pier_option.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bottom_diameter_of_bell = " & Me.bottom_diameter_of_bell.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bell_input_type = " & Me.bell_input_type.ToString.FormatDBValue)
@@ -2393,7 +2591,7 @@ Partial Public Class BelledPier
         Dim otherToCompare As BelledPier = TryCast(other, BelledPier)
         If otherToCompare Is Nothing Then Return False
         Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.drilled_pier_profile_id.CheckChange(otherToCompare.drilled_pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
+        Equals = If(Me.pier_profile_id.CheckChange(otherToCompare.pier_profile_id, changes, categoryName, "Drilled Pier Profile Id"), Equals, False)
         Equals = If(Me.belled_pier_option.CheckChange(otherToCompare.belled_pier_option, changes, categoryName, "Belled Pier Option"), Equals, False)
         Equals = If(Me.bottom_diameter_of_bell.CheckChange(otherToCompare.bottom_diameter_of_bell, changes, categoryName, "Bottom Diameter Of Bell"), Equals, False)
         Equals = If(Me.bell_input_type.CheckChange(otherToCompare.bell_input_type, changes, categoryName, "Bell Input Type"), Equals, False)
@@ -2412,8 +2610,9 @@ End Class
 Public Class DrilledPierSoilProfile
     Inherits SoilProfile
 
-    Public Property local_soil_profile_id
-    Public Property local_drilled_pier_id
+    Public Property local_soil_profile_id As Integer?
+    Public Property local_drilled_pier_id As Integer?
+    Public Property drilled_pier_id As Integer?
     Public Property DPSoilLayers As New List(Of DrilledPierSoilLayer)
 
     Public Sub New()
@@ -2426,10 +2625,10 @@ Public Class DrilledPierSoilProfile
         Try
             Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
             Me.local_drilled_pier_id = DBtoNullableDbl(dr.Item("local_drilled_pier_id"))
+            Me.drilled_pier_id = DBtoNullableDbl(dr.Item("drilled_pier_id"))
         Catch
         End Try
     End Sub
-
 
     Public Overrides Function SQLUpdate() As String
 
@@ -2461,7 +2660,6 @@ Public Class DrilledPierSoilProfile
         Return SQLUpdate
     End Function
 
-
 End Class
 
 Public Class DrilledPierSoilLayer
@@ -2473,10 +2671,11 @@ Public Class DrilledPierSoilLayer
         End Get
     End Property
 
-    Public Property local_soil_profile_id
-    Public Property local_soil_layer_id
-    Public Property local_drilled_pier_profile
-    Public Property local_drilled_pier_id
+    Public Property local_soil_profile_id As Integer?
+    Public Property soil_profile_id As Integer?
+    Public Property local_soil_layer_id As Integer?
+    Public Property drilled_pier_id As Integer?
+    Public Property local_drilled_pier_id As Integer?
 
     Public Sub New()
 
@@ -2486,10 +2685,11 @@ Public Class DrilledPierSoilLayer
         ConstructMe(dr, Parent)
 
         Try
-            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile"))
+            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
             Me.local_soil_layer_id = DBtoNullableDbl(dr.Item("local_soil_layer_id"))
-            Me.local_drilled_pier_profile = DBtoNullableDbl(dr.Item("local_drilled_pier_profile"))
+            Me.drilled_pier_id = DBtoNullableDbl(dr.Item("drilled_pier_id"))
             Me.local_drilled_pier_id = DBtoNullableDbl(dr.Item("local_drilled_pier_id"))
+            Me.soil_profile_id = DBtoNullableDbl(dr.Item("soil_profile_id"))
         Catch
         End Try
     End Sub
@@ -2498,20 +2698,17 @@ End Class
 Public Class DrilledPierResult
     Inherits EDSResult
 
-    Public Property modified_person_id As Integer?
-    Public Property process_stage As String
-    Public ReadOnly Property EDSObjectName As String
+    Public Overrides ReadOnly Property EDSObjectName As String
         Get
             Return "Drilled Pier Result"
         End Get
     End Property
 
-    Public ReadOnly Property EDSTableName As String
+    Public Overloads ReadOnly Property EDSTableName As String
         Get
             Return "fnd.drilled_pier_results"
         End Get
     End Property
-
 
     Public Function InsertCustom() As String
         InsertCustom = "BEGIN" & vbCrLf &

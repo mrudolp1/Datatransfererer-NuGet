@@ -299,7 +299,7 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("SST Unit Base Foundation") Then
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
-                Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
                 FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
