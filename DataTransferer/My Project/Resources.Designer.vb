@@ -64,14 +64,41 @@ Namespace My.Resources
         '''  Looks up a localized string similar to 
         '''BEGIN
         '''
-        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
-        '''		OUTPUT INSERTED.ID INTO @TopLevel
-        '''		VALUES([INSERT VALUES])
-        '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
+        '''	--Soil Layers
+        '''	DELETE FROM fnd.soil_layer WHERE soil_profile_id = [SOIL PROFILE ID]
+        '''	
+        '''	--Soil Profiles
+        '''	DELETE FROM fnd.soil_profile WHERE ID = [SOIL PROFILE ID]
+        '''
+        '''	--Anchor Profiles
+        '''	DELETE FROM fnd.anchor_block_profile WHERE ID = [ANCHOR PROFILE ID]
+        '''
+        '''	--Anchor Results
+        '''	DELETE FROM fnd.anchor_block_results WHERE anchor_block_id = [ANCHOR ID]
+        '''
+        '''	--Anchor Block
+        '''	DELETE FROM fnd.anchor_block WHERE ID = [ANCHOR ID]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property Anchor_Block__DELETE_() As String
+            Get
+                Return ResourceManager.GetString("Anchor_Block__DELETE_", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 
+        '''BEGIN
         '''
         '''	--[ANCHOR BLOCK PROFILE]
         '''
         '''	--[ANCHOR BLOCK SOIL PROFILE]
+        '''
+        '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
+        '''		OUTPUT INSERTED.ID INTO @SubLevel2
+        '''		VALUES([INSERT VALUES])
+        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
         '''
         '''	--[ANCHOR BLOCK RESULTS]
         '''END.
@@ -86,9 +113,9 @@ Namespace My.Resources
         '''  Looks up a localized string similar to BEGIN
         '''
         '''	INSERT INTO [TABLE NAME] ([INSERT FIELDS]) 
-        '''		OUTPUT INSERTED.ID INTO @SubLevel2
+        '''		OUTPUT INSERTED.ID INTO @SubLevel3
         '''		VALUES([INSERT VALUES])
-        '''	SELECT @SubLevel2ID=ID FROM @SubLevel2
+        '''	SELECT @SubLevel3ID=ID FROM @SubLevel3
         '''
         '''END.
         '''</summary>

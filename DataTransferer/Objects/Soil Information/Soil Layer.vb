@@ -225,6 +225,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = @SubLevel1ID") '& Me.Soil_Profile_id.ToString.FormatDBValue) 'Added for GAB to update correctly - MRR
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bottom_depth = " & Me.bottom_depth.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("effective_soil_density = " & Me.effective_soil_density.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)

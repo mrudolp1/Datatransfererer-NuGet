@@ -170,7 +170,6 @@ Partial Public Class AnchorBlockFoundation
     Public Overrides Function SQLInsert() As String
         Dim _abInsert As String
 
-        SQLInsert = ""
         SQLInsert = CCI_Engineering_Templates.My.Resources.Anchor_Block_Tool__INSERT
 
         SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
@@ -178,6 +177,7 @@ Partial Public Class AnchorBlockFoundation
         SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
 
         'Guy Anchors
+        _abInsert = ""
         For Each ab In Me.AnchorBlocks
             _abInsert += ab.SQLInsert + vbCrLf
         Next
@@ -198,7 +198,7 @@ Partial Public Class AnchorBlockFoundation
         Dim gbUp As String = ""
         For Each gab In Me.AnchorBlocks
             If gab.ID IsNot Nothing And gab?.ID > 0 Then
-                If gab.local_anchor_profile_id IsNot Nothing Then
+                If gab.local_anchor_id IsNot Nothing Then
                     gbUp += gab.SQLUpdate
                 Else
                     gbUp += gab.SQLDelete
@@ -207,14 +207,28 @@ Partial Public Class AnchorBlockFoundation
                 gbUp += gab.SQLInsert
             End If
         Next
+
+        SQLUpdate = SQLUpdate.Replace("--[OPTIONAL]", gbUp)
+
+        Return SQLUpdate + vbCrLf
+
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
+
+        'Not needed if SQL tables are updated to allow Cascading Delete - MRR
+        Dim gbDel As String = ""
+        For Each gab In Me.AnchorBlocks
+            gbDel += gab.SQLDelete
+        Next
+        SQLDelete = (gbDel + vbCrLf)
+        SQLDelete += CCI_Engineering_Templates.My.Resources.General__DELETE
+
+        'SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
         SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
-        Return SQLDelete
+        Return SQLDelete + vbCrLf
     End Function
 
 #End Region
@@ -534,53 +548,53 @@ Partial Public Class AnchorBlockFoundation
                 'Profile
                 'Add the structural properties of the anchor block to the profiles tab
                 Dim ap As AnchorBlockProfile = gab.AnchorProfile
-                If Not profExists.Contains(ap.local_anchor_profile_id) Then
-                    With .Worksheets("Anchor Profiles (SAPI)")
-                        If Not IsNothing(ap.ID) Then .Range("A" & profileRow).Value = CType(ap.ID, Integer)
-                        If Not IsNothing(ap.local_anchor_profile_id) Then .Range("B" & profileRow).Value = CType(ap.local_anchor_profile_id, Integer)
-                        If Not IsNothing(ap.anchor_depth) Then .Range("C" & profileRow).Value = CType(ap.anchor_depth, Double)
-                        If Not IsNothing(ap.anchor_width) Then .Range("D" & profileRow).Value = CType(ap.anchor_width, Double)
-                        If Not IsNothing(ap.anchor_thickness) Then .Range("E" & profileRow).Value = CType(ap.anchor_thickness, Double)
-                        If Not IsNothing(ap.anchor_length) Then .Range("F" & profileRow).Value = CType(ap.anchor_length, Double)
-                        If Not IsNothing(ap.anchor_toe_width) Then .Range("G" & profileRow).Value = CType(ap.anchor_toe_width, Double)
-                        If Not IsNothing(ap.anchor_top_rebar_size) Then .Range("H" & profileRow).Value = CType(ap.anchor_top_rebar_size, Integer)
-                        If Not IsNothing(ap.anchor_top_rebar_quantity) Then .Range("I" & profileRow).Value = CType(ap.anchor_top_rebar_quantity, Integer)
-                        If Not IsNothing(ap.anchor_front_rebar_size) Then .Range("J" & profileRow).Value = CType(ap.anchor_front_rebar_size, Integer)
-                        If Not IsNothing(ap.anchor_front_rebar_quantity) Then .Range("K" & profileRow).Value = CType(ap.anchor_front_rebar_quantity, Integer)
-                        If Not IsNothing(ap.anchor_stirrup_size) Then .Range("L" & profileRow).Value = CType(ap.anchor_stirrup_size, Integer)
-                        If Not IsNothing(ap.anchor_shaft_diameter) Then .Range("M" & profileRow).Value = CType(ap.anchor_shaft_diameter, Double)
-                        If Not IsNothing(ap.anchor_shaft_quantity) Then .Range("N" & profileRow).Value = CType(ap.anchor_shaft_quantity, Integer)
-                        If Not IsNothing(ap.anchor_shaft_area_override) Then .Range("O" & profileRow).Value = CType(ap.anchor_shaft_area_override, Double)
-                        If Not IsNothing(ap.anchor_shaft_shear_leg_factor) Then .Range("P" & profileRow).Value = CType(ap.anchor_shaft_shear_leg_factor, Double)
-                        If Not IsNothing(ap.anchor_shaft_section) Then .Range("Q" & profileRow).Value = CType(ap.anchor_shaft_section, String)
-                        If Not IsNothing(ap.anchor_rebar_grade) Then .Range("R" & profileRow).Value = CType(ap.anchor_rebar_grade, Double)
-                        If Not IsNothing(ap.concrete_compressive_strength) Then .Range("S" & profileRow).Value = CType(ap.concrete_compressive_strength, Double)
-                        If Not IsNothing(ap.clear_cover) Then .Range("T" & profileRow).Value = CType(ap.clear_cover, Double)
-                        If Not IsNothing(ap.anchor_shaft_yield_strength) Then .Range("U" & profileRow).Value = CType(ap.anchor_shaft_yield_strength, Double)
-                        If Not IsNothing(ap.anchor_shaft_ultimate_strength) Then .Range("V" & profileRow).Value = CType(ap.anchor_shaft_ultimate_strength, Double)
-                        If Not IsNothing(ap.rebar_known) Then .Range("W" & profileRow).Value = CType(ap.rebar_known, Boolean)
-                        If Not IsNothing(ap.anchor_shaft_known) Then .Range("X" & profileRow).Value = CType(ap.anchor_shaft_known, Boolean)
-                        If Not IsNothing(ap.basic_soil_check) Then .Range("Y" & profileRow).Value = CType(ap.basic_soil_check, Boolean)
-                        If Not IsNothing(ap.structural_check) Then .Range("Z" & profileRow).Value = CType(ap.structural_check, Boolean)
-                    End With
-                    'If it is added to the sheet then it needs to move on to the next row for the next structural design
-                    profileRow += 1
-                    'If it is added to the sheet then it adds it to a list of intergers containing local profile IDs
-                    'This ensures it won't be added twice.
-                    profExists.Add(ap.local_anchor_profile_id)
-                End If
+                'If Not profExists.Contains(ap.local_anchor_profile_id) Then
+                With .Worksheets("Anchor Profiles (SAPI)")
+                    If Not IsNothing(ap.ID) Then .Range("A" & profileRow).Value = CType(ap.ID, Integer)
+                    If Not IsNothing(ap.local_anchor_profile_id) Then .Range("B" & profileRow).Value = CType(ap.local_anchor_profile_id, Integer)
+                    If Not IsNothing(ap.anchor_depth) Then .Range("C" & profileRow).Value = CType(ap.anchor_depth, Double)
+                    If Not IsNothing(ap.anchor_width) Then .Range("D" & profileRow).Value = CType(ap.anchor_width, Double)
+                    If Not IsNothing(ap.anchor_thickness) Then .Range("E" & profileRow).Value = CType(ap.anchor_thickness, Double)
+                    If Not IsNothing(ap.anchor_length) Then .Range("F" & profileRow).Value = CType(ap.anchor_length, Double)
+                    If Not IsNothing(ap.anchor_toe_width) Then .Range("G" & profileRow).Value = CType(ap.anchor_toe_width, Double)
+                    If Not IsNothing(ap.anchor_top_rebar_size) Then .Range("H" & profileRow).Value = CType(ap.anchor_top_rebar_size, Integer)
+                    If Not IsNothing(ap.anchor_top_rebar_quantity) Then .Range("I" & profileRow).Value = CType(ap.anchor_top_rebar_quantity, Integer)
+                    If Not IsNothing(ap.anchor_front_rebar_size) Then .Range("J" & profileRow).Value = CType(ap.anchor_front_rebar_size, Integer)
+                    If Not IsNothing(ap.anchor_front_rebar_quantity) Then .Range("K" & profileRow).Value = CType(ap.anchor_front_rebar_quantity, Integer)
+                    If Not IsNothing(ap.anchor_stirrup_size) Then .Range("L" & profileRow).Value = CType(ap.anchor_stirrup_size, Integer)
+                    If Not IsNothing(ap.anchor_shaft_diameter) Then .Range("M" & profileRow).Value = CType(ap.anchor_shaft_diameter, Double)
+                    If Not IsNothing(ap.anchor_shaft_quantity) Then .Range("N" & profileRow).Value = CType(ap.anchor_shaft_quantity, Integer)
+                    If Not IsNothing(ap.anchor_shaft_area_override) Then .Range("O" & profileRow).Value = CType(ap.anchor_shaft_area_override, Double)
+                    If Not IsNothing(ap.anchor_shaft_shear_leg_factor) Then .Range("P" & profileRow).Value = CType(ap.anchor_shaft_shear_leg_factor, Double)
+                    If Not IsNothing(ap.anchor_shaft_section) Then .Range("Q" & profileRow).Value = CType(ap.anchor_shaft_section, String)
+                    If Not IsNothing(ap.anchor_rebar_grade) Then .Range("R" & profileRow).Value = CType(ap.anchor_rebar_grade, Double)
+                    If Not IsNothing(ap.concrete_compressive_strength) Then .Range("S" & profileRow).Value = CType(ap.concrete_compressive_strength, Double)
+                    If Not IsNothing(ap.clear_cover) Then .Range("T" & profileRow).Value = CType(ap.clear_cover, Double)
+                    If Not IsNothing(ap.anchor_shaft_yield_strength) Then .Range("U" & profileRow).Value = CType(ap.anchor_shaft_yield_strength, Double)
+                    If Not IsNothing(ap.anchor_shaft_ultimate_strength) Then .Range("V" & profileRow).Value = CType(ap.anchor_shaft_ultimate_strength, Double)
+                    If Not IsNothing(ap.rebar_known) Then .Range("W" & profileRow).Value = CType(ap.rebar_known, Boolean)
+                    If Not IsNothing(ap.anchor_shaft_known) Then .Range("X" & profileRow).Value = CType(ap.anchor_shaft_known, Boolean)
+                    If Not IsNothing(ap.basic_soil_check) Then .Range("Y" & profileRow).Value = CType(ap.basic_soil_check, Boolean)
+                    If Not IsNothing(ap.structural_check) Then .Range("Z" & profileRow).Value = CType(ap.structural_check, Boolean)
+                End With
+                'If it is added to the sheet then it needs to move on to the next row for the next structural design
+                profileRow += 1
+                'If it is added to the sheet then it adds it to a list of intergers containing local profile IDs
+                'This ensures it won't be added twice.
+                profExists.Add(ap.local_anchor_profile_id)
+                'End If
 
                 'Soil Profile
                 Dim sp As SoilProfile = gab.SoilProfile
-                If Not soilProfExists.Contains(gab.local_soil_profile_id) Then
-                    With .Worksheets("Soil Profiles (SAPI)")
-                        If Not IsNothing(sp.ID) Then .Range("A" & soilProfRow).Value = CType(sp.ID, Integer)
-                        If Not IsNothing(gab.local_soil_profile_id) Then .Range("B" & soilProfRow).Value = CType(gab.local_soil_profile_id, Integer)
-                        If Not IsNothing(sp.groundwater_depth) Then .Range("C" & soilProfRow).Value = CType(sp.groundwater_depth, Double)
-                        If Not IsNothing(sp.neglect_depth) Then .Range("D" & soilProfRow).Value = CType(sp.neglect_depth, Double)
-                    End With
-                    'Increment the soil profile row to ensure it goes to the next row of the table
-                    soilProfRow += 1
+                'If Not soilProfExists.Contains(gab.local_soil_profile_id) Then
+                With .Worksheets("Soil Profiles (SAPI)")
+                    If Not IsNothing(sp.ID) Then .Range("A" & soilProfRow).Value = CType(sp.ID, Integer)
+                    If Not IsNothing(gab.local_soil_profile_id) Then .Range("B" & soilProfRow).Value = CType(gab.local_soil_profile_id, Integer)
+                    If Not IsNothing(sp.groundwater_depth) Then .Range("C" & soilProfRow).Value = CType(sp.groundwater_depth, Double)
+                    If Not IsNothing(sp.neglect_depth) Then .Range("D" & soilProfRow).Value = CType(sp.neglect_depth, Double)
+                End With
+                'Increment the soil profile row to ensure it goes to the next row of the table
+                soilProfRow += 1
                     'If it is added to the sheet then it adds it to a list of intergers containing local soil profile IDs
                     'This ensures it won't be added twice.
                     soilProfExists.Add(gab.local_soil_profile_id)
@@ -610,7 +624,7 @@ Partial Public Class AnchorBlockFoundation
                         'Increment the soil layer row for the next layer in this profile as well as the next layer in the next profile
                         layerRow += 1
                     Next
-                End If
+                'End If
             Next
 
         End With
@@ -684,7 +698,7 @@ Partial Public Class AnchorBlock
         SQLInsert = SQLInsert.Replace("--[ANCHOR BLOCK RESULTS]", resInsert)
         SQLInsert = SQLInsert.TrimEnd
 
-        Return SQLInsert
+        Return SQLInsert + vbCrLf
     End Function
 
     Public Overrides Function SQLUpdate() As String
@@ -694,32 +708,34 @@ Partial Public Class AnchorBlock
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID)
 
-        Dim _pierInsert As String
-        Dim _soilInsert As String
+        Dim _profUpdate As String
+        Dim _soilUpdate As String
 
         If Me.AnchorProfile?.ID IsNot Nothing And Me.AnchorProfile?.ID > 0 Then
-            _pierInsert = Me.AnchorProfile.SQLUpdate
+            _profUpdate = Me.AnchorProfile.SQLUpdate
         Else
-            _pierInsert = Me.AnchorProfile.SQLInsert
+            _profUpdate = Me.AnchorProfile.SQLInsert
         End If
 
         If Me.SoilProfile?.ID IsNot Nothing And Me.SoilProfile?.ID > 0 Then
-            _soilInsert = Me.SoilProfile.SQLUpdate
+            _soilUpdate = Me.SoilProfile.SQLUpdate
         Else
-            _soilInsert = Me.SoilProfile.SQLInsert
+            _soilUpdate = Me.SoilProfile.SQLInsert
         End If
 
-        SQLUpdate = SQLUpdate.Replace("--[OPTIONAL]", _pierInsert + vbCrLf + _soilInsert + vbCrLf + Me.ResultQuery(True))
+        SQLUpdate = SQLUpdate.Replace("--[OPTIONAL]", _profUpdate + vbCrLf + _soilUpdate + vbCrLf + Me.ResultQuery(True) + vbCrLf)
 
-        Return SQLUpdate
+        Return SQLUpdate + vbCrLf
     End Function
 
     Public Overrides Function SQLDelete() As String
-        SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
-        SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
-        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
-        Return SQLDelete
+        SQLDelete = CCI_Engineering_Templates.My.Resources.Anchor_Block__DELETE_
+        SQLDelete = SQLDelete.Replace("[SOIL PROFILE ID]", Me.soil_profile_id)
+        SQLDelete = SQLDelete.Replace("[ANCHOR PROFILE ID]", Me.anchor_profile_id)
+        SQLDelete = SQLDelete.Replace("[ANCHOR ID]", Me.ID)
+
+        Return SQLDelete + vbCrLf
     End Function
 
 #End Region
@@ -855,7 +871,10 @@ Partial Public Class AnchorBlock
 
                 For Each layerRow As DataRow In strDS.Tables(abLayer.EDSObjectName).Rows
                     abLayer = (New AnchorBlockSoilLayer(layerRow, abSProfile))
-                    If If(isExcel, abSProfile.local_soil_profile_id = abLayer.local_soil_profile_id, Me.soil_profile_id = abLayer.Soil_Profile_id) Then
+                    If isExcel And IsNothing(Me.soil_profile_id) And IsNothing(abLayer.Soil_Profile_id) And abSProfile.local_soil_profile_id = abLayer.local_soil_profile_id Then 'First time SA with no EDS IDs in Excel tool
+                        abSProfile.ABSoilLayers.Add(abLayer)
+                        abSProfile.SoilLayers.Add(abLayer)
+                    ElseIf Me.soil_profile_id = abLayer.Soil_Profile_id Then 'From EDS, or second SA where tool has EDS IDs populated
                         abSProfile.ABSoilLayers.Add(abLayer)
                         abSProfile.SoilLayers.Add(abLayer)
                     End If
@@ -946,10 +965,13 @@ Partial Public Class AnchorBlock
         Equals = If(Me.local_soil_profile_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile Id"), Equals, False)
         Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
         Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
-        'Anchor Profile
-        Equals = If(Me.AnchorProfile.CheckChange(otherToCompare.AnchorProfile, changes, categoryName, "Pier Profile"), Equals, False)
-        'Soil Profile
-        Equals = If(Me.SoilProfile.CheckChange(otherToCompare.SoilProfile, changes, categoryName, "Soil Profile"), Equals, False)
+        If IsSomething(Me.local_anchor_id) Then 'If local ID isblank then there will be no Anchor Profile or Soil Profile associated to the Anchor Block object becuase it is to be deleted - MRR
+            'Anchor Profile
+            Equals = If(Me.AnchorProfile.CheckChange(otherToCompare.AnchorProfile, changes, categoryName, "Anchor Profile"), Equals, False)
+            'Soil Profile
+            Equals = If(Me.SoilProfile.CheckChange(otherToCompare.SoilProfile, changes, categoryName, "Soil Profile"), Equals, False)
+        End If
+
         Return Equals
     End Function
 #End Region
@@ -1479,7 +1501,8 @@ Partial Public Class AnchorBlockSoilProfile
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.Soil_Profile_UPDATE
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record

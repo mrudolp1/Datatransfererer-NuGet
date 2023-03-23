@@ -124,6 +124,9 @@
   <data name="Anchor_Block_Tool__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Anchor Block Tool (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Anchor_Block__DELETE_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Anchor Block (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Anchor_Block__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Anchor Block (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

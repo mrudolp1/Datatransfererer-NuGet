@@ -175,7 +175,7 @@ Partial Public Class EDSStructure
 
                     ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            'Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
@@ -264,7 +264,7 @@ Partial Public Class EDSStructure
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
 
-        structureQuery += "COMMIT"
+        structureQuery += vbCrLf & "COMMIT"
 
         Try
             My.Computer.Clipboard.SetText(structureQuery)
