@@ -503,7 +503,7 @@ Partial Public Class UnitBase
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -568,7 +568,7 @@ Partial Public Class UnitBase
     End Sub 'Generate a ub from EDS
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
-    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

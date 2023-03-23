@@ -845,7 +845,7 @@ Partial Public Class AnchorBlock
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -1287,7 +1287,7 @@ Partial Public Class AnchorBlockProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.anchor_depth = DBtoNullableDbl(dr.Item("anchor_depth"))
@@ -1482,7 +1482,7 @@ Partial Public Class AnchorBlockSoilProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing, Optional ByVal isExcel As Boolean = False)
         ConstructMe(dr, Parent)
 
         Try
@@ -1548,7 +1548,7 @@ Partial Public Class AnchorBlockSoilLayer
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         ConstructMe(dr, Parent)
 
         Try
