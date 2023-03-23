@@ -336,7 +336,7 @@ Partial Public Class EDSStructure
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
-                Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
                 FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)

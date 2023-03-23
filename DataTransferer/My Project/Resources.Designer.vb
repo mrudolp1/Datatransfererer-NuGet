@@ -1313,17 +1313,17 @@ Namespace My.Resources
             End Get
         End Property
 
-        '''<summary>
-        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details_results ([LEG REINFORCEMENT DETAILS RESULT FIELDS]) 
-        '''	VALUES([LEG REINFORCEMENT DETAILS RESULT VALUES])
-        '''
-        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT].
-        '''</summary>
-        Public ReadOnly Property Leg_Reinforcement_Details_Results_INSERT() As String
-            Get
-                Return ResourceManager.GetString("Leg_Reinforcement_Details_Results_INSERT", resourceCulture)
-            End Get
-        End Property
+        ''''<summary>
+        ''''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details_results ([LEG REINFORCEMENT DETAILS RESULT FIELDS]) 
+        ''''	VALUES([LEG REINFORCEMENT DETAILS RESULT VALUES])
+        ''''
+        ''''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT].
+        ''''</summary>
+        'Public ReadOnly Property Leg_Reinforcement_Details_Results_INSERT() As String
+        '    Get
+        '        Return ResourceManager.GetString("Leg_Reinforcement_Details_Results_INSERT", resourceCulture)
+        '    End Get
+        'End Property
 
         '''<summary>
         '''  Looks up a localized string similar to BEGIN
