@@ -413,7 +413,7 @@ Partial Public Class tnxFeedLine
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
@@ -838,7 +838,7 @@ Partial Public Class tnxDiscreteLoad
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
@@ -1180,7 +1180,7 @@ Partial Public Class tnxDish
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
@@ -1493,7 +1493,7 @@ Partial Public Class tnxUserForce
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub

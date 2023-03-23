@@ -363,7 +363,7 @@ Partial Public Class Pole
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         'Get values from structure code criteria
@@ -480,7 +480,7 @@ Partial Public Class Pole
 
     End Sub 'Generate Pole from EDS
 
-    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -1818,7 +1818,7 @@ Partial Public Class PoleSection
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) 'ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) 'ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -2300,7 +2300,7 @@ Partial Public Class PoleReinfSection
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -2678,7 +2678,7 @@ Partial Public Class PoleReinfGroup
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -3167,7 +3167,7 @@ Partial Public Class PoleIntGroup
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -3668,7 +3668,7 @@ Partial Public Class PoleReinfResults
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -3890,7 +3890,7 @@ Partial Public Class PoleMatlProp
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -4204,7 +4204,7 @@ Partial Public Class PoleBoltProp
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -5792,7 +5792,7 @@ Partial Public Class PoleReinfProp
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing) ', ByRef strDS As DataSet
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''

@@ -883,7 +883,7 @@ Partial Public Class Pile
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         'Get values from structure code criteria
@@ -992,7 +992,7 @@ Partial Public Class Pile
     End Sub 'Generate a pile from EDS
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
-    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

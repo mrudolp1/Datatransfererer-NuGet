@@ -108,7 +108,7 @@ Partial Public Class FileUpload
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -119,7 +119,7 @@ Partial Public Class FileUpload
 
     End Sub
 
-    Public Sub New(ByVal filePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal filePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

@@ -660,7 +660,7 @@ Partial Public Class DrilledPier
         End Try
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, ByVal strDS As DataSet, ByVal isExcel As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -1213,7 +1213,7 @@ Partial Public Class DrilledPierProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -1584,7 +1584,7 @@ Partial Public Class DrilledPierSection
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -1852,7 +1852,7 @@ Partial Public Class DrilledPierRebar
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -2169,7 +2169,7 @@ Partial Public Class EmbeddedPole
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -2498,7 +2498,7 @@ Partial Public Class BelledPier
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
@@ -2619,7 +2619,7 @@ Public Class DrilledPierSoilProfile
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         ConstructMe(dr, Parent)
 
         Try
@@ -2681,7 +2681,7 @@ Public Class DrilledPierSoilLayer
 
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         ConstructMe(dr, Parent)
 
         Try
@@ -2725,7 +2725,7 @@ Public Class DrilledPierResult
 
     End Sub
 
-    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
+    Public Sub New(ByVal resultDr As DataRow, ByVal Parent As EDSObjectWithQueries)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
