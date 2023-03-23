@@ -56,19 +56,29 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String())
-        Me.bus_unit = BU
-        Me.structure_id = structureID
-        Me.work_order_seq_num = WorkOrder
+    'Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    '    Me.bus_unit = BU
+    '    Me.structure_id = structureID
+    '    Me.work_order_seq_num = WorkOrder
 
-        LoadFromFiles(filePaths)
-    End Sub
+    '    LoadFromFiles(filePaths)
+    'End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String())
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
         Me.WorkingDirectory = WorkingDirectory
+
+        LoadFromFiles(filePaths)
+    End Sub
+
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        Me.bus_unit = BU
+        Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
+        Me.WorkingDirectory = WorkingDirectory
+        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromFiles(filePaths)
     End Sub
@@ -83,13 +93,14 @@ Partial Public Class EDSStructure
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = WorkingDirectory
+        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
