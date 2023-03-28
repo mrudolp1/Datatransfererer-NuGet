@@ -7,6 +7,7 @@ Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 
+<Serializable()>
 Partial Public Class EDSStructure
     Inherits EDSObject
 
