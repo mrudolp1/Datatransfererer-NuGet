@@ -14,9 +14,9 @@
     <StartupObject></StartupObject>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.19-beta.4</Version>
-    <AssemblyVersion>1.0.19.4</AssemblyVersion>
-    <FileVersion>1.0.19.4</FileVersion>
+    <Version>1.0.19-beta.5</Version>
+    <AssemblyVersion>1.0.19.5</AssemblyVersion>
+    <FileVersion>1.0.19.5</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
