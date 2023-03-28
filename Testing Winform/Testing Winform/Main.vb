@@ -132,7 +132,8 @@ Partial Public Class frmMain
         'xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, xlFd.FileNames)
+            Dim workingDirectory As String = Path.GetDirectoryName(xlFd.FileNames(0))
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive)
         End If
 
         'Test Parents
