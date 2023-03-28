@@ -78,6 +78,8 @@ Partial Public Class EDSStructure
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
+        Me.databaseIdentity = LogOnUser
+        Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = WorkingDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
