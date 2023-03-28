@@ -36,6 +36,8 @@
         Me.btnLoadFndFromEDS = New System.Windows.Forms.Button()
         Me.btnExportStrcFiles = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.txtDirectory = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.txtFndWO = New System.Windows.Forms.TextBox()
         Me.btnCompareStrc = New System.Windows.Forms.Button()
@@ -69,6 +71,7 @@
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
+        Me.btnBrowse = New System.Windows.Forms.Button()
         Me.pgStructure.SuspendLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer3.Panel1.SuspendLayout()
@@ -116,7 +119,7 @@
         'SplitContainer3
         '
         Me.SplitContainer3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer3.Location = New System.Drawing.Point(3, 48)
+        Me.SplitContainer3.Location = New System.Drawing.Point(3, 80)
         Me.SplitContainer3.Name = "SplitContainer3"
         '
         'SplitContainer3.Panel1
@@ -129,7 +132,7 @@
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer5)
         Me.SplitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SplitContainer3.Size = New System.Drawing.Size(877, 410)
+        Me.SplitContainer3.Size = New System.Drawing.Size(877, 378)
         Me.SplitContainer3.SplitterDistance = 438
         Me.SplitContainer3.TabIndex = 7
         '
@@ -157,7 +160,7 @@
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
         Me.SplitContainer4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.SplitContainer4.Size = New System.Drawing.Size(438, 410)
+        Me.SplitContainer4.Size = New System.Drawing.Size(438, 378)
         Me.SplitContainer4.SplitterDistance = 164
         Me.SplitContainer4.TabIndex = 4
         '
@@ -175,7 +178,7 @@
         Me.propgridFndXL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.propgridFndXL.Location = New System.Drawing.Point(0, 0)
         Me.propgridFndXL.Name = "propgridFndXL"
-        Me.propgridFndXL.Size = New System.Drawing.Size(270, 410)
+        Me.propgridFndXL.Size = New System.Drawing.Size(270, 378)
         Me.propgridFndXL.TabIndex = 4
         '
         'SplitContainer5
@@ -192,7 +195,7 @@
         '
         Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
         Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportStrcFiles)
-        Me.SplitContainer5.Size = New System.Drawing.Size(435, 410)
+        Me.SplitContainer5.Size = New System.Drawing.Size(435, 378)
         Me.SplitContainer5.SplitterDistance = 275
         Me.SplitContainer5.TabIndex = 0
         '
@@ -201,7 +204,7 @@
         Me.propgridFndEDS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.propgridFndEDS.Location = New System.Drawing.Point(0, 0)
         Me.propgridFndEDS.Name = "propgridFndEDS"
-        Me.propgridFndEDS.Size = New System.Drawing.Size(275, 410)
+        Me.propgridFndEDS.Size = New System.Drawing.Size(275, 378)
         Me.propgridFndEDS.TabIndex = 4
         '
         'btnLoadFndFromEDS
@@ -224,6 +227,9 @@
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.btnBrowse)
+        Me.Panel2.Controls.Add(Me.Label1)
+        Me.Panel2.Controls.Add(Me.txtDirectory)
         Me.Panel2.Controls.Add(Me.Label7)
         Me.Panel2.Controls.Add(Me.txtFndWO)
         Me.Panel2.Controls.Add(Me.btnCompareStrc)
@@ -234,8 +240,25 @@
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel2.Location = New System.Drawing.Point(3, 3)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(877, 45)
+        Me.Panel2.Size = New System.Drawing.Size(877, 77)
         Me.Panel2.TabIndex = 6
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(11, 45)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(97, 13)
+        Me.Label1.TabIndex = 13
+        Me.Label1.Text = "Working Directory:"
+        '
+        'txtDirectory
+        '
+        Me.txtDirectory.Location = New System.Drawing.Point(114, 41)
+        Me.txtDirectory.Name = "txtDirectory"
+        Me.txtDirectory.Size = New System.Drawing.Size(603, 21)
+        Me.txtDirectory.TabIndex = 12
+        Me.txtDirectory.Text = "C:\SAPI Work Area\Test"
         '
         'Label7
         '
@@ -573,6 +596,15 @@
         Me.TabControl1.Size = New System.Drawing.Size(891, 487)
         Me.TabControl1.TabIndex = 3
         '
+        'btnBrowse
+        '
+        Me.btnBrowse.Location = New System.Drawing.Point(723, 40)
+        Me.btnBrowse.Name = "btnBrowse"
+        Me.btnBrowse.Size = New System.Drawing.Size(79, 21)
+        Me.btnBrowse.TabIndex = 14
+        Me.btnBrowse.Text = "Browse..."
+        Me.btnBrowse.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.Appearance.BackColor = System.Drawing.Color.White
@@ -667,6 +699,9 @@
     Friend WithEvents TabControl1 As TabControl
     Friend WithEvents Label7 As Label
     Friend WithEvents txtFndWO As TextBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents txtDirectory As TextBox
+    Friend WithEvents btnBrowse As Button
 
 #End Region
 

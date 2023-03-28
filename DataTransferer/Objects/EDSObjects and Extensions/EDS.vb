@@ -7,6 +7,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
+<Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
