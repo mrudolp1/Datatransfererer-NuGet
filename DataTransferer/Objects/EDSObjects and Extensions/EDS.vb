@@ -41,7 +41,7 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property modified_person_id As Integer?
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String
+    Public Property process_stage As String = "test" 'added "test" since error occured during testing
 
     'Public Property differences As List(Of ObjectsComparer.Difference)
 

@@ -283,6 +283,15 @@
   <data name="CCIpole_Unreinf_Section_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\CCIpole\2 Unreinf Section (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="CCISeismic_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CCISeismic (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CCISeismic_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CCISeismic (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CCISeismic_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CCISeismic (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="Drilled_Pier_Profile__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Drilled Pier Profile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
