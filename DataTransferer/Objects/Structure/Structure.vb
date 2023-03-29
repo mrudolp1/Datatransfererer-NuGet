@@ -28,6 +28,7 @@ Partial Public Class EDSStructure
     Public Property NotMe As EDSStructure
     Public Property WorkingDirectory As String
     Public Property LegReinforcements As New List(Of LegReinforcement)
+    Public Property CCISeismics As New List(Of CCISeismic)
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
@@ -162,7 +163,8 @@ Partial Public Class EDSStructure
                         "Guy Anchor Blocks",
                         "Guy Anchor Profiles",
                         "Leg Reinforcements",
-                        "Leg Reinforcement Details"}
+                        "Leg Reinforcement Details",
+                        "CCISeismics"}
 
 
         Using strDS As New DataSet
@@ -194,6 +196,8 @@ Partial Public Class EDSStructure
                             --,pi.eng_app_id
                             --,pi.crrnt_rvsn_num
                             ,str.structure_type
+                            ,str.LAT_DEC
+                            ,str.LONG_DEC
                         FROM
                             isit_aim.structure                      str
                             ,isit_aim.site                          sit
@@ -265,6 +269,10 @@ Partial Public Class EDSStructure
                 Me.LegReinforcements.Add(New LegReinforcement(dr, strDS, Me))
             Next
 
+            'CCISeismic
+            For Each dr As DataRow In strDS.Tables("CCISeismics").Rows
+                Me.CCISeismics.Add(New CCISeismic(dr, strDS, Me))
+            Next
 
         End Using
 
@@ -300,6 +308,7 @@ Partial Public Class EDSStructure
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
         structureQuery += Me.LegReinforcements.EDSListQueryBuilder(existingStructure.LegReinforcements)
+        structureQuery += Me.CCISeismics.EDSListQueryBuilder(existingStructure.CCISeismics)
 
         structureQuery += vbCrLf & "COMMIT"
 
@@ -329,6 +338,8 @@ Partial Public Class EDSStructure
         Me.DrilledPierTools = New List(Of DrilledPierFoundation)
         Me.CCIplates = New List(Of CCIplate)
         Me.Poles = New List(Of Pole)
+        Me.LegReinforcements = New List(Of LegReinforcement)
+        Me.CCISeismics = New List(Of CCISeismic)
     End Sub
 
     Public Sub LoadFromFiles(filePaths As String())
@@ -362,7 +373,11 @@ Partial Public Class EDSStructure
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
             ElseIf item.Contains("Leg Reinforcement") Then
+                Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
+            ElseIf item.Contains("CCISeismic") Then
+                Me.CCISeismics = New List(Of CCISeismic)
+                Me.CCISeismics.Add(New CCISeismic(item, Me))
             End If
         Next
     End Sub
@@ -429,6 +444,11 @@ Partial Public Class EDSStructure
             LegReinforcements(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(LegReinforcements(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(LegReinforcements(i).templatePath))
             LegReinforcements(i).SavetoExcel()
         Next
+        For i = 0 To Me.CCISeismics.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            CCISeismics(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCISeismics(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCISeismics(i).templatePath))
+            CCISeismics(i).SavetoExcel()
+        Next
     End Sub
 #End Region
 
@@ -459,6 +479,7 @@ Partial Public Class EDSStructure
         Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
         Equals = If(Me.GuyAnchorBlockTools.CheckChange(otherToCompare.GuyAnchorBlockTools, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
         Equals = If(Me.LegReinforcements.CheckChange(otherToCompare.LegReinforcements, changes, categoryName, "LegReinforcements"), Equals, False)
+        Equals = If(Me.CCISeismics.CheckChange(otherToCompare.CCISeismics, changes, categoryName, "CCISeismics"), Equals, False)
 
         Return Equals
 

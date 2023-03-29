@@ -398,4 +398,7 @@ Begin
 		lr.bus_unit = @BU
 		AND lr.structure_id = @strID
 		AND lr.ID = lrdet.leg_reinforcement_id
+
+	--CCISeismic
+	Select * From load.seismic WHERE bus_unit=@BU AND structure_id=@strID
 END

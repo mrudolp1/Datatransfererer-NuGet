@@ -1246,6 +1246,55 @@ Namespace My.Resources
         End Property
 
         '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''DELETE FROM load.seismic WHERE ID = [ID]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCISeismic_DELETE() As String
+            Get
+                Return ResourceManager.GetString("CCISeismic_DELETE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''INSERT INTO load.seismic ([SEISMIC FIELDS]) 
+        '''	OUTPUT INSERTED.ID INTO @TopLevel
+        '''	VALUES([SEISMIC VALUES])
+        '''	SELECT @TopLevelID=ID FROM @TopLevel
+        '''
+        '''	DELETE FROM @TopLevel
+        '''	DELETE FROM @SubLevel1
+        '''	DELETE FROM @SubLevel2
+        '''	DELETE FROM @SubLevel3
+        '''	DELETE FROM @SubLevel4
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCISeismic_INSERT() As String
+            Get
+                Return ResourceManager.GetString("CCISeismic_INSERT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to BEGIN
+        '''
+        '''	UPDATE load.seismic
+        '''	SET [UPDATE] 
+        '''	WHERE ID = [ID]
+        '''
+        '''END.
+        '''</summary>
+        Public ReadOnly Property CCISeismic_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("CCISeismic_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to 
         '''BEGIN
         '''	
@@ -1411,7 +1460,8 @@ Namespace My.Resources
         End Property
 
         '''<summary>
-        '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details ([LEG REINFORCEMENT DETAIL FIELDS]) 
+        '''  Looks up a localized string similar to 	--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]
+        '''	INSERT INTO tnx.memb_leg_reinforcement_details ([LEG REINFORCEMENT DETAIL FIELDS]) 
         '''	OUTPUT INSERTED.ID INTO @SubLevel1
         '''	VALUES([LEG REINFORCEMENT DETAIL VALUES])
         '''	SELECT @SubLevel1ID=ID FROM @SubLevel1
@@ -1420,7 +1470,9 @@ Namespace My.Resources
         '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT]
         '''	--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]
         '''
-        '''	--[LEG REINFORCEMENT DETAIL INSERT].
+        '''	--END --[LEG REINFORCEMENT DETAIL INSERT END]
+        '''
+        '''	--[LEG REINFORCEMENT DETAIL INSE [rest of string was truncated]&quot;;.
         '''</summary>
         Public ReadOnly Property Leg_Reinforcement_Detail_INSERT() As String
             Get
@@ -1429,10 +1481,17 @@ Namespace My.Resources
         End Property
 
         '''<summary>
-        '''  Looks up a localized string similar to 	UPDATE tnx.memb_leg_reinforcement_details
+        '''  Looks up a localized string similar to 	--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]
+        '''	UPDATE tnx.memb_leg_reinforcement_details
         '''	SET [UPDATE] 
         '''	WHERE ID = [ID]
         '''	Set @SubLevel1ID=[ID]
+        '''
+        '''	--BEGIN --[LEG REINFORCEMENT DETAILS RESULTS INSERT BEGIN]
+        '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT]
+        '''	--END --[LEG REINFORCEMENT DETAILS RESULTS INSERT END]
+        '''
+        '''	--END --[LEG REINFORCEMENT DETAIL UPDATE END]
         '''
         '''	--[LEG REINFORCEMENT DETAIL INSERT].
         '''</summary>
@@ -1445,7 +1504,6 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to 	INSERT INTO tnx.memb_leg_reinforcement_details_results ([LEG REINFORCEMENT DETAILS RESULT FIELDS]) 
         '''	VALUES([LEG REINFORCEMENT DETAILS RESULT VALUES])
-        '''
         '''	--[LEG REINFORCEMENT DETAILS RESULTS INSERT].
         '''</summary>
         Public ReadOnly Property Leg_Reinforcement_Details_Results_INSERT() As String
@@ -1462,18 +1520,14 @@ Namespace My.Resources
         '''	VALUES([LEG REINFORCEMENT VALUES])
         '''	SELECT @TopLevelID=ID FROM @TopLevel
         '''
-        '''	--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]
         '''	--[LEG REINFORCEMENT DETAIL INSERT]
-        '''	--END --[LEG REINFORCEMENT DETAIL INSERT END]
-        '''
-        '''	--BEGIN --[RESULTS INSERT BEGIN]
-        '''	--[RESULTS INSERT]
-        '''	--END --[RESULTS INSERT END]
         '''
         '''	DELETE FROM @TopLevel
         '''	DELETE FROM @SubLevel1
         '''	DELETE FROM @SubLevel2
-        '''	DELETE FROM @Su [rest of string was truncated]&quot;;.
+        '''	DELETE FROM @SubLevel3
+        '''	DELETE FROM @SubLevel4
+        '''END.
         '''</summary>
         Public ReadOnly Property Leg_Reinforcement_INSERT() As String
             Get
@@ -1488,13 +1542,7 @@ Namespace My.Resources
         '''	SET [UPDATE] 
         '''	WHERE ID = [ID]
         '''
-        '''	--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]
         '''	--[LEG REINFORCEMENT DETAIL INSERT]
-        '''	--END --[LEG REINFORCEMENT DETAIL UPDATE END]
-        '''
-        '''	--BEGIN --[RESULTS UPDATE BEGIN]
-        '''	--[RESULTS INSERT]
-        '''	--END --[RESULTS UPDATE END]
         '''
         '''END.
         '''</summary>
