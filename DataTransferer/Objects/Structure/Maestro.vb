@@ -12,12 +12,6 @@ Partial Public Class EDSStructure
     'Tool paths
     Public SpliceCheckLocation As String = "C:\Users\" & Environment.UserName & "\Crown Castle USA Inc\Tower Assets Engineering - Engineering Templates\Monopole Splice Check"
 
-    ''' <summary>
-    ''' Dummy Conduct Overload
-    ''' </summary>
-    Public Overloads Sub Conduct()
-
-    End Sub
 
     ''' <summary>
     ''' This method will break until Macro names are established
