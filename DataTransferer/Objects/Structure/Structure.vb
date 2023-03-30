@@ -102,8 +102,9 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
