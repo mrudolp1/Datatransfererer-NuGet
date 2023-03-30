@@ -162,11 +162,11 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         ConstructMe(Row, Parent)
     End Sub
 
-    Public Sub ConstructMe(ByVal Row As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub ConstructMe(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
         ''''''Customize for each foundation type'''''
@@ -225,6 +225,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = @SubLevel1ID") '& Me.Soil_Profile_id.ToString.FormatDBValue) 'Added for GAB to update correctly - MRR
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bottom_depth = " & Me.bottom_depth.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("effective_soil_density = " & Me.effective_soil_density.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("cohesion = " & Me.cohesion.ToString.FormatDBValue)

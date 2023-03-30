@@ -207,7 +207,7 @@ Partial Public Class LegReinforcement
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -216,7 +216,7 @@ Partial Public Class LegReinforcement
 
     End Sub 'Generate Leg Reinforcement from EDS
 
-    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -242,7 +242,7 @@ Partial Public Class LegReinforcement
 
     End Sub 'Generate Leg Reinforcement from Excel
 
-    Private Sub BuildFromDataset(ByVal dr As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Private Sub BuildFromDataset(ByVal dr As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'Dataset is pulled in from either EDS or Excel. True = EDS, False = Excel
         'If Parent IsNot Nothing Then Me.Absorb(Parent) 'Do not double absorb!!!
 
@@ -650,19 +650,19 @@ Partial Public Class LegReinforcement
 
                     'Storing following in order to populate arbitrary shape info after worksheet is opened. 
                     If Not IsNothing(row.top_elev) Then
-                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
-                        .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
-                        tnxdataRow += 2
-                        'Else
-                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-                    End If
-                    If Not IsNothing(row.bot_elev) Then
-                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
-                        tnxdataRow += 1
-                        'Else
-                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-                    End If
-                Next
+                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
+                .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
+                tnxdataRow += 2
+                'Else
+                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+            End If
+            If Not IsNothing(row.bot_elev) Then
+                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
+                tnxdataRow += 1
+                'Else
+                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+            End If
+            Next
 
             End If
 
@@ -1351,8 +1351,8 @@ Partial Public Class LegReinforcementDetail
         'Leave Method Empty
     End Sub
 
-    'Public Sub New(ByVal row As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
-    Public Sub New(ByVal row As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
+    'Public Sub New(ByVal row As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal row As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -1802,7 +1802,7 @@ End Class
 '        'Leave Method Empty
 '    End Sub
 
-'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
 '        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
 '        If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -2001,15 +2001,43 @@ End Class
 '            Me._EDSTableName = Value
 '        End Set
 '    End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Modified Person Id")>
+'    'Public Property modified_person_id() As Integer?
+'    '    Get
+'    '        Return Me._modified_person_id
+'    '    End Get
+'    '    Set
+'    '        Me._modified_person_id = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Process Stage")>
+'    'Public Property process_stage() As String
+'    '    Get
+'    '        Return Me._process_stage
+'    '    End Get
+'    '    Set
+'    '        Me._process_stage = Value
+'    '    End Set
+'    'End Property
+'    '<Category("Bolt Results"), Description(""), DisplayName("Modified Date")>
+'    'Public Property modified_date() As DateTime?
+'    '    Get
+'    '        Return Me._modified_date
+'    '    End Get
+'    '    Set
+'    '        Me._modified_date = Value
+'    '    End Set
+'    'End Property
 
 '#End Region
 
-'#Region "Constructors"
-'    Public Sub New()
-'        'Leave Method Empty
+'#End Region
+
+'    Sub New()
+'        'Leave method empty
 '    End Sub
 
-'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+'    Public Sub New(ByVal lrrrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
 '        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
 '        If Parent IsNot Nothing Then Me.Absorb(Parent)
 

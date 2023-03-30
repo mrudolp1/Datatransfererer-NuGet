@@ -158,7 +158,7 @@ Partial Public Class tnxDatabase
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
@@ -316,11 +316,11 @@ Partial Public Class tnxMember
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
 
-    Public Sub New(data As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(data As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         Me.ID = DBtoNullableInt(data.Item("ID"))
@@ -461,11 +461,11 @@ Partial Public Class tnxMaterial
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
 
-    Public Sub New(data As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(data As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         Me.ID = DBtoNullableInt(data.Item("ID"))
@@ -775,7 +775,7 @@ Partial Public Class tnxGeometry
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
@@ -890,7 +890,7 @@ Public Class tnxResult
     ''' <param name="designLoad"></param>
     ''' <param name="appliedLoad"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
@@ -4276,11 +4276,11 @@ Partial Public Class tnxAntennaRecord
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
 
-    Public Sub New(data As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(data As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -8297,11 +8297,11 @@ Partial Public Class tnxTowerRecord
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
 
-    Public Sub New(data As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(data As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -11238,11 +11238,11 @@ Partial Public Class tnxGuyRecord
 #End Region
 
 #Region "Constructors"
-    Public Sub New(Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObject = Nothing)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
     End Sub
 
-    Public Sub New(data As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(data As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

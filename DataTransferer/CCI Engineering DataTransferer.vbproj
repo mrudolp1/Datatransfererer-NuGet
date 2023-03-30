@@ -14,14 +14,17 @@
     <StartupObject></StartupObject>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.18</Version>
-    <AssemblyVersion>1.0.0.10</AssemblyVersion>
-    <FileVersion>1.0.0.10</FileVersion>
+    <Version>1.0.19-beta.5</Version>
+    <AssemblyVersion>1.0.19.5</AssemblyVersion>
+    <FileVersion>1.0.19.5</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\**" />
     <Compile Remove="Queries\**" />
+    <EmbeddedResource Remove="Objects\Foundation - Drilled Pier\DNU\**" />
     <EmbeddedResource Remove="Queries\**" />
+    <None Remove="Objects\Foundation - Drilled Pier\DNU\**" />
     <None Remove="Queries\**" />
   </ItemGroup>
 
@@ -67,9 +70,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.Document.Processor" Version="21.2.7" />
-    <PackageReference Include="DevExpress.Win" Version="21.2.7" />
-    <PackageReference Include="DevExpress.Win.Spreadsheet" Version="21.2.7" />
+    <PackageReference Include="DevExpress.Document.Processor" Version="22.2.4" />
+    <PackageReference Include="DevExpress.Win" Version="22.2.4" />
+    <PackageReference Include="DevExpress.Win.Spreadsheet" Version="22.2.4" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
     <PackageReference Include="Oracle.ManagedDataAccess" Version="19.9.0" />

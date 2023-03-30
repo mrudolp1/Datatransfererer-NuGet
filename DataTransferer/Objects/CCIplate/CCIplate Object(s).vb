@@ -306,7 +306,7 @@ Partial Public Class CCIplate
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByRef Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
+    Public Sub New(ByVal dr As DataRow, ByRef strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing) 'Added strDS in order to pull EDS data from subtables
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -315,7 +315,7 @@ Partial Public Class CCIplate
 
     End Sub 'Generate a CCIplate from EDS
 
-    Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -341,7 +341,7 @@ Partial Public Class CCIplate
 
     End Sub 'Generate a CCIplate from Excel
 
-    Private Sub BuildFromDataset(ByVal dr As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Private Sub BuildFromDataset(ByVal dr As DataRow, ByRef ds As DataSet, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'Dataset is pulled in from either EDS or Excel. True = EDS, False = Excel
         'If Parent IsNot Nothing Then Me.Absorb(Parent) 'Do not double absorb!!!
 
@@ -1967,7 +1967,7 @@ Partial Public Class Connection
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal row As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal row As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal prow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -2306,7 +2306,7 @@ Partial Public Class PlateDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal pdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal pdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -2641,7 +2641,7 @@ Partial Public Class BoltGroup
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal bgrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal bgrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -2949,7 +2949,7 @@ Partial Public Class BoltDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal bdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal bdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -3239,7 +3239,7 @@ Partial Public Class CCIplateMaterial
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal mrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal mrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal mrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal mrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -3480,7 +3480,7 @@ Partial Public Class PlateResults
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal prrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal prrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -3685,7 +3685,7 @@ Partial Public Class BoltResults
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal brrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal brrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -3930,7 +3930,7 @@ Partial Public Class StiffenerGroup
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal sgrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal sgrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -4246,7 +4246,7 @@ Partial Public Class StiffenerDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal bdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal bdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -4516,7 +4516,7 @@ Partial Public Class StiffenerResults
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal brrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal brrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -4975,7 +4975,7 @@ Partial Public Class BridgeStiffenerDetail
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal bsdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
+    Public Sub New(ByVal bsdrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing) '(ByVal pdrow As DataRow, ByRef strDS As DataSet)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -5314,7 +5314,7 @@ Partial Public Class ConnectionResults
         'Leave Method Empty
     End Sub
 
-    Public Sub New(ByVal crrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByRef Parent As EDSObject = Nothing)
+    Public Sub New(ByVal crrow As DataRow, ByVal EDStruefalse As Boolean, Optional ByVal Parent As EDSObject = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

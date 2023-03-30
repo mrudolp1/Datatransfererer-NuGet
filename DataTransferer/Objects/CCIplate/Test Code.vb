@@ -1,6 +1,6 @@
 ﻿'Public Class CCIplate
 '    Public Property connections As New List(Of Connection)
-'    Public Sub New(ByVal dr As DataRow, Optional ByRef Parent As EDSObject = Nothing)
+'    Public Sub New(ByVal dr As DataRow, Optional ByVal Parent As EDSObject = Nothing)
 '        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
 '        If Parent IsNot Nothing Then Me.Absorb(Parent)
 '        Me.property1 = CType(dr.Item("property1"), String)

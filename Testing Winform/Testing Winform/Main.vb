@@ -11,7 +11,7 @@ Partial Public Class frmMain
     'Public myUnitBases As New DataTransfererUnitBase
     'Public myPierandPads As New DataTransfererPierandPad
     Public myDrilledPiers As New DrilledPierFoundation
-    Public myGuyedAnchorBlocks As New DataTransfererGuyedAnchorBlock
+    Public myGuyedAnchorBlocks As New AnchorBlockFoundation
     'Public myPiles As New DataTransfererPile
     'Public MyCCIpoles As New DataTransfererCCIpole
     'Public MyCCIplates As New DataTransfererCCIplate
@@ -128,11 +128,14 @@ Partial Public Class frmMain
         WorkOrder = txtFndWO.Text
 
         Dim xlFd As New OpenFileDialog
+        ''xlFd.InitialDirectory = txtDirectory.Text
         xlFd.Multiselect = True
         'xlFd.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
 
         If xlFd.ShowDialog = DialogResult.OK Then
-            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, xlFd.FileNames)
+            Dim workingDirectory As String = Path.GetDirectoryName(xlFd.FileNames(0))
+            txtDirectory.Text = workingDirectory
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive)
         End If
 
         'Test Parents
@@ -147,16 +150,19 @@ Partial Public Class frmMain
     Private Sub btnExportStrcFiles_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
         If strcEDS Is Nothing Then Exit Sub
 
-        Dim strcFBD As New FolderBrowserDialog
+        strcEDS.SaveTools(txtDirectory.Text)
 
-        If strcFBD.ShowDialog = DialogResult.OK Then
-            strcEDS.SaveTools(strcFBD.SelectedPath)
-        End If
     End Sub
     Private Sub btnLoadStrcFromEDS_Click(sender As Object, e As EventArgs) Handles btnLoadFndFromEDS.Click
         If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
         'Go to the EDSFoundationGroup.LoadAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, EDSnewId, EDSdbActive)
+        Dim workingDirectory As String = txtDirectory.Text
+        If Not Directory.Exists(workingDirectory) Then
+            MessageBox.Show("Working Directory Not Found.")
+            Exit Sub
+        End If
+
+        strcEDS = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, EDSnewId, EDSdbActive)
 
         propgridFndEDS.SelectedObject = strcEDS
 
@@ -171,7 +177,17 @@ Partial Public Class frmMain
         'strcLocal.CompareMe(strcEDS)
         strcLocal.Equals(strcEDS)
     End Sub
+
+    Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
+        Dim strcFBD As New FolderBrowserDialog
+
+        If strcFBD.ShowDialog = DialogResult.OK Then
+            txtDirectory.Text = strcFBD.SelectedPath
+        End If
+    End Sub
+
 #End Region
+
 
 #Region "Original Excel"
 
@@ -411,9 +427,7 @@ Partial Public Class frmMain
         End If
     End Sub
 
-    Private Sub txtFndWO_TextChanged(sender As Object, e As EventArgs) Handles txtFndWO.TextChanged
 
-    End Sub
 
 
 #End Region

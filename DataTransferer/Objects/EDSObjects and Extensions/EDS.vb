@@ -7,6 +7,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
+<Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
@@ -41,7 +42,7 @@ Partial Public MustInherit Class EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property modified_person_id As Integer?
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String
+    Public Property process_stage As String = "test" 'added "test" since error occured during testing
 
     'Public Property differences As List(Of ObjectsComparer.Difference)
 
@@ -384,6 +385,10 @@ Partial Public Class EDSResult
     Public Function SQLInsertValues(Optional ByVal ParentID As Integer? = Nothing) As String
         SQLInsertValues = ""
 
+        If Me.EDSTableName = "fnd.anchor_block_results" Then
+            EDSTableDepth = 3
+        End If
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
@@ -427,7 +432,7 @@ Partial Public Class EDSResult
     ''' 
     ''' </summary>
     ''' <param name="Parent"></param>
-    Public Sub New(Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
@@ -440,7 +445,7 @@ Partial Public Class EDSResult
     ''' <param name="result_lkup"></param>
     ''' <param name="rating"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByRef Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
@@ -449,7 +454,7 @@ Partial Public Class EDSResult
         Me.rating = rating
     End Sub
 
-    Public Sub New(ByVal resultDr As DataRow, ByRef Parent As EDSObjectWithQueries)
+    Public Sub New(ByVal resultDr As DataRow, ByVal Parent As EDSObjectWithQueries)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)

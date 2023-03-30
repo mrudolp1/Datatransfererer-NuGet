@@ -7,6 +7,7 @@ Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 
+<Serializable()>
 Partial Public Class EDSStructure
     Inherits EDSObject
 
@@ -20,14 +21,14 @@ Partial Public Class EDSStructure
     Public Property Poles As New List(Of Pole)
     Public Property UnitBases As New List(Of UnitBase)
     Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
-    Public Property GuyAnchorBlocks As New List(Of GuyedAnchorBlock)
+    Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
     Public Property FileUploads As New List(Of FileUpload)
     Public Property ReportOptions As ReportOptions
     Public Property SiteInfo As SiteInfo
     Public Property NotMe As EDSStructure
     Public Property WorkingDirectory As String
     Public Property LegReinforcements As New List(Of LegReinforcement)
-
+    Public Property CCISeismics As New List(Of CCISeismic)
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
@@ -57,19 +58,31 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String())
-        Me.bus_unit = BU
-        Me.structure_id = structureID
-        Me.work_order_seq_num = WorkOrder
+    'Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    '    Me.bus_unit = BU
+    '    Me.structure_id = structureID
+    '    Me.work_order_seq_num = WorkOrder
 
-        LoadFromFiles(filePaths)
-    End Sub
+    '    LoadFromFiles(filePaths)
+    'End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String())
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
         Me.WorkingDirectory = WorkingDirectory
+
+        LoadFromFiles(filePaths)
+    End Sub
+
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        Me.bus_unit = BU
+        Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
+        Me.databaseIdentity = LogOnUser
+        Me.activeDatabase = ActiveDatabase
+        Me.WorkingDirectory = WorkingDirectory
+        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromFiles(filePaths)
     End Sub
@@ -84,13 +97,14 @@ Partial Public Class EDSStructure
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
 
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = WorkingDirectory
+        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
@@ -114,7 +128,7 @@ Partial Public Class EDSStructure
                         "Pier and Pad",
                         "Unit Base",
                         "Pile",
-                        "Pile Locations",
+                        "Pile Locations", '"Drilled Pier",'"Anchor Block",
                         "Soil Profiles",
                         "Soil Layers",
                         "CCIplates",
@@ -144,7 +158,13 @@ Partial Public Class EDSStructure
                         "Drilled Pier Rebar",
                         "Belled Pier",
                         "Embedded Pole",
-                        "Drilled Pier Foundation"}
+                        "Drilled Pier Foundation",
+                        "Guy Anchor Block Tool",
+                        "Guy Anchor Blocks",
+                        "Guy Anchor Profiles",
+                        "Leg Reinforcements",
+                        "Leg Reinforcement Details",
+                        "CCISeismics"}
 
 
         Using strDS As New DataSet
@@ -176,6 +196,8 @@ Partial Public Class EDSStructure
                             --,pi.eng_app_id
                             --,pi.crrnt_rvsn_num
                             ,str.structure_type
+                            ,str.LAT_DEC
+                            ,str.LONG_DEC
                         FROM
                             isit_aim.structure                      str
                             ,isit_aim.site                          sit
@@ -237,12 +259,20 @@ Partial Public Class EDSStructure
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(strDS, Me, dr))
             Next
 
+            'Guy Anchor Block
+            For Each dr As DataRow In strDS.Tables("Guy Anchor Block Tool").Rows
+                Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(strDS, Me, dr))
+            Next
+
             'Leg Reinforcement
             For Each dr As DataRow In strDS.Tables("Leg Reinforcements").Rows
                 Me.LegReinforcements.Add(New LegReinforcement(dr, strDS, Me))
             Next
 
-
+            'CCISeismic
+            For Each dr As DataRow In strDS.Tables("CCISeismics").Rows
+                Me.CCISeismics.Add(New CCISeismic(dr, strDS, Me))
+            Next
 
         End Using
 
@@ -274,10 +304,11 @@ Partial Public Class EDSStructure
         'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
         'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
         structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(existingStructure.DrilledPierTools)
-        'structureQuery += Me.GuyAnchorBlocks.EDSListQuery(existingStructure.PierandPads)
+        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(existingStructure.GuyAnchorBlockTools)
         structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
         structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
         structureQuery += Me.LegReinforcements.EDSListQueryBuilder(existingStructure.LegReinforcements)
+        structureQuery += Me.CCISeismics.EDSListQueryBuilder(existingStructure.CCISeismics)
 
         structureQuery += vbCrLf & "COMMIT"
 
@@ -307,6 +338,8 @@ Partial Public Class EDSStructure
         Me.DrilledPierTools = New List(Of DrilledPierFoundation)
         Me.CCIplates = New List(Of CCIplate)
         Me.Poles = New List(Of Pole)
+        Me.LegReinforcements = New List(Of LegReinforcement)
+        Me.CCISeismics = New List(Of CCISeismic)
     End Sub
 
     Public Sub LoadFromFiles(filePaths As String())
@@ -328,11 +361,11 @@ Partial Public Class EDSStructure
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
-                Me.DrilledPierTools.Add(New DrilledPierFoundation(myFile, Me))
+                Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
                 FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
-                GuyAnchorBlocks = New List(Of GuyedAnchorBlock)
-                'Me.GuyAnchorBlocks.Add(New GuyedAnchorBlock(item))
+                GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
+                Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
             ElseIf item.Contains("CCIplate") Then
                 Me.CCIplates = New List(Of CCIplate)
                 Me.CCIplates.Add(New CCIplate(item, Me))
@@ -340,7 +373,11 @@ Partial Public Class EDSStructure
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
             ElseIf item.Contains("Leg Reinforcement") Then
+                Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
+            ElseIf item.Contains("CCISeismic") Then
+                Me.CCISeismics = New List(Of CCISeismic)
+                Me.CCISeismics.Add(New CCISeismic(item, Me))
             End If
         Next
     End Sub
@@ -384,25 +421,33 @@ Partial Public Class EDSStructure
             DrilledPierTools(i).SavetoExcel()
         Next
 
-        'For i = 0 To Me.GuyAnchorBlocks.Count - 1
-        '    fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-        '    GuyAnchorBlocks(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(GuyAnchorBlocks(i).templatePath) & fileNum)
-        '    GuyAnchorBlocks(i).SavetoExcel()
-        'Next
+        For i = 0 To Me.GuyAnchorBlockTools.Count - 1
+            fileNum = Format(" ({0})", i.ToString)
+            GuyAnchorBlockTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(GuyAnchorBlockTools(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(GuyAnchorBlockTools(i).templatePath))
+            GuyAnchorBlockTools(i).SavetoExcel()
+        Next
+
         For i = 0 To Me.CCIplates.Count - 1
             fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
             CCIplates(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).templatePath))
             CCIplates(i).SavetoExcel()
         Next
+
         For i = 0 To Me.Poles.Count - 1
             fileNum = Format(" ({0})", i.ToString)
             Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
             Poles(i).SavetoExcel()
         Next
+
         For i = 0 To Me.LegReinforcements.Count - 1
             fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
             LegReinforcements(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(LegReinforcements(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(LegReinforcements(i).templatePath))
             LegReinforcements(i).SavetoExcel()
+        Next
+        For i = 0 To Me.CCISeismics.Count - 1
+            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
+            CCISeismics(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCISeismics(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCISeismics(i).templatePath))
+            CCISeismics(i).SavetoExcel()
         Next
     End Sub
 #End Region
@@ -411,6 +456,8 @@ Partial Public Class EDSStructure
     Public Function CompareEDS(other As EDSObject, Optional ByRef changes As List(Of AnalysisChange) = Nothing) As Boolean
 
     End Function
+
+
 
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
         Equals = True
@@ -430,8 +477,9 @@ Partial Public Class EDSStructure
         Equals = If(Me.Piles.CheckChange(otherToCompare.Piles, changes, categoryName, "Piles"), Equals, False)
         Equals = If(Me.UnitBases.CheckChange(otherToCompare.UnitBases, changes, categoryName, "Unit Bases"), Equals, False)
         Equals = If(Me.DrilledPierTools.CheckChange(otherToCompare.DrilledPierTools, changes, categoryName, "Drilled Piers"), Equals, False)
-        Equals = If(Me.GuyAnchorBlocks.CheckChange(otherToCompare.GuyAnchorBlocks, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
+        Equals = If(Me.GuyAnchorBlockTools.CheckChange(otherToCompare.GuyAnchorBlockTools, changes, categoryName, "Guy Anchor Blocks"), Equals, False)
         Equals = If(Me.LegReinforcements.CheckChange(otherToCompare.LegReinforcements, changes, categoryName, "LegReinforcements"), Equals, False)
+        Equals = If(Me.CCISeismics.CheckChange(otherToCompare.CCISeismics, changes, categoryName, "CCISeismics"), Equals, False)
 
         Return Equals
 
