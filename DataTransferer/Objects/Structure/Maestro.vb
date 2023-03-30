@@ -52,6 +52,7 @@ Partial Public Class EDSStructure
         Dim unitBaseMac As String = ""
         Dim drilledPierMac As String = ""
         Dim pierAndPadMac As String = ""
+        Dim seisMac As String = ""
 
         'TNX vars
         Dim tnxFullPath As String = ""
@@ -62,6 +63,7 @@ Partial Public Class EDSStructure
         Dim strType As String = Me.SiteInfo.tower_type
         Dim poleWeUsin As Pole = Nothing
         Dim plateWeUsin As CCIplate = Nothing
+        Dim seismicWeUsin As CCISeismic = Nothing
         Dim basePlateConnection As Connection = Nothing
         Dim basePlateBoltGroup As BoltGroup = Nothing
 
@@ -157,10 +159,11 @@ Partial Public Class EDSStructure
                     Next
                 End If
                 '//Guy Anchor
-                If Me.GuyAnchorBlocks.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlocks.Count & " Guy Anchor Block Fnd(s) found..")
-                    For Each guyAnc As GuyedAnchorBlock In Me.GuyAnchorBlocks
-                        OpenExcelRunMacro(guyAnc.workbookpath, guyAnchorMac, isDevMode)
+
+                If Me.GuyAnchorBlockTools.Count > 0 Then
+                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
+                    For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
+                        OpenExcelRunMacro(guyAnc.workBookPath, guyAnchorMac, isDevMode)
                     Next
                 End If
 
@@ -172,8 +175,14 @@ Partial Public Class EDSStructure
 
                 '/run seismic macro to create eri with seismic loads if needed
 
-                If Me.seismic Then
-                    OpenExcelRunMacro()
+                If Me.CCISeismics.Count > 0 Then
+                    If Me.CCISeismics.Count > 1 Then
+                        WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..")
+                    End If
+                    seismicWeUsin = Me.CCISeismics.FirstOrDefault
+                    plateWeUsin = Me.CCIplates.FirstOrDefault
+
+                    OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac)
                 End If
 
                 '/run tnx
@@ -244,9 +253,9 @@ Partial Public Class EDSStructure
                     Next
                 End If
                 '//Run Guy Anchor
-                If Me.GuyAnchorBlocks.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlocks.Count & " Guy Anchors found..")
-                    For Each guyAnchor In Me.GuyAnchorBlocks
+                If Me.GuyAnchorBlockTools.Count > 0 Then
+                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
+                    For Each guyAnchor In Me.GuyAnchorBlockTools
                         OpenExcelRunMacro(guyAnchor.workBookPath, guyAnchorMac, isDevMode)
                     Next
                 End If
