@@ -454,12 +454,6 @@ Partial Public Class EDSStructure
 #End Region
 
 #Region "Check Changes"
-    Public Function CompareEDS(other As EDSObject, Optional ByRef changes As List(Of AnalysisChange) = Nothing) As Boolean
-
-    End Function
-
-
-
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
         Equals = True
         If changes Is Nothing Then changes = New List(Of AnalysisChange)

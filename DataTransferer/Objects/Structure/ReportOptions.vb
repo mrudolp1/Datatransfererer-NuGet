@@ -168,7 +168,7 @@ Public Class ReportOptions
         Initialize()
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, ReportDir As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(BU As String, SID As String, WO As String, ReportDir As String)
         bus_unit = BU
         structure_id = SID
         work_order_seq_num = WO
@@ -192,7 +192,7 @@ Public Class ReportOptions
                 IsFromDB = True
                 IsFromDefault = False
 
-                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
+                Generate(strDS.Tables(0).Rows(0))
                 Return
             End If
         End Using
@@ -205,7 +205,7 @@ Public Class ReportOptions
                 IsFromDB = True
                 IsFromDefault = True
 
-                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
+                Generate(strDS.Tables(0).Rows(0))
                 Return
             End If
         End Using
@@ -218,7 +218,7 @@ Public Class ReportOptions
     End Sub
 
     'Load everything from EDS data tables (in progress report)
-    Public Sub Generate(ByVal SiteCodeDataRow As DataRow, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub Generate(ByVal SiteCodeDataRow As DataRow)
 
 #Region "Items"
         Try
@@ -641,7 +641,7 @@ Public Class ReportOptions
         'Load list items
         Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 Assumptions.Clear()
                 Notes.Clear()
@@ -670,7 +670,7 @@ Public Class ReportOptions
                 query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
                 Using strDS As New DataSet
-                    sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                    sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
                     If (strDS.Tables(0).Rows.Count > 0) Then
                         Files.Clear()
                         Files.Add("CCIPole", New List(Of FilepathWithPriority))
@@ -709,7 +709,7 @@ Public Class ReportOptions
 
         Using strDS As New DataSet
             TableDocuments.Clear()
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 For Each item In strDS.Tables(0).Rows
                     Dim t As TableDocument = New TableDocument(
@@ -736,7 +736,7 @@ Public Class ReportOptions
             ProposedEquipment.Clear()
             ConditionalEquipment.Clear()
             OtherEquipment.Clear()
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
 
             If (strDS.Tables(0).Rows.Count > 0) Then
                 For Each item In strDS.Tables(0).Rows
@@ -1029,28 +1029,28 @@ Public Class ReportOptions
 #End Region
 
 #Region "Saving"
-    Public Function SaveReportOptionsToEds(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String) As Integer
+    Public Function SaveReportOptionsToEds() As Integer
 
         Try
             'If new default options, make other options not default
             If IsDefault Then 'Update bit
                 Dim x = SQLReplace_Default()
-                sqlSender(SQLReplace_Default(), ActiveDatabase, LogOnUser, 0.ToString)
+                sqlSender(SQLReplace_Default(), activeDatabase, databaseIdentity, 0.ToString)
             End If
 
             'Find and update (or insert) report options
             Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
             Using strDS As New DataSet
-                sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
                 If strDS.Tables(0).Rows.Count > 0 Then 'Update
-                    Dim opt_result = sqlSender(SQLUpdate(), ActiveDatabase, LogOnUser, 0.ToString)
+                    Dim opt_result = sqlSender(SQLUpdate(), activeDatabase, databaseIdentity, 0.ToString)
                     If (Not opt_result) Then
                         Console.WriteLine(SQLUpdate())
                         Return 500
                     End If
 
                 Else
-                    Dim opt_result = sqlSender(SQLInsert(), ActiveDatabase, LogOnUser, 0.ToString)
+                    Dim opt_result = sqlSender(SQLInsert(), activeDatabase, databaseIdentity, 0.ToString)
                     If (Not opt_result) Then
                         Console.WriteLine(SQLInsert())
                         Return 500
@@ -1098,7 +1098,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            Dim result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            Dim result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1132,7 +1132,7 @@ Public Class ReportOptions
 
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1169,7 +1169,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1255,7 +1255,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
