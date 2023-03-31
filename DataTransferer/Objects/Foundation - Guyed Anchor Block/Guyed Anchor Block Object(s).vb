@@ -1552,6 +1552,7 @@ Partial Public Class AnchorBlockSoilLayer
         ConstructMe(dr, Parent)
 
         Try
+            Me.Soil_Profile_id = DBtoNullableDbl(dr.Item("soil_profile_id"))
             Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
             Me.local_soil_layer_id = DBtoNullableDbl(dr.Item("local_soil_layer_id"))
         Catch
