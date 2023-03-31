@@ -38,6 +38,8 @@ Partial Public Class SiteCodeCriteria
     Private _structure_type As String
     Private _eng_app_id As Integer?
     Private _eng_app_id_revision As Integer?
+    Private _lat_dec As Double?
+    Private _long_dec As Double?
 
     <Category(""), Description(""), DisplayName("ibc_current")>
     Public Property ibc_current() As String
@@ -264,6 +266,24 @@ Partial Public Class SiteCodeCriteria
             Me._eng_app_id_revision = Value
         End Set
     End Property
+    <Category(""), Description(""), DisplayName("lat_dec")>
+    Public Property lat_dec() As Double?
+        Get
+            Return Me._lat_dec
+        End Get
+        Set
+            Me._lat_dec = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("long_dec")>
+    Public Property long_dec() As Double?
+        Get
+            Return Me._long_dec
+        End Get
+        Set
+            Me._long_dec = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -302,6 +322,8 @@ Partial Public Class SiteCodeCriteria
         Equals = If(Me.structure_type.CheckChange(otherToCompare.structure_type, changes, categoryName, "Structure Type"), Equals, False)
         Equals = If(Me.eng_app_id.CheckChange(otherToCompare.structure_type, changes, categoryName, "App ID"), Equals, False)
         Equals = If(Me.eng_app_id_revision.CheckChange(otherToCompare.structure_type, changes, categoryName, "App Revision"), Equals, False)
+        Equals = If(Me.lat_dec.CheckChange(otherToCompare.lat_dec, changes, categoryName, "Lat Dec"), Equals, False)
+        Equals = If(Me.long_dec.CheckChange(otherToCompare.long_dec, changes, categoryName, "Long Dec"), Equals, False)
 
         Return Equals
     End Function
@@ -546,6 +568,24 @@ Partial Public Class SiteCodeCriteria
             End If
         Catch ex As Exception
             Me.eng_app_id_revision = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("lat_dec"), Double)) Then
+                Me.lat_dec = CType(SiteCodeDataRow.Item("lat_dec"), Double)
+            Else
+                Me.lat_dec = Nothing
+            End If
+        Catch ex As Exception
+            Me.lat_dec = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("long_dec"), Double)) Then
+                Me.long_dec = CType(SiteCodeDataRow.Item("long_dec"), Double)
+            Else
+                Me.long_dec = Nothing
+            End If
+        Catch ex As Exception
+            Me.long_dec = Nothing
         End Try
     End Sub
 #End Region
