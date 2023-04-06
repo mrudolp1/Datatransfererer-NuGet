@@ -110,7 +110,7 @@ Partial Public Class frmMain
             EDSuserPwActive = EDSuserPwProduction
         End If
 
-        If Environment.UserName.ToLower = "imiller" Then
+        If Environment.UserName.ToLower = "imiller" Or Environment.UserName.ToLower = "stanley" Then
             txtFndBU.Text = My.Settings.myBU
             txtFndStrc.Text = My.Settings.myStrID
             txtFndWO.Text = My.Settings.myWO
@@ -470,6 +470,15 @@ Partial Public Class frmMain
         My.Settings.myWorkArea = sender.text
         My.Settings.Save()
     End Sub
+
+    Private Sub btnConduct_Click(sender As Object, e As EventArgs) Handles btnConduct.Click
+
+        strcLocal.Conduct(True)
+
+    End Sub
+
+
+
 
 #End Region
 
