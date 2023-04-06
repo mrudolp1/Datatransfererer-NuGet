@@ -70,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="DevExpress.Document.Processor" Version="22.2.4" />
     <PackageReference Include="DevExpress.Win" Version="22.2.4" />
     <PackageReference Include="DevExpress.Win.Spreadsheet" Version="22.2.4" />
