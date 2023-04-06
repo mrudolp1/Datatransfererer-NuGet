@@ -36,6 +36,7 @@
         Me.btnLoadFndFromEDS = New System.Windows.Forms.Button()
         Me.btnExportStrcFiles = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.btnBrowse = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtDirectory = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
@@ -71,7 +72,6 @@
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.btnBrowse = New System.Windows.Forms.Button()
         Me.pgStructure.SuspendLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer3.Panel1.SuspendLayout()
@@ -243,6 +243,15 @@
         Me.Panel2.Size = New System.Drawing.Size(877, 77)
         Me.Panel2.TabIndex = 6
         '
+        'btnBrowse
+        '
+        Me.btnBrowse.Location = New System.Drawing.Point(723, 40)
+        Me.btnBrowse.Name = "btnBrowse"
+        Me.btnBrowse.Size = New System.Drawing.Size(79, 21)
+        Me.btnBrowse.TabIndex = 14
+        Me.btnBrowse.Text = "Browse..."
+        Me.btnBrowse.UseVisualStyleBackColor = True
+        '
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -258,7 +267,6 @@
         Me.txtDirectory.Name = "txtDirectory"
         Me.txtDirectory.Size = New System.Drawing.Size(603, 21)
         Me.txtDirectory.TabIndex = 12
-        Me.txtDirectory.Text = "C:\SAPI Work Area\Test"
         '
         'Label7
         '
@@ -275,7 +283,6 @@
         Me.txtFndWO.Name = "txtFndWO"
         Me.txtFndWO.Size = New System.Drawing.Size(100, 21)
         Me.txtFndWO.TabIndex = 10
-        Me.txtFndWO.Text = "1234567"
         '
         'btnCompareStrc
         '
@@ -292,7 +299,6 @@
         Me.txtFndStrc.Name = "txtFndStrc"
         Me.txtFndStrc.Size = New System.Drawing.Size(100, 21)
         Me.txtFndStrc.TabIndex = 8
-        Me.txtFndStrc.Text = "A"
         '
         'Label5
         '
@@ -309,7 +315,6 @@
         Me.txtFndBU.Name = "txtFndBU"
         Me.txtFndBU.Size = New System.Drawing.Size(100, 21)
         Me.txtFndBU.TabIndex = 6
-        Me.txtFndBU.Text = "800000"
         '
         'Label6
         '
@@ -586,24 +591,15 @@
         '
         'TabControl1
         '
+        Me.TabControl1.Controls.Add(Me.pgStructure)
         Me.TabControl1.Controls.Add(Me.pgSQLBackUp)
         Me.TabControl1.Controls.Add(Me.pgTNX)
-        Me.TabControl1.Controls.Add(Me.pgStructure)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
         Me.TabControl1.Size = New System.Drawing.Size(891, 487)
         Me.TabControl1.TabIndex = 3
-        '
-        'btnBrowse
-        '
-        Me.btnBrowse.Location = New System.Drawing.Point(723, 40)
-        Me.btnBrowse.Name = "btnBrowse"
-        Me.btnBrowse.Size = New System.Drawing.Size(79, 21)
-        Me.btnBrowse.TabIndex = 14
-        Me.btnBrowse.Text = "Browse..."
-        Me.btnBrowse.UseVisualStyleBackColor = True
         '
         'frmMain
         '

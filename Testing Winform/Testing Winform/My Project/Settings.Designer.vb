@@ -61,6 +61,54 @@ Partial Friend NotInheritable Class Settings
             Return CType(Me("serverActive"),String)
         End Get
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myBU() As String
+        Get
+            Return CType(Me("myBU"),String)
+        End Get
+        Set
+            Me("myBU") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myWO() As String
+        Get
+            Return CType(Me("myWO"),String)
+        End Get
+        Set
+            Me("myWO") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myWorkArea() As String
+        Get
+            Return CType(Me("myWorkArea"),String)
+        End Get
+        Set
+            Me("myWorkArea") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myStrID() As String
+        Get
+            Return CType(Me("myStrID"),String)
+        End Get
+        Set
+            Me("myStrID") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
