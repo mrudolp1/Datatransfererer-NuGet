@@ -151,7 +151,8 @@ Partial Public Class frmMain
         If xlFd.ShowDialog = DialogResult.OK Then
             Dim workingDirectory As String = Path.GetDirectoryName(xlFd.FileNames(0))
             txtDirectory.Text = workingDirectory
-            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive)
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive, True)
+
         End If
 
         'Test Parents
