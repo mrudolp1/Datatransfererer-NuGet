@@ -80,6 +80,8 @@ Partial Public Class frmMain
     Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
     Public tokenHandle As New IntPtr(0)
 
+    Public isopening As Boolean
+
     Private Function token(s As String) As String
         Dim m As String = ""
         For x As Integer = 0 To 1000
@@ -97,6 +99,7 @@ Partial Public Class frmMain
         InitializeComponent()
     End Sub
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        isopening = True
         If My.Settings.serverActive = "dbDevelopment" Then
             EDSdbActive = EDSdbDevelopment
             EDSuserActive = EDSuserDevelopment
@@ -107,8 +110,21 @@ Partial Public Class frmMain
             EDSuserPwActive = EDSuserPwProduction
         End If
 
+        If Environment.UserName.ToLower = "imiller" Then
+            txtFndBU.Text = My.Settings.myBU
+            txtFndStrc.Text = My.Settings.myStrID
+            txtFndWO.Text = My.Settings.myWO
+            txtDirectory.Text = My.Settings.myWorkArea
+        Else
+            txtFndBU.Text = "800000"
+            txtFndStrc.Text = "A"
+            txtFndWO.Text = "1234567"
+            txtDirectory.Text = "C:\SAPI Work Area\Test"
+        End If
+
         LogonUser(token(EDSuserActive), "CCIC", token(EDSuserPwActive), 2, 0, EDStokenHandle)
         EDSnewId = New WindowsIdentity(EDStokenHandle)
+        isopening = False
     End Sub
 
     Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -425,6 +441,30 @@ Partial Public Class frmMain
                 End If
             End If
         End If
+    End Sub
+
+    Private Sub txtFndBU_TextChanged(sender As Object, e As EventArgs) Handles txtFndBU.TextChanged
+        If isopening Then Exit Sub
+        My.Settings.myBU = sender.text
+        My.Settings.Save()
+    End Sub
+
+    Private Sub txtFndStrc_TextChanged(sender As Object, e As EventArgs) Handles txtFndStrc.TextChanged
+        If isopening Then Exit Sub
+        My.Settings.myStrID = sender.text
+        My.Settings.Save()
+    End Sub
+
+    Private Sub txtFndWO_TextChanged(sender As Object, e As EventArgs) Handles txtFndWO.TextChanged
+        If isopening Then Exit Sub
+        My.Settings.myWO = sender.text
+        My.Settings.Save()
+    End Sub
+
+    Private Sub txtDirectory_TextChanged(sender As Object, e As EventArgs) Handles txtDirectory.TextChanged
+        If isopening Then Exit Sub
+        My.Settings.myWorkArea = sender.text
+        My.Settings.Save()
     End Sub
 
 

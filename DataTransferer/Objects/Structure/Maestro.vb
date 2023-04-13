@@ -24,9 +24,10 @@ Partial Public Class EDSStructure
 
         'MACRO VARS
         '//pole macros
-        Dim poleMacCreateTNX As String = ""
-        Dim poleMacRunTNXReactions As String = ""
-        Dim poleMacRunTNXReactionsBARB As String = ""
+        Dim poleMacCreateTNX As String = "MaestMe_Step1" ' step 1
+        Dim poleMacImportTNXReactions As String = "MaestMe_Step2" 'step 2
+        Dim poleMacRunAnalysis As String = "MaestMe_Step3" ' step 3
+        'Dim poleMacRunTNXReactionsBARB As String = ""
         '//plate macros
         Dim plateMac As String = ""
         '//splice check
@@ -38,14 +39,14 @@ Partial Public Class EDSStructure
         '/fnd macros
         '//monopole
         Dim dpMac As String = ""
-        Dim pierPadMac As String = ""
+        Dim pierPadMac As String = "MaestMe"
         Dim pileMac As String = ""
-        Dim guyAnchorMac As String = ""
+        Dim guyAnchorMac As String = "MaestMe"
         '//lattice
         Dim legReinforcementMac As String = ""
-        Dim unitBaseMac As String = ""
+        Dim unitBaseMac As String = "MaestMe"
         Dim drilledPierMac As String = ""
-        Dim pierAndPadMac As String = ""
+        'Dim pierAndPadMac As String = "MaestMe"
         Dim seisMac As String = ""
 
         'TNX vars
@@ -73,7 +74,7 @@ Partial Public Class EDSStructure
 
         Select Case strType
             Case "MONOPOLE"
-
+                'CCI Pole Step 1 - Create TNX
                 If Me.Poles.Count > 0 Then
                     If Me.Poles.Count > 1 Then
                         WriteLineLogLine("WARNING | " & Me.Poles.Count & " CCIPole files found! Using first or default..")
@@ -97,8 +98,9 @@ Partial Public Class EDSStructure
                 tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
                 RunTNX(tnxFullPath)
 
+                'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacRunTNXReactions, isDevMode)
+                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacImportTNXReactions, isDevMode)
                 End If
 
                 spliceCheckFile = SpliceCheck(workingAreaPath)
@@ -121,9 +123,13 @@ Partial Public Class EDSStructure
                     'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
                     If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
                         WriteLineLogLine("INFO | BARB elevation found..")
-                        DoBARB(poleWeUsin, poleMacRunTNXReactionsBARB, isDevMode)
-
+                        DoBARB(poleWeUsin, isDevMode)
                     End If
+                End If
+
+                'CCI Pole step 3 - Run Analysis
+                If CCIPoleExists And Not IsNothing(poleWeUsin) Then
+                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacRunAnalysis, isDevMode)
                 End If
 
                 'get compression, sheer, and moment from TNX
@@ -197,7 +203,7 @@ Partial Public Class EDSStructure
                           NotMe.LegReinforcements.Count = 0 Or
                           Not Me.tnx.geometry.Equals(NotMe.tnx.geometry) Or
                           Not Me.LegReinforcements.Equals(NotMe.LegReinforcements) Then
-                            WriteLineLogLine("WARNING | No Leg Reinforcement found! Could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.")
+                            WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.")
                         End If
                     End If
 
@@ -236,7 +242,7 @@ Partial Public Class EDSStructure
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
                     For Each pierAndPad In Me.PierandPads
-                        OpenExcelRunMacro(pierAndPad.workBookPath, pierAndPadMac, isDevMode)
+                        OpenExcelRunMacro(pierAndPad.workBookPath, pierPadMac, isDevMode)
                     Next
                 End If
                 '//Run Pile
@@ -270,7 +276,7 @@ Partial Public Class EDSStructure
 
     End Sub
 
-    Public Function DoBARB(ByVal poleWeUsin As Pole, ByVal poleMacRunTNXReactions As String, Optional ByVal isDevMode As Boolean = False) As Boolean
+    Public Function DoBARB(ByVal poleWeUsin As Pole, Optional ByVal isDevMode As Boolean = False) As Boolean
 
         Dim barbCL As Double
         Dim plateComp As Double
@@ -308,7 +314,7 @@ Partial Public Class EDSStructure
 
             If GetReactionsBARB(basePlateConnection, plateMom, plateComp, plateSheer) Then
                 'replace values in Pole
-                If Not BarbValuesIntoPole(poleWeUsin, poleWeUsin.workBookPath, barbCL, plateComp, plateSheer, plateMom, poleMacRunTNXReactions, isDevMode) Then
+                If Not BarbValuesIntoPole(poleWeUsin, poleWeUsin.workBookPath, barbCL, plateComp, plateSheer, plateMom, isDevMode) Then
                     Return False
                 End If
             Else
@@ -401,7 +407,7 @@ Partial Public Class EDSStructure
     End Function
 
     Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
-                                      plateShear As Double, plateMom As Double, poleMac As String, Optional isDevEnv As Boolean = False) As Boolean
+                                      plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
         Dim xlApp As Microsoft.Office.Interop.Excel.Application
         Dim xlWorkBook As Excel.Workbook
         Dim xlWorkSheet As Excel.Worksheet = Nothing
@@ -458,7 +464,11 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
-                xlApp.Run(poleMac)
+                'Dim poleOutputFromBarb As String
+
+                'poleOutputFromBarb = xlApp.Run(poleMac)
+
+                'WriteLineLogLine("INFO | " & poleOutputFromBarb)
 
                 xlWorkBook.Save()
                 xlWorkBook.Close()
@@ -637,13 +647,16 @@ Partial Public Class EDSStructure
 
         ' Wrap the file operation in a try-catch block to handle exceptions
         Try
+            ' If the log file does not exist, establish intro
+            If Not File.Exists(LogPath) Then
+                msg = "Maestro Log [START]" & vbCrLf &
+                    "Version: " & VerNum &
+                    msg
+            End If
             ' Use a StreamWriter to write to the log file
             ' The 'True' argument appends to the file if it already exists
             Using sw As New StreamWriter(LogPath, True)
-                ' If the log file does not exist, create it
-                If Not File.Exists(LogPath) Then
-                    sw.WriteLine("Maestro Log [START]" & vbCrLf & "Version: " & VerNum)
-                End If
+
                 ' Write the log message to the file
                 sw.WriteLine(dt & " | " & msg)
             End Using
