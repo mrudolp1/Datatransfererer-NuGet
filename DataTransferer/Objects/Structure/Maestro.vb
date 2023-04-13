@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Reflection
 Imports System.Runtime.InteropServices
+Imports System.Threading
 Imports Microsoft.Office.Interop
 
 Partial Public Class EDSStructure
@@ -19,7 +20,8 @@ Partial Public Class EDSStructure
     ''' </summary>
     ''' <param name="isDevMode"></param>
     Public Overloads Sub Conduct(Optional isDevMode As Boolean = False)
-        'exStruct As EDSStructure, workingAreaPath As String,
+        Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
+
         Dim CCIPoleExists As Boolean = False
 
         'MACRO VARS
@@ -50,12 +52,12 @@ Partial Public Class EDSStructure
         Dim seisMac As String = ""
 
         'TNX vars
-        Dim tnxFullPath As String = ""
+        Dim tnxFullPath As String = Me.tnx.filePath '""
         Dim tnxFileName As String = ""
 
         Dim excelResult As String = ""
 
-        Dim strType As String = Me.SiteInfo.tower_type
+        Dim strType As String = Me.SiteInfo.tower_type.ToUpper
         Dim poleWeUsin As Pole = Nothing
         Dim plateWeUsin As CCIplate = Nothing
         Dim seismicWeUsin As CCISeismic = Nothing
@@ -64,12 +66,15 @@ Partial Public Class EDSStructure
 
         Dim workingAreaPath As String = Me.WorkingDirectory 'ask Dan where this is
 
-        Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & ".txt"
+        Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & "_" & dt & ".txt"
 
 
         GetVerNum()
 
-        LogPath = String.Concat(workingAreaPath, logFileName)
+        LogPath = Path.Combine(workingAreaPath, logFileName)
+
+        CreateLogFile()
+
         WriteLineLogLine("INFO | Beginning Maestro process..")
 
         Select Case strType
@@ -95,15 +100,17 @@ Partial Public Class EDSStructure
                 'End If
 
                 'Run TNX
-                tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
-                RunTNX(tnxFullPath)
+                'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
+                If Not RunTNX(tnxFullPath, isDevMode) Then
+                    Exit Sub
+                End If
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacImportTNXReactions, isDevMode)
                 End If
 
-                spliceCheckFile = SpliceCheck(workingAreaPath)
+                spliceCheckFile = "" 'SpliceCheck(workingAreaPath)
 
                 If Not spliceCheckFile = "" Then
                     OpenExcelRunMacro(spliceCheckFile, spliceMacImportTNX, isDevMode)
@@ -148,6 +155,9 @@ Partial Public Class EDSStructure
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
                     For Each pierPad As PierAndPad In Me.PierandPads
+                        'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
+                        'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
+
                         OpenExcelRunMacro(pierPad.workBookPath, pierPadMac, isDevMode)
                     Next
                 End If
@@ -167,7 +177,7 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
-            Case "GUYED", "SELF-SUPPORT"
+            Case "GUYED", "SELF SUPPORT"
 
                 'Check if TNX has been ran. if not, run it
                 'Dan will provide a file path to check for in the working directory
@@ -186,8 +196,10 @@ Partial Public Class EDSStructure
                 End If
 
                 '/run tnx
-                tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
-                RunTNX(tnxFullPath)
+                'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
+                If Not RunTNX(tnxFullPath, isDevMode) Then
+                    Exit Sub
+                End If
 
                 '/run leg reinforcement
                 '//compare previous geometry to current geometry
@@ -229,6 +241,9 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
                     For Each unitbase In Me.UnitBases
                         OpenExcelRunMacro(unitbase.workBookPath, unitBaseMac, isDevMode)
+                        'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
+                        'OpenExcelRunMacro(tempPath, unitBaseMac, isDevMode)
+
                     Next
                 End If
                 '//Run Drilled Pier
@@ -267,6 +282,7 @@ Partial Public Class EDSStructure
 
         End Select
 
+        WriteLineLogLine("INFO | Maestro Log [END]")
 
         'determine sufficiency
 
@@ -373,7 +389,7 @@ Partial Public Class EDSStructure
 
                 If Not IsNothing(tnxFilePath) Then
                     logString = xlApp.Run(bigMac, tnxFilePath)
-                    WriteLineLogLine("INFO | Macro result: " & logString)
+                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
                 Else
                     WriteLineLogLine("WARNING | No TNX file path in structure..")
                     logString = xlApp.Run(bigMac)
@@ -514,24 +530,49 @@ Partial Public Class EDSStructure
         Return ""
     End Function
 
-    Public Function RunTNX(tnxFilePath As String) As Boolean
+    Public Function RunTNX(tnxFilePath As String, Optional isDevMode As Boolean = False) As Boolean
+        Dim tnxAppLocation As String = "C:\Program Files (x86)\TNX\tnxTower 8.1.5.0 BETA\tnxtower.exe"
+
+        Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
 
         Try
-            WriteLineLogLine("INFO | Running TNX..")
-            '            WriteLineLogLine("---------------------------------------------------------------
-            '---------------------------------------------------------------
-            '---------------------------------------------------------------")
-
             Dim cmdProcess As New Process
+
+
+            WriteLineLogLine("INFO | Running TNX..")
+
+            'determine TNX File path - newest version
+            tnxAppLocation = WhereInTheWorldIsTNXTower(isDevMode)
+
+            If tnxAppLocation = "" Then
+                'TNX app not found
+                WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.")
+                Return False
+            End If
+
+
             With cmdProcess
-                .StartInfo = New ProcessStartInfo("TNX Tower.exe", tnxFilePath)
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun") 'RunAnalysis 'SilentAnalysisRun
+
                 With .StartInfo
                     .CreateNoWindow = True
                     .UseShellExecute = False
                     .RedirectStandardOutput = True
+
                 End With
                 .Start()
-                .WaitForExit()
+
+                CheckLogFileForFinished(tnxLogFilePath, 300000)
+                Try
+                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
+                    .Kill()
+                    WriteLineLogLine("INFO | TNX termination complete..")
+                Catch ex As Exception
+                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                End Try
+
+                '.WaitForInputIdle()
+                '.WaitForExit()
             End With ' Read output to a string variable.
             Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
@@ -546,6 +587,129 @@ Partial Public Class EDSStructure
             WriteLineLogLine("ERROR: Exception Running TNX: " & ex.Message)
 
             Return False
+        End Try
+    End Function
+    ''' <summary>
+    '''check the TNX API silent log to determine when it's finished
+    '''maxTimeout is in milliseconds
+    ''' </summary>
+    ''' <param name="logFilePath"></param>
+    ''' <param name="maxTimeout"></param>
+    Private Function CheckLogFileForFinished(logFilePath As String, maxTimeout As Integer) As Boolean
+
+        ' Set the time interval to check the log file
+        Dim checkInterval As Integer = 2000 ' 2 seconds
+        ' Set the phrase to look for in the log file
+        Dim finishedPhrase As String = "DESIGN END"
+        ' Set the initial time
+        Dim startTime As DateTime = DateTime.Now
+
+        ' Create a FileStream and StreamReader to read the log file
+        'we're using a filestream to (hopefully) be able to read the file without preventing TNX from writing to it
+        Dim fs As FileStream
+        Dim logReader As StreamReader
+
+        While True
+            If File.Exists(logFilePath) Then
+                fs = New FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                logReader = New StreamReader(fs)
+                Exit While
+            Else
+                ' Check if the maximum timeout has been reached
+                If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
+                    WriteLineLogLine("WARNING | Checking TNX log exceeded timeout - could not find log file: " & logFilePath)
+                    Return False
+                End If
+                ' Wait for the check interval before checking again
+                Thread.Sleep(checkInterval)
+            End If
+        End While
+
+        Try
+            ' Loop until the "Finished" line is found or the maximum timeout is reached
+            While True
+                ' Read last line from the log file
+                Dim line As String = logReader.ReadToEnd()
+                ' If the line is null, wait for the check interval and continue
+                If line Is Nothing Then
+                    Thread.Sleep(checkInterval)
+                Else
+                    ' If the line contains "Finished", exit the loop
+                    If line.ToUpper.Contains(finishedPhrase) Then
+                        Exit While
+                    End If
+                End If
+                ' Check if the maximum timeout has been reached
+                If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
+                    Exit While
+                End If
+                ' Wait for the check interval before checking again
+                Thread.Sleep(checkInterval)
+            End While
+
+            ' Close the StreamReader
+            fs.Close()
+            logReader.Close()
+
+            ' Check if the "Finished" line was found or if the maximum timeout was reached
+            If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
+                WriteLineLogLine("WARNING | Checking TNX log exceeded timeout")
+                Return False
+            Else
+                WriteLineLogLine("INFO | TNX API Finished..")
+                Return True
+            End If
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception checking TNX Log: " & ex.Message)
+            Return False
+        End Try
+    End Function
+
+    Public Function WhereInTheWorldIsTNXTower(Optional isDevMode As Boolean = False) As String
+        Dim defaultAppLocationBase As String = "C:\Program Files (x86)\TNX"
+        Dim appName As String = "tnxTower"
+        Dim newestAppFolderName As String
+
+        Dim newestVersion As Version = Nothing
+        Dim newestFolder As String = Nothing
+
+        Try
+            If Not Directory.Exists(defaultAppLocationBase) Then
+                'TNX not installed
+                Return ""
+            End If
+
+            For Each folder In Directory.GetDirectories(defaultAppLocationBase)
+
+                Dim folderName As String = New DirectoryInfo(folder).Name.Replace(" BETA", "")
+                Dim folderVersion As Version = Nothing
+
+                'skip if beta version is found and we're not in devmode
+                If Not isDevMode And folder.ToUpper.Contains("BETA") Then
+                    Continue For
+                End If
+
+                'if we get here and folder has beta, strip "BETA" off and readd if necessary
+                'If folderName.ToUpper.Contains("BETA") Then
+                '    folderName = folderName.ToUpper.Replace(" BETA", "")
+                'End If
+
+                If Version.TryParse(folderName.Substring(appName.Length + 1), folderVersion) Then
+                    If newestVersion Is Nothing OrElse folderVersion > newestVersion Then
+                        newestVersion = folderVersion
+                        newestFolder = folder
+                    End If
+                End If
+            Next
+
+            newestAppFolderName = New DirectoryInfo(newestFolder).Name
+
+            WriteLineLogLine("INFO | Newest TNX Version found: " & newestAppFolderName)
+            Return Path.Combine(newestFolder, appName & ".exe")
+
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception finding TNX App: " & ex.Message)
+            Return ""
         End Try
     End Function
 
@@ -638,10 +802,35 @@ Partial Public Class EDSStructure
 #End Region
 
 #Region "Maestro Logging"
+    Public Sub CreateLogFile()
+        ' Get the current date and time
+        Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
+        Dim splt() As String = dt.Split(" ")
+        dt = splt(1) '& " " & splt(2)
+
+        Dim msg As String = "Maestro Log [START] " & "Version: " & VerNum
+
+        ' Print the message to the console
+        Console.WriteLine(dt & " | " & msg)
+
+        Try
+            Using sw As New StreamWriter(LogPath, True)
+
+                ' Write the log message to the file
+                sw.WriteLine(dt & " | " & msg)
+            End Using
+        Catch ex As Exception
+            Console.WriteLine("Error creating log file: " & ex.Message)
+
+        End Try
+    End Sub
+
+    <DebuggerStepThrough()>
     Public Sub WriteLineLogLine(msg As String)
         ' Get the current date and time
-        Dim dt As DateTime = DateTime.Now
-
+        Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
+        Dim splt() As String = dt.Split(" ")
+        dt = splt(1) '& " " & splt(2)
         ' Print the message to the console
         Console.WriteLine(dt & " | " & msg)
 
@@ -649,9 +838,8 @@ Partial Public Class EDSStructure
         Try
             ' If the log file does not exist, establish intro
             If Not File.Exists(LogPath) Then
-                msg = "Maestro Log [START]" & vbCrLf &
-                    "Version: " & VerNum &
-                    msg
+                msg = "Maestro Log [START] " & "Version: " & VerNum & vbCrLf &
+                      dt & " | " & msg
             End If
             ' Use a StreamWriter to write to the log file
             ' The 'True' argument appends to the file if it already exists
