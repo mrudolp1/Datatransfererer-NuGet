@@ -15,7 +15,7 @@ Partial Public Class Pole
 
     Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("CCIpole General EXCEL", "A2:K3", "General (SAPI)"),
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("CCIpole General EXCEL", "A2:L3", "General (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:W20", "Unreinf Pole (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Pole Reinf Sections EXCEL", "A2:W102", "Reinf Pole (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Reinf Groups EXCEL", "A2:J50", "Reinf Groups (SAPI)"),
@@ -222,6 +222,7 @@ Partial Public Class Pole
     Private _hole_deformation As Boolean?
     Private _ineff_mod_check As Boolean?
     Private _modified As Boolean?
+    Private _flange_data As Boolean?
     'Private _modified_person_id As Integer?
     'Private _process_stage As String
 
@@ -337,6 +338,15 @@ Partial Public Class Pole
             Me._modified = Value
         End Set
     End Property
+    <Category("Pole"), Description(""), DisplayName("Flange Data")>
+    Public Property flange_data() As Boolean?
+        Get
+            Return Me._flange_data
+        End Get
+        Set
+            Me._flange_data = Value
+        End Set
+    End Property
     '<Category("Pole"), Description(""), DisplayName("Modified Person Id")>
     'Public Property modified_person_id() As Integer?
     '    Get
@@ -386,6 +396,7 @@ Partial Public Class Pole
         Me.hole_deformation = DBtoNullableBool(dr.Item("hole_deformation"))
         Me.ineff_mod_check = DBtoNullableBool(dr.Item("ineff_mod_check"))
         Me.modified = DBtoNullableBool(dr.Item("modified"))
+        Me.flange_data = DBtoNullableBool(dr.Item("flange_data"))
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
@@ -512,6 +523,7 @@ Partial Public Class Pole
             Me.hole_deformation = DBtoNullableBool(dr.Item("hole_deformation"))
             Me.ineff_mod_check = DBtoNullableBool(dr.Item("ineff_mod_check"))
             Me.modified = DBtoNullableBool(dr.Item("modified"))
+            Me.flange_data = DBtoNullableBool(dr.Item("flange_data"))
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
         End If
@@ -692,6 +704,9 @@ Partial Public Class Pole
             If Not IsNothing(Me.modified) Then
                 .Worksheets("General (SAPI)").Range("K3").Value = CType(Me.modified, Boolean)
             End If
+            If Not IsNothing(Me.flange_data) Then
+                .Worksheets("General (SAPI)").Range("L3").Value = CType(Me.flange_data, Boolean)
+            End If
             'If Not IsNothing(Me.modified_person_id) Then
             '    .Worksheets("General (SAPI)").Range("L3").Value = CType(Me.modified_person_id, Integer)
             'Else
@@ -714,25 +729,49 @@ Partial Public Class Pole
             Else
                 pole_tia_current = "H"
             End If
-            .Worksheets("General (SAPI)").Range("P3").Value = CType(pole_tia_current, String)
+            .Worksheets("General (SAPI)").Range("Q3").Value = CType(pole_tia_current, String)
 
             'Load Z Normalization
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
             '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
-            '    .Worksheets("General (SAPI)").Range("Q3").Value = CType(load_z_norm, Boolean)
+            '    .Worksheets("General (SAPI)").Range("R3").Value = CType(load_z_norm, Boolean)
             'End If
             'H Section 15.5
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
                 pole_rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
-                .Worksheets("General (SAPI)").Range("R3").Value = CType(pole_rev_h_section_15_5, Boolean)
+                .Worksheets("General (SAPI)").Range("S3").Value = CType(pole_rev_h_section_15_5, Boolean)
             End If
             'Work Order
             If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
                 work_order_seq_num = Me.ParentStructure?.work_order_seq_num
-                .Worksheets("General (SAPI)").Range("S3").Value = CType(work_order_seq_num, Integer)
+                .Worksheets("General (SAPI)").Range("T3").Value = CType(work_order_seq_num, Integer)
             End If
 
-            Dim row As Integer = 2
+
+            'CCIplate BP / Flange Elevations And Fy Data
+            Dim pole_flange_fy As Double = 0
+            Dim row As Integer = 74
+            .Worksheets("Macro References").Range("I74:J83").ClearContents
+            For Each conn As Connection In Me.ParentStructure.CCIplates(0).Connections 'Does this need to loop through all potential CCIplate files? - MRR
+                If Not IsNothing(conn.connection_elevation) Then
+                    For Each plate As PlateDetail In conn.PlateDetails
+                        If plate.plate_type <> "Interior" Then
+                            For Each matl As CCIplateMaterial In plate.CCIplateMaterials
+                                If matl.ID = plate.plate_material And matl.fy_0 > pole_flange_fy Then
+                                    pole_flange_fy = CType(matl.fy_0, Double)
+                                End If
+                            Next
+                        End If
+                    Next
+                    .Worksheets("Macro References").Range("I" & row).Value = CType(conn.connection_elevation, Double)
+                    .Worksheets("Macro References").Range("J" & row).Value = pole_flange_fy
+                    row += 1
+                    pole_flange_fy = 0
+                End If
+            Next
+
+
+            row = 2
             Dim col As Integer = 0
             Dim drow, dcol As Integer
 
@@ -1393,6 +1432,7 @@ Partial Public Class Pole
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.hole_deformation.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ineff_mod_check.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.flange_data.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
@@ -1413,6 +1453,7 @@ Partial Public Class Pole
         SQLInsertFields = SQLInsertFields.AddtoDBString("hole_deformation")
         SQLInsertFields = SQLInsertFields.AddtoDBString("ineff_mod_check")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("flange_data")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
@@ -1433,6 +1474,7 @@ Partial Public Class Pole
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("hole_deformation = " & Me.hole_deformation.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ineff_mod_check = " & Me.ineff_mod_check.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified = " & Me.modified.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("flange_data = " & Me.flange_data.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
@@ -1463,6 +1505,7 @@ Partial Public Class Pole
         Equals = If(Me.hole_deformation.CheckChange(otherToCompare.hole_deformation, changes, categoryName, "Hole Deformation"), Equals, False)
         Equals = If(Me.ineff_mod_check.CheckChange(otherToCompare.ineff_mod_check, changes, categoryName, "Ineff Mod Check"), Equals, False)
         Equals = If(Me.modified.CheckChange(otherToCompare.modified, changes, categoryName, "Modified"), Equals, False)
+        Equals = If(Me.flange_data.CheckChange(otherToCompare.flange_data, changes, categoryName, "Flange Data"), Equals, False)
         'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
         'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
 
