@@ -3524,7 +3524,7 @@ Partial Public Class tnxUnitProperty
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return Math.Round(InputValue.Value * Me.multiplier.Value)
+        Return Math.Round(InputValue.Value * Me.multiplier.Value, 4)
 
     End Function
 

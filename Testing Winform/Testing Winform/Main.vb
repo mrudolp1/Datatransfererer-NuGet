@@ -443,6 +443,10 @@ Partial Public Class frmMain
         End If
     End Sub
 
+#End Region
+
+#Region "Textbox Changes"
+
     Private Sub txtFndBU_TextChanged(sender As Object, e As EventArgs) Handles txtFndBU.TextChanged
         If isopening Then Exit Sub
         My.Settings.myBU = sender.text
@@ -466,9 +470,6 @@ Partial Public Class frmMain
         My.Settings.myWorkArea = sender.text
         My.Settings.Save()
     End Sub
-
-
-
 
 #End Region
 

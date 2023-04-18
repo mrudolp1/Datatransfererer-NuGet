@@ -218,7 +218,7 @@ End Class
 
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
-    Inherits FileUpload
+    Inherits EDSObjectWithQueries
 
     <Category("Tool"), Description("Local path to query templates."), DisplayName("Tool Path")>
     Public Property workBookPath As String

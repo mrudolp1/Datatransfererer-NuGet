@@ -22,7 +22,6 @@ Partial Public Class EDSStructure
     Public Property UnitBases As New List(Of UnitBase)
     Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
     Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
-    Public Property FileUploads As New List(Of FileUpload)
     Public Property ReportOptions As ReportOptions
     Public Property SiteInfo As SiteInfo
     Public Property NotMe As EDSStructure
@@ -346,9 +345,6 @@ Partial Public Class EDSStructure
     Public Sub LoadFromFiles(filePaths As String())
 
         For Each item As String In filePaths
-            Dim myFile As New FileUpload
-
-            myFile = New FileUpload(item, Me)
             If item.EndsWith(".eri") Then
                 Me.tnx = New tnxModel(item, Me)
             ElseIf item.Contains("Pier and Pad Foundation") Then
@@ -363,7 +359,6 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
-                FileUploads.Add(myFile)
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))

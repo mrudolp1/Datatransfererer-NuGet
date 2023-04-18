@@ -17,10 +17,10 @@ Partial Public Class DrilledPierFoundation
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_lkup_code.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_name.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_ext.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_ver.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_lkup_code.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_name.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_ext.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.file_file_ver.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Now.ToString.FormatDBValue)
@@ -32,10 +32,10 @@ Partial Public Class DrilledPierFoundation
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("file_lkup_code")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_name")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_ext")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_ver")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("file_lkup_code")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_name")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_ext")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("file_file_ver")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("upload_date")
@@ -47,10 +47,10 @@ Partial Public Class DrilledPierFoundation
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_lkup_code = " & Me.file_lkup_code.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_name = " & Me.file_file_name.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_ext = " & Me.file_file_ext.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_ver = " & Me.file_file_ver.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_lkup_code = " & Me.file_lkup_code.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_name = " & Me.file_file_name.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_ext = " & Me.file_file_ext.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("file_file_ver = " & Me.file_file_ver.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
@@ -167,10 +167,10 @@ Partial Public Class DrilledPierFoundation
 
     Private Sub ConstructMe(ByVal dr As DataRow)
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.file_lkup_code = DBtoStr(dr.Item("file_lkup_code"))
-        Me.file_file_name = DBtoStr(dr.Item("file_file_name"))
-        Me.file_file_ext = DBtoStr(dr.Item("file_file_ext"))
-        Me.file_file_ver = DBtoStr(dr.Item("file_file_ver"))
+        'Me.file_lkup_code = DBtoStr(dr.Item("file_lkup_code"))
+        'Me.file_file_name = DBtoStr(dr.Item("file_file_name"))
+        'Me.file_file_ext = DBtoStr(dr.Item("file_file_ext"))
+        'Me.file_file_ver = DBtoStr(dr.Item("file_file_ver"))
     End Sub
 
     Public Sub New(ByVal strDS As DataSet, Optional ByVal Parent As EDSObject = Nothing, Optional ByVal dr As DataRow = Nothing)
@@ -200,9 +200,9 @@ Partial Public Class DrilledPierFoundation
 
         For Each item As EXCELDTParameter In excelDTParams
             Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(file_path, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(filepath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(file_path), item.xlsSheet, item.xlsRange))
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(filepath), item.xlsSheet, item.xlsRange))
             End Try
         Next
 
@@ -1270,6 +1270,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tie_yield_strength.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ultimate_gross_bearing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.drilled_pier_id.ToString.FormatDBValue)
         Return SQLInsertValues
     End Function
 
@@ -1292,6 +1293,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertFields = SQLInsertFields.AddtoDBString("tie_yield_strength")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("ultimate_gross_bearing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_id")
         Return SQLInsertFields
     End Function
 
@@ -1315,6 +1317,7 @@ Partial Public Class DrilledPierProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tie_yield_strength = " & Me.tie_yield_strength.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ultimate_gross_bearing = " & Me.ultimate_gross_bearing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & Me.drilled_pier_id.ToString.FormatDBValue)
         Return SQLUpdateFieldsandValues
     End Function
 #End Region
@@ -1347,7 +1350,7 @@ Partial Public Class DrilledPierProfile
         Equals = If(Me.tie_yield_strength.CheckChange(otherToCompare.tie_yield_strength, changes, categoryName, "Tie Yield Strength"), Equals, False)
         Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
         Equals = If(Me.ultimate_gross_bearing.CheckChange(otherToCompare.ultimate_gross_bearing, changes, categoryName, "Ultimate Bearing"), Equals, False)
-
+        Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier Foreign Key"), Equals, False)
 
         'Sections
         Equals = If(Me.Sections.CheckChange(otherToCompare.Sections, changes, categoryName, "Drilled Pier Sections"), Equals, False)
@@ -1618,7 +1621,7 @@ Partial Public Class DrilledPierSection
 
 #Region "Save to EDS"
     Public Overrides Function SQLInsertValues() As String
-        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID") 'Pier_profile_id
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_diameter.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.clear_cover.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.clear_cover_rebar_cage_option.ToString.FormatDBValue)
