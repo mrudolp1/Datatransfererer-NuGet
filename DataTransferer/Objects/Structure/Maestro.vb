@@ -82,7 +82,7 @@ Partial Public Class EDSStructure
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
-                    excelResult = OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacCreateTNX, isDevMode)
+                    excelResult = OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacCreateTNX, isDevMode)
 
                     If Not excelResult = "Success" Then
                         WriteLineLogLine("ERROR | Exception running macro for CCIPole: " & poleMacCreateTNX & vbCrLf & excelResult)
@@ -100,7 +100,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacImportTNXReactions, isDevMode)
+                    OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacImportTNXReactions, isDevMode)
                 End If
 
                 spliceCheckFile = SpliceCheck(workingAreaPath)
@@ -115,7 +115,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    OpenExcelRunMacro(plateWeUsin.workBookPath, plateMac)
+                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
 
                     WriteLineLogLine("INFO | Checking for BARB..")
 
@@ -129,7 +129,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    OpenExcelRunMacro(poleWeUsin.workBookPath, poleMacRunAnalysis, isDevMode)
+                    OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacRunAnalysis, isDevMode)
                 End If
 
                 'get compression, sheer, and moment from TNX
@@ -141,21 +141,21 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
                     For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        OpenExcelRunMacro(dp.workBookPath, dpMac, isDevMode)
+                        OpenExcelRunMacro(dp.WorkBookPath, dpMac, isDevMode)
                     Next
                 End If
                 '//pier & pad
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
                     For Each pierPad As PierAndPad In Me.PierandPads
-                        OpenExcelRunMacro(pierPad.workBookPath, pierPadMac, isDevMode)
+                        OpenExcelRunMacro(pierPad.WorkBookPath, pierPadMac, isDevMode)
                     Next
                 End If
                 '//Pile
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
                     For Each pile As Pile In Me.Piles
-                        OpenExcelRunMacro(pile.workBookPath, pileMac, isDevMode)
+                        OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
                     Next
                 End If
                 '//Guy Anchor
@@ -163,7 +163,7 @@ Partial Public Class EDSStructure
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
                     For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
-                        OpenExcelRunMacro(guyAnc.workBookPath, guyAnchorMac, isDevMode)
+                        OpenExcelRunMacro(guyAnc.WorkBookPath, guyAnchorMac, isDevMode)
                     Next
                 End If
 
@@ -182,7 +182,7 @@ Partial Public Class EDSStructure
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
                     plateWeUsin = Me.CCIplates.FirstOrDefault
 
-                    OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac)
+                    OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac)
                 End If
 
                 '/run tnx
@@ -208,7 +208,7 @@ Partial Public Class EDSStructure
                     End If
 
                     For Each legReinforcement As LegReinforcement In LegReinforcements
-                        OpenExcelRunMacro(legReinforcement.workBookPath, legReinforcementMac, isDevMode)
+                        OpenExcelRunMacro(legReinforcement.WorkBookPath, legReinforcementMac, isDevMode)
                     Next
                 Else
                     'WriteLineLogLine("WARNING | No Leg Reinforcement found! Could not verify Leg Reinforcement.")
@@ -220,7 +220,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    OpenExcelRunMacro(plateWeUsin.workBookPath, plateMac)
+                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
                 End If
 
                 '/loop through FNDs, open, input reactions & run macros
@@ -228,35 +228,35 @@ Partial Public Class EDSStructure
                 If Me.UnitBases.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
                     For Each unitbase In Me.UnitBases
-                        OpenExcelRunMacro(unitbase.workBookPath, unitBaseMac, isDevMode)
+                        OpenExcelRunMacro(unitbase.WorkBookPath, unitBaseMac, isDevMode)
                     Next
                 End If
                 '//Run Drilled Pier
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
                     For Each drilledPier In Me.DrilledPierTools
-                        OpenExcelRunMacro(drilledPier.workBookPath, drilledPierMac, isDevMode)
+                        OpenExcelRunMacro(drilledPier.WorkBookPath, drilledPierMac, isDevMode)
                     Next
                 End If
                 '//Run Pad/Pier
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
                     For Each pierAndPad In Me.PierandPads
-                        OpenExcelRunMacro(pierAndPad.workBookPath, pierPadMac, isDevMode)
+                        OpenExcelRunMacro(pierAndPad.WorkBookPath, pierPadMac, isDevMode)
                     Next
                 End If
                 '//Run Pile
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
                     For Each pile In Me.Piles
-                        OpenExcelRunMacro(pile.workBookPath, pileMac, isDevMode)
+                        OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
                     Next
                 End If
                 '//Run Guy Anchor
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
                     For Each guyAnchor In Me.GuyAnchorBlockTools
-                        OpenExcelRunMacro(guyAnchor.workBookPath, guyAnchorMac, isDevMode)
+                        OpenExcelRunMacro(guyAnchor.WorkBookPath, guyAnchorMac, isDevMode)
                     Next
                 End If
 
@@ -314,7 +314,7 @@ Partial Public Class EDSStructure
 
             If GetReactionsBARB(basePlateConnection, plateMom, plateComp, plateSheer) Then
                 'replace values in Pole
-                If Not BarbValuesIntoPole(poleWeUsin, poleWeUsin.workBookPath, barbCL, plateComp, plateSheer, plateMom, isDevMode) Then
+                If Not BarbValuesIntoPole(poleWeUsin, poleWeUsin.WorkBookPath, barbCL, plateComp, plateSheer, plateMom, isDevMode) Then
                     Return False
                 End If
             Else

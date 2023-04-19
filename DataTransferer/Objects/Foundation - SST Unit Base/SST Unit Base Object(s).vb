@@ -10,10 +10,11 @@ Partial Public Class UnitBase
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Unit Base"
+    Public Overrides ReadOnly Property EDSObjectName As String = "SST Unit Base Foundation"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.unit_base"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "SST Unit Base Foundation.xlsm")
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "SST Unit Base Foundation.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Unit Base General Details EXCEL", "A2:AU3", "Details (SAPI)"),
                                                         New EXCELDTParameter("Unit Base General Results EXCEL", "A2:C16", "Results (SAPI)")}
@@ -561,7 +562,7 @@ Partial Public Class UnitBase
         Me.pier_rebar_quantity = DBtoNullableInt(dr.Item("pier_rebar_quantity"))
         Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
         Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
-        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
@@ -575,7 +576,7 @@ Partial Public Class UnitBase
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
@@ -634,7 +635,7 @@ Partial Public Class UnitBase
             Me.pier_rebar_quantity = DBtoNullableInt(dr.Item("pier_rebar_quantity"))
             Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
             Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
-            Me.tool_version = DBtoStr(dr.Item("tool_version"))
+            Me.Version = DBtoStr(dr.Item("tool_version"))
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
@@ -863,7 +864,7 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("Rock").Value = "Yes"
             End If
 
-            If Me.groundwater_depth = -1 Then
+            If IsNothing(Me.groundwater_depth) OrElse Me.groundwater_depth = -1 Then
                 .Worksheets("Input").Range("gw").Value = "N/A"
             Else
                 .Worksheets("Input").Range("gw").Value = CType(Me.groundwater_depth, Double)
@@ -1109,7 +1110,7 @@ Partial Public Class UnitBase
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_rebar_quantity.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
@@ -1222,7 +1223,7 @@ Partial Public Class UnitBase
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.NullableToString.FormatDBValue)
