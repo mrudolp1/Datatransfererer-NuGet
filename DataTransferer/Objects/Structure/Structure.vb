@@ -80,6 +80,7 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
+        'does this need changed to workDirectory??
         Me.WorkingDirectory = WorkingDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
@@ -107,6 +108,21 @@ Partial Public Class EDSStructure
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
+    End Sub
+
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal forSeb As Boolean)
+
+
+        Me.bus_unit = BU
+        Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
+        Me.databaseIdentity = LogOnUser
+        Me.activeDatabase = ActiveDatabase
+        Me.WorkingDirectory = workDirectory
+        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.SiteInfo = New SiteInfo(WorkOrder)
+
+        LoadFromFiles(filePaths)
     End Sub
 
     Public Overrides Function ToString() As String
@@ -350,30 +366,39 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pier and Pad Foundation") Then
                 Me.PierandPads = New List(Of PierAndPad)
                 Me.PierandPads.Add(New PierAndPad(item, Me))
+                Me.PierandPads.Last.workBookPath = item
             ElseIf item.Contains("Pile Foundation") Then
                 Me.Piles = New List(Of Pile)
                 Me.Piles.Add(New Pile(item, Me))
+                Me.Piles.Last.workBookPath = item
             ElseIf item.Contains("SST Unit Base Foundation") Then
                 Me.UnitBases = New List(Of UnitBase)
                 Me.UnitBases.Add(New UnitBase(item, Me))
+                Me.UnitBases.Last.workBookPath = item
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
+                Me.DrilledPierTools.Last.workBookPath = item
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
+                Me.GuyAnchorBlockTools.Last.workBookPath = item
             ElseIf item.Contains("CCIplate") Then
                 Me.CCIplates = New List(Of CCIplate)
                 Me.CCIplates.Add(New CCIplate(item, Me))
+                Me.CCIplates.Last.workBookPath = item
             ElseIf item.Contains("CCIpole") Then
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
+                Me.Poles.Last.workBookPath = item
             ElseIf item.Contains("Leg Reinforcement") Then
                 Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
+                Me.LegReinforcements.Last.workBookPath = item
             ElseIf item.Contains("CCISeismic") Then
                 Me.CCISeismics = New List(Of CCISeismic)
                 Me.CCISeismics.Add(New CCISeismic(item, Me))
+                Me.CCISeismics.Last.workBookPath = item
             End If
         Next
     End Sub
