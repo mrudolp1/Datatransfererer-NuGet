@@ -213,7 +213,7 @@ Partial Public Class EDSStructure
                     ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
                     'run seismic. if output reads "Seismic analysis required" rerun TNX
-                    If OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac) = "SEISMIC ANALYSIS REQUIRED" Then
+                    If OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac, isDevMode, True) = "SEISMIC ANALYSIS REQUIRED" Then
                         '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
                             Exit Sub
@@ -253,7 +253,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
+                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac, isDevMode)
                 End If
 
                 '/loop through FNDs, open, input reactions & run macros
