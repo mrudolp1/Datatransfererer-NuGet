@@ -49,11 +49,11 @@ Partial Public Class EDSStructure
         Dim unitBaseMac As String = "MaestMe"
         Dim drilledPierMac As String = ""
         'Dim pierAndPadMac As String = "MaestMe"
-        Dim seisMac As String = ""
+        Dim seisMac As String = "MaestMe"
 
         'TNX vars
         Dim tnxFullPath As String = Me.tnx.filePath '""
-        Dim tnxFileName As String = ""
+        ' Dim tnxFileName As String = ""
 
         Dim excelResult As String = ""
 
@@ -94,14 +94,24 @@ Partial Public Class EDSStructure
                     End If
                 End If
 
-                'not done yet
-                ' If exStruct.Seismic Then
-                'OpenExcelRunMacro()
-                'End If
+                If Me.CCISeismics.Count > 0 Then
+                    If Me.CCISeismics.Count > 1 Then
+                        WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..")
+                    End If
+                    seismicWeUsin = Me.CCISeismics.FirstOrDefault
+
+                    OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac)
+                End If
+
 
                 'Run TNX
                 'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
-                If Not RunTNX(tnxFullPath, isDevMode) Then
+                If File.Exists(tnxFullPath) Then
+                    If Not RunTNX(tnxFullPath, isDevMode) Then
+                        Exit Sub
+                    End If
+                Else
+                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
                     Exit Sub
                 End If
 
@@ -183,6 +193,16 @@ Partial Public Class EDSStructure
                 'Dan will provide a file path to check for in the working directory
 
 
+                '/run tnx
+                'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
+                If File.Exists(tnxFullPath) Then
+                    If Not RunTNX(tnxFullPath, isDevMode) Then
+                        Exit Sub
+                    End If
+                Else
+                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                    Exit Sub
+                End If
                 '/run seismic macro to create eri with seismic loads if needed
 
                 If Me.CCISeismics.Count > 0 Then
@@ -190,16 +210,18 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..")
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
-                    plateWeUsin = Me.CCIplates.FirstOrDefault
+                    ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
-                    OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac)
+                    'run seismic. if output reads "Seismic analysis required" rerun TNX
+                    If OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac) = "SEISMIC ANALYSIS REQUIRED" Then
+                        '/run tnx
+                        If Not RunTNX(tnxFullPath, isDevMode) Then
+                            Exit Sub
+                        End If
+                    End If
                 End If
 
-                '/run tnx
-                'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
-                If Not RunTNX(tnxFullPath, isDevMode) Then
-                    Exit Sub
-                End If
+
 
                 '/run leg reinforcement
                 '//compare previous geometry to current geometry
@@ -357,7 +379,8 @@ Partial Public Class EDSStructure
         Return True
     End Function
 
-    Public Function OpenExcelRunMacro(excelPath As String, bigMac As String, Optional ByVal isDevEnv As Boolean = False) As String
+    Public Function OpenExcelRunMacro(excelPath As String, bigMac As String,
+                                      Optional ByVal isDevEnv As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
         Dim tnxFilePath As String = Me.tnx.filePath
         Dim toolFileName As String = Path.GetFileName(excelPath)
 
@@ -418,6 +441,11 @@ Partial Public Class EDSStructure
                 xlApp = Nothing
             End If
         End Try
+
+        'check for seismic
+        If isSeismic And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
+            Return "SEISMIC ANALYSIS REQUIRED"
+        End If
 
         Return "Success"
     End Function
@@ -577,10 +605,8 @@ Partial Public Class EDSStructure
             Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
-            WriteLineLogLine("INFO | " & ipconfigOutput)
-            '            WriteLineLogLine("---------------------------------------------------------------
-            '---------------------------------------------------------------
-            '---------------------------------------------------------------")
+            'WriteLineLogLine("INFO | " & ipconfigOutput)
+
             Return True
 
         Catch ex As Exception
