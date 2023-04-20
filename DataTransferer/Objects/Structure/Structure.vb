@@ -74,6 +74,7 @@ Partial Public Class EDSStructure
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromFiles(filePaths)
     End Sub
