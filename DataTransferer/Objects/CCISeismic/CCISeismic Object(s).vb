@@ -427,6 +427,7 @@ Partial Public Class CCISeismic
     End Sub 'Generate Seismic from EDS
 
     Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 

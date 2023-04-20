@@ -511,6 +511,8 @@ Partial Public Class PierAndPad
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
     Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
+
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
