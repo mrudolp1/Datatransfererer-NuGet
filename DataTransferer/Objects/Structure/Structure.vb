@@ -57,19 +57,11 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    'Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-    '    Me.bus_unit = BU
-    '    Me.structure_id = structureID
-    '    Me.work_order_seq_num = WorkOrder
-
-    '    LoadFromFiles(filePaths)
-    'End Sub
-
     Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
 
         LoadFromFiles(filePaths)
     End Sub
@@ -80,7 +72,7 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromFiles(filePaths)
@@ -393,57 +385,31 @@ Partial Public Class EDSStructure
         If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"))
 
         For i = 0 To Me.PierandPads.Count - 1
-            'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
-            'This works for now, just basing the name off the template name.
-            fileNum = String.Format(" ({0})", i.ToString)
-            PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(PierandPads(i).templatePath))
-            PierandPads(i).SavetoExcel()
+            PierandPads(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.Piles.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            'Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
-            Piles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Piles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Piles(i).templatePath))
-            Piles(i).SavetoExcel()
+            Piles(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.UnitBases.Count - 1
-            fileNum = String.Format(" ({0})", i.ToString)
-            UnitBases(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).templatePath))
-            UnitBases(i).SavetoExcel()
+            UnitBases(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.DrilledPierTools.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            DrilledPierTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileName(DrilledPierTools(i).templatePath) & fileNum)
-            DrilledPierTools(i).SavetoExcel()
+            DrilledPierTools(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.GuyAnchorBlockTools.Count - 1
-            fileNum = Format(" ({0})", i.ToString)
-            GuyAnchorBlockTools(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(GuyAnchorBlockTools(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(GuyAnchorBlockTools(i).templatePath))
-            GuyAnchorBlockTools(i).SavetoExcel()
+            GuyAnchorBlockTools(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.CCIplates.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            CCIplates(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).templatePath))
-            CCIplates(i).SavetoExcel()
+            CCIplates(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.Poles.Count - 1
-            fileNum = Format(" ({0})", i.ToString)
-            Poles(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).templatePath))
-            Poles(i).SavetoExcel()
+            Poles(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.LegReinforcements.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            LegReinforcements(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(LegReinforcements(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(LegReinforcements(i).templatePath))
-            LegReinforcements(i).SavetoExcel()
+            LegReinforcements(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.CCISeismics.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            CCISeismics(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCISeismics(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCISeismics(i).templatePath))
-            CCISeismics(i).SavetoExcel()
+            CCISeismics(i).SavetoExcel(index:=i)
         Next
     End Sub
 #End Region
