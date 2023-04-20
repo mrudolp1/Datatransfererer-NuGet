@@ -69,11 +69,13 @@ Partial Public Class DrilledPierFoundation
         End Get
     End Property
 
-    Public Overrides ReadOnly Property templatePath As String
+    Public Overrides ReadOnly Property TemplatePath As String
         Get
             Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Drilled Pier Foundation.xlsm")
         End Get
     End Property
+
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation
 
     Private _Insert As String
     Private _Update As String
@@ -131,7 +133,7 @@ Partial Public Class DrilledPierFoundation
         Return SQLDelete
     End Function
 
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Dim dp As New DrilledPier
             Dim dpProf As New DrilledPierProfile
@@ -191,6 +193,7 @@ Partial Public Class DrilledPierFoundation
     End Sub
 
     Public Sub New(ByVal filepath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = filepath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -198,7 +201,7 @@ Partial Public Class DrilledPierFoundation
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(filepath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception

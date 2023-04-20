@@ -9,11 +9,12 @@ Partial Public Class Pole
     Inherits EDSExcelObject
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole General"
+    Public Overrides ReadOnly Property EDSObjectName As String = "CCIpole"
     Public Overrides ReadOnly Property EDSTableName As String = "pole.pole"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIpole.xlsm")
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIpole.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.CCIpole
 
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("CCIpole General EXCEL", "A2:L3", "General (SAPI)"),
                                                         New EXCELDTParameter("CCIpole Pole Sections EXCEL", "A2:W20", "Unreinf Pole (SAPI)"),
@@ -492,13 +493,14 @@ Partial Public Class Pole
     End Sub 'Generate Pole from EDS
 
     Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))

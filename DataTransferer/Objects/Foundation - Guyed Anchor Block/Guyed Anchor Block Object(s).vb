@@ -66,6 +66,7 @@ Partial Public Class AnchorBlockFoundation
 
     'EXCEL CONSTRUCTOR
     Public Sub New(ByVal filepath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = filepath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
@@ -73,7 +74,7 @@ Partial Public Class AnchorBlockFoundation
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(filepath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception
@@ -126,7 +127,7 @@ Partial Public Class AnchorBlockFoundation
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Guy Anchor Block Tool"
+            Return "Guy Anchor Block Foundation"
         End Get
     End Property
 
@@ -136,13 +137,15 @@ Partial Public Class AnchorBlockFoundation
         End Get
     End Property
 
-    Public Overrides ReadOnly Property templatePath As String
+    Public Overrides ReadOnly Property TemplatePath As String
         Get
             Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Guyed Anchor Block Foundation.xlsm")
         End Get
     End Property
 
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation
+
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Dim ab As New AnchorBlock
             Dim abProf As New AnchorBlockProfile

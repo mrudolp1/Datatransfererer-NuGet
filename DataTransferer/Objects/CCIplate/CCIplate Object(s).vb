@@ -11,10 +11,11 @@ Partial Public Class CCIplate
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCIplates"
+    Public Overrides ReadOnly Property EDSObjectName As String = "CCIplate"
     Public Overrides ReadOnly Property EDSTableName As String = "conn.connections"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIplate.xlsm")
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIplate.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.CCIplate
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("CCIplates", "A1:K2", "Details (SAPI)"),
@@ -316,13 +317,14 @@ Partial Public Class CCIplate
     End Sub 'Generate a CCIplate from EDS
 
     Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
@@ -362,7 +364,7 @@ Partial Public Class CCIplate
         Me.seismic = DBtoNullableBool(dr.Item("seismic"))
         Me.seismic_flanges = DBtoNullableBool(dr.Item("seismic_flanges"))
         Me.Structural_105 = DBtoNullableBool(dr.Item("Structural_105"))
-        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.modified_person_id = If(EDStruefalse, DBtoNullableInt(dr.Item("modified_person_id")), Me.modified_person_id) 'Not provided in Excel
         Me.process_stage = If(EDStruefalse, DBtoStr(dr.Item("process_stage")), Me.process_stage) 'Not provided in Excel
 
@@ -1628,7 +1630,7 @@ Partial Public Class CCIplate
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_flanges.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Structural_105.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
@@ -1672,7 +1674,7 @@ Partial Public Class CCIplate
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic = " & Me.seismic.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_flanges = " & Me.seismic_flanges.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
@@ -1704,7 +1706,7 @@ Partial Public Class CCIplate
         Equals = If(Me.seismic.CheckChange(otherToCompare.seismic, changes, categoryName, "Seismic"), Equals, False)
         Equals = If(Me.seismic_flanges.CheckChange(otherToCompare.seismic_flanges, changes, categoryName, "Seismic Flanges"), Equals, False)
         Equals = If(Me.Structural_105.CheckChange(otherToCompare.Structural_105, changes, categoryName, "Structural 105"), Equals, False)
-        Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
+        Equals = If(Me.Version.CheckChange(otherToCompare.Version, changes, categoryName, "Tool Version"), Equals, False)
         'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
         'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
 

@@ -11,10 +11,11 @@ Partial Public Class CCISeismic
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCISeismics"
+    Public Overrides ReadOnly Property EDSObjectName As String = "CCISeismic"
     Public Overrides ReadOnly Property EDSTableName As String = "load.seismic"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCISeismic.xlsm")
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCISeismic.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.CCISeismic
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AC2", "Details (SAPI)")}
@@ -31,7 +32,7 @@ Partial Public Class CCISeismic
     Public Overrides Function SQLInsert() As String
 
         If _Insert = "" Then
-            _Insert = CCI_Engineering_Templates.My.Resources.CCISEISMIC_INSERT
+            _Insert = CCI_Engineering_Templates.My.Resources.CCISeismic_INSERT
         End If
         SQLInsert = _Insert
 
@@ -47,7 +48,7 @@ Partial Public Class CCISeismic
         'This section not only needs to call update commands but also needs to call insert and delete commands since subtables may involve adding or deleting records
 
         If _Update = "" Then
-            _Update = CCI_Engineering_Templates.My.Resources.CCISEISMIC_UPDATE
+            _Update = CCI_Engineering_Templates.My.Resources.CCISeismic_UPDATE
         End If
         SQLUpdate = _Update
 
@@ -63,7 +64,7 @@ Partial Public Class CCISeismic
 
         'Top Level
         If _Delete = "" Then
-            _Delete = CCI_Engineering_Templates.My.Resources.CCISEISMIC_DELETE
+            _Delete = CCI_Engineering_Templates.My.Resources.CCISeismic_DELETE
         End If
         SQLDelete = _Delete
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID.ToString.FormatDBValue)
@@ -426,13 +427,14 @@ Partial Public Class CCISeismic
     End Sub 'Generate Seismic from EDS
 
     Public Sub New(ExcelFilePath As String, Optional ByRef Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
@@ -461,7 +463,7 @@ Partial Public Class CCISeismic
         'Me.seismic_design_category = Me.ParentStructure?.structureCodeCriteria?.seismic_design_category
 
         Me.ID = DBtoNullableInt(dr.Item("ID"))
-        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.bus_unit = If(EDStruefalse, DBtoStr(dr.Item("bus_unit")), Me.bus_unit) 'Not provided in Excel
         Me.structure_id = If(EDStruefalse, DBtoStr(dr.Item("structure_id")), Me.structure_id) 'Not provided in Excel
         Me.modified_person_id = If(EDStruefalse, DBtoNullableInt(dr.Item("modified_person_id")), Me.modified_person_id) 'Not provided in Excel
@@ -739,7 +741,7 @@ Partial Public Class CCISeismic
         SQLInsertValues = ""
 
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
@@ -819,7 +821,7 @@ Partial Public Class CCISeismic
         SQLUpdateFieldsandValues = ""
 
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
@@ -869,7 +871,7 @@ Partial Public Class CCISeismic
         If otherToCompare Is Nothing Then Return False
 
         'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
-        Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
+        Equals = If(Me.Version.CheckChange(otherToCompare.Version, changes, categoryName, "Tool Version"), Equals, False)
         'Equals = If(Me.bus_unit.CheckChange(otherToCompare.bus_unit, changes, categoryName, "Bus Unit"), Equals, False)
         'Equals = If(Me.structure_id.CheckChange(otherToCompare.structure_id, changes, categoryName, "Structure Id"), Equals, False)
         'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)

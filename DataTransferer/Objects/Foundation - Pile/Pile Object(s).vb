@@ -11,10 +11,11 @@ Partial Public Class Pile
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pile"
+    Public Overrides ReadOnly Property EDSObjectName As String = "Pile Foundation"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.pile"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Pile_Foundation
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BC2", "Details (SAPI)"),
                                                         New EXCELDTParameter("Pile Soil Profile EXCEL", "B3:D4", "Sub Tables (SAPI)"),
@@ -955,7 +956,7 @@ Partial Public Class Pile
         Me.pile_cap_reference = DBtoStr(dr.Item("pile_cap_reference"))
         Me.Soil_110 = DBtoNullableBool(dr.Item("Soil_110"))
         Me.Structural_105 = DBtoNullableBool(dr.Item("Structural_105"))
-        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.Soil_Profile_id = DBtoNullableInt(dr.Item("soil_profile_id"))
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -993,13 +994,14 @@ Partial Public Class Pile
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
     Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
+        Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
@@ -1082,7 +1084,7 @@ Partial Public Class Pile
             Me.pile_cap_reference = DBtoStr(dr.Item("pile_cap_reference"))
             Me.Soil_110 = DBtoNullableBool(dr.Item("Soil_110"))
             Me.Structural_105 = DBtoNullableBool(dr.Item("Structural_105"))
-            Me.tool_version = DBtoStr(dr.Item("tool_version"))
+            Me.Version = DBtoStr(dr.Item("tool_version"))
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id")) 'don't pull from tool
             'Me.process_stage = DBtoStr(dr.Item("process_stage")) 'don't pull from tool
 
@@ -1786,7 +1788,7 @@ Partial Public Class Pile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pile_cap_reference.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Soil_110.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Structural_105.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString("@PrevID")
@@ -1933,7 +1935,7 @@ Partial Public Class Pile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pile_cap_reference = " & Me.pile_cap_reference.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Soil_110 = " & Me.Soil_110.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = @SubLevel1ID")
         'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -2016,7 +2018,7 @@ Partial Public Class Pile
         Equals = If(Me.pile_cap_reference.CheckChange(otherToCompare.pile_cap_reference, changes, categoryName, "Pile Cap Reference"), Equals, False)
         Equals = If(Me.Soil_110.CheckChange(otherToCompare.Soil_110, changes, categoryName, "Soil 110"), Equals, False)
         Equals = If(Me.Structural_105.CheckChange(otherToCompare.Structural_105, changes, categoryName, "Structural 105"), Equals, False)
-        Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
+        Equals = If(Me.Version.CheckChange(otherToCompare.Version, changes, categoryName, "Tool Version"), Equals, False)
         'Equals = If(Me.modified_person_id.CheckChange(otherToCompare.modified_person_id, changes, categoryName, "Modified Person Id"), Equals, False)
         'Equals = If(Me.process_stage.CheckChange(otherToCompare.process_stage, changes, categoryName, "Process Stage"), Equals, False)
 
