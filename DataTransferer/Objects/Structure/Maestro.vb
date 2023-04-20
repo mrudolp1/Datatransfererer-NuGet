@@ -40,14 +40,14 @@ Partial Public Class EDSStructure
 
         '/fnd macros
         '//monopole
-        Dim dpMac As String = ""
+        'Dim drilledPierMac As String = ""
         Dim pierPadMac As String = "MaestMe"
-        Dim pileMac As String = ""
+        Dim pileMac As String = "MaestMe"
         Dim guyAnchorMac As String = "MaestMe"
         '//lattice
         Dim legReinforcementMac As String = ""
         Dim unitBaseMac As String = "MaestMe"
-        Dim drilledPierMac As String = ""
+        Dim drilledPierMac As String = "MaestMe"
         'Dim pierAndPadMac As String = "MaestMe"
         Dim seisMac As String = "MaestMe"
 
@@ -158,7 +158,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
                     For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        OpenExcelRunMacro(dp.WorkBookPath, dpMac, isDevMode)
+                        OpenExcelRunMacro(dp.WorkBookPath, drilledPierMac, isDevMode)
                     Next
                 End If
                 '//pier & pad
