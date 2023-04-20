@@ -57,19 +57,11 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    'Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-    '    Me.bus_unit = BU
-    '    Me.structure_id = structureID
-    '    Me.work_order_seq_num = WorkOrder
-
-    '    LoadFromFiles(filePaths)
-    'End Sub
-
     Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
 
         LoadFromFiles(filePaths)
     End Sub
@@ -80,8 +72,7 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
-        'does this need changed to workDirectory??
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromFiles(filePaths)
@@ -108,21 +99,6 @@ Partial Public Class EDSStructure
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
-    End Sub
-
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal forSeb As Boolean)
-
-
-        Me.bus_unit = BU
-        Me.structure_id = structureID
-        Me.work_order_seq_num = WorkOrder
-        Me.databaseIdentity = LogOnUser
-        Me.activeDatabase = ActiveDatabase
-        Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
-        Me.SiteInfo = New SiteInfo(WorkOrder)
-
-        LoadFromFiles(filePaths)
     End Sub
 
     Public Overrides Function ToString() As String
