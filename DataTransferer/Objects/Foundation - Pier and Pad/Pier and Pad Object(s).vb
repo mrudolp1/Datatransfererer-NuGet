@@ -9,10 +9,11 @@ Partial Public Class PierAndPad
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pier And Pad"
+    Public Overrides ReadOnly Property EDSObjectName As String = "Pier And Pad Foundation"
     Public Overrides ReadOnly Property EDSTableName As String = "fnd.pier_pad"
-    Public Overrides ReadOnly Property templatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
-    Public Overrides ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
+    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
+    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation
+    Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)"),
                                                         New EXCELDTParameter("Pier and Pad General Results EXCEL", "A2:C16", "Results (SAPI)")}
@@ -503,7 +504,7 @@ Partial Public Class PierAndPad
         Me.pier_rebar_quantity = DBtoNullableInt(dr.Item("pier_rebar_quantity"))
         Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
         Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
-        Me.tool_version = DBtoStr(dr.Item("tool_version"))
+        Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
     End Sub 'Generate a pp from EDS
@@ -516,7 +517,7 @@ Partial Public Class PierAndPad
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
-        For Each item As EXCELDTParameter In excelDTParams
+        For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
                 excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
@@ -571,7 +572,7 @@ Partial Public Class PierAndPad
             Me.pier_rebar_quantity = DBtoNullableInt(dr.Item("pier_rebar_quantity"))
             Me.basic_soil_check = DBtoNullableBool(dr.Item("basic_soil_check"))
             Me.structural_check = DBtoNullableBool(dr.Item("structural_check"))
-            Me.tool_version = DBtoStr(dr.Item("tool_version"))
+            Me.Version = DBtoStr(dr.Item("tool_version"))
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
         End If
@@ -796,7 +797,7 @@ Partial Public Class PierAndPad
                 .Worksheets("Input").Range("Rock").Value = "Yes"
             End If
 
-            If Me.groundwater_depth = -1 Then
+            If IsNothing(Me.groundwater_depth) OrElse Me.groundwater_depth.Value = -1 Then
                 .Worksheets("Input").Range("gw").Value = "N/A"
             Else
                 .Worksheets("Input").Range("gw").Value = CType(Me.groundwater_depth, Double)
@@ -888,7 +889,7 @@ Partial Public Class PierAndPad
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.pier_rebar_quantity.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.NullableToString.FormatDBValue)
 
@@ -996,7 +997,7 @@ Partial Public Class PierAndPad
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_rebar_quantity = " & Me.pier_rebar_quantity.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.NullableToString.FormatDBValue)
 
@@ -1059,7 +1060,7 @@ Partial Public Class PierAndPad
         Equals = If(Me.pier_rebar_quantity.CheckChange(otherToCompare.pier_rebar_quantity, changes, categoryName, "Pier Rebar Quantity"), Equals, False)
         Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals, False)
         Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals, False)
-        Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
+        Equals = If(Me.Version.CheckChange(otherToCompare.Version, changes, categoryName, "Tool Version"), Equals, False)
 
         Return Equals
 

@@ -220,32 +220,43 @@ Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
     Inherits EDSObjectWithQueries
 
-    <Category("Tool"), Description("Local path to query templates."), DisplayName("Tool Path")>
-    Public Property workBookPath As String
+    <Category("Tool"), Description("Workbook Path."), DisplayName("Tool Path")>
+    Public Property WorkBookPath As String
     <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
-    Public MustOverride ReadOnly Property templatePath As String
-    <Category("Tool"), Description("Local path to query templates."), DisplayName("File Type")>
-    Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
+    Public MustOverride ReadOnly Property TemplatePath As String
+    <Category("Tool"), Description("Template resource."), Browsable(False)>
+    Public MustOverride ReadOnly Property Template As Byte()
+    <Category("Tool"), Description("Workbook Type."), DisplayName("File Type")>
+    Public Property FileType As DocumentFormat = DocumentFormat.Xlsm
     <Category("Tool"), Description("Data transfer parameters, a list of ranges to import from excel."), DisplayName("Import Ranges")>
-    Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    <Category("Tool"), Description("Version number of tool."), DisplayName("Tool Version")>
-    Public Property tool_version As String
+    Public MustOverride ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
+    <Category("Tool"), Description("Version number of tool."), DisplayName("Version")>
+    Public Property Version As String
+    '<Category("Tool"), Description("Title of tool."), DisplayName("Title")>
+    'Public Overridable ReadOnly Property Title As String
     <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
-    Public Property modified As Boolean?
+    Public Property Modified As Boolean?
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
 
-    Public Sub SavetoExcel()
+    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0)
         Dim wb As New Workbook
 
-        If workBookPath = "" Then
-            Debug.Print("No workbook path specified.")
-            Exit Sub
+        If String.IsNullOrEmpty(workBookPath) Then
+            If Me.ParentStructure?.WorkingDirectory Is Nothing Then
+                Debug.Print("No workbook path specified.")
+                Exit Sub
+            End If
+
+            'Build Path
+            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+
         End If
 
-        'Try
-        wb.LoadDocument(templatePath, fileType)
+        Me.WorkBookPath = workBookPath
+
+        wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()
 
         'Put the jelly in the donut
@@ -253,49 +264,28 @@ Partial Public MustInherit Class EDSExcelObject
 
         wb.Calculate()
         wb.EndUpdate()
-        wb.SaveDocument(workBookPath, fileType)
+        wb.SaveDocument(workBookPath, FileType)
 
-        'Catch ex As Exception
-        '    Debug.Print("Error Saving Workbook: " & ex.Message)
-        'End Try
+    End Sub
 
-        'Seb's Macro test (uncomment bellow)
-        'Dim xlApp As Microsoft.Office.Interop.Excel.Application
-        'Dim xlWorkBook As Excel.Workbook
-        'Dim xlVis As Boolean = False
+    Public Sub SavetoExcel()
+        Dim wb As New Workbook
 
-        '''set xl visibility to true if dev environment
-        ''If My.Settings.serverActive = "dbDevelopment" Then
-        ''    xlVis = True
-        ''End If
+        If WorkBookPath = "" Then
+            Debug.Print("No workbook path specified.")
+            Exit Sub
+        End If
 
-        ''Try
-        'If File.Exists(workBookPath) Then
-        '    xlApp = CreateObject("Excel.Application")
-        '    xlApp.Visible = xlVis
-        '    xlApp.DisplayAlerts = xlVis
+        'Try
+        wb.LoadDocument(TemplatePath, FileType)
+        wb.BeginUpdate()
 
-        '    xlWorkBook = xlApp.Workbooks.Open(workBookPath)
+        'Put the jelly in the donut
+        workBookFiller(wb)
 
-        '    System.Threading.Thread.Sleep(5000) 'required to allow enough time for file to open
-
-        '    'xlApp.Run("Update_Main_Screen")
-
-        '    xlWorkBook.Save()
-
-        '    xlWorkBook.Close()
-        '    xlApp.Quit()
-        'Else
-        '    'WriteLineLogLine(excelPath & " path not found!")
-        '    'Return False
-        'End If
-        ''Catch ex As Exception
-        ''    'WriteLineLogLine(ex.Message)
-        ''    'Return False
-        ''End Try
-
-
-
+        wb.Calculate()
+        wb.EndUpdate()
+        wb.SaveDocument(WorkBookPath, FileType)
 
     End Sub
 #End Region

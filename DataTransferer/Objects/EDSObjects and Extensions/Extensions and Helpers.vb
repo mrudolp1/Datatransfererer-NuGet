@@ -294,15 +294,75 @@ Public Module Extensions
 
     End Function
 
+    <Extension()>
+    Public Function GetExtension(docFormat As DocumentFormat) As String
+
+        Select Case docFormat
+            Case DocumentFormat.Xlsx, DocumentFormat.OpenXml
+                Return ".xlsx"
+            Case DocumentFormat.Xls
+                Return ".xls"
+            Case DocumentFormat.Xlsm
+                Return ".xlsm"
+            Case DocumentFormat.Xlsb
+                Return ".xlsb"
+            Case DocumentFormat.Xlt
+                Return ".xlt"
+            Case DocumentFormat.Xltm
+                Return ".xltm"
+            Case DocumentFormat.Xltx
+                Return ".xltx"
+            Case DocumentFormat.XmlSpreadsheet2003
+                Return ".xml"
+            Case DocumentFormat.Text
+                Return ".txt"
+            Case DocumentFormat.Csv
+                Return ".csv"
+            Case Else
+                Return ""
+        End Select
+
+    End Function
+
 End Module
 
 Public Module myLittleHelpers
 
+    ''' <summary>
+    ''' Increments the name following the same pattern that file explorer uses (- Copy, - Copy (2), - Copy (3)...)
+    ''' </summary>
+    ''' <paramname="destFileName"></param>
+    ''' <returns></returns>
+    Public Function IncrementFileName(ByVal destFileName As String) As String
+        If File.Exists(destFileName) Then
+            Dim fileName = Path.GetFileNameWithoutExtension(destFileName)
+            Dim ext = Path.GetExtension(destFileName)
+            Dim fileNameEndPosition = fileName.IndexOf(" - Copy")
+            Dim newFileName = fileName & " - Copy"
+            If fileNameEndPosition > 0 Then
+                Dim baseFileName = fileName.Substring(0, fileNameEndPosition)
+                Dim fileNameEnd = fileName.Substring(fileNameEndPosition)
+                Dim copyNum = 0
+                'Split the string on parenthesis, get the first value in between (odd index), and try to convert it to integer
+                Integer.TryParse(fileNameEnd.Split("("c, ")"c).Where(Function(item, index) index Mod 2 <> 0).FirstOrDefault(), copyNum)
+                copyNum += 1
+
+                newFileName = baseFileName & " - Copy (" & copyNum.ToString() & ")"
+            End If
+            Return IncrementFileName(Path.Combine(Path.GetDirectoryName(destFileName), newFileName & ext))
+        Else
+            Return destFileName
+        End If
+    End Function
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="resourceName"></param>
+    ''' <returns></returns>
     Public Function LoadResourceFileStream(resourceName As String) As String
         Dim assembly As Assembly = Assembly.GetExecutingAssembly()
         Dim output As String = ""
-
-        ''CCI_Engineering_Templates.My.Resources.Pile_DELETE
 
         Using stream As Stream = assembly.GetManifestResourceStream(resourceName)
             If Not stream Is Nothing Then
