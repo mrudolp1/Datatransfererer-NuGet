@@ -107,194 +107,191 @@ Partial Public Class EDSStructure
                 'Run TNX
                 'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
                 If File.Exists(tnxFullPath) Then
-                    If Not RunTNX(tnxFullPath, isDevMode) Then
-                        Exit Sub
-                    End If
-                Else
-                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
-                    Exit Sub
-                End If
-
-                'CCI Pole step 2 - pull in reactions
-                If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacImportTNXReactions, isDevMode)
-                End If
-
-                spliceCheckFile = "" 'SpliceCheck(workingAreaPath)
-
-                If Not spliceCheckFile = "" Then
-                    OpenExcelRunMacro(spliceCheckFile, spliceMacImportTNX, isDevMode)
-                    OpenExcelRunMacro(spliceCheckFile, spliceMacRun, isDevMode)
-                End If
-
-                If Me.CCIplates.Count > 0 Then
-                    If Me.CCIplates.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
-                    End If
-                    plateWeUsin = Me.CCIplates.FirstOrDefault
-                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
-
-                    WriteLineLogLine("INFO | Checking for BARB..")
-
-                    'barb
-                    'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
-                    If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
-                        WriteLineLogLine("INFO | BARB elevation found..")
-                        DoBARB(poleWeUsin, isDevMode)
-                    End If
-                End If
-
-                'CCI Pole step 3 - Run Analysis
-                If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacRunAnalysis, isDevMode)
-                End If
-
-                'get compression, sheer, and moment from TNX
-                'GetCompSheerMomFromTNX(comp, sheer, mom)
-
-                'loop through FNDs, open, input reactions & run macros
-                '//drilled pier
-                If Me.DrilledPierTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
-
-                    For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        OpenExcelRunMacro(dp.WorkBookPath, dpMac, isDevMode)
-                    Next
-                End If
-                '//pier & pad
-                If Me.PierandPads.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
-                    For Each pierPad As PierAndPad In Me.PierandPads
-                        OpenExcelRunMacro(pierPad.WorkBookPath, pierPadMac, isDevMode)
-                    Next
-                End If
-                '//Pile
-                If Me.Piles.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
-                    For Each pile As Pile In Me.Piles
-                        OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
-                    Next
-                End If
-                '//Guy Anchor
-
-                If Me.GuyAnchorBlockTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
-                    For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
-                        OpenExcelRunMacro(guyAnc.WorkBookPath, guyAnchorMac, isDevMode)
-                    Next
-                End If
-
-            Case "GUYED", "SELF SUPPORT"
-
-                'Check if TNX has been ran. if not, run it
-                'Dan will provide a file path to check for in the working directory
-
-
-                '/run tnx
-                'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
-                If File.Exists(tnxFullPath) Then
-                    If Not RunTNX(tnxFullPath, isDevMode) Then
-                        Exit Sub
-                    End If
-                Else
-                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
-                    Exit Sub
-                End If
-                '/run seismic macro to create eri with seismic loads if needed
-
-                If Me.CCISeismics.Count > 0 Then
-                    If Me.CCISeismics.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..")
-                    End If
-                    seismicWeUsin = Me.CCISeismics.FirstOrDefault
-                    ' plateWeUsin = Me.CCIplates.FirstOrDefault
-
-                    'run seismic. if output reads "Seismic analysis required" rerun TNX
-                    If OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac) = "SEISMIC ANALYSIS REQUIRED" Then
-                        '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
                             Exit Sub
                         End If
+                    Else
+                        WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                        Exit Sub
                     End If
-                End If
 
+                    'CCI Pole step 2 - pull in reactions
+                    If CCIPoleExists And Not IsNothing(poleWeUsin) Then
+                        OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacImportTNXReactions, isDevMode)
+                    End If
 
+                    spliceCheckFile = "" 'SpliceCheck(workingAreaPath)
 
-                '/run leg reinforcement
-                '//compare previous geometry to current geometry
-                '/run leg reinforcement if exists
-                If Me.LegReinforcements.Count > 0 Then
-                    If IsSomething(Me.NotMe) Then
-                        'if we get here, there's a previous EDS structure
-                        'check if EDS geometry exists
-                        'check if EDS leg reinforcement exists
-                        'compare geometry
-                        'compare leg reinforcement
-                        If IsNothing(NotMe.tnx.geometry) Or
-                          NotMe.LegReinforcements.Count = 0 Or
-                          Not Me.tnx.geometry.Equals(NotMe.tnx.geometry) Or
-                          Not Me.LegReinforcements.Equals(NotMe.LegReinforcements) Then
-                            WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.")
+                    If Not spliceCheckFile = "" Then
+                        OpenExcelRunMacro(spliceCheckFile, spliceMacImportTNX, isDevMode)
+                        OpenExcelRunMacro(spliceCheckFile, spliceMacRun, isDevMode)
+                    End If
+
+                    If Me.CCIplates.Count > 0 Then
+                        If Me.CCIplates.Count > 1 Then
+                            WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
+                        End If
+                        plateWeUsin = Me.CCIplates.FirstOrDefault
+                        OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
+
+                        WriteLineLogLine("INFO | Checking for BARB..")
+
+                        'barb
+                        'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
+                        If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
+                            WriteLineLogLine("INFO | BARB elevation found..")
+                            DoBARB(poleWeUsin, isDevMode)
                         End If
                     End If
 
-                    For Each legReinforcement As LegReinforcement In LegReinforcements
-                        OpenExcelRunMacro(legReinforcement.WorkBookPath, legReinforcementMac, isDevMode)
-                    Next
-                Else
-                    'WriteLineLogLine("WARNING | No Leg Reinforcement found! Could not verify Leg Reinforcement.")
-                End If
-
-                '/if plate exists, run - if Chris can update plate easily
-                If Me.CCIplates.Count > 0 Then
-                    If Me.CCIplates.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
+                    'CCI Pole step 3 - Run Analysis
+                    If CCIPoleExists And Not IsNothing(poleWeUsin) Then
+                        OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacRunAnalysis, isDevMode)
                     End If
-                    plateWeUsin = Me.CCIplates.FirstOrDefault
-                    OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
-                End If
 
-                '/loop through FNDs, open, input reactions & run macros
-                '//Run Unit Base
-                If Me.UnitBases.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
-                    For Each unitbase In Me.UnitBases
-                        OpenExcelRunMacro(unitbase.WorkBookPath, unitBaseMac, isDevMode)
-                    Next
-                End If
-                '//Run Drilled Pier
-                If Me.DrilledPierTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
-                    For Each drilledPier In Me.DrilledPierTools
-                        OpenExcelRunMacro(drilledPier.WorkBookPath, drilledPierMac, isDevMode)
-                    Next
-                End If
-                '//Run Pad/Pier
-                If Me.PierandPads.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
-                    For Each pierAndPad In Me.PierandPads
-                        OpenExcelRunMacro(pierAndPad.WorkBookPath, pierPadMac, isDevMode)
-                    Next
-                End If
-                '//Run Pile
-                If Me.Piles.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
-                    For Each pile In Me.Piles
-                        OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
-                    Next
-                End If
-                '//Run Guy Anchor
-                If Me.GuyAnchorBlockTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
-                    For Each guyAnchor In Me.GuyAnchorBlockTools
-                        OpenExcelRunMacro(guyAnchor.WorkBookPath, guyAnchorMac, isDevMode)
-                    Next
-                End If
+                    'get compression, sheer, and moment from TNX
+                    'GetCompSheerMomFromTNX(comp, sheer, mom)
 
-            Case Else
-                'manual process
-                WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType)
-                Exit Sub
+                    'loop through FNDs, open, input reactions & run macros
+                    '//drilled pier
+                    If Me.DrilledPierTools.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
+
+                        For Each dp As DrilledPierFoundation In Me.DrilledPierTools
+                            OpenExcelRunMacro(dp.WorkBookPath, dpMac, isDevMode)
+                        Next
+                    End If
+                    '//pier & pad
+                    If Me.PierandPads.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
+                        For Each pierPad As PierAndPad In Me.PierandPads
+                            OpenExcelRunMacro(pierPad.workBookPath, pierPadMac, isDevMode)
+                        Next
+                    End If
+                    '//Pile
+                    If Me.Piles.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
+                        For Each pile As Pile In Me.Piles
+                            OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
+                        Next
+                    End If
+                    '//Guy Anchor
+
+                    If Me.GuyAnchorBlockTools.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
+                        For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
+                            OpenExcelRunMacro(guyAnc.WorkBookPath, guyAnchorMac, isDevMode)
+                        Next
+                    End If
+
+                    Case "GUYED", "SELF SUPPORT"
+
+                    'Check if TNX has been ran. if not, run it
+                    'Dan will provide a file path to check for in the working directory
+
+
+                    '/run tnx
+                    'tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
+                    If File.Exists(tnxFullPath) Then
+                        If Not RunTNX(tnxFullPath, isDevMode) Then
+                            Exit Sub
+                        End If
+                    Else
+                        WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                        Exit Sub
+                    End If
+                    '/run seismic macro to create eri with seismic loads if needed
+
+                    If Me.CCISeismics.Count > 0 Then
+                        If Me.CCISeismics.Count > 1 Then
+                            WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..")
+                        End If
+                        seismicWeUsin = Me.CCISeismics.FirstOrDefault
+                        ' plateWeUsin = Me.CCIplates.FirstOrDefault
+
+                        OpenExcelRunMacro(seismicWeUsin.workBookPath, seisMac)
+                    End If
+
+                    '/run tnx
+                    tnxFullPath = Path.Combine(workingAreaPath, tnxFileName)
+                    RunTNX(tnxFullPath)
+
+
+                    '/run leg reinforcement
+                    '//compare previous geometry to current geometry
+                    '/run leg reinforcement if exists
+                    If Me.LegReinforcements.Count > 0 Then
+                        If IsSomething(Me.NotMe) Then
+                            'if we get here, there's a previous EDS structure
+                            'check if EDS geometry exists
+                            'check if EDS leg reinforcement exists
+                            'compare geometry
+                            'compare leg reinforcement
+                            If IsNothing(NotMe.tnx.geometry) Or
+                              NotMe.LegReinforcements.Count = 0 Or
+                              Not Me.tnx.geometry.Equals(NotMe.tnx.geometry) Or
+                              Not Me.LegReinforcements.Equals(NotMe.LegReinforcements) Then
+                                WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.")
+                            End If
+                        End If
+
+                        For Each legReinforcement As LegReinforcement In LegReinforcements
+                            OpenExcelRunMacro(legReinforcement.WorkBookPath, legReinforcementMac, isDevMode)
+                        Next
+                    Else
+                        'WriteLineLogLine("WARNING | No Leg Reinforcement found! Could not verify Leg Reinforcement.")
+                    End If
+
+                    '/if plate exists, run - if Chris can update plate easily
+                    If Me.CCIplates.Count > 0 Then
+                        If Me.CCIplates.Count > 1 Then
+                            WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
+                        End If
+                        plateWeUsin = Me.CCIplates.FirstOrDefault
+                        OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac)
+                    End If
+
+                    '/loop through FNDs, open, input reactions & run macros
+                    '//Run Unit Base
+                    If Me.UnitBases.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
+                        For Each unitbase In Me.UnitBases
+                            OpenExcelRunMacro(unitbase.workBookPath, unitBaseMac, isDevMode)
+                        Next
+                    End If
+                    '//Run Drilled Pier
+                    If Me.DrilledPierTools.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
+                        For Each drilledPier In Me.DrilledPierTools
+                            OpenExcelRunMacro(drilledPier.WorkBookPath, drilledPierMac, isDevMode)
+                        Next
+                    End If
+                    '//Run Pad/Pier
+                    If Me.PierandPads.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
+                        For Each pierAndPad In Me.PierandPads
+                            OpenExcelRunMacro(pierAndPad.WorkBookPath, pierPadMac, isDevMode)
+                        Next
+                    End If
+                    '//Run Pile
+                    If Me.Piles.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
+                        For Each pile In Me.Piles
+                            OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode)
+                        Next
+                    End If
+                    '//Run Guy Anchor
+                    If Me.GuyAnchorBlockTools.Count > 0 Then
+                        WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
+                        For Each guyAnchor In Me.GuyAnchorBlockTools
+                            OpenExcelRunMacro(guyAnchor.WorkBookPath, guyAnchorMac, isDevMode)
+                        Next
+                    End If
+
+                    Case Else
+                    'manual process
+                    WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType)
+                    Exit Sub
 
         End Select
 
@@ -552,27 +549,20 @@ Partial Public Class EDSStructure
         Return ""
     End Function
 
-    Public Function RunTNX(tnxFilePath As String, Optional isDevMode As Boolean = False) As Boolean
-        Dim tnxAppLocation As String = "C:\Program Files (x86)\TNX\tnxTower 8.1.5.0 BETA\tnxtower.exe"
+    Public Function RunTNX(tnxFilePath As String) As Boolean
 
         Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
-
+    Public Function RunTNX(tnxFilePath As String) As Boolean
         Try
             Dim cmdProcess As New Process
 
 
             WriteLineLogLine("INFO | Running TNX..")
+            '            WriteLineLogLine("---------------------------------------------------------------
+            '---------------------------------------------------------------
+            '---------------------------------------------------------------")
 
-            'determine TNX File path - newest version
-            tnxAppLocation = WhereInTheWorldIsTNXTower(isDevMode)
-
-            If tnxAppLocation = "" Then
-                'TNX app not found
-                WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.")
-                Return False
-            End If
-
-
+            Dim cmdProcess As New Process
             With cmdProcess
                 .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun") 'RunAnalysis 'SilentAnalysisRun
 
@@ -601,6 +591,10 @@ Partial Public Class EDSStructure
 
             'WriteLineLogLine("INFO | " & ipconfigOutput)
 
+            WriteLineLogLine("INFO | " & ipconfigOutput)
+            '            WriteLineLogLine("---------------------------------------------------------------
+            '---------------------------------------------------------------
+            '---------------------------------------------------------------")
             Return True
 
         Catch ex As Exception
@@ -609,11 +603,11 @@ Partial Public Class EDSStructure
             Return False
         End Try
     End Function
-    ''' <summary>
-    '''check the TNX API silent log to determine when it's finished
-    '''maxTimeout is in milliseconds
-    ''' </summary>
-    ''' <param name="logFilePath"></param>
+
+    Public Function WhereInTheWorldIsTNXTower(Optional isDevMode As Boolean = False) As String
+        Dim defaultAppLocationBase As String = "C:\Program Files (x86)\TNX"
+        Dim appName As String = "tnxTower"
+        Dim newestAppFolderName As String
     ''' <param name="maxTimeout"></param>
     Private Function CheckLogFileForFinished(logFilePath As String, maxTimeout As Integer) As Boolean
 
