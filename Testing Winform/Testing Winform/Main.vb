@@ -110,7 +110,7 @@ Partial Public Class frmMain
             EDSuserPwActive = EDSuserPwProduction
         End If
 
-        If Environment.UserName.ToLower = "imiller" Or Environment.UserName.ToLower = "stanley" Then
+        If Environment.UserName.ToLower = "imiller" Or Environment.UserName.ToLower = "stanley" Or Environment.UserName.ToLower = "dsmilowitz" Then
             txtFndBU.Text = My.Settings.myBU
             txtFndStrc.Text = My.Settings.myStrID
             txtFndWO.Text = My.Settings.myWO
@@ -151,7 +151,7 @@ Partial Public Class frmMain
         If xlFd.ShowDialog = DialogResult.OK Then
             Dim workingDirectory As String = Path.GetDirectoryName(xlFd.FileNames(0))
             txtDirectory.Text = workingDirectory
-            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive, True)
+            strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, workingDirectory, workingDirectory, xlFd.FileNames, EDSnewId, EDSdbActive)
 
         End If
 

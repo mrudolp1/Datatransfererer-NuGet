@@ -57,19 +57,11 @@ Partial Public Class EDSStructure
         'Leave method empty
     End Sub
 
-    'Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-    '    Me.bus_unit = BU
-    '    Me.structure_id = structureID
-    '    Me.work_order_seq_num = WorkOrder
-
-    '    LoadFromFiles(filePaths)
-    'End Sub
-
     Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
         Me.work_order_seq_num = WorkOrder
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
 
         LoadFromFiles(filePaths)
     End Sub
@@ -80,8 +72,7 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
-        'does this need changed to workDirectory??
-        Me.WorkingDirectory = WorkingDirectory
+        Me.WorkingDirectory = workDirectory
         Me.ReportOptions = New ReportOptions(reportDirectory, Me)
 
         LoadFromFiles(filePaths)
@@ -108,21 +99,6 @@ Partial Public Class EDSStructure
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
-    End Sub
-
-    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal workDirectory As String, ByVal reportDirectory As String, filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String, ByVal forSeb As Boolean)
-
-
-        Me.bus_unit = BU
-        Me.structure_id = structureID
-        Me.work_order_seq_num = WorkOrder
-        Me.databaseIdentity = LogOnUser
-        Me.activeDatabase = ActiveDatabase
-        Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
-        Me.SiteInfo = New SiteInfo(WorkOrder)
-
-        LoadFromFiles(filePaths)
     End Sub
 
     Public Overrides Function ToString() As String
@@ -366,39 +342,30 @@ Partial Public Class EDSStructure
             ElseIf item.Contains("Pier and Pad Foundation") Then
                 Me.PierandPads = New List(Of PierAndPad)
                 Me.PierandPads.Add(New PierAndPad(item, Me))
-                Me.PierandPads.Last.workBookPath = item
             ElseIf item.Contains("Pile Foundation") Then
                 Me.Piles = New List(Of Pile)
                 Me.Piles.Add(New Pile(item, Me))
-                Me.Piles.Last.workBookPath = item
             ElseIf item.Contains("SST Unit Base Foundation") Then
                 Me.UnitBases = New List(Of UnitBase)
                 Me.UnitBases.Add(New UnitBase(item, Me))
-                Me.UnitBases.Last.workBookPath = item
             ElseIf item.Contains("Drilled Pier Foundation") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
-                Me.DrilledPierTools.Last.workBookPath = item
             ElseIf item.Contains("Guyed Anchor Block Foundation") Then
                 GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
-                Me.GuyAnchorBlockTools.Last.workBookPath = item
             ElseIf item.Contains("CCIplate") Then
                 Me.CCIplates = New List(Of CCIplate)
                 Me.CCIplates.Add(New CCIplate(item, Me))
-                Me.CCIplates.Last.workBookPath = item
             ElseIf item.Contains("CCIpole") Then
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
-                Me.Poles.Last.workBookPath = item
             ElseIf item.Contains("Leg Reinforcement") Then
                 Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
-                Me.LegReinforcements.Last.workBookPath = item
             ElseIf item.Contains("CCISeismic") Then
                 Me.CCISeismics = New List(Of CCISeismic)
                 Me.CCISeismics.Add(New CCISeismic(item, Me))
-                Me.CCISeismics.Last.workBookPath = item
             End If
         Next
     End Sub
@@ -418,55 +385,31 @@ Partial Public Class EDSStructure
         If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"))
 
         For i = 0 To Me.PierandPads.Count - 1
-            'I think we need a better way to get filename and maintain meaningful file names after they've gone through the database.
-            'PierandPads(i).workBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(PierandPads(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(PierandPads(i).templatePath))
             PierandPads(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.Piles.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            'Piles(i).workBookPath = Path.Combine(folderPath, Path.GetFileName(Piles(i).templatePath) & fileNum)
-            Piles(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Piles(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(Piles(i).TemplatePath))
-            Piles(i).SavetoExcel()
+            Piles(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.UnitBases.Count - 1
-            fileNum = String.Format(" ({0})", i.ToString)
-            UnitBases(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(UnitBases(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(UnitBases(i).TemplatePath))
-            UnitBases(i).SavetoExcel()
+            UnitBases(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.DrilledPierTools.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            DrilledPierTools(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileName(DrilledPierTools(i).TemplatePath) & fileNum)
-            DrilledPierTools(i).SavetoExcel()
+            DrilledPierTools(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.GuyAnchorBlockTools.Count - 1
-            fileNum = Format(" ({0})", i.ToString)
-            GuyAnchorBlockTools(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(GuyAnchorBlockTools(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(GuyAnchorBlockTools(i).TemplatePath))
-            GuyAnchorBlockTools(i).SavetoExcel()
+            GuyAnchorBlockTools(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.CCIplates.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            CCIplates(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCIplates(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(CCIplates(i).TemplatePath))
-            CCIplates(i).SavetoExcel()
+            CCIplates(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.Poles.Count - 1
-            fileNum = Format(" ({0})", i.ToString)
-            Poles(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(Poles(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(Poles(i).TemplatePath))
-            Poles(i).SavetoExcel()
+            Poles(i).SavetoExcel(index:=i)
         Next
-
         For i = 0 To Me.LegReinforcements.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            LegReinforcements(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(LegReinforcements(i).TemplatePath) & "_EDS_" & fileNum & Path.GetExtension(LegReinforcements(i).TemplatePath))
-            LegReinforcements(i).SavetoExcel()
+            LegReinforcements(i).SavetoExcel(index:=i)
         Next
         For i = 0 To Me.CCISeismics.Count - 1
-            fileNum = If(i = 0, "", Format(" ({0})", i.ToString))
-            CCISeismics(i).WorkBookPath = Path.Combine(folderPath, Me.bus_unit & "_" & Path.GetFileNameWithoutExtension(CCISeismics(i).templatePath) & "_EDS_" & fileNum & Path.GetExtension(CCISeismics(i).templatePath))
-            CCISeismics(i).SavetoExcel()
+            CCISeismics(i).SavetoExcel(index:=i)
         Next
     End Sub
 #End Region
