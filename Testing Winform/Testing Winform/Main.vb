@@ -478,10 +478,190 @@ Partial Public Class frmMain
 
     End Sub
 
+    Private Sub testSaFolder_EditValueChanged(sender As Object, e As EventArgs) Handles testSaFolder.EditValueChanged
+        Try
+            SimpleExplorer2.SetCurrentDirectory(testSaFolder.Text)
+        Catch ex As Exception
+            SimpleExplorer2.SetCurrentDirectory(testSaFolder.Text.Replace(" - SA", ""))
+        End Try
+
+    End Sub
+
+    Private Sub testFolder_EditValueChanged(sender As Object, e As EventArgs) Handles testFolder.EditValueChanged
+        SimpleExplorer1.SetCurrentDirectory(testFolder.Text)
+    End Sub
+
+    Public unitTestCases As New List(Of TestCase)
+
+    Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabControl1.SelectedIndexChanged
+        If TabControl1.SelectedTab.Name = TabPage1.Name Then
+            If unitTestCases.Count > 0 Then Exit Sub
+
+            Using csvReader As New Microsoft.VisualBasic.FileIO.TextFieldParser("R:\Development\SAPI Testing\Unit Test Cases.csv")
+                csvReader.TextFieldType = FileIO.FieldType.Delimited
+                csvReader.SetDelimiters(",")
+                Dim csvValue As String()
+
+                While Not csvReader.EndOfData
+                    csvValue = csvReader.ReadFields
+                    unitTestCases.Add(New TestCase(csvValue))
+                End While
+            End Using
+        End If
+    End Sub
+
+    Private Sub testID_SelectedIndexChanged(sender As Object, e As EventArgs) Handles testID.SelectedIndexChanged
+        Dim id As Integer = testID.Text - 1
+        Dim testCase As Integer = testID.Text
+
+        If Not Directory.Exists("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase) Then
+            Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase)
+            Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Manual (Current)")
+            Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Reference SA Files")
+            Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Manual ERI")
+            CreateIteration(1, True)
+        End If
+
+        testBu.Text = unitTestCases(id).BU
+        testSid.Text = unitTestCases(id).SID
+        testWo.Text = unitTestCases(id).WO
+        testSaFolder.Text = unitTestCases(id).SAWorkArea
+        testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
+        testComb.Text = unitTestCases(id).COMB
+
+        Dim itCount As Integer = 0
+        For Each subDir In New DirectoryInfo("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase).GetDirectories
+            If subDir.Name.Contains("Iteration ") Then itCount += 1
+        Next
+
+        testIteration.Text = itCount
+        testNextIteration.Text = itCount + 1
+
+        btnNextIteration.Enabled = True
+    End Sub
+
+    Private Sub btnNextIteration_Click(sender As Object, e As EventArgs) Handles btnNextIteration.Click
+        CreateIteration(testNextIteration.Text)
+    End Sub
 
 
+    Public Sub CreateIteration(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
+        Dim answer = vbYes
+        Dim testCase As Integer = testID.Text
+        Dim MaeFolder As String = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Iteration " & Iteration & "\Maestro"
+        Dim ManFolder As String = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Iteration " & Iteration & "\Manual (SAPI)"
+        Dim PubFolder As String = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Manual (Current)"
+        Dim RefFolder As String = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Reference SA Files"
+        Dim EriFolder As String = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Manual ERI"
+
+        Dim fileCount As Integer = Directory.GetFiles(RefFolder).Count
+        Dim publishedFileCount As Integer = Directory.GetFiles(PubFolder).Count
+        Dim eriFileCount As Integer = Directory.GetFiles(EriFolder).Count
+
+        If fileCount = 0 Then
+            If Not isFirstTime Then MsgBox("Files do not exist in the 'Reference SA Files' folder yet. Please copy reference files to continue.", vbCritical, "No Reference Files")
+            testIteration.Text = Iteration - 1
+            testNextIteration.Text = Iteration
+        Else
+            Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Iteration " & Iteration)
+            Directory.CreateDirectory(MaeFolder)
+            Directory.CreateDirectory(ManFolder)
+
+            testIteration.Text = Iteration
+            testNextIteration.Text = Iteration + 1
+            testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
+
+            For Each file In New DirectoryInfo(RefFolder).GetFiles
+                If file.Extension.Contains("eri") Then
+                    file.CopyTo(MaeFolder)
+                    If eriFileCount = 0 Then file.CopyTo(EriFolder)
+                Else
+                    Dim myTemplate As Tuple(Of FileInfo, FileInfo) = WhichFile(file)
+
+                    If myTemplate.Item1 Is Nothing Or myTemplate.Item2 Is Nothing Then
+                        MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
+                    Else
+                        With myTemplate
+                            If publishedFileCount = 0 Then
+                                'Copy published versions of the tools into the manual folder 
+                                .Item1.CopyTo(GetNewFileName(PubFolder, .Item1))
+                            End If
+
+                            .Item2.CopyTo(GetNewFileName(MaeFolder, .Item2))
+                            .Item2.CopyTo(GetNewFileName(ManFolder, .Item2))
+                        End With
+                    End If
+                End If
+            Next
+
+
+        End If
+    End Sub
+
+    Public Function GetNewFileName(ByVal newFolder As String, ByVal file As FileInfo) As String
+        Dim counter As Integer = 0
+        Dim filePath As String = String.Format("{0}({1}", newFolder & "\" & file.Name, counter.ToString())
+        While IO.File.Exists(filePath)
+            counter += 1
+            filePath = String.Format("{0}({1}", newFolder & "\" & file.Name, counter.ToString())
+        End While
+
+        Return filePath
+    End Function
+
+    Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of FileInfo, FileInfo)
+        Dim returner As Tuple(Of FileInfo, FileInfo)
+
+        If file.Name.ToLower.Contains("cciplate") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("ccipole") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("cciseismic") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("drilled pier") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("guyed anchor") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("pier and pad") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("pile") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        ElseIf file.Name.ToLower.Contains("unit base") Then
+            returner = New Tuple(Of FileInfo, FileInfo)(New FileInfo(""), New FileInfo(""))
+        Else
+            returner = New Tuple(Of FileInfo, FileInfo)(Nothing, Nothing)
+        End If
+
+        Return returner
+    End Function
 
 #End Region
+
+End Class
+
+
+Partial Public Class TestCase
+    Public Property ID As Integer
+    Public Property BU As Integer
+    Public Property SID As String
+    Public Property WO As Integer
+    Public Property COMB As String
+    Public Property SAWorkArea As String
+
+    Public Sub New()
+
+    End Sub
+
+    Public Sub New(ByVal csvValue As String())
+        Me.ID = csvValue(0)
+        Me.BU = csvValue(1)
+        Me.SID = csvValue(2)
+        Me.WO = csvValue(3)
+        Me.COMB = csvValue(4)
+        Me.SAWorkArea = csvValue(5)
+    End Sub
 
 End Class
 

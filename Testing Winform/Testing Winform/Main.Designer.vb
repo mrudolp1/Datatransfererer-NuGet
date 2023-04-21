@@ -29,6 +29,7 @@
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.btnImportStrcFiles = New System.Windows.Forms.Button()
         Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
+        Me.btnConduct = New System.Windows.Forms.Button()
         Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
         Me.propgridFndXL = New System.Windows.Forms.PropertyGrid()
         Me.SplitContainer5 = New System.Windows.Forms.SplitContainer()
@@ -72,7 +73,30 @@
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.btnConduct = New System.Windows.Forms.Button()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.SplitContainerControl1 = New DevExpress.XtraEditors.SplitContainerControl()
+        Me.SimpleExplorer1 = New Testing_Winform.SimpleExplorer()
+        Me.SimpleExplorer2 = New Testing_Winform.SimpleExplorer()
+        Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+        Me.testComb = New DevExpress.XtraEditors.TextEdit()
+        Me.LabelControl9 = New DevExpress.XtraEditors.LabelControl()
+        Me.btnNextIteration = New DevExpress.XtraEditors.SimpleButton()
+        Me.testNextIteration = New DevExpress.XtraEditors.TextEdit()
+        Me.LabelControl8 = New DevExpress.XtraEditors.LabelControl()
+        Me.testID = New DevExpress.XtraEditors.ComboBoxEdit()
+        Me.LabelControl7 = New DevExpress.XtraEditors.LabelControl()
+        Me.LabelControl1 = New DevExpress.XtraEditors.LabelControl()
+        Me.testSaFolder = New DevExpress.XtraEditors.ButtonEdit()
+        Me.testFolder = New DevExpress.XtraEditors.TextEdit()
+        Me.testBu = New DevExpress.XtraEditors.TextEdit()
+        Me.testIteration = New DevExpress.XtraEditors.TextEdit()
+        Me.LabelControl2 = New DevExpress.XtraEditors.LabelControl()
+        Me.LabelControl6 = New DevExpress.XtraEditors.LabelControl()
+        Me.testSid = New DevExpress.XtraEditors.TextEdit()
+        Me.LabelControl5 = New DevExpress.XtraEditors.LabelControl()
+        Me.testWo = New DevExpress.XtraEditors.TextEdit()
+        Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
+        Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
         Me.pgStructure.SuspendLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer3.Panel1.SuspendLayout()
@@ -103,6 +127,24 @@
         Me.pgSQLBackUp.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabControl1.SuspendLayout()
+        Me.TabPage1.SuspendLayout()
+        CType(Me.SplitContainerControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SplitContainerControl1.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainerControl1.Panel1.SuspendLayout()
+        CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainerControl1.Panel2.SuspendLayout()
+        Me.SplitContainerControl1.SuspendLayout()
+        CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PanelControl1.SuspendLayout()
+        CType(Me.testComb.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testNextIteration.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testID.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testSaFolder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testFolder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testBu.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testIteration.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'pgStructure
@@ -165,6 +207,15 @@
         Me.SplitContainer4.Size = New System.Drawing.Size(438, 378)
         Me.SplitContainer4.SplitterDistance = 164
         Me.SplitContainer4.TabIndex = 4
+        '
+        'btnConduct
+        '
+        Me.btnConduct.Location = New System.Drawing.Point(2, 179)
+        Me.btnConduct.Name = "btnConduct"
+        Me.btnConduct.Size = New System.Drawing.Size(160, 21)
+        Me.btnConduct.TabIndex = 4
+        Me.btnConduct.Text = "Conduct"
+        Me.btnConduct.UseVisualStyleBackColor = True
         '
         'btnSaveFndToEDS
         '
@@ -596,6 +647,7 @@
         Me.TabControl1.Controls.Add(Me.pgStructure)
         Me.TabControl1.Controls.Add(Me.pgSQLBackUp)
         Me.TabControl1.Controls.Add(Me.pgTNX)
+        Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
@@ -603,14 +655,236 @@
         Me.TabControl1.Size = New System.Drawing.Size(891, 487)
         Me.TabControl1.TabIndex = 3
         '
-        'btnConduct
+        'TabPage1
         '
-        Me.btnConduct.Location = New System.Drawing.Point(2, 179)
-        Me.btnConduct.Name = "btnConduct"
-        Me.btnConduct.Size = New System.Drawing.Size(160, 21)
-        Me.btnConduct.TabIndex = 4
-        Me.btnConduct.Text = "Conduct"
-        Me.btnConduct.UseVisualStyleBackColor = True
+        Me.TabPage1.Controls.Add(Me.SplitContainerControl1)
+        Me.TabPage1.Controls.Add(Me.PanelControl1)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage1.Size = New System.Drawing.Size(883, 461)
+        Me.TabPage1.TabIndex = 5
+        Me.TabPage1.Text = "Testing"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'SplitContainerControl1
+        '
+        Me.SplitContainerControl1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainerControl1.Location = New System.Drawing.Point(3, 100)
+        Me.SplitContainerControl1.Name = "SplitContainerControl1"
+        '
+        'SplitContainerControl1.Panel1
+        '
+        Me.SplitContainerControl1.Panel1.Controls.Add(Me.SimpleExplorer1)
+        Me.SplitContainerControl1.Panel1.Text = "Panel1"
+        '
+        'SplitContainerControl1.Panel2
+        '
+        Me.SplitContainerControl1.Panel2.Controls.Add(Me.SimpleExplorer2)
+        Me.SplitContainerControl1.Panel2.Text = "Panel2"
+        Me.SplitContainerControl1.Size = New System.Drawing.Size(877, 358)
+        Me.SplitContainerControl1.SplitterPosition = 414
+        Me.SplitContainerControl1.TabIndex = 15
+        '
+        'SimpleExplorer1
+        '
+        Me.SimpleExplorer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SimpleExplorer1.Location = New System.Drawing.Point(0, 0)
+        Me.SimpleExplorer1.Margin = New System.Windows.Forms.Padding(0)
+        Me.SimpleExplorer1.Name = "SimpleExplorer1"
+        Me.SimpleExplorer1.Size = New System.Drawing.Size(414, 358)
+        Me.SimpleExplorer1.TabIndex = 14
+        '
+        'SimpleExplorer2
+        '
+        Me.SimpleExplorer2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SimpleExplorer2.Location = New System.Drawing.Point(0, 0)
+        Me.SimpleExplorer2.Margin = New System.Windows.Forms.Padding(0)
+        Me.SimpleExplorer2.Name = "SimpleExplorer2"
+        Me.SimpleExplorer2.Size = New System.Drawing.Size(453, 358)
+        Me.SimpleExplorer2.TabIndex = 15
+        '
+        'PanelControl1
+        '
+        Me.PanelControl1.Controls.Add(Me.testComb)
+        Me.PanelControl1.Controls.Add(Me.LabelControl9)
+        Me.PanelControl1.Controls.Add(Me.btnNextIteration)
+        Me.PanelControl1.Controls.Add(Me.testNextIteration)
+        Me.PanelControl1.Controls.Add(Me.LabelControl8)
+        Me.PanelControl1.Controls.Add(Me.testID)
+        Me.PanelControl1.Controls.Add(Me.LabelControl7)
+        Me.PanelControl1.Controls.Add(Me.LabelControl1)
+        Me.PanelControl1.Controls.Add(Me.testSaFolder)
+        Me.PanelControl1.Controls.Add(Me.testFolder)
+        Me.PanelControl1.Controls.Add(Me.testBu)
+        Me.PanelControl1.Controls.Add(Me.testIteration)
+        Me.PanelControl1.Controls.Add(Me.LabelControl2)
+        Me.PanelControl1.Controls.Add(Me.LabelControl6)
+        Me.PanelControl1.Controls.Add(Me.testSid)
+        Me.PanelControl1.Controls.Add(Me.LabelControl5)
+        Me.PanelControl1.Controls.Add(Me.testWo)
+        Me.PanelControl1.Controls.Add(Me.LabelControl4)
+        Me.PanelControl1.Controls.Add(Me.LabelControl3)
+        Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PanelControl1.Location = New System.Drawing.Point(3, 3)
+        Me.PanelControl1.Name = "PanelControl1"
+        Me.PanelControl1.Size = New System.Drawing.Size(877, 97)
+        Me.PanelControl1.TabIndex = 16
+        '
+        'testComb
+        '
+        Me.testComb.Location = New System.Drawing.Point(645, 63)
+        Me.testComb.Name = "testComb"
+        Me.testComb.Properties.ReadOnly = True
+        Me.testComb.Size = New System.Drawing.Size(127, 20)
+        Me.testComb.TabIndex = 20
+        '
+        'LabelControl9
+        '
+        Me.LabelControl9.Location = New System.Drawing.Point(556, 66)
+        Me.LabelControl9.Name = "LabelControl9"
+        Me.LabelControl9.Size = New System.Drawing.Size(83, 13)
+        Me.LabelControl9.TabIndex = 19
+        Me.LabelControl9.Text = "Test Combination"
+        '
+        'btnNextIteration
+        '
+        Me.btnNextIteration.Enabled = False
+        Me.btnNextIteration.Location = New System.Drawing.Point(715, 35)
+        Me.btnNextIteration.Name = "btnNextIteration"
+        Me.btnNextIteration.Size = New System.Drawing.Size(57, 23)
+        Me.btnNextIteration.TabIndex = 18
+        Me.btnNextIteration.Text = "Create"
+        '
+        'testNextIteration
+        '
+        Me.testNextIteration.Location = New System.Drawing.Point(644, 37)
+        Me.testNextIteration.Name = "testNextIteration"
+        Me.testNextIteration.Properties.ReadOnly = True
+        Me.testNextIteration.Size = New System.Drawing.Size(50, 20)
+        Me.testNextIteration.TabIndex = 17
+        '
+        'LabelControl8
+        '
+        Me.LabelControl8.Location = New System.Drawing.Point(570, 40)
+        Me.LabelControl8.Name = "LabelControl8"
+        Me.LabelControl8.Size = New System.Drawing.Size(68, 13)
+        Me.LabelControl8.TabIndex = 16
+        Me.LabelControl8.Text = "Next Iteration"
+        '
+        'testID
+        '
+        Me.testID.Location = New System.Drawing.Point(69, 11)
+        Me.testID.Name = "testID"
+        Me.testID.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.testID.Properties.Items.AddRange(New Object() {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100"})
+        Me.testID.Size = New System.Drawing.Size(89, 20)
+        Me.testID.TabIndex = 15
+        '
+        'LabelControl7
+        '
+        Me.LabelControl7.Location = New System.Drawing.Point(28, 14)
+        Me.LabelControl7.Name = "LabelControl7"
+        Me.LabelControl7.Size = New System.Drawing.Size(35, 13)
+        Me.LabelControl7.TabIndex = 14
+        Me.LabelControl7.Text = "Test ID"
+        '
+        'LabelControl1
+        '
+        Me.LabelControl1.Location = New System.Drawing.Point(164, 14)
+        Me.LabelControl1.Name = "LabelControl1"
+        Me.LabelControl1.Size = New System.Drawing.Size(13, 13)
+        Me.LabelControl1.TabIndex = 3
+        Me.LabelControl1.Text = "BU"
+        '
+        'testSaFolder
+        '
+        Me.testSaFolder.EditValue = ""
+        Me.testSaFolder.Location = New System.Drawing.Point(69, 37)
+        Me.testSaFolder.Name = "testSaFolder"
+        Me.testSaFolder.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton()})
+        Me.testSaFolder.Size = New System.Drawing.Size(451, 20)
+        Me.testSaFolder.TabIndex = 1
+        '
+        'testFolder
+        '
+        Me.testFolder.Location = New System.Drawing.Point(69, 63)
+        Me.testFolder.Name = "testFolder"
+        Me.testFolder.Properties.ReadOnly = True
+        Me.testFolder.Size = New System.Drawing.Size(451, 20)
+        Me.testFolder.TabIndex = 13
+        '
+        'testBu
+        '
+        Me.testBu.Location = New System.Drawing.Point(183, 11)
+        Me.testBu.Name = "testBu"
+        Me.testBu.Properties.ReadOnly = True
+        Me.testBu.Size = New System.Drawing.Size(100, 20)
+        Me.testBu.TabIndex = 2
+        '
+        'testIteration
+        '
+        Me.testIteration.Location = New System.Drawing.Point(644, 11)
+        Me.testIteration.Name = "testIteration"
+        Me.testIteration.Properties.ReadOnly = True
+        Me.testIteration.Size = New System.Drawing.Size(50, 20)
+        Me.testIteration.TabIndex = 12
+        '
+        'LabelControl2
+        '
+        Me.LabelControl2.Location = New System.Drawing.Point(289, 14)
+        Me.LabelControl2.Name = "LabelControl2"
+        Me.LabelControl2.Size = New System.Drawing.Size(59, 13)
+        Me.LabelControl2.TabIndex = 4
+        Me.LabelControl2.Text = "Structure ID"
+        '
+        'LabelControl6
+        '
+        Me.LabelControl6.Location = New System.Drawing.Point(556, 14)
+        Me.LabelControl6.Name = "LabelControl6"
+        Me.LabelControl6.Size = New System.Drawing.Size(82, 13)
+        Me.LabelControl6.TabIndex = 11
+        Me.LabelControl6.Text = "Current Iteration"
+        '
+        'testSid
+        '
+        Me.testSid.Location = New System.Drawing.Point(354, 11)
+        Me.testSid.Name = "testSid"
+        Me.testSid.Properties.ReadOnly = True
+        Me.testSid.Size = New System.Drawing.Size(36, 20)
+        Me.testSid.TabIndex = 5
+        '
+        'LabelControl5
+        '
+        Me.LabelControl5.Location = New System.Drawing.Point(9, 66)
+        Me.LabelControl5.Name = "LabelControl5"
+        Me.LabelControl5.Size = New System.Drawing.Size(54, 13)
+        Me.LabelControl5.TabIndex = 10
+        Me.LabelControl5.Text = "Test Folder"
+        '
+        'testWo
+        '
+        Me.testWo.Location = New System.Drawing.Point(420, 11)
+        Me.testWo.Name = "testWo"
+        Me.testWo.Properties.ReadOnly = True
+        Me.testWo.Size = New System.Drawing.Size(100, 20)
+        Me.testWo.TabIndex = 6
+        '
+        'LabelControl4
+        '
+        Me.LabelControl4.Location = New System.Drawing.Point(17, 40)
+        Me.LabelControl4.Name = "LabelControl4"
+        Me.LabelControl4.Size = New System.Drawing.Size(46, 13)
+        Me.LabelControl4.TabIndex = 8
+        Me.LabelControl4.Text = "SA Folder"
+        '
+        'LabelControl3
+        '
+        Me.LabelControl3.Location = New System.Drawing.Point(396, 14)
+        Me.LabelControl3.Name = "LabelControl3"
+        Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
+        Me.LabelControl3.TabIndex = 7
+        Me.LabelControl3.Text = "WO"
         '
         'frmMain
         '
@@ -658,6 +932,25 @@
         Me.pgSQLBackUp.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabControl1.ResumeLayout(False)
+        Me.TabPage1.ResumeLayout(False)
+        CType(Me.SplitContainerControl1.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainerControl1.Panel1.ResumeLayout(False)
+        CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainerControl1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainerControl1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainerControl1.ResumeLayout(False)
+        CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PanelControl1.ResumeLayout(False)
+        Me.PanelControl1.PerformLayout()
+        CType(Me.testComb.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testNextIteration.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testID.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testSaFolder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testFolder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testBu.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testIteration.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -710,6 +1003,30 @@
     Friend WithEvents txtDirectory As TextBox
     Friend WithEvents btnBrowse As Button
     Friend WithEvents btnConduct As Button
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents testSaFolder As DevExpress.XtraEditors.ButtonEdit
+    Friend WithEvents testIteration As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LabelControl6 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents LabelControl5 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents LabelControl4 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents LabelControl3 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents testWo As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents testSid As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LabelControl2 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents LabelControl1 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents testBu As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents testFolder As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents SplitContainerControl1 As DevExpress.XtraEditors.SplitContainerControl
+    Friend WithEvents SimpleExplorer1 As SimpleExplorer
+    Friend WithEvents SimpleExplorer2 As SimpleExplorer
+    Friend WithEvents PanelControl1 As DevExpress.XtraEditors.PanelControl
+    Friend WithEvents testID As DevExpress.XtraEditors.ComboBoxEdit
+    Friend WithEvents LabelControl7 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents btnNextIteration As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents testNextIteration As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LabelControl8 As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents testComb As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LabelControl9 As DevExpress.XtraEditors.LabelControl
 
 #End Region
 
