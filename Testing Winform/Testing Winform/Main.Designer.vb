@@ -25,13 +25,11 @@
         ''' the contents of this method with the code editor.
         ''' </summary>
         Private Sub InitializeComponent()
-            Dim GridLevelNode1 As DevExpress.XtraGrid.GridLevelNode = New DevExpress.XtraGrid.GridLevelNode()
-            Dim GridLevelNode2 As DevExpress.XtraGrid.GridLevelNode = New DevExpress.XtraGrid.GridLevelNode()
             Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
             Me.GridView2 = New DevExpress.XtraGrid.Views.Grid.GridView()
             Me.GridControl1 = New DevExpress.XtraGrid.GridControl()
-            Me.GridView3 = New DevExpress.XtraGrid.Views.Grid.GridView()
             Me.GridView1 = New DevExpress.XtraGrid.Views.Grid.GridView()
+            Me.GridView3 = New DevExpress.XtraGrid.Views.Grid.GridView()
             Me.pgStructure = New System.Windows.Forms.TabPage()
             Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
             Me.btnImportStrcFiles = New System.Windows.Forms.Button()
@@ -122,8 +120,8 @@
             Me.FileSystemWatcher1 = New System.IO.FileSystemWatcher()
             CType(Me.GridView2, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.GridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -206,22 +204,12 @@
             'GridControl1
             '
             Me.GridControl1.Dock = System.Windows.Forms.DockStyle.Fill
-            GridLevelNode1.LevelTemplate = Me.GridView2
-            GridLevelNode1.RelationName = "Level1"
-            GridLevelNode2.LevelTemplate = Me.GridView3
-            GridLevelNode2.RelationName = "Level2"
-            Me.GridControl1.LevelTree.Nodes.AddRange(New DevExpress.XtraGrid.GridLevelNode() {GridLevelNode1, GridLevelNode2})
-            Me.GridControl1.Location = New System.Drawing.Point(568, 16)
+            Me.GridControl1.Location = New System.Drawing.Point(1042, 16)
             Me.GridControl1.MainView = Me.GridView1
             Me.GridControl1.Name = "GridControl1"
-            Me.GridControl1.Size = New System.Drawing.Size(651, 190)
+            Me.GridControl1.Size = New System.Drawing.Size(177, 190)
             Me.GridControl1.TabIndex = 19
-            Me.GridControl1.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView3, Me.GridView1, Me.GridView2})
-            '
-            'GridView3
-            '
-            Me.GridView3.GridControl = Me.GridControl1
-            Me.GridView3.Name = "GridView3"
+            Me.GridControl1.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView1, Me.GridView3, Me.GridView2})
             '
             'GridView1
             '
@@ -236,9 +224,13 @@
             Me.GridView1.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full
             Me.GridView1.OptionsView.ColumnAutoWidth = False
             Me.GridView1.OptionsView.ColumnHeaderAutoHeight = DevExpress.Utils.DefaultBoolean.[True]
-            Me.GridView1.OptionsView.ShowFooter = True
             Me.GridView1.OptionsView.ShowGroupPanel = False
             Me.GridView1.OptionsView.ShowIndicator = False
+            '
+            'GridView3
+            '
+            Me.GridView3.GridControl = Me.GridControl1
+            Me.GridView3.Name = "GridView3"
             '
             'pgStructure
             '
@@ -893,7 +885,7 @@
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Left
             Me.rtbNotes.Location = New System.Drawing.Point(0, 16)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(568, 190)
+            Me.rtbNotes.Size = New System.Drawing.Size(1042, 190)
             Me.rtbNotes.TabIndex = 17
             Me.rtbNotes.Text = ""
             '
@@ -981,7 +973,6 @@
             Me.testConduct.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
             Me.testConduct.Size = New System.Drawing.Size(77, 49)
             Me.testConduct.TabIndex = 24
-            Me.testConduct.Visible = False
             '
             'chkWorkLocal
             '
@@ -1184,8 +1175,8 @@
             Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
             CType(Me.GridView2, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).EndInit()
-            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.GridView1, System.ComponentModel.ISupportInitialize).EndInit()
+            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).EndInit()
             Me.pgStructure.ResumeLayout(False)
             Me.SplitContainer3.Panel1.ResumeLayout(False)
             Me.SplitContainer3.Panel2.ResumeLayout(False)

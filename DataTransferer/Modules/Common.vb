@@ -212,7 +212,7 @@ Public Module Common
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource
         'DevExpress specific process to fill an excel data source with information from a range in excel
         Dim importSettings As New ExcelWorksheetSettings() With {.WorksheetName = ws, .CellRange = rng}
-        Dim options As New ExcelSourceOptions() With {.ImportSettings = importSettings}
+        Dim options As New ExcelSourceOptions() With {.ImportSettings = importSettings, .SkipHiddenColumns = False, .SkipHiddenRows = False}
         GetExcelDataSource = New ExcelDataSource() With {.FileName = path, .SourceOptions = options}
         GetExcelDataSource.Fill()
 
