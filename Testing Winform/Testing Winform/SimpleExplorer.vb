@@ -26,15 +26,23 @@ Namespace UnitTesting
                                                                      End Sub)
                 AddHandler listView.FocusedLinkChanged, AddressOf OnListViewFocusedLinkChanged
                 AddHandler listView.CurrentItemChanged, AddressOf OnListViewCurrentItemChanged
+                '</gridControl>
+
+                '<gridview>
                 AddHandler gridView1.RowClick, AddressOf gridView1_RowClick
                 AddHandler gridView1.DoubleClick, AddressOf gridView1_DoubleClick
-                '</gridControl>
+                '</gridview>
+
+                '<listview>
                 AddHandler listView.AllowGoBackChanged, AddressOf OnUpdateNavigationButtons
                 AddHandler listView.AllowGoForwardChanged, AddressOf OnUpdateNavigationButtons
                 AddHandler listView.AllowGoUpChanged, AddressOf OnUpdateNavigationButtons
+                '</listview
+
                 '<currentPathEdit>
                 breadCrumb = fileExplorerAssistant.Attach(currentPathEdit, Sub(x) AddHandler x.CurrentItemChanged, AddressOf OnCurrentPathEditCurrentItemChanged)
                 '</currentPathEdit>
+
                 '<treeList>
                 folderTree = fileExplorerAssistant.Attach(TreeList, Sub(x)
                                                                         x.RootNodes.Add(New EnvironmentSpecialFolderNode(Environment.SpecialFolder.Desktop))
@@ -43,9 +51,7 @@ Namespace UnitTesting
                 folderTree.AutoExpandToCurrent = True
                 '</treeList>
 
-                'listView.SetCurrentPath("C:\SAPI Work Area")
-                'folderTree.SetCurrentPath("C:\SAPI Work Area")
-
+                'Allow multiselect to permit users to select multiple folders or files at the same time. 
                 Me.listView.MultiSelect = True
             End If
         End Sub
@@ -80,99 +86,86 @@ Namespace UnitTesting
 
         Private Sub OnListViewCurrentItemChanged(ByVal sender As Object, ByVal e As CurrentItemChangedEventArgs)
             breadCrumb.SetCurrentItem(e.CurrentItem)
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         '</gridControl>
         '<treeList>
         Private Sub OnTreeCurrentItemChanged(ByVal sender As Object, ByVal e As CurrentItemChangedEventArgs)
             listView.SetCurrentItem(e.CurrentItem)
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         '</treeList>
         '<currentPathEdit>
         Private Sub OnCurrentPathEditCurrentItemChanged(ByVal sender As Object, ByVal e As CurrentItemChangedEventArgs)
             listView.SetCurrentItem(e.CurrentItem)
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         '</currentPathEdit>
         Private Sub btnBack_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnBack.Click
             listView.GoBack()
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         Private Sub btnForward_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnForward.Click
             listView.GoForward()
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         Private Sub btnUp_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnUp.Click
             listView.GoUp()
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
         Private Sub gridView1_RowClick(sender As Object, e As DevExpress.XtraGrid.Views.Grid.RowClickEventArgs)
+            'Only perform this action for specific files
+            'It was taking too long to load tools and csvs from network drives while working at home
             If Me.Name.ToLower = "selocal" Then
                 Dim info As IO.FileInfo
                 Dim fName As String
                 Dim path As String
-                Dim finalDT As DataTable
+                Dim loadDt As DataTable
+
+                'Get the filename from the sepcified row click
                 fName = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "Name")
+                'Get the path from the bread crumb path (could change as the user navigates)
                 path = breadCrumb.CurrentPath
+                'Create a new fileinfo based on the path and file name
                 info = New System.IO.FileInfo(path & "\" & fName)
+
+                'If the info is something (i.e. not a file folder) then attempt to load results or csv data
                 If info IsNot Nothing Then
                     If fName.Contains(".") And fName.Contains("xlsm") Then
 
                         SelectedFile = info
-                        finalDT = SummarizedResults(info)
-
+                        loadDt = SummarizedResults(info)
                     ElseIf fName.Contains(".csv") Then
-                        finalDT = CSVtoDatatable(info)
+                        loadDt = CSVtoDatatable(info)
                     End If
 
+                    'Set the reference grid on the main form to the returned datatable
                     frmMain.GridView1.Columns.Clear()
                     frmMain.GridControl1.DataSource = Nothing
-                    frmMain.GridControl1.DataSource = finalDT
+                    frmMain.GridControl1.DataSource = loadDt
                     frmMain.GridControl1.RefreshDataSource()
                     frmMain.GridView1.BestFitColumns(True)
                 End If
             Else
             End If
 
-            Try
-                Me.gridView1.Columns(2).Visible = False
-                Me.gridView1.Columns(4).Visible = False
-            Catch
-            End Try
+            HideDateAndSize()
         End Sub
 
+        'When a row is double clicked it was displaying all columns again
         Private Sub gridView1_DoubleClick(sender As Object, e As EventArgs)
+            HideDateAndSize()
+        End Sub
+
+        'Since Date and file size don't update consistently, hide these columns from the view to alleviate confusion
+        'This is basically just constantly done to force these columns to b ehidden. 
+        Private Sub HideDateAndSize()
             Try
                 Me.gridView1.Columns(2).Visible = False
                 Me.gridView1.Columns(4).Visible = False

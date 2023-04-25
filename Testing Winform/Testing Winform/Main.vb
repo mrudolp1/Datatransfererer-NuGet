@@ -199,6 +199,7 @@ Namespace UnitTesting
             End If
         End Sub
 #End Region
+
 #Region "Shame"
 
         Dim tappy As Integer
@@ -321,6 +322,8 @@ Namespace UnitTesting
                 LoadTestCases(unitTestCases)
             End If
 
+            'Check local isn't really being used anymore since I forced it to work local. 
+            'The local directory MUST be specified. It is currently defaulting to your source folder outside your repos folder
             If chkWorkLocal.Checked And lFolder = String.Empty Then
                 MsgBox("Please specify a local directory to continue.", vbCritical, "No Local Directory")
                 isopening = True
@@ -333,16 +336,21 @@ Namespace UnitTesting
             Dim testCase As Integer = testID.Text
             Dim dirUse As String
 
+            'Again, the check local isn't important as it is forced into local work at this time.
             If chkWorkLocal.Checked Then
                 dirUse = lFolder
             Else
                 dirUse = rFolder
             End If
 
+            'if the directory exists on the R drive but not locally
+            '''Copy the directory locally since you're probably continuing work done by someone else. 
             If Directory.Exists(rFolder & "\Test ID " & testCase) And chkWorkLocal.Checked And Not Directory.Exists(lFolder & "\Test ID " & testCase) Then
                 My.Computer.FileSystem.CopyDirectory(rFolder & "\Test ID " & testCase, lFolder & "\Test ID " & testCase)
             End If
 
+            'Create the initial directory
+            ''' the direcotrycreator method creates it locally and on the network
             If Not Directory.Exists(dirUse & "\Test ID " & testCase) Then
                 DirectoryCreator("\Test ID " & testCase)
                 DirectoryCreator("\Test ID " & testCase & "\Manual (Current)")
@@ -350,6 +358,7 @@ Namespace UnitTesting
                 DirectoryCreator("\Test ID " & testCase & "\Manual ERI")
                 File.Create(dirUse & "\Test ID " & testCase & "\Test Notes.txt").Dispose()
 
+                'When first creating the test case folder general notes (Salute) will be created to get started. 
                 If rtbNotes.Text.Length = 0 Then
                     rtbNotes.Text = "Testing notes for Test ID " & testCase
                     rtbNotes.Text += vbCrLf & "BU = " & unitTestCases(id).BU
@@ -359,22 +368,30 @@ Namespace UnitTesting
                     rtbNotes.Text += vbCrLf & "Load Combination = " & unitTestCases(id).COMB
                 End If
 
+                'Create the 1st iteration folder. 
+                '''Specifying that this is the first time (The boolean in the called method) 
                 CreateIteration(1, True)
             Else
+                'If the directory exists, it just loads in the text file for reference
                 rtbNotes.Text = System.IO.File.ReadAllText(dirUse & "\Test ID " & testCase & "\Test Notes.txt")
             End If
 
+            'Start file sinking....drip drip drip into the R drive
             InitializeLocaltoCentralSync()
+            'Attempted to thread to save time but turns out it is just because of the network connection issues at home
             thr1 = New Thread(AddressOf DirectorySync.StartAsync)
             thr1.Start()
 
+            'Set the site data loaded from the test case CSV.
             testBu.Text = unitTestCases(id).BU
             testSid.Text = unitTestCases(id).SID
             testWo.Text = unitTestCases(id).WO
-            testSaFolder.Text = unitTestCases(id).SAWorkArea
-            testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
+            testSaFolder.Text = unitTestCases(id).SAWorkArea 'This will update the directory for the SA Reference folder
+            testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase 'This will update the directory for the network test case
             testComb.Text = unitTestCases(id).COMB
 
+            'Iteration count is determined
+            '''A count of folders containing the word 'iteration' are counted
             Dim itCount As Integer = 0
             For Each subDir In New DirectoryInfo("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase).GetDirectories
                 If subDir.Name.Contains("Iteration ") Then itCount += 1
@@ -383,11 +400,14 @@ Namespace UnitTesting
             testIteration.Text = itCount
             testNextIteration.Text = itCount + 1
 
+            'Enable all of the buttons for use in the iteration
             btnNextIteration.Enabled = True
             testIterationResults.Enabled = True
             testPrevResults.Enabled = True
             testPublishedResults.Enabled = True
+            testConduct.Enabled = True
 
+            'Update the local directory to the local test case. 
             Try
                 seLocal.SetCurrentDirectory(dirUse & "\Test ID " & testCase)
             Catch
@@ -425,25 +445,37 @@ Namespace UnitTesting
         'Conduct button click for current iteration
         Private Sub testConduct_Click(sender As Object, e As EventArgs) Handles testConduct.Click
             Dim iteration As Integer = testIteration.Text
-            Dim maeWorkArea As String = ""
+            Dim testcase As Integer = testID.Text
+            Dim maeWorkArea As String = lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
             Dim myFiles As String()
             Dim myFilesLst As New List(Of String)
 
-
+            'Loop through all files in the maestro folder for the current test case and iteration
             For Each info As FileInfo In New DirectoryInfo(maeWorkArea).GetFiles
                 If info.Extension = ".eri" Then
+                    'All eris permitted
                     myFilesLst.Add(info.FullName)
-                Else
+                ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
+                    'Determine if the file is one of the templates
                     Dim template As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(info)
 
+                    'If the properties of the tuple are nothing then they aren't templates
                     If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
                         myFilesLst.Add(info.FullName)
                     End If
                 End If
             Next
 
+            'Convert the list of valid file names to an array for creating anew structure
             myFiles = myFilesLst.ToArray
             strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, maeWorkArea, maeWorkArea, myFiles, EDSnewId, EDSdbActive)
+
+            'Conduct it!!!
+            '''This is commented out since Seb is actively working on the conduct function
+            'strcLocal.Conduct(True)
+
+            'Allow the user to view the opbjects created in the strlocal object
+            pgcUnitTesting.SelectedObject = strcLocal
         End Sub
 
         'Create CSV Results files
@@ -460,7 +492,7 @@ Namespace UnitTesting
 
         'Custom Methods
         Public Sub CreateIteration(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
-            Dim answer = vbYes
+            'Determine which directory to use. 
             Dim dirUse As String
             If chkWorkLocal.Checked Then
                 dirUse = lFolder
@@ -468,6 +500,7 @@ Namespace UnitTesting
                 dirUse = rFolder
             End If
 
+            'Set the directories to reference based on working local or on the network.
             Dim testCase As Integer = testID.Text
             Dim MaeFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Maestro"
             Dim ManFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Manual (SAPI)"
@@ -475,15 +508,25 @@ Namespace UnitTesting
             Dim RefFolder As String = dirUse & "\Test ID " & testCase & "\Reference SA Files"
             Dim EriFolder As String = dirUse & "\Test ID " & testCase & "\Manual ERI"
 
+            'Get a file count of all files in the:
+            '''SA reference folder
+            '''Published tool folder
+            '''ERI Reference folder
             Dim fileCount As Integer = Directory.GetFiles(RefFolder).Count
             Dim publishedFileCount As Integer = Directory.GetFiles(PubFolder).Count
             Dim eriFileCount As Integer = Directory.GetFiles(EriFolder).Count
 
             If fileCount = 0 Then
+                'If the file count is no and it is not the first time: 
+                '''Users may not continue because they have not copied over SA reference files yet. 
                 If Not isFirstTime Then MsgBox("Files do not exist in the 'Reference SA Files' folder yet. Please copy reference files to continue.", vbCritical, "No Reference Files")
                 testIteration.Text = Iteration - 1
                 testNextIteration.Text = Iteration
             Else
+                'If the SA Reference file count is > 0 then:
+                '''Create the directories
+                '''Increase the iteration (Should be at 0 if this is the first time)
+                '''get all required files for testing
                 Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Iteration " & Iteration)
                 Directory.CreateDirectory(MaeFolder)
                 Directory.CreateDirectory(ManFolder)
@@ -492,22 +535,32 @@ Namespace UnitTesting
                 testNextIteration.Text = Iteration + 1
                 testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
 
+                'Loop through all files in the SA Reference Files Folder
                 For Each file In New DirectoryInfo(RefFolder).GetFiles
+                    'All ERIs welcome
+                    'ERI is copied to the:
+                    '''Manual ERI Folder
+                    '''Mae Folder
                     If file.Extension.Contains("eri") Then
                         file.CopyTo(MaeFolder & "\" & file.Name)
                         If eriFileCount = 0 Then file.CopyTo(EriFolder & "\" & file.Name)
                     Else
+                        'Determine if the file is a template
                         Dim myTemplate As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(file)
+
+                        'If it is determined to be a template:
+                        '''The published version will be copied into the published tools folder
+                        '''The new SAPI templates will be copied into the mae folder and man folder for the iteration
                         With myTemplate
                             If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
                                 MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
                             Else
-
                                 If publishedFileCount = 0 Then
                                     'Copy published versions of the tools into the manual folder 
                                     .Item1.CopyTo(GetNewFileName(PubFolder, file:= .Item1))
                                 End If
 
+                                'Templates are saved as Bytes() and need to be converted appropriately. 
                                 IO.File.WriteAllBytes(GetNewFileName(MaeFolder, fileName:= .Item3), .Item2)
                                 IO.File.WriteAllBytes(GetNewFileName(ManFolder, fileName:= .Item3), .Item2)
 
@@ -537,10 +590,12 @@ Namespace UnitTesting
             DirectorySync.RetryOptions.RetryWaitTime = 2
         End Sub
         Public Sub DirectoryCreator(ByVal subFolder As String)
+            'Create R drive directory for folder
             If Not Directory.Exists(rFolder & subFolder) Then
                 Directory.CreateDirectory(rFolder & subFolder)
             End If
 
+            'Create local directory for folder
             If chkWorkLocal.Checked Then
                 If Not Directory.Exists(lFolder & subFolder) Then
                     Directory.CreateDirectory(lFolder & subFolder)
@@ -557,12 +612,14 @@ Namespace UnitTesting
         'Loads the CSV with the test cases 
         'CSV is saved here: R:\Development\SAPI Testing
         Public Sub LoadTestCases(ByRef lst As List(Of TestCase))
+            'Read csv saved in R drive location
             Using csvReader As New Microsoft.VisualBasic.FileIO.TextFieldParser("R:\Development\SAPI Testing\Unit Test Cases.csv")
                 csvReader.TextFieldType = FileIO.FieldType.Delimited
                 csvReader.SetDelimiters(",")
                 Dim csvValue As String()
 
                 While Not csvReader.EndOfData
+                    'Create a list of test cases based on the CSV data
                     csvValue = csvReader.ReadFields
                     lst.Add(New TestCase(csvValue))
                 End While
@@ -572,12 +629,15 @@ Namespace UnitTesting
         'Gets a combined datatbale of results for all spreadsheets in directory.
         Public Sub GetAllResults(ByVal folder As String)
             Dim combinedResults As New DataTable
+            'Loop through all files in the specified folder
             For Each info As FileInfo In New DirectoryInfo(folder).GetFiles
                 If info.Extension.ToLower = ".xlsm" Then
+                    'Merge the datatable to append all data together
                     combinedResults.Merge(SummarizedResults(info))
                 End If
             Next
 
+            'Save the datatable to a CSV in the specified folder location
             DatatableToCSV(combinedResults, folder & "\Summarized Results.csv")
         End Sub
 
@@ -610,7 +670,9 @@ Namespace UnitTesting
         Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of FileInfo, Byte(), String, String, String)
             Dim returner As Tuple(Of FileInfo, Byte(), String, String, String)
 
+            'This templatesfolder needs to be customized if your username doesn't match your user folder or if your engineering templates are synced to a different location
             Dim templatesFolder As String = "C:\Users\" & Environment.UserName & "\Crown Castle USA Inc\Tower Assets Engineering - Engineering Templates\"
+
             'Item 1 = current published versions
             'Item 2 = new versions created for SAPI
             'Item 3 = File name to be used with the bytes
@@ -701,7 +763,13 @@ Namespace UnitTesting
             Dim finalDt As New DataTable
             Dim resultsDt As New DataTable
 
+            'Determine if the selected file is a template
             If myTemplate.Item1 IsNot Nothing And myTemplate.Item2 IsNot Nothing And myTemplate.Item4 IsNot Nothing Then
+
+                'There is potential for a template to have 2 specified ranges to import
+                '''Drilled Pier
+                '''CCIplate
+                '''Tables are added to the temp dataset for each range in the workbook
                 For Each str As String In myTemplate.Item5.Split("|")
                     Try
                         tempds.Tables.Remove("Selected Results " & myTemplate.Item3 & "_" & str)
@@ -711,12 +779,14 @@ Namespace UnitTesting
                     tempds.Tables.Add(
                                         Common.ExcelDatasourceToDataTable(
                                             Common.GetExcelDataSource(
-                                                    info.FullName,
-                                                    myTemplate.Item4,
-                                                    str),
-                                             "Selected Results " & myTemplate.Item3 & "_" & str))
+                                                    info.FullName, 'Path
+                                                    myTemplate.Item4, 'Sheet Name
+                                                    str), 'Range
+                                             "Selected Results " & myTemplate.Item3 & "_" & str)) 'Datatable name
                 Next
 
+                'If it is a drilled pier determine which range is the correct range
+                '''For monopoles and self supports, the range to select is just the summary from the 'Foundation Input' Tab
                 If myTemplate.Item3.Contains("Drilled Pier") Then
                     Try
                         If tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "BD8:CF59").Rows(0).Item("Guyed Tower Reactions").ToString = String.Empty Then
@@ -731,11 +801,13 @@ Namespace UnitTesting
                     resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
                 End If
 
+                'Add columns to the final DT that shows the summary of the component, type and rating.
                 finalDt.Columns.Add("Type", Type.GetType("System.String"))
                 finalDt.Columns.Add("Rating", Type.GetType("System.String"))
                 finalDt.Columns.Add("Tool", Type.GetType("System.String"))
 
                 With resultsDt
+                    'Select case based on 'Filename_Range'
                     Select Case .TableName
                         Case "Selected Results " & "CCIplate.xlsm" & "_" & "B1:BO64"
                             For i = 0 To .Rows.Count - 1
@@ -948,6 +1020,7 @@ Namespace UnitTesting
         'Convert a CSV file to a databale
         'Uses an OLEDBAdpater to SELECT * FROM csv file
         'None string columns load in with incorrect column headers
+        'This is extremely similar to how we use the SQL adapter for the SQL loader and Sender
         Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasHeaders As Boolean = True) As DataTable
             Dim dssample As New DataSet
             Dim folder = info.FullName.Replace(info.Name, "")
@@ -959,6 +1032,9 @@ Namespace UnitTesting
 
             If hasHeaders Then
                 For Each dc As DataColumn In dssample.Tables(0).Columns
+                    'If the data is not saved as a string then it will not recognize the header column as it doesn't not assume headers in the SQL query
+                    'I didn't have time to create custom queries. 
+                    'This just works for any selected csv file
                     Try
                         dc.ColumnName = dssample.Tables(0).Rows(0).Item(dc)
                     Catch
@@ -969,6 +1045,7 @@ Namespace UnitTesting
             End If
 
             If dssample.Tables.Count > 0 Then
+                'Only 1 table should have been output but it returns that table
                 Return dssample.Tables(0)
             End If
         End Function
@@ -986,6 +1063,8 @@ Namespace UnitTesting
         End Function
     End Module
 
+    'Test cases are created when a test case is selected
+    'These will correlate to the values in the CSV in the R: drive testing location
     Partial Public Class TestCase
         Public Property ID As Integer
         Public Property BU As Integer
@@ -1011,7 +1090,7 @@ Namespace UnitTesting
 End Namespace
 
 
-
+'UNSUED
 #Region "Original Excel"
 
 

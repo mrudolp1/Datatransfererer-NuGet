@@ -79,9 +79,9 @@
             Me.exceltosql = New System.Windows.Forms.Button()
             Me.TabControl1 = New System.Windows.Forms.TabControl()
             Me.pgUnitTesting = New System.Windows.Forms.TabPage()
-            Me.SplitContainerControl2 = New DevExpress.XtraEditors.SplitContainerControl()
+            Me.sccTesting = New DevExpress.XtraEditors.SplitContainerControl()
             Me.SplitContainerControl1 = New DevExpress.XtraEditors.SplitContainerControl()
-            Me.SplitContainerControl3 = New DevExpress.XtraEditors.SplitContainerControl()
+            Me.sccNetwork = New DevExpress.XtraEditors.SplitContainerControl()
             Me.seNetwork = New Testing_Winform.UnitTesting.SimpleExplorer()
             Me.LabelControl11 = New DevExpress.XtraEditors.LabelControl()
             Me.seSA = New Testing_Winform.UnitTesting.SimpleExplorer()
@@ -118,6 +118,9 @@
             Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
             Me.FileSystemWatcher1 = New System.IO.FileSystemWatcher()
+            Me.sccReference = New DevExpress.XtraEditors.SplitContainerControl()
+            Me.sccMain = New DevExpress.XtraEditors.SplitContainerControl()
+            Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             CType(Me.GridView2, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.GridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -153,24 +156,24 @@
             CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.TabControl1.SuspendLayout()
             Me.pgUnitTesting.SuspendLayout()
-            CType(Me.SplitContainerControl2, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.SplitContainerControl2.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.SplitContainerControl2.Panel1.SuspendLayout()
-            CType(Me.SplitContainerControl2.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.SplitContainerControl2.Panel2.SuspendLayout()
-            Me.SplitContainerControl2.SuspendLayout()
+            CType(Me.sccTesting, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.sccTesting.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccTesting.Panel1.SuspendLayout()
+            CType(Me.sccTesting.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccTesting.Panel2.SuspendLayout()
+            Me.sccTesting.SuspendLayout()
             CType(Me.SplitContainerControl1, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.SplitContainerControl1.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainerControl1.Panel1.SuspendLayout()
             CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainerControl1.Panel2.SuspendLayout()
             Me.SplitContainerControl1.SuspendLayout()
-            CType(Me.SplitContainerControl3, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.SplitContainerControl3.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.SplitContainerControl3.Panel1.SuspendLayout()
-            CType(Me.SplitContainerControl3.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.SplitContainerControl3.Panel2.SuspendLayout()
-            Me.SplitContainerControl3.SuspendLayout()
+            CType(Me.sccNetwork, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.sccNetwork.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccNetwork.Panel1.SuspendLayout()
+            CType(Me.sccNetwork.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccNetwork.Panel2.SuspendLayout()
+            Me.sccNetwork.SuspendLayout()
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.PanelControl1.SuspendLayout()
             CType(Me.chkWorkLocal.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -185,6 +188,18 @@
             CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.sccReference, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.sccReference.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccReference.Panel1.SuspendLayout()
+            CType(Me.sccReference.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccReference.Panel2.SuspendLayout()
+            Me.sccReference.SuspendLayout()
+            CType(Me.sccMain, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.sccMain.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccMain.Panel1.SuspendLayout()
+            CType(Me.sccMain.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.sccMain.Panel2.SuspendLayout()
+            Me.sccMain.SuspendLayout()
             Me.SuspendLayout()
             '
             'GridView2
@@ -204,10 +219,10 @@
             'GridControl1
             '
             Me.GridControl1.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.GridControl1.Location = New System.Drawing.Point(1042, 16)
+            Me.GridControl1.Location = New System.Drawing.Point(0, 0)
             Me.GridControl1.MainView = Me.GridView1
             Me.GridControl1.Name = "GridControl1"
-            Me.GridControl1.Size = New System.Drawing.Size(177, 190)
+            Me.GridControl1.Size = New System.Drawing.Size(88, 206)
             Me.GridControl1.TabIndex = 19
             Me.GridControl1.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView1, Me.GridView3, Me.GridView2})
             '
@@ -729,8 +744,8 @@
             '
             'TabControl1
             '
-            Me.TabControl1.Controls.Add(Me.pgUnitTesting)
             Me.TabControl1.Controls.Add(Me.pgStructure)
+            Me.TabControl1.Controls.Add(Me.pgUnitTesting)
             Me.TabControl1.Controls.Add(Me.pgSQLBackUp)
             Me.TabControl1.Controls.Add(Me.pgTNX)
             Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -742,7 +757,7 @@
             '
             'pgUnitTesting
             '
-            Me.pgUnitTesting.Controls.Add(Me.SplitContainerControl2)
+            Me.pgUnitTesting.Controls.Add(Me.sccMain)
             Me.pgUnitTesting.Controls.Add(Me.PanelControl1)
             Me.pgUnitTesting.Location = New System.Drawing.Point(4, 22)
             Me.pgUnitTesting.Name = "pgUnitTesting"
@@ -752,28 +767,26 @@
             Me.pgUnitTesting.Text = "Testing"
             Me.pgUnitTesting.UseVisualStyleBackColor = True
             '
-            'SplitContainerControl2
+            'sccTesting
             '
-            Me.SplitContainerControl2.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.SplitContainerControl2.FixedPanel = DevExpress.XtraEditors.SplitFixedPanel.Panel2
-            Me.SplitContainerControl2.Horizontal = False
-            Me.SplitContainerControl2.Location = New System.Drawing.Point(3, 123)
-            Me.SplitContainerControl2.Name = "SplitContainerControl2"
+            Me.sccTesting.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.sccTesting.FixedPanel = DevExpress.XtraEditors.SplitFixedPanel.Panel2
+            Me.sccTesting.Horizontal = False
+            Me.sccTesting.Location = New System.Drawing.Point(0, 0)
+            Me.sccTesting.Name = "sccTesting"
             '
-            'SplitContainerControl2.Panel1
+            'sccTesting.sccTesting_Panel1
             '
-            Me.SplitContainerControl2.Panel1.Controls.Add(Me.SplitContainerControl1)
-            Me.SplitContainerControl2.Panel1.Text = "Panel1"
+            Me.sccTesting.Panel1.Controls.Add(Me.SplitContainerControl1)
+            Me.sccTesting.Panel1.Text = "Panel1"
             '
-            'SplitContainerControl2.Panel2
+            'sccTesting.sccTesting_Panel2
             '
-            Me.SplitContainerControl2.Panel2.Controls.Add(Me.GridControl1)
-            Me.SplitContainerControl2.Panel2.Controls.Add(Me.rtbNotes)
-            Me.SplitContainerControl2.Panel2.Controls.Add(Me.LabelControl14)
-            Me.SplitContainerControl2.Panel2.Text = "Panel2"
-            Me.SplitContainerControl2.Size = New System.Drawing.Size(1219, 616)
-            Me.SplitContainerControl2.SplitterPosition = 206
-            Me.SplitContainerControl2.TabIndex = 18
+            Me.sccTesting.Panel2.Controls.Add(Me.sccReference)
+            Me.sccTesting.Panel2.Text = "Panel2"
+            Me.sccTesting.Size = New System.Drawing.Size(986, 616)
+            Me.sccTesting.SplitterPosition = 206
+            Me.sccTesting.TabIndex = 18
             '
             'SplitContainerControl1
             '
@@ -783,7 +796,7 @@
             '
             'SplitContainerControl1.Panel1
             '
-            Me.SplitContainerControl1.Panel1.Controls.Add(Me.SplitContainerControl3)
+            Me.SplitContainerControl1.Panel1.Controls.Add(Me.sccNetwork)
             Me.SplitContainerControl1.Panel1.Text = "Panel1"
             '
             'SplitContainerControl1.Panel2
@@ -791,31 +804,31 @@
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.seLocal)
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.LabelControl13)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(1219, 400)
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(986, 400)
             Me.SplitContainerControl1.SplitterPosition = 622
             Me.SplitContainerControl1.TabIndex = 15
             '
-            'SplitContainerControl3
+            'sccNetwork
             '
-            Me.SplitContainerControl3.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.SplitContainerControl3.Horizontal = False
-            Me.SplitContainerControl3.Location = New System.Drawing.Point(0, 0)
-            Me.SplitContainerControl3.Name = "SplitContainerControl3"
+            Me.sccNetwork.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.sccNetwork.Horizontal = False
+            Me.sccNetwork.Location = New System.Drawing.Point(0, 0)
+            Me.sccNetwork.Name = "sccNetwork"
             '
-            'SplitContainerControl3.Panel1
+            'sccNetwork.sccNetwork_Panel1
             '
-            Me.SplitContainerControl3.Panel1.Controls.Add(Me.seNetwork)
-            Me.SplitContainerControl3.Panel1.Controls.Add(Me.LabelControl11)
-            Me.SplitContainerControl3.Panel1.Text = "Panel1"
+            Me.sccNetwork.Panel1.Controls.Add(Me.seNetwork)
+            Me.sccNetwork.Panel1.Controls.Add(Me.LabelControl11)
+            Me.sccNetwork.Panel1.Text = "Panel1"
             '
-            'SplitContainerControl3.Panel2
+            'sccNetwork.sccNetwork_Panel2
             '
-            Me.SplitContainerControl3.Panel2.Controls.Add(Me.seSA)
-            Me.SplitContainerControl3.Panel2.Controls.Add(Me.LabelControl12)
-            Me.SplitContainerControl3.Panel2.Text = "Panel2"
-            Me.SplitContainerControl3.Size = New System.Drawing.Size(622, 400)
-            Me.SplitContainerControl3.SplitterPosition = 191
-            Me.SplitContainerControl3.TabIndex = 15
+            Me.sccNetwork.Panel2.Controls.Add(Me.seSA)
+            Me.sccNetwork.Panel2.Controls.Add(Me.LabelControl12)
+            Me.sccNetwork.Panel2.Text = "Panel2"
+            Me.sccNetwork.Size = New System.Drawing.Size(622, 400)
+            Me.sccNetwork.SplitterPosition = 191
+            Me.sccNetwork.TabIndex = 15
             '
             'seNetwork
             '
@@ -866,7 +879,7 @@
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(587, 384)
+            Me.seLocal.Size = New System.Drawing.Size(354, 384)
             Me.seLocal.TabIndex = 15
             '
             'LabelControl13
@@ -882,10 +895,10 @@
             '
             'rtbNotes
             '
-            Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Left
+            Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
             Me.rtbNotes.Location = New System.Drawing.Point(0, 16)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(1042, 190)
+            Me.rtbNotes.Size = New System.Drawing.Size(888, 190)
             Me.rtbNotes.TabIndex = 17
             Me.rtbNotes.Text = ""
             '
@@ -1159,6 +1172,54 @@
             Me.FileSystemWatcher1.EnableRaisingEvents = True
             Me.FileSystemWatcher1.SynchronizingObject = Me
             '
+            'sccReference
+            '
+            Me.sccReference.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.sccReference.Location = New System.Drawing.Point(0, 0)
+            Me.sccReference.Name = "sccReference"
+            '
+            'sccReference.sccReference_Panel1
+            '
+            Me.sccReference.Panel1.Controls.Add(Me.rtbNotes)
+            Me.sccReference.Panel1.Controls.Add(Me.LabelControl14)
+            Me.sccReference.Panel1.Text = "Panel1"
+            '
+            'sccReference.sccReference_Panel2
+            '
+            Me.sccReference.Panel2.Controls.Add(Me.GridControl1)
+            Me.sccReference.Panel2.Text = "Panel2"
+            Me.sccReference.Size = New System.Drawing.Size(986, 206)
+            Me.sccReference.SplitterPosition = 888
+            Me.sccReference.TabIndex = 20
+            '
+            'sccMain
+            '
+            Me.sccMain.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.sccMain.FixedPanel = DevExpress.XtraEditors.SplitFixedPanel.Panel2
+            Me.sccMain.Location = New System.Drawing.Point(3, 123)
+            Me.sccMain.Name = "sccMain"
+            '
+            'sccMain.sccMain_Panel1
+            '
+            Me.sccMain.Panel1.Controls.Add(Me.sccTesting)
+            Me.sccMain.Panel1.Text = "Panel1"
+            '
+            'sccMain.sccMain_Panel2
+            '
+            Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
+            Me.sccMain.Panel2.Text = "Panel2"
+            Me.sccMain.Size = New System.Drawing.Size(1219, 616)
+            Me.sccMain.SplitterPosition = 223
+            Me.sccMain.TabIndex = 21
+            '
+            'pgcUnitTesting
+            '
+            Me.pgcUnitTesting.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.pgcUnitTesting.Location = New System.Drawing.Point(0, 0)
+            Me.pgcUnitTesting.Name = "pgcUnitTesting"
+            Me.pgcUnitTesting.Size = New System.Drawing.Size(223, 616)
+            Me.pgcUnitTesting.TabIndex = 0
+            '
             'frmMain
             '
             Me.Appearance.BackColor = System.Drawing.Color.White
@@ -1211,13 +1272,12 @@
             CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.TabControl1.ResumeLayout(False)
             Me.pgUnitTesting.ResumeLayout(False)
-            CType(Me.SplitContainerControl2.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl2.Panel1.ResumeLayout(False)
-            CType(Me.SplitContainerControl2.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl2.Panel2.ResumeLayout(False)
-            Me.SplitContainerControl2.Panel2.PerformLayout()
-            CType(Me.SplitContainerControl2, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl2.ResumeLayout(False)
+            CType(Me.sccTesting.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccTesting.Panel1.ResumeLayout(False)
+            CType(Me.sccTesting.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccTesting.Panel2.ResumeLayout(False)
+            CType(Me.sccTesting, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccTesting.ResumeLayout(False)
             CType(Me.SplitContainerControl1.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.SplitContainerControl1.Panel1.ResumeLayout(False)
             CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1225,14 +1285,14 @@
             Me.SplitContainerControl1.Panel2.PerformLayout()
             CType(Me.SplitContainerControl1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.SplitContainerControl1.ResumeLayout(False)
-            CType(Me.SplitContainerControl3.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl3.Panel1.ResumeLayout(False)
-            Me.SplitContainerControl3.Panel1.PerformLayout()
-            CType(Me.SplitContainerControl3.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl3.Panel2.ResumeLayout(False)
-            Me.SplitContainerControl3.Panel2.PerformLayout()
-            CType(Me.SplitContainerControl3, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.SplitContainerControl3.ResumeLayout(False)
+            CType(Me.sccNetwork.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccNetwork.Panel1.ResumeLayout(False)
+            Me.sccNetwork.Panel1.PerformLayout()
+            CType(Me.sccNetwork.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccNetwork.Panel2.ResumeLayout(False)
+            Me.sccNetwork.Panel2.PerformLayout()
+            CType(Me.sccNetwork, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccNetwork.ResumeLayout(False)
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.PanelControl1.ResumeLayout(False)
             Me.PanelControl1.PerformLayout()
@@ -1248,6 +1308,19 @@
             CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).EndInit()
+            CType(Me.sccReference.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccReference.Panel1.ResumeLayout(False)
+            Me.sccReference.Panel1.PerformLayout()
+            CType(Me.sccReference.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccReference.Panel2.ResumeLayout(False)
+            CType(Me.sccReference, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccReference.ResumeLayout(False)
+            CType(Me.sccMain.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccMain.Panel1.ResumeLayout(False)
+            CType(Me.sccMain.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccMain.Panel2.ResumeLayout(False)
+            CType(Me.sccMain, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.sccMain.ResumeLayout(False)
             Me.ResumeLayout(False)
 
         End Sub
@@ -1323,10 +1396,10 @@
         Friend WithEvents testComb As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl9 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents rtbNotes As RichTextBox
-        Friend WithEvents SplitContainerControl2 As DevExpress.XtraEditors.SplitContainerControl
+        Friend WithEvents sccTesting As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents testLocalWorkarea As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl10 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents SplitContainerControl3 As DevExpress.XtraEditors.SplitContainerControl
+        Friend WithEvents sccNetwork As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents LabelControl11 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents seSA As SimpleExplorer
         Friend WithEvents LabelControl12 As DevExpress.XtraEditors.LabelControl
@@ -1344,6 +1417,9 @@
         Friend WithEvents Panel2 As Panel
         Friend WithEvents Panel1 As Panel
         Friend WithEvents testPublishedResults As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents sccReference As DevExpress.XtraEditors.SplitContainerControl
+        Friend WithEvents sccMain As DevExpress.XtraEditors.SplitContainerControl
+        Friend WithEvents pgcUnitTesting As PropertyGrid
 
 #End Region
 
