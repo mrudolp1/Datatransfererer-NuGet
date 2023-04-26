@@ -496,16 +496,21 @@ Partial Public Class Pole
         Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
+        LoadFromExcel()
+    End Sub 'Generate Pole from Excel
+#End Region
 
+#Region "Load From Excel"
+    Public Overrides Sub LoadFromExcel()
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
         For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(Me.WorkBookPath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(ExcelFilePath), item.xlsSheet, item.xlsRange))
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(Me.WorkBookPath), item.xlsSheet, item.xlsRange))
             End Try
         Next
 
@@ -530,7 +535,6 @@ Partial Public Class Pole
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
         End If
 
-
         If excelDS.Tables.Contains("CCIpole Matl Property Details EXCEL") Then
             For Each row As DataRow In excelDS.Tables("CCIpole Matl Property Details EXCEL").Rows
                 Me.matls.Add(New PoleMatlProp(row, Me))
@@ -548,7 +552,6 @@ Partial Public Class Pole
                 Me.reinfs.Add(New PoleReinfProp(row, Me))
             Next
         End If
-
 
         If excelDS.Tables.Contains("CCIpole Pole Sections EXCEL") Then
             For Each row As DataRow In excelDS.Tables("CCIpole Pole Sections EXCEL").Rows
@@ -603,7 +606,6 @@ Partial Public Class Pole
 
         End If
 
-
         If excelDS.Tables.Contains("CCIpole Int Groups EXCEL") Then
             For Each GroupRow As DataRow In excelDS.Tables("CCIpole Int Groups EXCEL").Rows
                 Dim NewIntGroup As PoleIntGroup
@@ -650,9 +652,7 @@ Partial Public Class Pole
                 Me.reinf_section_results.Add(New PoleReinfResults(row, Me))
             Next
         End If
-
-
-    End Sub 'Generate Pole from Excel
+    End Sub
 #End Region
 
 #Region "Save to Excel"
