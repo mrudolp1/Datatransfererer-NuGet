@@ -109,6 +109,30 @@ Partial Friend NotInheritable Class Settings
             Me("myStrID") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property localWorkArea() As String
+        Get
+            Return CType(Me("localWorkArea"),String)
+        End Get
+        Set
+            Me("localWorkArea") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property workLocal() As Boolean
+        Get
+            Return CType(Me("workLocal"),Boolean)
+        End Get
+        Set
+            Me("workLocal") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
