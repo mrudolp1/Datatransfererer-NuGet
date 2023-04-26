@@ -1145,7 +1145,7 @@
             '
             'testWo
             '
-            Me.testWo.Location = New System.Drawing.Point(420, 11)
+            Me.testWo.Location = New System.Drawing.Point(444, 15)
             Me.testWo.Name = "testWo"
             Me.testWo.Properties.ReadOnly = True
             Me.testWo.Size = New System.Drawing.Size(100, 20)
@@ -1161,7 +1161,7 @@
             '
             'LabelControl3
             '
-            Me.LabelControl3.Location = New System.Drawing.Point(396, 14)
+            Me.LabelControl3.Location = New System.Drawing.Point(420, 18)
             Me.LabelControl3.Name = "LabelControl3"
             Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
             Me.LabelControl3.TabIndex = 7
