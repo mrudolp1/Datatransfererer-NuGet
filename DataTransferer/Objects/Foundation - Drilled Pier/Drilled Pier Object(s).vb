@@ -653,7 +653,7 @@ Partial Public Class DrilledPier
         Me.soil_profile_id = DBtoNullableInt(dr.Item("soil_profile_id"))
         Me.reaction_position = DBtoNullableInt(dr.Item("reaction_position"))
         Me.reaction_location = DBtoStr(dr.Item("reaction_location"))
-        Me.local_soil_profile = DBtoNullableInt(dr.Item("local_soil_profile"))
+        Me.local_soil_profile = DBtoNullableInt(dr.Item("local_soil_profile_id"))
         Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
         Me.local_drilled_pier_id = DBtoNullableInt(dr.Item("local_drilled_pier_id"))
         Try
