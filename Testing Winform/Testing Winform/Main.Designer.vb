@@ -73,7 +73,6 @@
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.exceltosql = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.btnEriLoop = New System.Windows.Forms.Button()
         Me.pgStructure.SuspendLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer3.Panel1.SuspendLayout()
@@ -156,7 +155,6 @@
         '
         'SplitContainer4.Panel1
         '
-        Me.SplitContainer4.Panel1.Controls.Add(Me.btnEriLoop)
         Me.SplitContainer4.Panel1.Controls.Add(Me.btnConduct)
         Me.SplitContainer4.Panel1.Controls.Add(Me.btnSaveFndToEDS)
         '
@@ -614,15 +612,6 @@
         Me.TabControl1.Size = New System.Drawing.Size(891, 487)
         Me.TabControl1.TabIndex = 3
         '
-        'btnEriLoop
-        '
-        Me.btnEriLoop.Location = New System.Drawing.Point(1, 217)
-        Me.btnEriLoop.Name = "btnEriLoop"
-        Me.btnEriLoop.Size = New System.Drawing.Size(160, 21)
-        Me.btnEriLoop.TabIndex = 5
-        Me.btnEriLoop.Text = "Loop Through ERI"
-        Me.btnEriLoop.UseVisualStyleBackColor = True
-        '
         'frmMain
         '
         Me.Appearance.BackColor = System.Drawing.Color.White
@@ -721,7 +710,6 @@
     Friend WithEvents txtDirectory As TextBox
     Friend WithEvents btnBrowse As Button
     Friend WithEvents btnConduct As Button
-    Friend WithEvents btnEriLoop As Button
 
 #End Region
 

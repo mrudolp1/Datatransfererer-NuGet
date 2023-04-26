@@ -478,7 +478,7 @@ Partial Public Class frmMain
 
     End Sub
 
-    Private Sub btnEriLoop_Click(sender As Object, e As EventArgs) Handles btnEriLoop.Click
+    Private Sub btnEriLoop_Click(sender As Object, e As EventArgs)
         Dim str As New EDSStructure
         str.LogPath = "C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\ERI Testing\ERI Log.txt"
         For Each fold In Directory.GetDirectories(txtDirectory.Text)
