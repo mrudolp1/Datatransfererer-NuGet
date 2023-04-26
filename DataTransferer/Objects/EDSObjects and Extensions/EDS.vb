@@ -5,6 +5,10 @@ Imports System.IO
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports System.Reflection
+Imports System.Runtime.InteropServices
+Imports System.Threading
+Imports Microsoft.Office.Interop
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
 <Serializable()>
@@ -236,6 +240,101 @@ Partial Public MustInherit Class EDSExcelObject
     'Public Overridable ReadOnly Property Title As String
     <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
     Public Property Modified As Boolean?
+
+#Region "Run Excel Macro"
+    ''' <summary>
+    ''' Adding this in case we want to use it later on.
+    ''' Allows individual objects to have an excel macro ran
+    ''' </summary>
+    ''' <param name="bigMac"></param> --> Macro name from excel VBA
+    ''' <param name="isDevEnv"></param> --> Boolean to specify if it is in development mod
+    ''' <param name="isSeismic"></param> --> Boolean to specify if seismic is required
+    ''' <returns></returns>
+    Public Function OpenExcelRunMacro(bigMac As String, Optional ByVal isDevEnv As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
+        'Built this using a with to just add a '.' where something from the structure is needed. 
+        '''WriteLineLogLine
+        '''tnxFilePath
+
+        With Me.ParentStructure
+            Dim tnxFilePath As String = Me.ParentStructure.tnx.filePath
+            Dim toolFileName As String = Path.GetFileName(Me.WorkBookPath)
+            Dim excelPath As String = Me.WorkBookPath
+            Dim logString As String = ""
+            If String.IsNullOrEmpty(excelPath) Or String.IsNullOrEmpty(bigMac) Then
+                Return "ERROR | excelPath or bigMac parameter is null or empty"
+            End If
+
+            Dim xlApp As Microsoft.Office.Interop.Excel.Application = Nothing
+            Dim xlWorkBook As Excel.Workbook = Nothing
+
+            Dim errorMessage As String = String.Empty
+
+            Dim xlVisibility As Boolean = False
+            If isDevEnv Then
+                xlVisibility = True
+            End If
+
+            Try
+                If File.Exists(excelPath) Then
+
+                    xlApp = CreateObject("Excel.Application")
+                    xlApp.Visible = xlVisibility
+
+                    xlWorkBook = xlApp.Workbooks.Open(excelPath)
+
+                    .WriteLineLogLine("INFO | Tool: " & toolFileName)
+                    .WriteLineLogLine("INFO | Running macro: " & bigMac)
+
+                    If Not IsNothing(tnxFilePath) Then
+                        logString = xlApp.Run(bigMac, tnxFilePath)
+                        .WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    Else
+                        .WriteLineLogLine("WARNING | No TNX file path in structure..")
+                        logString = xlApp.Run(bigMac)
+                        .WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    End If
+
+                    xlWorkBook.Save()
+                Else
+                    errorMessage = $"ERROR | {excelPath} path not found!"
+                    .WriteLineLogLine(errorMessage)
+                    Return errorMessage
+                End If
+            Catch ex As Exception
+                errorMessage = ex.Message
+                .WriteLineLogLine(errorMessage)
+                Return errorMessage
+            Finally
+                If xlWorkBook IsNot Nothing Then
+                    xlWorkBook.Close()
+                    Marshal.ReleaseComObject(xlWorkBook)
+                    xlWorkBook = Nothing
+                End If
+                If xlApp IsNot Nothing Then
+                    xlApp.Quit()
+                    Marshal.ReleaseComObject(xlApp)
+                    xlApp = Nothing
+                End If
+            End Try
+
+            'New method to just laod data and set properties
+            Me.LoadFromExcel()
+
+            'check for seismic
+            If isSeismic And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
+                Return "SEISMIC ANALYSIS REQUIRED"
+            End If
+        End With
+
+        Return "Success"
+    End Function
+#End Region
+
+#Region "Load From Excel"
+    Public Overridable Sub LoadFromExcel()
+
+    End Sub
+#End Region
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
