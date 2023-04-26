@@ -8,6 +8,7 @@ Imports Oracle.ManagedDataAccess.Client
 Imports RoboSharp
 Imports System.Threading
 Imports System.Data.OleDb
+Imports System.Runtime.CompilerServices
 
 Namespace UnitTesting
 
@@ -318,10 +319,6 @@ Namespace UnitTesting
             If isopening Then Exit Sub
             If testID.Text = String.Empty Then Exit Sub
 
-            If unitTestCases.Count = 0 Then
-                LoadTestCases(unitTestCases)
-            End If
-
             'Check local isn't really being used anymore since I forced it to work local. 
             'The local directory MUST be specified. It is currently defaulting to your source folder outside your repos folder
             If chkWorkLocal.Checked And lFolder = String.Empty Then
@@ -331,6 +328,12 @@ Namespace UnitTesting
                 isopening = False
                 Exit Sub
             End If
+
+            If unitTestCases.Count = 0 Then
+                LoadTestCases(unitTestCases)
+            End If
+
+            ButtonclickToggle(Me.Cursor)
 
             Dim id As Integer = testID.Text - 1
             Dim testCase As Integer = testID.Text
@@ -406,21 +409,25 @@ Namespace UnitTesting
             testPrevResults.Enabled = True
             testPublishedResults.Enabled = True
             testConduct.Enabled = True
+            testCompareAll.Enabled = True
 
             'Update the local directory to the local test case. 
             Try
                 seLocal.SetCurrentDirectory(dirUse & "\Test ID " & testCase)
             Catch
             End Try
+            ButtonclickToggle(Me.Cursor)
         End Sub
 
         'Create a new iteration button click
         Private Sub btnNextIteration_Click(sender As Object, e As EventArgs) Handles btnNextIteration.Click
+            ButtonclickToggle(Me.Cursor)
             CreateIteration(testNextIteration.Text)
+            ButtonclickToggle(Me.Cursor)
         End Sub
 
         'Rich textbox changed event for test notes
-        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs) Handles rtbNotes.TextChanged
+        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs)
             Dim testCase As Integer = testID.Text
             Dim dirUse As String
             If chkWorkLocal.Checked Then
@@ -444,6 +451,7 @@ Namespace UnitTesting
 
         'Conduct button click for current iteration
         Private Sub testConduct_Click(sender As Object, e As EventArgs) Handles testConduct.Click
+            ButtonclickToggle(Me.Cursor)
             Dim iteration As Integer = testIteration.Text
             Dim testcase As Integer = testID.Text
             Dim maeWorkArea As String = lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
@@ -476,19 +484,47 @@ Namespace UnitTesting
 
             'Allow the user to view the opbjects created in the strlocal object
             pgcUnitTesting.SelectedObject = strcLocal
+            ButtonclickToggle(Me.Cursor)
         End Sub
 
-        'Create CSV Results files
+        'Create and compare CSV Results files
         Private Sub testPrevResults_Click(sender As Object, e As EventArgs) Handles testPrevResults.Click
+            ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Reference SA Files")
+            ButtonclickToggle(Me.Cursor)
         End Sub
         Private Sub testPublishedResults_Click(sender As Object, e As EventArgs) Handles testPublishedResults.Click
+            ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Manual (Current)")
+            ButtonclickToggle(Me.Cursor)
         End Sub
         Private Sub testIterationResults_Click(sender As Object, e As EventArgs) Handles testIterationResults.Click
+            ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Maestro")
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Manual (SAPI)")
+            ButtonclickToggle(Me.Cursor)
         End Sub
+        Private Sub testCompareAll_Click(sender As Object, e As EventArgs) Handles testCompareAll.Click
+            ButtonclickToggle(Me.Cursor)
+            Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
+
+            'Item 1 = Manual Compared to Maestro   
+            '''Item 1 = Boolean specifying if they match
+            '''Item 2 = Data table of the comparisons
+            'Item 2 = Current Tools Compared to Manual
+            '''Item 1 = Boolean specifying if they match
+            '''Item 2 = Data table of the comparisons
+            'Item 3 = Current Tools Compared to Maestro
+            '''Item 1 = Boolean specifying if they match
+            '''Item 2 = Data table of the comparisons
+            'Item 4 = Dataset will all tables
+
+            Dim newSum As New frmSummary
+            newSum.myDs = checks.Item4
+            newSum.Show()
+            ButtonclickToggle(Me.Cursor)
+        End Sub
+
 
         'Custom Methods
         Public Sub CreateIteration(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
@@ -545,27 +581,29 @@ Namespace UnitTesting
                         file.CopyTo(MaeFolder & "\" & file.Name)
                         If eriFileCount = 0 Then file.CopyTo(EriFolder & "\" & file.Name)
                     Else
-                        'Determine if the file is a template
-                        Dim myTemplate As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(file)
+                        If file.Extension.ToLower = ".eri" Or file.Extension.ToLower = ".xlsm" Then
+                            'Determine if the file is a template
+                            Dim myTemplate As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(file)
 
-                        'If it is determined to be a template:
-                        '''The published version will be copied into the published tools folder
-                        '''The new SAPI templates will be copied into the mae folder and man folder for the iteration
-                        With myTemplate
-                            If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
-                                MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
-                            Else
-                                If publishedFileCount = 0 Then
-                                    'Copy published versions of the tools into the manual folder 
-                                    .Item1.CopyTo(GetNewFileName(PubFolder, file:= .Item1))
+                            'If it is determined to be a template:
+                            '''The published version will be copied into the published tools folder
+                            '''The new SAPI templates will be copied into the mae folder and man folder for the iteration
+                            With myTemplate
+                                If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
+                                    MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
+                                Else
+                                    If publishedFileCount = 0 Then
+                                        'Copy published versions of the tools into the manual folder 
+                                        .Item1.CopyTo(GetNewFileName(PubFolder, fileName:= .Item3))
+                                    End If
+
+                                    'Templates are saved as Bytes() and need to be converted appropriately. 
+                                    IO.File.WriteAllBytes(GetNewFileName(MaeFolder, fileName:= .Item3), .Item2)
+                                    IO.File.WriteAllBytes(GetNewFileName(ManFolder, fileName:= .Item3), .Item2)
+
                                 End If
-
-                                'Templates are saved as Bytes() and need to be converted appropriately. 
-                                IO.File.WriteAllBytes(GetNewFileName(MaeFolder, fileName:= .Item3), .Item2)
-                                IO.File.WriteAllBytes(GetNewFileName(ManFolder, fileName:= .Item3), .Item2)
-
-                            End If
-                        End With
+                            End With
+                        End If
                     End If
                 Next
             End If
@@ -602,6 +640,8 @@ Namespace UnitTesting
                 End If
             End If
         End Sub
+
+
 #End Region
 
     End Class
@@ -975,10 +1015,37 @@ Namespace UnitTesting
             End With
         End Sub
 
+        'Determine if a file is open
+        Private Function FileIsOpen(ByVal file As FileInfo) As Boolean
+            Dim stream As FileStream = Nothing
+            Try
+                stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)
+                stream.Close()
+                Return False
+            Catch ex As Exception
+                Return True
+            End Try
+        End Function
+
         'This was taken from logic used in the CCI SQL Manager but has been adjusted to use a datatable instead of a datagrid. 
         'If you are trying to output something that a user is editing. The data will need to be converted to a datatable to utilize this
         'This could probably be updated to work similar to the thing Ken Linck wrote that accepts any type of object. Instead of ouputting HTML calls we could output CSV.
         Public Sub DatatableToCSV(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
+            Dim counter As Integer = 0
+RetryFileOpenCheck:
+            If IO.File.Exists(strFilePath) Then
+                If FileIsOpen(New FileInfo(strFilePath)) Then
+                    MsgBox(strFilePath & " is currently open. " & vbCrLf & vbCrLf & "Please close the file to continue.", MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "File is in use")
+
+                    counter += 1
+                    If counter > 3 Then
+                        MsgBox("It seems the file is still open." & vbCrLf & vbCrLf & "Process is ending.", vbInformation)
+                        Exit Sub
+                    End If
+                    GoTo RetryFileOpenCheck
+                End If
+            End If
+
             Dim sw As StreamWriter = New StreamWriter(strFilePath, False)
 
             For i As Integer = 0 To dtDataTable.Columns.Count - 1
@@ -1061,6 +1128,184 @@ Namespace UnitTesting
             Next
             Return m
         End Function
+
+        'Compares the results of all results available
+        Public Function CompareResults() As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet)
+            Dim manToMae As Tuple(Of Boolean, DataTable) 'Item1
+            Dim curToMan As Tuple(Of Boolean, DataTable) 'Item2
+            Dim curToMae As Tuple(Of Boolean, DataTable) 'Item2
+            Dim resDs As New DataSet 'Item4
+
+            Dim dir As String = IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, frmMain.lFolder, frmMain.rFolder)
+            Dim testid As Integer = CType(frmMain.testID.Text, Integer)
+            Dim testiteration As Integer = CType(frmMain.testIteration.Text, Integer)
+
+            GetAllResults(dir & "\Test ID " & testid & "\Reference SA Files")
+            GetAllResults(dir & "\Test ID " & testid & "\Manual (Current)")
+            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro")
+            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)")
+
+            Dim refDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Reference SA Files\Summarized Results.csv"))
+            Dim curDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Manual (Current)\Summarized Results.csv"))
+            Dim manDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)\Summarized Results.csv"))
+            Dim maeDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro\Summarized Results.csv"))
+            Dim comDt As DataTable = New DataTable("Combined Results")
+
+            comDt.Columns.Add("Type", Type.GetType("System.String"))
+            comDt.Columns.Add("Rating", Type.GetType("System.String"))
+            comDt.Columns.Add("Tool", Type.GetType("System.String"))
+            comDt.Columns.Add("Summary Type", Type.GetType("System.String"))
+
+            refDt.ResultsSorting("Reference SA")
+            curDt.ResultsSorting("Published Versions")
+            manDt.ResultsSorting("Manual")
+            maeDt.ResultsSorting("Maestro")
+
+            manToMae = manDt.IsMatching(maeDt)
+            curToMan = curDt.IsMatching(manDt)
+            curToMae = curDt.IsMatching(maeDt)
+
+            resDs.Tables.Add(refDt.Copy)
+            resDs.Tables.Add(curDt.Copy)
+            resDs.Tables.Add(manDt.Copy)
+            resDs.Tables.Add(maeDt.Copy)
+
+            For Each dt As DataTable In resDs.Tables
+                comDt.Merge(dt)
+            Next
+
+            resDs.Tables.Add(comDt.Copy)
+            resDs.Tables.Add(manToMae.Item2.Copy)
+            resDs.Tables.Add(curToMan.Item2.Copy)
+            resDs.Tables.Add(curToMae.Item2.Copy)
+
+            Return New Tuple(Of
+                        Tuple(Of Boolean, DataTable),
+                        Tuple(Of Boolean, DataTable),
+                        Tuple(Of Boolean, DataTable),
+                        DataSet
+                       )(
+                        curToMan,
+                        curToMae,
+                        manToMae,
+                        resDs
+                        )
+        End Function
+
+        'Custom extension to sort the results datatables by check/failure mode and tool name
+        '''Extension specific to datatables
+        '''Adds a reference column for results comparison
+        '''Names the table based on the optional parameter provided
+        '''Sorts the datatable by Type and Tool
+        <Extension()>
+        Public Sub ResultsSorting(ByRef dt As DataTable, Optional ByVal addColumn As String = Nothing)
+            If addColumn IsNot Nothing Then
+                Dim newcolumn As New Data.DataColumn("Summary Type", GetType(System.String))
+                newcolumn.DefaultValue = addColumn
+                dt.Columns.Add(newcolumn)
+            End If
+
+            dt.Columns(1).ColumnName = "Rating Old"
+
+            Dim newRatingColumn As New Data.DataColumn("Rating", GetType(System.String))
+            dt.Columns.Add(newRatingColumn)
+
+            For Each dr As DataRow In dt.Rows
+                dr.Item("Rating") = dr.Item("Rating Old").ToString
+            Next
+
+            dt.Columns.Remove("Rating Old")
+            dt.TableName = addColumn
+            dt.AsDataView.Sort = "Type ASC, Tool ASC"
+        End Sub
+
+        'Determine if 2 datatables have the same exact values 
+        '''Returns a boolean determining if they are the sam
+        '''Returns a databale of the compared values
+        <Extension()>
+        Public Function IsMatching(ByRef dt As DataTable, ByVal comparer As DataTable) As Tuple(Of Boolean, DataTable)
+            Dim dtVal As Double = Double.NaN
+            Dim comparerVal As Double = Double.NaN
+            Dim delta As Double = Double.NaN
+            Dim perDelta As Double = Double.NaN
+
+            Dim matching As Boolean = True 'Item1
+            Dim diffDt As New DataTable 'Item2
+            diffDt.TableName = dt.TableName & " v. " & comparer.TableName
+            diffDt.Columns.Add(dt.TableName & " File", GetType(System.String))
+            diffDt.Columns.Add("Check/Failure Mode", GetType(System.String))
+            diffDt.Columns.Add(dt.TableName & " Val", GetType(System.Double))
+            diffDt.Columns.Add(comparer.TableName & " Val", GetType(System.Double))
+            diffDt.Columns.Add("Delta", GetType(System.Double))
+            diffDt.Columns.Add("% Difference", GetType(System.Double))
+
+            For i As Integer = 0 To Math.Max(dt.Rows.Count, comparer.Rows.Count) - 1
+                Dim dtRow As DataRow
+                Dim comparerRow As DataRow
+
+                Try
+                    dtRow = dt.Rows(i)
+                Catch ex As Exception
+                    dtRow = Nothing
+                End Try
+
+                If dtRow IsNot Nothing Then
+                    For Each dr As DataRow In comparer.Rows
+                        If dr.Item("Type").ToString = dtRow.Item("Type").ToString And dr.Item("Tool").ToString = dtRow.Item("Tool").ToString Then
+                            comparerRow = dr
+                            Exit For
+                        Else
+                            comparerRow = Nothing
+                        End If
+                    Next
+
+                    If IsNumeric(dtRow.Item("Rating")) Then
+                        dtVal = CType(dtRow.Item("Rating"), Double)
+                    End If
+                Else
+                    comparerRow = comparer.Rows(i)
+                End If
+
+                If comparerRow IsNot Nothing Then
+                    If IsNumeric(comparerRow.Item("Rating")) Then
+                        comparerVal = CType(comparerRow.Item("Rating"), Double)
+                    End If
+                End If
+
+                If dtVal <> Double.NaN And comparerVal <> Double.NaN Then
+                    delta = Math.Round(dtVal - comparerVal, 3)
+                    perDelta = Math.Round((comparerVal - dtVal) / (dtVal) * 100, 2)
+                End If
+
+                diffDt.Rows.Add(
+                                dtRow.Item("Tool").ToString,
+                                dtRow.Item("Type").ToString,
+                                IIf(Double.IsNaN(dtVal), Nothing, dtVal),
+                                IIf(Double.IsNaN(comparerVal), Nothing, comparerVal),
+                                IIf(Double.IsNaN(delta), Nothing, delta),
+                                IIf(Double.IsNaN(perDelta), Nothing, perDelta)
+                               )
+
+                If delta = Double.NaN Or delta <> 0 Then
+                    matching = False
+                End If
+
+                comparerVal = Double.NaN
+                dtVal = Double.NaN
+                delta = Double.NaN
+                perDelta = Double.NaN
+            Next
+
+            Return New Tuple(Of Boolean, DataTable)(matching, diffDt)
+        End Function
+
+        Public Sub ButtonclickToggle(ByRef cur As Cursor)
+            If cur = Cursors.WaitCursor Then
+                cur = Cursors.Default
+            Else
+                cur = Cursors.WaitCursor
+            End If
+        End Sub
     End Module
 
     'Test cases are created when a test case is selected

@@ -63,44 +63,13 @@ Partial Public Class AnchorBlockFoundation
         Next
     End Sub
 
-    Public Overrides Sub LoadFromExcel()
-        ''''''Customize for each foundation type'''''
-        Dim excelDS As New DataSet
-
-        For Each item As EXCELDTParameter In ExcelDTParams
-            Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(Me.WorkBookPath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
-            Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(Me.WorkBookPath), item.xlsSheet, item.xlsRange))
-            End Try
-        Next
-
-        'If tables exist then construct otherwise just return blank GAB Tool 
-        '''''''''''''''''''''
-        '''''''''''''''''''''
-        If excelDS.Tables.Contains("Guy Anchor Block Tool") Then
-            Dim dr As DataRow = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
-
-            ConstructMe(dr)
-
-            Dim myAB As New AnchorBlock
-            For Each abrow As DataRow In excelDS.Tables(myAB.EDSObjectName).Rows
-                If IsSomething(abrow.Item("local_anchor_id")) Or (IsSomething(abrow.Item("ID")) And IsNothing(abrow.Item("local_anchor_id"))) Then
-                    Me.AnchorBlocks.Add(New AnchorBlock(abrow, excelDS, True, Me))
-                End If
-            Next
-        End If
-        '''''''''''''''''''''
-        '''''''''''''''''''''
-    End Sub
-
     'EXCEL CONSTRUCTOR
     Public Sub New(ByVal ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
         Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        LoadFromExcel(ExcelFilePath)
+        LoadFromExcel()
 
         'ATTEMPT AT MAKING GENERAL LISTS *salute* WORK
         'Add a list of anchor profiles
@@ -242,6 +211,39 @@ Partial Public Class AnchorBlockFoundation
         Return SQLDelete + vbCrLf
     End Function
 
+#End Region
+
+#Region "Load From Excel"
+    Public Overrides Sub LoadFromExcel()
+        ''''''Customize for each foundation type'''''
+        Dim excelDS As New DataSet
+
+        For Each item As EXCELDTParameter In ExcelDTParams
+            Try
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(Me.WorkBookPath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+            Catch ex As Exception
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(Me.WorkBookPath), item.xlsSheet, item.xlsRange))
+            End Try
+        Next
+
+        'If tables exist then construct otherwise just return blank GAB Tool 
+        '''''''''''''''''''''
+        '''''''''''''''''''''
+        If excelDS.Tables.Contains("Guy Anchor Block Tool") Then
+            Dim dr As DataRow = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
+
+            ConstructMe(dr)
+
+            Dim myAB As New AnchorBlock
+            For Each abrow As DataRow In excelDS.Tables(myAB.EDSObjectName).Rows
+                If IsSomething(abrow.Item("local_anchor_id")) Or (IsSomething(abrow.Item("ID")) And IsNothing(abrow.Item("local_anchor_id"))) Then
+                    Me.AnchorBlocks.Add(New AnchorBlock(abrow, excelDS, True, Me))
+                End If
+            Next
+        End If
+        '''''''''''''''''''''
+        '''''''''''''''''''''
+    End Sub
 #End Region
 
 #Region "Save to EDS"

@@ -26,10 +26,6 @@
         ''' </summary>
         Private Sub InitializeComponent()
             Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-            Me.GridView2 = New DevExpress.XtraGrid.Views.Grid.GridView()
-            Me.GridControl1 = New DevExpress.XtraGrid.GridControl()
-            Me.GridView1 = New DevExpress.XtraGrid.Views.Grid.GridView()
-            Me.GridView3 = New DevExpress.XtraGrid.Views.Grid.GridView()
             Me.pgStructure = New System.Windows.Forms.TabPage()
             Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
             Me.btnImportStrcFiles = New System.Windows.Forms.Button()
@@ -82,18 +78,22 @@
             Me.sccMain = New DevExpress.XtraEditors.SplitContainerControl()
             Me.sccTesting = New DevExpress.XtraEditors.SplitContainerControl()
             Me.SplitContainerControl1 = New DevExpress.XtraEditors.SplitContainerControl()
-            Me.sccNetwork = New DevExpress.XtraEditors.SplitContainerControl()
+            Me.XtraTabControl1 = New DevExpress.XtraTab.XtraTabControl()
+            Me.XtraTabPage1 = New DevExpress.XtraTab.XtraTabPage()
             Me.seNetwork = New Testing_Winform.UnitTesting.SimpleExplorer()
-            Me.LabelControl11 = New DevExpress.XtraEditors.LabelControl()
+            Me.XtraTabPage2 = New DevExpress.XtraTab.XtraTabPage()
             Me.seSA = New Testing_Winform.UnitTesting.SimpleExplorer()
-            Me.LabelControl12 = New DevExpress.XtraEditors.LabelControl()
+            Me.XtraTabControl2 = New DevExpress.XtraTab.XtraTabControl()
+            Me.XtraTabPage3 = New DevExpress.XtraTab.XtraTabPage()
             Me.seLocal = New Testing_Winform.UnitTesting.SimpleExplorer()
-            Me.LabelControl13 = New DevExpress.XtraEditors.LabelControl()
-            Me.sccReference = New DevExpress.XtraEditors.SplitContainerControl()
             Me.rtbNotes = New System.Windows.Forms.RichTextBox()
             Me.LabelControl14 = New DevExpress.XtraEditors.LabelControl()
+            Me.GridControl1 = New DevExpress.XtraGrid.GridControl()
+            Me.GridView1 = New DevExpress.XtraGrid.Views.Grid.GridView()
+            Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.testCompareAll = New DevExpress.XtraEditors.SimpleButton()
             Me.testPublishedResults = New DevExpress.XtraEditors.SimpleButton()
             Me.testPrevResults = New DevExpress.XtraEditors.SimpleButton()
             Me.testIterationResults = New DevExpress.XtraEditors.SimpleButton()
@@ -120,11 +120,6 @@
             Me.testWo = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
-            Me.FileSystemWatcher1 = New System.IO.FileSystemWatcher()
-            CType(Me.GridView2, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.GridView1, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -174,18 +169,15 @@
             CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainerControl1.Panel2.SuspendLayout()
             Me.SplitContainerControl1.SuspendLayout()
-            CType(Me.sccNetwork, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.sccNetwork.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.sccNetwork.Panel1.SuspendLayout()
-            CType(Me.sccNetwork.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.sccNetwork.Panel2.SuspendLayout()
-            Me.sccNetwork.SuspendLayout()
-            CType(Me.sccReference, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.sccReference.Panel1, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.sccReference.Panel1.SuspendLayout()
-            CType(Me.sccReference.Panel2, System.ComponentModel.ISupportInitialize).BeginInit()
-            Me.sccReference.Panel2.SuspendLayout()
-            Me.sccReference.SuspendLayout()
+            CType(Me.XtraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.XtraTabControl1.SuspendLayout()
+            Me.XtraTabPage1.SuspendLayout()
+            Me.XtraTabPage2.SuspendLayout()
+            CType(Me.XtraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
+            Me.XtraTabControl2.SuspendLayout()
+            Me.XtraTabPage3.SuspendLayout()
+            CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+            CType(Me.GridView1, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.PanelControl1.SuspendLayout()
             CType(Me.chkWorkLocal.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -199,53 +191,7 @@
             CType(Me.testIteration.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-            CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SuspendLayout()
-            '
-            'GridView2
-            '
-            Me.GridView2.GridControl = Me.GridControl1
-            Me.GridView2.HorzScrollVisibility = DevExpress.XtraGrid.Views.Base.ScrollVisibility.Always
-            Me.GridView2.Name = "GridView2"
-            Me.GridView2.OptionsFilter.AllowAutoFilterConditionChange = DevExpress.Utils.DefaultBoolean.[False]
-            Me.GridView2.OptionsFilter.AllowFilterEditor = False
-            Me.GridView2.OptionsFilter.InHeaderSearchMode = DevExpress.XtraGrid.Views.Grid.GridInHeaderSearchMode.Disabled
-            Me.GridView2.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full
-            Me.GridView2.OptionsView.ColumnAutoWidth = False
-            Me.GridView2.OptionsView.ColumnHeaderAutoHeight = DevExpress.Utils.DefaultBoolean.[True]
-            Me.GridView2.OptionsView.ShowGroupPanel = False
-            Me.GridView2.OptionsView.ShowIndicator = False
-            '
-            'GridControl1
-            '
-            Me.GridControl1.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.GridControl1.Location = New System.Drawing.Point(0, 0)
-            Me.GridControl1.MainView = Me.GridView1
-            Me.GridControl1.Name = "GridControl1"
-            Me.GridControl1.Size = New System.Drawing.Size(88, 206)
-            Me.GridControl1.TabIndex = 19
-            Me.GridControl1.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView1, Me.GridView3, Me.GridView2})
-            '
-            'GridView1
-            '
-            Me.GridView1.GridControl = Me.GridControl1
-            Me.GridView1.HorzScrollVisibility = DevExpress.XtraGrid.Views.Base.ScrollVisibility.Always
-            Me.GridView1.Name = "GridView1"
-            Me.GridView1.OptionsFilter.AllowAutoFilterConditionChange = DevExpress.Utils.DefaultBoolean.[False]
-            Me.GridView1.OptionsFilter.AllowFilterEditor = False
-            Me.GridView1.OptionsFilter.InHeaderSearchMode = DevExpress.XtraGrid.Views.Grid.GridInHeaderSearchMode.Disabled
-            Me.GridView1.OptionsLayout.Columns.AddNewColumns = False
-            Me.GridView1.OptionsLayout.Columns.RemoveOldColumns = False
-            Me.GridView1.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full
-            Me.GridView1.OptionsView.ColumnAutoWidth = False
-            Me.GridView1.OptionsView.ColumnHeaderAutoHeight = DevExpress.Utils.DefaultBoolean.[True]
-            Me.GridView1.OptionsView.ShowGroupPanel = False
-            Me.GridView1.OptionsView.ShowIndicator = False
-            '
-            'GridView3
-            '
-            Me.GridView3.GridControl = Me.GridControl1
-            Me.GridView3.Name = "GridView3"
             '
             'pgStructure
             '
@@ -781,10 +727,12 @@
             '
             'sccMain.Panel2
             '
+            Me.sccMain.Panel2.Controls.Add(Me.GridControl1)
+            Me.sccMain.Panel2.Controls.Add(Me.SplitterControl1)
             Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
             Me.sccMain.Panel2.Text = "Panel2"
             Me.sccMain.Size = New System.Drawing.Size(1219, 616)
-            Me.sccMain.SplitterPosition = 223
+            Me.sccMain.SplitterPosition = 298
             Me.sccMain.TabIndex = 21
             '
             'sccTesting
@@ -802,9 +750,10 @@
             '
             'sccTesting.Panel2
             '
-            Me.sccTesting.Panel2.Controls.Add(Me.sccReference)
+            Me.sccTesting.Panel2.Controls.Add(Me.rtbNotes)
+            Me.sccTesting.Panel2.Controls.Add(Me.LabelControl14)
             Me.sccTesting.Panel2.Text = "Panel2"
-            Me.sccTesting.Size = New System.Drawing.Size(986, 616)
+            Me.sccTesting.Size = New System.Drawing.Size(911, 616)
             Me.sccTesting.SplitterPosition = 206
             Me.sccTesting.TabIndex = 18
             '
@@ -816,153 +765,156 @@
             '
             'SplitContainerControl1.Panel1
             '
-            Me.SplitContainerControl1.Panel1.Controls.Add(Me.sccNetwork)
+            Me.SplitContainerControl1.Panel1.Controls.Add(Me.XtraTabControl1)
             Me.SplitContainerControl1.Panel1.Text = "Panel1"
             '
             'SplitContainerControl1.Panel2
             '
-            Me.SplitContainerControl1.Panel2.Controls.Add(Me.seLocal)
-            Me.SplitContainerControl1.Panel2.Controls.Add(Me.LabelControl13)
+            Me.SplitContainerControl1.Panel2.Controls.Add(Me.XtraTabControl2)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(986, 400)
-            Me.SplitContainerControl1.SplitterPosition = 622
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(911, 400)
+            Me.SplitContainerControl1.SplitterPosition = 435
             Me.SplitContainerControl1.TabIndex = 15
             '
-            'sccNetwork
+            'XtraTabControl1
             '
-            Me.sccNetwork.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.sccNetwork.Horizontal = False
-            Me.sccNetwork.Location = New System.Drawing.Point(0, 0)
-            Me.sccNetwork.Name = "sccNetwork"
+            Me.XtraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.XtraTabControl1.HeaderOrientation = DevExpress.XtraTab.TabOrientation.Horizontal
+            Me.XtraTabControl1.Location = New System.Drawing.Point(0, 0)
+            Me.XtraTabControl1.Name = "XtraTabControl1"
+            Me.XtraTabControl1.SelectedTabPage = Me.XtraTabPage1
+            Me.XtraTabControl1.ShowTabHeader = DevExpress.Utils.DefaultBoolean.[True]
+            Me.XtraTabControl1.Size = New System.Drawing.Size(435, 400)
+            Me.XtraTabControl1.TabIndex = 16
+            Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage1, Me.XtraTabPage2})
             '
-            'sccNetwork.Panel1
+            'XtraTabPage1
             '
-            Me.sccNetwork.Panel1.Controls.Add(Me.seNetwork)
-            Me.sccNetwork.Panel1.Controls.Add(Me.LabelControl11)
-            Me.sccNetwork.Panel1.Text = "Panel1"
-            '
-            'sccNetwork.Panel2
-            '
-            Me.sccNetwork.Panel2.Controls.Add(Me.seSA)
-            Me.sccNetwork.Panel2.Controls.Add(Me.LabelControl12)
-            Me.sccNetwork.Panel2.Text = "Panel2"
-            Me.sccNetwork.Size = New System.Drawing.Size(622, 400)
-            Me.sccNetwork.SplitterPosition = 191
-            Me.sccNetwork.TabIndex = 15
+            Me.XtraTabPage1.Controls.Add(Me.seNetwork)
+            Me.XtraTabPage1.Name = "XtraTabPage1"
+            Me.XtraTabPage1.Size = New System.Drawing.Size(433, 375)
+            Me.XtraTabPage1.Text = "Network Test Folder"
             '
             'seNetwork
             '
             Me.seNetwork.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.seNetwork.Location = New System.Drawing.Point(0, 16)
+            Me.seNetwork.Location = New System.Drawing.Point(0, 0)
             Me.seNetwork.Margin = New System.Windows.Forms.Padding(0)
             Me.seNetwork.Name = "seNetwork"
             Me.seNetwork.SelectedFile = Nothing
-            Me.seNetwork.Size = New System.Drawing.Size(622, 175)
-            Me.seNetwork.TabIndex = 14
+            Me.seNetwork.Size = New System.Drawing.Size(433, 375)
+            Me.seNetwork.TabIndex = 16
             '
-            'LabelControl11
+            'XtraTabPage2
             '
-            Me.LabelControl11.Appearance.Font = New System.Drawing.Font("Tahoma", 10.0!, System.Drawing.FontStyle.Bold)
-            Me.LabelControl11.Appearance.Options.UseFont = True
-            Me.LabelControl11.Dock = System.Windows.Forms.DockStyle.Top
-            Me.LabelControl11.Location = New System.Drawing.Point(0, 0)
-            Me.LabelControl11.Name = "LabelControl11"
-            Me.LabelControl11.Size = New System.Drawing.Size(176, 16)
-            Me.LabelControl11.TabIndex = 0
-            Me.LabelControl11.Text = "Testing Directory: Network"
+            Me.XtraTabPage2.Controls.Add(Me.seSA)
+            Me.XtraTabPage2.Name = "XtraTabPage2"
+            Me.XtraTabPage2.Size = New System.Drawing.Size(0, 0)
+            Me.XtraTabPage2.Text = "SA Reference Folder"
             '
             'seSA
             '
             Me.seSA.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.seSA.Location = New System.Drawing.Point(0, 16)
+            Me.seSA.Location = New System.Drawing.Point(0, 0)
             Me.seSA.Margin = New System.Windows.Forms.Padding(0)
             Me.seSA.Name = "seSA"
             Me.seSA.SelectedFile = Nothing
-            Me.seSA.Size = New System.Drawing.Size(622, 183)
-            Me.seSA.TabIndex = 15
+            Me.seSA.Size = New System.Drawing.Size(0, 0)
+            Me.seSA.TabIndex = 17
             '
-            'LabelControl12
+            'XtraTabControl2
             '
-            Me.LabelControl12.Appearance.Font = New System.Drawing.Font("Tahoma", 10.0!, System.Drawing.FontStyle.Bold)
-            Me.LabelControl12.Appearance.Options.UseFont = True
-            Me.LabelControl12.Dock = System.Windows.Forms.DockStyle.Top
-            Me.LabelControl12.Location = New System.Drawing.Point(0, 0)
-            Me.LabelControl12.Name = "LabelControl12"
-            Me.LabelControl12.Size = New System.Drawing.Size(154, 16)
-            Me.LabelControl12.TabIndex = 1
-            Me.LabelControl12.Text = "SA Reference Directory"
+            Me.XtraTabControl2.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.XtraTabControl2.Location = New System.Drawing.Point(0, 0)
+            Me.XtraTabControl2.Name = "XtraTabControl2"
+            Me.XtraTabControl2.SelectedTabPage = Me.XtraTabPage3
+            Me.XtraTabControl2.Size = New System.Drawing.Size(466, 400)
+            Me.XtraTabControl2.TabIndex = 17
+            Me.XtraTabControl2.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage3})
+            '
+            'XtraTabPage3
+            '
+            Me.XtraTabPage3.Controls.Add(Me.seLocal)
+            Me.XtraTabPage3.Name = "XtraTabPage3"
+            Me.XtraTabPage3.Size = New System.Drawing.Size(464, 375)
+            Me.XtraTabPage3.Text = "Local Testing Folder"
             '
             'seLocal
             '
             Me.seLocal.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.seLocal.Location = New System.Drawing.Point(0, 16)
+            Me.seLocal.Location = New System.Drawing.Point(0, 0)
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(354, 384)
-            Me.seLocal.TabIndex = 15
-            '
-            'LabelControl13
-            '
-            Me.LabelControl13.Appearance.Font = New System.Drawing.Font("Tahoma", 10.0!, System.Drawing.FontStyle.Bold)
-            Me.LabelControl13.Appearance.Options.UseFont = True
-            Me.LabelControl13.Dock = System.Windows.Forms.DockStyle.Top
-            Me.LabelControl13.Location = New System.Drawing.Point(0, 0)
-            Me.LabelControl13.Name = "LabelControl13"
-            Me.LabelControl13.Size = New System.Drawing.Size(154, 16)
-            Me.LabelControl13.TabIndex = 16
-            Me.LabelControl13.Text = "Testing Directory: Local"
-            '
-            'sccReference
-            '
-            Me.sccReference.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.sccReference.Location = New System.Drawing.Point(0, 0)
-            Me.sccReference.Name = "sccReference"
-            '
-            'sccReference.Panel1
-            '
-            Me.sccReference.Panel1.Controls.Add(Me.rtbNotes)
-            Me.sccReference.Panel1.Controls.Add(Me.LabelControl14)
-            Me.sccReference.Panel1.Text = "Panel1"
-            '
-            'sccReference.Panel2
-            '
-            Me.sccReference.Panel2.Controls.Add(Me.GridControl1)
-            Me.sccReference.Panel2.Text = "Panel2"
-            Me.sccReference.Size = New System.Drawing.Size(986, 206)
-            Me.sccReference.SplitterPosition = 888
-            Me.sccReference.TabIndex = 20
+            Me.seLocal.Size = New System.Drawing.Size(464, 375)
+            Me.seLocal.TabIndex = 16
             '
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.rtbNotes.Location = New System.Drawing.Point(0, 16)
+            Me.rtbNotes.Location = New System.Drawing.Point(0, 13)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(888, 190)
-            Me.rtbNotes.TabIndex = 17
+            Me.rtbNotes.Size = New System.Drawing.Size(911, 193)
+            Me.rtbNotes.TabIndex = 19
             Me.rtbNotes.Text = ""
             '
             'LabelControl14
             '
-            Me.LabelControl14.Appearance.Font = New System.Drawing.Font("Tahoma", 10.0!, System.Drawing.FontStyle.Bold)
-            Me.LabelControl14.Appearance.Options.UseFont = True
             Me.LabelControl14.Dock = System.Windows.Forms.DockStyle.Top
             Me.LabelControl14.Location = New System.Drawing.Point(0, 0)
             Me.LabelControl14.Name = "LabelControl14"
-            Me.LabelControl14.Size = New System.Drawing.Size(69, 16)
-            Me.LabelControl14.TabIndex = 18
+            Me.LabelControl14.Size = New System.Drawing.Size(52, 13)
+            Me.LabelControl14.TabIndex = 20
             Me.LabelControl14.Text = "Test Notes"
+            '
+            'GridControl1
+            '
+            Me.GridControl1.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.GridControl1.Location = New System.Drawing.Point(0, 452)
+            Me.GridControl1.MainView = Me.GridView1
+            Me.GridControl1.Name = "GridControl1"
+            Me.GridControl1.Size = New System.Drawing.Size(298, 164)
+            Me.GridControl1.TabIndex = 20
+            Me.GridControl1.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView1})
+            '
+            'GridView1
+            '
+            Me.GridView1.GridControl = Me.GridControl1
+            Me.GridView1.HorzScrollVisibility = DevExpress.XtraGrid.Views.Base.ScrollVisibility.Always
+            Me.GridView1.Name = "GridView1"
+            Me.GridView1.OptionsFilter.AllowAutoFilterConditionChange = DevExpress.Utils.DefaultBoolean.[False]
+            Me.GridView1.OptionsFilter.AllowFilterEditor = False
+            Me.GridView1.OptionsFilter.InHeaderSearchMode = DevExpress.XtraGrid.Views.Grid.GridInHeaderSearchMode.Disabled
+            Me.GridView1.OptionsLayout.Columns.AddNewColumns = False
+            Me.GridView1.OptionsLayout.Columns.RemoveOldColumns = False
+            Me.GridView1.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full
+            Me.GridView1.OptionsView.ColumnAutoWidth = False
+            Me.GridView1.OptionsView.ColumnHeaderAutoHeight = DevExpress.Utils.DefaultBoolean.[True]
+            Me.GridView1.OptionsView.ShowGroupPanel = False
+            Me.GridView1.OptionsView.ShowIndicator = False
+            '
+            'SplitterControl1
+            '
+            Me.SplitterControl1.Cursor = System.Windows.Forms.Cursors.HSplit
+            Me.SplitterControl1.Dock = System.Windows.Forms.DockStyle.Top
+            Me.SplitterControl1.Location = New System.Drawing.Point(0, 442)
+            Me.SplitterControl1.Name = "SplitterControl1"
+            Me.SplitterControl1.Size = New System.Drawing.Size(298, 10)
+            Me.SplitterControl1.TabIndex = 21
+            Me.SplitterControl1.TabStop = False
             '
             'pgcUnitTesting
             '
-            Me.pgcUnitTesting.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.pgcUnitTesting.Dock = System.Windows.Forms.DockStyle.Top
+            Me.pgcUnitTesting.HelpVisible = False
             Me.pgcUnitTesting.Location = New System.Drawing.Point(0, 0)
             Me.pgcUnitTesting.Name = "pgcUnitTesting"
-            Me.pgcUnitTesting.Size = New System.Drawing.Size(223, 616)
+            Me.pgcUnitTesting.Size = New System.Drawing.Size(298, 442)
             Me.pgcUnitTesting.TabIndex = 0
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.testCompareAll)
             Me.PanelControl1.Controls.Add(Me.testPublishedResults)
             Me.PanelControl1.Controls.Add(Me.testPrevResults)
             Me.PanelControl1.Controls.Add(Me.testIterationResults)
@@ -995,32 +947,41 @@
             Me.PanelControl1.Size = New System.Drawing.Size(1219, 120)
             Me.PanelControl1.TabIndex = 16
             '
+            'testCompareAll
+            '
+            Me.testCompareAll.Enabled = False
+            Me.testCompareAll.Location = New System.Drawing.Point(864, 91)
+            Me.testCompareAll.Name = "testCompareAll"
+            Me.testCompareAll.Size = New System.Drawing.Size(177, 23)
+            Me.testCompareAll.TabIndex = 28
+            Me.testCompareAll.Text = "Compare All Results"
+            '
             'testPublishedResults
             '
             Me.testPublishedResults.Enabled = False
-            Me.testPublishedResults.Location = New System.Drawing.Point(806, 35)
+            Me.testPublishedResults.Location = New System.Drawing.Point(864, 64)
             Me.testPublishedResults.Name = "testPublishedResults"
-            Me.testPublishedResults.Size = New System.Drawing.Size(125, 23)
+            Me.testPublishedResults.Size = New System.Drawing.Size(177, 23)
             Me.testPublishedResults.TabIndex = 27
-            Me.testPublishedResults.Text = "Published Tools Results"
+            Me.testPublishedResults.Text = "Create Published Tools Results"
             '
             'testPrevResults
             '
             Me.testPrevResults.Enabled = False
-            Me.testPrevResults.Location = New System.Drawing.Point(806, 9)
+            Me.testPrevResults.Location = New System.Drawing.Point(864, 35)
             Me.testPrevResults.Name = "testPrevResults"
-            Me.testPrevResults.Size = New System.Drawing.Size(125, 23)
+            Me.testPrevResults.Size = New System.Drawing.Size(177, 23)
             Me.testPrevResults.TabIndex = 26
-            Me.testPrevResults.Text = "Previous SA Results"
+            Me.testPrevResults.Text = "Create Reference SA Results"
             '
             'testIterationResults
             '
             Me.testIterationResults.Enabled = False
-            Me.testIterationResults.Location = New System.Drawing.Point(700, 9)
+            Me.testIterationResults.Location = New System.Drawing.Point(864, 6)
             Me.testIterationResults.Name = "testIterationResults"
-            Me.testIterationResults.Size = New System.Drawing.Size(75, 23)
+            Me.testIterationResults.Size = New System.Drawing.Size(177, 23)
             Me.testIterationResults.TabIndex = 25
-            Me.testIterationResults.Text = "Save Results"
+            Me.testIterationResults.Text = "Create Iteration Results"
             '
             'testConduct
             '
@@ -1029,16 +990,16 @@
             Me.testConduct.Enabled = False
             Me.testConduct.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.download
             Me.testConduct.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.Full
-            Me.testConduct.Location = New System.Drawing.Point(957, 9)
+            Me.testConduct.Location = New System.Drawing.Point(706, 14)
             Me.testConduct.Name = "testConduct"
             Me.testConduct.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-            Me.testConduct.Size = New System.Drawing.Size(77, 49)
+            Me.testConduct.Size = New System.Drawing.Size(55, 39)
             Me.testConduct.TabIndex = 24
             '
             'chkWorkLocal
             '
             Me.chkWorkLocal.Enabled = False
-            Me.chkWorkLocal.Location = New System.Drawing.Point(856, 63)
+            Me.chkWorkLocal.Location = New System.Drawing.Point(767, 24)
             Me.chkWorkLocal.Name = "chkWorkLocal"
             Me.chkWorkLocal.Properties.Caption = "Work Local"
             Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
@@ -1061,7 +1022,7 @@
             '
             'testComb
             '
-            Me.testComb.Location = New System.Drawing.Point(645, 63)
+            Me.testComb.Location = New System.Drawing.Point(651, 63)
             Me.testComb.Name = "testComb"
             Me.testComb.Properties.ReadOnly = True
             Me.testComb.Size = New System.Drawing.Size(194, 20)
@@ -1069,7 +1030,7 @@
             '
             'LabelControl9
             '
-            Me.LabelControl9.Location = New System.Drawing.Point(556, 66)
+            Me.LabelControl9.Location = New System.Drawing.Point(562, 66)
             Me.LabelControl9.Name = "LabelControl9"
             Me.LabelControl9.Size = New System.Drawing.Size(83, 13)
             Me.LabelControl9.TabIndex = 19
@@ -1078,15 +1039,15 @@
             'btnNextIteration
             '
             Me.btnNextIteration.Enabled = False
-            Me.btnNextIteration.Location = New System.Drawing.Point(700, 35)
+            Me.btnNextIteration.Location = New System.Drawing.Point(651, 91)
             Me.btnNextIteration.Name = "btnNextIteration"
-            Me.btnNextIteration.Size = New System.Drawing.Size(75, 23)
+            Me.btnNextIteration.Size = New System.Drawing.Size(195, 23)
             Me.btnNextIteration.TabIndex = 18
-            Me.btnNextIteration.Text = "Create"
+            Me.btnNextIteration.Text = "Create New Iteration"
             '
             'testNextIteration
             '
-            Me.testNextIteration.Location = New System.Drawing.Point(644, 37)
+            Me.testNextIteration.Location = New System.Drawing.Point(650, 37)
             Me.testNextIteration.Name = "testNextIteration"
             Me.testNextIteration.Properties.ReadOnly = True
             Me.testNextIteration.Size = New System.Drawing.Size(50, 20)
@@ -1094,7 +1055,7 @@
             '
             'LabelControl8
             '
-            Me.LabelControl8.Location = New System.Drawing.Point(570, 40)
+            Me.LabelControl8.Location = New System.Drawing.Point(576, 40)
             Me.LabelControl8.Name = "LabelControl8"
             Me.LabelControl8.Size = New System.Drawing.Size(68, 13)
             Me.LabelControl8.TabIndex = 16
@@ -1153,7 +1114,7 @@
             '
             'testIteration
             '
-            Me.testIteration.Location = New System.Drawing.Point(644, 11)
+            Me.testIteration.Location = New System.Drawing.Point(650, 11)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.ReadOnly = True
             Me.testIteration.Size = New System.Drawing.Size(50, 20)
@@ -1169,7 +1130,7 @@
             '
             'LabelControl6
             '
-            Me.LabelControl6.Location = New System.Drawing.Point(556, 14)
+            Me.LabelControl6.Location = New System.Drawing.Point(562, 14)
             Me.LabelControl6.Name = "LabelControl6"
             Me.LabelControl6.Size = New System.Drawing.Size(82, 13)
             Me.LabelControl6.TabIndex = 11
@@ -1215,11 +1176,6 @@
             Me.LabelControl3.TabIndex = 7
             Me.LabelControl3.Text = "WO"
             '
-            'FileSystemWatcher1
-            '
-            Me.FileSystemWatcher1.EnableRaisingEvents = True
-            Me.FileSystemWatcher1.SynchronizingObject = Me
-            '
             'frmMain
             '
             Me.Appearance.BackColor = System.Drawing.Color.White
@@ -1234,10 +1190,6 @@
             Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
             Me.Text = "EDS & Excel Testing"
             Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
-            CType(Me.GridView2, System.ComponentModel.ISupportInitialize).EndInit()
-            CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).EndInit()
-            CType(Me.GridView1, System.ComponentModel.ISupportInitialize).EndInit()
-            CType(Me.GridView3, System.ComponentModel.ISupportInitialize).EndInit()
             Me.pgStructure.ResumeLayout(False)
             Me.SplitContainer3.Panel1.ResumeLayout(False)
             Me.SplitContainer3.Panel2.ResumeLayout(False)
@@ -1282,30 +1234,24 @@
             Me.sccTesting.Panel1.ResumeLayout(False)
             CType(Me.sccTesting.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
             Me.sccTesting.Panel2.ResumeLayout(False)
+            Me.sccTesting.Panel2.PerformLayout()
             CType(Me.sccTesting, System.ComponentModel.ISupportInitialize).EndInit()
             Me.sccTesting.ResumeLayout(False)
             CType(Me.SplitContainerControl1.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.SplitContainerControl1.Panel1.ResumeLayout(False)
             CType(Me.SplitContainerControl1.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
             Me.SplitContainerControl1.Panel2.ResumeLayout(False)
-            Me.SplitContainerControl1.Panel2.PerformLayout()
             CType(Me.SplitContainerControl1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.SplitContainerControl1.ResumeLayout(False)
-            CType(Me.sccNetwork.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccNetwork.Panel1.ResumeLayout(False)
-            Me.sccNetwork.Panel1.PerformLayout()
-            CType(Me.sccNetwork.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccNetwork.Panel2.ResumeLayout(False)
-            Me.sccNetwork.Panel2.PerformLayout()
-            CType(Me.sccNetwork, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccNetwork.ResumeLayout(False)
-            CType(Me.sccReference.Panel1, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccReference.Panel1.ResumeLayout(False)
-            Me.sccReference.Panel1.PerformLayout()
-            CType(Me.sccReference.Panel2, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccReference.Panel2.ResumeLayout(False)
-            CType(Me.sccReference, System.ComponentModel.ISupportInitialize).EndInit()
-            Me.sccReference.ResumeLayout(False)
+            CType(Me.XtraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.XtraTabControl1.ResumeLayout(False)
+            Me.XtraTabPage1.ResumeLayout(False)
+            Me.XtraTabPage2.ResumeLayout(False)
+            CType(Me.XtraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
+            Me.XtraTabControl2.ResumeLayout(False)
+            Me.XtraTabPage3.ResumeLayout(False)
+            CType(Me.GridControl1, System.ComponentModel.ISupportInitialize).EndInit()
+            CType(Me.GridView1, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.PanelControl1.ResumeLayout(False)
             Me.PanelControl1.PerformLayout()
@@ -1320,7 +1266,6 @@
             CType(Me.testIteration.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.testSid.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.testWo.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-            CType(Me.FileSystemWatcher1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.ResumeLayout(False)
 
         End Sub
@@ -1385,8 +1330,6 @@
         Friend WithEvents testBu As DevExpress.XtraEditors.TextEdit
         Friend WithEvents testFolder As DevExpress.XtraEditors.TextEdit
         Friend WithEvents SplitContainerControl1 As DevExpress.XtraEditors.SplitContainerControl
-        Friend WithEvents seNetwork As SimpleExplorer
-        Friend WithEvents seLocal As SimpleExplorer
         Friend WithEvents PanelControl1 As DevExpress.XtraEditors.PanelControl
         Friend WithEvents testID As DevExpress.XtraEditors.ComboBoxEdit
         Friend WithEvents LabelControl7 As DevExpress.XtraEditors.LabelControl
@@ -1395,31 +1338,32 @@
         Friend WithEvents LabelControl8 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents testComb As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl9 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents rtbNotes As RichTextBox
         Friend WithEvents sccTesting As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents testLocalWorkarea As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl10 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents sccNetwork As DevExpress.XtraEditors.SplitContainerControl
-        Friend WithEvents LabelControl11 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents seSA As SimpleExplorer
-        Friend WithEvents LabelControl12 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents LabelControl13 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents LabelControl14 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents chkWorkLocal As DevExpress.XtraEditors.CheckEdit
-        Friend WithEvents FileSystemWatcher1 As IO.FileSystemWatcher
         Friend WithEvents testConduct As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testPrevResults As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testIterationResults As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents GridControl1 As DevExpress.XtraGrid.GridControl
-        Friend WithEvents GridView1 As DevExpress.XtraGrid.Views.Grid.GridView
-        Friend WithEvents GridView2 As DevExpress.XtraGrid.Views.Grid.GridView
-        Friend WithEvents GridView3 As DevExpress.XtraGrid.Views.Grid.GridView
-        Friend WithEvents Panel2 As Panel
-        Friend WithEvents Panel1 As Panel
         Friend WithEvents testPublishedResults As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents sccReference As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents sccMain As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents pgcUnitTesting As PropertyGrid
+        Friend WithEvents testCompareAll As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents XtraTabControl1 As DevExpress.XtraTab.XtraTabControl
+        Friend WithEvents XtraTabPage1 As DevExpress.XtraTab.XtraTabPage
+        Friend WithEvents seNetwork As SimpleExplorer
+        Friend WithEvents XtraTabPage2 As DevExpress.XtraTab.XtraTabPage
+        Friend WithEvents seSA As SimpleExplorer
+        Friend WithEvents XtraTabControl2 As DevExpress.XtraTab.XtraTabControl
+        Friend WithEvents XtraTabPage3 As DevExpress.XtraTab.XtraTabPage
+        Friend WithEvents seLocal As SimpleExplorer
+        Friend WithEvents rtbNotes As RichTextBox
+        Friend WithEvents LabelControl14 As DevExpress.XtraEditors.LabelControl
+        Friend WithEvents GridControl1 As DevExpress.XtraGrid.GridControl
+        Friend WithEvents GridView1 As DevExpress.XtraGrid.Views.Grid.GridView
+        Friend WithEvents Panel2 As Panel
+        Friend WithEvents Panel1 As Panel
+        Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
 
 #End Region
 
