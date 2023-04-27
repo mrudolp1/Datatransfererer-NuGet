@@ -512,7 +512,7 @@ ErrorSkip:
             Return "Fail"
         End If
         Try
-            objectTorun.LoadFromExcel(excelPath)
+            objectTorun.LoadFromExcel()
         Catch ex As Exception
             WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message)
             Return "Fail"
@@ -655,7 +655,7 @@ ErrorSkip:
 
 
             With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun") 'RunAnalysis 'SilentAnalysisRun
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateCCIReport") 'RunAnalysis 'SilentAnalysisRun
 
                 With .StartInfo
                     .CreateNoWindow = True
@@ -1059,8 +1059,22 @@ ErrorSkip:
         Return If(val1 > val2, val1, val2)
 
     End Function
+    ''' <summary>
+    ''' Loops through a set of eri files and runs TNX logic on them
+    ''' pass in the parent directory. this folder should have a group of folders with an eri in each and no other files - delete generated files if rerun needed
+    ''' </summary>
+    ''' <param name="parentDirectory"></param>
+    Private Sub LoopThroughERIFiles(parentDirectory As String)
+        Dim str As New EDSStructure
+        str.LogPath = "C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\ERI Testing\ERI Log.txt"
+        For Each fold In Directory.GetDirectories(parentDirectory)
+            For Each f In Directory.GetFiles(fold)
+                str.RunTNX(f, True)
+                Exit For
+            Next
+        Next
 
-
+    End Sub
 
 #End Region
 End Class

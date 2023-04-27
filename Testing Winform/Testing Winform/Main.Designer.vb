@@ -849,26 +849,6 @@
             Me.seLocal.Size = New System.Drawing.Size(464, 375)
             Me.seLocal.TabIndex = 16
             '
-            'sccReference
-            '
-            Me.sccReference.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.sccReference.Location = New System.Drawing.Point(0, 0)
-            Me.sccReference.Name = "sccReference"
-            '
-            'sccReference.Panel1
-            '
-            Me.sccReference.Panel1.Controls.Add(Me.rtbNotes)
-            Me.sccReference.Panel1.Controls.Add(Me.LabelControl14)
-            Me.sccReference.Panel1.Text = "Panel1"
-            '
-            'sccReference.Panel2
-            '
-            Me.sccReference.Panel2.Controls.Add(Me.GridControl1)
-            Me.sccReference.Panel2.Text = "Panel2"
-            Me.sccReference.Size = New System.Drawing.Size(986, 206)
-            Me.sccReference.SplitterPosition = 888
-            Me.sccReference.TabIndex = 20
-            '
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
