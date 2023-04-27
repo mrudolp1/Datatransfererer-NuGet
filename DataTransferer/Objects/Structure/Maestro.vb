@@ -87,7 +87,7 @@ Partial Public Class EDSStructure
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
                         GoTo ErrorSkip
                     End If
 
@@ -103,7 +103,7 @@ Partial Public Class EDSStructure
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
 
-                    If CheckForSuccess(OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac), "CCISeismic") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode), "CCISeismic") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -121,28 +121,29 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
 
-                spliceCheckFile = "" 'SpliceCheck(workingAreaPath)
+                'Splice Check
+                'spliceCheckFile = "" 'SpliceCheck(workingAreaPath)
 
-                If Not spliceCheckFile = "" Then
-                    If CheckForSuccess(OpenExcelRunMacro(spliceCheckFile, spliceMacImportTNX, isDevMode), "Splice Check - Import TNX") = False Then
-                        GoTo ErrorSkip
-                    End If
-                    If CheckForSuccess(OpenExcelRunMacro(spliceCheckFile, spliceMacRun, isDevMode), "Splice Check - Run") = False Then
-                        GoTo ErrorSkip
-                    End If
-                End If
+                'If Not spliceCheckFile = "" Then
+                '    If CheckForSuccess(OpenExcelRunMacro(spliceCheckFile, spliceMacImportTNX, isDevMode), "Splice Check - Import TNX") = False Then
+                '        GoTo ErrorSkip
+                '    End If
+                '    If CheckForSuccess(OpenExcelRunMacro(spliceCheckFile, spliceMacRun, isDevMode), "Splice Check - Run") = False Then
+                '        GoTo ErrorSkip
+                '    End If
+                'End If
 
                 If Me.CCIplates.Count > 0 Then
                     If Me.CCIplates.Count > 1 Then
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
                         GoTo ErrorSkip
                     End If
 
@@ -158,7 +159,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin.WorkBookPath, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -172,7 +173,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
                     For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(dp.WorkBookPath, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(dp, drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -184,7 +185,7 @@ Partial Public Class EDSStructure
                         'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
 
-                        If CheckForSuccess(OpenExcelRunMacro(pierPad.WorkBookPath, pierPadMac, isDevMode), "Pier & Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(pierPad, pierPadMac, isDevMode), "Pier & Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -193,7 +194,7 @@ Partial Public Class EDSStructure
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
                     For Each pile As Pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(pile, pileMac, isDevMode), "Pile") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -203,7 +204,7 @@ Partial Public Class EDSStructure
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
                     For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(guyAnc.WorkBookPath, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(guyAnc, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -234,7 +235,7 @@ Partial Public Class EDSStructure
                     ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
                     'run seismic. if output reads "Seismic analysis required" rerun TNX
-                    excelResult = OpenExcelRunMacro(seismicWeUsin.WorkBookPath, seisMac, isDevMode, True)
+                    excelResult = OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode, True)
                     If excelResult = "SEISMIC ANALYSIS REQUIRED" Then
                         '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
@@ -265,7 +266,7 @@ Partial Public Class EDSStructure
                     End If
 
                     For Each legReinforcement As LegReinforcement In LegReinforcements
-                        If CheckForSuccess(OpenExcelRunMacro(legReinforcement.WorkBookPath, legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(legReinforcement, legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -279,7 +280,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin.WorkBookPath, plateMac, isDevMode), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -289,7 +290,7 @@ Partial Public Class EDSStructure
                 If Me.UnitBases.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
                     For Each unitbase In Me.UnitBases
-                        If CheckForSuccess(OpenExcelRunMacro(unitbase.WorkBookPath, unitBaseMac, isDevMode), "Unit Base") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(unitbase, unitBaseMac, isDevMode), "Unit Base") = False Then
                             GoTo ErrorSkip
                         End If
                         'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
@@ -301,7 +302,7 @@ Partial Public Class EDSStructure
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
                     For Each drilledPier In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(drilledPier.WorkBookPath, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -310,7 +311,7 @@ Partial Public Class EDSStructure
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
                     For Each pierAndPad In Me.PierandPads
-                        If CheckForSuccess(OpenExcelRunMacro(pierAndPad.WorkBookPath, pierPadMac, isDevMode), "Pier and Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(pierAndPad, pierPadMac, isDevMode), "Pier and Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -319,7 +320,7 @@ Partial Public Class EDSStructure
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
                     For Each pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(pile.WorkBookPath, pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(pile, pileMac, isDevMode), "Pile") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -328,7 +329,7 @@ Partial Public Class EDSStructure
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
                     For Each guyAnchor In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(guyAnchor.WorkBookPath, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(guyAnchor, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -435,12 +436,14 @@ ErrorSkip:
         Return True
     End Function
 
-    Public Function OpenExcelRunMacro(excelPath As String, bigMac As String,
-                                      Optional ByVal isDevEnv As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
+    Public Function OpenExcelRunMacro(objectTorun As EDSExcelObject, bigMac As String,
+                                      Optional ByVal xlVisibility As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
         Dim tnxFilePath As String = Me.tnx.filePath
+        Dim excelPath As String = objectTorun.WorkBookPath
         Dim toolFileName As String = Path.GetFileName(excelPath)
 
         Dim logString As String = ""
+
         If String.IsNullOrEmpty(excelPath) Or String.IsNullOrEmpty(bigMac) Then
             WriteLineLogLine("ERROR | excelPath or bigMac parameter is null or empty")
             Return "Fail"
@@ -449,12 +452,12 @@ ErrorSkip:
         Dim xlApp As Microsoft.Office.Interop.Excel.Application = Nothing
         Dim xlWorkBook As Excel.Workbook = Nothing
 
-        Dim errorMessage As String = String.Empty
+        Dim errorMessage As String = ""
 
-        Dim xlVisibility As Boolean = False
-        If isDevEnv Then
-            xlVisibility = True
-        End If
+        'Dim xlVisibility As Boolean = False
+        'If isDevEnv Then
+        '    xlVisibility = True
+        'End If
 
         Try
             If File.Exists(excelPath) Then
@@ -508,7 +511,12 @@ ErrorSkip:
         If logString.Contains("| ERROR |") Then
             Return "Fail"
         End If
-
+        Try
+            objectTorun.LoadFromExcel()
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message)
+            Return "Fail"
+        End Try
         'check for seismic
         If isSeismic And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
             Return "SEISMIC ANALYSIS REQUIRED"
@@ -647,7 +655,7 @@ ErrorSkip:
 
 
             With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun") 'RunAnalysis 'SilentAnalysisRun
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateCCIReport") 'RunAnalysis 'SilentAnalysisRun
 
                 With .StartInfo
                     .CreateNoWindow = True
@@ -1051,8 +1059,22 @@ ErrorSkip:
         Return If(val1 > val2, val1, val2)
 
     End Function
+    ''' <summary>
+    ''' Loops through a set of eri files and runs TNX logic on them
+    ''' pass in the parent directory. this folder should have a group of folders with an eri in each and no other files - delete generated files if rerun needed
+    ''' </summary>
+    ''' <param name="parentDirectory"></param>
+    Private Sub LoopThroughERIFiles(parentDirectory As String)
+        Dim str As New EDSStructure
+        str.LogPath = "C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\ERI Testing\ERI Log.txt"
+        For Each fold In Directory.GetDirectories(parentDirectory)
+            For Each f In Directory.GetFiles(fold)
+                str.RunTNX(f, True)
+                Exit For
+            Next
+        Next
 
-
+    End Sub
 
 #End Region
 End Class
