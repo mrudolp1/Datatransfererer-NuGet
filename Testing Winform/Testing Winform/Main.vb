@@ -507,6 +507,7 @@ Namespace UnitTesting
         Private Sub testCompareAll_Click(sender As Object, e As EventArgs) Handles testCompareAll.Click
             ButtonclickToggle(Me.Cursor)
             Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
+            ButtonclickToggle(Me.Cursor)
 
             'Item 1 = Manual Compared to Maestro   
             '''Item 1 = Boolean specifying if they match
@@ -522,7 +523,6 @@ Namespace UnitTesting
             Dim newSum As New frmSummary
             newSum.myDs = checks.Item4
             newSum.Show()
-            ButtonclickToggle(Me.Cursor)
         End Sub
 
 
@@ -1031,47 +1031,24 @@ Namespace UnitTesting
         'If you are trying to output something that a user is editing. The data will need to be converted to a datatable to utilize this
         'This could probably be updated to work similar to the thing Ken Linck wrote that accepts any type of object. Instead of ouputting HTML calls we could output CSV.
         Public Sub DatatableToCSV(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
-            Dim counter As Integer = 0
+            Dim counter As Integer = 1
 RetryFileOpenCheck:
             If IO.File.Exists(strFilePath) Then
                 If FileIsOpen(New FileInfo(strFilePath)) Then
                     MsgBox(strFilePath & " is currently open. " & vbCrLf & vbCrLf & "Please close the file to continue.", MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "File is in use")
 
                     counter += 1
-                    If counter > 3 Then
-                        MsgBox("It seems the file is still open." & vbCrLf & vbCrLf & "Process is ending.", vbInformation)
+                    If counter > 2 Then
+                        MsgBox("It seems the file is still open." & vbCrLf & vbCrLf & "Data was not saved to CSV.", vbInformation)
                         Exit Sub
                     End If
                     GoTo RetryFileOpenCheck
                 End If
             End If
 
-            Dim sw As StreamWriter = New StreamWriter(strFilePath, False)
-
-            For i As Integer = 0 To dtDataTable.Columns.Count - 1
-                sw.Write(dtDataTable.Columns(i))
-
-                If i < dtDataTable.Columns.Count - 1 Then
-                    sw.Write(",")
-                End If
-            Next
-
-            sw.Write(sw.NewLine)
-
-            For Each dr As DataRow In dtDataTable.Rows
-
+            Using sw As StreamWriter = New StreamWriter(strFilePath, False)
                 For i As Integer = 0 To dtDataTable.Columns.Count - 1
-
-                    If Not Convert.IsDBNull(dr(i)) Then
-                        Dim value As String = dr(i).ToString()
-
-                        If value.Contains(","c) Then
-                            value = String.Format("""{0}""", value)
-                            sw.Write(value)
-                        Else
-                            sw.Write(dr(i).ToString())
-                        End If
-                    End If
+                    sw.Write(dtDataTable.Columns(i))
 
                     If i < dtDataTable.Columns.Count - 1 Then
                         sw.Write(",")
@@ -1079,9 +1056,32 @@ RetryFileOpenCheck:
                 Next
 
                 sw.Write(sw.NewLine)
-            Next
 
-            sw.Close()
+                For Each dr As DataRow In dtDataTable.Rows
+
+                    For i As Integer = 0 To dtDataTable.Columns.Count - 1
+
+                        If Not Convert.IsDBNull(dr(i)) Then
+                            Dim value As String = dr(i).ToString()
+
+                            If value.Contains(","c) Then
+                                value = String.Format("""{0}""", value)
+                                sw.Write(value)
+                            Else
+                                sw.Write(dr(i).ToString())
+                            End If
+                        End If
+
+                        If i < dtDataTable.Columns.Count - 1 Then
+                            sw.Write(",")
+                        End If
+                    Next
+
+                    sw.Write(sw.NewLine)
+                Next
+
+                sw.Close()
+            End Using
         End Sub
 
         'Convert a CSV file to a databale
@@ -1238,7 +1238,7 @@ RetryFileOpenCheck:
             diffDt.Columns.Add(comparer.TableName & " Val", GetType(System.Double))
             diffDt.Columns.Add("Delta", GetType(System.Double))
             diffDt.Columns.Add("% Difference", GetType(System.Double))
-
+            diffDt.Columns.Add("Status", GetType(System.String))
             For i As Integer = 0 To Math.Max(dt.Rows.Count, comparer.Rows.Count) - 1
                 Dim dtRow As DataRow
                 Dim comparerRow As DataRow
@@ -1283,7 +1283,8 @@ RetryFileOpenCheck:
                                 IIf(Double.IsNaN(dtVal), Nothing, dtVal),
                                 IIf(Double.IsNaN(comparerVal), Nothing, comparerVal),
                                 IIf(Double.IsNaN(delta), Nothing, delta),
-                                IIf(Double.IsNaN(perDelta), Nothing, perDelta)
+                                IIf(Double.IsNaN(perDelta), Nothing, perDelta),
+                                IIf(Double.IsNaN(delta) Or delta > 0.1, "Fail", "Pass")
                                )
 
                 If delta = Double.NaN Or delta <> 0 Then
@@ -1299,6 +1300,9 @@ RetryFileOpenCheck:
             Return New Tuple(Of Boolean, DataTable)(matching, diffDt)
         End Function
 
+        'Toggles the cursor between default and waiting
+        '''Placed at the beginning and end of form events like button clicks or checkbox changes
+        '''Should also be placed anywhere you exit sub 
         Public Sub ButtonclickToggle(ByRef cur As Cursor)
             If cur = Cursors.WaitCursor Then
                 cur = Cursors.Default
@@ -1306,6 +1310,41 @@ RetryFileOpenCheck:
                 cur = Cursors.WaitCursor
             End If
         End Sub
+
+        'Extension for datatables to export to CSV using the datatabletocsv method
+        '''Requires a filepath for where to save the csv
+        <Extension()>
+        Public Sub ToCSV(ByVal dt As DataTable, ByVal FilePath As String)
+            DatatableToCSV(dt, FilePath)
+        End Sub
+
+        'Replaces all special characters in a string that aren't allowed in file folder or file names
+        <Extension()>
+        Public Function ToDirectoryString(ByVal str As String) As String
+            str = str.Replace("#", "")
+            str = str.Replace("%", "")
+            str = str.Replace("&", "")
+            str = str.Replace("{", "")
+            str = str.Replace("}", "")
+            str = str.Replace("/", "")
+            str = str.Replace("\", "")
+            str = str.Replace("<", "")
+            str = str.Replace(">", "")
+            str = str.Replace("*", "")
+            str = str.Replace("?", "")
+            str = str.Replace("$", "")
+            str = str.Replace("!", "")
+            str = str.Replace("'", "")
+            str = str.Replace("""", "")
+            str = str.Replace(":", "")
+            str = str.Replace("@", "")
+            str = str.Replace("+", "")
+            str = str.Replace("`", "")
+            str = str.Replace("|", "")
+            str = str.Replace("=", "")
+
+            Return str
+        End Function
     End Module
 
     'Test cases are created when a test case is selected
