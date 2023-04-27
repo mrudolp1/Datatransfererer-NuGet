@@ -199,6 +199,20 @@ Namespace UnitTesting
                 txtDirectory.Text = strcFBD.SelectedPath
             End If
         End Sub
+
+        Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+            Dim tempstr As New EDSStructure
+
+            For Each dir As FileInfo In New DirectoryInfo(txtDirectory.Text).GetFiles
+                If dir.Extension = "" Then
+                    For Each file As FileInfo In New DirectoryInfo(dir.FullName).GetFiles
+                        If file.Extension.ToLower = ".eri" Then
+                            tempstr.RunTNX(file.FullName)
+                        End If
+                    Next
+                End If
+            Next
+        End Sub
 #End Region
 
 #Region "Shame"
@@ -640,8 +654,6 @@ Namespace UnitTesting
                 End If
             End If
         End Sub
-
-
 #End Region
 
     End Class

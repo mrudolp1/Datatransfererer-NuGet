@@ -30,6 +30,7 @@
             Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
             Me.btnImportStrcFiles = New System.Windows.Forms.Button()
             Me.SplitContainer4 = New System.Windows.Forms.SplitContainer()
+            Me.Button1 = New System.Windows.Forms.Button()
             Me.btnConduct = New System.Windows.Forms.Button()
             Me.btnSaveFndToEDS = New System.Windows.Forms.Button()
             Me.propgridFndXL = New System.Windows.Forms.PropertyGrid()
@@ -243,6 +244,7 @@
             '
             'SplitContainer4.Panel1
             '
+            Me.SplitContainer4.Panel1.Controls.Add(Me.Button1)
             Me.SplitContainer4.Panel1.Controls.Add(Me.btnConduct)
             Me.SplitContainer4.Panel1.Controls.Add(Me.btnSaveFndToEDS)
             '
@@ -253,6 +255,15 @@
             Me.SplitContainer4.Size = New System.Drawing.Size(606, 659)
             Me.SplitContainer4.SplitterDistance = 164
             Me.SplitContainer4.TabIndex = 4
+            '
+            'Button1
+            '
+            Me.Button1.Location = New System.Drawing.Point(2, 319)
+            Me.Button1.Name = "Button1"
+            Me.Button1.Size = New System.Drawing.Size(160, 21)
+            Me.Button1.TabIndex = 5
+            Me.Button1.Text = "tnx Loop Conductor"
+            Me.Button1.UseVisualStyleBackColor = True
             '
             'btnConduct
             '
@@ -1364,6 +1375,7 @@
         Friend WithEvents Panel2 As Panel
         Friend WithEvents Panel1 As Panel
         Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
+        Friend WithEvents Button1 As Button
 
 #End Region
 
