@@ -120,6 +120,7 @@
             Me.testWo = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
+            Me.btnLoopThroughERI = New System.Windows.Forms.Button()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -243,6 +244,7 @@
             '
             'SplitContainer4.Panel1
             '
+            Me.SplitContainer4.Panel1.Controls.Add(Me.btnLoopThroughERI)
             Me.SplitContainer4.Panel1.Controls.Add(Me.btnConduct)
             Me.SplitContainer4.Panel1.Controls.Add(Me.btnSaveFndToEDS)
             '
@@ -849,26 +851,6 @@
             Me.seLocal.Size = New System.Drawing.Size(464, 375)
             Me.seLocal.TabIndex = 16
             '
-            'sccReference
-            '
-            Me.sccReference.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.sccReference.Location = New System.Drawing.Point(0, 0)
-            Me.sccReference.Name = "sccReference"
-            '
-            'sccReference.Panel1
-            '
-            Me.sccReference.Panel1.Controls.Add(Me.rtbNotes)
-            Me.sccReference.Panel1.Controls.Add(Me.LabelControl14)
-            Me.sccReference.Panel1.Text = "Panel1"
-            '
-            'sccReference.Panel2
-            '
-            Me.sccReference.Panel2.Controls.Add(Me.GridControl1)
-            Me.sccReference.Panel2.Text = "Panel2"
-            Me.sccReference.Size = New System.Drawing.Size(986, 206)
-            Me.sccReference.SplitterPosition = 888
-            Me.sccReference.TabIndex = 20
-            '
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
@@ -1196,6 +1178,15 @@
             Me.LabelControl3.TabIndex = 7
             Me.LabelControl3.Text = "WO"
             '
+            'btnLoopThroughERI
+            '
+            Me.btnLoopThroughERI.Location = New System.Drawing.Point(2, 319)
+            Me.btnLoopThroughERI.Name = "btnLoopThroughERI"
+            Me.btnLoopThroughERI.Size = New System.Drawing.Size(160, 21)
+            Me.btnLoopThroughERI.TabIndex = 5
+            Me.btnLoopThroughERI.Text = "Loop Through ERI"
+            Me.btnLoopThroughERI.UseVisualStyleBackColor = True
+            '
             'frmMain
             '
             Me.Appearance.BackColor = System.Drawing.Color.White
@@ -1384,6 +1375,7 @@
         Friend WithEvents Panel2 As Panel
         Friend WithEvents Panel1 As Panel
         Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
+        Friend WithEvents btnLoopThroughERI As Button
 
 #End Region
 
