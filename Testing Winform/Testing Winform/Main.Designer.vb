@@ -122,6 +122,8 @@
             Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
             Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnLoopThroughERI = New System.Windows.Forms.Button()
+            Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -244,6 +246,8 @@
             Me.SplitContainer4.Name = "SplitContainer4"
             '
             'SplitContainer4.Panel1
+            Me.SplitContainer4.Panel1.Controls.Add(Me.Button1)
+            Me.SplitContainer4.Panel1.Controls.Add(Me.btnLoopThroughERI)
             '
             Me.SplitContainer4.Panel1.Controls.Add(Me.Button1)
             Me.SplitContainer4.Panel1.Controls.Add(Me.btnConduct)
@@ -1187,6 +1191,24 @@
             Me.LabelControl3.Name = "LabelControl3"
             Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
             Me.LabelControl3.TabIndex = 7
+            'testStructureOnly
+            '
+            Me.testStructureOnly.Enabled = False
+            Me.testStructureOnly.Location = New System.Drawing.Point(790, 12)
+            Me.testStructureOnly.Name = "testStructureOnly"
+            Me.testStructureOnly.Size = New System.Drawing.Size(55, 43)
+            Me.testStructureOnly.TabIndex = 29
+            Me.testStructureOnly.Text = "Load" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Structure" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only"
+            '
+            'btnLoopThroughERI
+            '
+            Me.btnLoopThroughERI.Location = New System.Drawing.Point(2, 319)
+            Me.btnLoopThroughERI.Name = "btnLoopThroughERI"
+            Me.btnLoopThroughERI.Size = New System.Drawing.Size(160, 21)
+            Me.btnLoopThroughERI.TabIndex = 5
+            Me.btnLoopThroughERI.Text = "Loop Through ERI"
+            Me.btnLoopThroughERI.UseVisualStyleBackColor = True
+            '
             Me.LabelControl3.Text = "WO"
             '
             'testStructureOnly
@@ -1375,6 +1397,9 @@
         Friend WithEvents XtraTabPage1 As DevExpress.XtraTab.XtraTabPage
         Friend WithEvents seNetwork As SimpleExplorer
         Friend WithEvents XtraTabPage2 As DevExpress.XtraTab.XtraTabPage
+        Friend WithEvents Button1 As Button
+        Friend WithEvents testStructureOnly As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnLoopThroughERI As Button
         Friend WithEvents seSA As SimpleExplorer
         Friend WithEvents XtraTabControl2 As DevExpress.XtraTab.XtraTabControl
         Friend WithEvents XtraTabPage3 As DevExpress.XtraTab.XtraTabPage

@@ -664,6 +664,12 @@ Namespace UnitTesting
             End If
         End Sub
 
+        Private Sub btnLoopThroughERI_Click(sender As Object, e As EventArgs) Handles btnLoopThroughERI.Click
+            Dim ed As New EDSStructure
+            Dim pd As String = txtDirectory.Text
+            ed.LoopThroughERIFiles(pd)
+        End Sub
+
 
 #End Region
 
