@@ -65,7 +65,7 @@
             Me.ClientSize = New System.Drawing.Size(1162, 634)
             Me.Controls.Add(Me.StatusStrip1)
             Me.Controls.Add(Me.tcData)
-            Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+            Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
             Me.Name = "frmSummary"
             Me.Text = "Summary"
             Me.StatusStrip1.ResumeLayout(False)

@@ -125,12 +125,20 @@ Namespace UnitTesting
 
             LogonUser(token(EDSuserActive), "CCIC", token(EDSuserPwActive), 2, 0, EDStokenHandle)
             EDSnewId = New WindowsIdentity(EDStokenHandle)
+            KillRoboCops()
             isopening = False
         End Sub
 
         Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
             CloseHandle(EDStokenHandle)
             DirectorySync.Stop()
+        End Sub
+
+        Private Sub KillRoboCops()
+            Dim proc = Process.GetProcessesByName("RoboCopy")
+            For i As Integer = 0 To proc.Count - 1
+                proc(i).Kill()
+            Next i
         End Sub
 #End Region
 
@@ -201,18 +209,26 @@ Namespace UnitTesting
         End Sub
 
         Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-            Dim tempstr As New EDSStructure
+            Dim str As New EDSStructure
 
-            For Each dir As FileInfo In New DirectoryInfo(txtDirectory.Text).GetFiles
-                If dir.Extension = "" Then
-                    For Each file As FileInfo In New DirectoryInfo(dir.FullName).GetFiles
-                        If file.Extension.ToLower = ".eri" Then
-                            tempstr.RunTNX(file.FullName)
-                        End If
-                    Next
-                End If
+            For Each fold As DirectoryInfo In New DirectoryInfo(txtDirectory.Text).GetDirectories
+                For Each file As FileInfo In New DirectoryInfo(fold.FullName).GetFiles
+                    If Not file.Extension.ToLower = ".eri" Then
+                        file.Delete()
+                    End If
+                Next
+                For Each file As FileInfo In New DirectoryInfo(fold.FullName).GetFiles
+                    If file.Extension.ToLower = ".eri" Then
+                        str.LogPath = fold.FullName
+                        str.RunTNX(file.FullName, True)
+                        Exit For
+                    End If
+                Next
             Next
         End Sub
+
+
+
 #End Region
 
 #Region "Shame"
@@ -424,6 +440,7 @@ Namespace UnitTesting
             testPublishedResults.Enabled = True
             testConduct.Enabled = True
             testCompareAll.Enabled = True
+            testStructureOnly.Enabled = True
 
             'Update the local directory to the local test case. 
             Try
@@ -441,7 +458,7 @@ Namespace UnitTesting
         End Sub
 
         'Rich textbox changed event for test notes
-        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs)
+        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs) Handles rtbNotes.TextChanged 
             Dim testCase As Integer = testID.Text
             Dim dirUse As String
             If chkWorkLocal.Checked Then
@@ -466,40 +483,32 @@ Namespace UnitTesting
         'Conduct button click for current iteration
         Private Sub testConduct_Click(sender As Object, e As EventArgs) Handles testConduct.Click
             ButtonclickToggle(Me.Cursor)
-            Dim iteration As Integer = testIteration.Text
-            Dim testcase As Integer = testID.Text
-            Dim maeWorkArea As String = lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
-            Dim myFiles As String()
-            Dim myFilesLst As New List(Of String)
 
-            'Loop through all files in the maestro folder for the current test case and iteration
-            For Each info As FileInfo In New DirectoryInfo(maeWorkArea).GetFiles
-                If info.Extension = ".eri" Then
-                    'All eris permitted
-                    myFilesLst.Add(info.FullName)
-                ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
-                    'Determine if the file is one of the templates
-                    Dim template As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(info)
-
-                    'If the properties of the tuple are nothing then they aren't templates
-                    If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
-                        myFilesLst.Add(info.FullName)
-                    End If
-                End If
-            Next
-
-            'Convert the list of valid file names to an array for creating anew structure
-            myFiles = myFilesLst.ToArray
-            strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, maeWorkArea, maeWorkArea, myFiles, EDSnewId, EDSdbActive)
+            CreateStructure()
 
             'Conduct it!!!
             '''This is commented out since Seb is actively working on the conduct function
-            'strcLocal.Conduct(True)
+            '''Uncommented 4-27-2023
+            strcLocal.Conduct(True)
+            SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
 
-            'Allow the user to view the opbjects created in the strlocal object
-            pgcUnitTesting.SelectedObject = strcLocal
             ButtonclickToggle(Me.Cursor)
         End Sub
+        Private Sub testStructureOnly_Click(sender As Object, e As EventArgs) Handles testStructureOnly.Click
+            ButtonclickToggle(Me.Cursor)
+
+            CreateStructure()
+            SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+
+            ButtonclickToggle(Me.Cursor)
+        End Sub
+
+
+        Private Sub SetStructureToPropertyGrid(ByVal str As EDSStructure, ByVal pgrid As PropertyGrid)
+            'Allow the user to view the opbjects created in the strlocal object
+            pgrid.SelectedObject = str
+        End Sub
+
 
         'Create and compare CSV Results files
         Private Sub testPrevResults_Click(sender As Object, e As EventArgs) Handles testPrevResults.Click
@@ -654,12 +663,45 @@ Namespace UnitTesting
                 End If
             End If
         End Sub
+
+
 #End Region
 
     End Class
 
     Public Module MyLargelyLittleHelpers
         Public isopening As Boolean
+
+        'Creates a structure object based on the files in the maestro folder for the current iteration
+        Public Sub CreateStructure()
+            Dim iteration As Integer = frmMain.testIteration.Text
+            Dim testcase As Integer = frmMain.testID.Text
+            Dim maeWorkArea As String = frmMain.lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
+            Dim myFiles As String()
+            Dim myFilesLst As New List(Of String)
+
+            'Loop through all files in the maestro folder for the current test case and iteration
+            For Each info As FileInfo In New DirectoryInfo(maeWorkArea).GetFiles
+                If info.Extension = ".eri" Then
+                    'All eris permitted
+                    myFilesLst.Add(info.FullName)
+                ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
+                    'Determine if the file is one of the templates
+                    Dim template As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(info)
+
+                    'If the properties of the tuple are nothing then they aren't templates
+                    If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
+                        myFilesLst.Add(info.FullName)
+                    End If
+                ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
+                    info.Delete()
+                End If
+            Next
+
+            'Convert the list of valid file names to an array for creating anew structure
+            myFiles = myFilesLst.ToArray
+            frmMain.strcLocal = New EDSStructure(frmMain.testBu.Text, frmMain.testSid.Text, frmMain.testWo.Text, maeWorkArea, maeWorkArea, myFiles, frmMain.EDSnewId, frmMain.EDSdbActive)
+        End Sub
 
         'Loads the CSV with the test cases 
         'CSV is saved here: R:\Development\SAPI Testing

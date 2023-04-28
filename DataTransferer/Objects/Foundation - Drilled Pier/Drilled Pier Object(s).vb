@@ -170,16 +170,20 @@ Partial Public Class DrilledPierFoundation
         Next
 
         If excelDS.Tables.Contains("Drilled Pier Foundation") Then
-            Dim dr As DataRow = excelDS.Tables("Drilled Pier Foundation").Rows(0)
 
-            ConstructMe(dr)
+            If excelDS.Tables("Drilled Pier").Rows.Count > 0 Then
 
-            Dim myDP As New DrilledPier
-            For Each dprow As DataRow In excelDS.Tables(myDP.EDSObjectName).Rows
-                If IsSomething(dprow.Item("local_drilled_pier_id")) Or (IsSomething(dprow.Item("ID")) And IsNothing(dprow.Item("local_drilled_pier_id"))) Then
-                    Me.DrilledPiers.Add(New DrilledPier(dprow, excelDS, True, Me))
-                End If
-            Next
+                Dim dr As DataRow = excelDS.Tables("Drilled Pier Foundation").Rows(0)
+
+                ConstructMe(dr)
+
+                Dim myDP As New DrilledPier
+                For Each dprow As DataRow In excelDS.Tables(myDP.EDSObjectName).Rows
+                    If IsSomething(dprow.Item("local_drilled_pier_id")) Or (IsSomething(dprow.Item("ID")) And IsNothing(dprow.Item("local_drilled_pier_id"))) Then
+                        Me.DrilledPiers.Add(New DrilledPier(dprow, excelDS, True, Me))
+                    End If
+                Next
+            End If
         End If
     End Sub
 #End Region
@@ -560,7 +564,7 @@ Partial Public Class DrilledPier
     Private _reaction_location As String
     Private _local_soil_profile As Integer?
     Private _local_pier_profile_id As Integer?
-    Private _drilled_pier_tool_id As Integer
+    Private _drilled_pier_tool_id As Integer?
 
     <Category("Drilled Pier"), Description(""), DisplayName("Id")>
     Public Property ID() As Integer?

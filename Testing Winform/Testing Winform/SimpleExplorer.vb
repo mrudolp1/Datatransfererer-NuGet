@@ -143,6 +143,42 @@ Namespace UnitTesting
                         loadDt = SummarizedResults(info)
                     ElseIf fName.Contains(".csv") Then
                         loadDt = CSVtoDatatable(info)
+                    ElseIf fName.Contains(".txt") Then
+                        Using sr As New IO.StreamReader(info.FullName)
+                            Dim tempDt As New DataTable
+                            Dim newRow As String()
+
+                            While Not sr.EndOfStream
+                                newRow = sr.ReadLine.Split("|")
+                                If newRow.Count > 0 Then
+                                    If tempDt.Columns.Count = 0 Then
+                                        tempDt.Columns.Add("Time", GetType(System.String))
+                                        tempDt.Columns.Add("Message", GetType(System.String))
+                                    End If
+                                    Dim combined As String
+
+                                    Try
+                                        combined = newRow(1) & "|" & newRow(2)
+                                    Catch ex As Exception
+                                        Try
+                                            combined = newRow(1)
+                                        Catch ex1 As Exception
+                                            combined = ""
+                                        End Try
+                                    End Try
+
+                                    tempDt.Rows.Add(newRow(0), combined)
+                                Else
+                                    If tempDt.Columns.Count = 0 Then
+                                        tempDt.Columns.Add("Text", GetType(System.String))
+                                    End If
+                                    tempDt.Rows.Add(sr.ReadLine)
+                                End If
+                            End While
+
+                            loadDt = tempDt
+                            sr.Close()
+                        End Using
                     End If
 
                     'Set the reference grid on the main form to the returned datatable

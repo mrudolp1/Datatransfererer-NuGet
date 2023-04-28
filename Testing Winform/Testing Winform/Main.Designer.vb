@@ -121,6 +121,7 @@
             Me.testWo = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl4 = New DevExpress.XtraEditors.LabelControl()
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
+            Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -860,26 +861,6 @@
             Me.seLocal.Size = New System.Drawing.Size(464, 375)
             Me.seLocal.TabIndex = 16
             '
-            'sccReference
-            '
-            Me.sccReference.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.sccReference.Location = New System.Drawing.Point(0, 0)
-            Me.sccReference.Name = "sccReference"
-            '
-            'sccReference.Panel1
-            '
-            Me.sccReference.Panel1.Controls.Add(Me.rtbNotes)
-            Me.sccReference.Panel1.Controls.Add(Me.LabelControl14)
-            Me.sccReference.Panel1.Text = "Panel1"
-            '
-            'sccReference.Panel2
-            '
-            Me.sccReference.Panel2.Controls.Add(Me.GridControl1)
-            Me.sccReference.Panel2.Text = "Panel2"
-            Me.sccReference.Size = New System.Drawing.Size(986, 206)
-            Me.sccReference.SplitterPosition = 888
-            Me.sccReference.TabIndex = 20
-            '
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
@@ -945,6 +926,7 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.testStructureOnly)
             Me.PanelControl1.Controls.Add(Me.testCompareAll)
             Me.PanelControl1.Controls.Add(Me.testPublishedResults)
             Me.PanelControl1.Controls.Add(Me.testPrevResults)
@@ -1030,7 +1012,7 @@
             'chkWorkLocal
             '
             Me.chkWorkLocal.Enabled = False
-            Me.chkWorkLocal.Location = New System.Drawing.Point(767, 24)
+            Me.chkWorkLocal.Location = New System.Drawing.Point(562, 93)
             Me.chkWorkLocal.Name = "chkWorkLocal"
             Me.chkWorkLocal.Properties.Caption = "Work Local"
             Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
@@ -1206,6 +1188,15 @@
             Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
             Me.LabelControl3.TabIndex = 7
             Me.LabelControl3.Text = "WO"
+            '
+            'testStructureOnly
+            '
+            Me.testStructureOnly.Enabled = False
+            Me.testStructureOnly.Location = New System.Drawing.Point(790, 12)
+            Me.testStructureOnly.Name = "testStructureOnly"
+            Me.testStructureOnly.Size = New System.Drawing.Size(55, 43)
+            Me.testStructureOnly.TabIndex = 29
+            Me.testStructureOnly.Text = "Load" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Structure" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only"
             '
             'frmMain
             '
@@ -1396,6 +1387,7 @@
         Friend WithEvents Panel1 As Panel
         Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
         Friend WithEvents Button1 As Button
+        Friend WithEvents testStructureOnly As DevExpress.XtraEditors.SimpleButton
 
 #End Region
 
