@@ -5,15 +5,32 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
-
+<DataContractAttribute()>
 Partial Public Class Pole
     Inherits EDSExcelObject
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCIpole"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.pole"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIpole.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.CCIpole
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "CCIpole"
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.pole"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCIpole.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.CCIpole
+        End Get
+    End Property
 
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
@@ -213,8 +230,6 @@ Partial Public Class Pole
 #End Region
 
 #Region "Define"
-    'Private _bus_unit As String
-    'Private _structure_id As String
     Private _pole_id As Integer?
     Private _upper_structure_type As String
     Private _analysis_deg As Double?
@@ -225,42 +240,21 @@ Partial Public Class Pole
     Private _ineff_mod_check As Boolean?
     Private _modified As Boolean?
     Private _flange_data As Boolean?
-    'Private _modified_person_id As Integer?
-    'Private _process_stage As String
 
-     <DataMember()> Public Property unreinf_sections As New List(Of PoleSection)
-     <DataMember()> Public Property reinf_sections As New List(Of PoleReinfSection)
-     <DataMember()> Public Property reinf_groups As New List(Of PoleReinfGroup)
+    <DataMember()> Public Property unreinf_sections As New List(Of PoleSection)
+    <DataMember()> Public Property reinf_sections As New List(Of PoleReinfSection)
+    <DataMember()> Public Property reinf_groups As New List(Of PoleReinfGroup)
     ' <DataMember()> Public Property reinf_ids As New List(Of PoleReinfDetail)
-     <DataMember()> Public Property int_groups As New List(Of PoleIntGroup)
+    <DataMember()> Public Property int_groups As New List(Of PoleIntGroup)
     ' <DataMember()> Public Property int_ids As New List(Of PoleIntDetail)
-     <DataMember()> Public Property reinf_section_results As New List(Of PoleReinfResults)
-     <DataMember()> Public Property matls As New List(Of PoleMatlProp)
-     <DataMember()> Public Property bolts As New List(Of PoleBoltProp)
-     <DataMember()> Public Property reinfs As New List(Of PoleReinfProp)
+    <DataMember()> Public Property reinf_section_results As New List(Of PoleReinfResults)
+    <DataMember()> Public Property matls As New List(Of PoleMatlProp)
+    <DataMember()> Public Property bolts As New List(Of PoleBoltProp)
+    <DataMember()> Public Property reinfs As New List(Of PoleReinfProp)
 
 
-
-    '<Category("Pole"), Description(""), DisplayName("Bus Unit")>
-    ' <DataMember()> Public Property bus_unit() As String
-    '    Get
-    '        Return Me._bus_unit
-    '    End Get
-    '    Set
-    '        Me._bus_unit = Value
-    '    End Set
-    'End Property
-    '<Category("Pole"), Description(""), DisplayName("Structure Id")>
-    ' <DataMember()> Public Property structure_id() As String
-    '    Get
-    '        Return Me._structure_id
-    '    End Get
-    '    Set
-    '        Me._structure_id = Value
-    '    End Set
-    'End Property
     <Category("Pole"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -269,7 +263,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Upper Structure Type")>
-     <DataMember()> Public Property upper_structure_type() As String
+    <DataMember()> Public Property upper_structure_type() As String
         Get
             Return Me._upper_structure_type
         End Get
@@ -278,7 +272,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Analysis Deg")>
-     <DataMember()> Public Property analysis_deg() As Double?
+    <DataMember()> Public Property analysis_deg() As Double?
         Get
             Return Me._analysis_deg
         End Get
@@ -287,7 +281,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Geom Increment Length")>
-     <DataMember()> Public Property geom_increment_length() As Double?
+    <DataMember()> Public Property geom_increment_length() As Double?
         Get
             Return Me._geom_increment_length
         End Get
@@ -296,7 +290,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Tool Version")>
-     <DataMember()> Public Property tool_version() As String
+    <DataMember()> Public Property tool_version() As String
         Get
             Return Me._tool_version
         End Get
@@ -305,7 +299,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Check Connections")>
-     <DataMember()> Public Property check_connections() As Boolean?
+    <DataMember()> Public Property check_connections() As Boolean?
         Get
             Return Me._check_connections
         End Get
@@ -314,7 +308,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Hole Deformation")>
-     <DataMember()> Public Property hole_deformation() As Boolean?
+    <DataMember()> Public Property hole_deformation() As Boolean?
         Get
             Return Me._hole_deformation
         End Get
@@ -323,7 +317,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Ineff Mod Check")>
-     <DataMember()> Public Property ineff_mod_check() As Boolean?
+    <DataMember()> Public Property ineff_mod_check() As Boolean?
         Get
             Return Me._ineff_mod_check
         End Get
@@ -332,7 +326,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Modified")>
-     <DataMember()> Public Property modified() As Boolean?
+    <DataMember()> Public Property modified() As Boolean?
         Get
             Return Me._modified
         End Get
@@ -341,7 +335,7 @@ Partial Public Class Pole
         End Set
     End Property
     <Category("Pole"), Description(""), DisplayName("Flange Data")>
-     <DataMember()> Public Property flange_data() As Boolean?
+    <DataMember()> Public Property flange_data() As Boolean?
         Get
             Return Me._flange_data
         End Get
@@ -349,25 +343,6 @@ Partial Public Class Pole
             Me._flange_data = Value
         End Set
     End Property
-    '<Category("Pole"), Description(""), DisplayName("Modified Person Id")>
-    ' <DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("Pole"), Description(""), DisplayName("Process Stage")>
-    ' <DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
-    'End Property
-
 #End Region
 
 #Region "Constructors"
@@ -1548,12 +1523,21 @@ Partial Public Class Pole
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleSection
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Unreinforced Sections"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Unreinforced Sections"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\2 Unreinf Section (INSERT).sql")
@@ -1650,7 +1634,7 @@ Partial Public Class PoleSection
     ' <DataMember()> Public Property matls As New List(Of PoleMatlProp) 'referencing me.parent.matls for query builder instead of having matls be a subproperty of the object
 
     <Category("CCIpole Sections"), Description(""), DisplayName("Section Id")>
-     <DataMember()> Public Property section_id() As Integer?
+    <DataMember()> Public Property section_id() As Integer?
         Get
             Return Me._section_id
         End Get
@@ -1659,7 +1643,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -1668,7 +1652,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Local Section Id")>
-     <DataMember()> Public Property local_section_id() As Integer?
+    <DataMember()> Public Property local_section_id() As Integer?
         Get
             Return Me._local_section_id
         End Get
@@ -1677,7 +1661,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Elev Bot")>
-     <DataMember()> Public Property elev_bot() As Double?
+    <DataMember()> Public Property elev_bot() As Double?
         Get
             Return Me._elev_bot
         End Get
@@ -1686,7 +1670,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Elev Top")>
-     <DataMember()> Public Property elev_top() As Double?
+    <DataMember()> Public Property elev_top() As Double?
         Get
             Return Me._elev_top
         End Get
@@ -1695,7 +1679,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Length Section")>
-     <DataMember()> Public Property length_section() As Double?
+    <DataMember()> Public Property length_section() As Double?
         Get
             Return Me._length_section
         End Get
@@ -1704,7 +1688,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Length Splice")>
-     <DataMember()> Public Property length_splice() As Double?
+    <DataMember()> Public Property length_splice() As Double?
         Get
             Return Me._length_splice
         End Get
@@ -1713,7 +1697,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Num Sides")>
-     <DataMember()> Public Property num_sides() As Integer?
+    <DataMember()> Public Property num_sides() As Integer?
         Get
             Return Me._num_sides
         End Get
@@ -1722,7 +1706,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Diam Bot")>
-     <DataMember()> Public Property diam_bot() As Double?
+    <DataMember()> Public Property diam_bot() As Double?
         Get
             Return Me._diam_bot
         End Get
@@ -1731,7 +1715,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Diam Top")>
-     <DataMember()> Public Property diam_top() As Double?
+    <DataMember()> Public Property diam_top() As Double?
         Get
             Return Me._diam_top
         End Get
@@ -1740,7 +1724,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Wall Thickness")>
-     <DataMember()> Public Property wall_thickness() As Double?
+    <DataMember()> Public Property wall_thickness() As Double?
         Get
             Return Me._wall_thickness
         End Get
@@ -1749,7 +1733,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Bend Radius")>
-     <DataMember()> Public Property bend_radius() As Double?
+    <DataMember()> Public Property bend_radius() As Double?
         Get
             Return Me._bend_radius
         End Get
@@ -1758,7 +1742,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Matl Id")>
-     <DataMember()> Public Property matl_id() As Integer?
+    <DataMember()> Public Property matl_id() As Integer?
         Get
             Return Me._matl_id
         End Get
@@ -1767,7 +1751,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Local Matl Id")>
-     <DataMember()> Public Property local_matl_id() As Integer?
+    <DataMember()> Public Property local_matl_id() As Integer?
         Get
             Return Me._local_matl_id
         End Get
@@ -1776,7 +1760,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Pole Type")>
-     <DataMember()> Public Property pole_type() As String
+    <DataMember()> Public Property pole_type() As String
         Get
             Return Me._pole_type
         End Get
@@ -1785,7 +1769,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Section Name")>
-     <DataMember()> Public Property section_name() As String
+    <DataMember()> Public Property section_name() As String
         Get
             Return Me._section_name
         End Get
@@ -1794,7 +1778,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Socket Length")>
-     <DataMember()> Public Property socket_length() As Double?
+    <DataMember()> Public Property socket_length() As Double?
         Get
             Return Me._socket_length
         End Get
@@ -1803,7 +1787,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Weight Mult")>
-     <DataMember()> Public Property weight_mult() As Double?
+    <DataMember()> Public Property weight_mult() As Double?
         Get
             Return Me._weight_mult
         End Get
@@ -1812,7 +1796,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Wp Mult")>
-     <DataMember()> Public Property wp_mult() As Double?
+    <DataMember()> Public Property wp_mult() As Double?
         Get
             Return Me._wp_mult
         End Get
@@ -1821,7 +1805,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Af Factor")>
-     <DataMember()> Public Property af_factor() As Double?
+    <DataMember()> Public Property af_factor() As Double?
         Get
             Return Me._af_factor
         End Get
@@ -1830,7 +1814,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Ar Factor")>
-     <DataMember()> Public Property ar_factor() As Double?
+    <DataMember()> Public Property ar_factor() As Double?
         Get
             Return Me._ar_factor
         End Get
@@ -1839,7 +1823,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Round Area Ratio")>
-     <DataMember()> Public Property round_area_ratio() As Double?
+    <DataMember()> Public Property round_area_ratio() As Double?
         Get
             Return Me._round_area_ratio
         End Get
@@ -1848,7 +1832,7 @@ Partial Public Class PoleSection
         End Set
     End Property
     <Category("CCIpole Sections"), Description(""), DisplayName("Flat Area Ratio")>
-     <DataMember()> Public Property flat_area_ratio() As Double?
+    <DataMember()> Public Property flat_area_ratio() As Double?
         Get
             Return Me._flat_area_ratio
         End Get
@@ -2033,12 +2017,21 @@ Partial Public Class PoleSection
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleReinfSection
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Reinforced Sections"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforced_sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Reinforced Sections"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.reinforced_sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\3 Reinf Section (INSERT).sql")
@@ -2132,7 +2125,7 @@ Partial Public Class PoleReinfSection
     ' <DataMember()> Public Property matls As New List(Of PoleMatlProp)
 
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Section Id")>
-     <DataMember()> Public Property section_id() As Integer?
+    <DataMember()> Public Property section_id() As Integer?
         Get
             Return Me._section_id
         End Get
@@ -2141,7 +2134,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -2150,7 +2143,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Local Section Id")>
-     <DataMember()> Public Property local_section_id() As Integer?
+    <DataMember()> Public Property local_section_id() As Integer?
         Get
             Return Me._local_section_id
         End Get
@@ -2159,7 +2152,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Elev Bot")>
-     <DataMember()> Public Property elev_bot() As Double?
+    <DataMember()> Public Property elev_bot() As Double?
         Get
             Return Me._elev_bot
         End Get
@@ -2168,7 +2161,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Elev Top")>
-     <DataMember()> Public Property elev_top() As Double?
+    <DataMember()> Public Property elev_top() As Double?
         Get
             Return Me._elev_top
         End Get
@@ -2177,7 +2170,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Length Section")>
-     <DataMember()> Public Property length_section() As Double?
+    <DataMember()> Public Property length_section() As Double?
         Get
             Return Me._length_section
         End Get
@@ -2186,7 +2179,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Length Splice")>
-     <DataMember()> Public Property length_splice() As Double?
+    <DataMember()> Public Property length_splice() As Double?
         Get
             Return Me._length_splice
         End Get
@@ -2195,7 +2188,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Num Sides")>
-     <DataMember()> Public Property num_sides() As Integer?
+    <DataMember()> Public Property num_sides() As Integer?
         Get
             Return Me._num_sides
         End Get
@@ -2204,7 +2197,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Diam Bot")>
-     <DataMember()> Public Property diam_bot() As Double?
+    <DataMember()> Public Property diam_bot() As Double?
         Get
             Return Me._diam_bot
         End Get
@@ -2213,7 +2206,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Diam Top")>
-     <DataMember()> Public Property diam_top() As Double?
+    <DataMember()> Public Property diam_top() As Double?
         Get
             Return Me._diam_top
         End Get
@@ -2222,7 +2215,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Wall Thickness")>
-     <DataMember()> Public Property wall_thickness() As Double?
+    <DataMember()> Public Property wall_thickness() As Double?
         Get
             Return Me._wall_thickness
         End Get
@@ -2231,7 +2224,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Bend Radius")>
-     <DataMember()> Public Property bend_radius() As Double?
+    <DataMember()> Public Property bend_radius() As Double?
         Get
             Return Me._bend_radius
         End Get
@@ -2240,7 +2233,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Matl Id")>
-     <DataMember()> Public Property matl_id() As Integer?
+    <DataMember()> Public Property matl_id() As Integer?
         Get
             Return Me._matl_id
         End Get
@@ -2249,7 +2242,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Local Matl Id")>
-     <DataMember()> Public Property local_matl_id() As Integer?
+    <DataMember()> Public Property local_matl_id() As Integer?
         Get
             Return Me._local_matl_id
         End Get
@@ -2258,7 +2251,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Pole Type")>
-     <DataMember()> Public Property pole_type() As String
+    <DataMember()> Public Property pole_type() As String
         Get
             Return Me._pole_type
         End Get
@@ -2267,7 +2260,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Weight Mult")>
-     <DataMember()> Public Property weight_mult() As Double?
+    <DataMember()> Public Property weight_mult() As Double?
         Get
             Return Me._weight_mult
         End Get
@@ -2276,7 +2269,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Section Name")>
-     <DataMember()> Public Property section_name() As String
+    <DataMember()> Public Property section_name() As String
         Get
             Return Me._section_name
         End Get
@@ -2285,7 +2278,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Socket Length")>
-     <DataMember()> Public Property socket_length() As Double?
+    <DataMember()> Public Property socket_length() As Double?
         Get
             Return Me._socket_length
         End Get
@@ -2294,7 +2287,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Wp Mult")>
-     <DataMember()> Public Property wp_mult() As Double?
+    <DataMember()> Public Property wp_mult() As Double?
         Get
             Return Me._wp_mult
         End Get
@@ -2303,7 +2296,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Af Factor")>
-     <DataMember()> Public Property af_factor() As Double?
+    <DataMember()> Public Property af_factor() As Double?
         Get
             Return Me._af_factor
         End Get
@@ -2312,7 +2305,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Ar Factor")>
-     <DataMember()> Public Property ar_factor() As Double?
+    <DataMember()> Public Property ar_factor() As Double?
         Get
             Return Me._ar_factor
         End Get
@@ -2321,7 +2314,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Round Area Ratio")>
-     <DataMember()> Public Property round_area_ratio() As Double?
+    <DataMember()> Public Property round_area_ratio() As Double?
         Get
             Return Me._round_area_ratio
         End Get
@@ -2330,7 +2323,7 @@ Partial Public Class PoleReinfSection
         End Set
     End Property
     <Category("CCIpole Reinf Sections"), Description(""), DisplayName("Flat Area Ratio")>
-     <DataMember()> Public Property flat_area_ratio() As Double?
+    <DataMember()> Public Property flat_area_ratio() As Double?
         Get
             Return Me._flat_area_ratio
         End Get
@@ -2516,12 +2509,21 @@ Partial Public Class PoleReinfSection
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleReinfGroup
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Reinforcement Groups"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcements"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Reinforcement Groups"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.reinforcements"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\4 Reinf Group (INSERT).sql")
@@ -2624,10 +2626,10 @@ Partial Public Class PoleReinfGroup
     Private _local_reinf_id As Integer?
     Private _qty As Integer?
     ' <DataMember()> Public Property reinfs As New List(Of PoleReinfProp)
-     <DataMember()> Public Property reinf_ids As New List(Of PoleReinfDetail)
+    <DataMember()> Public Property reinf_ids As New List(Of PoleReinfDetail)
 
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Group Id")>
-     <DataMember()> Public Property group_id() As Integer?
+    <DataMember()> Public Property group_id() As Integer?
         Get
             Return Me._group_id
         End Get
@@ -2636,7 +2638,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -2645,7 +2647,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Local Group Id")>
-     <DataMember()> Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -2654,7 +2656,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Elev Bot Actual")>
-     <DataMember()> Public Property elev_bot_actual() As Double?
+    <DataMember()> Public Property elev_bot_actual() As Double?
         Get
             Return Me._elev_bot_actual
         End Get
@@ -2663,7 +2665,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Elev Bot Eff")>
-     <DataMember()> Public Property elev_bot_eff() As Double?
+    <DataMember()> Public Property elev_bot_eff() As Double?
         Get
             Return Me._elev_bot_eff
         End Get
@@ -2672,7 +2674,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Elev Top Actual")>
-     <DataMember()> Public Property elev_top_actual() As Double?
+    <DataMember()> Public Property elev_top_actual() As Double?
         Get
             Return Me._elev_top_actual
         End Get
@@ -2681,7 +2683,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Elev Top Eff")>
-     <DataMember()> Public Property elev_top_eff() As Double?
+    <DataMember()> Public Property elev_top_eff() As Double?
         Get
             Return Me._elev_top_eff
         End Get
@@ -2690,7 +2692,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Reinf Id")>
-     <DataMember()> Public Property reinf_id() As Integer?
+    <DataMember()> Public Property reinf_id() As Integer?
         Get
             Return Me._reinf_id
         End Get
@@ -2699,7 +2701,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Local Reinf Id")>
-     <DataMember()> Public Property local_reinf_id() As Integer?
+    <DataMember()> Public Property local_reinf_id() As Integer?
         Get
             Return Me._local_reinf_id
         End Get
@@ -2708,7 +2710,7 @@ Partial Public Class PoleReinfGroup
         End Set
     End Property
     <Category("CCIpole Reinfs"), Description(""), DisplayName("Qty")>
-     <DataMember()> Public Property qty() As Integer?
+    <DataMember()> Public Property qty() As Integer?
         Get
             Return Me._qty
         End Get
@@ -2830,12 +2832,21 @@ Partial Public Class PoleReinfGroup
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleReinfDetail
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Reinforcement Details"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcement_details"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Reinforcement Details"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.reinforcement_details"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\5 Reinf Detail (INSERT).sql")
@@ -2881,7 +2892,7 @@ Partial Public Class PoleReinfDetail
     Private _note As String
 
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Reinforcment Id")>
-     <DataMember()> Public Property reinforcement_id() As Integer?
+    <DataMember()> Public Property reinforcement_id() As Integer?
         Get
             Return Me._reinforcement_id
         End Get
@@ -2890,7 +2901,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Group Id")>
-     <DataMember()> Public Property group_id() As Integer?
+    <DataMember()> Public Property group_id() As Integer?
         Get
             Return Me._group_id
         End Get
@@ -2899,7 +2910,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Local Group Id")>
-     <DataMember()> Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -2908,7 +2919,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Local Reinf Id")>
-     <DataMember()> Public Property local_reinforcement_id() As Integer?
+    <DataMember()> Public Property local_reinforcement_id() As Integer?
         Get
             Return Me._local_reinforcement_id
         End Get
@@ -2917,7 +2928,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Pole Flat")>
-     <DataMember()> Public Property pole_flat() As Integer?
+    <DataMember()> Public Property pole_flat() As Integer?
         Get
             Return Me._pole_flat
         End Get
@@ -2926,7 +2937,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Horizontal Offset")>
-     <DataMember()> Public Property horizontal_offset() As Double?
+    <DataMember()> Public Property horizontal_offset() As Double?
         Get
             Return Me._horizontal_offset
         End Get
@@ -2935,7 +2946,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Rotation")>
-     <DataMember()> Public Property rotation() As Double?
+    <DataMember()> Public Property rotation() As Double?
         Get
             Return Me._rotation
         End Get
@@ -2944,7 +2955,7 @@ Partial Public Class PoleReinfDetail
         End Set
     End Property
     <Category("CCIpole Reinf Details"), Description(""), DisplayName("Note")>
-     <DataMember()> Public Property note() As String
+    <DataMember()> Public Property note() As String
         Get
             Return Me._note
         End Get
@@ -3054,12 +3065,21 @@ Partial Public Class PoleReinfDetail
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleIntGroup
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Interference Groups"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.interferences"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Interference Groups"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.interferences"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\6 Int Group (INSERT).sql")
@@ -3131,10 +3151,10 @@ Partial Public Class PoleIntGroup
     Private _width As Double?
     Private _description As String
     Private _qty As Integer?
-     <DataMember()> Public Property int_ids As New List(Of PoleIntDetail)
+    <DataMember()> Public Property int_ids As New List(Of PoleIntDetail)
 
     <Category("CCIpole Ints"), Description(""), DisplayName("Group Id")>
-     <DataMember()> Public Property group_id() As Integer?
+    <DataMember()> Public Property group_id() As Integer?
         Get
             Return Me._group_id
         End Get
@@ -3143,7 +3163,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -3152,7 +3172,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Local Group Id")>
-     <DataMember()> Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -3161,7 +3181,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Elev Bot")>
-     <DataMember()> Public Property elev_bot() As Double?
+    <DataMember()> Public Property elev_bot() As Double?
         Get
             Return Me._elev_bot
         End Get
@@ -3170,7 +3190,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Elev Top")>
-     <DataMember()> Public Property elev_top() As Double?
+    <DataMember()> Public Property elev_top() As Double?
         Get
             Return Me._elev_top
         End Get
@@ -3179,7 +3199,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Width")>
-     <DataMember()> Public Property width() As Double?
+    <DataMember()> Public Property width() As Double?
         Get
             Return Me._width
         End Get
@@ -3188,7 +3208,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Description")>
-     <DataMember()> Public Property description() As String
+    <DataMember()> Public Property description() As String
         Get
             Return Me._description
         End Get
@@ -3197,7 +3217,7 @@ Partial Public Class PoleIntGroup
         End Set
     End Property
     <Category("CCIpole Ints"), Description(""), DisplayName("Qty")>
-     <DataMember()> Public Property qty() As Integer?
+    <DataMember()> Public Property qty() As Integer?
         Get
             Return Me._qty
         End Get
@@ -3309,12 +3329,21 @@ Partial Public Class PoleIntGroup
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleIntDetail
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Interference Details"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.interference_details"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Interference Details"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.interference_details"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\7 Int Detail (INSERT).sql")
@@ -3360,7 +3389,7 @@ Partial Public Class PoleIntDetail
     Private _note As String
 
     <Category("CCIpole Int Details"), Description(""), DisplayName("Intference Id")>
-     <DataMember()> Public Property interference_id() As Integer?
+    <DataMember()> Public Property interference_id() As Integer?
         Get
             Return Me._interference_id
         End Get
@@ -3369,7 +3398,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Group Id")>
-     <DataMember()> Public Property group_id() As Integer?
+    <DataMember()> Public Property group_id() As Integer?
         Get
             Return Me._group_id
         End Get
@@ -3378,7 +3407,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Local Group Id")>
-     <DataMember()> Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -3387,7 +3416,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Local Intference Id")>
-     <DataMember()> Public Property local_interference_id() As Integer?
+    <DataMember()> Public Property local_interference_id() As Integer?
         Get
             Return Me._local_interference_id
         End Get
@@ -3396,7 +3425,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Pole Flat")>
-     <DataMember()> Public Property pole_flat() As Integer?
+    <DataMember()> Public Property pole_flat() As Integer?
         Get
             Return Me._pole_flat
         End Get
@@ -3405,7 +3434,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Horizontal Offset")>
-     <DataMember()> Public Property horizontal_offset() As Double?
+    <DataMember()> Public Property horizontal_offset() As Double?
         Get
             Return Me._horizontal_offset
         End Get
@@ -3414,7 +3443,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Rotation")>
-     <DataMember()> Public Property rotation() As Double?
+    <DataMember()> Public Property rotation() As Double?
         Get
             Return Me._rotation
         End Get
@@ -3423,7 +3452,7 @@ Partial Public Class PoleIntDetail
         End Set
     End Property
     <Category("CCIpole Int Details"), Description(""), DisplayName("Note")>
-     <DataMember()> Public Property note() As String
+    <DataMember()> Public Property note() As String
         Get
             Return Me._note
         End Get
@@ -3534,12 +3563,21 @@ Partial Public Class PoleIntDetail
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleReinfResults
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Results"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.reinforcement_results"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Results"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.reinforcement_results"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\8 Reinf Result (INSERT).sql")
@@ -3598,7 +3636,7 @@ Partial Public Class PoleReinfResults
     'Private _modified_date As DateTime?
 
     <Category("CCIpole Results"), Description(""), DisplayName("Result Id")>
-     <DataMember()> Public Property result_id() As Integer?
+    <DataMember()> Public Property result_id() As Integer?
         Get
             Return Me._result_id
         End Get
@@ -3607,7 +3645,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Work Order Seq Num")>
-     <DataMember()> Public Property work_order_seq_num() As Integer?
+    <DataMember()> Public Property work_order_seq_num() As Integer?
         Get
             Return Me._work_order_seq_num
         End Get
@@ -3616,7 +3654,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Pole Id")>
-     <DataMember()> Public Property pole_id() As Integer?
+    <DataMember()> Public Property pole_id() As Integer?
         Get
             Return Me._pole_id
         End Get
@@ -3625,7 +3663,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Section Id")>
-     <DataMember()> Public Property section_id() As Integer?
+    <DataMember()> Public Property section_id() As Integer?
         Get
             Return Me._section_id
         End Get
@@ -3635,7 +3673,7 @@ Partial Public Class PoleReinfResults
     End Property
 
     <Category("CCIpole Results"), Description(""), DisplayName("Local Section Id")>
-     <DataMember()> Public Property local_section_id() As Integer?
+    <DataMember()> Public Property local_section_id() As Integer?
         Get
             Return Me._local_section_id
         End Get
@@ -3644,7 +3682,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Group Id")>
-     <DataMember()> Public Property group_id() As Integer?
+    <DataMember()> Public Property group_id() As Integer?
         Get
             Return Me._group_id
         End Get
@@ -3653,7 +3691,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Local Group Id")>
-     <DataMember()> Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -3662,7 +3700,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Result Lkup")>
-     <DataMember()> Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -3671,7 +3709,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Rating")>
-     <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -3828,12 +3866,21 @@ Partial Public Class PoleReinfResults
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleMatlProp
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Custom Matls"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_matls"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Custom Matls"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.pole_matls"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Matl (INSERT).sql")
@@ -3875,7 +3922,7 @@ Partial Public Class PoleMatlProp
     Private _ind_default As Boolean?
 
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Matl Id")>
-     <DataMember()> Public Property matl_id() As Integer?
+    <DataMember()> Public Property matl_id() As Integer?
         Get
             Return Me._matl_id
         End Get
@@ -3884,7 +3931,7 @@ Partial Public Class PoleMatlProp
         End Set
     End Property
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Local Matl Id")>
-     <DataMember()> Public Property local_matl_id() As Integer?
+    <DataMember()> Public Property local_matl_id() As Integer?
         Get
             Return Me._local_matl_id
         End Get
@@ -3893,7 +3940,7 @@ Partial Public Class PoleMatlProp
         End Set
     End Property
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Name")>
-     <DataMember()> Public Property name() As String
+    <DataMember()> Public Property name() As String
         Get
             Return Me._name
         End Get
@@ -3902,7 +3949,7 @@ Partial Public Class PoleMatlProp
         End Set
     End Property
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Fy")>
-     <DataMember()> Public Property fy() As Double?
+    <DataMember()> Public Property fy() As Double?
         Get
             Return Me._fy
         End Get
@@ -3911,7 +3958,7 @@ Partial Public Class PoleMatlProp
         End Set
     End Property
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Fu")>
-     <DataMember()> Public Property fu() As Double?
+    <DataMember()> Public Property fu() As Double?
         Get
             Return Me._fu
         End Get
@@ -3920,7 +3967,7 @@ Partial Public Class PoleMatlProp
         End Set
     End Property
     <Category("CCIpole Matl DB"), Description(""), DisplayName("Ind Default")>
-     <DataMember()> Public Property ind_default() As Boolean?
+    <DataMember()> Public Property ind_default() As Boolean?
         Get
             Return Me._ind_default
         End Get
@@ -4022,12 +4069,21 @@ Partial Public Class PoleMatlProp
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleBoltProp
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Custom Bolts"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_bolts"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Custom Bolts"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.pole_bolts"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Bolt (INSERT).sql")
@@ -4081,7 +4137,7 @@ Partial Public Class PoleBoltProp
     Private _ind_default As Boolean?
 
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt Id")>
-     <DataMember()> Public Property bolt_id() As Integer?
+    <DataMember()> Public Property bolt_id() As Integer?
         Get
             Return Me._bolt_id
         End Get
@@ -4090,7 +4146,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Local Bolt Id")>
-     <DataMember()> Public Property local_bolt_id() As Integer?
+    <DataMember()> Public Property local_bolt_id() As Integer?
         Get
             Return Me._local_bolt_id
         End Get
@@ -4099,7 +4155,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Name")>
-     <DataMember()> Public Property name() As String
+    <DataMember()> Public Property name() As String
         Get
             Return Me._name
         End Get
@@ -4108,7 +4164,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Description")>
-     <DataMember()> Public Property description() As String
+    <DataMember()> Public Property description() As String
         Get
             Return Me._description
         End Get
@@ -4117,7 +4173,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Diam")>
-     <DataMember()> Public Property diam() As Double?
+    <DataMember()> Public Property diam() As Double?
         Get
             Return Me._diam
         End Get
@@ -4126,7 +4182,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Area")>
-     <DataMember()> Public Property area() As Double?
+    <DataMember()> Public Property area() As Double?
         Get
             Return Me._area
         End Get
@@ -4135,7 +4191,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Fu Bolt")>
-     <DataMember()> Public Property fu_bolt() As Double?
+    <DataMember()> Public Property fu_bolt() As Double?
         Get
             Return Me._fu_bolt
         End Get
@@ -4144,7 +4200,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Sleeve Diam Out")>
-     <DataMember()> Public Property sleeve_diam_out() As Double?
+    <DataMember()> Public Property sleeve_diam_out() As Double?
         Get
             Return Me._sleeve_diam_out
         End Get
@@ -4153,7 +4209,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Sleeve Diam In")>
-     <DataMember()> Public Property sleeve_diam_in() As Double?
+    <DataMember()> Public Property sleeve_diam_in() As Double?
         Get
             Return Me._sleeve_diam_in
         End Get
@@ -4162,7 +4218,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Fu Sleeve")>
-     <DataMember()> Public Property fu_sleeve() As Double?
+    <DataMember()> Public Property fu_sleeve() As Double?
         Get
             Return Me._fu_sleeve
         End Get
@@ -4171,7 +4227,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt N Sleeve Shear Revf")>
-     <DataMember()> Public Property bolt_n_sleeve_shear_revF() As Double?
+    <DataMember()> Public Property bolt_n_sleeve_shear_revF() As Double?
         Get
             Return Me._bolt_n_sleeve_shear_revF
         End Get
@@ -4180,7 +4236,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt X Sleeve Shear Revf")>
-     <DataMember()> Public Property bolt_x_sleeve_shear_revF() As Double?
+    <DataMember()> Public Property bolt_x_sleeve_shear_revF() As Double?
         Get
             Return Me._bolt_x_sleeve_shear_revF
         End Get
@@ -4189,7 +4245,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt N Sleeve Shear Revg")>
-     <DataMember()> Public Property bolt_n_sleeve_shear_revG() As Double?
+    <DataMember()> Public Property bolt_n_sleeve_shear_revG() As Double?
         Get
             Return Me._bolt_n_sleeve_shear_revG
         End Get
@@ -4198,7 +4254,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt X Sleeve Shear Revg")>
-     <DataMember()> Public Property bolt_x_sleeve_shear_revG() As Double?
+    <DataMember()> Public Property bolt_x_sleeve_shear_revG() As Double?
         Get
             Return Me._bolt_x_sleeve_shear_revG
         End Get
@@ -4207,7 +4263,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt N Sleeve Shear Revh")>
-     <DataMember()> Public Property bolt_n_sleeve_shear_revH() As Double?
+    <DataMember()> Public Property bolt_n_sleeve_shear_revH() As Double?
         Get
             Return Me._bolt_n_sleeve_shear_revH
         End Get
@@ -4216,7 +4272,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Bolt X Sleeve Shear Revh")>
-     <DataMember()> Public Property bolt_x_sleeve_shear_revH() As Double?
+    <DataMember()> Public Property bolt_x_sleeve_shear_revH() As Double?
         Get
             Return Me._bolt_x_sleeve_shear_revH
         End Get
@@ -4225,7 +4281,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Rb Applied Revh")>
-     <DataMember()> Public Property rb_applied_revH() As Boolean?
+    <DataMember()> Public Property rb_applied_revH() As Boolean?
         Get
             Return Me._rb_applied_revH
         End Get
@@ -4234,7 +4290,7 @@ Partial Public Class PoleBoltProp
         End Set
     End Property
     <Category("CCIpole Bolt DB"), Description(""), DisplayName("Ind Default")>
-     <DataMember()> Public Property ind_default() As Boolean?
+    <DataMember()> Public Property ind_default() As Boolean?
         Get
             Return Me._ind_default
         End Get
@@ -4398,12 +4454,21 @@ Partial Public Class PoleBoltProp
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PoleReinfProp
     Inherits EDSObjectWithQueries
 
 #Region "Inherited"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pole Custom Reinfs"
-    Public Overrides ReadOnly Property EDSTableName As String = "pole.pole_reinforcements"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pole Custom Reinfs"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "pole.pole_reinforcements"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         'SQLInsert = QueryBuilderFromFile(queryPath & "CCIpole\DB Reinf (INSERT).sql")

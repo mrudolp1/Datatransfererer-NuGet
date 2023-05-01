@@ -19,7 +19,16 @@ Partial Public Class EDSStructure
             Return "Structure Model"
         End Get
     End Property
-
+    'The structure class should return itself if the parent is requested
+    Private _ParentStructure As EDSStructure
+    Public Overrides ReadOnly Property ParentStructure As EDSStructure
+        Get
+            Return Me
+        End Get
+        'Set(value As EDSStructure)
+        '    _ParentStructure = value
+        'End Set
+    End Property
 
     <DataMember()> Public Property tnx As tnxModel
     <DataMember()> Public Property CCIplates As New List(Of CCIplate)
@@ -37,16 +46,6 @@ Partial Public Class EDSStructure
     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
 
-    'The structure class should return itself if the parent is requested
-    Private _ParentStructure As EDSStructure
-    Public Overrides ReadOnly Property ParentStructure As EDSStructure
-        Get
-            Return Me
-        End Get
-        'Set(value As EDSStructure)
-        '    _ParentStructure = value
-        'End Set
-    End Property
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}
 
