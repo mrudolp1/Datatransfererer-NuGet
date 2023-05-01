@@ -57,9 +57,12 @@
     <Reference Include="DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Data.22.2.4\lib\net452\DevExpress.Data.v22.2.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.DataAccess.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Dialogs.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Drawing.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Drawing.22.2.4\lib\net452\DevExpress.Drawing.v22.2.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Images.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Office.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Office.Core.22.2.4\lib\net452\DevExpress.Office.v22.2.Core.dll</HintPath>
     </Reference>
@@ -93,6 +96,7 @@
     <Reference Include="DevExpress.XtraBars.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraBars.v22.2.Design.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.XtraDialogs.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraEditors.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\DevExpress.XtraEditors.v22.2.dll</HintPath>
     </Reference>
@@ -123,6 +127,7 @@
     <Reference Include="DevExpress.XtraPrinting.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Win.Printing.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraPrinting.v22.2.Design.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraTreeList.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <HintPath>..\packages\DevExpress.Win.TreeList.22.2.4\lib\net452\DevExpress.XtraTreeList.v22.2.dll</HintPath>
     </Reference>
@@ -138,8 +143,13 @@
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.19.9.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
+    <Reference Include="RoboSharp, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RoboSharp.1.2.8\lib\net45\RoboSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -162,6 +172,12 @@
     <Import Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Summary.Designer.vb">
+      <DependentUpon>Summary.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Summary.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Main.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -174,10 +190,20 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="SimpleExplorer.designer.vb">
+      <DependentUpon>SimpleExplorer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleExplorer.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <EmbeddedResource Include="Summary.resx">
+      <DependentUpon>Summary.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -189,6 +215,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SimpleExplorer.resx">
+      <DependentUpon>SimpleExplorer.vb</DependentUpon>
+    </EmbeddedResource>
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
@@ -217,6 +246,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\construction-svgrepo-com %281%29.svg" />
+    <None Include="Resources\ladder-svgrepo-com.svg" />
+    <None Include="Resources\navigateBack.svg" />
+    <None Include="Resources\navigateForward.svg" />
+    <None Include="Resources\navigateUp.svg" />
+    <None Include="Resources\download.jfif" />
     <Content Include="wanda_LjA_icon.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -572,16 +572,23 @@ Partial Public Class UnitBase
         Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
+        LoadFromExcel()
 
+    End Sub 'Generate a ub from Excel
+
+#End Region
+
+#Region "Load From Excel"
+    Public Overrides Sub LoadFromExcel()
         ''''''Customize for each foundation type'''''
         Dim excelDS As New DataSet
 
         For Each item As EXCELDTParameter In ExcelDTParams
             'Get additional tables from excel file 
             Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(Me.WorkBookPath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
             Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(ExcelFilePath), item.xlsSheet, item.xlsRange))
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(Me.WorkBookPath), item.xlsSheet, item.xlsRange))
             End Try
         Next
 
@@ -655,8 +662,7 @@ Partial Public Class UnitBase
 
         End If
 
-    End Sub 'Generate a ub from Excel
-
+    End Sub
 #End Region
 
 #Region "Save to Excel"
