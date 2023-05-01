@@ -13,8 +13,16 @@ Partial Public Class SoilProfile
     Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Soil Profile"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.soil_profile"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Soil Profile"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.soil_profile"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
 
@@ -56,6 +64,7 @@ Partial Public Class SoilProfile
     End Function
 
 #End Region
+
 #Region "Define"
 
     <DataMember()> Public Property SoilLayers As New List(Of SoilLayer)

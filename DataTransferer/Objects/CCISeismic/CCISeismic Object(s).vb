@@ -1,19 +1,35 @@
 ﻿Option Strict On
 
 Imports System.ComponentModel
-Imports System.Data
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class CCISeismic
     Inherits EDSExcelObject
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCISeismic"
-    Public Overrides ReadOnly Property EDSTableName As String = "load.seismic"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCISeismic.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.CCISeismic
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "CCISeismic"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "load.seismic"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "CCISeismic.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.CCISeismic
+        End Get
+    End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
@@ -76,12 +92,6 @@ Partial Public Class CCISeismic
 
 #Region "Define"
 
-    'Private _ID As Integer?'Defined in EDSObject
-    'Private _tool_version As String'Defined in EDSExcelObject
-    'Private _bus_unit As Integer?'Defined in EDSObject
-    'Private _structure_id As String'Defined in EDSObject
-    'Private _modified_person_id As Integer?'Defined in EDSOEDSExcelObjectbject
-    'Private _process_stage As String'Defined in EDSObEDSExcelObjectject
     Private _lat_sign As String
     Private _lat_deg As Integer?
     Private _lat_min As Integer?
@@ -110,60 +120,6 @@ Partial Public Class CCISeismic
     Private _create_seismic_loads As Boolean?
     Private _user_force_appurtenance As Boolean?
 
-    '<Category("Seismic"), Description(""), DisplayName("Id")>
-    ' <DataMember()> Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
-    '<Category("Seismic"), Description(""), DisplayName("Tool Version")>
-    ' <DataMember()> Public Property tool_version() As String
-    '    Get
-    '        Return Me._tool_version
-    '    End Get
-    '    Set
-    '        Me._tool_version = Value
-    '    End Set
-    'End Property
-    '<Category("Seismic"), Description(""), DisplayName("Bus Unit")>
-    ' <DataMember()> Public Property bus_unit() As Integer?
-    '    Get
-    '        Return Me._bus_unit
-    '    End Get
-    '    Set
-    '        Me._bus_unit = Value
-    '    End Set
-    'End Property
-    '<Category("Seismic"), Description(""), DisplayName("Structure Id")>
-    ' <DataMember()> Public Property structure_id() As String
-    '    Get
-    '        Return Me._structure_id
-    '    End Get
-    '    Set
-    '        Me._structure_id = Value
-    '    End Set
-    'End Property
-    '<Category("Seismic"), Description(""), DisplayName("Modified Person Id")>
-    ' <DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("Seismic"), Description(""), DisplayName("Process Stage")>
-    ' <DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
-    'End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Sign")>
      <DataMember()> Public Property lat_sign() As String
         Get

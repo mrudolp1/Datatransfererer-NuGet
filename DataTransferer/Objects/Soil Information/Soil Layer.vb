@@ -14,8 +14,16 @@ Partial Public Class SoilLayer
     'Inherits EDSObject
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Soil Layer"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.soil_layer"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Soil Layer"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.soil_layer"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         SQLInsert = ""
@@ -54,7 +62,6 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
 
 #Region "Define"
 
-    Private _ID As Integer?
     Private _soil_profile_id As Integer?
     Private _bottom_depth As Double?
     Private _effective_soil_density As Double?
@@ -65,15 +72,6 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
     Private _nominal_bearing_capacity As Double? 'Does not apply to Piles -- For drilled piers this is being used as ultimate and nominal. The toggle
     Private _spt_blow_count As Integer?
 
-    <Category("Soil Layer"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Soil Layer"), Description(""), DisplayName("Soil Profile ID")>
     <DataMember()> Public Property Soil_Profile_id() As Integer?
         Get

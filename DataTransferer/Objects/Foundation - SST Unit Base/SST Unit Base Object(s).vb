@@ -5,15 +5,33 @@ Imports System.Data
 Imports DevExpress.Spreadsheet
 Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class UnitBase
     Inherits EDSExcelObject
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "SST Unit Base Foundation"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.unit_base"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "SST Unit Base Foundation.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "SST Unit Base Foundation"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.unit_base"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "SST Unit Base Foundation.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation
+        End Get
+    End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Unit Base General Details EXCEL", "A2:AU3", "Details (SAPI)"),

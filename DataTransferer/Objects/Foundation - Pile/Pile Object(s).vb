@@ -1,20 +1,36 @@
 ﻿Option Strict On
 
 Imports System.ComponentModel
-Imports System.Data
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class Pile
     Inherits EDSExcelObject
 
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pile Foundation"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.pile"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Pile_Foundation
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pile Foundation"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.pile"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pile Foundation.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.Pile_Foundation
+        End Get
+    End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BC2", "Details (SAPI)"),
@@ -187,10 +203,6 @@ Partial Public Class Pile
 #End Region
 
 #Region "Define"
-
-    'Private _ID As Integer? 'Defined in EDSObject
-    'Private _bus_unit As String 'Defined in EDSObject
-    'Private _structure_id As String 'Defined in EDSObject
     Private _load_eccentricity As Double?
     Private _bolt_circle_bearing_plate_width As Double?
     Private _pile_shape As String
@@ -252,45 +264,11 @@ Partial Public Class Pile
     Private _Structural_105 As Boolean?
     Private _soil_profile_id As Integer?
     'Private _tool_version As String'Defined in EDSExcelObject
-    'Private _modified_person_id As Integer?'Defined in EDSObject
-    'Private _process_stage As String'Defined in EDSObject
 
-     <DataMember()> Public Property SoilProfiles As New List(Of SoilProfile)
-    ' <DataMember()> Public Property SoilProfiles As SoilProfile
+    <DataMember()> Public Property SoilProfiles As New List(Of SoilProfile)
+    <DataMember()> Public Property SoilLayers As New List(Of SoilLayer)
+    <DataMember()> Public Property PileLocations As New List(Of PileLocation)
 
-     <DataMember()> Public Property SoilLayers As New List(Of SoilLayer)
-    ' <DataMember()> Public Property SoilLayers As SoilLayer
-
-     <DataMember()> Public Property PileLocations As New List(Of PileLocation)
-    ' <DataMember()> Public Property PileLocations As SoilLayer
-
-    '<Category("Pile"), Description(""), DisplayName("Id")>
-    ' <DataMember()> Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
-    '<Category("Pile"), Description(""), DisplayName("Bus Unit")>
-    ' <DataMember()> Public Property bus_unit() As String
-    '    Get
-    '        Return Me._bus_unit
-    '    End Get
-    '    Set
-    '        Me._bus_unit = Value
-    '    End Set
-    'End Property
-    '<Category("Pile"), Description(""), DisplayName("Structure Id")>
-    ' <DataMember()> Public Property structure_id() As String
-    '    Get
-    '        Return Me._structure_id
-    '    End Get
-    '    Set
-    '        Me._structure_id = Value
-    '    End Set
-    'End Property
     <Category("Pile"), Description(""), DisplayName("Load Eccentricity")>
      <DataMember()> Public Property load_eccentricity() As Double?
         Get
@@ -840,43 +818,7 @@ Partial Public Class Pile
     '        Me._tool_version = Value
     '    End Set
     'End Property
-    '<Category("Pile"), Description(""), DisplayName("Modified Person Id")>
-    ' <DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("Pile"), Description(""), DisplayName("Process Stage")>
-    ' <DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
-    'End Property
-    '<Category("Pile"), Description(""), DisplayName("TIA")>
-    ' <DataMember()> Public Property tia_current() As String
-    '    Get
-    '        Return If(Me.ParentStructure.structureCodeCriteria.tia_current, Me._tia_current)
-    '    End Get
-    '    Set
-    '        Me._tia_current = Value
-    '    End Set
-    'End Property
-    '<Category("Pile"), Description(""), DisplayName("Rev H Section 15.5")>
-    ' <DataMember()> Public Property rev_h_section_15_5() As Boolean?
-    '    Get
-    '        Return If(Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5, Me._rev_h_section_15_5)
-    '    End Get
-    '    Set
-    '        Me._rev_h_section_15_5 = Value
-    '    End Set
-    'End Property
-    'Load Z
+
 #End Region
 
 #Region "Constructors"
@@ -2046,12 +1988,21 @@ Partial Public Class Pile
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class PileLocation
     Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pile Location"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.pile_location"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pile Location"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.pile_location"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
 
@@ -2091,18 +2042,11 @@ Partial Public Class PileLocation
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
+
     Private _pile_x_coordinate As Double?
     Private _pile_y_coordinate As Double?
-    <Category("Pile Location"), Description(""), DisplayName("Id")>
-     <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
+
     <Category("Pile Location"), Description(""), DisplayName("Pile X Coordinate")>
      <DataMember()> Public Property pile_x_coordinate() As Double?
         Get

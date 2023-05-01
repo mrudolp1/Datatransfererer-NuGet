@@ -4,15 +4,33 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class PierAndPad
     Inherits EDSExcelObject
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Pier And Pad Foundation"
-    Public Overrides ReadOnly Property EDSTableName As String = "fnd.pier_pad"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Pier And Pad Foundation"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "fnd.pier_pad"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Pier and Pad Foundation.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation
+        End Get
+    End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)"),

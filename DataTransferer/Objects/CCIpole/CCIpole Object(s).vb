@@ -4,7 +4,7 @@ Imports System.Runtime.Serialization
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
+
 <DataContractAttribute()>
 Partial Public Class Pole
     Inherits EDSExcelObject
