@@ -2,9 +2,11 @@
 
 Imports System.ComponentModel
 Imports System.Data
+Imports System.Runtime.Serialization
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
 
+<DataContractAttribute()>
 Partial Public Class CCIplate
     Inherits EDSExcelObject
 
@@ -163,11 +165,11 @@ Partial Public Class CCIplate
     'Private _modified_person_id As Integer? 'Defined in EDSExcelObject
     'Private _process_stage As String 'Defined in EDSExcelObject
 
-    Public Property Connections As New List(Of Connection)
-    'Public Property ConnectionResults As New List(Of ConnectionResults)
+    <DataMember()> Public Property Connections As New List(Of Connection)
+    '<DataMember()> Public Property ConnectionResults As New List(Of ConnectionResults)
 
     '<Category("Connection"), Description(""), DisplayName("Id")>
-    'Public Property ID() As Integer?
+    '<DataMember()> Public Property ID() As Integer?
     '    Get
     '        Return Me._ID
     '    End Get
@@ -176,7 +178,7 @@ Partial Public Class CCIplate
     '    End Set
     'End Property
     '<Category("Connection"), Description(""), DisplayName("Bus Unit")>
-    'Public Property bus_unit() As String
+    '<DataMember()> Public Property bus_unit() As String
     '    Get
     '        Return Me._bus_unit
     '    End Get
@@ -185,7 +187,7 @@ Partial Public Class CCIplate
     '    End Set
     'End Property
     '<Category("Connection"), Description(""), DisplayName("Structure Id")>
-    'Public Property structure_id() As String
+    '<DataMember()> Public Property structure_id() As String
     '    Get
     '        Return Me._structure_id
     '    End Get
@@ -194,7 +196,7 @@ Partial Public Class CCIplate
     '    End Set
     'End Property
     <Category("CCIplate"), Description(""), DisplayName("Anchor Rod Spacing")>
-    Public Property anchor_rod_spacing() As Double?
+    <DataMember()> Public Property anchor_rod_spacing() As Double?
         Get
             Return Me._anchor_rod_spacing
         End Get
@@ -203,7 +205,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Clip Distance")>
-    Public Property clip_distance() As Double?
+    <DataMember()> Public Property clip_distance() As Double?
         Get
             Return Me._clip_distance
         End Get
@@ -212,7 +214,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Barb Cl Elevation")>
-    Public Property barb_cl_elevation() As Double?
+    <DataMember()> Public Property barb_cl_elevation() As Double?
         Get
             Return Me._barb_cl_elevation
         End Get
@@ -221,7 +223,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Include Pole Reactions")>
-    Public Property include_pole_reactions() As Boolean?
+    <DataMember()> Public Property include_pole_reactions() As Boolean?
         Get
             Return Me._include_pole_reactions
         End Get
@@ -230,7 +232,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Consider Ar Eccentricity")>
-    Public Property consider_ar_eccentricity() As Boolean?
+    <DataMember()> Public Property consider_ar_eccentricity() As Boolean?
         Get
             Return Me._consider_ar_eccentricity
         End Get
@@ -239,7 +241,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Leg Mod Eccentricity")>
-    Public Property leg_mod_eccentricity() As Double?
+    <DataMember()> Public Property leg_mod_eccentricity() As Double?
         Get
             Return Me._leg_mod_eccentricity
         End Get
@@ -248,7 +250,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Seismic")>
-    Public Property seismic() As Boolean?
+    <DataMember()> Public Property seismic() As Boolean?
         Get
             Return Me._seismic
         End Get
@@ -257,7 +259,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Seismic Flanges")>
-    Public Property seismic_flanges() As Boolean?
+    <DataMember()> Public Property seismic_flanges() As Boolean?
         Get
             Return Me._seismic_flanges
         End Get
@@ -266,7 +268,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     <Category("CCIplate"), Description(""), DisplayName("Structural 105")>
-    Public Property Structural_105() As Boolean?
+    <DataMember()> Public Property Structural_105() As Boolean?
         Get
             Return Me._Structural_105
         End Get
@@ -275,7 +277,7 @@ Partial Public Class CCIplate
         End Set
     End Property
     '<Category("Connection"), Description(""), DisplayName("Tool Version")>
-    'Public Property tool_version() As String
+    '<DataMember()> Public Property tool_version() As String
     '    Get
     '        Return Me._tool_version
     '    End Get
@@ -284,7 +286,7 @@ Partial Public Class CCIplate
     '    End Set
     'End Property
     '<Category("Connection"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    '<DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -293,7 +295,7 @@ Partial Public Class CCIplate
     '    End Set
     'End Property
     '<Category("Connection"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    '<DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -320,26 +322,7 @@ Partial Public Class CCIplate
         Me.WorkBookPath = ExcelFilePath
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then Me.Absorb(Parent)
-
-        ''''''Customize for each foundation type'''''
-        Dim excelDS As New DataSet
-
-        For Each item As EXCELDTParameter In ExcelDTParams
-            'Get additional tables from excel file 
-            Try
-                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(ExcelFilePath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
-            Catch ex As Exception
-                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(ExcelFilePath), item.xlsSheet, item.xlsRange))
-            End Try
-        Next
-
-        If excelDS.Tables.Contains("CCIplates") Then
-            Dim dr = excelDS.Tables("CCIplates").Rows(0)
-
-            'Following used to create dataset, regardless if source was EDS or Excel. Boolean used to identify source. Excel = False
-            BuildFromDataset(dr, excelDS, False, Me)
-
-        End If
+        LoadFromExcel()
 
     End Sub 'Generate a CCIplate from Excel
 
@@ -506,6 +489,30 @@ Partial Public Class CCIplate
         'End Function
     End Sub
 
+#End Region
+
+#Region "Load From Excel"
+    Public Overrides Sub LoadFromExcel()
+        Dim excelDS As New DataSet
+
+        For Each item As EXCELDTParameter In ExcelDTParams
+            'Get additional tables from excel file 
+            Try
+                excelDS.Tables.Add(ExcelDatasourceToDataTable(GetExcelDataSource(Me.WorkBookPath, item.xlsSheet, item.xlsRange), item.xlsDatatable))
+            Catch ex As Exception
+                Debug.Print(String.Format("Failed to create datatable for: {0}, {1}, {2}", IO.Path.GetFileName(Me.WorkBookPath), item.xlsSheet, item.xlsRange))
+            End Try
+        Next
+
+        'Specific requirements for setting CCIplate properties and properties of its children
+        If excelDS.Tables.Contains("CCIplates") Then
+            Dim dr = excelDS.Tables("CCIplates").Rows(0)
+
+            'Following used to create dataset, regardless if source was EDS or Excel. Boolean used to identify source. Excel = False
+            BuildFromDataset(dr, excelDS, False, Me)
+
+        End If
+    End Sub
 #End Region
 
 #Region "Save to Excel"
@@ -1721,7 +1728,7 @@ Partial Public Class CCIplate
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class Connection
     Inherits EDSObjectWithQueries
 
@@ -1901,13 +1908,13 @@ Partial Public Class Connection
     Private _bolt_configuration As String
     Private _cciplate_id As Integer?
 
-    Public Property PlateDetails As New List(Of PlateDetail)
-    Public Property BoltGroups As New List(Of BoltGroup)
-    Public Property BridgeStiffenerDetails As New List(Of BridgeStiffenerDetail)
-    Public Property ConnectionResults As New List(Of ConnectionResults)
+    <DataMember()> Public Property PlateDetails As New List(Of PlateDetail)
+    <DataMember()> Public Property BoltGroups As New List(Of BoltGroup)
+    <DataMember()> Public Property BridgeStiffenerDetails As New List(Of BridgeStiffenerDetail)
+    <DataMember()> Public Property ConnectionResults As New List(Of ConnectionResults)
 
     <Category("Connection"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -1917,7 +1924,7 @@ Partial Public Class Connection
     End Property
 
     <Category("Connection"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -1926,7 +1933,7 @@ Partial Public Class Connection
         End Set
     End Property
     <Category("Connection"), Description(""), DisplayName("Connection Elevation")>
-    Public Property connection_elevation() As Double?
+    <DataMember()> Public Property connection_elevation() As Double?
         Get
             Return Me._connection_elevation
         End Get
@@ -1935,7 +1942,7 @@ Partial Public Class Connection
         End Set
     End Property
     <Category("Connection"), Description(""), DisplayName("Connection Type")>
-    Public Property connection_type() As String
+    <DataMember()> Public Property connection_type() As String
         Get
             Return Me._connection_type
         End Get
@@ -1944,7 +1951,7 @@ Partial Public Class Connection
         End Set
     End Property
     <Category("Connection"), Description(""), DisplayName("Bolt Configuration")>
-    Public Property bolt_configuration() As String
+    <DataMember()> Public Property bolt_configuration() As String
         Get
             Return Me._bolt_configuration
         End Get
@@ -1953,7 +1960,7 @@ Partial Public Class Connection
         End Set
     End Property
     <Category("Connection"), Description(""), DisplayName("CCIplate Id")>
-    Public Property cciplate_id() As Integer?
+    <DataMember()> Public Property cciplate_id() As Integer?
         Get
             Return Me._cciplate_id
         End Get
@@ -2061,7 +2068,7 @@ Partial Public Class Connection
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class PlateDetail
     Inherits EDSObjectWithQueries
 
@@ -2187,12 +2194,12 @@ Partial Public Class PlateDetail
     Private _stiffener_clear_space As Double?
     Private _plate_check As Boolean?
 
-    Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
-    Public Property PlateResults As New List(Of PlateResults)
-    Public Property StiffenerGroups As New List(Of StiffenerGroup)
+    <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
+    <DataMember()> Public Property PlateResults As New List(Of PlateResults)
+    <DataMember()> Public Property StiffenerGroups As New List(Of StiffenerGroup)
 
     <Category("Plate Details"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -2201,7 +2208,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -2211,7 +2218,7 @@ Partial Public Class PlateDetail
     End Property
 
     <Category("Plate Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -2220,7 +2227,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Connection Id")>
-    Public Property connection_id() As Integer?
+    <DataMember()> Public Property connection_id() As Integer?
         Get
             Return Me._connection_id
         End Get
@@ -2229,7 +2236,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Location")>
-    Public Property plate_location() As String
+    <DataMember()> Public Property plate_location() As String
         Get
             Return Me._plate_location
         End Get
@@ -2238,7 +2245,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Type")>
-    Public Property plate_type() As String
+    <DataMember()> Public Property plate_type() As String
         Get
             Return Me._plate_type
         End Get
@@ -2247,7 +2254,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Diameter")>
-    Public Property plate_diameter() As Double?
+    <DataMember()> Public Property plate_diameter() As Double?
         Get
             Return Me._plate_diameter
         End Get
@@ -2256,7 +2263,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Thickness")>
-    Public Property plate_thickness() As Double?
+    <DataMember()> Public Property plate_thickness() As Double?
         Get
             Return Me._plate_thickness
         End Get
@@ -2265,7 +2272,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Material")>
-    Public Property plate_material() As Integer?
+    <DataMember()> Public Property plate_material() As Integer?
         Get
             Return Me._plate_material
         End Get
@@ -2274,7 +2281,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Stiffener Configuration")>
-    Public Property stiffener_configuration() As Integer?
+    <DataMember()> Public Property stiffener_configuration() As Integer?
         Get
             Return Me._stiffener_configuration
         End Get
@@ -2283,7 +2290,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Stiffener Clear Space")>
-    Public Property stiffener_clear_space() As Double?
+    <DataMember()> Public Property stiffener_clear_space() As Double?
         Get
             Return Me._stiffener_clear_space
         End Get
@@ -2292,7 +2299,7 @@ Partial Public Class PlateDetail
         End Set
     End Property
     <Category("Plate Details"), Description(""), DisplayName("Plate Check")>
-    Public Property plate_check() As Boolean?
+    <DataMember()> Public Property plate_check() As Boolean?
         Get
             Return Me._plate_check
         End Get
@@ -2435,6 +2442,7 @@ Partial Public Class PlateDetail
 #End Region
 
 End Class
+<DataContractAttribute()>
 Partial Public Class BoltGroup
     Inherits EDSObjectWithQueries
 
@@ -2540,11 +2548,11 @@ Partial Public Class BoltGroup
     Private _bolt_name As String
 
 
-    Public Property BoltDetails As New List(Of BoltDetail)
-    Public Property BoltResults As New List(Of BoltResults)
+    <DataMember()> Public Property BoltDetails As New List(Of BoltDetail)
+    <DataMember()> Public Property BoltResults As New List(Of BoltResults)
 
     <Category("Bolt Groups"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -2553,7 +2561,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -2563,7 +2571,7 @@ Partial Public Class BoltGroup
     End Property
 
     <Category("Bolt Groups"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -2572,7 +2580,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Connection Id")>
-    Public Property connection_id() As Integer?
+    <DataMember()> Public Property connection_id() As Integer?
         Get
             Return Me._connection_id
         End Get
@@ -2581,7 +2589,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Resist Axial")>
-    Public Property resist_axial() As Boolean?
+    <DataMember()> Public Property resist_axial() As Boolean?
         Get
             Return Me._resist_axial
         End Get
@@ -2590,7 +2598,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Resist Shear")>
-    Public Property resist_shear() As Boolean?
+    <DataMember()> Public Property resist_shear() As Boolean?
         Get
             Return Me._resist_shear
         End Get
@@ -2599,7 +2607,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Plate Bending")>
-    Public Property plate_bending() As Boolean?
+    <DataMember()> Public Property plate_bending() As Boolean?
         Get
             Return Me._plate_bending
         End Get
@@ -2608,7 +2616,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Grout Considered")>
-    Public Property grout_considered() As Boolean?
+    <DataMember()> Public Property grout_considered() As Boolean?
         Get
             Return Me._grout_considered
         End Get
@@ -2617,7 +2625,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Apply Barb Elevation")>
-    Public Property apply_barb_elevation() As Boolean?
+    <DataMember()> Public Property apply_barb_elevation() As Boolean?
         Get
             Return Me._apply_barb_elevation
         End Get
@@ -2626,7 +2634,7 @@ Partial Public Class BoltGroup
         End Set
     End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Bolt Name")>
-    Public Property bolt_name() As String
+    <DataMember()> Public Property bolt_name() As String
         Get
             Return Me._bolt_name
         End Get
@@ -2743,6 +2751,7 @@ Partial Public Class BoltGroup
 #End Region
 
 End Class
+<DataContractAttribute()>
 Partial Public Class BoltDetail
     Inherits EDSObjectWithQueries
 
@@ -2813,10 +2822,10 @@ Partial Public Class BoltDetail
     Private _area_override As Double?
     Private _tension_only As Boolean?
 
-    Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
+    <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
 
     '<Category("Bolt Details"), Description(""), DisplayName("Local Id")>
-    'Public Property local_id() As Integer?
+    '<DataMember()> Public Property local_id() As Integer?
     '    Get
     '        Return Me._local_id
     '    End Get
@@ -2825,7 +2834,7 @@ Partial Public Class BoltDetail
     '    End Set
     'End Property
     <Category("Bolt Details"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -2834,7 +2843,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Local Group Id")>
-    Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -2844,7 +2853,7 @@ Partial Public Class BoltDetail
     End Property
 
     <Category("Bolt Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -2853,7 +2862,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Group Id")>
-    Public Property bolt_group_id() As Integer?
+    <DataMember()> Public Property bolt_group_id() As Integer?
         Get
             Return Me._bolt_group_id
         End Get
@@ -2862,7 +2871,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Location")>
-    Public Property bolt_location() As Double?
+    <DataMember()> Public Property bolt_location() As Double?
         Get
             Return Me._bolt_location
         End Get
@@ -2871,7 +2880,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Diameter")>
-    Public Property bolt_diameter() As Double?
+    <DataMember()> Public Property bolt_diameter() As Double?
         Get
             Return Me._bolt_diameter
         End Get
@@ -2880,7 +2889,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Material")>
-    Public Property bolt_material() As Integer?
+    <DataMember()> Public Property bolt_material() As Integer?
         Get
             Return Me._bolt_material
         End Get
@@ -2889,7 +2898,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Circle")>
-    Public Property bolt_circle() As Double?
+    <DataMember()> Public Property bolt_circle() As Double?
         Get
             Return Me._bolt_circle
         End Get
@@ -2898,7 +2907,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Eta Factor")>
-    Public Property eta_factor() As Double?
+    <DataMember()> Public Property eta_factor() As Double?
         Get
             Return Me._eta_factor
         End Get
@@ -2907,7 +2916,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Lar")>
-    Public Property lar() As Double?
+    <DataMember()> Public Property lar() As Double?
         Get
             Return Me._lar
         End Get
@@ -2916,7 +2925,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Thread Type")>
-    Public Property bolt_thread_type() As String
+    <DataMember()> Public Property bolt_thread_type() As String
         Get
             Return Me._bolt_thread_type
         End Get
@@ -2925,7 +2934,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Area Override")>
-    Public Property area_override() As Double?
+    <DataMember()> Public Property area_override() As Double?
         Get
             Return Me._area_override
         End Get
@@ -2934,7 +2943,7 @@ Partial Public Class BoltDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Tension Only")>
-    Public Property tension_only() As Boolean?
+    <DataMember()> Public Property tension_only() As Boolean?
         Get
             Return Me._tension_only
         End Get
@@ -3068,7 +3077,7 @@ Partial Public Class BoltDetail
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class CCIplateMaterial
     Inherits EDSObjectWithQueries
 
@@ -3108,7 +3117,7 @@ Partial Public Class CCIplateMaterial
     Private _fu_4_125 As Double?
     Private _default_material As Boolean?
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -3117,7 +3126,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("Connection Material Properties"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -3126,7 +3135,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Name")>
-    Public Property name() As String
+    <DataMember()> Public Property name() As String
         Get
             Return Me._name
         End Get
@@ -3135,7 +3144,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fy 0")>
-    Public Property fy_0() As Double?
+    <DataMember()> Public Property fy_0() As Double?
         Get
             Return Me._fy_0
         End Get
@@ -3144,7 +3153,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fy 1 125")>
-    Public Property fy_1_125() As Double?
+    <DataMember()> Public Property fy_1_125() As Double?
         Get
             Return Me._fy_1_125
         End Get
@@ -3153,7 +3162,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fy 1 625")>
-    Public Property fy_1_625() As Double?
+    <DataMember()> Public Property fy_1_625() As Double?
         Get
             Return Me._fy_1_625
         End Get
@@ -3162,7 +3171,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fy 2 625")>
-    Public Property fy_2_625() As Double?
+    <DataMember()> Public Property fy_2_625() As Double?
         Get
             Return Me._fy_2_625
         End Get
@@ -3171,7 +3180,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fy 4 125")>
-    Public Property fy_4_125() As Double?
+    <DataMember()> Public Property fy_4_125() As Double?
         Get
             Return Me._fy_4_125
         End Get
@@ -3180,7 +3189,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fu 0")>
-    Public Property fu_0() As Double?
+    <DataMember()> Public Property fu_0() As Double?
         Get
             Return Me._fu_0
         End Get
@@ -3189,7 +3198,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fu 1 125")>
-    Public Property fu_1_125() As Double?
+    <DataMember()> Public Property fu_1_125() As Double?
         Get
             Return Me._fu_1_125
         End Get
@@ -3198,7 +3207,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fu 1 625")>
-    Public Property fu_1_625() As Double?
+    <DataMember()> Public Property fu_1_625() As Double?
         Get
             Return Me._fu_1_625
         End Get
@@ -3207,7 +3216,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fu 2 625")>
-    Public Property fu_2_625() As Double?
+    <DataMember()> Public Property fu_2_625() As Double?
         Get
             Return Me._fu_2_625
         End Get
@@ -3216,7 +3225,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Fu 4 125")>
-    Public Property fu_4_125() As Double?
+    <DataMember()> Public Property fu_4_125() As Double?
         Get
             Return Me._fu_4_125
         End Get
@@ -3225,7 +3234,7 @@ Partial Public Class CCIplateMaterial
         End Set
     End Property
     <Category("CCIplate Material Properties"), Description(""), DisplayName("Default Material")>
-    Public Property default_material() As Boolean?
+    <DataMember()> Public Property default_material() As Boolean?
         Get
             Return Me._default_material
         End Get
@@ -3369,7 +3378,7 @@ Partial Public Class CCIplateMaterial
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class PlateResults
     Inherits EDSObjectWithQueries
     'Inherits EDSResult
@@ -3403,7 +3412,7 @@ Partial Public Class PlateResults
     'Private _modified_date As DateTime? 'not provided in Excel
 
     <Category("Plate Results"), Description(""), DisplayName("Plate Details Id")>
-    Public Property plate_details_id() As Integer?
+    <DataMember()> Public Property plate_details_id() As Integer?
         Get
             Return Me._plate_details_id
         End Get
@@ -3412,7 +3421,7 @@ Partial Public Class PlateResults
         End Set
     End Property
     <Category("Plate Results"), Description(""), DisplayName("Local Plate Id")>
-    Public Property local_plate_id() As Integer?
+    <DataMember()> Public Property local_plate_id() As Integer?
         Get
             Return Me._local_plate_id
         End Get
@@ -3421,7 +3430,7 @@ Partial Public Class PlateResults
         End Set
     End Property
     '<Category("Plate Results"), Description(""), DisplayName("Work Order Seq Num")>
-    'Public Property work_order_seq_num() As Double?
+    '<DataMember()> Public Property work_order_seq_num() As Double?
     '    Get
     '        Return Me._work_order_seq_num
     '    End Get
@@ -3430,7 +3439,7 @@ Partial Public Class PlateResults
     '    End Set
     'End Property
     <Category("Plate Results"), Description(""), DisplayName("Rating")>
-    Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -3439,7 +3448,7 @@ Partial Public Class PlateResults
         End Set
     End Property
     <Category("Plate Results"), Description(""), DisplayName("Result Lkup")>
-    Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -3448,7 +3457,7 @@ Partial Public Class PlateResults
         End Set
     End Property
     '<Category("Plate Results"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    '<DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -3457,7 +3466,7 @@ Partial Public Class PlateResults
     '    End Set
     'End Property
     '<Category("Plate Results"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    '<DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -3466,7 +3475,7 @@ Partial Public Class PlateResults
     '    End Set
     'End Property
     '<Category("Plate Results"), Description(""), DisplayName("Modified Date")>
-    'Public Property modified_date() As DateTime?
+    '<DataMember()> Public Property modified_date() As DateTime?
     '    Get
     '        Return Me._modified_date
     '    End Get
@@ -3565,7 +3574,7 @@ Partial Public Class PlateResults
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class BoltResults
     Inherits EDSObjectWithQueries
 
@@ -3599,7 +3608,7 @@ Partial Public Class BoltResults
     'Private _modified_date As DateTime? 'not provided in Excel
 
     <Category("Bolt Results"), Description(""), DisplayName("Bolt Id")>
-    Public Property bolt_id() As Integer?
+    <DataMember()> Public Property bolt_id() As Integer?
         Get
             Return Me._bolt_id
         End Get
@@ -3608,7 +3617,7 @@ Partial Public Class BoltResults
         End Set
     End Property
     <Category("Bolt Results"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -3617,7 +3626,7 @@ Partial Public Class BoltResults
         End Set
     End Property
     <Category("Bolt Results"), Description(""), DisplayName("Local Bolt Group Id")>
-    Public Property local_bolt_group_id() As Integer?
+    <DataMember()> Public Property local_bolt_group_id() As Integer?
         Get
             Return Me._local_bolt_group_id
         End Get
@@ -3626,7 +3635,7 @@ Partial Public Class BoltResults
         End Set
     End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Work Order Seq Num")>
-    'Public Property work_order_seq_num() As Double?
+    '<DataMember()> Public Property work_order_seq_num() As Double?
     '    Get
     '        Return Me._work_order_seq_num
     '    End Get
@@ -3635,7 +3644,7 @@ Partial Public Class BoltResults
     '    End Set
     'End Property
     <Category("Bolt Results"), Description(""), DisplayName("Rating")>
-    Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -3644,7 +3653,7 @@ Partial Public Class BoltResults
         End Set
     End Property
     <Category("Bolt Results"), Description(""), DisplayName("Result Lkup")>
-    Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -3653,7 +3662,7 @@ Partial Public Class BoltResults
         End Set
     End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    '<DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -3662,7 +3671,7 @@ Partial Public Class BoltResults
     '    End Set
     'End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    '<DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -3671,7 +3680,7 @@ Partial Public Class BoltResults
     '    End Set
     'End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Modified Date")>
-    'Public Property modified_date() As DateTime?
+    '<DataMember()> Public Property modified_date() As DateTime?
     '    Get
     '        Return Me._modified_date
     '    End Get
@@ -3771,7 +3780,7 @@ Partial Public Class BoltResults
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class StiffenerGroup
     Inherits EDSObjectWithQueries
 
@@ -3875,11 +3884,11 @@ Partial Public Class StiffenerGroup
     Private _plate_details_id As Integer?
     Private _stiffener_name As String
 
-    Public Property StiffenerDetails As New List(Of StiffenerDetail)
-    'Public Property StiffenerResults As New List(Of StiffenerResults)
+    <DataMember()> Public Property StiffenerDetails As New List(Of StiffenerDetail)
+    '<DataMember()> Public Property StiffenerResults As New List(Of StiffenerResults)
 
     <Category("Stiffener Groups"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -3888,7 +3897,7 @@ Partial Public Class StiffenerGroup
         End Set
     End Property
     <Category("Stiffener Groups"), Description(""), DisplayName("Local Plate Id")>
-    Public Property local_plate_id() As Integer?
+    <DataMember()> Public Property local_plate_id() As Integer?
         Get
             Return Me._local_plate_id
         End Get
@@ -3898,7 +3907,7 @@ Partial Public Class StiffenerGroup
     End Property
 
     <Category("Stiffener Groups"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -3907,7 +3916,7 @@ Partial Public Class StiffenerGroup
         End Set
     End Property
     <Category("Stiffener Groups"), Description(""), DisplayName("Plate Details Id")>
-    Public Property plate_details_id() As Integer?
+    <DataMember()> Public Property plate_details_id() As Integer?
         Get
             Return Me._plate_details_id
         End Get
@@ -3916,7 +3925,7 @@ Partial Public Class StiffenerGroup
         End Set
     End Property
     <Category("Stiffener Groups"), Description(""), DisplayName("Stiffener Name")>
-    Public Property stiffener_name() As String
+    <DataMember()> Public Property stiffener_name() As String
         Get
             Return Me._stiffener_name
         End Get
@@ -4007,7 +4016,7 @@ Partial Public Class StiffenerGroup
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class StiffenerDetail
     Inherits EDSObjectWithQueries
 
@@ -4073,10 +4082,10 @@ Partial Public Class StiffenerDetail
     Private _weld_strength As Double?
 
 
-    Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
+    <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
 
     '<Category("Bolt Details"), Description(""), DisplayName("Local Id")>
-    'Public Property local_id() As Integer?
+    '<DataMember()> Public Property local_id() As Integer?
     '    Get
     '        Return Me._local_id
     '    End Get
@@ -4085,7 +4094,7 @@ Partial Public Class StiffenerDetail
     '    End Set
     'End Property
     <Category("Bolt Details"), Description(""), DisplayName("Local Plate Id")>
-    Public Property local_plate_id() As Integer?
+    <DataMember()> Public Property local_plate_id() As Integer?
         Get
             Return Me._local_plate_id
         End Get
@@ -4094,7 +4103,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Bolt Details"), Description(""), DisplayName("Local Group Id")>
-    Public Property local_group_id() As Integer?
+    <DataMember()> Public Property local_group_id() As Integer?
         Get
             Return Me._local_group_id
         End Get
@@ -4104,7 +4113,7 @@ Partial Public Class StiffenerDetail
     End Property
 
     <Category("Stiffener Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -4113,7 +4122,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Id")>
-    Public Property stiffener_id() As Integer?
+    <DataMember()> Public Property stiffener_id() As Integer?
         Get
             Return Me._stiffener_id
         End Get
@@ -4122,7 +4131,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Location")>
-    Public Property stiffener_location() As Double?
+    <DataMember()> Public Property stiffener_location() As Double?
         Get
             Return Me._stiffener_location
         End Get
@@ -4131,7 +4140,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Width")>
-    Public Property stiffener_width() As Double?
+    <DataMember()> Public Property stiffener_width() As Double?
         Get
             Return Me._stiffener_width
         End Get
@@ -4140,7 +4149,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Height")>
-    Public Property stiffener_height() As Double?
+    <DataMember()> Public Property stiffener_height() As Double?
         Get
             Return Me._stiffener_height
         End Get
@@ -4149,7 +4158,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Thickness")>
-    Public Property stiffener_thickness() As Double?
+    <DataMember()> Public Property stiffener_thickness() As Double?
         Get
             Return Me._stiffener_thickness
         End Get
@@ -4158,7 +4167,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener H Notch")>
-    Public Property stiffener_h_notch() As Double?
+    <DataMember()> Public Property stiffener_h_notch() As Double?
         Get
             Return Me._stiffener_h_notch
         End Get
@@ -4167,7 +4176,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener V Notch")>
-    Public Property stiffener_v_notch() As Double?
+    <DataMember()> Public Property stiffener_v_notch() As Double?
         Get
             Return Me._stiffener_v_notch
         End Get
@@ -4176,7 +4185,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Grade")>
-    Public Property stiffener_grade() As Double?
+    <DataMember()> Public Property stiffener_grade() As Double?
         Get
             Return Me._stiffener_grade
         End Get
@@ -4185,7 +4194,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Weld Type")>
-    Public Property weld_type() As String
+    <DataMember()> Public Property weld_type() As String
         Get
             Return Me._weld_type
         End Get
@@ -4194,7 +4203,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Groove Depth")>
-    Public Property groove_depth() As Double?
+    <DataMember()> Public Property groove_depth() As Double?
         Get
             Return Me._groove_depth
         End Get
@@ -4203,7 +4212,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Groove Angle")>
-    Public Property groove_angle() As Double?
+    <DataMember()> Public Property groove_angle() As Double?
         Get
             Return Me._groove_angle
         End Get
@@ -4212,7 +4221,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("H Fillet Weld")>
-    Public Property h_fillet_weld() As Double?
+    <DataMember()> Public Property h_fillet_weld() As Double?
         Get
             Return Me._h_fillet_weld
         End Get
@@ -4221,7 +4230,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("V Fillet Weld")>
-    Public Property v_fillet_weld() As Double?
+    <DataMember()> Public Property v_fillet_weld() As Double?
         Get
             Return Me._v_fillet_weld
         End Get
@@ -4230,7 +4239,7 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Weld Strength")>
-    Public Property weld_strength() As Double?
+    <DataMember()> Public Property weld_strength() As Double?
         Get
             Return Me._weld_strength
         End Get
@@ -4375,7 +4384,7 @@ Partial Public Class StiffenerDetail
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class StiffenerResults
     Inherits EDSObjectWithQueries
     'StiffenerResults are currently not being referenced. Stiffeners reported with plate details. 
@@ -4430,7 +4439,7 @@ Partial Public Class StiffenerResults
     'Private _modified_date As DateTime? 'not provided in Excel
 
     <Category("Stiffener Results"), Description(""), DisplayName("Stiffener Id")>
-    Public Property stiffener_id() As Integer?
+    <DataMember()> Public Property stiffener_id() As Integer?
         Get
             Return Me._stiffener_id
         End Get
@@ -4439,7 +4448,7 @@ Partial Public Class StiffenerResults
         End Set
     End Property
     <Category("Stiffener Results"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -4448,7 +4457,7 @@ Partial Public Class StiffenerResults
         End Set
     End Property
     <Category("Stiffener Results"), Description(""), DisplayName("Local Bolt Group Id")>
-    Public Property local_stiffener_group_id() As Integer?
+    <DataMember()> Public Property local_stiffener_group_id() As Integer?
         Get
             Return Me._local_stiffener_group_id
         End Get
@@ -4457,7 +4466,7 @@ Partial Public Class StiffenerResults
         End Set
     End Property
     '<Category("Stiffener Results"), Description(""), DisplayName("Work Order Seq Num")>
-    'Public Property work_order_seq_num() As Double?
+    '<DataMember()> Public Property work_order_seq_num() As Double?
     '    Get
     '        Return Me._work_order_seq_num
     '    End Get
@@ -4466,7 +4475,7 @@ Partial Public Class StiffenerResults
     '    End Set
     'End Property
     <Category("Stiffener Results"), Description(""), DisplayName("Rating")>
-    Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -4475,7 +4484,7 @@ Partial Public Class StiffenerResults
         End Set
     End Property
     <Category("Stiffener Results"), Description(""), DisplayName("Result Lkup")>
-    Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -4484,7 +4493,7 @@ Partial Public Class StiffenerResults
         End Set
     End Property
     '<Category("Stiffener Results"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    '<DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -4493,7 +4502,7 @@ Partial Public Class StiffenerResults
     '    End Set
     'End Property
     '<Category("Stiffener Results"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    '<DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -4502,7 +4511,7 @@ Partial Public Class StiffenerResults
     '    End Set
     'End Property
     '<Category("Stiffener Results"), Description(""), DisplayName("Modified Date")>
-    'Public Property modified_date() As DateTime?
+    '<DataMember()> Public Property modified_date() As DateTime?
     '    Get
     '        Return Me._modified_date
     '    End Get
@@ -4602,7 +4611,7 @@ Partial Public Class StiffenerResults
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class BridgeStiffenerDetail
     Inherits EDSObjectWithQueries
 
@@ -4696,10 +4705,10 @@ Partial Public Class BridgeStiffenerDetail
     Private _exx_shim_plate As Double?
     Private _filler_shim_thickness As Double?
 
-    Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
+    <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
 
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -4708,7 +4717,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -4718,7 +4727,7 @@ Partial Public Class BridgeStiffenerDetail
     End Property
 
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -4727,7 +4736,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Connection Id")>
-    Public Property connection_id() As Integer?
+    <DataMember()> Public Property connection_id() As Integer?
         Get
             Return Me._connection_id
         End Get
@@ -4736,7 +4745,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Stiffener Type")>
-    Public Property stiffener_type() As String
+    <DataMember()> Public Property stiffener_type() As String
         Get
             Return Me._stiffener_type
         End Get
@@ -4745,7 +4754,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Analysis Type")>
-    Public Property analysis_type() As String
+    <DataMember()> Public Property analysis_type() As String
         Get
             Return Me._analysis_type
         End Get
@@ -4754,7 +4763,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Quantity")>
-    Public Property quantity() As Double?
+    <DataMember()> Public Property quantity() As Double?
         Get
             Return Me._quantity
         End Get
@@ -4763,7 +4772,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bridge Stiffener Width")>
-    Public Property bridge_stiffener_width() As Double?
+    <DataMember()> Public Property bridge_stiffener_width() As Double?
         Get
             Return Me._bridge_stiffener_width
         End Get
@@ -4772,7 +4781,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bridge Stiffener Thickness")>
-    Public Property bridge_stiffener_thickness() As Double?
+    <DataMember()> Public Property bridge_stiffener_thickness() As Double?
         Get
             Return Me._bridge_stiffener_thickness
         End Get
@@ -4781,7 +4790,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bridge Stiffener Material")>
-    Public Property bridge_stiffener_material() As Integer?
+    <DataMember()> Public Property bridge_stiffener_material() As Integer?
         Get
             Return Me._bridge_stiffener_material
         End Get
@@ -4790,7 +4799,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Unbraced Length")>
-    Public Property unbraced_length() As Double?
+    <DataMember()> Public Property unbraced_length() As Double?
         Get
             Return Me._unbraced_length
         End Get
@@ -4799,7 +4808,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Total Length")>
-    Public Property total_length() As Double?
+    <DataMember()> Public Property total_length() As Double?
         Get
             Return Me._total_length
         End Get
@@ -4808,7 +4817,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Weld Size")>
-    Public Property weld_size() As Double?
+    <DataMember()> Public Property weld_size() As Double?
         Get
             Return Me._weld_size
         End Get
@@ -4817,7 +4826,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Exx")>
-    Public Property exx() As Double?
+    <DataMember()> Public Property exx() As Double?
         Get
             Return Me._exx
         End Get
@@ -4826,7 +4835,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Upper Weld Length")>
-    Public Property upper_weld_length() As Double?
+    <DataMember()> Public Property upper_weld_length() As Double?
         Get
             Return Me._upper_weld_length
         End Get
@@ -4835,7 +4844,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Lower Weld Length")>
-    Public Property lower_weld_length() As Double?
+    <DataMember()> Public Property lower_weld_length() As Double?
         Get
             Return Me._lower_weld_length
         End Get
@@ -4844,7 +4853,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Upper Plate Width")>
-    Public Property upper_plate_width() As Double?
+    <DataMember()> Public Property upper_plate_width() As Double?
         Get
             Return Me._upper_plate_width
         End Get
@@ -4853,7 +4862,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Lower Plate Width")>
-    Public Property lower_plate_width() As Double?
+    <DataMember()> Public Property lower_plate_width() As Double?
         Get
             Return Me._lower_plate_width
         End Get
@@ -4862,7 +4871,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Neglect Flange Connection")>
-    Public Property neglect_flange_connection() As Boolean?
+    <DataMember()> Public Property neglect_flange_connection() As Boolean?
         Get
             Return Me._neglect_flange_connection
         End Get
@@ -4871,7 +4880,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Hole Diameter")>
-    Public Property bolt_hole_diameter() As Double?
+    <DataMember()> Public Property bolt_hole_diameter() As Double?
         Get
             Return Me._bolt_hole_diameter
         End Get
@@ -4880,7 +4889,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Qty Eccentric")>
-    Public Property bolt_qty_eccentric() As Double?
+    <DataMember()> Public Property bolt_qty_eccentric() As Double?
         Get
             Return Me._bolt_qty_eccentric
         End Get
@@ -4889,7 +4898,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Qty Shear")>
-    Public Property bolt_qty_shear() As Double?
+    <DataMember()> Public Property bolt_qty_shear() As Double?
         Get
             Return Me._bolt_qty_shear
         End Get
@@ -4898,7 +4907,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Intermediate Bolt Spacing")>
-    Public Property intermediate_bolt_spacing() As Double?
+    <DataMember()> Public Property intermediate_bolt_spacing() As Double?
         Get
             Return Me._intermediate_bolt_spacing
         End Get
@@ -4907,7 +4916,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Diameter")>
-    Public Property bolt_diameter() As Double?
+    <DataMember()> Public Property bolt_diameter() As Double?
         Get
             Return Me._bolt_diameter
         End Get
@@ -4916,7 +4925,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Sleeve Diameter")>
-    Public Property bolt_sleeve_diameter() As Double?
+    <DataMember()> Public Property bolt_sleeve_diameter() As Double?
         Get
             Return Me._bolt_sleeve_diameter
         End Get
@@ -4925,7 +4934,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Washer Diameter")>
-    Public Property washer_diameter() As Double?
+    <DataMember()> Public Property washer_diameter() As Double?
         Get
             Return Me._washer_diameter
         End Get
@@ -4934,7 +4943,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Tensile Strength")>
-    Public Property bolt_tensile_strength() As Double?
+    <DataMember()> Public Property bolt_tensile_strength() As Double?
         Get
             Return Me._bolt_tensile_strength
         End Get
@@ -4943,7 +4952,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Bolt Allowable Shear")>
-    Public Property bolt_allowable_shear() As Double?
+    <DataMember()> Public Property bolt_allowable_shear() As Double?
         Get
             Return Me._bolt_allowable_shear
         End Get
@@ -4952,7 +4961,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Exx Shim Plate")>
-    Public Property exx_shim_plate() As Double?
+    <DataMember()> Public Property exx_shim_plate() As Double?
         Get
             Return Me._exx_shim_plate
         End Get
@@ -4961,7 +4970,7 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Filler Shim Thickness")>
-    Public Property filler_shim_thickness() As Double?
+    <DataMember()> Public Property filler_shim_thickness() As Double?
         Get
             Return Me._filler_shim_thickness
         End Get
@@ -5193,7 +5202,7 @@ Partial Public Class BridgeStiffenerDetail
 #End Region
 
 End Class
-
+<DataContractAttribute()>
 Partial Public Class ConnectionResults
     Inherits EDSObjectWithQueries
 
@@ -5228,7 +5237,7 @@ Partial Public Class ConnectionResults
     'Private _modified_date As DateTime? 'not provided in Excel
 
     <Category("Connection Results"), Description(""), DisplayName("Plate Id")>
-    Public Property plate_id() As Integer?
+    <DataMember()> Public Property plate_id() As Integer?
         Get
             Return Me._plate_id
         End Get
@@ -5237,7 +5246,7 @@ Partial Public Class ConnectionResults
         End Set
     End Property
     <Category("Connection Results"), Description(""), DisplayName("Local Connection Id")>
-    Public Property local_connection_id() As Integer?
+    <DataMember()> Public Property local_connection_id() As Integer?
         Get
             Return Me._local_connection_id
         End Get
@@ -5246,7 +5255,7 @@ Partial Public Class ConnectionResults
         End Set
     End Property
     '<Category("Connection Results"), Description(""), DisplayName("Local Bolt Group Id")>
-    'Public Property local_bolt_group_id() As Integer?
+    '<DataMember()> Public Property local_bolt_group_id() As Integer?
     '    Get
     '        Return Me._local_bolt_group_id
     '    End Get
@@ -5255,7 +5264,7 @@ Partial Public Class ConnectionResults
     '    End Set
     'End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Work Order Seq Num")>
-    'Public Property work_order_seq_num() As Double?
+    '<DataMember()> Public Property work_order_seq_num() As Double?
     '    Get
     '        Return Me._work_order_seq_num
     '    End Get
@@ -5264,7 +5273,7 @@ Partial Public Class ConnectionResults
     '    End Set
     'End Property
     <Category("Connection Results"), Description(""), DisplayName("Rating")>
-    Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Double?
         Get
             Return Me._rating
         End Get
@@ -5273,7 +5282,7 @@ Partial Public Class ConnectionResults
         End Set
     End Property
     <Category("Connection Results"), Description(""), DisplayName("Result Lkup")>
-    Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -5282,7 +5291,7 @@ Partial Public Class ConnectionResults
         End Set
     End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    '<DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -5291,7 +5300,7 @@ Partial Public Class ConnectionResults
     '    End Set
     'End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    '<DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -5300,7 +5309,7 @@ Partial Public Class ConnectionResults
     '    End Set
     'End Property
     '<Category("Bolt Results"), Description(""), DisplayName("Modified Date")>
-    'Public Property modified_date() As DateTime?
+    '<DataMember()> Public Property modified_date() As DateTime?
     '    Get
     '        Return Me._modified_date
     '    End Get

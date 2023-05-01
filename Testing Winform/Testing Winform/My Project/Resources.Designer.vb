@@ -81,6 +81,26 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property intro_1669842870() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("intro-1669842870", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property l_intro_1658899230() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("l-intro-1658899230", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
         Friend ReadOnly Property ladder_svgrepo_com() As Byte()

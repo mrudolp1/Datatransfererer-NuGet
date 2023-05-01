@@ -9,6 +9,9 @@ Imports RoboSharp
 Imports System.Threading
 Imports System.Data.OleDb
 Imports System.Runtime.CompilerServices
+Imports Newtonsoft.Json
+Imports CciSites.Utils.JsonUtil
+Imports System.Runtime.Serialization.Json
 
 Namespace UnitTesting
 
@@ -441,6 +444,7 @@ Namespace UnitTesting
             testConduct.Enabled = True
             testCompareAll.Enabled = True
             testStructureOnly.Enabled = True
+            testJason.Enabled = True
 
             'Update the local directory to the local test case. 
             Try
@@ -458,7 +462,7 @@ Namespace UnitTesting
         End Sub
 
         'Rich textbox changed event for test notes
-        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs) Handles rtbNotes.TextChanged 
+        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs) Handles rtbNotes.TextChanged
             Dim testCase As Integer = testID.Text
             Dim dirUse As String
             If chkWorkLocal.Checked Then
@@ -670,7 +674,46 @@ Namespace UnitTesting
             ed.LoopThroughERIFiles(pd)
         End Sub
 
+        'Create a json file of the lodaed structure
+        Private Sub testJason_Click(sender As Object, e As EventArgs) Handles testJason.Click
+            Dim strJson As String
 
+            Try
+                strJson = ToJsonString(Of EDSStructure)(strcLocal)
+            Catch ex As Exception
+            End Try
+
+            Using sw As New StreamWriter(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString.ToDirectoryString & ".ccistr")
+                sw.Write(strJson)
+                sw.Close()
+            End Using
+        End Sub
+
+        Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+            Dim dateCheck As DateTime = "1/1/1900 12:00 AM"
+            Dim myFile As FileInfo = Nothing
+
+            For Each file As FileInfo In New DirectoryInfo(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\").GetFiles
+                If file.Extension.ToLower = ".ccistr" Then
+                    If file.CreationTime > dateCheck Then
+                        dateCheck = file.CreationTime
+                        myFile = file
+                    End If
+                End If
+            Next
+
+            If myFile IsNot Nothing Then
+                Dim tempStr As New EDSStructure
+                Using sr As New StreamReader(myFile.FullName)
+                    tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
+                    sr.Close()
+                End Using
+
+                Console.WriteLine(tempStr.EDSObjectName)
+
+                pgcUnitTesting.SelectedObject = tempStr
+            End If
+        End Sub
 #End Region
 
     End Class
@@ -1431,6 +1474,38 @@ RetryFileOpenCheck:
         End Sub
 
     End Class
+
+    'JSON Serializer
+    Public Module JsonUtil
+        Public Function FromJsonString(Of T)(ByVal jsonString As String) As T
+            Using aMemoryStream As MemoryStream = New MemoryStream(Encoding.UTF8.GetBytes(jsonString))
+                Dim ser = New DataContractJsonSerializer(GetType(T))
+                Return CType(ser.ReadObject(aMemoryStream), T)
+            End Using
+        End Function
+
+        Public Function FromJsonString(Of T)(ByVal jsonString As String, ByVal serializerInstance As DataContractJsonSerializer) As T
+            Using aMemoryStream As MemoryStream = New MemoryStream(Encoding.UTF8.GetBytes(jsonString))
+                Dim ser = New DataContractJsonSerializer(GetType(T))
+                Return CType(ser.ReadObject(aMemoryStream), T)
+            End Using
+        End Function
+
+        Public Function ToJsonString(ByVal valueObject As Object, ByVal serializerInstance As DataContractJsonSerializer) As String
+            Using aMemoryStream As MemoryStream = New MemoryStream()
+                serializerInstance.WriteObject(aMemoryStream, valueObject)
+                Return Encoding.[Default].GetString(aMemoryStream.ToArray())
+            End Using
+        End Function
+
+        Public Function ToJsonString(Of T)(ByVal valueObject As T) As String
+            Using aMemoryStream As MemoryStream = New MemoryStream()
+                Dim serializer As DataContractJsonSerializer = New DataContractJsonSerializer(GetType(T))
+                serializer.WriteObject(aMemoryStream, valueObject)
+                Return Encoding.[Default].GetString(aMemoryStream.ToArray())
+            End Using
+        End Function
+    End Module
 End Namespace
 
 

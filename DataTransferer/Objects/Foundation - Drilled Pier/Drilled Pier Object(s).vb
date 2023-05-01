@@ -2,6 +2,7 @@
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
 <DataContractAttribute()>
+<TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 <KnownType(GetType(DrilledPierFoundation))>
 Partial Public Class DrilledPierFoundation
     Inherits EDSExcelObject

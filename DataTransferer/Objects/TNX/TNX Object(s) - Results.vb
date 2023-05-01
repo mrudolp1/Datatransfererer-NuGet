@@ -1,4 +1,5 @@
-﻿Imports MoreLinq
+﻿Imports System.Runtime.Serialization
+Imports MoreLinq
 
 Partial Public Class tnxTowerOutput
     Public Sub ConverttoEDSResults(tnx As tnxGeometry)
