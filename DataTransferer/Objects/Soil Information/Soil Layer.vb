@@ -5,8 +5,10 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 Imports Microsoft.Office.Interop
+Imports System.Runtime.Serialization
 
-
+<DataContractAttribute()>
+<KnownType(GetType(SoilLayer))>
 Partial Public Class SoilLayer
     Inherits EDSObjectWithQueries
     'Inherits EDSObject
@@ -64,7 +66,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
     Private _spt_blow_count As Integer?
 
     <Category("Soil Layer"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -73,7 +75,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Soil Profile ID")>
-    Public Property Soil_Profile_id() As Integer?
+    <DataMember()> Public Property Soil_Profile_id() As Integer?
         Get
             Return Me._soil_profile_id
         End Get
@@ -82,7 +84,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Bottom Depth")>
-    Public Property bottom_depth() As Double?
+    <DataMember()> Public Property bottom_depth() As Double?
         Get
             Return Me._bottom_depth
         End Get
@@ -91,7 +93,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Effective Soil Density")>
-    Public Property effective_soil_density() As Double?
+    <DataMember()> Public Property effective_soil_density() As Double?
         Get
             Return Me._effective_soil_density
         End Get
@@ -100,7 +102,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Cohesion")>
-    Public Property cohesion() As Double?
+    <DataMember()> Public Property cohesion() As Double?
         Get
             Return Me._cohesion
         End Get
@@ -109,7 +111,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Friction Angle")>
-    Public Property friction_angle() As Double?
+    <DataMember()> Public Property friction_angle() As Double?
         Get
             Return Me._friction_angle
         End Get
@@ -118,7 +120,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Skin Friction Override Comp")>
-    Public Property skin_friction_override_comp() As Double?
+    <DataMember()> Public Property skin_friction_override_comp() As Double?
         Get
             Return Me._skin_friction_override_comp
         End Get
@@ -127,7 +129,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Skin Friction Override Uplift")>
-    Public Property skin_friction_override_uplift() As Double?
+    <DataMember()> Public Property skin_friction_override_uplift() As Double?
         Get
             Return Me._skin_friction_override_uplift
         End Get
@@ -136,7 +138,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Nominal Bearing Capacity")>
-    Public Property nominal_bearing_capacity() As Double?
+    <DataMember()> Public Property nominal_bearing_capacity() As Double?
         Get
             Return Me._nominal_bearing_capacity
         End Get
@@ -145,7 +147,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
         End Set
     End Property
     <Category("Soil Layer"), Description(""), DisplayName("Spt Blow Count")>
-    Public Property spt_blow_count() As Integer?
+    <DataMember()> Public Property spt_blow_count() As Integer?
         Get
             Return Me._spt_blow_count
         End Get

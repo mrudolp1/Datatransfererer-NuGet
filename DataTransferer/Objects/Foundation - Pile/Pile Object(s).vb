@@ -4,7 +4,7 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
-
+Imports System.Runtime.Serialization
 Partial Public Class Pile
     Inherits EDSExcelObject
 
@@ -255,17 +255,17 @@ Partial Public Class Pile
     'Private _modified_person_id As Integer?'Defined in EDSObject
     'Private _process_stage As String'Defined in EDSObject
 
-    Public Property SoilProfiles As New List(Of SoilProfile)
-    'Public Property SoilProfiles As SoilProfile
+     <DataMember()> Public Property SoilProfiles As New List(Of SoilProfile)
+    ' <DataMember()> Public Property SoilProfiles As SoilProfile
 
-    Public Property SoilLayers As New List(Of SoilLayer)
-    'Public Property SoilLayers As SoilLayer
+     <DataMember()> Public Property SoilLayers As New List(Of SoilLayer)
+    ' <DataMember()> Public Property SoilLayers As SoilLayer
 
-    Public Property PileLocations As New List(Of PileLocation)
-    'Public Property PileLocations As SoilLayer
+     <DataMember()> Public Property PileLocations As New List(Of PileLocation)
+    ' <DataMember()> Public Property PileLocations As SoilLayer
 
     '<Category("Pile"), Description(""), DisplayName("Id")>
-    'Public Property ID() As Integer?
+    ' <DataMember()> Public Property ID() As Integer?
     '    Get
     '        Return Me._ID
     '    End Get
@@ -274,7 +274,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Bus Unit")>
-    'Public Property bus_unit() As String
+    ' <DataMember()> Public Property bus_unit() As String
     '    Get
     '        Return Me._bus_unit
     '    End Get
@@ -283,7 +283,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Structure Id")>
-    'Public Property structure_id() As String
+    ' <DataMember()> Public Property structure_id() As String
     '    Get
     '        Return Me._structure_id
     '    End Get
@@ -292,7 +292,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     <Category("Pile"), Description(""), DisplayName("Load Eccentricity")>
-    Public Property load_eccentricity() As Double?
+     <DataMember()> Public Property load_eccentricity() As Double?
         Get
             Return Me._load_eccentricity
         End Get
@@ -301,7 +301,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Bolt Circle Bearing Plate Width")>
-    Public Property bolt_circle_bearing_plate_width() As Double?
+     <DataMember()> Public Property bolt_circle_bearing_plate_width() As Double?
         Get
             Return Me._bolt_circle_bearing_plate_width
         End Get
@@ -310,7 +310,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Shape")>
-    Public Property pile_shape() As String
+     <DataMember()> Public Property pile_shape() As String
         Get
             Return Me._pile_shape
         End Get
@@ -319,7 +319,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Material")>
-    Public Property pile_material() As String
+     <DataMember()> Public Property pile_material() As String
         Get
             Return Me._pile_material
         End Get
@@ -328,7 +328,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Length")>
-    Public Property pile_length() As Double?
+     <DataMember()> Public Property pile_length() As Double?
         Get
             Return Me._pile_length
         End Get
@@ -337,7 +337,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Diameter Width")>
-    Public Property pile_diameter_width() As Double?
+     <DataMember()> Public Property pile_diameter_width() As Double?
         Get
             Return Me._pile_diameter_width
         End Get
@@ -346,7 +346,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Pipe Thickness")>
-    Public Property pile_pipe_thickness() As Double?
+     <DataMember()> Public Property pile_pipe_thickness() As Double?
         Get
             Return Me._pile_pipe_thickness
         End Get
@@ -355,7 +355,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Soil Capacity Given")>
-    Public Property pile_soil_capacity_given() As Boolean?
+     <DataMember()> Public Property pile_soil_capacity_given() As Boolean?
         Get
             Return Me._pile_soil_capacity_given
         End Get
@@ -364,7 +364,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Steel Yield Strength")>
-    Public Property steel_yield_strength() As Double?
+     <DataMember()> Public Property steel_yield_strength() As Double?
         Get
             Return Me._steel_yield_strength
         End Get
@@ -373,7 +373,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Type Option")>
-    Public Property pile_type_option() As String
+     <DataMember()> Public Property pile_type_option() As String
         Get
             Return Me._pile_type_option
         End Get
@@ -382,7 +382,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Rebar Quantity")>
-    Public Property rebar_quantity() As Double?
+     <DataMember()> Public Property rebar_quantity() As Double?
         Get
             Return Me._rebar_quantity
         End Get
@@ -391,7 +391,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Group Config")>
-    Public Property pile_group_config() As String
+     <DataMember()> Public Property pile_group_config() As String
         Get
             Return Me._pile_group_config
         End Get
@@ -400,7 +400,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Foundation Depth")>
-    Public Property foundation_depth() As Double?
+     <DataMember()> Public Property foundation_depth() As Double?
         Get
             Return Me._foundation_depth
         End Get
@@ -409,7 +409,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Thickness")>
-    Public Property pad_thickness() As Double?
+     <DataMember()> Public Property pad_thickness() As Double?
         Get
             Return Me._pad_thickness
         End Get
@@ -418,7 +418,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Width Dir1")>
-    Public Property pad_width_dir1() As Double?
+     <DataMember()> Public Property pad_width_dir1() As Double?
         Get
             Return Me._pad_width_dir1
         End Get
@@ -427,7 +427,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Width Dir2")>
-    Public Property pad_width_dir2() As Double?
+     <DataMember()> Public Property pad_width_dir2() As Double?
         Get
             Return Me._pad_width_dir2
         End Get
@@ -436,7 +436,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Size Bottom")>
-    Public Property pad_rebar_size_bottom() As Integer?
+     <DataMember()> Public Property pad_rebar_size_bottom() As Integer?
         Get
             Return Me._pad_rebar_size_bottom
         End Get
@@ -445,7 +445,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Size Top")>
-    Public Property pad_rebar_size_top() As Integer?
+     <DataMember()> Public Property pad_rebar_size_top() As Integer?
         Get
             Return Me._pad_rebar_size_top
         End Get
@@ -454,7 +454,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Quantity Bottom Dir1")>
-    Public Property pad_rebar_quantity_bottom_dir1() As Double?
+     <DataMember()> Public Property pad_rebar_quantity_bottom_dir1() As Double?
         Get
             Return Me._pad_rebar_quantity_bottom_dir1
         End Get
@@ -463,7 +463,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Quantity Top Dir1")>
-    Public Property pad_rebar_quantity_top_dir1() As Double?
+     <DataMember()> Public Property pad_rebar_quantity_top_dir1() As Double?
         Get
             Return Me._pad_rebar_quantity_top_dir1
         End Get
@@ -472,7 +472,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Quantity Bottom Dir2")>
-    Public Property pad_rebar_quantity_bottom_dir2() As Double?
+     <DataMember()> Public Property pad_rebar_quantity_bottom_dir2() As Double?
         Get
             Return Me._pad_rebar_quantity_bottom_dir2
         End Get
@@ -481,7 +481,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pad Rebar Quantity Top Dir2")>
-    Public Property pad_rebar_quantity_top_dir2() As Double?
+     <DataMember()> Public Property pad_rebar_quantity_top_dir2() As Double?
         Get
             Return Me._pad_rebar_quantity_top_dir2
         End Get
@@ -490,7 +490,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pier Shape")>
-    Public Property pier_shape() As String
+     <DataMember()> Public Property pier_shape() As String
         Get
             Return Me._pier_shape
         End Get
@@ -499,7 +499,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pier Diameter")>
-    Public Property pier_diameter() As Double?
+     <DataMember()> Public Property pier_diameter() As Double?
         Get
             Return Me._pier_diameter
         End Get
@@ -508,7 +508,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Extension Above Grade")>
-    Public Property extension_above_grade() As Double?
+     <DataMember()> Public Property extension_above_grade() As Double?
         Get
             Return Me._extension_above_grade
         End Get
@@ -517,7 +517,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pier Rebar Size")>
-    Public Property pier_rebar_size() As Integer?
+     <DataMember()> Public Property pier_rebar_size() As Integer?
         Get
             Return Me._pier_rebar_size
         End Get
@@ -526,7 +526,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pier Rebar Quantity")>
-    Public Property pier_rebar_quantity() As Double?
+     <DataMember()> Public Property pier_rebar_quantity() As Double?
         Get
             Return Me._pier_rebar_quantity
         End Get
@@ -535,7 +535,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pier Tie Size")>
-    Public Property pier_tie_size() As Integer?
+     <DataMember()> Public Property pier_tie_size() As Integer?
         Get
             Return Me._pier_tie_size
         End Get
@@ -544,7 +544,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Rebar Grade")>
-    Public Property rebar_grade() As Double?
+     <DataMember()> Public Property rebar_grade() As Double?
         Get
             Return Me._rebar_grade
         End Get
@@ -553,7 +553,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Concrete Compressive Strength")>
-    Public Property concrete_compressive_strength() As Double?
+     <DataMember()> Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
         End Get
@@ -562,7 +562,7 @@ Partial Public Class Pile
         End Set
     End Property
     '<Category("Soil"), Description(""), DisplayName("Groundwater Depth")>
-    'Public Property groundwater_depth() As Double?
+    ' <DataMember()> Public Property groundwater_depth() As Double?
     '    Get
     '        Return Me._groundwater_depth
     '    End Get
@@ -571,7 +571,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     <Category("Soil"), Description(""), DisplayName("Total Soil Unit Weight")>
-    Public Property total_soil_unit_weight() As Double?
+     <DataMember()> Public Property total_soil_unit_weight() As Double?
         Get
             Return Me._total_soil_unit_weight
         End Get
@@ -580,7 +580,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Cohesion")>
-    Public Property cohesion() As Double?
+     <DataMember()> Public Property cohesion() As Double?
         Get
             Return Me._cohesion
         End Get
@@ -589,7 +589,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Friction Angle")>
-    Public Property friction_angle() As Double?
+     <DataMember()> Public Property friction_angle() As Double?
         Get
             Return Me._friction_angle
         End Get
@@ -598,7 +598,7 @@ Partial Public Class Pile
         End Set
     End Property
     '<Category("Soil"), Description(""), DisplayName("Neglect Depth")>
-    'Public Property neglect_depth() As Double?
+    ' <DataMember()> Public Property neglect_depth() As Double?
     '    Get
     '        Return Me._neglect_depth
     '    End Get
@@ -607,7 +607,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     <Category("Soil"), Description(""), DisplayName("Spt Blow Count")>
-    Public Property spt_blow_count() As Double?
+     <DataMember()> Public Property spt_blow_count() As Double?
         Get
             Return Me._spt_blow_count
         End Get
@@ -616,7 +616,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Pile Negative Friction Force")>
-    Public Property pile_negative_friction_force() As Double?
+     <DataMember()> Public Property pile_negative_friction_force() As Double?
         Get
             Return Me._pile_negative_friction_force
         End Get
@@ -625,7 +625,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Ultimate Compression")>
-    Public Property pile_ultimate_compression() As Double?
+     <DataMember()> Public Property pile_ultimate_compression() As Double?
         Get
             Return Me._pile_ultimate_compression
         End Get
@@ -634,7 +634,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Ultimate Tension")>
-    Public Property pile_ultimate_tension() As Double?
+     <DataMember()> Public Property pile_ultimate_tension() As Double?
         Get
             Return Me._pile_ultimate_tension
         End Get
@@ -643,7 +643,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Top And Bottom Rebar Different")>
-    Public Property top_and_bottom_rebar_different() As Boolean?
+     <DataMember()> Public Property top_and_bottom_rebar_different() As Boolean?
         Get
             Return Me._top_and_bottom_rebar_different
         End Get
@@ -652,7 +652,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Ultimate Gross End Bearing")>
-    Public Property ultimate_gross_end_bearing() As Double?
+     <DataMember()> Public Property ultimate_gross_end_bearing() As Double?
         Get
             Return Me._ultimate_gross_end_bearing
         End Get
@@ -661,7 +661,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Skin Friction Given")>
-    Public Property skin_friction_given() As Boolean?
+     <DataMember()> Public Property skin_friction_given() As Boolean?
         Get
             Return Me._skin_friction_given
         End Get
@@ -670,7 +670,7 @@ Partial Public Class Pile
         End Set
     End Property
     '<Category("Pile"), Description(""), DisplayName("Pile Quantity Circular")>
-    'Public Property pile_quantity_circular() As Double?
+    ' <DataMember()> Public Property pile_quantity_circular() As Double?
     '    Get
     '        Return Me._pile_quantity_circular
     '    End Get
@@ -679,7 +679,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Group Diameter Circular")>
-    'Public Property group_diameter_circular() As Double?
+    ' <DataMember()> Public Property group_diameter_circular() As Double?
     '    Get
     '        Return Me._group_diameter_circular
     '    End Get
@@ -688,7 +688,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Pile Column Quantity")>
-    'Public Property pile_column_quantity() As Double?
+    ' <DataMember()> Public Property pile_column_quantity() As Double?
     '    Get
     '        Return Me._pile_column_quantity
     '    End Get
@@ -697,7 +697,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Pile Row Quantity")>
-    'Public Property pile_row_quantity() As Double?
+    ' <DataMember()> Public Property pile_row_quantity() As Double?
     '    Get
     '        Return Me._pile_row_quantity
     '    End Get
@@ -706,7 +706,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     <Category("Pile"), Description(""), DisplayName("Pile Group Option 1")>
-    Public Property pile_group_option_1() As Double?
+     <DataMember()> Public Property pile_group_option_1() As Double?
         Get
             Return Me._pile_group_option_1
         End Get
@@ -715,7 +715,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Group Option 2")>
-    Public Property pile_group_option_2() As Double?
+     <DataMember()> Public Property pile_group_option_2() As Double?
         Get
             Return Me._pile_group_option_2
         End Get
@@ -724,7 +724,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Columns Spacing")>
-    Public Property pile_columns_spacing() As Double?
+     <DataMember()> Public Property pile_columns_spacing() As Double?
         Get
             Return Me._pile_columns_spacing
         End Get
@@ -733,7 +733,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Row Spacing")>
-    Public Property pile_row_spacing() As Double?
+     <DataMember()> Public Property pile_row_spacing() As Double?
         Get
             Return Me._pile_row_spacing
         End Get
@@ -742,7 +742,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Group Efficiency Factor Given")>
-    Public Property group_efficiency_factor_given() As Boolean?
+     <DataMember()> Public Property group_efficiency_factor_given() As Boolean?
         Get
             Return Me._group_efficiency_factor_given
         End Get
@@ -751,7 +751,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Group Efficiency Factor")>
-    Public Property group_efficiency_factor() As Double?
+     <DataMember()> Public Property group_efficiency_factor() As Double?
         Get
             Return Me._group_efficiency_factor
         End Get
@@ -760,7 +760,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Cap Type")>
-    Public Property cap_type() As String
+     <DataMember()> Public Property cap_type() As String
         Get
             Return Me._cap_type
         End Get
@@ -769,7 +769,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Quantity Asymmetric")>
-    Public Property pile_quantity_asymmetric() As Double?
+     <DataMember()> Public Property pile_quantity_asymmetric() As Double?
         Get
             Return Me._pile_quantity_asymmetric
         End Get
@@ -778,7 +778,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Spacing Min Asymmetric")>
-    Public Property pile_spacing_min_asymmetric() As Double?
+     <DataMember()> Public Property pile_spacing_min_asymmetric() As Double?
         Get
             Return Me._pile_spacing_min_asymmetric
         End Get
@@ -787,7 +787,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Quantity Piles Surrounding")>
-    Public Property quantity_piles_surrounding() As Double?
+     <DataMember()> Public Property quantity_piles_surrounding() As Double?
         Get
             Return Me._quantity_piles_surrounding
         End Get
@@ -796,7 +796,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Pile Cap Reference")>
-    Public Property pile_cap_reference() As String
+     <DataMember()> Public Property pile_cap_reference() As String
         Get
             Return Me._pile_cap_reference
         End Get
@@ -805,7 +805,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Soil 110")>
-    Public Property Soil_110() As Boolean?
+     <DataMember()> Public Property Soil_110() As Boolean?
         Get
             Return Me._Soil_110
         End Get
@@ -814,7 +814,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Pile"), Description(""), DisplayName("Structural 105")>
-    Public Property Structural_105() As Boolean?
+     <DataMember()> Public Property Structural_105() As Boolean?
         Get
             Return Me._Structural_105
         End Get
@@ -823,7 +823,7 @@ Partial Public Class Pile
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Soil Profile ID")>
-    Public Property Soil_Profile_id() As Integer?
+     <DataMember()> Public Property Soil_Profile_id() As Integer?
         Get
             Return Me._soil_profile_id
         End Get
@@ -832,7 +832,7 @@ Partial Public Class Pile
         End Set
     End Property
     '<Category("Pile"), Description(""), DisplayName("Tool Version")>
-    'Public Property tool_version() As String
+    ' <DataMember()> Public Property tool_version() As String
     '    Get
     '        Return Me._tool_version
     '    End Get
@@ -841,7 +841,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    ' <DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -850,7 +850,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    ' <DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -859,7 +859,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("TIA")>
-    'Public Property tia_current() As String
+    ' <DataMember()> Public Property tia_current() As String
     '    Get
     '        Return If(Me.ParentStructure.structureCodeCriteria.tia_current, Me._tia_current)
     '    End Get
@@ -868,7 +868,7 @@ Partial Public Class Pile
     '    End Set
     'End Property
     '<Category("Pile"), Description(""), DisplayName("Rev H Section 15.5")>
-    'Public Property rev_h_section_15_5() As Boolean?
+    ' <DataMember()> Public Property rev_h_section_15_5() As Boolean?
     '    Get
     '        Return If(Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5, Me._rev_h_section_15_5)
     '    End Get
@@ -2095,7 +2095,7 @@ Partial Public Class PileLocation
     Private _pile_x_coordinate As Double?
     Private _pile_y_coordinate As Double?
     <Category("Pile Location"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+     <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -2104,7 +2104,7 @@ Partial Public Class PileLocation
         End Set
     End Property
     <Category("Pile Location"), Description(""), DisplayName("Pile X Coordinate")>
-    Public Property pile_x_coordinate() As Double?
+     <DataMember()> Public Property pile_x_coordinate() As Double?
         Get
             Return Me._pile_x_coordinate
         End Get
@@ -2113,7 +2113,7 @@ Partial Public Class PileLocation
         End Set
     End Property
     <Category("Pile Location"), Description(""), DisplayName("Pile Y Coordinate")>
-    Public Property pile_y_coordinate() As Double?
+     <DataMember()> Public Property pile_y_coordinate() As Double?
         Get
             Return Me._pile_y_coordinate
         End Get

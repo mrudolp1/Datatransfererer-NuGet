@@ -5,8 +5,10 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 Imports Microsoft.Office.Interop
+Imports System.Runtime.Serialization
 
-
+<DataContractAttribute()>
+<KnownType(GetType(SoilProfile))>
 Partial Public Class SoilProfile
     Inherits EDSObjectWithQueries
 
@@ -56,13 +58,13 @@ Partial Public Class SoilProfile
 #End Region
 #Region "Define"
 
-    Public Property SoilLayers As New List(Of SoilLayer)
+    <DataMember()> Public Property SoilLayers As New List(Of SoilLayer)
 
     Private _groundwater_depth As Double?
     Private _neglect_depth As Double?
 
     <Category("Soil Profile"), Description(""), DisplayName("Groundwater Depth")>
-    Public Property groundwater_depth() As Double?
+    <DataMember()> Public Property groundwater_depth() As Double?
         Get
             Return Me._groundwater_depth
         End Get
@@ -71,7 +73,7 @@ Partial Public Class SoilProfile
         End Set
     End Property
     <Category("Soil Profile"), Description(""), DisplayName("Neglect Depth")>
-    Public Property neglect_depth() As Double?
+    <DataMember()> Public Property neglect_depth() As Double?
         Get
             Return Me._neglect_depth
         End Get

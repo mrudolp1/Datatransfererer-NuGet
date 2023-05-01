@@ -7,8 +7,9 @@ Imports System.IO
 Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
-
+<DataContract()>
 Partial Public Class tnxFeedLine
     Inherits EDSObject
 
@@ -60,7 +61,7 @@ Partial Public Class tnxFeedLine
     Private _FeedLineRowClearSpacing As Double?
 
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRec")>
-    Public Property FeedLineRec() As Integer?
+    <DataMember()> Public Property FeedLineRec() As Integer?
         Get
             Return Me._FeedLineRec
         End Get
@@ -69,7 +70,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEnabled")>
-    Public Property FeedLineEnabled() As Boolean?
+    <DataMember()> Public Property FeedLineEnabled() As Boolean?
         Get
             Return Me._FeedLineEnabled
         End Get
@@ -78,7 +79,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDatabase")>
-    Public Property FeedLineDatabase() As String
+    <DataMember()> Public Property FeedLineDatabase() As String
         Get
             Return Me._FeedLineDatabase
         End Get
@@ -87,7 +88,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineDescription")>
-    Public Property FeedLineDescription() As String
+    <DataMember()> Public Property FeedLineDescription() As String
         Get
             Return Me._FeedLineDescription
         End Get
@@ -96,7 +97,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClassificationCategory")>
-    Public Property FeedLineClassificationCategory() As String
+    <DataMember()> Public Property FeedLineClassificationCategory() As String
         Get
             Return Me._FeedLineClassificationCategory
         End Get
@@ -105,7 +106,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNote")>
-    Public Property FeedLineNote() As String
+    <DataMember()> Public Property FeedLineNote() As String
         Get
             Return Me._FeedLineNote
         End Get
@@ -114,7 +115,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNum")>
-    Public Property FeedLineNum() As Integer?
+    <DataMember()> Public Property FeedLineNum() As Integer?
         Get
             Return Me._FeedLineNum
         End Get
@@ -123,7 +124,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineUseShielding")>
-    Public Property FeedLineUseShielding() As Boolean?
+    <DataMember()> Public Property FeedLineUseShielding() As Boolean?
         Get
             Return Me._FeedLineUseShielding
         End Get
@@ -132,7 +133,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("ExcludeFeedLineFromTorque")>
-    Public Property ExcludeFeedLineFromTorque() As Boolean?
+    <DataMember()> Public Property ExcludeFeedLineFromTorque() As Boolean?
         Get
             Return Me._ExcludeFeedLineFromTorque
         End Get
@@ -141,7 +142,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineNumPerRow")>
-    Public Property FeedLineNumPerRow() As Integer?
+    <DataMember()> Public Property FeedLineNumPerRow() As Integer?
         Get
             Return Me._FeedLineNumPerRow
         End Get
@@ -150,7 +151,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("FeedLineFace")>
-    Public Property FeedLineFace() As Integer?
+    <DataMember()> Public Property FeedLineFace() As Integer?
         Get
             Return Me._FeedLineFace
         End Get
@@ -159,7 +160,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineComponentType")>
-    Public Property FeedLineComponentType() As String
+    <DataMember()> Public Property FeedLineComponentType() As String
         Get
             Return Me._FeedLineComponentType
         End Get
@@ -168,7 +169,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineGroupTreatmentType")>
-    Public Property FeedLineGroupTreatmentType() As String
+    <DataMember()> Public Property FeedLineGroupTreatmentType() As String
         Get
             Return Me._FeedLineGroupTreatmentType
         End Get
@@ -177,7 +178,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRoundClusterDia")>
-    Public Property FeedLineRoundClusterDia() As Double?
+    <DataMember()> Public Property FeedLineRoundClusterDia() As Double?
         Get
             Return Me._FeedLineRoundClusterDia
         End Get
@@ -186,7 +187,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWidth")>
-    Public Property FeedLineWidth() As Double?
+    <DataMember()> Public Property FeedLineWidth() As Double?
         Get
             Return Me._FeedLineWidth
         End Get
@@ -195,7 +196,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeter")>
-    Public Property FeedLinePerimeter() As Double?
+    <DataMember()> Public Property FeedLinePerimeter() As Double?
         Get
             Return Me._FeedLinePerimeter
         End Get
@@ -204,7 +205,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FlatAttachmentEffectiveWidthRatio")>
-    Public Property FlatAttachmentEffectiveWidthRatio() As Double?
+    <DataMember()> Public Property FlatAttachmentEffectiveWidthRatio() As Double?
         Get
             Return Me._FlatAttachmentEffectiveWidthRatio
         End Get
@@ -213,7 +214,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("AutoCalcFlatAttachmentEffectiveWidthRatio")>
-    Public Property AutoCalcFlatAttachmentEffectiveWidthRatio() As Boolean?
+    <DataMember()> Public Property AutoCalcFlatAttachmentEffectiveWidthRatio() As Boolean?
         Get
             Return Me._AutoCalcFlatAttachmentEffectiveWidthRatio
         End Get
@@ -222,7 +223,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaNoIce")>
-    Public Property FeedLineShieldingFactorKaNoIce() As Double?
+    <DataMember()> Public Property FeedLineShieldingFactorKaNoIce() As Double?
         Get
             Return Me._FeedLineShieldingFactorKaNoIce
         End Get
@@ -231,7 +232,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaIce")>
-    Public Property FeedLineShieldingFactorKaIce() As Double?
+    <DataMember()> Public Property FeedLineShieldingFactorKaIce() As Double?
         Get
             Return Me._FeedLineShieldingFactorKaIce
         End Get
@@ -240,7 +241,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineAutoCalcKa")>
-    Public Property FeedLineAutoCalcKa() As Boolean?
+    <DataMember()> Public Property FeedLineAutoCalcKa() As Boolean?
         Get
             Return Me._FeedLineAutoCalcKa
         End Get
@@ -249,7 +250,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaNoIce")>
-    Public Property FeedLineCaAaNoIce() As Double?
+    <DataMember()> Public Property FeedLineCaAaNoIce() As Double?
         Get
             Return Me._FeedLineCaAaNoIce
         End Get
@@ -258,7 +259,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce")>
-    Public Property FeedLineCaAaIce() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce() As Double?
         Get
             Return Me._FeedLineCaAaIce
         End Get
@@ -267,7 +268,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_1")>
-    Public Property FeedLineCaAaIce_1() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_1() As Double?
         Get
             Return Me._FeedLineCaAaIce_1
         End Get
@@ -276,7 +277,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_2")>
-    Public Property FeedLineCaAaIce_2() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_2() As Double?
         Get
             Return Me._FeedLineCaAaIce_2
         End Get
@@ -285,7 +286,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_4")>
-    Public Property FeedLineCaAaIce_4() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_4() As Double?
         Get
             Return Me._FeedLineCaAaIce_4
         End Get
@@ -294,7 +295,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtNoIce")>
-    Public Property FeedLineWtNoIce() As Double?
+    <DataMember()> Public Property FeedLineWtNoIce() As Double?
         Get
             Return Me._FeedLineWtNoIce
         End Get
@@ -303,7 +304,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce")>
-    Public Property FeedLineWtIce() As Double?
+    <DataMember()> Public Property FeedLineWtIce() As Double?
         Get
             Return Me._FeedLineWtIce
         End Get
@@ -312,7 +313,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_1")>
-    Public Property FeedLineWtIce_1() As Double?
+    <DataMember()> Public Property FeedLineWtIce_1() As Double?
         Get
             Return Me._FeedLineWtIce_1
         End Get
@@ -321,7 +322,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_2")>
-    Public Property FeedLineWtIce_2() As Double?
+    <DataMember()> Public Property FeedLineWtIce_2() As Double?
         Get
             Return Me._FeedLineWtIce_2
         End Get
@@ -330,7 +331,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_4")>
-    Public Property FeedLineWtIce_4() As Double?
+    <DataMember()> Public Property FeedLineWtIce_4() As Double?
         Get
             Return Me._FeedLineWtIce_4
         End Get
@@ -339,7 +340,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineFaceOffset")>
-    Public Property FeedLineFaceOffset() As Double?
+    <DataMember()> Public Property FeedLineFaceOffset() As Double?
         Get
             Return Me._FeedLineFaceOffset
         End Get
@@ -348,7 +349,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineOffsetFrac")>
-    Public Property FeedLineOffsetFrac() As Double?
+    <DataMember()> Public Property FeedLineOffsetFrac() As Double?
         Get
             Return Me._FeedLineOffsetFrac
         End Get
@@ -357,7 +358,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetStartFrac")>
-    Public Property FeedLinePerimeterOffsetStartFrac() As Double?
+    <DataMember()> Public Property FeedLinePerimeterOffsetStartFrac() As Double?
         Get
             Return Me._FeedLinePerimeterOffsetStartFrac
         End Get
@@ -366,7 +367,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetEndFrac")>
-    Public Property FeedLinePerimeterOffsetEndFrac() As Double?
+    <DataMember()> Public Property FeedLinePerimeterOffsetEndFrac() As Double?
         Get
             Return Me._FeedLinePerimeterOffsetEndFrac
         End Get
@@ -375,7 +376,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineStartHt")>
-    Public Property FeedLineStartHt() As Double?
+    <DataMember()> Public Property FeedLineStartHt() As Double?
         Get
             Return Me._FeedLineStartHt
         End Get
@@ -384,7 +385,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEndHt")>
-    Public Property FeedLineEndHt() As Double?
+    <DataMember()> Public Property FeedLineEndHt() As Double?
         Get
             Return Me._FeedLineEndHt
         End Get
@@ -393,7 +394,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClearSpacing")>
-    Public Property FeedLineClearSpacing() As Double?
+    <DataMember()> Public Property FeedLineClearSpacing() As Double?
         Get
             Return Me._FeedLineClearSpacing
         End Get
@@ -402,7 +403,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRowClearSpacing")>
-    Public Property FeedLineRowClearSpacing() As Double?
+    <DataMember()> Public Property FeedLineRowClearSpacing() As Double?
         Get
             Return Me._FeedLineRowClearSpacing
         End Get
@@ -475,6 +476,7 @@ Partial Public Class tnxFeedLine
 #End Region
 
 End Class
+<DataContract()>
 Partial Public Class tnxDiscreteLoad
     Inherits EDSObject
 
@@ -521,7 +523,7 @@ Partial Public Class tnxDiscreteLoad
 
 
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadRec")>
-    Public Property TowerLoadRec() As Integer?
+    <DataMember()> Public Property TowerLoadRec() As Integer?
         Get
             Return Me._TowerLoadRec
         End Get
@@ -530,7 +532,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEnabled")>
-    Public Property TowerLoadEnabled() As Boolean?
+    <DataMember()> Public Property TowerLoadEnabled() As Boolean?
         Get
             Return Me._TowerLoadEnabled
         End Get
@@ -539,7 +541,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDatabase")>
-    Public Property TowerLoadDatabase() As String
+    <DataMember()> Public Property TowerLoadDatabase() As String
         Get
             Return Me._TowerLoadDatabase
         End Get
@@ -548,7 +550,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadDescription")>
-    Public Property TowerLoadDescription() As String
+    <DataMember()> Public Property TowerLoadDescription() As String
         Get
             Return Me._TowerLoadDescription
         End Get
@@ -557,7 +559,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadType")>
-    Public Property TowerLoadType() As String
+    <DataMember()> Public Property TowerLoadType() As String
         Get
             Return Me._TowerLoadType
         End Get
@@ -566,7 +568,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadClassificationCategory")>
-    Public Property TowerLoadClassificationCategory() As String
+    <DataMember()> Public Property TowerLoadClassificationCategory() As String
         Get
             Return Me._TowerLoadClassificationCategory
         End Get
@@ -575,7 +577,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNote")>
-    Public Property TowerLoadNote() As String
+    <DataMember()> Public Property TowerLoadNote() As String
         Get
             Return Me._TowerLoadNote
         End Get
@@ -584,7 +586,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadNum")>
-    Public Property TowerLoadNum() As Integer?
+    <DataMember()> Public Property TowerLoadNum() As Integer?
         Get
             Return Me._TowerLoadNum
         End Get
@@ -593,7 +595,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("TowerLoadFace")>
-    Public Property TowerLoadFace() As Integer?
+    <DataMember()> Public Property TowerLoadFace() As Integer?
         Get
             Return Me._TowerLoadFace
         End Get
@@ -602,7 +604,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetType")>
-    Public Property TowerOffsetType() As String
+    <DataMember()> Public Property TowerOffsetType() As String
         Get
             Return Me._TowerOffsetType
         End Get
@@ -611,7 +613,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetDist")>
-    Public Property TowerOffsetDist() As Double?
+    <DataMember()> Public Property TowerOffsetDist() As Double?
         Get
             Return Me._TowerOffsetDist
         End Get
@@ -620,7 +622,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerVertOffset")>
-    Public Property TowerVertOffset() As Double?
+    <DataMember()> Public Property TowerVertOffset() As Double?
         Get
             Return Me._TowerVertOffset
         End Get
@@ -629,7 +631,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLateralOffset")>
-    Public Property TowerLateralOffset() As Double?
+    <DataMember()> Public Property TowerLateralOffset() As Double?
         Get
             Return Me._TowerLateralOffset
         End Get
@@ -638,7 +640,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAzimuthAdjustment")>
-    Public Property TowerAzimuthAdjustment() As Double?
+    <DataMember()> Public Property TowerAzimuthAdjustment() As Double?
         Get
             Return Me._TowerAzimuthAdjustment
         End Get
@@ -647,7 +649,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAppurtSymbol")>
-    Public Property TowerAppurtSymbol() As String
+    <DataMember()> Public Property TowerAppurtSymbol() As String
         Get
             Return Me._TowerAppurtSymbol
         End Get
@@ -656,7 +658,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaNoIce")>
-    Public Property TowerLoadShieldingFactorKaNoIce() As Double?
+    <DataMember()> Public Property TowerLoadShieldingFactorKaNoIce() As Double?
         Get
             Return Me._TowerLoadShieldingFactorKaNoIce
         End Get
@@ -665,7 +667,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaIce")>
-    Public Property TowerLoadShieldingFactorKaIce() As Double?
+    <DataMember()> Public Property TowerLoadShieldingFactorKaIce() As Double?
         Get
             Return Me._TowerLoadShieldingFactorKaIce
         End Get
@@ -674,7 +676,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadAutoCalcKa")>
-    Public Property TowerLoadAutoCalcKa() As Boolean?
+    <DataMember()> Public Property TowerLoadAutoCalcKa() As Boolean?
         Get
             Return Me._TowerLoadAutoCalcKa
         End Get
@@ -683,7 +685,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce")>
-    Public Property TowerLoadCaAaNoIce() As Double?
+    <DataMember()> Public Property TowerLoadCaAaNoIce() As Double?
         Get
             Return Me._TowerLoadCaAaNoIce
         End Get
@@ -692,7 +694,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce")>
-    Public Property TowerLoadCaAaIce() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce() As Double?
         Get
             Return Me._TowerLoadCaAaIce
         End Get
@@ -701,7 +703,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_1")>
-    Public Property TowerLoadCaAaIce_1() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_1() As Double?
         Get
             Return Me._TowerLoadCaAaIce_1
         End Get
@@ -710,7 +712,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_2")>
-    Public Property TowerLoadCaAaIce_2() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_2() As Double?
         Get
             Return Me._TowerLoadCaAaIce_2
         End Get
@@ -719,7 +721,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_4")>
-    Public Property TowerLoadCaAaIce_4() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_4() As Double?
         Get
             Return Me._TowerLoadCaAaIce_4
         End Get
@@ -728,7 +730,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce_Side")>
-    Public Property TowerLoadCaAaNoIce_Side() As Double?
+    <DataMember()> Public Property TowerLoadCaAaNoIce_Side() As Double?
         Get
             Return Me._TowerLoadCaAaNoIce_Side
         End Get
@@ -737,7 +739,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side")>
-    Public Property TowerLoadCaAaIce_Side() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side() As Double?
         Get
             Return Me._TowerLoadCaAaIce_Side
         End Get
@@ -746,7 +748,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_1")>
-    Public Property TowerLoadCaAaIce_Side_1() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_1() As Double?
         Get
             Return Me._TowerLoadCaAaIce_Side_1
         End Get
@@ -755,7 +757,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_2")>
-    Public Property TowerLoadCaAaIce_Side_2() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_2() As Double?
         Get
             Return Me._TowerLoadCaAaIce_Side_2
         End Get
@@ -764,7 +766,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_4")>
-    Public Property TowerLoadCaAaIce_Side_4() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_4() As Double?
         Get
             Return Me._TowerLoadCaAaIce_Side_4
         End Get
@@ -773,7 +775,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtNoIce")>
-    Public Property TowerLoadWtNoIce() As Double?
+    <DataMember()> Public Property TowerLoadWtNoIce() As Double?
         Get
             Return Me._TowerLoadWtNoIce
         End Get
@@ -782,7 +784,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce")>
-    Public Property TowerLoadWtIce() As Double?
+    <DataMember()> Public Property TowerLoadWtIce() As Double?
         Get
             Return Me._TowerLoadWtIce
         End Get
@@ -791,7 +793,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_1")>
-    Public Property TowerLoadWtIce_1() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_1() As Double?
         Get
             Return Me._TowerLoadWtIce_1
         End Get
@@ -800,7 +802,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_2")>
-    Public Property TowerLoadWtIce_2() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_2() As Double?
         Get
             Return Me._TowerLoadWtIce_2
         End Get
@@ -809,7 +811,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_4")>
-    Public Property TowerLoadWtIce_4() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_4() As Double?
         Get
             Return Me._TowerLoadWtIce_4
         End Get
@@ -818,7 +820,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadStartHt")>
-    Public Property TowerLoadStartHt() As Double?
+    <DataMember()> Public Property TowerLoadStartHt() As Double?
         Get
             Return Me._TowerLoadStartHt
         End Get
@@ -827,7 +829,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEndHt")>
-    Public Property TowerLoadEndHt() As Double?
+    <DataMember()> Public Property TowerLoadEndHt() As Double?
         Get
             Return Me._TowerLoadEndHt
         End Get
@@ -896,7 +898,7 @@ Partial Public Class tnxDiscreteLoad
 #End Region
 
 End Class
-
+<DataContract()>
 Partial Public Class tnxDish
     Inherits EDSObject
 
@@ -934,7 +936,7 @@ Partial Public Class tnxDish
     Private _DishBeamWidth As Double?
 
     <Category("TNX Dish"), Description(""), DisplayName("DishRec")>
-    Public Property DishRec() As Integer?
+    <DataMember()> Public Property DishRec() As Integer?
         Get
             Return Me._DishRec
         End Get
@@ -943,7 +945,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishEnabled")>
-    Public Property DishEnabled() As Boolean?
+    <DataMember()> Public Property DishEnabled() As Boolean?
         Get
             Return Me._DishEnabled
         End Get
@@ -952,7 +954,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDatabase")>
-    Public Property DishDatabase() As String
+    <DataMember()> Public Property DishDatabase() As String
         Get
             Return Me._DishDatabase
         End Get
@@ -961,7 +963,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDescription")>
-    Public Property DishDescription() As String
+    <DataMember()> Public Property DishDescription() As String
         Get
             Return Me._DishDescription
         End Get
@@ -970,7 +972,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishClassificationCategory")>
-    Public Property DishClassificationCategory() As String
+    <DataMember()> Public Property DishClassificationCategory() As String
         Get
             Return Me._DishClassificationCategory
         End Get
@@ -979,7 +981,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishNote")>
-    Public Property DishNote() As String
+    <DataMember()> Public Property DishNote() As String
         Get
             Return Me._DishNote
         End Get
@@ -988,7 +990,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishNum")>
-    Public Property DishNum() As Integer?
+    <DataMember()> Public Property DishNum() As Integer?
         Get
             Return Me._DishNum
         End Get
@@ -997,7 +999,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description("{0 = A, 1 = B,  2 = C, 3 = D}"), DisplayName("DishFace")>
-    Public Property DishFace() As Integer?
+    <DataMember()> Public Property DishFace() As Integer?
         Get
             Return Me._DishFace
         End Get
@@ -1006,7 +1008,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishType")>
-    Public Property DishType() As String
+    <DataMember()> Public Property DishType() As String
         Get
             Return Me._DishType
         End Get
@@ -1015,7 +1017,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishOffsetType")>
-    Public Property DishOffsetType() As String
+    <DataMember()> Public Property DishOffsetType() As String
         Get
             Return Me._DishOffsetType
         End Get
@@ -1024,7 +1026,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishVertOffset")>
-    Public Property DishVertOffset() As Double?
+    <DataMember()> Public Property DishVertOffset() As Double?
         Get
             Return Me._DishVertOffset
         End Get
@@ -1033,7 +1035,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishLateralOffset")>
-    Public Property DishLateralOffset() As Double?
+    <DataMember()> Public Property DishLateralOffset() As Double?
         Get
             Return Me._DishLateralOffset
         End Get
@@ -1042,7 +1044,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishOffsetDist")>
-    Public Property DishOffsetDist() As Double?
+    <DataMember()> Public Property DishOffsetDist() As Double?
         Get
             Return Me._DishOffsetDist
         End Get
@@ -1051,7 +1053,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishArea")>
-    Public Property DishArea() As Double?
+    <DataMember()> Public Property DishArea() As Double?
         Get
             Return Me._DishArea
         End Get
@@ -1060,7 +1062,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce")>
-    Public Property DishAreaIce() As Double?
+    <DataMember()> Public Property DishAreaIce() As Double?
         Get
             Return Me._DishAreaIce
         End Get
@@ -1069,7 +1071,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_1")>
-    Public Property DishAreaIce_1() As Double?
+    <DataMember()> Public Property DishAreaIce_1() As Double?
         Get
             Return Me._DishAreaIce_1
         End Get
@@ -1078,7 +1080,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_2")>
-    Public Property DishAreaIce_2() As Double?
+    <DataMember()> Public Property DishAreaIce_2() As Double?
         Get
             Return Me._DishAreaIce_2
         End Get
@@ -1087,7 +1089,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_4")>
-    Public Property DishAreaIce_4() As Double?
+    <DataMember()> Public Property DishAreaIce_4() As Double?
         Get
             Return Me._DishAreaIce_4
         End Get
@@ -1096,7 +1098,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDiameter")>
-    Public Property DishDiameter() As Double?
+    <DataMember()> Public Property DishDiameter() As Double?
         Get
             Return Me._DishDiameter
         End Get
@@ -1105,7 +1107,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtNoIce")>
-    Public Property DishWtNoIce() As Double?
+    <DataMember()> Public Property DishWtNoIce() As Double?
         Get
             Return Me._DishWtNoIce
         End Get
@@ -1114,7 +1116,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce")>
-    Public Property DishWtIce() As Double?
+    <DataMember()> Public Property DishWtIce() As Double?
         Get
             Return Me._DishWtIce
         End Get
@@ -1123,7 +1125,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_1")>
-    Public Property DishWtIce_1() As Double?
+    <DataMember()> Public Property DishWtIce_1() As Double?
         Get
             Return Me._DishWtIce_1
         End Get
@@ -1132,7 +1134,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_2")>
-    Public Property DishWtIce_2() As Double?
+    <DataMember()> Public Property DishWtIce_2() As Double?
         Get
             Return Me._DishWtIce_2
         End Get
@@ -1141,7 +1143,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_4")>
-    Public Property DishWtIce_4() As Double?
+    <DataMember()> Public Property DishWtIce_4() As Double?
         Get
             Return Me._DishWtIce_4
         End Get
@@ -1150,7 +1152,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishStartHt")>
-    Public Property DishStartHt() As Double?
+    <DataMember()> Public Property DishStartHt() As Double?
         Get
             Return Me._DishStartHt
         End Get
@@ -1159,7 +1161,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAzimuthAdjustment")>
-    Public Property DishAzimuthAdjustment() As Double?
+    <DataMember()> Public Property DishAzimuthAdjustment() As Double?
         Get
             Return Me._DishAzimuthAdjustment
         End Get
@@ -1168,7 +1170,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishBeamWidth")>
-    Public Property DishBeamWidth() As Double?
+    <DataMember()> Public Property DishBeamWidth() As Double?
         Get
             Return Me._DishBeamWidth
         End Get
@@ -1229,8 +1231,7 @@ Partial Public Class tnxDish
     End Function
 #End Region
 End Class
-
-
+<DataContract()>
 Partial Public Class tnxUserForce
     Inherits EDSObject
 
@@ -1266,7 +1267,7 @@ Partial Public Class tnxUserForce
     Private _UserForceEh As Double?
 
     <Category("TNX User Force"), Description(""), DisplayName("UserForceRec")>
-    Public Property UserForceRec() As Integer?
+    <DataMember()> Public Property UserForceRec() As Integer?
         Get
             Return Me._UserForceRec
         End Get
@@ -1275,7 +1276,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEnabled")>
-    Public Property UserForceEnabled() As Boolean?
+    <DataMember()> Public Property UserForceEnabled() As Boolean?
         Get
             Return Me._UserForceEnabled
         End Get
@@ -1284,7 +1285,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceDescription")>
-    Public Property UserForceDescription() As String
+    <DataMember()> Public Property UserForceDescription() As String
         Get
             Return Me._UserForceDescription
         End Get
@@ -1293,7 +1294,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceStartHt")>
-    Public Property UserForceStartHt() As Double?
+    <DataMember()> Public Property UserForceStartHt() As Double?
         Get
             Return Me._UserForceStartHt
         End Get
@@ -1302,7 +1303,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceOffset")>
-    Public Property UserForceOffset() As Double?
+    <DataMember()> Public Property UserForceOffset() As Double?
         Get
             Return Me._UserForceOffset
         End Get
@@ -1311,7 +1312,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAzimuth")>
-    Public Property UserForceAzimuth() As Double?
+    <DataMember()> Public Property UserForceAzimuth() As Double?
         Get
             Return Me._UserForceAzimuth
         End Get
@@ -1320,7 +1321,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxNoIce")>
-    Public Property UserForceFxNoIce() As Double?
+    <DataMember()> Public Property UserForceFxNoIce() As Double?
         Get
             Return Me._UserForceFxNoIce
         End Get
@@ -1329,7 +1330,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzNoIce")>
-    Public Property UserForceFzNoIce() As Double?
+    <DataMember()> Public Property UserForceFzNoIce() As Double?
         Get
             Return Me._UserForceFzNoIce
         End Get
@@ -1338,7 +1339,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialNoIce")>
-    Public Property UserForceAxialNoIce() As Double?
+    <DataMember()> Public Property UserForceAxialNoIce() As Double?
         Get
             Return Me._UserForceAxialNoIce
         End Get
@@ -1347,7 +1348,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearNoIce")>
-    Public Property UserForceShearNoIce() As Double?
+    <DataMember()> Public Property UserForceShearNoIce() As Double?
         Get
             Return Me._UserForceShearNoIce
         End Get
@@ -1356,7 +1357,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcNoIce")>
-    Public Property UserForceCaAcNoIce() As Double?
+    <DataMember()> Public Property UserForceCaAcNoIce() As Double?
         Get
             Return Me._UserForceCaAcNoIce
         End Get
@@ -1365,7 +1366,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxIce")>
-    Public Property UserForceFxIce() As Double?
+    <DataMember()> Public Property UserForceFxIce() As Double?
         Get
             Return Me._UserForceFxIce
         End Get
@@ -1374,7 +1375,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzIce")>
-    Public Property UserForceFzIce() As Double?
+    <DataMember()> Public Property UserForceFzIce() As Double?
         Get
             Return Me._UserForceFzIce
         End Get
@@ -1383,7 +1384,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialIce")>
-    Public Property UserForceAxialIce() As Double?
+    <DataMember()> Public Property UserForceAxialIce() As Double?
         Get
             Return Me._UserForceAxialIce
         End Get
@@ -1392,7 +1393,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearIce")>
-    Public Property UserForceShearIce() As Double?
+    <DataMember()> Public Property UserForceShearIce() As Double?
         Get
             Return Me._UserForceShearIce
         End Get
@@ -1401,7 +1402,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcIce")>
-    Public Property UserForceCaAcIce() As Double?
+    <DataMember()> Public Property UserForceCaAcIce() As Double?
         Get
             Return Me._UserForceCaAcIce
         End Get
@@ -1410,7 +1411,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxService")>
-    Public Property UserForceFxService() As Double?
+    <DataMember()> Public Property UserForceFxService() As Double?
         Get
             Return Me._UserForceFxService
         End Get
@@ -1419,7 +1420,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzService")>
-    Public Property UserForceFzService() As Double?
+    <DataMember()> Public Property UserForceFzService() As Double?
         Get
             Return Me._UserForceFzService
         End Get
@@ -1428,7 +1429,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialService")>
-    Public Property UserForceAxialService() As Double?
+    <DataMember()> Public Property UserForceAxialService() As Double?
         Get
             Return Me._UserForceAxialService
         End Get
@@ -1437,7 +1438,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearService")>
-    Public Property UserForceShearService() As Double?
+    <DataMember()> Public Property UserForceShearService() As Double?
         Get
             Return Me._UserForceShearService
         End Get
@@ -1446,7 +1447,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcService")>
-    Public Property UserForceCaAcService() As Double?
+    <DataMember()> Public Property UserForceCaAcService() As Double?
         Get
             Return Me._UserForceCaAcService
         End Get
@@ -1455,7 +1456,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhx")>
-    Public Property UserForceEhx() As Double?
+    <DataMember()> Public Property UserForceEhx() As Double?
         Get
             Return Me._UserForceEhx
         End Get
@@ -1464,7 +1465,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhz")>
-    Public Property UserForceEhz() As Double?
+    <DataMember()> Public Property UserForceEhz() As Double?
         Get
             Return Me._UserForceEhz
         End Get
@@ -1473,7 +1474,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEv")>
-    Public Property UserForceEv() As Double?
+    <DataMember()> Public Property UserForceEv() As Double?
         Get
             Return Me._UserForceEv
         End Get
@@ -1482,7 +1483,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEh")>
-    Public Property UserForceEh() As Double?
+    <DataMember()> Public Property UserForceEh() As Double?
         Get
             Return Me._UserForceEh
         End Get

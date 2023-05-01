@@ -1,12 +1,14 @@
 ﻿Imports System.ComponentModel
 Imports DevExpress.Spreadsheet
-
+Imports System.Runtime.Serialization
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierFoundation))>
 Partial Public Class DrilledPierFoundation
     Inherits EDSExcelObject
 
-    Public Property DrilledPiers As New List(Of DrilledPier)
+    <DataMember()> Public Property DrilledPiers As New List(Of DrilledPier)
 
-    'Public Property ParentFile As New FileUpload
+    ' <DataMember()> Public Property ParentFile As New FileUpload
 
     'Origin row in the driled pier database. Basically just where the profile numbers are in the database worksheet.
     'This is actually 58 but due to the 0,0 origin in excel, it is 1 less
@@ -458,6 +460,8 @@ Partial Public Class DrilledPierFoundation
 #End Region
 End Class
 
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPier))>
 Partial Public Class DrilledPier
     Inherits EDSObjectWithQueries
 
@@ -553,10 +557,10 @@ Partial Public Class DrilledPier
 #End Region
 
 #Region "Define"
-    Public Property PierProfile As DrilledPierProfile
-    Public Property SoilProfile As DrilledPierSoilProfile
+    <DataMember()> Public Property PierProfile As DrilledPierProfile
+    <DataMember()> Public Property SoilProfile As DrilledPierSoilProfile
 
-    Private _ID As Integer?
+
     Private _local_drilled_pier_id
     Private _pier_profile_id As Integer?
     Private _soil_profile_id As Integer?
@@ -566,17 +570,9 @@ Partial Public Class DrilledPier
     Private _local_pier_profile_id As Integer?
     Private _drilled_pier_tool_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Profile Id")>
-    Public Property pier_profile_id() As Integer?
+    <DataMember()> Public Property pier_profile_id() As Integer?
         Get
             Return Me._pier_profile_id
         End Get
@@ -585,7 +581,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Soil Profile Id")>
-    Public Property soil_profile_id() As Integer?
+    <DataMember()> Public Property soil_profile_id() As Integer?
         Get
             Return Me._soil_profile_id
         End Get
@@ -594,7 +590,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Reaction Position")>
-    Public Property reaction_position() As Integer?
+    <DataMember()> Public Property reaction_position() As Integer?
         Get
             Return Me._reaction_position
         End Get
@@ -603,7 +599,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Reaction Location")>
-    Public Property reaction_location() As String
+    <DataMember()> Public Property reaction_location() As String
         Get
             Return Me._reaction_location
         End Get
@@ -612,7 +608,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Soil Profile")>
-    Public Property local_soil_profile() As Integer?
+    <DataMember()> Public Property local_soil_profile() As Integer?
         Get
             Return Me._local_soil_profile
         End Get
@@ -621,7 +617,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier Profile")>
-    Public Property local_pier_profile_id() As Integer?
+    <DataMember()> Public Property local_pier_profile_id() As Integer?
         Get
             Return Me._local_pier_profile_id
         End Get
@@ -630,7 +626,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id() As Integer?
+    <DataMember()> Public Property local_drilled_pier_id() As Integer?
         Get
             Return Me._local_drilled_pier_id
         End Get
@@ -639,7 +635,7 @@ Partial Public Class DrilledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier Tool ID")>
-    Public Property drilled_pier_tool_id() As Integer?
+    <DataMember()> Public Property drilled_pier_tool_id() As Integer?
         Get
             Return Me._drilled_pier_tool_id
         End Get
@@ -786,14 +782,14 @@ Partial Public Class DrilledPier
                         IIf(resRow.item("Concrete Shear (Uplift)") IsNot Nothing, dt.Rows.Add("FND_CON_SHEAR_UP", Math.Round(CType(resRow.item("Concrete Shear (Uplift)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
-                        Try
+                    Try
                         IIf(resRow.item("Soil Max") IsNot Nothing, dt.Rows.Add("FND_SOIL_MAX", Math.Round(CType(resRow.item("Soil Max"), Double), 3) * 100), Nothing)
                     Catch
-                        End Try
-                        Try
+                    End Try
+                    Try
                         IIf(resRow.item("Structure Max") IsNot Nothing, dt.Rows.Add("FND_STRC_MAX", Math.Round(CType(resRow.item("Structure Max"), Double), 3) * 100), Nothing)
                     Catch
-                        End Try
+                    End Try
                     'dt.Rows.Add("DPSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
                     'dt.Rows.Add("DPSTRUC", Math.Round(CType(resRow.item("Structural Rating"), Double), 3))
                     'Exit For
@@ -892,7 +888,8 @@ Partial Public Class DrilledPier
     End Function
 
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierProfile))>
 Partial Public Class DrilledPierProfile
     Inherits EDSObjectWithQueries
 
@@ -1035,11 +1032,11 @@ Partial Public Class DrilledPierProfile
 #End Region
 
 #Region "Define"
-    Public Property Sections As New List(Of DrilledPierSection)
-    Public Property EmbeddedPole As EmbeddedPole
-    Public Property BelledPier As New BelledPier
+    <DataMember()> Public Property Sections As New List(Of DrilledPierSection)
+    <DataMember()> Public Property EmbeddedPole As EmbeddedPole
+    <DataMember()> Public Property BelledPier As New BelledPier
 
-    Private _ID As Integer?
+
     Private _foundation_depth As Double?
     Private _extension_above_grade As Double?
     Private _assume_min_steel As Boolean?
@@ -1062,17 +1059,9 @@ Partial Public Class DrilledPierProfile
     Private _local_drilled_pier_id As Integer?
     Private _drilled_pier_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
     <Category("Drilled Pier"), Description(""), DisplayName("Foundation Depth")>
-    Public Property foundation_depth() As Double?
+    <DataMember()> Public Property foundation_depth() As Double?
         Get
             Return Me._foundation_depth
         End Get
@@ -1081,7 +1070,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Extension Above Grade")>
-    Public Property extension_above_grade() As Double?
+    <DataMember()> Public Property extension_above_grade() As Double?
         Get
             Return Me._extension_above_grade
         End Get
@@ -1090,7 +1079,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Assume Min Steel")>
-    Public Property assume_min_steel() As Boolean?
+    <DataMember()> Public Property assume_min_steel() As Boolean?
         Get
             Return Me._assume_min_steel
         End Get
@@ -1099,7 +1088,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Check Shear Along Depth")>
-    Public Property check_shear_along_depth() As Boolean?
+    <DataMember()> Public Property check_shear_along_depth() As Boolean?
         Get
             Return Me._check_shear_along_depth
         End Get
@@ -1108,7 +1097,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Utilize Skin Friction Methodology")>
-    Public Property utilize_shear_friction_methodology() As Boolean?
+    <DataMember()> Public Property utilize_shear_friction_methodology() As Boolean?
         Get
             Return Me._utilize_shear_friction_methodology
         End Get
@@ -1117,7 +1106,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Embedded Pole")>
-    Public Property embedded_pole() As Boolean?
+    <DataMember()> Public Property embedded_pole() As Boolean?
         Get
             Return Me._embedded_pole
         End Get
@@ -1126,7 +1115,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Belled Pier")>
-    Public Property belled_pier() As Boolean?
+    <DataMember()> Public Property belled_pier() As Boolean?
         Get
             Return Me._belled_pier
         End Get
@@ -1135,7 +1124,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Concrete Compressive Strength")>
-    Public Property concrete_compressive_strength() As Double?
+    <DataMember()> Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
         End Get
@@ -1144,7 +1133,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Longitudinal Rebar Yield Strength")>
-    Public Property longitudinal_rebar_yield_strength() As Double?
+    <DataMember()> Public Property longitudinal_rebar_yield_strength() As Double?
         Get
             Return Me._longitudinal_rebar_yield_strength
         End Get
@@ -1153,7 +1142,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Rebar Cage 2 Fy Override")>
-    Public Property rebar_cage_2_fy_override() As Double?
+    <DataMember()> Public Property rebar_cage_2_fy_override() As Double?
         Get
             Return Me._rebar_cage_2_fy_override
         End Get
@@ -1162,7 +1151,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Rebar Cage 3 Fy Override")>
-    Public Property rebar_cage_3_fy_override() As Double?
+    <DataMember()> Public Property rebar_cage_3_fy_override() As Double?
         Get
             Return Me._rebar_cage_3_fy_override
         End Get
@@ -1171,7 +1160,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Rebar Effective Depths")>
-    Public Property rebar_effective_depths() As Boolean?
+    <DataMember()> Public Property rebar_effective_depths() As Boolean?
         Get
             Return Me._rebar_effective_depths
         End Get
@@ -1180,7 +1169,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Shear Crit Depth Override Comp")>
-    Public Property shear_crit_depth_override_comp() As Double?
+    <DataMember()> Public Property shear_crit_depth_override_comp() As Double?
         Get
             Return Me._shear_crit_depth_override_comp
         End Get
@@ -1189,7 +1178,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Shear Crit Depth Override Uplift")>
-    Public Property shear_crit_depth_override_uplift() As Double?
+    <DataMember()> Public Property shear_crit_depth_override_uplift() As Double?
         Get
             Return Me._shear_crit_depth_override_uplift
         End Get
@@ -1198,7 +1187,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Shear Override Crit Depth")>
-    Public Property shear_override_crit_depth() As Boolean?
+    <DataMember()> Public Property shear_override_crit_depth() As Boolean?
         Get
             Return Me._shear_override_crit_depth
         End Get
@@ -1207,7 +1196,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Tie Yield Strength")>
-    Public Property tie_yield_strength() As Double?
+    <DataMember()> Public Property tie_yield_strength() As Double?
         Get
             Return Me._tie_yield_strength
         End Get
@@ -1216,7 +1205,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Tool Version")>
-    Public Property tool_version() As String
+    <DataMember()> Public Property tool_version() As String
         Get
             Return Me._tool_version
         End Get
@@ -1225,7 +1214,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Ultimate Bearing")>
-    Public Property ultimate_gross_bearing() As Boolean?
+    <DataMember()> Public Property ultimate_gross_bearing() As Boolean?
         Get
             Return Me._ultimate_gross_bearing
         End Get
@@ -1234,7 +1223,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
-    Public Property local_pier_profile_id As Integer?
+    <DataMember()> Public Property local_pier_profile_id As Integer?
         Get
             Return _local_pier_profile_id
         End Get
@@ -1243,7 +1232,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
         Get
             Return _local_drilled_pier_id
         End Get
@@ -1252,7 +1241,7 @@ Partial Public Class DrilledPierProfile
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
-    Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
         Get
             Return _drilled_pier_id
         End Get
@@ -1414,7 +1403,8 @@ Partial Public Class DrilledPierProfile
 
     End Function
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierSection))>
 Partial Public Class DrilledPierSection
     Inherits EDSObjectWithQueries
 
@@ -1501,9 +1491,9 @@ Partial Public Class DrilledPierSection
 #End Region
 
 #Region "Define"
-    Public Property Rebar As New List(Of DrilledPierRebar)
+    <DataMember()> Public Property Rebar As New List(Of DrilledPierRebar)
 
-    Private _ID As Integer?
+
     Private _pier_diameter As Double?
     Private _clear_cover As Double?
     Private _clear_cover_rebar_cage_option As Boolean?
@@ -1517,17 +1507,9 @@ Partial Public Class DrilledPierSection
     Private _local_pier_profile_id As Integer?
     Private _pier_profile_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Diameter")>
-    Public Property pier_diameter() As Double?
+    <DataMember()> Public Property pier_diameter() As Double?
         Get
             Return Me._pier_diameter
         End Get
@@ -1536,7 +1518,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Clear Cover")>
-    Public Property clear_cover() As Double?
+    <DataMember()> Public Property clear_cover() As Double?
         Get
             Return Me._clear_cover
         End Get
@@ -1545,7 +1527,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Clear Cover Rebar Cage Option")>
-    Public Property clear_cover_rebar_cage_option() As Boolean?
+    <DataMember()> Public Property clear_cover_rebar_cage_option() As Boolean?
         Get
             Return Me._clear_cover_rebar_cage_option
         End Get
@@ -1554,7 +1536,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Tie Size")>
-    Public Property tie_size() As Integer?
+    <DataMember()> Public Property tie_size() As Integer?
         Get
             Return Me._tie_size
         End Get
@@ -1563,7 +1545,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Tie Spacing")>
-    Public Property tie_spacing() As Double?
+    <DataMember()> Public Property tie_spacing() As Double?
         Get
             Return Me._tie_spacing
         End Get
@@ -1572,7 +1554,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bottom Elevation")>
-    Public Property bottom_elevation() As Double?
+    <DataMember()> Public Property bottom_elevation() As Double?
         Get
             Return Me._bottom_elevation
         End Get
@@ -1581,7 +1563,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Section Id")>
-    Public Property local_section_id() As Integer?
+    <DataMember()> Public Property local_section_id() As Integer?
         Get
             Return Me._local_section_id
         End Get
@@ -1590,7 +1572,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Rho Override")>
-    Public Property rho_override() As Double?
+    <DataMember()> Public Property rho_override() As Double?
         Get
             Return Me._rho_override
         End Get
@@ -1599,7 +1581,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
-    Public Property local_pier_profile_id As Integer?
+    <DataMember()> Public Property local_pier_profile_id As Integer?
         Get
             Return _local_pier_profile_id
         End Get
@@ -1608,7 +1590,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
         Get
             Return _local_drilled_pier_id
         End Get
@@ -1617,7 +1599,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
-    Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
         Get
             Return _drilled_pier_id
         End Get
@@ -1626,7 +1608,7 @@ Partial Public Class DrilledPierSection
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
-    Public Property pier_profile_id As Integer?
+    <DataMember()> Public Property pier_profile_id As Integer?
         Get
             Return _pier_profile_id
         End Get
@@ -1746,7 +1728,8 @@ Partial Public Class DrilledPierSection
 
     End Function
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierRebar))>
 Partial Public Class DrilledPierRebar
     Inherits EDSObjectWithQueries
 
@@ -1801,7 +1784,7 @@ Partial Public Class DrilledPierRebar
 #Region "Define"
     Public local_section_id As Integer?
 
-    Private _ID As Integer?
+
     Private _section_id As Integer?
     Private _longitudinal_rebar_quantity As Integer?
     Private _longitudinal_rebar_size As Integer?
@@ -1812,17 +1795,9 @@ Partial Public Class DrilledPierRebar
     Private _local_pier_profile_id As Integer?
     Private _pier_profile_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
     <Category("Drilled Pier"), Description(""), DisplayName("Section Id")>
-    Public Property section_id() As Integer?
+    <DataMember()> Public Property section_id() As Integer?
         Get
             Return Me._section_id
         End Get
@@ -1831,7 +1806,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Longitudinal Rebar Quantity")>
-    Public Property longitudinal_rebar_quantity() As Integer?
+    <DataMember()> Public Property longitudinal_rebar_quantity() As Integer?
         Get
             Return Me._longitudinal_rebar_quantity
         End Get
@@ -1840,7 +1815,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Longitudinal Rebar Size")>
-    Public Property longitudinal_rebar_size() As Integer?
+    <DataMember()> Public Property longitudinal_rebar_size() As Integer?
         Get
             Return Me._longitudinal_rebar_size
         End Get
@@ -1849,7 +1824,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Longitudinal Rebar Cage Diameter")>
-    Public Property longitudinal_rebar_cage_diameter() As Double?
+    <DataMember()> Public Property longitudinal_rebar_cage_diameter() As Double?
         Get
             Return Me._longitudinal_rebar_cage_diameter
         End Get
@@ -1858,7 +1833,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Rebar Id")>
-    Public Property local_rebar_id() As Integer?
+    <DataMember()> Public Property local_rebar_id() As Integer?
         Get
             Return Me._local_rebar_id
         End Get
@@ -1867,7 +1842,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
-    Public Property local_pier_profile_id As Integer?
+    <DataMember()> Public Property local_pier_profile_id As Integer?
         Get
             Return _local_pier_profile_id
         End Get
@@ -1876,7 +1851,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
         Get
             Return _local_drilled_pier_id
         End Get
@@ -1885,7 +1860,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
-    Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
         Get
             Return _drilled_pier_id
         End Get
@@ -1894,7 +1869,7 @@ Partial Public Class DrilledPierRebar
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
-    Public Property pier_profile_id As Integer?
+    <DataMember()> Public Property pier_profile_id As Integer?
         Get
             Return _pier_profile_id
         End Get
@@ -1995,7 +1970,8 @@ Partial Public Class DrilledPierRebar
 
     End Function
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(EmbeddedPole))>
 Partial Public Class EmbeddedPole
     Inherits EDSObjectWithQueries
 
@@ -2048,7 +2024,6 @@ Partial Public Class EmbeddedPole
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
     Private _embedded_pole_option As Boolean?
     Private _encased_in_concrete As Boolean?
     Private _pole_side_quantity As Integer?
@@ -2066,17 +2041,8 @@ Partial Public Class EmbeddedPole
     Private _local_pier_profile_id As Integer?
     Private _pier_profile_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Embedded Pole Option")>
-    Public Property embedded_pole_option() As Boolean?
+    <DataMember()> Public Property embedded_pole_option() As Boolean?
         Get
             Return Me._embedded_pole_option
         End Get
@@ -2085,7 +2051,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Encased In Concrete")>
-    Public Property encased_in_concrete() As Boolean?
+    <DataMember()> Public Property encased_in_concrete() As Boolean?
         Get
             Return Me._encased_in_concrete
         End Get
@@ -2094,7 +2060,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Side Quantity")>
-    Public Property pole_side_quantity() As Integer?
+    <DataMember()> Public Property pole_side_quantity() As Integer?
         Get
             Return Me._pole_side_quantity
         End Get
@@ -2103,7 +2069,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Yield Strength")>
-    Public Property pole_yield_strength() As Double?
+    <DataMember()> Public Property pole_yield_strength() As Double?
         Get
             Return Me._pole_yield_strength
         End Get
@@ -2112,7 +2078,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Thickness")>
-    Public Property pole_thickness() As Double?
+    <DataMember()> Public Property pole_thickness() As Double?
         Get
             Return Me._pole_thickness
         End Get
@@ -2121,7 +2087,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Embedded Pole Input Type")>
-    Public Property embedded_pole_input_type() As String
+    <DataMember()> Public Property embedded_pole_input_type() As String
         Get
             Return Me._embedded_pole_input_type
         End Get
@@ -2130,7 +2096,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Diameter Toc")>
-    Public Property pole_diameter_toc() As Double?
+    <DataMember()> Public Property pole_diameter_toc() As Double?
         Get
             Return Me._pole_diameter_toc
         End Get
@@ -2139,7 +2105,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Top Diameter")>
-    Public Property pole_top_diameter() As Double?
+    <DataMember()> Public Property pole_top_diameter() As Double?
         Get
             Return Me._pole_top_diameter
         End Get
@@ -2148,7 +2114,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Bottom Diameter")>
-    Public Property pole_bottom_diameter() As Double?
+    <DataMember()> Public Property pole_bottom_diameter() As Double?
         Get
             Return Me._pole_bottom_diameter
         End Get
@@ -2157,7 +2123,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Section Length")>
-    Public Property pole_section_length() As Double?
+    <DataMember()> Public Property pole_section_length() As Double?
         Get
             Return Me._pole_section_length
         End Get
@@ -2166,7 +2132,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Taper Factor")>
-    Public Property pole_taper_factor() As Double?
+    <DataMember()> Public Property pole_taper_factor() As Double?
         Get
             Return Me._pole_taper_factor
         End Get
@@ -2175,7 +2141,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pole Bend Radius Override")>
-    Public Property pole_bend_radius_override() As Double?
+    <DataMember()> Public Property pole_bend_radius_override() As Double?
         Get
             Return Me._pole_bend_radius_override
         End Get
@@ -2184,7 +2150,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
-    Public Property local_pier_profile_id As Integer?
+    <DataMember()> Public Property local_pier_profile_id As Integer?
         Get
             Return _local_pier_profile_id
         End Get
@@ -2193,7 +2159,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
         Get
             Return _local_drilled_pier_id
         End Get
@@ -2202,7 +2168,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
-    Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
         Get
             Return _drilled_pier_id
         End Get
@@ -2211,7 +2177,7 @@ Partial Public Class EmbeddedPole
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
-    Public Property pier_profile_id As Integer?
+    <DataMember()> Public Property pier_profile_id As Integer?
         Get
             Return _pier_profile_id
         End Get
@@ -2345,7 +2311,8 @@ Partial Public Class EmbeddedPole
 
     End Function
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(BelledPier))>
 Partial Public Class BelledPier
     Inherits EDSObjectWithQueries
 
@@ -2398,7 +2365,6 @@ Partial Public Class BelledPier
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
     Private _belled_pier_option As Boolean?
     Private _bottom_diameter_of_bell As Double?
     Private _bell_input_type As String
@@ -2414,17 +2380,8 @@ Partial Public Class BelledPier
     Private _local_pier_profile_id As Integer?
     Private _pier_profile_id As Integer?
 
-    <Category("Drilled Pier"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Belled Pier Option")>
-    Public Property belled_pier_option() As Boolean?
+    <DataMember()> Public Property belled_pier_option() As Boolean?
         Get
             Return Me._belled_pier_option
         End Get
@@ -2433,7 +2390,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bottom Diameter Of Bell")>
-    Public Property bottom_diameter_of_bell() As Double?
+    <DataMember()> Public Property bottom_diameter_of_bell() As Double?
         Get
             Return Me._bottom_diameter_of_bell
         End Get
@@ -2442,7 +2399,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bell Input Type")>
-    Public Property bell_input_type() As String
+    <DataMember()> Public Property bell_input_type() As String
         Get
             Return Me._bell_input_type
         End Get
@@ -2451,7 +2408,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bell Angle")>
-    Public Property bell_angle() As Double?
+    <DataMember()> Public Property bell_angle() As Double?
         Get
             Return Me._bell_angle
         End Get
@@ -2460,7 +2417,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bell Height")>
-    Public Property bell_height() As Double?
+    <DataMember()> Public Property bell_height() As Double?
         Get
             Return Me._bell_height
         End Get
@@ -2469,7 +2426,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Bell Toe Height")>
-    Public Property bell_toe_height() As Double?
+    <DataMember()> Public Property bell_toe_height() As Double?
         Get
             Return Me._bell_toe_height
         End Get
@@ -2478,7 +2435,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Neglect Top Soil Layer")>
-    Public Property neglect_top_soil_layer() As Boolean?
+    <DataMember()> Public Property neglect_top_soil_layer() As Boolean?
         Get
             Return Me._neglect_top_soil_layer
         End Get
@@ -2487,7 +2444,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Swelling Expansive Soil")>
-    Public Property swelling_expansive_soil() As Boolean?
+    <DataMember()> Public Property swelling_expansive_soil() As Boolean?
         Get
             Return Me._swelling_expansive_soil
         End Get
@@ -2496,7 +2453,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Depth Of Expansive Soil")>
-    Public Property depth_of_expansive_soil() As Double?
+    <DataMember()> Public Property depth_of_expansive_soil() As Double?
         Get
             Return Me._depth_of_expansive_soil
         End Get
@@ -2505,7 +2462,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Expansive Soil Force")>
-    Public Property expansive_soil_force() As Double?
+    <DataMember()> Public Property expansive_soil_force() As Double?
         Get
             Return Me._expansive_soil_force
         End Get
@@ -2514,7 +2471,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Pier Profile ID")>
-    Public Property local_pier_profile_id As Integer?
+    <DataMember()> Public Property local_pier_profile_id As Integer?
         Get
             Return _local_pier_profile_id
         End Get
@@ -2523,7 +2480,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Local Drilled Pier ID")>
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
         Get
             Return _local_drilled_pier_id
         End Get
@@ -2532,7 +2489,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Drilled Pier ID")>
-    Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
         Get
             Return _drilled_pier_id
         End Get
@@ -2541,7 +2498,7 @@ Partial Public Class BelledPier
         End Set
     End Property
     <Category("Drilled Pier"), Description(""), DisplayName("Pier Profile ID")>
-    Public Property pier_profile_id As Integer?
+    <DataMember()> Public Property pier_profile_id As Integer?
         Get
             Return _pier_profile_id
         End Get
@@ -2664,14 +2621,15 @@ Partial Public Class BelledPier
 
     End Function
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierSoilProfile))>
 Public Class DrilledPierSoilProfile
     Inherits SoilProfile
 
-    Public Property local_soil_profile_id As Integer?
-    Public Property local_drilled_pier_id As Integer?
-    Public Property drilled_pier_id As Integer?
-    Public Property DPSoilLayers As New List(Of DrilledPierSoilLayer)
+    <DataMember()> Public Property local_soil_profile_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property DPSoilLayers As New List(Of DrilledPierSoilLayer)
 
     Public Sub New()
 
@@ -2719,7 +2677,8 @@ Public Class DrilledPierSoilProfile
     End Function
 
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierSoilLayer))>
 Public Class DrilledPierSoilLayer
     Inherits SoilLayer
 
@@ -2729,11 +2688,11 @@ Public Class DrilledPierSoilLayer
         End Get
     End Property
 
-    Public Property local_soil_profile_id As Integer?
-    Public Property soil_profile_id As Integer?
-    Public Property local_soil_layer_id As Integer?
-    Public Property drilled_pier_id As Integer?
-    Public Property local_drilled_pier_id As Integer?
+    <DataMember()> Public Property local_soil_profile_id As Integer?
+    <DataMember()> Public Property soil_profile_id As Integer?
+    <DataMember()> Public Property local_soil_layer_id As Integer?
+    <DataMember()> Public Property drilled_pier_id As Integer?
+    <DataMember()> Public Property local_drilled_pier_id As Integer?
 
     Public Sub New()
 
@@ -2752,7 +2711,8 @@ Public Class DrilledPierSoilLayer
         End Try
     End Sub
 End Class
-
+<DataContractAttribute()>
+<KnownType(GetType(DrilledPierResult))>
 Public Class DrilledPierResult
     Inherits EDSResult
 

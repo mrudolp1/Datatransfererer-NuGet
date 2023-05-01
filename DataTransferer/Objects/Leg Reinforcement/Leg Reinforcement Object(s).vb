@@ -2,6 +2,7 @@
 
 Imports System.ComponentModel
 Imports System.Data
+Imports System.Runtime.Serialization
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
 
@@ -134,10 +135,10 @@ Partial Public Class LegReinforcement
     'Private _process_stage As String 'Defined in EDSExcelObject
     Private _Structural_105 As Boolean?
 
-    Public Property LegReinforcementDetails As New List(Of LegReinforcementDetail)
+    <DataMember()> Public Property LegReinforcementDetails As New List(Of LegReinforcementDetail)
 
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Id")>
-    'Public Property ID() As Integer?
+    ' <DataMember()> Public Property ID() As Integer?
     '    Get
     '        Return Me._ID
     '    End Get
@@ -146,7 +147,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Tool Version")>
-    'Public Property tool_version() As String
+    ' <DataMember()> Public Property tool_version() As String
     '    Get
     '        Return Me._tool_version
     '    End Get
@@ -155,7 +156,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Bus Unit")>
-    'Public Property bus_unit() As Integer?
+    ' <DataMember()> Public Property bus_unit() As Integer?
     '    Get
     '        Return Me._bus_unit
     '    End Get
@@ -164,7 +165,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Structure Id")>
-    'Public Property structure_id() As String
+    ' <DataMember()> Public Property structure_id() As String
     '    Get
     '        Return Me._structure_id
     '    End Get
@@ -173,7 +174,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Modified Person Id")>
-    'Public Property modified_person_id() As Integer?
+    ' <DataMember()> Public Property modified_person_id() As Integer?
     '    Get
     '        Return Me._modified_person_id
     '    End Get
@@ -182,7 +183,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     '<Category("Leg Reinforcements"), Description(""), DisplayName("Process Stage")>
-    'Public Property process_stage() As String
+    ' <DataMember()> Public Property process_stage() As String
     '    Get
     '        Return Me._process_stage
     '    End Get
@@ -191,7 +192,7 @@ Partial Public Class LegReinforcement
     '    End Set
     'End Property
     <Category("Leg Reinforcements"), Description(""), DisplayName("Structural 105")>
-    Public Property Structural_105() As Boolean?
+    <DataMember()> Public Property Structural_105() As Boolean?
         Get
             Return Me._Structural_105
         End Get
@@ -656,19 +657,19 @@ Partial Public Class LegReinforcement
 
                     'Storing following in order to populate arbitrary shape info after worksheet is opened. 
                     If Not IsNothing(row.top_elev) Then
-                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
-                .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
-                tnxdataRow += 2
-                'Else
-                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-            End If
-            If Not IsNothing(row.bot_elev) Then
-                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
-                tnxdataRow += 1
-                'Else
-                '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
-            End If
-            Next
+                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerRec=" & CType(row.local_id, Integer)
+                        .Worksheets("TNX File").Range("A" & tnxdataRow + 1).Value = "TowerHeight=" & CType(row.top_elev, Double)
+                        tnxdataRow += 2
+                        'Else
+                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+                    End If
+                    If Not IsNothing(row.bot_elev) Then
+                        .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "TowerSectionLength=" & CType(row.top_elev, Double) - CType(row.bot_elev, Double)
+                        tnxdataRow += 1
+                        'Else
+                        '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
+                    End If
+                Next
 
             End If
 
@@ -878,11 +879,11 @@ Partial Public Class LegReinforcementDetail
     Private _top_elev As Double?
     Private _bot_elev As Double?
 
-    'Public Property LegReinforcementResults As New List(Of LegReinforcementResults)
-    'Public Property LegReinforcementResults2 As New List(Of LegReinforcementResults2)
+    ' <DataMember()> Public Property LegReinforcementResults As New List(Of LegReinforcementResults)
+    ' <DataMember()> Public Property LegReinforcementResults2 As New List(Of LegReinforcementResults2)
 
     '<Category("Leg Reinforcement Details"), Description(""), DisplayName("Local Id")>
-    'Public Property local_id() As Integer?
+    ' <DataMember()> Public Property local_id() As Integer?
     '    Get
     '        Return Me._local_id
     '    End Get
@@ -891,7 +892,7 @@ Partial Public Class LegReinforcementDetail
     '    End Set
     'End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Id")>
-    Public Property ID() As Integer?
+    <DataMember()> Public Property ID() As Integer?
         Get
             Return Me._ID
         End Get
@@ -900,7 +901,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Id")>
-    Public Property leg_reinforcement_id() As Integer?
+    <DataMember()> Public Property leg_reinforcement_id() As Integer?
         Get
             Return Me._leg_reinforcement_id
         End Get
@@ -909,7 +910,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Load Time Mod Option")>
-    Public Property leg_load_time_mod_option() As Boolean?
+    <DataMember()> Public Property leg_load_time_mod_option() As Boolean?
         Get
             Return Me._leg_load_time_mod_option
         End Get
@@ -918,7 +919,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("End Connection Type")>
-    Public Property end_connection_type() As String
+    <DataMember()> Public Property end_connection_type() As String
         Get
             Return Me._end_connection_type
         End Get
@@ -927,7 +928,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Crushing")>
-    Public Property leg_crushing() As Boolean?
+    <DataMember()> Public Property leg_crushing() As Boolean?
         Get
             Return Me._leg_crushing
         End Get
@@ -936,7 +937,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Applied Load Type")>
-    Public Property applied_load_type() As String
+    <DataMember()> Public Property applied_load_type() As String
         Get
             Return Me._applied_load_type
         End Get
@@ -945,7 +946,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Slenderness Ratio Type")>
-    Public Property slenderness_ratio_type() As String
+    <DataMember()> Public Property slenderness_ratio_type() As String
         Get
             Return Me._slenderness_ratio_type
         End Get
@@ -954,7 +955,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermeditate Connection Type")>
-    Public Property intermeditate_connection_type() As String
+    <DataMember()> Public Property intermeditate_connection_type() As String
         Get
             Return Me._intermeditate_connection_type
         End Get
@@ -963,7 +964,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Intermeditate Connection Spacing")>
-    Public Property intermeditate_connection_spacing() As Double?
+    <DataMember()> Public Property intermeditate_connection_spacing() As Double?
         Get
             Return Me._intermeditate_connection_spacing
         End Get
@@ -972,7 +973,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Ki Override")>
-    Public Property ki_override() As Double?
+    <DataMember()> Public Property ki_override() As Double?
         Get
             Return Me._ki_override
         End Get
@@ -981,7 +982,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Diameter")>
-    Public Property leg_diameter() As Double?
+    <DataMember()> Public Property leg_diameter() As Double?
         Get
             Return Me._leg_diameter
         End Get
@@ -990,7 +991,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Thickness")>
-    Public Property leg_thickness() As Double?
+    <DataMember()> Public Property leg_thickness() As Double?
         Get
             Return Me._leg_thickness
         End Get
@@ -999,7 +1000,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Grade")>
-    Public Property leg_grade() As Double?
+    <DataMember()> Public Property leg_grade() As Double?
         Get
             Return Me._leg_grade
         End Get
@@ -1008,7 +1009,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Unbraced Length")>
-    Public Property leg_unbraced_length() As Double?
+    <DataMember()> Public Property leg_unbraced_length() As Double?
         Get
             Return Me._leg_unbraced_length
         End Get
@@ -1017,7 +1018,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Diameter")>
-    Public Property rein_diameter() As Double?
+    <DataMember()> Public Property rein_diameter() As Double?
         Get
             Return Me._rein_diameter
         End Get
@@ -1026,7 +1027,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Thickness")>
-    Public Property rein_thickness() As Double?
+    <DataMember()> Public Property rein_thickness() As Double?
         Get
             Return Me._rein_thickness
         End Get
@@ -1035,7 +1036,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Grade")>
-    Public Property rein_grade() As Double?
+    <DataMember()> Public Property rein_grade() As Double?
         Get
             Return Me._rein_grade
         End Get
@@ -1044,7 +1045,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Print Bolt On Connections")>
-    Public Property print_bolt_on_connections() As Boolean?
+    <DataMember()> Public Property print_bolt_on_connections() As Boolean?
         Get
             Return Me._print_bolt_on_connections
         End Get
@@ -1053,7 +1054,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Length")>
-    Public Property leg_length() As Double?
+    <DataMember()> Public Property leg_length() As Double?
         Get
             Return Me._leg_length
         End Get
@@ -1062,7 +1063,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Rein Length")>
-    Public Property rein_length() As Double?
+    <DataMember()> Public Property rein_length() As Double?
         Get
             Return Me._rein_length
         End Get
@@ -1071,7 +1072,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Set Top To Bottom")>
-    Public Property set_top_to_bottom() As Boolean?
+    <DataMember()> Public Property set_top_to_bottom() As Boolean?
         Get
             Return Me._set_top_to_bottom
         End Get
@@ -1080,7 +1081,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Quantity Bot")>
-    Public Property flange_bolt_quantity_bot() As Integer?
+    <DataMember()> Public Property flange_bolt_quantity_bot() As Integer?
         Get
             Return Me._flange_bolt_quantity_bot
         End Get
@@ -1089,7 +1090,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Circle Bot")>
-    Public Property flange_bolt_circle_bot() As Double?
+    <DataMember()> Public Property flange_bolt_circle_bot() As Double?
         Get
             Return Me._flange_bolt_circle_bot
         End Get
@@ -1098,7 +1099,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Orientation Bot")>
-    Public Property flange_bolt_orientation_bot() As Integer?
+    <DataMember()> Public Property flange_bolt_orientation_bot() As Integer?
         Get
             Return Me._flange_bolt_orientation_bot
         End Get
@@ -1107,7 +1108,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Quantity Top")>
-    Public Property flange_bolt_quantity_top() As Integer?
+    <DataMember()> Public Property flange_bolt_quantity_top() As Integer?
         Get
             Return Me._flange_bolt_quantity_top
         End Get
@@ -1116,7 +1117,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Circle Top")>
-    Public Property flange_bolt_circle_top() As Double?
+    <DataMember()> Public Property flange_bolt_circle_top() As Double?
         Get
             Return Me._flange_bolt_circle_top
         End Get
@@ -1125,7 +1126,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Bolt Orientation Top")>
-    Public Property flange_bolt_orientation_top() As Integer?
+    <DataMember()> Public Property flange_bolt_orientation_top() As Integer?
         Get
             Return Me._flange_bolt_orientation_top
         End Get
@@ -1134,7 +1135,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Size Bot")>
-    Public Property threaded_rod_size_bot() As String
+    <DataMember()> Public Property threaded_rod_size_bot() As String
         Get
             Return Me._threaded_rod_size_bot
         End Get
@@ -1143,7 +1144,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Mat Bot")>
-    Public Property threaded_rod_mat_bot() As String
+    <DataMember()> Public Property threaded_rod_mat_bot() As String
         Get
             Return Me._threaded_rod_mat_bot
         End Get
@@ -1152,7 +1153,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Quantity Bot")>
-    Public Property threaded_rod_quantity_bot() As Integer?
+    <DataMember()> Public Property threaded_rod_quantity_bot() As Integer?
         Get
             Return Me._threaded_rod_quantity_bot
         End Get
@@ -1161,7 +1162,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Unbraced Length Bot")>
-    Public Property threaded_rod_unbraced_length_bot() As Double?
+    <DataMember()> Public Property threaded_rod_unbraced_length_bot() As Double?
         Get
             Return Me._threaded_rod_unbraced_length_bot
         End Get
@@ -1170,7 +1171,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Size Top")>
-    Public Property threaded_rod_size_top() As String
+    <DataMember()> Public Property threaded_rod_size_top() As String
         Get
             Return Me._threaded_rod_size_top
         End Get
@@ -1179,7 +1180,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Mat Top")>
-    Public Property threaded_rod_mat_top() As String
+    <DataMember()> Public Property threaded_rod_mat_top() As String
         Get
             Return Me._threaded_rod_mat_top
         End Get
@@ -1188,7 +1189,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Quantity Top")>
-    Public Property threaded_rod_quantity_top() As Integer?
+    <DataMember()> Public Property threaded_rod_quantity_top() As Integer?
         Get
             Return Me._threaded_rod_quantity_top
         End Get
@@ -1197,7 +1198,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Threaded Rod Unbraced Length Top")>
-    Public Property threaded_rod_unbraced_length_top() As Double?
+    <DataMember()> Public Property threaded_rod_unbraced_length_top() As Double?
         Get
             Return Me._threaded_rod_unbraced_length_top
         End Get
@@ -1206,7 +1207,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Height Bot")>
-    Public Property stiffener_height_bot() As Double?
+    <DataMember()> Public Property stiffener_height_bot() As Double?
         Get
             Return Me._stiffener_height_bot
         End Get
@@ -1215,7 +1216,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Length Bot")>
-    Public Property stiffener_length_bot() As Double?
+    <DataMember()> Public Property stiffener_length_bot() As Double?
         Get
             Return Me._stiffener_length_bot
         End Get
@@ -1224,7 +1225,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Fillet Bot")>
-    Public Property stiffener_fillet_bot() As Integer?
+    <DataMember()> Public Property stiffener_fillet_bot() As Integer?
         Get
             Return Me._stiffener_fillet_bot
         End Get
@@ -1233,7 +1234,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Exx Bot")>
-    Public Property stiffener_exx_bot() As Double?
+    <DataMember()> Public Property stiffener_exx_bot() As Double?
         Get
             Return Me._stiffener_exx_bot
         End Get
@@ -1242,7 +1243,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Thickness Bot")>
-    Public Property flange_thickness_bot() As Double?
+    <DataMember()> Public Property flange_thickness_bot() As Double?
         Get
             Return Me._flange_thickness_bot
         End Get
@@ -1251,7 +1252,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Height Top")>
-    Public Property stiffener_height_top() As Double?
+    <DataMember()> Public Property stiffener_height_top() As Double?
         Get
             Return Me._stiffener_height_top
         End Get
@@ -1260,7 +1261,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Length Top")>
-    Public Property stiffener_length_top() As Double?
+    <DataMember()> Public Property stiffener_length_top() As Double?
         Get
             Return Me._stiffener_length_top
         End Get
@@ -1269,7 +1270,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Fillet Top")>
-    Public Property stiffener_fillet_top() As Integer?
+    <DataMember()> Public Property stiffener_fillet_top() As Integer?
         Get
             Return Me._stiffener_fillet_top
         End Get
@@ -1278,7 +1279,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Stiffener Exx Top")>
-    Public Property stiffener_exx_top() As Double?
+    <DataMember()> Public Property stiffener_exx_top() As Double?
         Get
             Return Me._stiffener_exx_top
         End Get
@@ -1287,7 +1288,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Flange Thickness Top")>
-    Public Property flange_thickness_top() As Double?
+    <DataMember()> Public Property flange_thickness_top() As Double?
         Get
             Return Me._flange_thickness_top
         End Get
@@ -1296,7 +1297,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Structure Ind")>
-    Public Property structure_ind() As String
+    <DataMember()> Public Property structure_ind() As String
         Get
             Return Me._structure_ind
         End Get
@@ -1305,7 +1306,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Reinforcement Type")>
-    Public Property reinforcement_type() As String
+    <DataMember()> Public Property reinforcement_type() As String
         Get
             Return Me._reinforcement_type
         End Get
@@ -1314,7 +1315,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Name")>
-    Public Property leg_reinforcement_name() As String
+    <DataMember()> Public Property leg_reinforcement_name() As String
         Get
             Return Me._leg_reinforcement_name
         End Get
@@ -1323,7 +1324,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Local Id")>
-    Public Property local_id() As Integer?
+    <DataMember()> Public Property local_id() As Integer?
         Get
             Return Me._local_id
         End Get
@@ -1332,7 +1333,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Top Elev")>
-    Public Property top_elev() As Double?
+    <DataMember()> Public Property top_elev() As Double?
         Get
             Return Me._top_elev
         End Get
@@ -1341,7 +1342,7 @@ Partial Public Class LegReinforcementDetail
         End Set
     End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Bot Elev")>
-    Public Property bot_elev() As Double?
+    <DataMember()> Public Property bot_elev() As Double?
         Get
             Return Me._bot_elev
         End Get
@@ -1729,7 +1730,7 @@ End Class
 '    'Private _modified_date As DateTime? 'not provided in Excel
 
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Leg Reinforcement Details Id")>
-'    Public Property leg_reinforcement_details_id() As Integer?
+'     <DataMember()> Public Property leg_reinforcement_details_id() As Integer?
 '        Get
 '            Return Me._leg_reinforcement_details_id
 '        End Get
@@ -1738,7 +1739,7 @@ End Class
 '        End Set
 '    End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Local Id")>
-'    Public Property local_id() As Integer?
+'     <DataMember()> Public Property local_id() As Integer?
 '        Get
 '            Return Me._local_id
 '        End Get
@@ -1747,7 +1748,7 @@ End Class
 '        End Set
 '    End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Work Order Seq Num")>
-'    'Public Property work_order_seq_num() As Double?
+'    ' <DataMember()> Public Property work_order_seq_num() As Double?
 '    '    Get
 '    '        Return Me._work_order_seq_num
 '    '    End Get
@@ -1756,7 +1757,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Rating")>
-'    Public Property rating() As Double?
+'     <DataMember()> Public Property rating() As Double?
 '        Get
 '            Return Me._rating
 '        End Get
@@ -1765,7 +1766,7 @@ End Class
 '        End Set
 '    End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Result Lkup")>
-'    Public Property result_lkup() As String
+'     <DataMember()> Public Property result_lkup() As String
 '        Get
 '            Return Me._result_lkup
 '        End Get
@@ -1774,7 +1775,7 @@ End Class
 '        End Set
 '    End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Person Id")>
-'    'Public Property modified_person_id() As Integer?
+'    ' <DataMember()> Public Property modified_person_id() As Integer?
 '    '    Get
 '    '        Return Me._modified_person_id
 '    '    End Get
@@ -1783,7 +1784,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Process Stage")>
-'    'Public Property process_stage() As String
+'    ' <DataMember()> Public Property process_stage() As String
 '    '    Get
 '    '        Return Me._process_stage
 '    '    End Get
@@ -1792,7 +1793,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Date")>
-'    'Public Property modified_date() As DateTime?
+'    ' <DataMember()> Public Property modified_date() As DateTime?
 '    '    Get
 '    '        Return Me._modified_date
 '    '    End Get
@@ -1927,7 +1928,7 @@ End Class
 '    Private _EDSTableName As String
 
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Leg Reinforcement Details Id")>
-'    Public Property leg_reinforcement_details_id() As Integer?
+'     <DataMember()> Public Property leg_reinforcement_details_id() As Integer?
 '        Get
 '            Return Me._leg_reinforcement_details_id
 '        End Get
@@ -1936,7 +1937,7 @@ End Class
 '        End Set
 '    End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Local Id")>
-'    Public Property local_id() As Integer?
+'     <DataMember()> Public Property local_id() As Integer?
 '        Get
 '            Return Me._local_id
 '        End Get
@@ -1945,7 +1946,7 @@ End Class
 '        End Set
 '    End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Work Order Seq Num")>
-'    'Public Property work_order_seq_num() As Double?
+'    ' <DataMember()> Public Property work_order_seq_num() As Double?
 '    '    Get
 '    '        Return Me._work_order_seq_num
 '    '    End Get
@@ -1954,7 +1955,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Rating")>
-'    Public Property rating() As Double?
+'     <DataMember()> Public Property rating() As Double?
 '        Get
 '            Return Me._rating
 '        End Get
@@ -1963,7 +1964,7 @@ End Class
 '        End Set
 '    End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("Result Lkup")>
-'    Public Property result_lkup() As String
+'     <DataMember()> Public Property result_lkup() As String
 '        Get
 '            Return Me._result_lkup
 '        End Get
@@ -1972,7 +1973,7 @@ End Class
 '        End Set
 '    End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Person Id")>
-'    'Public Property modified_person_id() As Integer?
+'    ' <DataMember()> Public Property modified_person_id() As Integer?
 '    '    Get
 '    '        Return Me._modified_person_id
 '    '    End Get
@@ -1981,7 +1982,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Process Stage")>
-'    'Public Property process_stage() As String
+'    ' <DataMember()> Public Property process_stage() As String
 '    '    Get
 '    '        Return Me._process_stage
 '    '    End Get
@@ -1990,7 +1991,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Leg Reinforcement Results"), Description(""), DisplayName("Modified Date")>
-'    'Public Property modified_date() As DateTime?
+'    ' <DataMember()> Public Property modified_date() As DateTime?
 '    '    Get
 '    '        Return Me._modified_date
 '    '    End Get
@@ -1999,7 +2000,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    <Category("Leg Reinforcement Results"), Description(""), DisplayName("EDS Table Name")>
-'    Public Property EDSTableName() As String
+'     <DataMember()> Public Property EDSTableName() As String
 '        Get
 '            Return Me._EDSTableName
 '        End Get
@@ -2008,7 +2009,7 @@ End Class
 '        End Set
 '    End Property
 '    '<Category("Bolt Results"), Description(""), DisplayName("Modified Person Id")>
-'    'Public Property modified_person_id() As Integer?
+'    ' <DataMember()> Public Property modified_person_id() As Integer?
 '    '    Get
 '    '        Return Me._modified_person_id
 '    '    End Get
@@ -2017,7 +2018,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Bolt Results"), Description(""), DisplayName("Process Stage")>
-'    'Public Property process_stage() As String
+'    ' <DataMember()> Public Property process_stage() As String
 '    '    Get
 '    '        Return Me._process_stage
 '    '    End Get
@@ -2026,7 +2027,7 @@ End Class
 '    '    End Set
 '    'End Property
 '    '<Category("Bolt Results"), Description(""), DisplayName("Modified Date")>
-'    'Public Property modified_date() As DateTime?
+'    ' <DataMember()> Public Property modified_date() As DateTime?
 '    '    Get
 '    '        Return Me._modified_date
 '    '    End Get

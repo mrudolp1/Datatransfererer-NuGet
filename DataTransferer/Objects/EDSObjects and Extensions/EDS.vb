@@ -9,14 +9,16 @@ Imports System.Reflection
 Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports Microsoft.Office.Interop
+Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
+<DataContract()>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
     <Category("EDS"), Description(""), DisplayName("ID")>
-    Public Property ID As Integer?
+    <DataMember()> Public Property ID As Integer?
     <Category("EDS"), Description(""), DisplayName("Name")>
     Public MustOverride ReadOnly Property EDSObjectName As String
     <Category("EDS"), Description(""), DisplayName("Full Name")>
@@ -34,21 +36,21 @@ Partial Public MustInherit Class EDSObject
         End Get
     End Property
     <Category("EDS"), Description(""), DisplayName("BU")>
-    Public Property bus_unit As String
+    <DataMember()> Public Property bus_unit As String
     <Category("EDS"), Description(""), DisplayName("Structure ID")>
-    Public Property structure_id As String
+    <DataMember()> Public Property structure_id As String
     <Category("EDS"), Description(""), DisplayName("Work Order")>
-    Public Property work_order_seq_num As String
+    <DataMember()> Public Property work_order_seq_num As String
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property activeDatabase As String
+    <DataMember()> Public Property activeDatabase As String
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property databaseIdentity As WindowsIdentity
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property modified_person_id As Integer?
+    <DataMember()> Public Property modified_person_id As Integer?
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String = "test" 'added "test" since error occured during testing
+    <DataMember()> Public Property process_stage As String = "test" 'added "test" since error occured during testing
 
-    'Public Property differences As List(Of ObjectsComparer.Difference)
+    ' <DataMember()> Public Property differences As List(Of ObjectsComparer.Difference)
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
@@ -111,6 +113,7 @@ Partial Public MustInherit Class EDSObject
 
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
     <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
@@ -220,26 +223,27 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
     Inherits EDSObjectWithQueries
 
     <Category("Tool"), Description("Workbook Path."), DisplayName("Tool Path")>
-    Public Property WorkBookPath As String
+    <DataMember()> Public Property WorkBookPath As String
     <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
     Public MustOverride ReadOnly Property TemplatePath As String
     <Category("Tool"), Description("Template resource."), Browsable(False)>
     Public MustOverride ReadOnly Property Template As Byte()
     <Category("Tool"), Description("Workbook Type."), DisplayName("File Type")>
-    Public Property FileType As DocumentFormat = DocumentFormat.Xlsm
+    <DataMember()> Public Property FileType As DocumentFormat = DocumentFormat.Xlsm
     <Category("Tool"), Description("Data transfer parameters, a list of ranges to import from excel."), DisplayName("Import Ranges")>
     Public MustOverride ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
     <Category("Tool"), Description("Version number of tool."), DisplayName("Version")>
-    Public Property Version As String
+    <DataMember()> Public Property Version As String
     '<Category("Tool"), Description("Title of tool."), DisplayName("Title")>
     'Public Overridable ReadOnly Property Title As String
     <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
-    Public Property Modified As Boolean?
+    <DataMember()> Public Property Modified As Boolean?
 
 #Region "Run Excel Macro"
     ''' <summary>
@@ -391,6 +395,7 @@ Partial Public MustInherit Class EDSExcelObject
 
 End Class
 
+<DataContract()>
 Partial Public Class EDSResult
     Inherits EDSObject
 
@@ -408,7 +413,7 @@ Partial Public Class EDSResult
     'Public Shadows Property Parent As EDSObjectWithQueries
 
     <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Result ID")>
-    Public Property foreign_key() As Integer?
+    <DataMember()> Public Property foreign_key() As Integer?
         Get
             Return Me._foreign_key
         End Get
@@ -417,7 +422,7 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Result Type")>
-    Public Property result_lkup() As String
+    <DataMember()> Public Property result_lkup() As String
         Get
             Return Me._result_lkup
         End Get
@@ -436,7 +441,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result Table Name")>
-    Public Property EDSTableName() As String
+    <DataMember()> Public Property EDSTableName() As String
         Get
             Return Me._EDSTableName
         End Get
@@ -446,7 +451,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result ID Name")>
-    Public Property ForeignKeyName() As String
+    <DataMember()> Public Property ForeignKeyName() As String
         Get
             Return Me._ForeignKeyName
         End Get

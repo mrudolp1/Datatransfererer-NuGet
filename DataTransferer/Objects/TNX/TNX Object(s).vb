@@ -10,8 +10,9 @@ Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 Imports MoreLinq
+Imports System.Runtime.Serialization
 
-
+<DataContract()>
 Partial Public Class tnxModel
     Inherits EDSObjectWithQueries
 
@@ -42,7 +43,7 @@ Partial Public Class tnxModel
     Private _ConsiderGeometryEquality As Boolean = True
 
     <Category("TNX"), Description(""), DisplayName("filePath")>
-    Public Property filePath() As String
+    <DataMember()> Public Property filePath() As String
         Get
             Return Me._filePath
         End Get
@@ -51,7 +52,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("tnxDatabase")>
-    Public Property database() As tnxDatabase
+    <DataMember()> Public Property database() As tnxDatabase
         Get
             Return Me._database
         End Get
@@ -60,7 +61,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Settings")>
-    Public Property settings() As tnxSettings
+    <DataMember()> Public Property settings() As tnxSettings
         Get
             Return Me._settings
         End Get
@@ -69,7 +70,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Solution Settings")>
-    Public Property solutionSettings() As tnxSolutionSettings
+    <DataMember()> Public Property solutionSettings() As tnxSolutionSettings
         Get
             Return Me._solutionSettings
         End Get
@@ -78,7 +79,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("MTO Settings")>
-    Public Property MTOSettings() As tnxMTOSettings
+    <DataMember()> Public Property MTOSettings() As tnxMTOSettings
         Get
             Return Me._MTOSettings
         End Get
@@ -87,7 +88,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Report Settings")>
-    Public Property reportSettings() As tnxReportSettings
+    <DataMember()> Public Property reportSettings() As tnxReportSettings
         Get
             Return Me._reportSettings
         End Get
@@ -96,7 +97,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("CCI Report")>
-    Public Property CCIReport() As tnxCCIReport
+    <DataMember()> Public Property CCIReport() As tnxCCIReport
         Get
             Return Me._CCIReport
         End Get
@@ -105,7 +106,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Code")>
-    Public Property code() As tnxCode
+    <DataMember()> Public Property code() As tnxCode
         Get
             Return Me._code
         End Get
@@ -114,7 +115,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Options")>
-    Public Property options() As tnxOptions
+    <DataMember()> Public Property options() As tnxOptions
         Get
             Return Me._options
         End Get
@@ -123,7 +124,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Geometry")>
-    Public Property geometry() As tnxGeometry
+    <DataMember()> Public Property geometry() As tnxGeometry
         Get
             Return Me._geometry
         End Get
@@ -132,7 +133,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Feed Lines")>
-    Public Property feedLines() As List(Of tnxFeedLine)
+    <DataMember()> Public Property feedLines() As List(Of tnxFeedLine)
         Get
             Return Me._feedLines
         End Get
@@ -141,7 +142,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Discrete Loads")>
-    Public Property discreteLoads() As List(Of tnxDiscreteLoad)
+    <DataMember()> Public Property discreteLoads() As List(Of tnxDiscreteLoad)
         Get
             Return Me._discreteLoads
         End Get
@@ -150,7 +151,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Dishes")>
-    Public Property dishes() As List(Of tnxDish)
+    <DataMember()> Public Property dishes() As List(Of tnxDish)
         Get
             Return Me._dishes
         End Get
@@ -159,7 +160,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("User Forces")>
-    Public Property userForces() As List(Of tnxUserForce)
+    <DataMember()> Public Property userForces() As List(Of tnxUserForce)
         Get
             Return Me._userForces
         End Get
@@ -168,7 +169,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("All the other stuff")>
-    Public Property otherLines() As List(Of String())
+    <DataMember()> Public Property otherLines() As List(Of String())
         Get
             Return Me._otherLines
         End Get
@@ -178,7 +179,7 @@ Partial Public Class tnxModel
     End Property
 
     <Category("Settings"), Description("Consider loading in the equality comparison."), DisplayName("Consider Loading Equality")>
-    Public Property ConsiderLoadingEquality() As Boolean
+    <DataMember()> Public Property ConsiderLoadingEquality() As Boolean
         Get
             Return _ConsiderLoadingEquality
         End Get
@@ -188,13 +189,16 @@ Partial Public Class tnxModel
     End Property
 
     <Category("Settings"), Description("Consider database item and tower sections in the equality comparison. Disable this when determining if the main TNX table needs to be updated."), DisplayName("Consider Geometry Equality")>
-    Public Property ConsiderGeometryEquality() As Boolean
+    <DataMember()> Public Property ConsiderGeometryEquality() As Boolean
         Get
             Return _ConsiderGeometryEquality
         End Get
         Set(value As Boolean)
             _ConsiderGeometryEquality = value
-            Me.geometry.ConsiderSectionEquality = value
+            Try
+                Me.geometry.ConsiderSectionEquality = value
+            Catch
+            End Try
         End Set
     End Property
 

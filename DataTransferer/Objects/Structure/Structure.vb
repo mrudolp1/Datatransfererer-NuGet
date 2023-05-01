@@ -6,28 +6,30 @@ Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
 <Serializable()>
+<DataContract()>
 Partial Public Class EDSStructure
     Inherits EDSObject
 
     Public Overrides ReadOnly Property EDSObjectName As String = "Structure Model"
 
-    Public Property tnx As tnxModel
-    Public Property CCIplates As New List(Of CCIplate)
-    Public Property structureCodeCriteria As SiteCodeCriteria
-    Public Property PierandPads As New List(Of PierAndPad)
-    Public Property Piles As New List(Of Pile)
-    Public Property Poles As New List(Of Pole)
-    Public Property UnitBases As New List(Of UnitBase)
-    Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
-    Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
-    Public Property ReportOptions As ReportOptions
-    Public Property SiteInfo As SiteInfo
-    Public Property NotMe As EDSStructure
-    Public Property WorkingDirectory As String
-    Public Property LegReinforcements As New List(Of LegReinforcement)
-    Public Property CCISeismics As New List(Of CCISeismic)
+     <DataMember()> Public Property tnx As tnxModel
+     <DataMember()> Public Property CCIplates As New List(Of CCIplate)
+     <DataMember()> Public Property structureCodeCriteria As SiteCodeCriteria
+     <DataMember()> Public Property PierandPads As New List(Of PierAndPad)
+     <DataMember()> Public Property Piles As New List(Of Pile)
+     <DataMember()> Public Property Poles As New List(Of Pole)
+     <DataMember()> Public Property UnitBases As New List(Of UnitBase)
+     <DataMember()> Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
+     <DataMember()> Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
+     <DataMember()> Public Property ReportOptions As ReportOptions
+     <DataMember()> Public Property SiteInfo As SiteInfo
+     <DataMember()> Public Property NotMe As EDSStructure
+     <DataMember()> Public Property WorkingDirectory As String
+     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
+     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
 
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure

@@ -3,7 +3,7 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
-
+Imports System.Runtime.Serialization
 Partial Public Class PierAndPad
     Inherits EDSExcelObject
 
@@ -67,7 +67,7 @@ Partial Public Class PierAndPad
     Private _structural_check As Boolean?
 
     <Category("Pier"), Description(""), DisplayName("Pier Shape")>
-    Public Property pier_shape() As String
+     <DataMember()> Public Property pier_shape() As String
         Get
             Return Me._pier_shape
         End Get
@@ -76,7 +76,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Diameter")>
-    Public Property pier_diameter() As Double?
+     <DataMember()> Public Property pier_diameter() As Double?
         Get
             Return Me._pier_diameter
         End Get
@@ -85,7 +85,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Extension Above Grade")>
-    Public Property extension_above_grade() As Double?
+     <DataMember()> Public Property extension_above_grade() As Double?
         Get
             Return Me._extension_above_grade
         End Get
@@ -94,7 +94,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Rebar Size")>
-    Public Property pier_rebar_size() As Integer?
+     <DataMember()> Public Property pier_rebar_size() As Integer?
         Get
             Return Me._pier_rebar_size
         End Get
@@ -103,7 +103,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Tie Size")>
-    Public Property pier_tie_size() As Integer?
+     <DataMember()> Public Property pier_tie_size() As Integer?
         Get
             Return Me._pier_tie_size
         End Get
@@ -112,7 +112,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Tie Quantity")>
-    Public Property pier_tie_quantity() As Integer?
+     <DataMember()> Public Property pier_tie_quantity() As Integer?
         Get
             Return Me._pier_tie_quantity
         End Get
@@ -121,7 +121,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Reinforcement Type")>
-    Public Property pier_reinforcement_type() As String
+     <DataMember()> Public Property pier_reinforcement_type() As String
         Get
             Return Me._pier_reinforcement_type
         End Get
@@ -130,7 +130,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Clear Cover")>
-    Public Property pier_clear_cover() As Double?
+     <DataMember()> Public Property pier_clear_cover() As Double?
         Get
             Return Me._pier_clear_cover
         End Get
@@ -139,7 +139,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Foundation Depth")>
-    Public Property foundation_depth() As Double?
+     <DataMember()> Public Property foundation_depth() As Double?
         Get
             Return Me._foundation_depth
         End Get
@@ -148,7 +148,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Width 1")>
-    Public Property pad_width_1() As Double?
+     <DataMember()> Public Property pad_width_1() As Double?
         Get
             Return Me._pad_width_1
         End Get
@@ -157,7 +157,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Width 2")>
-    Public Property pad_width_2() As Double?
+     <DataMember()> Public Property pad_width_2() As Double?
         Get
             Return Me._pad_width_2
         End Get
@@ -166,7 +166,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Thickness")>
-    Public Property pad_thickness() As Double?
+     <DataMember()> Public Property pad_thickness() As Double?
         Get
             Return Me._pad_thickness
         End Get
@@ -175,7 +175,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Size Top Dir1")>
-    Public Property pad_rebar_size_top_dir1() As Integer?
+     <DataMember()> Public Property pad_rebar_size_top_dir1() As Integer?
         Get
             Return Me._pad_rebar_size_top_dir1
         End Get
@@ -184,7 +184,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Size Bottom Dir1")>
-    Public Property pad_rebar_size_bottom_dir1() As Integer?
+     <DataMember()> Public Property pad_rebar_size_bottom_dir1() As Integer?
         Get
             Return Me._pad_rebar_size_bottom_dir1
         End Get
@@ -193,7 +193,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Size Top Dir2")>
-    Public Property pad_rebar_size_top_dir2() As Integer?
+     <DataMember()> Public Property pad_rebar_size_top_dir2() As Integer?
         Get
             Return Me._pad_rebar_size_top_dir2
         End Get
@@ -202,7 +202,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Size Bottom Dir2")>
-    Public Property pad_rebar_size_bottom_dir2() As Integer?
+     <DataMember()> Public Property pad_rebar_size_bottom_dir2() As Integer?
         Get
             Return Me._pad_rebar_size_bottom_dir2
         End Get
@@ -211,7 +211,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Quantity Top Dir1")>
-    Public Property pad_rebar_quantity_top_dir1() As Integer?
+     <DataMember()> Public Property pad_rebar_quantity_top_dir1() As Integer?
         Get
             Return Me._pad_rebar_quantity_top_dir1
         End Get
@@ -220,7 +220,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Quantity Bottom Dir1")>
-    Public Property pad_rebar_quantity_bottom_dir1() As Integer?
+     <DataMember()> Public Property pad_rebar_quantity_bottom_dir1() As Integer?
         Get
             Return Me._pad_rebar_quantity_bottom_dir1
         End Get
@@ -229,7 +229,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Quantity Top Dir2")>
-    Public Property pad_rebar_quantity_top_dir2() As Integer?
+     <DataMember()> Public Property pad_rebar_quantity_top_dir2() As Integer?
         Get
             Return Me._pad_rebar_quantity_top_dir2
         End Get
@@ -238,7 +238,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Rebar Quantity Bottom Dir2")>
-    Public Property pad_rebar_quantity_bottom_dir2() As Integer?
+     <DataMember()> Public Property pad_rebar_quantity_bottom_dir2() As Integer?
         Get
             Return Me._pad_rebar_quantity_bottom_dir2
         End Get
@@ -247,7 +247,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Pad Clear Cover")>
-    Public Property pad_clear_cover() As Double?
+     <DataMember()> Public Property pad_clear_cover() As Double?
         Get
             Return Me._pad_clear_cover
         End Get
@@ -256,7 +256,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Rebar Grade")>
-    Public Property rebar_grade() As Double?
+     <DataMember()> Public Property rebar_grade() As Double?
         Get
             Return Me._rebar_grade
         End Get
@@ -265,7 +265,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Concrete Compressive Strength")>
-    Public Property concrete_compressive_strength() As Double?
+     <DataMember()> Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
         End Get
@@ -274,7 +274,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Dry Concrete Density")>
-    Public Property dry_concrete_density() As Double?
+     <DataMember()> Public Property dry_concrete_density() As Double?
         Get
             Return Me._dry_concrete_density
         End Get
@@ -283,7 +283,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Total Soil Unit Weight")>
-    Public Property total_soil_unit_weight() As Double?
+     <DataMember()> Public Property total_soil_unit_weight() As Double?
         Get
             Return Me._total_soil_unit_weight
         End Get
@@ -292,7 +292,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Bearing Type")>
-    Public Property bearing_type() As String
+     <DataMember()> Public Property bearing_type() As String
         Get
             Return Me._bearing_type
         End Get
@@ -301,7 +301,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Nominal Bearing Capacity")>
-    Public Property nominal_bearing_capacity() As Double?
+     <DataMember()> Public Property nominal_bearing_capacity() As Double?
         Get
             Return Me._nominal_bearing_capacity
         End Get
@@ -310,7 +310,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Cohesion")>
-    Public Property cohesion() As Double?
+     <DataMember()> Public Property cohesion() As Double?
         Get
             Return Me._cohesion
         End Get
@@ -319,7 +319,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Friction Angle")>
-    Public Property friction_angle() As Double?
+     <DataMember()> Public Property friction_angle() As Double?
         Get
             Return Me._friction_angle
         End Get
@@ -328,7 +328,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Spt Blow Count")>
-    Public Property spt_blow_count() As Integer?
+     <DataMember()> Public Property spt_blow_count() As Integer?
         Get
             Return Me._spt_blow_count
         End Get
@@ -337,7 +337,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Base Friction Factor")>
-    Public Property base_friction_factor() As Double?
+     <DataMember()> Public Property base_friction_factor() As Double?
         Get
             Return Me._base_friction_factor
         End Get
@@ -346,7 +346,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Neglect Depth")>
-    Public Property neglect_depth() As Double?
+     <DataMember()> Public Property neglect_depth() As Double?
         Get
             Return Me._neglect_depth
         End Get
@@ -355,7 +355,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Bearing Distribution Type")>
-    Public Property bearing_distribution_type() As Boolean?
+     <DataMember()> Public Property bearing_distribution_type() As Boolean?
         Get
             Return Me._bearing_distribution_type
         End Get
@@ -364,7 +364,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Soil"), Description(""), DisplayName("Groundwater Depth")>
-    Public Property groundwater_depth() As Double?
+     <DataMember()> Public Property groundwater_depth() As Double?
         Get
             Return Me._groundwater_depth
         End Get
@@ -373,7 +373,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Top And Bottom Rebar Different")>
-    Public Property top_and_bottom_rebar_different() As Boolean?
+     <DataMember()> Public Property top_and_bottom_rebar_different() As Boolean?
         Get
             Return Me._top_and_bottom_rebar_different
         End Get
@@ -382,7 +382,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Block Foundation")>
-    Public Property block_foundation() As Boolean?
+     <DataMember()> Public Property block_foundation() As Boolean?
         Get
             Return Me._block_foundation
         End Get
@@ -391,7 +391,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pad"), Description(""), DisplayName("Rectangular Foundation")>
-    Public Property rectangular_foundation() As Boolean?
+     <DataMember()> Public Property rectangular_foundation() As Boolean?
         Get
             Return Me._rectangular_foundation
         End Get
@@ -400,7 +400,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Base Plate Distance Above Foundation")>
-    Public Property base_plate_distance_above_foundation() As Double?
+     <DataMember()> Public Property base_plate_distance_above_foundation() As Double?
         Get
             Return Me._base_plate_distance_above_foundation
         End Get
@@ -409,7 +409,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Bolt Circle Bearing Plate Width")>
-    Public Property bolt_circle_bearing_plate_width() As Double?
+     <DataMember()> Public Property bolt_circle_bearing_plate_width() As Double?
         Get
             Return Me._bolt_circle_bearing_plate_width
         End Get
@@ -418,7 +418,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier"), Description(""), DisplayName("Pier Rebar Quantity")>
-    Public Property pier_rebar_quantity() As Integer?
+     <DataMember()> Public Property pier_rebar_quantity() As Integer?
         Get
             Return Me._pier_rebar_quantity
         End Get
@@ -427,7 +427,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Basic Soil Check")>
-    Public Property basic_soil_check() As Boolean?
+     <DataMember()> Public Property basic_soil_check() As Boolean?
         Get
             Return Me._basic_soil_check
         End Get
@@ -436,7 +436,7 @@ Partial Public Class PierAndPad
         End Set
     End Property
     <Category("Pier and Pad "), Description(""), DisplayName("Structural Check")>
-    Public Property structural_check() As Boolean?
+     <DataMember()> Public Property structural_check() As Boolean?
         Get
             Return Me._structural_check
         End Get

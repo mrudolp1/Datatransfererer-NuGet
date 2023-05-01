@@ -5,7 +5,7 @@ Imports System.ComponentModel
 Imports System.Data
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
-
+Imports System.Runtime.Serialization
 Partial Public Class AnchorBlockFoundation
     Inherits EDSExcelObject
 
@@ -13,10 +13,10 @@ Partial Public Class AnchorBlockFoundation
     Private _file_ver As String
     Private _modified As Boolean?
 
-    Public Property AnchorBlocks As New List(Of AnchorBlock)
+     <DataMember()> Public Property AnchorBlocks As New List(Of AnchorBlock)
 
     <Category("Guy Anchor Block Tool"), Description(""), DisplayName("File Ver")>
-    Public Property file_ver() As String
+     <DataMember()> Public Property file_ver() As String
         Get
             Return Me._file_ver
         End Get
@@ -25,7 +25,7 @@ Partial Public Class AnchorBlockFoundation
         End Set
     End Property
     <Category("Guy Anchor Block Tool"), Description(""), DisplayName("Modified")>
-    Public Property modified() As Boolean?
+     <DataMember()> Public Property modified() As Boolean?
         Get
             Return Me._modified
         End Get
@@ -672,8 +672,8 @@ End Class
 Partial Public Class AnchorBlock
     Inherits EDSObjectWithQueries
 
-    Public Property AnchorProfile As AnchorBlockProfile
-    Public Property SoilProfile As AnchorBlockSoilProfile
+     <DataMember()> Public Property AnchorProfile As AnchorBlockProfile
+     <DataMember()> Public Property SoilProfile As AnchorBlockSoilProfile
 
 #Region "Inheritted"
     '''Must override these inherited properties
@@ -763,7 +763,7 @@ Partial Public Class AnchorBlock
     Private _local_soil_profile_id As Integer?
     Private _local_anchor_profile_id As Integer?
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Profile Id")>
-    Public Property anchor_profile_id() As Integer?
+     <DataMember()> Public Property anchor_profile_id() As Integer?
         Get
             Return Me._anchor_profile_id
         End Get
@@ -772,7 +772,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Block Tool Id")>
-    Public Property anchor_block_tool_id() As Integer?
+     <DataMember()> Public Property anchor_block_tool_id() As Integer?
         Get
             Return Me._anchor_block_tool_id
         End Get
@@ -781,7 +781,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Soil Profile Id")>
-    Public Property soil_profile_id() As Integer?
+     <DataMember()> Public Property soil_profile_id() As Integer?
         Get
             Return Me._soil_profile_id
         End Get
@@ -790,7 +790,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Id")>
-    Public Property local_anchor_id() As Integer?
+     <DataMember()> Public Property local_anchor_id() As Integer?
         Get
             Return Me._local_anchor_id
         End Get
@@ -799,7 +799,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     '<Category("Guy Anchor Blocks"), Description(""), DisplayName("Reaction Position")>
-    'Public Property reaction_position() As Integer?
+    ' <DataMember()> Public Property reaction_position() As Integer?
     '    Get
     '        Return Me._reaction_position
     '    End Get
@@ -808,7 +808,7 @@ Partial Public Class AnchorBlock
     '    End Set
     'End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Reaction Location")>
-    Public Property reaction_location() As String
+     <DataMember()> Public Property reaction_location() As String
         Get
             Return Me._reaction_location
         End Get
@@ -817,7 +817,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Soil Profile Id")>
-    Public Property local_soil_profile_id() As Integer?
+     <DataMember()> Public Property local_soil_profile_id() As Integer?
         Get
             Return Me._local_soil_profile_id
         End Get
@@ -826,7 +826,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Profile Id")>
-    Public Property local_anchor_profile_id() As Integer?
+     <DataMember()> Public Property local_anchor_profile_id() As Integer?
         Get
             Return Me._local_anchor_profile_id
         End Get
@@ -1068,7 +1068,7 @@ Partial Public Class AnchorBlockProfile
     Private _local_anchor_profile_id As Integer?
 
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Depth")>
-    Public Property anchor_depth() As Double?
+     <DataMember()> Public Property anchor_depth() As Double?
         Get
             Return Me._anchor_depth
         End Get
@@ -1077,7 +1077,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Width")>
-    Public Property anchor_width() As Double?
+     <DataMember()> Public Property anchor_width() As Double?
         Get
             Return Me._anchor_width
         End Get
@@ -1086,7 +1086,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Thickness")>
-    Public Property anchor_thickness() As Double?
+     <DataMember()> Public Property anchor_thickness() As Double?
         Get
             Return Me._anchor_thickness
         End Get
@@ -1095,7 +1095,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Length")>
-    Public Property anchor_length() As Double?
+     <DataMember()> Public Property anchor_length() As Double?
         Get
             Return Me._anchor_length
         End Get
@@ -1104,7 +1104,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Toe Width")>
-    Public Property anchor_toe_width() As Double?
+     <DataMember()> Public Property anchor_toe_width() As Double?
         Get
             Return Me._anchor_toe_width
         End Get
@@ -1113,7 +1113,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Top Rebar Size")>
-    Public Property anchor_top_rebar_size() As Integer?
+     <DataMember()> Public Property anchor_top_rebar_size() As Integer?
         Get
             Return Me._anchor_top_rebar_size
         End Get
@@ -1122,7 +1122,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Top Rebar Quantity")>
-    Public Property anchor_top_rebar_quantity() As Integer?
+     <DataMember()> Public Property anchor_top_rebar_quantity() As Integer?
         Get
             Return Me._anchor_top_rebar_quantity
         End Get
@@ -1131,7 +1131,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Size")>
-    Public Property anchor_front_rebar_size() As Integer?
+     <DataMember()> Public Property anchor_front_rebar_size() As Integer?
         Get
             Return Me._anchor_front_rebar_size
         End Get
@@ -1140,7 +1140,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Quantity")>
-    Public Property anchor_front_rebar_quantity() As Integer?
+     <DataMember()> Public Property anchor_front_rebar_quantity() As Integer?
         Get
             Return Me._anchor_front_rebar_quantity
         End Get
@@ -1149,7 +1149,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Stirrup Size")>
-    Public Property anchor_stirrup_size() As Integer?
+     <DataMember()> Public Property anchor_stirrup_size() As Integer?
         Get
             Return Me._anchor_stirrup_size
         End Get
@@ -1158,7 +1158,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Diameter")>
-    Public Property anchor_shaft_diameter() As Double?
+     <DataMember()> Public Property anchor_shaft_diameter() As Double?
         Get
             Return Me._anchor_shaft_diameter
         End Get
@@ -1167,7 +1167,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Quantity")>
-    Public Property anchor_shaft_quantity() As Integer?
+     <DataMember()> Public Property anchor_shaft_quantity() As Integer?
         Get
             Return Me._anchor_shaft_quantity
         End Get
@@ -1176,7 +1176,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Area Override")>
-    Public Property anchor_shaft_area_override() As Double?
+     <DataMember()> Public Property anchor_shaft_area_override() As Double?
         Get
             Return Me._anchor_shaft_area_override
         End Get
@@ -1185,7 +1185,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Shear Leg Factor")>
-    Public Property anchor_shaft_shear_leg_factor() As Double?
+     <DataMember()> Public Property anchor_shaft_shear_leg_factor() As Double?
         Get
             Return Me._anchor_shaft_shear_leg_factor
         End Get
@@ -1194,7 +1194,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Section")>
-    Public Property anchor_shaft_section() As String
+     <DataMember()> Public Property anchor_shaft_section() As String
         Get
             Return Me._anchor_shaft_section
         End Get
@@ -1203,7 +1203,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Rebar Grade")>
-    Public Property anchor_rebar_grade() As Double?
+     <DataMember()> Public Property anchor_rebar_grade() As Double?
         Get
             Return Me._anchor_rebar_grade
         End Get
@@ -1212,7 +1212,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Concrete Compressive Strength")>
-    Public Property concrete_compressive_strength() As Double?
+     <DataMember()> Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
         End Get
@@ -1221,7 +1221,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Clear Cover")>
-    Public Property clear_cover() As Double?
+     <DataMember()> Public Property clear_cover() As Double?
         Get
             Return Me._clear_cover
         End Get
@@ -1230,7 +1230,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Yield Strength")>
-    Public Property anchor_shaft_yield_strength() As Double?
+     <DataMember()> Public Property anchor_shaft_yield_strength() As Double?
         Get
             Return Me._anchor_shaft_yield_strength
         End Get
@@ -1239,7 +1239,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Ultimate Strength")>
-    Public Property anchor_shaft_ultimate_strength() As Double?
+     <DataMember()> Public Property anchor_shaft_ultimate_strength() As Double?
         Get
             Return Me._anchor_shaft_ultimate_strength
         End Get
@@ -1248,7 +1248,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Rebar Known")>
-    Public Property rebar_known() As Boolean?
+     <DataMember()> Public Property rebar_known() As Boolean?
         Get
             Return Me._rebar_known
         End Get
@@ -1257,7 +1257,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Known")>
-    Public Property anchor_shaft_known() As Boolean?
+     <DataMember()> Public Property anchor_shaft_known() As Boolean?
         Get
             Return Me._anchor_shaft_known
         End Get
@@ -1266,7 +1266,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Basic Soil Check")>
-    Public Property basic_soil_check() As Boolean?
+     <DataMember()> Public Property basic_soil_check() As Boolean?
         Get
             Return Me._basic_soil_check
         End Get
@@ -1275,7 +1275,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Structural Check")>
-    Public Property structural_check() As Boolean?
+     <DataMember()> Public Property structural_check() As Boolean?
         Get
             Return Me._structural_check
         End Get
@@ -1284,7 +1284,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("AnchorBlockProfile"), Description(""), DisplayName("Local Anchor Profile Id")>
-    Public Property local_anchor_profile_id() As Integer?
+     <DataMember()> Public Property local_anchor_profile_id() As Integer?
         Get
             Return Me._local_anchor_profile_id
         End Get
@@ -1476,8 +1476,8 @@ End Class
 Partial Public Class AnchorBlockSoilProfile
     Inherits SoilProfile
 
-    Public Property local_soil_profile_id As Integer?
-    Public Property ABSoilLayers As New List(Of AnchorBlockSoilLayer)
+     <DataMember()> Public Property local_soil_profile_id As Integer?
+     <DataMember()> Public Property ABSoilLayers As New List(Of AnchorBlockSoilLayer)
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
@@ -1548,8 +1548,8 @@ End Class
 Partial Public Class AnchorBlockSoilLayer
     Inherits SoilLayer
 
-    Public Property local_soil_profile_id As Integer?
-    Public Property local_soil_layer_id As Integer?
+     <DataMember()> Public Property local_soil_profile_id As Integer?
+     <DataMember()> Public Property local_soil_layer_id As Integer?
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
