@@ -1,15 +1,15 @@
 ﻿Imports System.ComponentModel
-Imports System.Security.Principal
-Imports DevExpress.Spreadsheet
-Imports System.IO
-Imports DevExpress.DataAccess.Excel
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class SiteCodeCriteria
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Site Code Criteria"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Site Code Criteria"
+        End Get
+    End Property
 
 #Region "Define"
 

@@ -1,20 +1,35 @@
 ﻿Option Strict On
 
 Imports System.ComponentModel
-Imports System.Data
 Imports System.Runtime.Serialization
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
 
+<DataContractAttribute()>
 Partial Public Class LegReinforcement
     Inherits EDSExcelObject
 
 #Region "Inheritted"
     '''Must override these inherited properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Leg Reinforcement"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement"
-    Public Overrides ReadOnly Property TemplatePath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Leg Reinforcement Tool.xlsm")
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Leg Reinforcement"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.memb_leg_reinforcement"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property TemplatePath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates", "Leg Reinforcement Tool.xlsm")
+        End Get
+    End Property
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool
+        End Get
+    End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
@@ -756,13 +771,26 @@ Partial Public Class LegReinforcement
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class LegReinforcementDetail
     Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Leg Reinforcement Details"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.memb_leg_reinforcement_details"
-    Public Overrides ReadOnly Property EDSTableDepth As Integer = 1 'base 0 so this is first sub level
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Leg Reinforcement Details"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.memb_leg_reinforcement_details"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableDepth As Integer
+        Get
+            Return 1 'base 0 so this is first sub level
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
 

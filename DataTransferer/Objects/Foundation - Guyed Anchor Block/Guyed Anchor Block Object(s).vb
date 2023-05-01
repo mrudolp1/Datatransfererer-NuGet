@@ -2,10 +2,10 @@
 Option Compare Binary
 
 Imports System.ComponentModel
-Imports System.Data
 Imports DevExpress.Spreadsheet
-'Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
 Partial Public Class AnchorBlockFoundation
     Inherits EDSExcelObject
 
@@ -120,7 +120,11 @@ Partial Public Class AnchorBlockFoundation
         End Get
     End Property
 
-    Public Overrides ReadOnly Property Template As Byte() = CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation
+    Public Overrides ReadOnly Property Template As Byte()
+        Get
+            Return CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation
+        End Get
+    End Property
 
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
@@ -669,6 +673,7 @@ Partial Public Class AnchorBlockFoundation
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class AnchorBlock
     Inherits EDSObjectWithQueries
 
@@ -990,6 +995,7 @@ Partial Public Class AnchorBlock
 #End Region
 End Class
 
+<DataContractAttribute()>
 Partial Public Class AnchorBlockProfile
     Inherits EDSObjectWithQueries
 
@@ -1473,6 +1479,7 @@ Partial Public Class AnchorBlockProfile
 
 End Class
 
+'<DataContractAttribute()>
 Partial Public Class AnchorBlockSoilProfile
     Inherits SoilProfile
 
@@ -1484,12 +1491,6 @@ Partial Public Class AnchorBlockSoilProfile
             Return "Soil Profiles"
         End Get
     End Property
-
-    'Public Overrides ReadOnly Property EDSTableName As String
-    '    Get
-    '        Return "fnd.soil_profile"
-    '    End Get
-    'End Property
 
     Public Sub New()
 
@@ -1545,6 +1546,7 @@ Partial Public Class AnchorBlockSoilProfile
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class AnchorBlockSoilLayer
     Inherits SoilLayer
 
@@ -1574,6 +1576,7 @@ Partial Public Class AnchorBlockSoilLayer
 
 End Class
 
+<DataContractAttribute()>
 Partial Public Class AnchorBlockResult
     Inherits EDSResult
 

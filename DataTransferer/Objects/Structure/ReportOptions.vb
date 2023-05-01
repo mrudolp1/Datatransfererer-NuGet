@@ -1,23 +1,29 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
 Imports System.IO
-'Imports Microsoft.Data.SqlClient
 Imports System.Runtime.Serialization
-Imports System.Security.Principal
 
+<DataContractAttribute()>
 Public Class ReportOptions
     Inherits EDSObjectWithQueries
 
 #Region "Properties"
-    
+
     'Required overriden Properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
-    Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Report Options"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "report.report_options"
+        End Get
+    End Property
 
     'Properties: Store in SQL report.report_options table (PK = WO)
-     <DataMember()> Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
-
-     <DataMember()> Public Property ReportType As String
+    <DataMember()> Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+    <DataMember()> Public Property ReportType As String
      <DataMember()> Public Property ConfigurationType As String
      <DataMember()> Public Property LC As String
      <DataMember()> Public Property LCSubtype As String
@@ -70,25 +76,25 @@ Public Class ReportOptions
      <DataMember()> Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
     'Equipment (Tables 1,2,3)
-    Public ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
-    Public ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
-    Public OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
+    <DataMember()> Public Property ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
+    <DataMember()> Public Property ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
+    <DataMember()> Public Property OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
 
     'Documents (for Table 4)
-    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
+    <DataMember()> Public Property TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
 
     'Temporary place to put LMP data, to eventually be merged with the Equipment Tables in the Report Class Library...
-    Public temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
+    <DataMember()> Public Property temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
 
     'File management
-    Public RootDir As DirectoryInfo
+    <DataMember()> Public Property RootDir As DirectoryInfo
 
     'Files / Appendixes
-    Public Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+    <DataMember()> Public Property Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
-     <DataMember()> Public Property IsFromDB As Boolean
+    <DataMember()> Public Property IsFromDB As Boolean
      <DataMember()> Public Property IsFromDefault As Boolean
 
 #End Region
@@ -1530,6 +1536,7 @@ Public Class FilepathWithPriority
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class TableDocument
      <DataMember()> Public Property Enabled As Boolean
 
@@ -1563,6 +1570,7 @@ Public Class TableDocument
     End Sub
 End Class
 
+<DataContractAttribute()>
 Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Mounting Level")>
      <DataMember()> Public Property mounting_level As String
@@ -1642,6 +1650,7 @@ Public Class Equipment
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class FeedLineInformation
 
      <DataMember()> Public Property enabled As Boolean

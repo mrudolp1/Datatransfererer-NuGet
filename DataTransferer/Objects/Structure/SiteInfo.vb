@@ -1,7 +1,7 @@
-﻿Imports Microsoft.VisualBasic
-Imports System.Runtime.Serialization
+﻿Imports System.Runtime.Serialization
 
 'All SiteInfo information comes from Oracle
+<DataContractAttribute()>
 Public Class SiteInfo
 
 #Region "Constructors"
