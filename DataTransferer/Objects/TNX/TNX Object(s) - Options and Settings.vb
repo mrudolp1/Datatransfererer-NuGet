@@ -2,11 +2,6 @@
 Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary Text comparison instead of Text Comparison
 
 Imports System.ComponentModel
-Imports System.Data
-Imports System.IO
-Imports System.Security.Principal
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
 Imports System.Runtime.Serialization
 
 #Region "Code"
@@ -14,7 +9,11 @@ Imports System.Runtime.Serialization
 Partial Public Class tnxCode
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Code"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Code"
+        End Get
+    End Property
 
 #Region "Define"
     Private _design As New tnxDesign()
@@ -116,7 +115,11 @@ End Class
 Partial Public Class tnxDesign
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Design"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Design"
+        End Get
+    End Property
 
 #Region "Define"
     Private _DesignCode As String
@@ -295,7 +298,11 @@ End Class
 Partial Public Class tnxIce
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Ice"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Ice"
+        End Get
+    End Property
 
 #Region "Define"
     Private _IceThickness As Double?
@@ -385,7 +392,11 @@ End Class
 Partial Public Class tnxThermal
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Code"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Code"
+        End Get
+    End Property
 
 #Region "Define"
     Private _TempDrop As Double?
@@ -422,7 +433,11 @@ End Class
 Partial Public Class tnxWind
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Wind"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Wind"
+        End Get
+    End Property
 
 #Region "Define"
     Private _WindSpeed As Double?
@@ -874,7 +889,11 @@ End Class
 Partial Public Class tnxMisclCode
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Miscl"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Miscl"
+        End Get
+    End Property
 
 #Region "Define"
     Private _GroutFc As Double?
@@ -930,7 +949,11 @@ End Class
 Partial Public Class tnxSeismic
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Seismic"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Seismic"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1002,7 +1025,11 @@ End Class
 Partial Public Class tnxOptions
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Options"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Options"
+        End Get
+    End Property
 
 #Region "Define"
     Private _UseClearSpans As Boolean?
@@ -1434,7 +1461,11 @@ End Class
 Partial Public Class tnxFoundationStiffness
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Foundation Stiffness"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Foundation Stiffness"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1505,7 +1536,11 @@ End Class
 Partial Public Class tnxDefaultGirtOffsets
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Default Girt Offsets"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Default Girt Offsets"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1563,7 +1598,11 @@ End Class
 Partial Public Class tnxCantileverPoles
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Cantilever Poles"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Cantilever Poles"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1676,7 +1715,11 @@ End Class
 Partial Public Class tnxWindDirections
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Wind Directions"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Wind Directions"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2253,7 +2296,11 @@ End Class
 Partial Public Class tnxMisclOptions
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Miscl"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Miscl"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2261,7 +2308,7 @@ Partial Public Class tnxMisclOptions
     Private _RadiusSampleDist As Double?
 
     <Category("TNX Miscl Options"), Description("Tension Only Take-Up"), DisplayName("Hog Rod Takeup")>
-     <DataMember()> Public Property HogRodTakeup() As Double?
+    <DataMember()> Public Property HogRodTakeup() As Double?
         Get
             Return Me._HogRodTakeup
         End Get
@@ -2270,7 +2317,7 @@ Partial Public Class tnxMisclOptions
         End Set
     End Property
     <Category("TNX Miscl Options"), Description("Sampling Distance"), DisplayName("Radius Sample Dist")>
-     <DataMember()> Public Property RadiusSampleDist() As Double?
+    <DataMember()> Public Property RadiusSampleDist() As Double?
         Get
             Return Me._RadiusSampleDist
         End Get
@@ -2295,9 +2342,6 @@ Partial Public Class tnxMisclOptions
         Return Equals
     End Function
 End Class
-
-
-
 #End Region
 
 #Region "Settings"
@@ -2305,7 +2349,11 @@ End Class
 Partial Public Class tnxSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Settings"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Settings"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2316,7 +2364,7 @@ Partial Public Class tnxSettings
     Private _userInfo As New tnxUserInfo()
 
     <Category("TNX Setings"), Description(""), DisplayName("US Units")>
-     <DataMember()> Public Property USUnits() As tnxUnits
+    <DataMember()> Public Property USUnits() As tnxUnits
         Get
             Return Me._USUnits
         End Get
@@ -2325,7 +2373,7 @@ Partial Public Class tnxSettings
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("Project Info")>
-     <DataMember()> Public Property projectInfo() As tnxProjectInfo
+    <DataMember()> Public Property projectInfo() As tnxProjectInfo
         Get
             Return Me._projectInfo
         End Get
@@ -2334,7 +2382,7 @@ Partial Public Class tnxSettings
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("User Info")>
-     <DataMember()> Public Property userInfo() As tnxUserInfo
+    <DataMember()> Public Property userInfo() As tnxUserInfo
         Get
             Return Me._userInfo
         End Get
@@ -2373,7 +2421,11 @@ End Class
 Partial Public Class tnxSolutionSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Solution"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Solution"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2472,7 +2524,11 @@ End Class
 Partial Public Class tnxReportSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Report"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Report"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2780,7 +2836,11 @@ End Class
 Partial Public Class tnxMTOSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "MTO"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "MTO"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2948,7 +3008,11 @@ End Class
 Partial Public Class tnxProjectInfo
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Project Info"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Project Info"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -3084,7 +3148,11 @@ End Class
 Partial Public Class tnxUserInfo
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "User Info"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "User Info"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -3219,7 +3287,7 @@ Partial Public Class tnxUnits
     Private _Spacing As New tnxSpacingUnit()
 
     <Category("TNX Units"), Description(""), DisplayName("Length")>
-     <DataMember()> Public Property Length() As tnxLengthUnit
+    <DataMember()> Public Property Length() As tnxLengthUnit
         Get
             Return Me._Length
         End Get
@@ -3228,7 +3296,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Coordinate")>
-     <DataMember()> Public Property Coordinate() As tnxCoordinateUnit
+    <DataMember()> Public Property Coordinate() As tnxCoordinateUnit
         Get
             Return Me._Coordinate
         End Get
@@ -3237,7 +3305,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Force")>
-     <DataMember()> Public Property Force() As tnxForceUnit
+    <DataMember()> Public Property Force() As tnxForceUnit
         Get
             Return Me._Force
         End Get
@@ -3246,7 +3314,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Load")>
-     <DataMember()> Public Property Load() As tnxLoadUnit
+    <DataMember()> Public Property Load() As tnxLoadUnit
         Get
             Return Me._Load
         End Get
@@ -3255,7 +3323,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Moment")>
-     <DataMember()> Public Property Moment() As tnxMomentUnit
+    <DataMember()> Public Property Moment() As tnxMomentUnit
         Get
             Return Me._Moment
         End Get
@@ -3264,7 +3332,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Properties")>
-     <DataMember()> Public Property Properties() As tnxPropertiesUnit
+    <DataMember()> Public Property Properties() As tnxPropertiesUnit
         Get
             Return Me._Properties
         End Get
@@ -3273,7 +3341,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Pressure")>
-     <DataMember()> Public Property Pressure() As tnxPressureUnit
+    <DataMember()> Public Property Pressure() As tnxPressureUnit
         Get
             Return Me._Pressure
         End Get
@@ -3282,7 +3350,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Velocity")>
-     <DataMember()> Public Property Velocity() As tnxVelocityUnit
+    <DataMember()> Public Property Velocity() As tnxVelocityUnit
         Get
             Return Me._Velocity
         End Get
@@ -3291,7 +3359,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Displacement")>
-     <DataMember()> Public Property Displacement() As tnxDisplacementUnit
+    <DataMember()> Public Property Displacement() As tnxDisplacementUnit
         Get
             Return Me._Displacement
         End Get
@@ -3300,7 +3368,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Mass")>
-     <DataMember()> Public Property Mass() As tnxMassUnit
+    <DataMember()> Public Property Mass() As tnxMassUnit
         Get
             Return Me._Mass
         End Get
@@ -3309,7 +3377,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Acceleration")>
-     <DataMember()> Public Property Acceleration() As tnxAccelerationUnit
+    <DataMember()> Public Property Acceleration() As tnxAccelerationUnit
         Get
             Return Me._Acceleration
         End Get
@@ -3318,7 +3386,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Stress")>
-     <DataMember()> Public Property Stress() As tnxStressUnit
+    <DataMember()> Public Property Stress() As tnxStressUnit
         Get
             Return Me._Stress
         End Get
@@ -3327,7 +3395,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Density")>
-     <DataMember()> Public Property Density() As tnxDensityUnit
+    <DataMember()> Public Property Density() As tnxDensityUnit
         Get
             Return Me._Density
         End Get
@@ -3336,7 +3404,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Unitwt")>
-     <DataMember()> Public Property UnitWt() As tnxUnitWTUnit
+    <DataMember()> Public Property UnitWt() As tnxUnitWTUnit
         Get
             Return Me._UnitWt
         End Get
@@ -3345,7 +3413,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Strength")>
-     <DataMember()> Public Property Strength() As tnxStrengthUnit
+    <DataMember()> Public Property Strength() As tnxStrengthUnit
         Get
             Return Me._Strength
         End Get
@@ -3354,7 +3422,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Modulus")>
-     <DataMember()> Public Property Modulus() As tnxModulusUnit
+    <DataMember()> Public Property Modulus() As tnxModulusUnit
         Get
             Return Me._Modulus
         End Get
@@ -3363,7 +3431,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Temperature")>
-     <DataMember()> Public Property Temperature() As tnxTempUnit
+    <DataMember()> Public Property Temperature() As tnxTempUnit
         Get
             Return Me._Temperature
         End Get
@@ -3372,7 +3440,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Printer")>
-     <DataMember()> Public Property Printer() As tnxPrinterUnit
+    <DataMember()> Public Property Printer() As tnxPrinterUnit
         Get
             Return Me._Printer
         End Get
@@ -3381,7 +3449,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Rotation")>
-     <DataMember()> Public Property Rotation() As tnxRotationUnit
+    <DataMember()> Public Property Rotation() As tnxRotationUnit
         Get
             Return Me._Rotation
         End Get
@@ -3390,7 +3458,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Spacing")>
-     <DataMember()> Public Property Spacing() As tnxSpacingUnit
+    <DataMember()> Public Property Spacing() As tnxSpacingUnit
         Get
             Return Me._Spacing
         End Get
@@ -3439,7 +3507,6 @@ Partial Public Class tnxUnits
     End Function
 
 End Class
-
 Partial Public Class tnxUnitProperty
     'Variables need to be public for inheritance
     Public _value As String
@@ -3586,7 +3653,6 @@ Partial Public Class tnxLengthUnit
     End Sub
 
 End Class
-
 Partial Public Class tnxCoordinateUnit
     Inherits tnxLengthUnit
     Public Sub New()
@@ -3597,7 +3663,6 @@ Partial Public Class tnxCoordinateUnit
 
     End Sub
 End Class
-
 Partial Public Class tnxForceUnit
     Inherits tnxUnitProperty
 
@@ -4116,7 +4181,11 @@ End Class
 Partial Public Class tnxCCIReport
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCI Report"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "CCI Report"
+        End Get
+    End Property
 #Region "Define"
     Private _sReportProjectNumber As String
     Private _sReportJobType As String

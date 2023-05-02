@@ -122,7 +122,11 @@ Partial Public Class tnxDatabase
     Inherits EDSObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"
@@ -216,9 +220,21 @@ Partial Public Class tnxMember
     Inherits tnxDatabaseObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Member"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.members"
-    Public Overrides ReadOnly Property EDSXrefTableName As String = "tnx.members_xref"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database Member"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.members"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSXrefTableName As String
+        Get
+            Return "tnx.members_xref"
+        End Get
+    End Property
 
     Private _Insert As String
     Private _Delete As String
@@ -357,9 +373,21 @@ Partial Public Class tnxMaterial
     Inherits tnxDatabaseObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Material"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.materials"
-    Public Overrides ReadOnly Property EDSXrefTableName As String = "tnx.materials_xref"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database Material"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.materials"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSXrefTableName As String
+        Get
+            Return "tnx.materials_xref"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         Return Me.SQLInsert(Nothing)
@@ -506,7 +534,11 @@ End Class
 Partial Public Class tnxGeometry
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Geometry"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Geometry"
+        End Get
+    End Property
 
 #Region "Define"
     Private _TowerType As String
@@ -842,7 +874,7 @@ Partial Public Class tnxGeometry
 
 End Class
 
-
+<DataContract()>
 Public Class tnxResult
     Inherits EDSResult
 
@@ -932,13 +964,17 @@ Public Class tnxResult
 
 End Class
 
-<DataContractAttribute()>
+<DataContract()>
 Partial Public MustInherit Class tnxGeometryRec
     Inherits EDSObjectWithQueries
     Implements IComparable(Of tnxGeometryRec)
     'Use this type to allow sorting by Record instead of ID and provide a custom version of EDSListQueryBuilder for tnx geometry records
     <DataMember()> Public Property Rec As Integer?
-    Public Overrides ReadOnly Property EDSTableDepth As Integer = 1
+    Public Overrides ReadOnly Property EDSTableDepth As Integer
+        Get
+            Return 1
+        End Get
+    End Property
     'This cannot override the Results list from the EDSObjectWithQueries because it is a different type, instead we can shadow
     <DataMember()> Public Property TNXResults As New List(Of tnxResult)
 
@@ -970,8 +1006,16 @@ Partial Public Class tnxAntennaRecord
     'upper structure
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Upper Structure Section " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.upper_structure_sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Upper Structure Section " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.upper_structure_sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
@@ -5083,8 +5127,16 @@ Partial Public Class tnxTowerRecord
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Base Structure Section " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.base_structure_sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Base Structure Section " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.base_structure_sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
@@ -10094,8 +10146,16 @@ Partial Public Class tnxGuyRecord
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.guys"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Guy Level " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.guys"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)

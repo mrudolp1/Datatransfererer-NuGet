@@ -2,11 +2,6 @@
 Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary Text comparison instead of Text Comparison
 
 Imports System.ComponentModel
-Imports System.Data
-Imports System.IO
-Imports System.Security.Principal
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
 Imports System.Runtime.Serialization
 
 <DataContract()>
@@ -15,7 +10,11 @@ Partial Public Class tnxFeedLine
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Feed Line"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Feed Line"
+        End Get
+    End Property
 
 #End Region
 
@@ -476,12 +475,17 @@ Partial Public Class tnxFeedLine
 #End Region
 
 End Class
+
 <DataContract()>
 Partial Public Class tnxDiscreteLoad
     Inherits EDSObject
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Discrete Load"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Discrete Load"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"
@@ -898,12 +902,17 @@ Partial Public Class tnxDiscreteLoad
 #End Region
 
 End Class
+
 <DataContract()>
 Partial Public Class tnxDish
     Inherits EDSObject
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "Dish"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Dish"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"
@@ -1231,12 +1240,17 @@ Partial Public Class tnxDish
     End Function
 #End Region
 End Class
+
 <DataContract()>
 Partial Public Class tnxUserForce
     Inherits EDSObject
 
 #Region "Inheritted"
-    Public Overrides ReadOnly Property EDSObjectName As String = "User Force"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "User Force"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"

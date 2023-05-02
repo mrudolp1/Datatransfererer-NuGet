@@ -18,8 +18,16 @@ Partial Public Class tnxModel
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Model"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.tnx"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Model"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.tnx"
+        End Get
+    End Property
 
 #End Region
 
@@ -10456,8 +10464,6 @@ Partial Public Class tnxModel
     End Function
 
 End Class
-
-
 
 Public Class DefaultERItxtValues
     Private newList As New List(Of String)
