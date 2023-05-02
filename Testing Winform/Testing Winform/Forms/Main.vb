@@ -413,6 +413,7 @@ Namespace UnitTesting
             End If
 
             'Start file sinking....drip drip drip into the R drive
+            KillRoboCops()
             InitializeLocaltoCentralSync()
             'Attempted to thread to save time but turns out it is just because of the network connection issues at home
             thr1 = New Thread(AddressOf DirectorySync.StartAsync)
@@ -857,7 +858,7 @@ Namespace UnitTesting
                 "Guyed Anchor Block Foundation.xlsm",
                 "Input",
                 "M20:X70")
-            ElseIf file.Name.ToLower.Contains("leg reinforcement.xlsm") Then
+            ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
                 returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
                 New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\Guyed Anchor Block Foundation (4.0.0).xlsm"),
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool,
