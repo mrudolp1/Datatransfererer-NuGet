@@ -234,7 +234,11 @@ Partial Public Class AnchorBlockFoundation
         '''''''''''''''''''''
         '''''''''''''''''''''
         If excelDS.Tables.Contains("Guy Anchor Block Tool") Then
-            Dim dr As DataRow = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
+            Dim dr As DataRow
+            Try
+                dr = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
+            Catch ex As Exception
+            End Try
 
             ConstructMe(dr)
 

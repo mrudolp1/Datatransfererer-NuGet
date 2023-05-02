@@ -491,7 +491,14 @@ Partial Public Class Pole
         Next
 
         If excelDS.Tables.Contains("CCIpole General EXCEL") Then
-            Dim dr = excelDS.Tables("CCIpole General EXCEL").Rows(0)
+            'If row(0) exists and can be set as a datarow then it is good to continue. 
+            Dim dr As DataRow
+            Try
+                dr = excelDS.Tables("CCIpole General EXCEL").Rows(0)
+            Catch ex As Exception
+                Exit Sub
+            End Try
+
             'Need to dimension DataRow from GenStructure/TNX and anywhere else inputs may come from as well - MRR
 
             'Me.bus_unit = DBtoStr(dr.Item("bus_unit"))

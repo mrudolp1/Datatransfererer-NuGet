@@ -33,10 +33,10 @@ Partial Public Class Pile
     End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BC2", "Details (SAPI)"),
-                                                        New EXCELDTParameter("Pile Soil Profile EXCEL", "B3:D4", "Sub Tables (SAPI)"),
-                                                        New EXCELDTParameter("Pile Soil Layer EXCEL", "G3:O17", "Sub Tables (SAPI)"),
-                                                        New EXCELDTParameter("Pile Location EXCEL", "R3:T103", "Sub Tables (SAPI)"),
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pile General Details EXCEL", "A1:BG2", "Details (SAPI)"),
+                                                        New EXCELDTParameter("Pile Soil Profile EXCEL", "B3:E4", "Sub Tables (SAPI)"),
+                                                        New EXCELDTParameter("Pile Soil Layer EXCEL", "G3:P17", "Sub Tables (SAPI)"),
+                                                        New EXCELDTParameter("Pile Location EXCEL", "R3:U103", "Sub Tables (SAPI)"),
                                                         New EXCELDTParameter("Pile Results EXCEL", "A1:C17", "Results (SAPI)")}
             '***Add additional table references here****
         End Get
