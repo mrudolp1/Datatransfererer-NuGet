@@ -63,6 +63,36 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
+        Friend ReadOnly Property CCIplate__4_1_2_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCIplate__4_1_2_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property CCIpole__4_5_8_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCIpole__4_5_8_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property CCISeismic__3_3_9_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCISeismic__3_3_9_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
         Friend ReadOnly Property construction_svgrepo_com__1_() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("construction_svgrepo_com__1_", resourceCulture)
@@ -77,6 +107,26 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("download", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property Drilled_Pier_Foundation__5_0_5_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Drilled_Pier_Foundation__5_0_5_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property Guyed_Anchor_Block_Foundation__4_0_0_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Guyed_Anchor_Block_Foundation__4_0_0_", resourceCulture)
+                Return CType(obj,Byte())
             End Get
         End Property
         
@@ -113,6 +163,16 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
+        Friend ReadOnly Property Leg_Reinforcement_Tool__10_0_4_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Leg_Reinforcement_Tool__10_0_4_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
         Friend ReadOnly Property navigateBack() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("navigateBack", resourceCulture)
@@ -136,6 +196,36 @@ Namespace My.Resources
         Friend ReadOnly Property navigateUp() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("navigateUp", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property Pier_and_Pad_Foundation__4_1_1_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Pier_and_Pad_Foundation__4_1_1_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property Pile_Foundation__2_2_1_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Pile_Foundation__2_2_1_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property SST_Unit_Base_Foundation__4_0_3_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("SST_Unit_Base_Foundation__4_0_3_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property

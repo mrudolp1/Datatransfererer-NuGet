@@ -12,6 +12,9 @@ Imports System.Runtime.CompilerServices
 Imports Newtonsoft.Json
 Imports CciSites.Utils.JsonUtil
 Imports System.Runtime.Serialization.Json
+Imports System.Text.RegularExpressions
+Imports Microsoft.Office.Interop
+Imports System.Runtime.InteropServices
 
 Namespace UnitTesting
 
@@ -146,6 +149,14 @@ Namespace UnitTesting
 #End Region
 
 #Region "Structure"
+
+        Private Sub btnLoopThroughERI_Click(sender As Object, e As EventArgs) Handles btnLoopThroughERI.Click
+            Dim ed As New EDSStructure
+            Dim pd As String = txtDirectory.Text
+            ed.LoopThroughERIFiles(pd)
+        End Sub
+
+
         Private Sub btnImportStrcFiles_Click(sender As Object, e As EventArgs) Handles btnImportStrcFiles.Click
             If txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
             BUNumber = txtFndBU.Text
@@ -312,12 +323,7 @@ Namespace UnitTesting
         End Sub
 #End Region
 
-#Region "Unit Testing"
-        Public unitTestCases As New List(Of TestCase)
-        Public rFolder As String = "R:\Development\SAPI Testing\Unit Testing"
-        Public lFolder As String
-        Public thr1 As Thread
-        Public DirectorySync As RoboCommand = New RoboCommand()
+#Region "Unit Testing - Control handlers only"
 
         'Simple explorer change events based on textbox change events
         Private Sub testSaFolder_EditValueChanged(sender As Object, e As EventArgs) Handles testSaFolder.EditValueChanged
@@ -393,6 +399,7 @@ Namespace UnitTesting
                 DirectoryCreator("\Test ID " & testCase & "\Reference SA Files")
                 DirectoryCreator("\Test ID " & testCase & "\Manual ERI")
                 File.Create(dirUse & "\Test ID " & testCase & "\Test Notes.txt").Dispose()
+                File.Create(dirUse & "\Test ID " & testCase & "\Test Activity.txt").Dispose()
 
                 'When first creating the test case folder general notes (Salute) will be created to get started. 
                 If rtbNotes.Text.Length = 0 Then
@@ -447,19 +454,37 @@ Namespace UnitTesting
             testStructureOnly.Enabled = True
             testJason.Enabled = True
 
+            step1.Enabled = True
+            step2.Enabled = True
+            step3.Enabled = True
+            step3a.Enabled = True
+            step3b.Enabled = True
+            step4.Enabled = True
+            step5.Enabled = True
+            step6.Enabled = True
+            rtfactivityLog.Visible = True
+
             'Update the local directory to the local test case. 
             Try
                 seLocal.SetCurrentDirectory(dirUse & "\Test ID " & testCase)
             Catch
             End Try
+            LogActivity("START | Test Case" & testCase, True)
             ButtonclickToggle(Me.Cursor)
         End Sub
 
-        'Create a new iteration button click
-        Private Sub btnNextIteration_Click(sender As Object, e As EventArgs) Handles btnNextIteration.Click
-            ButtonclickToggle(Me.Cursor)
-            CreateIteration(testNextIteration.Text)
-            ButtonclickToggle(Me.Cursor)
+        'Log that a test case is ending
+        Private Sub testID_EditValueChanging(sender As Object, e As DevExpress.XtraEditors.Controls.ChangingEventArgs) Handles testID.EditValueChanging
+            If isopening Then Exit Sub
+            Dim testcase As String
+            Try
+                testcase = e.OldValue.ToString
+                If IsNumeric(testcase) Then
+                    LogActivity("FINISH | Test Case" & testcase)
+                End If
+            Catch ex As Exception
+
+            End Try
         End Sub
 
         'Rich textbox changed event for test notes
@@ -478,11 +503,147 @@ Namespace UnitTesting
             End Try
         End Sub
 
+        Private Sub TestSteps(sender As Object, e As EventArgs) Handles step1.Click, step2.Click, step3.Click, step3a.Click, step3b.Click, step4.Click, step5.Click, step6.Click
+            If isopening Then Exit Sub
+
+            ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
+            LogActivity("BEGIN | " & sender.text.ToString)
+
+            Select Case sender.name.ToString
+                Case "step1"
+                    Dim myfilesLst As New List(Of FileInfo)
+                    'Loop through all files in the maestro folder for the current test case and iteration
+                    For Each info As FileInfo In New DirectoryInfo(testSaFolder.Text).GetFiles
+                        If info.Extension = ".eri" Then
+                            'All eris permitted
+                            myfilesLst.Add(info)
+                        ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
+                            'Determine if the file is one of the templates
+                            Dim template As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
+
+                            'If the properties of the tuple are nothing then they aren't templates
+                            If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
+                                myfilesLst.Add(info)
+                            End If
+                        End If
+                    Next
+
+                    Dim newFileCsv As New DataTable
+                    newFileCsv.Columns.Add("FilePath", GetType(System.String))
+                    newFileCsv.Columns.Add("Version", GetType(System.String))
+                    For Each file As FileInfo In myfilesLst
+                        Dim newFile As FileInfo = file.CopyTo(dirUse & "\Test ID " & testID.Text.ToString & "\Reference SA Files\" & file.Name)
+                        newFileCsv.Rows.Add(file.FullName, file.TemplateVersion)
+                        LogActivity("DEBUG | '" & file.Name & "' copied")
+                    Next
+
+                    DatatableToCSV(newFileCsv, dirUse & "\Test ID " & testID.Text.ToString & "\Reference SA Files\File List.csv")
+                Case "step2"
+                    'Create new iteration
+                    CreateIteration(testNextIteration.Text)
+
+                Case "step3"
+                    'Make sure all necessary files exist in the required folders
+                    If testIteration.Text = 0 Then
+                        MsgBox("Please create an iteration to continue.", vbInformation)
+                        LogActivity("ERROR | Iteration not created.")
+                        Exit Select
+                    End If
+
+                    CreateTemplateFiles(testIteration.Text)
+
+                Case "step3a"
+                    'Create Published versions of the files
+                    If testIteration.Text = 0 Then
+                        MsgBox("Please create an iteration to continue.", vbInformation)
+                        LogActivity("ERROR | Iteration not created.")
+                        Exit Select
+                    End If
+
+                    ImportInputs("PUblishedPath")
+
+                Case "step3b"
+                    'Create SAPI version with imort inputs
+                    If testIteration.Text = 0 Then
+                        MsgBox("Please create an iteration to continue.", vbInformation)
+                        LogActivity("ERROR | Iteration not created.")
+                        Exit Select
+                    End If
+
+                    ImportInputs("MaestroPath")
+
+                Case "step4"
+                    'Step 4. Run the ERI file in the Manual Reference Folder
+                    Dim tempStrc As New EDSStructure
+                    Dim myERIs As New List(Of String)
+                    For Each info As FileInfo In New DirectoryInfo(dirUse & "\Test ID " & testID.Text.ToString & "\Manual ERI").GetFiles
+                        If info.Extension = ".eri" Then
+                            'All eris permitted
+                            myERIs.Add(info.FullName)
+                        ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
+                            info.Delete()
+                        End If
+                    Next
+
+                    For Each eri As String In myERIs
+                        If Not tempStrc.RunTNX(eri, True) Then
+                            LogActivity("ERROR | Failed to run ERI: " & eri)
+                            GoTo finishMe
+                        End If
+                    Next
+                Case "step5"
+                    'Step 5. Conduct the Maestro files
+                    CreateStructure()
+
+                    'Conduct it!!!
+                    '''This is commented out since Seb is actively working on the conduct function
+                    '''Uncommented 4-27-2023
+                    strcLocal.Conduct(True)
+                    If DidConductProperly(strcLocal.LogPath) Then
+                        ObjectToJson(Of EDSStructure)(strcLocal, dirUse & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString.ToDirectoryString & ".ccistr")
+                    End If
+                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+                Case "step6"
+                    Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
+                    ButtonclickToggle(Me.Cursor, Cursors.Default)
+
+                    'Item 1 = Manual Compared to Maestro   
+                    '''Item 1 = Boolean specifying if they match
+                    '''Item 2 = Data table of the comparisons
+                    'Item 2 = Current Tools Compared to Manual
+                    '''Item 1 = Boolean specifying if they match
+                    '''Item 2 = Data table of the comparisons
+                    'Item 3 = Current Tools Compared to Maestro
+                    '''Item 1 = Boolean specifying if they match
+                    '''Item 2 = Data table of the comparisons
+                    'Item 4 = Dataset will all tables
+
+                    Dim newSum As New frmSummary
+                    newSum.myDs = checks.Item4
+                    newSum.Show()
+            End Select
+
+finishMe:
+            LogActivity("END | " & sender.text.ToString, True)
+            ButtonclickToggle(Me.Cursor, Cursors.Default)
+        End Sub
+
+
+
+#Region "Unit Testing - Old Buttons"
         'work local or remote option 
         Private Sub CheckEdit1_CheckedChanged(sender As Object, e As EventArgs) Handles chkWorkLocal.CheckedChanged
             If isopening Then Exit Sub
             My.Settings.workLocal = sender.checked
             My.Settings.Save()
+        End Sub
+
+
+        'Create a new iteration button click
+        Private Sub btnNextIteration_Click(sender As Object, e As EventArgs) Handles btnNextIteration.Click
+            ButtonclickToggle(Me.Cursor)
+            CreateIteration(testNextIteration.Text)
+            ButtonclickToggle(Me.Cursor)
         End Sub
 
         'Conduct button click for current iteration
@@ -499,6 +660,52 @@ Namespace UnitTesting
 
             ButtonclickToggle(Me.Cursor)
         End Sub
+        'Create a json file of the lodaed structure
+        Private Sub testJason_Click(sender As Object, e As EventArgs) Handles testJason.Click
+            Dim strJson As String
+
+            Try
+                strJson = ToJsonString(Of EDSStructure)(strcLocal)
+            Catch ex As Exception
+            End Try
+
+            Using sw As New StreamWriter(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString.ToDirectoryString & ".ccistr")
+                sw.Write(strJson)
+                sw.Close()
+            End Using
+        End Sub
+        Private Sub testJasonLoad_click(sender As Object, e As EventArgs) Handles testJasonLoad.Click
+            Dim dateCheck As DateTime = "1/1/1900 12:00 AM"
+            Dim myFile As FileInfo = Nothing
+
+            For Each file As FileInfo In New DirectoryInfo(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\").GetFiles
+                If file.Extension.ToLower = ".ccistr" Then
+                    If file.CreationTime > dateCheck Then
+                        dateCheck = file.CreationTime
+                        myFile = file
+                    End If
+                End If
+            Next
+
+            If myFile IsNot Nothing Then
+                Dim tempStr As New EDSStructure
+                Using sr As New StreamReader(myFile.FullName)
+                    tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
+                    sr.Close()
+                End Using
+
+                Console.WriteLine(tempStr.EDSObjectName)
+
+                pgcUnitTesting.SelectedObject = tempStr
+            End If
+        End Sub
+
+        Private Sub SimpleButton1_Click(sender As Object, e As EventArgs)
+            Dim file As New FileInfo("C:\Users\Imiller\Work Area\SAPI Testing\Unit Testing\Test ID 75\Reference SA Files\Drilled Pier Foundation (5.0.3).xlsm")
+            MsgBox(file.TemplateVersion)
+        End Sub
+
+
         Private Sub testStructureOnly_Click(sender As Object, e As EventArgs) Handles testStructureOnly.Click
             ButtonclickToggle(Me.Cursor)
 
@@ -507,13 +714,10 @@ Namespace UnitTesting
 
             ButtonclickToggle(Me.Cursor)
         End Sub
-
-
         Private Sub SetStructureToPropertyGrid(ByVal str As EDSStructure, ByVal pgrid As PropertyGrid)
             'Allow the user to view the opbjects created in the strlocal object
             pgrid.SelectedObject = str
         End Sub
-
 
         'Create and compare CSV Results files
         Private Sub testPrevResults_Click(sender As Object, e As EventArgs) Handles testPrevResults.Click
@@ -553,95 +757,347 @@ Namespace UnitTesting
             newSum.Show()
         End Sub
 
+#End Region
 
-        'Custom Methods
-        Public Sub CreateIteration(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
-            'Determine which directory to use. 
-            Dim dirUse As String
-            If chkWorkLocal.Checked Then
-                dirUse = lFolder
-            Else
-                dirUse = rFolder
+#End Region
+    End Class
+
+    Public Module MyLargelyLittleHelpers
+        'Determine which directory to use. 
+        Public ReadOnly Property dirUse As String
+            Get
+                If frmMain.chkWorkLocal.Checked Then
+                    Return lFolder
+                Else
+                    Return rFolder
+                End If
+            End Get
+        End Property
+
+        Public isopening As Boolean
+        Public unitTestCases As New List(Of TestCase)
+        Public rFolder As String = "R:\Development\SAPI Testing\Unit Testing"
+        Public lFolder As String
+        Public thr1 As Thread
+        Public DirectorySync As RoboCommand = New RoboCommand()
+
+        'Import inputs for all files in a directory
+        Public Function ImportInputs(ByVal FileType As String) As Boolean
+            Dim SAFiles As New DataTable
+            SAFiles = CSVtoDatatable(New FileInfo(dirUse & "\Test ID " & frmMain.testID.Text.ToString & "\Reference SA Files\File List.csv"))
+            If SAFiles.Columns.Count > 2 Then
+                CreateTemplateFiles(frmMain.testIteration.Text)
             End If
 
+            Dim myXL As Tuple(Of Excel.Application, Boolean) = GetXlApp()
+            'Item 1 = Excel application
+            'Item 2 = Boolean (If true that means excel was previously open
+
+            For Each dr As DataRow In SAFiles.Rows()
+                Dim importingFrom As New FileInfo(dr.Item("FilePath").ToString)
+                If importingFrom.Extension.ToLower = ".xlsm" Then
+                    Dim importingTo As New FileInfo(dr.Item(FileType).ToString)
+                    Dim macroname As String = "Import_Previous_Version"
+                    Dim params As Tuple(Of String, String, Boolean) = New Tuple(Of String, String, Boolean)(importingFrom.FullName.ToString, importingFrom.TemplateVersion, True)
+
+                    If importingTo.Name.ToLower.Contains("pile") Then
+                        macroname = "Button173_Click"
+                    ElseIf importingTo.Name.ToLower.Contains("drilled pier") Then
+                        If FileType = "MaestroPath" Then
+                            macroname += "_Performer"
+                        End If
+                    End If
+
+                    Import_Previous_Version(myXL.Item1, importingTo, macroname, params)
+                End If
+            Next
+
+            DisposeXlApp(myXL.Item1, myXL.Item2)
+        End Function
+
+        'Create or get the excel application to use.
+        Public Function GetXlApp() As Tuple(Of Excel.Application, Boolean)
+            Try
+                Return New Tuple(Of Excel.Application, Boolean)(GetObject(, "Excel.Appliction"), True)
+            Catch ex As Exception
+                Return New Tuple(Of Excel.Application, Boolean)(CreateObject("Excel.Application"), False)
+            End Try
+        End Function
+
+        'Close the excel application if it was created 
+        Public Function DisposeXlApp(ByRef xlapp As Excel.Application, isOpen As Boolean)
+            If xlapp IsNot Nothing Then
+                If Not isOpen Then
+                    xlapp.Quit()
+                    Marshal.ReleaseComObject(xlapp)
+                End If
+
+                xlapp = Nothing
+            End If
+        End Function
+
+        Public Function Import_Previous_Version(ByVal xlapp As Excel.Application,
+                                                ByVal workbookFile As FileInfo,
+                                                ByVal macroName As String,
+                                                ByVal params As Tuple(Of String, String, Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
+                                                Optional ByVal xlVisibility As Boolean = False
+                                                ) As Boolean
+
+            Dim toolFileName As String = Path.GetFileName(workbookFile.Name)
+            Dim xlWorkBook As Excel.Workbook = Nothing
+            Dim errorMessage As String = ""
+            Dim isSuccess As Boolean = True
+
+            If workbookFile Is Nothing Or String.IsNullOrEmpty(macroName) Then
+                LogActivity("ERROR | workbookFile or macroName parameter is null or empty")
+                Return False
+            End If
+
+            Try
+                If workbookFile.Exists Then
+
+                    xlapp.Visible = xlVisibility
+                    xlWorkBook = xlapp.Workbooks.Open(workbookFile.FullName)
+
+                    LogActivity("DEBUG | Tool: " & toolFileName)
+                    LogActivity("DEBUG | BEGIN MACRO: " & macroName)
+
+                    'Check that the strings aren't empty and that ismaesting = true
+                    If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
+                        xlapp.Run(macroName, params.Item1, params.Item2, params.Item3)
+                        LogActivity("DEBUG | END MACRO: " & macroName)
+                    Else
+                        LogActivity("ERROR | Parameters not specific ")
+                        LogActivity("DEBUG | Tool: " & toolFileName & " failed to import inputs")
+                        isSuccess = False
+                    End If
+
+                    xlWorkBook.Save()
+                Else
+                    LogActivity("ERROR | " & workbookFile.FullName & " path not found!")
+                End If
+            Catch ex As Exception
+                errorMessage = ex.Message
+                LogActivity("ERROR | " & ex.Message)
+                isSuccess = False
+            Finally
+                Try
+                    If xlWorkBook IsNot Nothing Then
+                        xlWorkBook.Close()
+                        Marshal.ReleaseComObject(xlWorkBook)
+                        xlWorkBook = Nothing
+                    End If
+                Catch ex As Exception
+                    LogActivity("WARNING | Could not close Excel Workbook: " & toolFileName)
+                End Try
+            End Try
+
+            Return isSuccess
+        End Function
+
+        'serialize any object to a json
+        '''Object being passed in
+        '''location to save the file path
+        Public Function ObjectToJson(Of T)(ByVal obj As Object, ByVal jsonPath As String) As Boolean
+            Dim objJson As String
+
+            Try
+                objJson = ToJsonString(Of T)(CType(obj, T))
+                Using sw As New StreamWriter(jsonPath)
+                    sw.Write(objJson)
+                    sw.Close()
+                End Using
+                Return True
+            Catch ex As Exception
+                objJson = Nothing
+                Return False
+            End Try
+        End Function
+
+        'Determine if the maestro conductor ran successfully
+        Public Function DidConductProperly(ByVal logpath As String) As Boolean
+            Dim isFailure As Boolean = False
+            Using maeSr As New StreamReader(logpath)
+                If maeSr.ReadToEnd.Contains("ERROR") Then
+                    isFailure = True
+                End If
+                maeSr.Close()
+            End Using
+
+            Return isFailure
+        End Function
+
+        'Logs any activity happening during the unit testing process
+        Public Sub LogActivity(msg As String, Optional ByVal loadLog As Boolean = False)
+            Dim testCase As Integer = frmMain.testID.Text
+            Dim testFolder As String = dirUse & "\Test ID " & testCase
+            Dim logPath As String = testFolder & "\Test Activity.txt"
+
+            ' Get the current date and time
+            Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
+            Dim splt() As String = dt.Split(" ")
+            dt = splt(1) '& " " & splt(2)
+
+            ' Print the message to the console
+            Console.WriteLine(dt & " | " & msg)
+
+            ' Wrap the file operation in a try-catch block to handle exceptions
+            Try
+                ' If the log file does not exist, establish intro
+                If Not File.Exists(logPath) Then
+                    File.Create(dirUse & "\Test ID " & testCase & "\Test Activity.txt").Dispose()
+                End If
+                ' Use a StreamWriter to write to the log file
+                ' The 'True' argument appends to the file if it already exists
+                Using sw As New StreamWriter(logPath, True)
+                    ' Write the log message to the file
+                    sw.WriteLine(dt & " | " & msg)
+                End Using
+                If loadLog Then ReloadLog(logPath)
+            Catch ex As Exception
+                ' Handle the exception
+                Console.WriteLine("Error writing to log file: " & ex.Message)
+            End Try
+        End Sub
+
+        Public Sub ReloadLog(ByVal logPath As String)
+            Using sr As New StreamReader(logPath)
+                frmMain.rtfactivityLog.Text = sr.ReadToEnd.ToString
+                sr.Close()
+            End Using
+        End Sub
+
+        'Get count of files in the refernce file folder
+        Public Function GetReferenceFileCount(ByVal testcase As String) As Integer
+            Dim RefFolder As String = dirUse & "\Test ID " & testcase & "\Reference SA Files"
+            Dim fileCount As Integer = Directory.GetFiles(RefFolder).Count
+
+            Return fileCount
+        End Function
+
+        'If the file count of the files in the reference SA folder = 0 no and it is not the first time: 
+        '''Users may not continue because they have not copied over SA reference files yet.
+        Public Sub FirstTimeWarning(ByVal isFirstTime As Boolean, ByVal iteration As Integer)
+            If Not isFirstTime Then MsgBox("Files Do Not exist In the 'Reference SA Files' folder yet. Please copy reference files to continue.", vbCritical, "No Reference Files")
+            frmMain.testIteration.Text = iteration - 1
+            frmMain.testNextIteration.Text = iteration
+        End Sub
+
+        'Create folders required for unit testing to be conducted
+        '''Maestro folder 
+        '''Manual folder 
+        '''Iteration creation will always generate files. 
+        '''Users will have the option to replace the files in the folder. 
+        Public Sub CreateIteration(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
             'Set the directories to reference based on working local or on the network.
-            Dim testCase As Integer = testID.Text
+            Dim testCase As Integer = frmMain.testID.Text
+            Dim itFolder As String = dirUse & "\ Test ID " & testCase & "\Iteration " & Iteration
+            Dim MaeFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Maestro"
+            Dim ManFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Manual (SAPI)"
+
+            frmMain.testIteration.Text = Iteration
+            frmMain.testNextIteration.Text = Iteration + 1
+            frmMain.testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
+
+            If GetReferenceFileCount(testCase.ToString) = 0 Then
+                FirstTimeWarning(isFirstTime, Iteration)
+            Else
+                '''Create the directories
+                '''Increase the iteration (Should be at 0 if this is the first time)
+                '''get all required files for testing
+                Directory.CreateDirectory(itFolder)
+                Directory.CreateDirectory(MaeFolder)
+                Directory.CreateDirectory(ManFolder)
+                CreateTemplateFiles(Iteration, isFirstTime)
+            End If
+
+        End Sub
+
+        'Get a file count of all files in the:
+        '''SA reference folder
+        '''Published tool folder
+        '''ERI Reference folder
+        Public Sub CreateTemplateFiles(ByVal Iteration As Integer, ByVal Optional isFirstTime As Boolean = False)
+            'Set the directories to reference based on working local or on the network.
+            Dim testCase As Integer = frmMain.testID.Text
+            Dim itFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration
             Dim MaeFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Maestro"
             Dim ManFolder As String = dirUse & "\Test ID " & testCase & "\Iteration " & Iteration & "\Manual (SAPI)"
             Dim PubFolder As String = dirUse & "\Test ID " & testCase & "\Manual (Current)"
             Dim RefFolder As String = dirUse & "\Test ID " & testCase & "\Reference SA Files"
             Dim EriFolder As String = dirUse & "\Test ID " & testCase & "\Manual ERI"
 
-            'Get a file count of all files in the:
-            '''SA reference folder
-            '''Published tool folder
-            '''ERI Reference folder
             Dim fileCount As Integer = Directory.GetFiles(RefFolder).Count
             Dim publishedFileCount As Integer = Directory.GetFiles(PubFolder).Count
             Dim eriFileCount As Integer = Directory.GetFiles(EriFolder).Count
 
-            If fileCount = 0 Then
-                'If the file count is no and it is not the first time: 
-                '''Users may not continue because they have not copied over SA reference files yet. 
-                If Not isFirstTime Then MsgBox("Files do not exist in the 'Reference SA Files' folder yet. Please copy reference files to continue.", vbCritical, "No Reference Files")
-                testIteration.Text = Iteration - 1
-                testNextIteration.Text = Iteration
-            Else
-                'If the SA Reference file count is > 0 then:
-                '''Create the directories
-                '''Increase the iteration (Should be at 0 if this is the first time)
-                '''get all required files for testing
-                Directory.CreateDirectory("R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase & "\Iteration " & Iteration)
-                Directory.CreateDirectory(MaeFolder)
-                Directory.CreateDirectory(ManFolder)
-
-                testIteration.Text = Iteration
-                testNextIteration.Text = Iteration + 1
-                testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
-
-                'Loop through all files in the SA Reference Files Folder
-                For Each file In New DirectoryInfo(RefFolder).GetFiles
-                    'All ERIs welcome
-                    'ERI is copied to the:
-                    '''Manual ERI Folder
-                    '''Mae Folder
-                    If file.Extension.Contains("eri") Then
-                        file.CopyTo(MaeFolder & "\" & file.Name)
-                        If eriFileCount = 0 Then file.CopyTo(EriFolder & "\" & file.Name)
-                    Else
-                        If file.Extension.ToLower = ".eri" Or file.Extension.ToLower = ".xlsm" Then
-                            'Determine if the file is a template
-                            Dim myTemplate As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(file)
-
-                            'If it is determined to be a template:
-                            '''The published version will be copied into the published tools folder
-                            '''The new SAPI templates will be copied into the mae folder and man folder for the iteration
-                            With myTemplate
-                                If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
-                                    MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
-                                Else
-                                    If publishedFileCount = 0 Then
-                                        'Copy published versions of the tools into the manual folder 
-                                        .Item1.CopyTo(GetNewFileName(PubFolder, fileName:= .Item3))
-                                    End If
-
-                                    'Templates are saved as Bytes() and need to be converted appropriately. 
-                                    IO.File.WriteAllBytes(GetNewFileName(MaeFolder, fileName:= .Item3), .Item2)
-                                    IO.File.WriteAllBytes(GetNewFileName(ManFolder, fileName:= .Item3), .Item2)
-
-                                End If
-                            End With
-                        End If
-                    End If
-                Next
+            Dim SAFiles As New DataTable
+            SAFiles = CSVtoDatatable(New FileInfo(dirUse & "\Test ID " & testCase & "\Reference SA Files\File List.csv"))
+            If SAFiles.Columns.Count < 3 Then
+                SAFiles.Columns.Add("MaestroPath", GetType(System.String))
+                SAFiles.Columns.Add("ManualPath", GetType(System.String))
+                SAFiles.Columns.Add("PublishedPath", GetType(System.String))
             End If
+
+            'Loop through all files in the SA Reference Files Folder
+            For Each dr As DataRow In SAFiles.Rows
+
+                Dim file As New FileInfo(dr.Item("FilePath").ToString)
+                'All ERIs welcome
+                'ERI is copied to the:
+                '''Manual ERI Folder
+                '''Mae Folder
+                If file.Extension.Contains("eri") Then
+                    file.CopyTo(MaeFolder & "\" & file.Name)
+                    If eriFileCount = 0 Then file.CopyTo(EriFolder & "\" & file.Name)
+                Else
+                    If file.Extension.ToLower = ".eri" Or file.Extension.ToLower = ".xlsm" Then
+                        'Determine if the file is a template
+                        Dim myTemplate As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(file)
+
+                        'If it is determined to be a template:
+                        '''The published version will be copied into the published tools folder
+                        '''The new SAPI templates will be copied into the mae folder and man folder for the iteration
+                        With myTemplate
+                            If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
+                                MsgBox("Could not determine template file type for file: " & vbCrLf & file.Name & vbCrLf & vbCrLf & "Please copy template manually.", vbCritical, "Template Not Found")
+                            Else
+                                If publishedFileCount = 0 Then
+                                    'Copy published versions of the tools into the manual folder 
+                                    Dim pubPath As String = GetNewFileName(PubFolder, fileName:= .Item3)
+                                    IO.File.WriteAllBytes(pubPath, .Item1)
+                                    dr.Item("PublishedPath") = PubPath
+                                End If
+
+                                'Templates are saved as Bytes() and need to be converted appropriately. 
+                                Dim maePath As String = GetNewFileName(MaeFolder, fileName:= .Item3)
+                                IO.File.WriteAllBytes(maePath, .Item2)
+                                dr.Item("MaestroPath") = maePath
+
+                                'File will be copied to the manual folder once the files are populated with data via 
+                                'Manual files will be replaces when user imports data into the maestro files.
+                                'Alternative will be to load maestro and manual files manually.
+                                '''Import Inputs
+                                '''Structure import
+                                Dim manPath As String = GetNewFileName(ManFolder, fileName:= .Item3)
+                                IO.File.WriteAllBytes(manPath, .Item2)
+                                dr.Item("ManualPath") = maePath
+                            End If
+                        End With
+                    End If
+                End If
+            Next
+
+            DatatableToCSV(SAFiles, dirUse & "\Test ID " & testCase & "\Reference SA Files\File List.csv")
         End Sub
+
+        'Being robocommmand to copy files to R: drive on a regular basis.
         Public Sub InitializeLocaltoCentralSync()
             If DirectorySync.IsRunning Then
                 Return
             End If
 
-            Dim testCase As Integer = testID.Text
+            Dim testCase As Integer = frmMain.testID.Text
 
             DirectorySync.CopyOptions.Source = lFolder & "\Test ID " & testCase
             DirectorySync.CopyOptions.Destination = rFolder & "\Test ID " & testCase
@@ -655,6 +1111,9 @@ Namespace UnitTesting
             DirectorySync.RetryOptions.RetryCount = 1
             DirectorySync.RetryOptions.RetryWaitTime = 2
         End Sub
+
+        'Create a directory for unit testing. 
+        '''Creates a directory locally and in the network location.
         Public Sub DirectoryCreator(ByVal subFolder As String)
             'Create R drive directory for folder
             If Not Directory.Exists(rFolder & subFolder) Then
@@ -662,71 +1121,18 @@ Namespace UnitTesting
             End If
 
             'Create local directory for folder
-            If chkWorkLocal.Checked Then
+            If frmMain.chkWorkLocal.Checked Then
                 If Not Directory.Exists(lFolder & subFolder) Then
                     Directory.CreateDirectory(lFolder & subFolder)
                 End If
             End If
         End Sub
 
-        Private Sub btnLoopThroughERI_Click(sender As Object, e As EventArgs) Handles btnLoopThroughERI.Click
-            Dim ed As New EDSStructure
-            Dim pd As String = txtDirectory.Text
-            ed.LoopThroughERIFiles(pd)
-        End Sub
-
-        'Create a json file of the lodaed structure
-        Private Sub testJason_Click(sender As Object, e As EventArgs) Handles testJason.Click
-            Dim strJson As String
-
-            Try
-                strJson = ToJsonString(Of EDSStructure)(strcLocal)
-            Catch ex As Exception
-            End Try
-
-            Using sw As New StreamWriter(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString.ToDirectoryString & ".ccistr")
-                sw.Write(strJson)
-                sw.Close()
-            End Using
-        End Sub
-
-        Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-            Dim dateCheck As DateTime = "1/1/1900 12:00 AM"
-            Dim myFile As FileInfo = Nothing
-
-            For Each file As FileInfo In New DirectoryInfo(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\").GetFiles
-                If file.Extension.ToLower = ".ccistr" Then
-                    If file.CreationTime > dateCheck Then
-                        dateCheck = file.CreationTime
-                        myFile = file
-                    End If
-                End If
-            Next
-
-            If myFile IsNot Nothing Then
-                Dim tempStr As New EDSStructure
-                Using sr As New StreamReader(myFile.FullName)
-                    tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
-                    sr.Close()
-                End Using
-
-                Console.WriteLine(tempStr.EDSObjectName)
-
-                pgcUnitTesting.SelectedObject = tempStr
-            End If
-        End Sub
-#End Region
-
-    End Class
-
-    Public Module MyLargelyLittleHelpers
-        Public isopening As Boolean
-
         'Creates a structure object based on the files in the maestro folder for the current iteration
         Public Sub CreateStructure()
             Dim iteration As Integer = frmMain.testIteration.Text
             Dim testcase As Integer = frmMain.testID.Text
-            Dim maeWorkArea As String = frmMain.lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
+            Dim maeWorkArea As String = lFolder & "\Test ID " & testcase & "\Iteration " & iteration & "\Maestro"
             Dim myFiles As String()
             Dim myFilesLst As New List(Of String)
 
@@ -737,7 +1143,7 @@ Namespace UnitTesting
                     myFilesLst.Add(info.FullName)
                 ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
                     'Determine if the file is one of the templates
-                    Dim template As Tuple(Of FileInfo, Byte(), String, String, String) = WhichFile(info)
+                    Dim template As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
 
                     'If the properties of the tuple are nothing then they aren't templates
                     If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
@@ -811,8 +1217,8 @@ Namespace UnitTesting
 
         'Used to determine which template is being used
         'This could have been set up as a class but ended up going too far and now we have tuples. Enjoy! :)
-        Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of FileInfo, Byte(), String, String, String)
-            Dim returner As Tuple(Of FileInfo, Byte(), String, String, String)
+        Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of Byte(), Byte(), String, String, String)
+            Dim returner As Tuple(Of Byte(), Byte(), String, String, String)
 
             'This templatesfolder needs to be customized if your username doesn't match your user folder or if your engineering templates are synced to a different location
             Dim templatesFolder As String = "C:\Users\" & Environment.UserName & "\Crown Castle USA Inc\Tower Assets Engineering - Engineering Templates\"
@@ -824,70 +1230,70 @@ Namespace UnitTesting
             'Item 5 = Range for results 
 
             If file.Name.ToLower.Contains("cciplate") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "CCIPlate\CCIplate (4.1.2).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCIplate__4_1_2_,
                 CCI_Engineering_Templates.My.Resources.CCIplate,
                 "CCIplate.xlsm",
                 "Results Database",
                 "B1:BO64")
             ElseIf file.Name.ToLower.Contains("ccipole") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "CCIPole\CCIpole (4.5.8).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCIpole__4_5_8_,
                 CCI_Engineering_Templates.My.Resources.CCIpole,
                 "CCIpole.xlsm",
                 "Results",
                 "AZ4:BT108")
             ElseIf file.Name.ToLower.Contains("cciseismic") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "CCISeismic\CCISeismic (3.3.9).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCISeismic__3_3_9_,
                 CCI_Engineering_Templates.My.Resources.CCISeismic,
                 "CCISeismic.xlsm",
                 Nothing,
                 Nothing)
             ElseIf file.Name.ToLower.Contains("drilled pier") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\Drilled Pier Foundation (5.0.5).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Drilled_Pier_Foundation__5_0_5_,
                 CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation,
                 "Drilled Pier Foundation.xlsm",
                 "Foundation Input",
                 "BD8:CF59|H10:L31")
             ElseIf file.Name.ToLower.Contains("guyed anchor") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\Guyed Anchor Block Foundation (4.0.0).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Guyed_Anchor_Block_Foundation__4_0_0_,
                 CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation,
                 "Guyed Anchor Block Foundation.xlsm",
                 "Input",
                 "M20:X70")
             ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\Guyed Anchor Block Foundation (4.0.0).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool,
                 "Leg Reinforcement Tool.xlsm",
                 Nothing,
                 Nothing)
             ElseIf file.Name.ToLower.Contains("pier and pad") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Half Pipe Leg Modification\Leg Reinforcement Tool (10.0.4).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Pier_and_Pad_Foundation__4_1_1_,
                 CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation,
                 "Pier and Pad Foundation.xlsm",
                 "Input",
                 "F12:K25")
             ElseIf file.Name.ToLower.Contains("pile") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\Pile Foundation (2.2.1).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Pile_Foundation__2_2_1_,
                 CCI_Engineering_Templates.My.Resources.Pile_Foundation,
                 "Pile Foundation.xlsm",
                 "Input",
                 "G13:M31")
             ElseIf file.Name.ToLower.Contains("unit base") Then
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
-                New FileInfo(templatesFolder & "Foundation Templates\Unified Foundation Tools\SST Unit Base Foundation (4.0.3).xlsm"),
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.SST_Unit_Base_Foundation__4_0_3_,
                 CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation,
                 "SST Unit Base Foundation.xlsm",
                 "Input",
                 "F12:K24")
             Else
-                returner = New Tuple(Of FileInfo, Byte(), String, String, String)(
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
                 Nothing,
                 Nothing,
                 Nothing,
@@ -901,7 +1307,7 @@ Namespace UnitTesting
         'Return a datatable of summarized results from  a selected file
         'Invalid files return blank datatables
         Public Function SummarizedResults(ByVal info As IO.FileInfo) As DataTable
-            Dim myTemplate As Tuple(Of IO.FileInfo, Byte(), String, String, String) = WhichFile(info)
+            Dim myTemplate As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
             Dim range As String = myTemplate.Item5
             Dim tempds As New DataSet
             Dim finalDt As New DataTable
@@ -1119,8 +1525,73 @@ Namespace UnitTesting
             End With
         End Sub
 
+        'Compares the results of all results available
+        Public Function CompareResults() As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet)
+            Dim manToMae As Tuple(Of Boolean, DataTable) 'Item1
+            Dim curToMan As Tuple(Of Boolean, DataTable) 'Item2
+            Dim curToMae As Tuple(Of Boolean, DataTable) 'Item2
+            Dim resDs As New DataSet 'Item4
+
+            Dim dir As String = IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, lFolder, rFolder)
+            Dim testid As Integer = CType(frmMain.testID.Text, Integer)
+            Dim testiteration As Integer = CType(frmMain.testIteration.Text, Integer)
+
+            GetAllResults(dir & "\Test ID " & testid & "\Reference SA Files")
+            GetAllResults(dir & "\Test ID " & testid & "\Manual (Current)")
+            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro")
+            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)")
+
+            Dim refDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Reference SA Files\Summarized Results.csv"))
+            Dim curDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Manual (Current)\Summarized Results.csv"))
+            Dim manDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)\Summarized Results.csv"))
+            Dim maeDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro\Summarized Results.csv"))
+            Dim comDt As DataTable = New DataTable("Combined Results")
+
+            comDt.Columns.Add("Type", Type.GetType("System.String"))
+            comDt.Columns.Add("Rating", Type.GetType("System.String"))
+            comDt.Columns.Add("Tool", Type.GetType("System.String"))
+            comDt.Columns.Add("Summary Type", Type.GetType("System.String"))
+
+            refDt.ResultsSorting("Reference SA")
+            curDt.ResultsSorting("Published Versions")
+            manDt.ResultsSorting("Manual")
+            maeDt.ResultsSorting("Maestro")
+
+            manToMae = manDt.IsMatching(maeDt)
+            curToMan = curDt.IsMatching(manDt)
+            curToMae = curDt.IsMatching(maeDt)
+
+            resDs.Tables.Add(refDt.Copy)
+            resDs.Tables.Add(curDt.Copy)
+            resDs.Tables.Add(manDt.Copy)
+            resDs.Tables.Add(maeDt.Copy)
+
+            For Each dt As DataTable In resDs.Tables
+                comDt.Merge(dt)
+            Next
+
+            resDs.Tables.Add(comDt.Copy)
+            resDs.Tables.Add(manToMae.Item2.Copy)
+            resDs.Tables.Add(curToMan.Item2.Copy)
+            resDs.Tables.Add(curToMae.Item2.Copy)
+
+            Return New Tuple(Of
+                        Tuple(Of Boolean, DataTable),
+                        Tuple(Of Boolean, DataTable),
+                        Tuple(Of Boolean, DataTable),
+                        DataSet
+                       )(
+                        curToMan,
+                        curToMae,
+                        manToMae,
+                        resDs
+                        )
+        End Function
+    End Module
+
+    Public Module GeneralHelpers 'salute
         'Determine if a file is open
-        Private Function FileIsOpen(ByVal file As FileInfo) As Boolean
+        Public Function FileIsOpen(ByVal file As FileInfo) As Boolean
             Dim stream As FileStream = Nothing
             Try
                 stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)
@@ -1192,33 +1663,76 @@ RetryFileOpenCheck:
         'Uses an OLEDBAdpater to SELECT * FROM csv file
         'None string columns load in with incorrect column headers
         'This is extremely similar to how we use the SQL adapter for the SQL loader and Sender
-        Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasHeaders As Boolean = True) As DataTable
-            Dim dssample As New DataSet
-            Dim folder = info.FullName.Replace(info.Name, "")
-            Dim CnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & folder & ";Extended Properties=""text;HDR=No;FMT=Delimited"";"
+        'Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasHeaders As Boolean = True) As DataTable
+        '    Dim dssample As New DataSet
+        '    Dim folder = info.FullName.Replace(info.Name, "")
+        '    Dim CnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & folder & ";Extended Properties=""text;HDR=No;FMT=Delimited"";"
 
-            Using Adp As New OleDbDataAdapter("select * from [" & info.Name & "]", CnStr)
-                Adp.Fill(dssample)
-            End Using
+        '    Using Adp As New OleDbDataAdapter("select * from [" & info.Name & "]", CnStr)
 
-            If hasHeaders Then
-                For Each dc As DataColumn In dssample.Tables(0).Columns
-                    'If the data is not saved as a string then it will not recognize the header column as it doesn't not assume headers in the SQL query
-                    'I didn't have time to create custom queries. 
-                    'This just works for any selected csv file
-                    Try
-                        dc.ColumnName = dssample.Tables(0).Rows(0).Item(dc)
-                    Catch
-                    End Try
+        '        Try
+        '            Adp.Fill(dssample)
+        '        Catch
+        '        End Try
+        '    End Using
+
+        '    If hasHeaders Then
+        '        For Each dc As DataColumn In dssample.Tables(0).Columns
+        '            'If the data is not saved as a string then it will not recognize the header column as it doesn't not assume headers in the SQL query
+        '            'I didn't have time to create custom queries. 
+        '            'This just works for any selected csv file
+        '            Try
+        '                dc.ColumnName = dssample.Tables(0).Rows(0).Item(dc)
+        '            Catch
+        '            End Try
+        '        Next
+
+        '        dssample.Tables(0).Rows.Remove(dssample.Tables(0).Rows(0))
+        '    End If
+
+        '    If dssample.Tables.Count > 0 Then
+        '        'Only 1 table should have been output but it returns that table
+        '        Return dssample.Tables(0)
+        '    End If
+        'End Function
+
+        Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasheaders As Boolean = True) As DataTable
+            Dim SR As StreamReader = New StreamReader(info.FullName)
+            Dim dt As DataTable = New DataTable()
+            Dim row As DataRow
+            Dim headersAdded As Boolean = False
+
+            If hasheaders Then
+                Dim line As String = SR.ReadLine()
+                Dim strArray As String() = line.Split(","c)
+                For Each s As String In strArray
+                    dt.Columns.Add(s)
+                    headersAdded = True
                 Next
-
-                dssample.Tables(0).Rows.Remove(dssample.Tables(0).Rows(0))
             End If
 
-            If dssample.Tables.Count > 0 Then
-                'Only 1 table should have been output but it returns that table
-                Return dssample.Tables(0)
-            End If
+            Do
+                Dim line As String
+                line = SR.ReadLine
+                If Not line = String.Empty Then
+                    If Not headersAdded Then
+                        Dim strArray As String() = line.Split(","c)
+                        Dim counter As Integer = 1
+                        For Each s As String In strArray
+                            dt.Columns.Add("F" & counter)
+                            headersAdded = True
+                        Next
+                    End If
+
+                    row = dt.NewRow()
+                    row.ItemArray = line.Split(","c)
+                    dt.Rows.Add(row)
+                Else
+                    Exit Do
+                End If
+            Loop
+
+            Return dt
         End Function
 
         Public Function token(s As String) As String
@@ -1233,69 +1747,26 @@ RetryFileOpenCheck:
             Return m
         End Function
 
-        'Compares the results of all results available
-        Public Function CompareResults() As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet)
-            Dim manToMae As Tuple(Of Boolean, DataTable) 'Item1
-            Dim curToMan As Tuple(Of Boolean, DataTable) 'Item2
-            Dim curToMae As Tuple(Of Boolean, DataTable) 'Item2
-            Dim resDs As New DataSet 'Item4
 
-            Dim dir As String = IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, frmMain.lFolder, frmMain.rFolder)
-            Dim testid As Integer = CType(frmMain.testID.Text, Integer)
-            Dim testiteration As Integer = CType(frmMain.testIteration.Text, Integer)
+        'Toggles the cursor between default and waiting
+        '''Placed at the beginning and end of form events like button clicks or checkbox changes
+        '''Should also be placed anywhere you exit sub 
+        Public Sub ButtonclickToggle(ByRef cur As Cursor, Optional ByVal type As Cursor = Nothing)
+            If type IsNot Nothing Then
+                cur = type
+                Exit Sub
+            End If
 
-            GetAllResults(dir & "\Test ID " & testid & "\Reference SA Files")
-            GetAllResults(dir & "\Test ID " & testid & "\Manual (Current)")
-            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro")
-            GetAllResults(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)")
 
-            Dim refDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Reference SA Files\Summarized Results.csv"))
-            Dim curDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Manual (Current)\Summarized Results.csv"))
-            Dim manDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Manual (SAPI)\Summarized Results.csv"))
-            Dim maeDt As DataTable = CSVtoDatatable(New FileInfo(dir & "\Test ID " & testid & "\Iteration " & testiteration & "\Maestro\Summarized Results.csv"))
-            Dim comDt As DataTable = New DataTable("Combined Results")
+            If cur = Cursors.WaitCursor Then
+                cur = Cursors.Default
+            Else
+                cur = Cursors.WaitCursor
+            End If
+        End Sub
+    End Module
 
-            comDt.Columns.Add("Type", Type.GetType("System.String"))
-            comDt.Columns.Add("Rating", Type.GetType("System.String"))
-            comDt.Columns.Add("Tool", Type.GetType("System.String"))
-            comDt.Columns.Add("Summary Type", Type.GetType("System.String"))
-
-            refDt.ResultsSorting("Reference SA")
-            curDt.ResultsSorting("Published Versions")
-            manDt.ResultsSorting("Manual")
-            maeDt.ResultsSorting("Maestro")
-
-            manToMae = manDt.IsMatching(maeDt)
-            curToMan = curDt.IsMatching(manDt)
-            curToMae = curDt.IsMatching(maeDt)
-
-            resDs.Tables.Add(refDt.Copy)
-            resDs.Tables.Add(curDt.Copy)
-            resDs.Tables.Add(manDt.Copy)
-            resDs.Tables.Add(maeDt.Copy)
-
-            For Each dt As DataTable In resDs.Tables
-                comDt.Merge(dt)
-            Next
-
-            resDs.Tables.Add(comDt.Copy)
-            resDs.Tables.Add(manToMae.Item2.Copy)
-            resDs.Tables.Add(curToMan.Item2.Copy)
-            resDs.Tables.Add(curToMae.Item2.Copy)
-
-            Return New Tuple(Of
-                        Tuple(Of Boolean, DataTable),
-                        Tuple(Of Boolean, DataTable),
-                        Tuple(Of Boolean, DataTable),
-                        DataSet
-                       )(
-                        curToMan,
-                        curToMae,
-                        manToMae,
-                        resDs
-                        )
-        End Function
-
+    Public Module UnitTestingExtensions
         'Custom extension to sort the results datatables by check/failure mode and tool name
         '''Extension specific to datatables
         '''Adds a reference column for results comparison
@@ -1404,17 +1875,6 @@ RetryFileOpenCheck:
             Return New Tuple(Of Boolean, DataTable)(matching, diffDt)
         End Function
 
-        'Toggles the cursor between default and waiting
-        '''Placed at the beginning and end of form events like button clicks or checkbox changes
-        '''Should also be placed anywhere you exit sub 
-        Public Sub ButtonclickToggle(ByRef cur As Cursor)
-            If cur = Cursors.WaitCursor Then
-                cur = Cursors.Default
-            Else
-                cur = Cursors.WaitCursor
-            End If
-        End Sub
-
         'Extension for datatables to export to CSV using the datatabletocsv method
         '''Requires a filepath for where to save the csv
         <Extension()>
@@ -1448,6 +1908,22 @@ RetryFileOpenCheck:
             str = str.Replace("=", "")
 
             Return str
+        End Function
+
+        <Extension()>
+        Public Function TemplateVersion(ByVal file As FileInfo) As String
+            Dim ver As String = Nothing
+            Dim name As String = file.Name.Replace(file.Extension, "")
+            Dim pattern As New Regex("\d+(\.\d+)+")
+            Dim sMatch As Match = pattern.Match(name)
+
+            If sMatch.Success Then
+                ver = sMatch.Value
+            Else
+                ver = "-"
+            End If
+
+            Return ver
         End Function
     End Module
 
