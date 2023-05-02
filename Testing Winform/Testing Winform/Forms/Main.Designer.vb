@@ -88,6 +88,7 @@
             Me.XtraTabControl2 = New DevExpress.XtraTab.XtraTabControl()
             Me.XtraTabPage3 = New DevExpress.XtraTab.XtraTabPage()
             Me.seLocal = New Testing_Winform.UnitTesting.SimpleExplorer()
+            Me.rtfactivityLog = New System.Windows.Forms.RichTextBox()
             Me.rtbNotes = New System.Windows.Forms.RichTextBox()
             Me.LabelControl14 = New DevExpress.XtraEditors.LabelControl()
             Me.GridControl1 = New DevExpress.XtraGrid.GridControl()
@@ -95,20 +96,29 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
-            Me.Button2 = New System.Windows.Forms.Button()
+            Me.SimpleButton1 = New DevExpress.XtraEditors.SimpleButton()
+            Me.testJasonLoad = New System.Windows.Forms.Button()
+            Me.step6 = New DevExpress.XtraEditors.SimpleButton()
             Me.testJason = New System.Windows.Forms.Button()
-            Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
-            Me.testCompareAll = New DevExpress.XtraEditors.SimpleButton()
-            Me.testPublishedResults = New DevExpress.XtraEditors.SimpleButton()
-            Me.testPrevResults = New DevExpress.XtraEditors.SimpleButton()
             Me.testIterationResults = New DevExpress.XtraEditors.SimpleButton()
+            Me.step5 = New DevExpress.XtraEditors.SimpleButton()
+            Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
+            Me.step4 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnNextIteration = New DevExpress.XtraEditors.SimpleButton()
+            Me.step3b = New DevExpress.XtraEditors.SimpleButton()
+            Me.testCompareAll = New DevExpress.XtraEditors.SimpleButton()
+            Me.step3a = New DevExpress.XtraEditors.SimpleButton()
             Me.testConduct = New DevExpress.XtraEditors.SimpleButton()
+            Me.step3 = New DevExpress.XtraEditors.SimpleButton()
+            Me.testPublishedResults = New DevExpress.XtraEditors.SimpleButton()
+            Me.step2 = New DevExpress.XtraEditors.SimpleButton()
+            Me.testPrevResults = New DevExpress.XtraEditors.SimpleButton()
+            Me.step1 = New DevExpress.XtraEditors.SimpleButton()
             Me.chkWorkLocal = New DevExpress.XtraEditors.CheckEdit()
             Me.testLocalWorkarea = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl10 = New DevExpress.XtraEditors.LabelControl()
             Me.testComb = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl9 = New DevExpress.XtraEditors.LabelControl()
-            Me.btnNextIteration = New DevExpress.XtraEditors.SimpleButton()
             Me.testNextIteration = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl8 = New DevExpress.XtraEditors.LabelControl()
             Me.testID = New DevExpress.XtraEditors.ComboBoxEdit()
@@ -205,7 +215,7 @@
             Me.pgStructure.Location = New System.Drawing.Point(4, 22)
             Me.pgStructure.Name = "pgStructure"
             Me.pgStructure.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgStructure.Size = New System.Drawing.Size(1248, 742)
+            Me.pgStructure.Size = New System.Drawing.Size(1727, 742)
             Me.pgStructure.TabIndex = 4
             Me.pgStructure.Text = "Structure"
             Me.pgStructure.UseVisualStyleBackColor = True
@@ -226,8 +236,8 @@
             '
             Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer5)
             Me.SplitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer3.Size = New System.Drawing.Size(1242, 659)
-            Me.SplitContainer3.SplitterDistance = 617
+            Me.SplitContainer3.Size = New System.Drawing.Size(1721, 659)
+            Me.SplitContainer3.SplitterDistance = 854
             Me.SplitContainer3.TabIndex = 7
             '
             'btnImportStrcFiles
@@ -257,7 +267,7 @@
             '
             Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
             Me.SplitContainer4.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer4.Size = New System.Drawing.Size(617, 659)
+            Me.SplitContainer4.Size = New System.Drawing.Size(854, 659)
             Me.SplitContainer4.SplitterDistance = 164
             Me.SplitContainer4.TabIndex = 4
             '
@@ -302,7 +312,7 @@
             Me.propgridFndXL.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndXL.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndXL.Name = "propgridFndXL"
-            Me.propgridFndXL.Size = New System.Drawing.Size(449, 659)
+            Me.propgridFndXL.Size = New System.Drawing.Size(686, 659)
             Me.propgridFndXL.TabIndex = 4
             '
             'SplitContainer5
@@ -319,8 +329,8 @@
             '
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportStrcFiles)
-            Me.SplitContainer5.Size = New System.Drawing.Size(621, 659)
-            Me.SplitContainer5.SplitterDistance = 391
+            Me.SplitContainer5.Size = New System.Drawing.Size(863, 659)
+            Me.SplitContainer5.SplitterDistance = 543
             Me.SplitContainer5.TabIndex = 0
             '
             'propgridFndEDS
@@ -328,7 +338,7 @@
             Me.propgridFndEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndEDS.Name = "propgridFndEDS"
-            Me.propgridFndEDS.Size = New System.Drawing.Size(391, 659)
+            Me.propgridFndEDS.Size = New System.Drawing.Size(543, 659)
             Me.propgridFndEDS.TabIndex = 4
             '
             'btnLoadFndFromEDS
@@ -364,7 +374,7 @@
             Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel2.Location = New System.Drawing.Point(3, 3)
             Me.Panel2.Name = "Panel2"
-            Me.Panel2.Size = New System.Drawing.Size(1242, 77)
+            Me.Panel2.Size = New System.Drawing.Size(1721, 77)
             Me.Panel2.TabIndex = 6
             '
             'btnBrowse
@@ -456,7 +466,7 @@
             Me.pgTNX.Location = New System.Drawing.Point(4, 22)
             Me.pgTNX.Name = "pgTNX"
             Me.pgTNX.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgTNX.Size = New System.Drawing.Size(1248, 742)
+            Me.pgTNX.Size = New System.Drawing.Size(1727, 742)
             Me.pgTNX.TabIndex = 1
             Me.pgTNX.Text = "TNX"
             Me.pgTNX.UseVisualStyleBackColor = True
@@ -478,8 +488,8 @@
             '
             Me.SplitContainer1.Panel2.Controls.Add(Me.scFromEDS)
             Me.SplitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer1.Size = New System.Drawing.Size(1242, 691)
-            Me.SplitContainer1.SplitterDistance = 617
+            Me.SplitContainer1.Size = New System.Drawing.Size(1721, 691)
+            Me.SplitContainer1.SplitterDistance = 854
             Me.SplitContainer1.TabIndex = 6
             '
             'btnSavetoEDS
@@ -511,7 +521,7 @@
             '
             Me.scFromERI.Panel2.Controls.Add(Me.propgridTNXERI)
             Me.scFromERI.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.scFromERI.Size = New System.Drawing.Size(617, 691)
+            Me.scFromERI.Size = New System.Drawing.Size(854, 691)
             Me.scFromERI.SplitterDistance = 164
             Me.scFromERI.TabIndex = 4
             '
@@ -520,7 +530,7 @@
             Me.propgridTNXERI.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXERI.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXERI.Name = "propgridTNXERI"
-            Me.propgridTNXERI.Size = New System.Drawing.Size(449, 691)
+            Me.propgridTNXERI.Size = New System.Drawing.Size(686, 691)
             Me.propgridTNXERI.TabIndex = 4
             '
             'scFromEDS
@@ -537,8 +547,8 @@
             '
             Me.scFromEDS.Panel2.Controls.Add(Me.btnLoadfromEDS)
             Me.scFromEDS.Panel2.Controls.Add(Me.btnExportERI)
-            Me.scFromEDS.Size = New System.Drawing.Size(621, 691)
-            Me.scFromEDS.SplitterDistance = 391
+            Me.scFromEDS.Size = New System.Drawing.Size(863, 691)
+            Me.scFromEDS.SplitterDistance = 543
             Me.scFromEDS.TabIndex = 0
             '
             'propgridTNXEDS
@@ -546,7 +556,7 @@
             Me.propgridTNXEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXEDS.Name = "propgridTNXEDS"
-            Me.propgridTNXEDS.Size = New System.Drawing.Size(391, 691)
+            Me.propgridTNXEDS.Size = New System.Drawing.Size(543, 691)
             Me.propgridTNXEDS.TabIndex = 4
             '
             'btnLoadfromEDS
@@ -578,7 +588,7 @@
             Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel1.Location = New System.Drawing.Point(3, 3)
             Me.Panel1.Name = "Panel1"
-            Me.Panel1.Size = New System.Drawing.Size(1242, 45)
+            Me.Panel1.Size = New System.Drawing.Size(1721, 45)
             Me.Panel1.TabIndex = 5
             '
             'btnTest
@@ -645,7 +655,7 @@
             Me.pgSQLBackUp.Location = New System.Drawing.Point(4, 22)
             Me.pgSQLBackUp.Name = "pgSQLBackUp"
             Me.pgSQLBackUp.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgSQLBackUp.Size = New System.Drawing.Size(1248, 742)
+            Me.pgSQLBackUp.Size = New System.Drawing.Size(1727, 742)
             Me.pgSQLBackUp.TabIndex = 0
             Me.pgSQLBackUp.Text = "SQL"
             Me.pgSQLBackUp.UseVisualStyleBackColor = True
@@ -723,7 +733,7 @@
             Me.TabControl1.Location = New System.Drawing.Point(0, 0)
             Me.TabControl1.Name = "TabControl1"
             Me.TabControl1.SelectedIndex = 0
-            Me.TabControl1.Size = New System.Drawing.Size(1256, 768)
+            Me.TabControl1.Size = New System.Drawing.Size(1735, 768)
             Me.TabControl1.TabIndex = 0
             '
             'pgUnitTesting
@@ -733,7 +743,7 @@
             Me.pgUnitTesting.Location = New System.Drawing.Point(4, 22)
             Me.pgUnitTesting.Name = "pgUnitTesting"
             Me.pgUnitTesting.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgUnitTesting.Size = New System.Drawing.Size(1248, 742)
+            Me.pgUnitTesting.Size = New System.Drawing.Size(1727, 742)
             Me.pgUnitTesting.TabIndex = 5
             Me.pgUnitTesting.Text = "Testing"
             Me.pgUnitTesting.UseVisualStyleBackColor = True
@@ -756,7 +766,7 @@
             Me.sccMain.Panel2.Controls.Add(Me.SplitterControl1)
             Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
             Me.sccMain.Panel2.Text = "Panel2"
-            Me.sccMain.Size = New System.Drawing.Size(1242, 616)
+            Me.sccMain.Size = New System.Drawing.Size(1721, 616)
             Me.sccMain.SplitterPosition = 298
             Me.sccMain.TabIndex = 21
             '
@@ -775,10 +785,11 @@
             '
             'sccTesting.Panel2
             '
+            Me.sccTesting.Panel2.Controls.Add(Me.rtfactivityLog)
             Me.sccTesting.Panel2.Controls.Add(Me.rtbNotes)
             Me.sccTesting.Panel2.Controls.Add(Me.LabelControl14)
             Me.sccTesting.Panel2.Text = "Panel2"
-            Me.sccTesting.Size = New System.Drawing.Size(934, 616)
+            Me.sccTesting.Size = New System.Drawing.Size(1413, 616)
             Me.sccTesting.SplitterPosition = 206
             Me.sccTesting.TabIndex = 18
             '
@@ -797,7 +808,7 @@
             '
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.XtraTabControl2)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(934, 400)
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(1413, 400)
             Me.SplitContainerControl1.SplitterPosition = 435
             Me.SplitContainerControl1.TabIndex = 15
             '
@@ -853,7 +864,7 @@
             Me.XtraTabControl2.Location = New System.Drawing.Point(0, 0)
             Me.XtraTabControl2.Name = "XtraTabControl2"
             Me.XtraTabControl2.SelectedTabPage = Me.XtraTabPage3
-            Me.XtraTabControl2.Size = New System.Drawing.Size(489, 400)
+            Me.XtraTabControl2.Size = New System.Drawing.Size(968, 400)
             Me.XtraTabControl2.TabIndex = 17
             Me.XtraTabControl2.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage3})
             '
@@ -861,7 +872,7 @@
             '
             Me.XtraTabPage3.Controls.Add(Me.seLocal)
             Me.XtraTabPage3.Name = "XtraTabPage3"
-            Me.XtraTabPage3.Size = New System.Drawing.Size(487, 375)
+            Me.XtraTabPage3.Size = New System.Drawing.Size(966, 375)
             Me.XtraTabPage3.Text = "Local Testing Folder"
             '
             'seLocal
@@ -871,15 +882,26 @@
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(487, 375)
+            Me.seLocal.Size = New System.Drawing.Size(966, 375)
             Me.seLocal.TabIndex = 16
+            '
+            'rtfactivityLog
+            '
+            Me.rtfactivityLog.Dock = System.Windows.Forms.DockStyle.Right
+            Me.rtfactivityLog.Location = New System.Drawing.Point(960, 13)
+            Me.rtfactivityLog.Name = "rtfactivityLog"
+            Me.rtfactivityLog.ReadOnly = True
+            Me.rtfactivityLog.Size = New System.Drawing.Size(453, 193)
+            Me.rtfactivityLog.TabIndex = 21
+            Me.rtfactivityLog.Text = ""
+            Me.rtfactivityLog.Visible = False
             '
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
             Me.rtbNotes.Location = New System.Drawing.Point(0, 13)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(934, 193)
+            Me.rtbNotes.Size = New System.Drawing.Size(1413, 193)
             Me.rtbNotes.TabIndex = 19
             Me.rtbNotes.Text = ""
             '
@@ -939,20 +961,29 @@
             '
             'PanelControl1
             '
-            Me.PanelControl1.Controls.Add(Me.Button2)
+            Me.PanelControl1.Controls.Add(Me.SimpleButton1)
+            Me.PanelControl1.Controls.Add(Me.testJasonLoad)
+            Me.PanelControl1.Controls.Add(Me.step6)
             Me.PanelControl1.Controls.Add(Me.testJason)
-            Me.PanelControl1.Controls.Add(Me.testStructureOnly)
-            Me.PanelControl1.Controls.Add(Me.testCompareAll)
-            Me.PanelControl1.Controls.Add(Me.testPublishedResults)
-            Me.PanelControl1.Controls.Add(Me.testPrevResults)
             Me.PanelControl1.Controls.Add(Me.testIterationResults)
+            Me.PanelControl1.Controls.Add(Me.step5)
+            Me.PanelControl1.Controls.Add(Me.testStructureOnly)
+            Me.PanelControl1.Controls.Add(Me.step4)
+            Me.PanelControl1.Controls.Add(Me.btnNextIteration)
+            Me.PanelControl1.Controls.Add(Me.step3b)
+            Me.PanelControl1.Controls.Add(Me.testCompareAll)
+            Me.PanelControl1.Controls.Add(Me.step3a)
             Me.PanelControl1.Controls.Add(Me.testConduct)
+            Me.PanelControl1.Controls.Add(Me.step3)
+            Me.PanelControl1.Controls.Add(Me.testPublishedResults)
+            Me.PanelControl1.Controls.Add(Me.step2)
+            Me.PanelControl1.Controls.Add(Me.testPrevResults)
+            Me.PanelControl1.Controls.Add(Me.step1)
             Me.PanelControl1.Controls.Add(Me.chkWorkLocal)
             Me.PanelControl1.Controls.Add(Me.testLocalWorkarea)
             Me.PanelControl1.Controls.Add(Me.LabelControl10)
             Me.PanelControl1.Controls.Add(Me.testComb)
             Me.PanelControl1.Controls.Add(Me.LabelControl9)
-            Me.PanelControl1.Controls.Add(Me.btnNextIteration)
             Me.PanelControl1.Controls.Add(Me.testNextIteration)
             Me.PanelControl1.Controls.Add(Me.LabelControl8)
             Me.PanelControl1.Controls.Add(Me.testID)
@@ -972,77 +1003,138 @@
             Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Top
             Me.PanelControl1.Location = New System.Drawing.Point(3, 3)
             Me.PanelControl1.Name = "PanelControl1"
-            Me.PanelControl1.Size = New System.Drawing.Size(1242, 120)
+            Me.PanelControl1.Size = New System.Drawing.Size(1721, 120)
             Me.PanelControl1.TabIndex = 16
             '
-            'Button2
+            'SimpleButton1
             '
-            Me.Button2.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.intro_1669842870
-            Me.Button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.Button2.Location = New System.Drawing.Point(1146, 14)
-            Me.Button2.Name = "Button2"
-            Me.Button2.Size = New System.Drawing.Size(80, 86)
-            Me.Button2.TabIndex = 31
-            Me.Button2.Text = "Load JSON"
-            Me.Button2.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-            Me.Button2.UseVisualStyleBackColor = True
+            Me.SimpleButton1.Location = New System.Drawing.Point(1527, 22)
+            Me.SimpleButton1.Name = "SimpleButton1"
+            Me.SimpleButton1.Size = New System.Drawing.Size(172, 23)
+            Me.SimpleButton1.TabIndex = 40
+            Me.SimpleButton1.Text = "Version Number Test"
+            Me.SimpleButton1.Visible = False
+            '
+            'testJasonLoad
+            '
+            Me.testJasonLoad.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.intro_1669842870
+            Me.testJasonLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
+            Me.testJasonLoad.Location = New System.Drawing.Point(1423, 60)
+            Me.testJasonLoad.Name = "testJasonLoad"
+            Me.testJasonLoad.Size = New System.Drawing.Size(83, 55)
+            Me.testJasonLoad.TabIndex = 31
+            Me.testJasonLoad.Text = "Load JSON"
+            Me.testJasonLoad.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+            Me.testJasonLoad.UseVisualStyleBackColor = True
+            Me.testJasonLoad.Visible = False
+            '
+            'step6
+            '
+            Me.step6.Appearance.Options.UseTextOptions = True
+            Me.step6.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step6.Enabled = False
+            Me.step6.Location = New System.Drawing.Point(1038, 92)
+            Me.step6.Name = "step6"
+            Me.step6.Size = New System.Drawing.Size(177, 23)
+            Me.step6.TabIndex = 39
+            Me.step6.Text = "6. Create Results"
             '
             'testJason
             '
             Me.testJason.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.l_intro_1658899230
             Me.testJason.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testJason.Location = New System.Drawing.Point(1060, 14)
+            Me.testJason.Location = New System.Drawing.Point(1423, 6)
             Me.testJason.Name = "testJason"
-            Me.testJason.Size = New System.Drawing.Size(80, 86)
+            Me.testJason.Size = New System.Drawing.Size(83, 55)
             Me.testJason.TabIndex = 30
             Me.testJason.Text = "Create JSON"
             Me.testJason.TextAlign = System.Drawing.ContentAlignment.BottomCenter
             Me.testJason.UseVisualStyleBackColor = True
-            '
-            'testStructureOnly
-            '
-            Me.testStructureOnly.Enabled = False
-            Me.testStructureOnly.Location = New System.Drawing.Point(790, 12)
-            Me.testStructureOnly.Name = "testStructureOnly"
-            Me.testStructureOnly.Size = New System.Drawing.Size(55, 43)
-            Me.testStructureOnly.TabIndex = 29
-            Me.testStructureOnly.Text = "Load" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Structure" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only"
-            '
-            'testCompareAll
-            '
-            Me.testCompareAll.Enabled = False
-            Me.testCompareAll.Location = New System.Drawing.Point(864, 91)
-            Me.testCompareAll.Name = "testCompareAll"
-            Me.testCompareAll.Size = New System.Drawing.Size(177, 23)
-            Me.testCompareAll.TabIndex = 28
-            Me.testCompareAll.Text = "Compare All Results"
-            '
-            'testPublishedResults
-            '
-            Me.testPublishedResults.Enabled = False
-            Me.testPublishedResults.Location = New System.Drawing.Point(864, 64)
-            Me.testPublishedResults.Name = "testPublishedResults"
-            Me.testPublishedResults.Size = New System.Drawing.Size(177, 23)
-            Me.testPublishedResults.TabIndex = 27
-            Me.testPublishedResults.Text = "Create Published Tools Results"
-            '
-            'testPrevResults
-            '
-            Me.testPrevResults.Enabled = False
-            Me.testPrevResults.Location = New System.Drawing.Point(864, 35)
-            Me.testPrevResults.Name = "testPrevResults"
-            Me.testPrevResults.Size = New System.Drawing.Size(177, 23)
-            Me.testPrevResults.TabIndex = 26
-            Me.testPrevResults.Text = "Create Reference SA Results"
+            Me.testJason.Visible = False
             '
             'testIterationResults
             '
             Me.testIterationResults.Enabled = False
-            Me.testIterationResults.Location = New System.Drawing.Point(864, 6)
+            Me.testIterationResults.Location = New System.Drawing.Point(1240, 6)
             Me.testIterationResults.Name = "testIterationResults"
             Me.testIterationResults.Size = New System.Drawing.Size(177, 23)
             Me.testIterationResults.TabIndex = 25
             Me.testIterationResults.Text = "Create Iteration Results"
+            Me.testIterationResults.Visible = False
+            '
+            'step5
+            '
+            Me.step5.Appearance.Options.UseTextOptions = True
+            Me.step5.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step5.Enabled = False
+            Me.step5.Location = New System.Drawing.Point(1038, 63)
+            Me.step5.Name = "step5"
+            Me.step5.Size = New System.Drawing.Size(177, 23)
+            Me.step5.TabIndex = 38
+            Me.step5.Text = "5. Conduct"
+            '
+            'testStructureOnly
+            '
+            Me.testStructureOnly.Enabled = False
+            Me.testStructureOnly.Location = New System.Drawing.Point(1502, 60)
+            Me.testStructureOnly.Name = "testStructureOnly"
+            Me.testStructureOnly.Size = New System.Drawing.Size(71, 55)
+            Me.testStructureOnly.TabIndex = 29
+            Me.testStructureOnly.Text = "Load" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Structure" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only"
+            Me.testStructureOnly.Visible = False
+            '
+            'step4
+            '
+            Me.step4.Appearance.Options.UseTextOptions = True
+            Me.step4.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step4.Enabled = False
+            Me.step4.Location = New System.Drawing.Point(1038, 34)
+            Me.step4.Name = "step4"
+            Me.step4.Size = New System.Drawing.Size(177, 23)
+            Me.step4.TabIndex = 37
+            Me.step4.Text = "4. Run Reference ERI "
+            '
+            'btnNextIteration
+            '
+            Me.btnNextIteration.Enabled = False
+            Me.btnNextIteration.Location = New System.Drawing.Point(1240, 89)
+            Me.btnNextIteration.Name = "btnNextIteration"
+            Me.btnNextIteration.Size = New System.Drawing.Size(177, 23)
+            Me.btnNextIteration.TabIndex = 18
+            Me.btnNextIteration.Text = "Create New Iteration"
+            Me.btnNextIteration.Visible = False
+            '
+            'step3b
+            '
+            Me.step3b.Appearance.Options.UseTextOptions = True
+            Me.step3b.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step3b.Enabled = False
+            Me.step3b.Location = New System.Drawing.Point(1038, 5)
+            Me.step3b.Name = "step3b"
+            Me.step3b.Size = New System.Drawing.Size(177, 23)
+            Me.step3b.TabIndex = 36
+            Me.step3b.Text = "3b. Import Inputs (Maestro)"
+            '
+            'testCompareAll
+            '
+            Me.testCompareAll.Enabled = False
+            Me.testCompareAll.Location = New System.Drawing.Point(1240, 70)
+            Me.testCompareAll.Name = "testCompareAll"
+            Me.testCompareAll.Size = New System.Drawing.Size(177, 23)
+            Me.testCompareAll.TabIndex = 28
+            Me.testCompareAll.Text = "Compare All Results"
+            Me.testCompareAll.Visible = False
+            '
+            'step3a
+            '
+            Me.step3a.Appearance.Options.UseTextOptions = True
+            Me.step3a.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step3a.Enabled = False
+            Me.step3a.Location = New System.Drawing.Point(855, 92)
+            Me.step3a.Name = "step3a"
+            Me.step3a.Size = New System.Drawing.Size(177, 23)
+            Me.step3a.TabIndex = 35
+            Me.step3a.Text = "3a. Import Inputs (Published)"
             '
             'testConduct
             '
@@ -1051,20 +1143,75 @@
             Me.testConduct.Enabled = False
             Me.testConduct.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.download
             Me.testConduct.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.Full
-            Me.testConduct.Location = New System.Drawing.Point(706, 14)
+            Me.testConduct.Location = New System.Drawing.Point(1502, 6)
             Me.testConduct.Name = "testConduct"
             Me.testConduct.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-            Me.testConduct.Size = New System.Drawing.Size(55, 39)
+            Me.testConduct.Size = New System.Drawing.Size(71, 55)
             Me.testConduct.TabIndex = 24
+            Me.testConduct.Visible = False
+            '
+            'step3
+            '
+            Me.step3.Appearance.Options.UseTextOptions = True
+            Me.step3.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step3.Enabled = False
+            Me.step3.Location = New System.Drawing.Point(855, 63)
+            Me.step3.Name = "step3"
+            Me.step3.Size = New System.Drawing.Size(177, 23)
+            Me.step3.TabIndex = 34
+            Me.step3.Text = "3. Create Template Files"
+            '
+            'testPublishedResults
+            '
+            Me.testPublishedResults.Enabled = False
+            Me.testPublishedResults.Location = New System.Drawing.Point(1240, 48)
+            Me.testPublishedResults.Name = "testPublishedResults"
+            Me.testPublishedResults.Size = New System.Drawing.Size(177, 23)
+            Me.testPublishedResults.TabIndex = 27
+            Me.testPublishedResults.Text = "Create Published Tools Results"
+            Me.testPublishedResults.Visible = False
+            '
+            'step2
+            '
+            Me.step2.Appearance.Options.UseTextOptions = True
+            Me.step2.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step2.Enabled = False
+            Me.step2.Location = New System.Drawing.Point(855, 34)
+            Me.step2.Name = "step2"
+            Me.step2.Size = New System.Drawing.Size(177, 23)
+            Me.step2.TabIndex = 33
+            Me.step2.Text = "2. Create New Iteration"
+            '
+            'testPrevResults
+            '
+            Me.testPrevResults.Enabled = False
+            Me.testPrevResults.Location = New System.Drawing.Point(1240, 27)
+            Me.testPrevResults.Name = "testPrevResults"
+            Me.testPrevResults.Size = New System.Drawing.Size(177, 23)
+            Me.testPrevResults.TabIndex = 26
+            Me.testPrevResults.Text = "Create Reference SA Results"
+            Me.testPrevResults.Visible = False
+            '
+            'step1
+            '
+            Me.step1.Appearance.Options.UseTextOptions = True
+            Me.step1.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.step1.Enabled = False
+            Me.step1.Location = New System.Drawing.Point(855, 5)
+            Me.step1.Name = "step1"
+            Me.step1.Size = New System.Drawing.Size(177, 23)
+            Me.step1.TabIndex = 32
+            Me.step1.Text = "1. Get SA Reference Files"
             '
             'chkWorkLocal
             '
             Me.chkWorkLocal.Enabled = False
-            Me.chkWorkLocal.Location = New System.Drawing.Point(562, 93)
+            Me.chkWorkLocal.Location = New System.Drawing.Point(1599, 57)
             Me.chkWorkLocal.Name = "chkWorkLocal"
             Me.chkWorkLocal.Properties.Caption = "Work Local"
             Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
             Me.chkWorkLocal.TabIndex = 23
+            Me.chkWorkLocal.Visible = False
             '
             'testLocalWorkarea
             '
@@ -1083,32 +1230,23 @@
             '
             'testComb
             '
-            Me.testComb.Location = New System.Drawing.Point(651, 63)
+            Me.testComb.Location = New System.Drawing.Point(650, 41)
             Me.testComb.Name = "testComb"
             Me.testComb.Properties.ReadOnly = True
-            Me.testComb.Size = New System.Drawing.Size(194, 20)
+            Me.testComb.Size = New System.Drawing.Size(180, 20)
             Me.testComb.TabIndex = 20
             '
             'LabelControl9
             '
-            Me.LabelControl9.Location = New System.Drawing.Point(562, 66)
+            Me.LabelControl9.Location = New System.Drawing.Point(562, 44)
             Me.LabelControl9.Name = "LabelControl9"
             Me.LabelControl9.Size = New System.Drawing.Size(83, 13)
             Me.LabelControl9.TabIndex = 19
             Me.LabelControl9.Text = "Test Combination"
             '
-            'btnNextIteration
-            '
-            Me.btnNextIteration.Enabled = False
-            Me.btnNextIteration.Location = New System.Drawing.Point(651, 91)
-            Me.btnNextIteration.Name = "btnNextIteration"
-            Me.btnNextIteration.Size = New System.Drawing.Size(195, 23)
-            Me.btnNextIteration.TabIndex = 18
-            Me.btnNextIteration.Text = "Create New Iteration"
-            '
             'testNextIteration
             '
-            Me.testNextIteration.Location = New System.Drawing.Point(650, 37)
+            Me.testNextIteration.Location = New System.Drawing.Point(780, 11)
             Me.testNextIteration.Name = "testNextIteration"
             Me.testNextIteration.Properties.ReadOnly = True
             Me.testNextIteration.Size = New System.Drawing.Size(50, 20)
@@ -1116,7 +1254,7 @@
             '
             'LabelControl8
             '
-            Me.LabelControl8.Location = New System.Drawing.Point(576, 40)
+            Me.LabelControl8.Location = New System.Drawing.Point(706, 14)
             Me.LabelControl8.Name = "LabelControl8"
             Me.LabelControl8.Size = New System.Drawing.Size(68, 13)
             Me.LabelControl8.TabIndex = 16
@@ -1244,7 +1382,7 @@
             Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
             Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
             Me.AutoScroll = True
-            Me.ClientSize = New System.Drawing.Size(1256, 768)
+            Me.ClientSize = New System.Drawing.Size(1735, 768)
             Me.Controls.Add(Me.TabControl1)
             Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
             Me.Name = "frmMain"
@@ -1429,7 +1567,17 @@
         Friend WithEvents Panel1 As Panel
         Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
         Friend WithEvents testJason As Button
-        Friend WithEvents Button2 As Button
+        Friend WithEvents testJasonLoad As Button
+        Friend WithEvents step6 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step5 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step4 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step3b As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step3a As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step3 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step2 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents step1 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents rtfactivityLog As RichTextBox
+        Friend WithEvents SimpleButton1 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
