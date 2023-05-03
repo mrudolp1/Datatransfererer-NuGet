@@ -18,7 +18,7 @@ change sFileTarget to sTargetFile
 
 NEW VARIABLE
 
-Optional ByVal isMaesting as Boolean = False 
+,Optional ByVal isMaesting as Boolean = False 
 
 FILE OPEN CHECK 
 
