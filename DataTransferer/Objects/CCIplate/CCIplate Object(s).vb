@@ -516,6 +516,7 @@ Partial Public Class CCIplate
         'Site Code Criteria
         Dim tia_current, site_name, structure_type As String
         Dim rev_h_section_15_5 As Boolean?
+        Dim site_app, site_rev As Integer?
 
         With wb
             'Site Code Criteria
@@ -529,6 +530,18 @@ Partial Public Class CCIplate
             '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
             '    .Worksheets("Input").Range("D7").Value = CType(order_number, String)
             'End If
+            'App ID
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
+                site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id
+                'Revision #
+                If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision) Then
+                    site_rev = Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision
+                    'fields are combined into 1 cell within CCIplate
+                    .Worksheets("Main").Range("C5").Value = CType(site_app, String) & " REV. " & CType(site_rev, String)
+                Else
+                    .Worksheets("Main").Range("C5").Value = CType(site_app, String)
+                End If
+            End If
             'Tower Type - Defaulting to Monopole if not one of the main tower types
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
             If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then
@@ -648,8 +661,40 @@ Partial Public Class CCIplate
             '    .Worksheets("").Range("").Value = CType(Me.process_stage, String)
             'End If
 
+            'Pole Geometry (when CCIpole exists)
+            'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
+            'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
+            If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
+                Dim col, GeoRow As Integer
+                GeoRow = 18
+                .Worksheets("Sub Tables (SAPI)").Range("A4").Value = CType(True, Boolean) 'Flags if geometry was produced by CCIpole. If true, geometry won't pull in from tnx file path.
+                For Each ps As PoleSection In Me.ParentStructure.Poles(0).unreinf_sections
+                    col = 3
+                    If Not IsNothing(ps.length_section) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_section, Double)
+                    col += 1
+                    If Not IsNothing(ps.length_splice) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_splice, Double)
+                    col += 1
+                    If Not IsNothing(ps.num_sides) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.num_sides, Integer)
+                    col += 1
+                    If Not IsNothing(ps.diam_bot) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_bot, Double)
+                    col += 1
+                    If Not IsNothing(ps.diam_top) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_top, Double)
+                    col += 1
+                    If Not IsNothing(ps.wall_thickness) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.wall_thickness, Double)
+                    col += 1
+                    If Not IsNothing(ps.matl_id) Then
+                        For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
+                            If matl.ID = ps.matl_id Then
+                                .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
+                            End If
+                        Next
+                    End If
+                    'If Not IsNothing(ps.local_matl_id) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.local_matl_id, Integer)
+                    'col += 1
 
-
+                    GeoRow += 1
+                Next
+            End If
 
             If Me.Connections.Count > 0 Then
                 'identify first row to copy data into Excel Sheet
