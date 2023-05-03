@@ -140,7 +140,7 @@ Namespace UnitTesting
                     If fName.Contains(".") And fName.Contains("xlsm") Then
 
                         SelectedFile = info
-                        loadDt = SummarizedResults(info)
+                        loadDt = frmMain.SummarizedResults(info)
                     ElseIf fName.Contains(".csv") Then
                         loadDt = CSVtoDatatable(info)
                     ElseIf fName.Contains(".txt") Then
@@ -183,9 +183,9 @@ Namespace UnitTesting
 
                     'Set the reference grid on the main form to the returned datatable
                     frmMain.GridView1.Columns.Clear()
-                    frmMain.GridControl1.DataSource = Nothing
-                    frmMain.GridControl1.DataSource = loadDt
-                    frmMain.GridControl1.RefreshDataSource()
+                    frmMain.gcViewer.DataSource = Nothing
+                    frmMain.gcViewer.DataSource = loadDt
+                    frmMain.gcViewer.RefreshDataSource()
                     frmMain.GridView1.BestFitColumns(True)
                 End If
             Else

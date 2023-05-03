@@ -1,0 +1,62 @@
+Import Previous Version Macro Names:
+
+Pile 		- Button173_Click
+Unit Base 	- Import_Previous_Version
+Pier & Pad 	- Import_Previous_Version
+Seis 		- Import_Previous_Version
+Plate 		- Import_Previous_Version
+Pole 		- Import_Previous_Version
+Pier 		- Import_Previous_Version_Performer
+GAB 		- Import_Previous_Version
+Leg 		- Import_Previous_Version
+
+Code References:
+
+VARIABLE NAME WHEN OPENING FILE
+
+change sFileTarget to sTargetFile
+
+NEW VARIABLE
+
+Optional ByVal isMaesting as Boolean = False 
+
+FILE OPEN CHECK 
+
+    If Not isMaesting Then
+        MsgBox "Please close the file being imported and try again."
+    End If
+    
+    Application.ScreenUpdating = True
+    Application.EnableEvents = True
+    Exit Sub
+
+
+IMPORT LOADS RESPONSE
+
+If isMaesting Then
+    response = vbNo
+Else
+    response = MsgBox("Would you also like to import loads from file?", vbYesNo, "Applied Loads")
+End If
+
+
+IMPORT RANGE ERROR
+
+        If Not isMaesting Then
+            iContinueImport = MsgBox("Unable to import range:  " & sDestination, vbOKCancel, "Error")
+            'vbCancel = 2
+            If iContinueImport = vbCancel Then GoTo SomethingWrong
+        End If
+
+
+CCISEISMIC SPECIFIC
+                Dim iUpdateDcode
+                    If isMaesting Then
+                        iUpdateDcode = vbYes
+                    Else
+                        iUpdateDcode = MsgBox("Imported design code is TIA-222-H." & vbCrLf & vbCrLf _
+                        & "Do you want to update it to TIA-222-H-1?", vbYesNo + vbDefaultButton1, "Update TIA-222-H")
+                    End If
+
+
+POLE SPECIFIC

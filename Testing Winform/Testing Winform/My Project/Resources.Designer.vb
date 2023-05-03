@@ -61,6 +61,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type DevExpress.Utils.Svg.SvgImage.
+        '''</summary>
+        Friend ReadOnly Property about() As DevExpress.Utils.Svg.SvgImage
+            Get
+                Dim obj As Object = ResourceManager.GetObject("about", resourceCulture)
+                Return CType(obj,DevExpress.Utils.Svg.SvgImage)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
         Friend ReadOnly Property CCIplate__4_1_2_() As Byte()
@@ -87,6 +97,16 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("CCISeismic__3_3_9_", resourceCulture)
                 Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type DevExpress.Utils.Svg.SvgImage.
+        '''</summary>
+        Friend ReadOnly Property charttype_line() As DevExpress.Utils.Svg.SvgImage
+            Get
+                Dim obj As Object = ResourceManager.GetObject("charttype_line", resourceCulture)
+                Return CType(obj,DevExpress.Utils.Svg.SvgImage)
             End Get
         End Property
         
@@ -127,6 +147,16 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("Guyed_Anchor_Block_Foundation__4_0_0_", resourceCulture)
                 Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type DevExpress.Utils.Svg.SvgImage.
+        '''</summary>
+        Friend ReadOnly Property highimportance() As DevExpress.Utils.Svg.SvgImage
+            Get
+                Dim obj As Object = ResourceManager.GetObject("highimportance", resourceCulture)
+                Return CType(obj,DevExpress.Utils.Svg.SvgImage)
             End Get
         End Property
         
@@ -221,12 +251,32 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type DevExpress.Utils.Svg.SvgImage.
+        '''</summary>
+        Friend ReadOnly Property rightangleconnector() As DevExpress.Utils.Svg.SvgImage
+            Get
+                Dim obj As Object = ResourceManager.GetObject("rightangleconnector", resourceCulture)
+                Return CType(obj,DevExpress.Utils.Svg.SvgImage)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
         Friend ReadOnly Property SST_Unit_Base_Foundation__4_0_3_() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("SST_Unit_Base_Foundation__4_0_3_", resourceCulture)
                 Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type DevExpress.Utils.Svg.SvgImage.
+        '''</summary>
+        Friend ReadOnly Property warning() As DevExpress.Utils.Svg.SvgImage
+            Get
+                Dim obj As Object = ResourceManager.GetObject("warning", resourceCulture)
+                Return CType(obj,DevExpress.Utils.Svg.SvgImage)
             End Get
         End Property
     End Module
