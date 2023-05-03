@@ -1,95 +1,101 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
 Imports System.IO
-'Imports Microsoft.Data.SqlClient
+Imports System.Runtime.Serialization
 
-Imports System.Security.Principal
-
+<DataContractAttribute()>
 Public Class ReportOptions
     Inherits EDSObjectWithQueries
 
 #Region "Properties"
-    
+
     'Required overriden Properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
-    Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Report Options"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "report.report_options"
+        End Get
+    End Property
 
     'Properties: Store in SQL report.report_options table (PK = WO)
-    Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
-
-    Public Property ReportType As String
-    Public Property ConfigurationType As String
-    Public Property LC As String
-    Public Property LCSubtype As String
-    Public Property CodeRef As String
-    Public Property ToBeStamped As Boolean
-    Public Property ToBeGivenToCustomer As Boolean
-    Public Property OnlySuperStructureAnalyzed As Boolean
-    Public Property NewBuildInNewCode As Boolean
-    Public Property IBM As Boolean
-    Public Property TacExposureChange As Boolean
-    Public Property TacTopoChange As Boolean
-    Public Property MappingDocuments As Boolean
-    Public Property ProposedExtension As Boolean
-    Public Property ExtensionHeight As Double
-    Public Property CanisterExtension As Boolean
-    Public Property IsModified As Boolean
-    Public Property RohnPirodFlangePlates As Boolean
-    Public Property FlangeFEA As Boolean
-    Public Property MpSliceOption As Integer '0,1,2
-    Public Property ConditionallyPassing As Boolean
-    Public Property GradeBeamAnalysisNeeded As Boolean
-    Public Property GradeBeamsRequired As Boolean
-    Public Property GroutRequired As Boolean
-    Public Property ATTAddendum As Boolean
-    Public Property RemoveCFDAreas As Boolean = True
-    Public Property UseTiltTwistWording As Boolean
-    Public Property LicenseOnly As Boolean
-    Public Property MultipleFoundationsConsidered As Boolean
-    Public Property RohnClips As Boolean
-    Public Property TopographicCategoryOtherThan1 As Boolean
-    Public Property ImportanceFactorOtherThan1 As Boolean
-    Public Property PrevWO As Integer
-    Public Property IsDefault As Boolean
+    <DataMember()> Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+    <DataMember()> Public Property ReportType As String
+     <DataMember()> Public Property ConfigurationType As String
+     <DataMember()> Public Property LC As String
+     <DataMember()> Public Property LCSubtype As String
+     <DataMember()> Public Property CodeRef As String
+     <DataMember()> Public Property ToBeStamped As Boolean
+     <DataMember()> Public Property ToBeGivenToCustomer As Boolean
+     <DataMember()> Public Property OnlySuperStructureAnalyzed As Boolean
+     <DataMember()> Public Property NewBuildInNewCode As Boolean
+     <DataMember()> Public Property IBM As Boolean
+     <DataMember()> Public Property TacExposureChange As Boolean
+     <DataMember()> Public Property TacTopoChange As Boolean
+     <DataMember()> Public Property MappingDocuments As Boolean
+     <DataMember()> Public Property ProposedExtension As Boolean
+     <DataMember()> Public Property ExtensionHeight As Double
+     <DataMember()> Public Property CanisterExtension As Boolean
+     <DataMember()> Public Property IsModified As Boolean
+     <DataMember()> Public Property RohnPirodFlangePlates As Boolean
+     <DataMember()> Public Property FlangeFEA As Boolean
+     <DataMember()> Public Property MpSliceOption As Integer '0,1,2
+     <DataMember()> Public Property ConditionallyPassing As Boolean
+     <DataMember()> Public Property GradeBeamAnalysisNeeded As Boolean
+     <DataMember()> Public Property GradeBeamsRequired As Boolean
+     <DataMember()> Public Property GroutRequired As Boolean
+     <DataMember()> Public Property ATTAddendum As Boolean
+     <DataMember()> Public Property RemoveCFDAreas As Boolean = True
+     <DataMember()> Public Property UseTiltTwistWording As Boolean
+     <DataMember()> Public Property LicenseOnly As Boolean
+     <DataMember()> Public Property MultipleFoundationsConsidered As Boolean
+     <DataMember()> Public Property RohnClips As Boolean
+     <DataMember()> Public Property TopographicCategoryOtherThan1 As Boolean
+     <DataMember()> Public Property ImportanceFactorOtherThan1 As Boolean
+     <DataMember()> Public Property PrevWO As Integer
+     <DataMember()> Public Property IsDefault As Boolean
 
     'Properties: Get from EDS based on WO(???)
-    Public Property EngName As String
-    Public Property EngQAName As String
-    Public Property EngStampName As String
-    Public Property EngStampTitle As String
+     <DataMember()> Public Property EngName As String
+     <DataMember()> Public Property EngQAName As String
+     <DataMember()> Public Property EngStampName As String
+     <DataMember()> Public Property EngStampTitle As String
 
-    Public Property ReportDate As Date = Today
-    Public Property JurisdictionWording As String
+     <DataMember()> Public Property ReportDate As Date = Today
+     <DataMember()> Public Property JurisdictionWording As String
 
 
     'Lists: Stored in db under report.report_lists
-    Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
     'From
     '{"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
-    Public Property Notes As BindingList(Of String) = New BindingList(Of String)
-    Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property Notes As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
     'Equipment (Tables 1,2,3)
-    Public ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
-    Public ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
-    Public OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
+    <DataMember()> Public Property ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
+    <DataMember()> Public Property ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
+    <DataMember()> Public Property OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
 
     'Documents (for Table 4)
-    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
+    <DataMember()> Public Property TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
 
     'Temporary place to put LMP data, to eventually be merged with the Equipment Tables in the Report Class Library...
-    Public temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
+    <DataMember()> Public Property temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
 
     'File management
-    Public RootDir As DirectoryInfo
+    <DataMember()> Public Property RootDir As DirectoryInfo
 
     'Files / Appendixes
-    Public Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+    <DataMember()> Public Property Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
-    Public Property IsFromDB As Boolean
-    Public Property IsFromDefault As Boolean
+    <DataMember()> Public Property IsFromDB As Boolean
+     <DataMember()> Public Property IsFromDefault As Boolean
 
 #End Region
 
@@ -1530,12 +1536,13 @@ Public Class FilepathWithPriority
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class TableDocument
-    Public Property Enabled As Boolean
+     <DataMember()> Public Property Enabled As Boolean
 
-    Public Property Document As String
-    Public Property Reference As String
-    Public Property Source As String
+     <DataMember()> Public Property Document As String
+     <DataMember()> Public Property Reference As String
+     <DataMember()> Public Property Source As String
 
     Private _valid As Boolean
 
@@ -1563,28 +1570,29 @@ Public Class TableDocument
     End Sub
 End Class
 
+<DataContractAttribute()>
 Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Mounting Level")>
-    Public Property mounting_level As String
+     <DataMember()> Public Property mounting_level As String
 
 
     <Category("EDS"), Description(""), DisplayName("Center Line Elevation")>
-    Public Property center_line_elevation As String
+     <DataMember()> Public Property center_line_elevation As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Antennas")>
-    Public Property num_antennas As Long
+     <DataMember()> Public Property num_antennas As Long
 
     <Category("EDS"), Description(""), DisplayName("Antenna Manufacturer")>
-    Public Property antenna_manufacturer As String
+     <DataMember()> Public Property antenna_manufacturer As String
 
     <Category("EDS"), Description(""), DisplayName("Antenna Model")>
-    Public Property antenna_model As String
+     <DataMember()> Public Property antenna_model As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
-    Public Property num_feed_lines As String
+     <DataMember()> Public Property num_feed_lines As String
 
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
-    Public Property feed_line_size As String
+     <DataMember()> Public Property feed_line_size As String
 
     Public Sub New()
         mounting_level = " - "
@@ -1642,14 +1650,15 @@ Public Class Equipment
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class FeedLineInformation
 
-    Public Property enabled As Boolean
-    Public Property size As String
-    Public Property status As String
-    Public Property ccicode As String
-    Public Property sum_count As String
-    Public Property endheight As String
+     <DataMember()> Public Property enabled As Boolean
+     <DataMember()> Public Property size As String
+     <DataMember()> Public Property status As String
+     <DataMember()> Public Property ccicode As String
+     <DataMember()> Public Property sum_count As String
+     <DataMember()> Public Property endheight As String
 
     Public Sub New()
 

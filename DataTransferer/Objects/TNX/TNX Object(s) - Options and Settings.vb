@@ -2,17 +2,18 @@
 Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary Text comparison instead of Text Comparison
 
 Imports System.ComponentModel
-Imports System.Data
-Imports System.IO
-Imports System.Security.Principal
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
 #Region "Code"
+<DataContract()>
 Partial Public Class tnxCode
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Code"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Code"
+        End Get
+    End Property
 
 #Region "Define"
     Private _design As New tnxDesign()
@@ -23,7 +24,7 @@ Partial Public Class tnxCode
     Private _seismic As New tnxSeismic()
 
     <Category("TNX Code"), Description(""), DisplayName("Design")>
-    Public Property design() As tnxDesign
+     <DataMember()> Public Property design() As tnxDesign
         Get
             Return Me._design
         End Get
@@ -33,7 +34,7 @@ Partial Public Class tnxCode
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Ice")>
-    Public Property ice() As tnxIce
+     <DataMember()> Public Property ice() As tnxIce
         Get
             Return Me._ice
         End Get
@@ -43,7 +44,7 @@ Partial Public Class tnxCode
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Thermal")>
-    Public Property thermal() As tnxThermal
+     <DataMember()> Public Property thermal() As tnxThermal
         Get
             Return Me._thermal
         End Get
@@ -53,7 +54,7 @@ Partial Public Class tnxCode
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Wind")>
-    Public Property wind() As tnxWind
+     <DataMember()> Public Property wind() As tnxWind
         Get
             Return Me._wind
         End Get
@@ -63,7 +64,7 @@ Partial Public Class tnxCode
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Miscellaneous Code")>
-    Public Property misclCode() As tnxMisclCode
+     <DataMember()> Public Property misclCode() As tnxMisclCode
         Get
             Return Me._misclCode
         End Get
@@ -73,7 +74,7 @@ Partial Public Class tnxCode
     End Property
 
     <Category("TNX Code"), Description(""), DisplayName("Seismic")>
-    Public Property seismic() As tnxSeismic
+     <DataMember()> Public Property seismic() As tnxSeismic
         Get
             Return Me._seismic
         End Get
@@ -110,11 +111,15 @@ Partial Public Class tnxCode
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxDesign
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Design"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Design"
+        End Get
+    End Property
 
 #Region "Define"
     Private _DesignCode As String
@@ -133,7 +138,7 @@ Partial Public Class tnxDesign
     Private _PrintBitmaps As Boolean?
 
     <Category("TNX Code Design"), Description(""), DisplayName("DesignCode")>
-    Public Property DesignCode() As String
+     <DataMember()> Public Property DesignCode() As String
         Get
             Return Me._DesignCode
         End Get
@@ -142,7 +147,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("Analysis Only, Check Sections, Cyclic Design"), DisplayName("ERIDesignMode")>
-    Public Property ERIDesignMode() As String
+     <DataMember()> Public Property ERIDesignMode() As String
         Get
             Return Me._ERIDesignMode
         End Get
@@ -151,7 +156,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - legs"), DisplayName("DoInteraction")>
-    Public Property DoInteraction() As Boolean?
+     <DataMember()> Public Property DoInteraction() As Boolean?
         Get
             Return Me._DoInteraction
         End Get
@@ -160,7 +165,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - horizontals"), DisplayName("DoHorzInteraction")>
-    Public Property DoHorzInteraction() As Boolean?
+     <DataMember()> Public Property DoHorzInteraction() As Boolean?
         Get
             Return Me._DoHorzInteraction
         End Get
@@ -169,7 +174,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("consider moments - diagonals"), DisplayName("DoDiagInteraction")>
-    Public Property DoDiagInteraction() As Boolean?
+     <DataMember()> Public Property DoDiagInteraction() As Boolean?
         Get
             Return Me._DoDiagInteraction
         End Get
@@ -178,7 +183,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseMomentMagnification")>
-    Public Property UseMomentMagnification() As Boolean?
+     <DataMember()> Public Property UseMomentMagnification() As Boolean?
         Get
             Return Me._UseMomentMagnification
         End Get
@@ -187,7 +192,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseCodeStressRatio")>
-    Public Property UseCodeStressRatio() As Boolean?
+     <DataMember()> Public Property UseCodeStressRatio() As Boolean?
         Get
             Return Me._UseCodeStressRatio
         End Get
@@ -196,7 +201,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("base structure allowable stress ratio"), DisplayName("AllowStressRatio")>
-    Public Property AllowStressRatio() As Double?
+     <DataMember()> Public Property AllowStressRatio() As Double?
         Get
             Return Me._AllowStressRatio
         End Get
@@ -205,7 +210,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("upper structure allowable stress ratio"), DisplayName("AllowAntStressRatio")>
-    Public Property AllowAntStressRatio() As Double?
+     <DataMember()> Public Property AllowAntStressRatio() As Double?
         Get
             Return Me._AllowAntStressRatio
         End Get
@@ -214,7 +219,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseCodeGuySF")>
-    Public Property UseCodeGuySF() As Boolean?
+     <DataMember()> Public Property UseCodeGuySF() As Boolean?
         Get
             Return Me._UseCodeGuySF
         End Get
@@ -223,7 +228,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("GuySF")>
-    Public Property GuySF() As Double?
+     <DataMember()> Public Property GuySF() As Double?
         Get
             Return Me._GuySF
         End Get
@@ -232,7 +237,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("UseTIA222H_AnnexS")>
-    Public Property UseTIA222H_AnnexS() As Boolean?
+     <DataMember()> Public Property UseTIA222H_AnnexS() As Boolean?
         Get
             Return Me._UseTIA222H_AnnexS
         End Get
@@ -241,7 +246,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description("TIA-222-H Annex S allowable ratio"), DisplayName("TIA_222_H_AnnexS_Ratio")>
-    Public Property TIA_222_H_AnnexS_Ratio() As Double?
+     <DataMember()> Public Property TIA_222_H_AnnexS_Ratio() As Double?
         Get
             Return Me._TIA_222_H_AnnexS_Ratio
         End Get
@@ -250,7 +255,7 @@ Partial Public Class tnxDesign
         End Set
     End Property
     <Category("TNX Code Design"), Description(""), DisplayName("PrintBitmaps")>
-    Public Property PrintBitmaps() As Boolean?
+     <DataMember()> Public Property PrintBitmaps() As Boolean?
         Get
             Return Me._PrintBitmaps
         End Get
@@ -289,11 +294,15 @@ Partial Public Class tnxDesign
     End Function
 
 End Class
-
+<DataContract()>
 Partial Public Class tnxIce
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Ice"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Ice"
+        End Get
+    End Property
 
 #Region "Define"
     Private _IceThickness As Double?
@@ -304,7 +313,7 @@ Partial Public Class tnxIce
     Private _UseIceEscalation As Boolean?
 
     <Category("TNX Code Ice"), Description(""), DisplayName("IceThickness")>
-    Public Property IceThickness() As Double?
+     <DataMember()> Public Property IceThickness() As Double?
         Get
             Return Me._IceThickness
         End Get
@@ -313,7 +322,7 @@ Partial Public Class tnxIce
         End Set
     End Property
     <Category("TNX Code Ice"), Description(""), DisplayName("IceDensity")>
-    Public Property IceDensity() As Double?
+     <DataMember()> Public Property IceDensity() As Double?
         Get
             Return Me._IceDensity
         End Get
@@ -322,7 +331,7 @@ Partial Public Class tnxIce
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("UseModified_TIA_222_IceParameters")>
-    Public Property UseModified_TIA_222_IceParameters() As Boolean?
+     <DataMember()> Public Property UseModified_TIA_222_IceParameters() As Boolean?
         Get
             Return Me._UseModified_TIA_222_IceParameters
         End Get
@@ -331,7 +340,7 @@ Partial Public Class tnxIce
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("TIA_222_IceThicknessMultiplier")>
-    Public Property TIA_222_IceThicknessMultiplier() As Double?
+     <DataMember()> Public Property TIA_222_IceThicknessMultiplier() As Double?
         Get
             Return Me._TIA_222_IceThicknessMultiplier
         End Get
@@ -340,7 +349,7 @@ Partial Public Class tnxIce
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-G/H Custom Ice Options"), DisplayName("DoNotUse_TIA_222_IceEscalation")>
-    Public Property DoNotUse_TIA_222_IceEscalation() As Boolean?
+     <DataMember()> Public Property DoNotUse_TIA_222_IceEscalation() As Boolean?
         Get
             Return Me._DoNotUse_TIA_222_IceEscalation
         End Get
@@ -349,7 +358,7 @@ Partial Public Class tnxIce
         End Set
     End Property
     <Category("TNX Code Ice"), Description("TIA-222-F and earlier"), DisplayName("UseIceEscalation")>
-    Public Property UseIceEscalation() As Boolean?
+     <DataMember()> Public Property UseIceEscalation() As Boolean?
         Get
             Return Me._UseIceEscalation
         End Get
@@ -379,17 +388,21 @@ Partial Public Class tnxIce
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxThermal
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Code"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Code"
+        End Get
+    End Property
 
 #Region "Define"
     Private _TempDrop As Double?
 
     <Category("TNX Code Thermal"), Description(""), DisplayName("TempDrop")>
-    Public Property TempDrop() As Double?
+     <DataMember()> Public Property TempDrop() As Double?
         Get
             Return Me._TempDrop
         End Get
@@ -416,11 +429,15 @@ Partial Public Class tnxThermal
 End Class
 
 
-
+<DataContract()>
 Partial Public Class tnxWind
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Wind"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Wind"
+        End Get
+    End Property
 
 #Region "Define"
     Private _WindSpeed As Double?
@@ -464,7 +481,7 @@ Partial Public Class tnxWind
     Private _CSA_S37_ServiceabilityFactor As Double?
 
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeed")>
-    Public Property WindSpeed() As Double?
+     <DataMember()> Public Property WindSpeed() As Double?
         Get
             Return Me._WindSpeed
         End Get
@@ -473,7 +490,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedIce")>
-    Public Property WindSpeedIce() As Double?
+     <DataMember()> Public Property WindSpeedIce() As Double?
         Get
             Return Me._WindSpeedIce
         End Get
@@ -482,7 +499,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindSpeedService")>
-    Public Property WindSpeedService() As Double?
+     <DataMember()> Public Property WindSpeedService() As Double?
         Get
             Return Me._WindSpeedService
         End Get
@@ -491,7 +508,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("UseStateCountyLookup")>
-    Public Property UseStateCountyLookup() As Boolean?
+     <DataMember()> Public Property UseStateCountyLookup() As Boolean?
         Get
             Return Me._UseStateCountyLookup
         End Get
@@ -500,7 +517,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("State")>
-    Public Property State() As String
+     <DataMember()> Public Property State() As String
         Get
             Return Me._State
         End Get
@@ -509,7 +526,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("County")>
-    Public Property County() As String
+     <DataMember()> Public Property County() As String
         Get
             Return Me._County
         End Get
@@ -518,7 +535,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("UseMaxKz")>
-    Public Property UseMaxKz() As Boolean?
+     <DataMember()> Public Property UseMaxKz() As Boolean?
         Get
             Return Me._UseMaxKz
         End Get
@@ -527,7 +544,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_WindData")>
-    Public Property ASCE_7_10_WindData() As Boolean?
+     <DataMember()> Public Property ASCE_7_10_WindData() As Boolean?
         Get
             Return Me._ASCE_7_10_WindData
         End Get
@@ -536,7 +553,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-G Only"), DisplayName("ASCE_7_10_ConvertWindToASD")>
-    Public Property ASCE_7_10_ConvertWindToASD() As Boolean?
+     <DataMember()> Public Property ASCE_7_10_ConvertWindToASD() As Boolean?
         Get
             Return Me._ASCE_7_10_ConvertWindToASD
         End Get
@@ -545,7 +562,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Use Special Wind Profile"), DisplayName("UseASCEWind")>
-    Public Property UseASCEWind() As Boolean?
+     <DataMember()> Public Property UseASCEWind() As Boolean?
         Get
             Return Me._UseASCEWind
         End Get
@@ -554,7 +571,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Use TIA Gh Value"), DisplayName("AutoCalc_ASCE_GH")>
-    Public Property AutoCalc_ASCE_GH() As Boolean?
+     <DataMember()> Public Property AutoCalc_ASCE_GH() As Boolean?
         Get
             Return Me._AutoCalc_ASCE_GH
         End Get
@@ -563,7 +580,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = B, 1 = C,  2 = D}"), DisplayName("ASCE_ExposureCat")>
-    Public Property ASCE_ExposureCat() As Integer?
+     <DataMember()> Public Property ASCE_ExposureCat() As Integer?
         Get
             Return Me._ASCE_ExposureCat
         End Get
@@ -572,7 +589,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = ASCE 7-88, 1 = ASCE 7-93, 2= ASCE 7-95, 3 = ASCE 7-98, 4 = ASCE 7-02, 5 = Cook Co., IL, 6 = WIS 53, 7 = Chicago}"), DisplayName("ASCE_Year")>
-    Public Property ASCE_Year() As Integer?
+     <DataMember()> Public Property ASCE_Year() As Integer?
         Get
             Return Me._ASCE_Year
         End Get
@@ -581,7 +598,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ASCEGh")>
-    Public Property ASCEGh() As Double?
+     <DataMember()> Public Property ASCEGh() As Double?
         Get
             Return Me._ASCEGh
         End Get
@@ -590,7 +607,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ASCEI")>
-    Public Property ASCEI() As Double?
+     <DataMember()> Public Property ASCEI() As Double?
         Get
             Return Me._ASCEI
         End Get
@@ -599,7 +616,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = Every Section, 1 = between guys, 2 = user specify (WindCalcPoints)}"), DisplayName("CalcWindAt")>
-    Public Property CalcWindAt() As Integer?
+     <DataMember()> Public Property CalcWindAt() As Integer?
         Get
             Return Me._CalcWindAt
         End Get
@@ -608,7 +625,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("WindCalcPoints")>
-    Public Property WindCalcPoints() As Double?
+     <DataMember()> Public Property WindCalcPoints() As Double?
         Get
             Return Me._WindCalcPoints
         End Get
@@ -617,7 +634,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = B, 1 = C, 2 = D}"), DisplayName("WindExposure")>
-    Public Property WindExposure() As Integer?
+     <DataMember()> Public Property WindExposure() As Integer?
         Get
             Return Me._WindExposure
         End Get
@@ -626,7 +643,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("Structure Class - TIA-222-G Only {0 = I, 1 = II, 2 = III}"), DisplayName("StructureCategory")>
-    Public Property StructureCategory() As Integer?
+     <DataMember()> Public Property StructureCategory() As Integer?
         Get
             Return Me._StructureCategory
         End Get
@@ -635,7 +652,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("TIA-222-H Only {0 = I, 1 = II,  2 = III,  3 = IV}"), DisplayName("RiskCategory")>
-    Public Property RiskCategory() As Integer?
+     <DataMember()> Public Property RiskCategory() As Integer?
         Get
             Return Me._RiskCategory
         End Get
@@ -644,7 +661,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = 1, 1 = 2, 2 = 3, 3 = 4, 4 = 5/Rigorous Procedure}"), DisplayName("TopoCategory")>
-    Public Property TopoCategory() As Integer?
+     <DataMember()> Public Property TopoCategory() As Integer?
         Get
             Return Me._TopoCategory
         End Get
@@ -653,7 +670,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("{0 = Continuous Ridge, 1 = Flat Topped Ridge, 2 = Hill, 3 = Flat Topped Hill, 4 = Continuous Escarpment}"), DisplayName("RSMTopographicFeature")>
-    Public Property RSMTopographicFeature() As Integer?
+     <DataMember()> Public Property RSMTopographicFeature() As Integer?
         Get
             Return Me._RSMTopographicFeature
         End Get
@@ -662,7 +679,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RSM_L")>
-    Public Property RSM_L() As Double?
+     <DataMember()> Public Property RSM_L() As Double?
         Get
             Return Me._RSM_L
         End Get
@@ -671,7 +688,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RSM_X")>
-    Public Property RSM_X() As Double?
+     <DataMember()> Public Property RSM_X() As Double?
         Get
             Return Me._RSM_X
         End Get
@@ -680,7 +697,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("CrestHeight")>
-    Public Property CrestHeight() As Double?
+     <DataMember()> Public Property CrestHeight() As Double?
         Get
             Return Me._CrestHeight
         End Get
@@ -689,7 +706,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("TIA_222_H_TopoFeatureDownwind")>
-    Public Property TIA_222_H_TopoFeatureDownwind() As Boolean?
+     <DataMember()> Public Property TIA_222_H_TopoFeatureDownwind() As Boolean?
         Get
             Return Me._TIA_222_H_TopoFeatureDownwind
         End Get
@@ -698,7 +715,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("BaseElevAboveSeaLevel")>
-    Public Property BaseElevAboveSeaLevel() As Double?
+     <DataMember()> Public Property BaseElevAboveSeaLevel() As Double?
         Get
             Return Me._BaseElevAboveSeaLevel
         End Get
@@ -707,7 +724,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("ConsiderRooftopSpeedUp")>
-    Public Property ConsiderRooftopSpeedUp() As Boolean?
+     <DataMember()> Public Property ConsiderRooftopSpeedUp() As Boolean?
         Get
             Return Me._ConsiderRooftopSpeedUp
         End Get
@@ -716,7 +733,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopWS")>
-    Public Property RooftopWS() As Double?
+     <DataMember()> Public Property RooftopWS() As Double?
         Get
             Return Me._RooftopWS
         End Get
@@ -725,7 +742,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopHS")>
-    Public Property RooftopHS() As Double?
+     <DataMember()> Public Property RooftopHS() As Double?
         Get
             Return Me._RooftopHS
         End Get
@@ -734,7 +751,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopParapetHt")>
-    Public Property RooftopParapetHt() As Double?
+     <DataMember()> Public Property RooftopParapetHt() As Double?
         Get
             Return Me._RooftopParapetHt
         End Get
@@ -743,7 +760,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description(""), DisplayName("RooftopXB")>
-    Public Property RooftopXB() As Double?
+     <DataMember()> Public Property RooftopXB() As Double?
         Get
             Return Me._RooftopXB
         End Get
@@ -752,7 +769,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier {0 = A, 1 = B, 2 = C}"), DisplayName("WindZone")>
-    Public Property WindZone() As Integer?
+     <DataMember()> Public Property WindZone() As Integer?
         Get
             Return Me._WindZone
         End Get
@@ -761,7 +778,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMult")>
-    Public Property EIACWindMult() As Double?
+     <DataMember()> Public Property EIACWindMult() As Double?
         Get
             Return Me._EIACWindMult
         End Get
@@ -770,7 +787,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier"), DisplayName("EIACWindMultIce")>
-    Public Property EIACWindMultIce() As Double?
+     <DataMember()> Public Property EIACWindMultIce() As Double?
         Get
             Return Me._EIACWindMultIce
         End Get
@@ -779,7 +796,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("EIA-222-C and earlier - Set Cable Drag Factor to 1.0"), DisplayName("EIACIgnoreCableDrag")>
-    Public Property EIACIgnoreCableDrag() As Boolean?
+     <DataMember()> Public Property EIACIgnoreCableDrag() As Boolean?
         Get
             Return Me._EIACIgnoreCableDrag
         End Get
@@ -788,7 +805,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_RefVelPress")>
-    Public Property CSA_S37_RefVelPress() As Double?
+     <DataMember()> Public Property CSA_S37_RefVelPress() As Double?
         Get
             Return Me._CSA_S37_RefVelPress
         End Get
@@ -797,7 +814,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only {0 = I, 1 = II, 2 = III}"), DisplayName("CSA_S37_ReliabilityClass")>
-    Public Property CSA_S37_ReliabilityClass() As Integer?
+     <DataMember()> Public Property CSA_S37_ReliabilityClass() As Integer?
         Get
             Return Me._CSA_S37_ReliabilityClass
         End Get
@@ -806,7 +823,7 @@ Partial Public Class tnxWind
         End Set
     End Property
     <Category("TNX Code Wind"), Description("CSA S37-01 only"), DisplayName("CSA_S37_ServiceabilityFactor")>
-    Public Property CSA_S37_ServiceabilityFactor() As Double?
+     <DataMember()> Public Property CSA_S37_ServiceabilityFactor() As Double?
         Get
             Return Me._CSA_S37_ServiceabilityFactor
         End Get
@@ -868,11 +885,15 @@ Partial Public Class tnxWind
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxMisclCode
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Miscl"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Miscl"
+        End Get
+    End Property
 
 #Region "Define"
     Private _GroutFc As Double?
@@ -880,7 +901,7 @@ Partial Public Class tnxMisclCode
     Private _TowerBoltMinEdgeDist As Double?
 
     <Category("TNX Code Miscellaneous"), Description(""), DisplayName("GroutFc")>
-    Public Property GroutFc() As Double?
+     <DataMember()> Public Property GroutFc() As Double?
         Get
             Return Me._GroutFc
         End Get
@@ -889,7 +910,7 @@ Partial Public Class tnxMisclCode
         End Set
     End Property
     <Category("TNX Code Miscellaneous"), Description("Default bolt grade"), DisplayName("TowerBoltGrade")>
-    Public Property TowerBoltGrade() As String
+     <DataMember()> Public Property TowerBoltGrade() As String
         Get
             Return Me._TowerBoltGrade
         End Get
@@ -898,7 +919,7 @@ Partial Public Class tnxMisclCode
         End Set
     End Property
     <Category("TNX Code Miscellaneous"), Description("Not in UI"), DisplayName("TowerBoltMinEdgeDist")>
-    Public Property TowerBoltMinEdgeDist() As Double?
+     <DataMember()> Public Property TowerBoltMinEdgeDist() As Double?
         Get
             Return Me._TowerBoltMinEdgeDist
         End Get
@@ -924,11 +945,15 @@ Partial Public Class tnxMisclCode
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxSeismic
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Seismic"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Seismic"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -938,7 +963,7 @@ Partial Public Class tnxSeismic
     Private _SeismicS1 As Double?
 
     <Category("TNX Code seismic"), Description(""), DisplayName("UseASCE7_10_Seismic_Lcomb")>
-    Public Property UseASCE7_10_Seismic_Lcomb() As Boolean?
+     <DataMember()> Public Property UseASCE7_10_Seismic_Lcomb() As Boolean?
         Get
             Return Me._UseASCE7_10_Seismic_Lcomb
         End Get
@@ -947,7 +972,7 @@ Partial Public Class tnxSeismic
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI {0 = A, 1 = B, 2 = C, 3 = D, 4 = E} "), DisplayName("SeismicSiteClass")>
-    Public Property SeismicSiteClass() As Integer?
+     <DataMember()> Public Property SeismicSiteClass() As Integer?
         Get
             Return Me._SeismicSiteClass
         End Get
@@ -956,7 +981,7 @@ Partial Public Class tnxSeismic
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicSs")>
-    Public Property SeismicSs() As Double?
+     <DataMember()> Public Property SeismicSs() As Double?
         Get
             Return Me._SeismicSs
         End Get
@@ -965,7 +990,7 @@ Partial Public Class tnxSeismic
         End Set
     End Property
     <Category("TNX Code seismic"), Description("not in UI"), DisplayName("SeismicS1")>
-    Public Property SeismicS1() As Double?
+     <DataMember()> Public Property SeismicS1() As Double?
         Get
             Return Me._SeismicS1
         End Get
@@ -996,10 +1021,15 @@ End Class
 #End Region
 
 #Region "Options"
+<DataContract()>
 Partial Public Class tnxOptions
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Options"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Options"
+        End Get
+    End Property
 
 #Region "Define"
     Private _UseClearSpans As Boolean?
@@ -1040,7 +1070,7 @@ Partial Public Class tnxOptions
     Private _misclOptions As New tnxMisclOptions()
 
     <Category("TNX Options"), Description(""), DisplayName("UseClearSpans")>
-    Public Property UseClearSpans() As Boolean?
+     <DataMember()> Public Property UseClearSpans() As Boolean?
         Get
             Return Me._UseClearSpans
         End Get
@@ -1049,7 +1079,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseClearSpansKlr")>
-    Public Property UseClearSpansKlr() As Boolean?
+     <DataMember()> Public Property UseClearSpansKlr() As Boolean?
         Get
             Return Me._UseClearSpansKlr
         End Get
@@ -1058,7 +1088,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("treat feedline bundles as cylindrical"), DisplayName("UseFeedlineAsCylinder")>
-    Public Property UseFeedlineAsCylinder() As Boolean?
+     <DataMember()> Public Property UseFeedlineAsCylinder() As Boolean?
         Get
             Return Me._UseFeedlineAsCylinder
         End Get
@@ -1067,7 +1097,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Distribute Leg Loads As Uniform"), DisplayName("UseLegLoads")>
-    Public Property UseLegLoads() As Boolean?
+     <DataMember()> Public Property UseLegLoads() As Boolean?
         Get
             Return Me._UseLegLoads
         End Get
@@ -1076,7 +1106,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("SR Sleeve Bolts Resist Compression"), DisplayName("SRTakeCompression")>
-    Public Property SRTakeCompression() As Boolean?
+     <DataMember()> Public Property SRTakeCompression() As Boolean?
         Get
             Return Me._SRTakeCompression
         End Get
@@ -1085,7 +1115,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("All Leg Panels Have Same Allowable"), DisplayName("AllLegPanelsSame")>
-    Public Property AllLegPanelsSame() As Boolean?
+     <DataMember()> Public Property AllLegPanelsSame() As Boolean?
         Get
             Return Me._AllLegPanelsSame
         End Get
@@ -1094,7 +1124,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Include Bolts In Member Capacity"), DisplayName("UseCombinedBoltCapacity")>
-    Public Property UseCombinedBoltCapacity() As Boolean?
+     <DataMember()> Public Property UseCombinedBoltCapacity() As Boolean?
         Get
             Return Me._UseCombinedBoltCapacity
         End Get
@@ -1103,7 +1133,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Secondary Horizontal Braces Leg"), DisplayName("SecHorzBracesLeg")>
-    Public Property SecHorzBracesLeg() As Boolean?
+     <DataMember()> Public Property SecHorzBracesLeg() As Boolean?
         Get
             Return Me._SecHorzBracesLeg
         End Get
@@ -1112,7 +1142,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Sort Capacity Reports By Component"), DisplayName("SortByComponent")>
-    Public Property SortByComponent() As Boolean?
+     <DataMember()> Public Property SortByComponent() As Boolean?
         Get
             Return Me._SortByComponent
         End Get
@@ -1121,7 +1151,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("SR Members Have Cut Ends"), DisplayName("SRCutEnds")>
-    Public Property SRCutEnds() As Boolean?
+     <DataMember()> Public Property SRCutEnds() As Boolean?
         Get
             Return Me._SRCutEnds
         End Get
@@ -1130,7 +1160,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("SR Members Are Concentric"), DisplayName("SRConcentric")>
-    Public Property SRConcentric() As Boolean?
+     <DataMember()> Public Property SRConcentric() As Boolean?
         Get
             Return Me._SRConcentric
         End Get
@@ -1139,7 +1169,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Include Angle Block Shear Check"), DisplayName("CalcBlockShear")>
-    Public Property CalcBlockShear() As Boolean?
+     <DataMember()> Public Property CalcBlockShear() As Boolean?
         Get
             Return Me._CalcBlockShear
         End Get
@@ -1148,7 +1178,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Use Diamond Inner Bracing"), DisplayName("Use4SidedDiamondBracing")>
-    Public Property Use4SidedDiamondBracing() As Boolean?
+     <DataMember()> Public Property Use4SidedDiamondBracing() As Boolean?
         Get
             Return Me._Use4SidedDiamondBracing
         End Get
@@ -1157,7 +1187,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Triangulate Diamond Inner Bracing"), DisplayName("TriangulateInnerBracing")>
-    Public Property TriangulateInnerBracing() As Boolean?
+     <DataMember()> Public Property TriangulateInnerBracing() As Boolean?
         Get
             Return Me._TriangulateInnerBracing
         End Get
@@ -1166,7 +1196,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Print Carrier/Notes"), DisplayName("PrintCarrierNotes")>
-    Public Property PrintCarrierNotes() As Boolean?
+     <DataMember()> Public Property PrintCarrierNotes() As Boolean?
         Get
             Return Me._PrintCarrierNotes
         End Get
@@ -1175,7 +1205,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Add IBC .6D+W Combination"), DisplayName("AddIBCWindCase")>
-    Public Property AddIBCWindCase() As Boolean?
+     <DataMember()> Public Property AddIBCWindCase() As Boolean?
         Get
             Return Me._AddIBCWindCase
         End Get
@@ -1184,7 +1214,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Leg Bolts Are At Top Of Section"), DisplayName("LegBoltsAtTop")>
-    Public Property LegBoltsAtTop() As Boolean?
+     <DataMember()> Public Property LegBoltsAtTop() As Boolean?
         Get
             Return Me._LegBoltsAtTop
         End Get
@@ -1193,7 +1223,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_MinBracingResistance")>
-    Public Property UseTIA222Exemptions_MinBracingResistance() As Boolean?
+     <DataMember()> Public Property UseTIA222Exemptions_MinBracingResistance() As Boolean?
         Get
             Return Me._UseTIA222Exemptions_MinBracingResistance
         End Get
@@ -1202,7 +1232,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("UseTIA222Exemptions_TensionSplice")>
-    Public Property UseTIA222Exemptions_TensionSplice() As Boolean?
+     <DataMember()> Public Property UseTIA222Exemptions_TensionSplice() As Boolean?
         Get
             Return Me._UseTIA222Exemptions_TensionSplice
         End Get
@@ -1211,7 +1241,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description(""), DisplayName("IgnoreKLryFor60DegAngleLegs")>
-    Public Property IgnoreKLryFor60DegAngleLegs() As Boolean?
+     <DataMember()> Public Property IgnoreKLryFor60DegAngleLegs() As Boolean?
         Get
             Return Me._IgnoreKLryFor60DegAngleLegs
         End Get
@@ -1220,7 +1250,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Consider Feed Line Torque"), DisplayName("UseFeedlineTorque")>
-    Public Property UseFeedlineTorque() As Boolean?
+     <DataMember()> Public Property UseFeedlineTorque() As Boolean?
         Get
             Return Me._UseFeedlineTorque
         End Get
@@ -1229,7 +1259,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Assume Legs Pinned"), DisplayName("UsePinnedElements")>
-    Public Property UsePinnedElements() As Boolean?
+     <DataMember()> Public Property UsePinnedElements() As Boolean?
         Get
             Return Me._UsePinnedElements
         End Get
@@ -1238,7 +1268,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Assume Rigid Index Plate"), DisplayName("UseRigidIndex")>
-    Public Property UseRigidIndex() As Boolean?
+     <DataMember()> Public Property UseRigidIndex() As Boolean?
         Get
             Return Me._UseRigidIndex
         End Get
@@ -1247,7 +1277,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Retension Guys To Initial Tension"), DisplayName("UseTrueCable")>
-    Public Property UseTrueCable() As Boolean?
+     <DataMember()> Public Property UseTrueCable() As Boolean?
         Get
             Return Me._UseTrueCable
         End Get
@@ -1256,7 +1286,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Use ASCE 10 X-Brace Ly Rules"), DisplayName("UseASCELy")>
-    Public Property UseASCELy() As Boolean?
+     <DataMember()> Public Property UseASCELy() As Boolean?
         Get
             Return Me._UseASCELy
         End Get
@@ -1265,7 +1295,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Calculate Forces in Supporing Bracing Members"), DisplayName("CalcBracingForces")>
-    Public Property CalcBracingForces() As Boolean?
+     <DataMember()> Public Property CalcBracingForces() As Boolean?
         Get
             Return Me._CalcBracingForces
         End Get
@@ -1274,7 +1304,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Ignore Redundant Bracing in FEA"), DisplayName("IgnoreBracingFEA")>
-    Public Property IgnoreBracingFEA() As Boolean?
+     <DataMember()> Public Property IgnoreBracingFEA() As Boolean?
         Get
             Return Me._IgnoreBracingFEA
         End Get
@@ -1283,7 +1313,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Bypass Mast Stability Checks"), DisplayName("BypassStabilityChecks")>
-    Public Property BypassStabilityChecks() As Boolean?
+     <DataMember()> Public Property BypassStabilityChecks() As Boolean?
         Get
             Return Me._BypassStabilityChecks
         End Get
@@ -1292,7 +1322,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Project Wind Area Of Appurtenances"), DisplayName("UseWindProjection")>
-    Public Property UseWindProjection() As Boolean?
+     <DataMember()> Public Property UseWindProjection() As Boolean?
         Get
             Return Me._UseWindProjection
         End Get
@@ -1301,7 +1331,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("Use Azimuth Dish Coefficients"), DisplayName("UseDishCoeff")>
-    Public Property UseDishCoeff() As Boolean?
+     <DataMember()> Public Property UseDishCoeff() As Boolean?
         Get
             Return Me._UseDishCoeff
         End Get
@@ -1310,7 +1340,7 @@ Partial Public Class tnxOptions
         End Set
     End Property
     <Category("TNX Options"), Description("AutoCalc Torque Arm Area"), DisplayName("AutoCalcTorqArmArea")>
-    Public Property AutoCalcTorqArmArea() As Boolean?
+     <DataMember()> Public Property AutoCalcTorqArmArea() As Boolean?
         Get
             Return Me._AutoCalcTorqArmArea
         End Get
@@ -1320,7 +1350,7 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Foundation Stiffness Options")>
-    Public Property foundationStiffness() As tnxFoundationStiffness
+     <DataMember()> Public Property foundationStiffness() As tnxFoundationStiffness
         Get
             Return Me._foundationStiffness
         End Get
@@ -1330,7 +1360,7 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Default Girt Offsets Options")>
-    Public Property defaultGirtOffsets() As tnxDefaultGirtOffsets
+     <DataMember()> Public Property defaultGirtOffsets() As tnxDefaultGirtOffsets
         Get
             Return Me._defaultGirtOffsets
         End Get
@@ -1340,7 +1370,7 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Cantilever Pole Options")>
-    Public Property cantileverPoles() As tnxCantileverPoles
+     <DataMember()> Public Property cantileverPoles() As tnxCantileverPoles
         Get
             Return Me._cantileverPoles
         End Get
@@ -1350,7 +1380,7 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Wind Direction Options")>
-    Public Property windDirections() As tnxWindDirections
+     <DataMember()> Public Property windDirections() As tnxWindDirections
         Get
             Return Me._windDirections
         End Get
@@ -1360,7 +1390,7 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Miscellaneous Options")>
-    Public Property misclOptions() As tnxMisclOptions
+     <DataMember()> Public Property misclOptions() As tnxMisclOptions
         Get
             Return Me._misclOptions
         End Get
@@ -1427,11 +1457,15 @@ Partial Public Class tnxOptions
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxFoundationStiffness
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Foundation Stiffness"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Foundation Stiffness"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1441,7 +1475,7 @@ Partial Public Class tnxFoundationStiffness
     Private _GuyHorz As Double?
 
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastVert")>
-    Public Property MastVert() As Double?
+     <DataMember()> Public Property MastVert() As Double?
         Get
             Return Me._MastVert
         End Get
@@ -1450,7 +1484,7 @@ Partial Public Class tnxFoundationStiffness
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("MastHorz")>
-    Public Property MastHorz() As Double?
+     <DataMember()> Public Property MastHorz() As Double?
         Get
             Return Me._MastHorz
         End Get
@@ -1459,7 +1493,7 @@ Partial Public Class tnxFoundationStiffness
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyVert")>
-    Public Property GuyVert() As Double?
+     <DataMember()> Public Property GuyVert() As Double?
         Get
             Return Me._GuyVert
         End Get
@@ -1468,7 +1502,7 @@ Partial Public Class tnxFoundationStiffness
         End Set
     End Property
     <Category("TNX Foundation Stiffness Options"), Description("foundation stiffness"), DisplayName("GuyHorz")>
-    Public Property GuyHorz() As Double?
+     <DataMember()> Public Property GuyHorz() As Double?
         Get
             Return Me._GuyHorz
         End Get
@@ -1498,11 +1532,15 @@ Partial Public Class tnxFoundationStiffness
     End Function
 
 End Class
-
+<DataContract()>
 Partial Public Class tnxDefaultGirtOffsets
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Default Girt Offsets"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Default Girt Offsets"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1511,7 +1549,7 @@ Partial Public Class tnxDefaultGirtOffsets
     Private _OffsetBotGirt As Boolean?
 
     <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffset")>
-    Public Property GirtOffset() As Double?
+     <DataMember()> Public Property GirtOffset() As Double?
         Get
             Return Me._GirtOffset
         End Get
@@ -1520,7 +1558,7 @@ Partial Public Class tnxDefaultGirtOffsets
         End Set
     End Property
     <Category("TNX Default Girt Offset Options"), Description(""), DisplayName("GirtOffsetLatticedPole")>
-    Public Property GirtOffsetLatticedPole() As Double?
+     <DataMember()> Public Property GirtOffsetLatticedPole() As Double?
         Get
             Return Me._GirtOffsetLatticedPole
         End Get
@@ -1529,7 +1567,7 @@ Partial Public Class tnxDefaultGirtOffsets
         End Set
     End Property
     <Category("TNX Default Girt Offset Options"), Description("offset girt at foundation"), DisplayName("OffsetBotGirt")>
-    Public Property OffsetBotGirt() As Boolean?
+     <DataMember()> Public Property OffsetBotGirt() As Boolean?
         Get
             Return Me._OffsetBotGirt
         End Get
@@ -1556,11 +1594,15 @@ Partial Public Class tnxDefaultGirtOffsets
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxCantileverPoles
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Cantilever Poles"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Cantilever Poles"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1574,7 +1616,7 @@ Partial Public Class tnxCantileverPoles
     Private _CantKFactor As Double?
 
     <Category("TNX Cantilever Pole Options"), Description(")Include Shear-Torsion Interaction"), DisplayName("CheckVonMises")>
-    Public Property CheckVonMises() As Boolean?
+     <DataMember()> Public Property CheckVonMises() As Boolean?
         Get
             Return Me._CheckVonMises
         End Get
@@ -1583,7 +1625,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Use Top Mounted Socket"), DisplayName("SocketTopMount")>
-    Public Property SocketTopMount() As Boolean?
+     <DataMember()> Public Property SocketTopMount() As Boolean?
         Get
             Return Me._SocketTopMount
         End Get
@@ -1592,7 +1634,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Print Pole Stresses at Increments"), DisplayName("PrintMonopoleAtIncrements")>
-    Public Property PrintMonopoleAtIncrements() As Boolean?
+     <DataMember()> Public Property PrintMonopoleAtIncrements() As Boolean?
         Get
             Return Me._PrintMonopoleAtIncrements
         End Get
@@ -1601,7 +1643,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Always Yse Sub-Critical Flow"), DisplayName("UseSubCriticalFlow")>
-    Public Property UseSubCriticalFlow() As Boolean?
+     <DataMember()> Public Property UseSubCriticalFlow() As Boolean?
         Get
             Return Me._UseSubCriticalFlow
         End Get
@@ -1610,7 +1652,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Pole Without Linear Attachments"), DisplayName("AssumePoleWithNoAttachments")>
-    Public Property AssumePoleWithNoAttachments() As Boolean?
+     <DataMember()> Public Property AssumePoleWithNoAttachments() As Boolean?
         Get
             Return Me._AssumePoleWithNoAttachments
         End Get
@@ -1619,7 +1661,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Pole With Shroud or No Appurtenances"), DisplayName("AssumePoleWithShroud")>
-    Public Property AssumePoleWithShroud() As Boolean?
+     <DataMember()> Public Property AssumePoleWithShroud() As Boolean?
         Get
             Return Me._AssumePoleWithShroud
         End Get
@@ -1628,7 +1670,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Outside and Inside Corner Radii Are Known"), DisplayName("PoleCornerRadiusKnown")>
-    Public Property PoleCornerRadiusKnown() As Boolean?
+     <DataMember()> Public Property PoleCornerRadiusKnown() As Boolean?
         Get
             Return Me._PoleCornerRadiusKnown
         End Get
@@ -1637,7 +1679,7 @@ Partial Public Class tnxCantileverPoles
         End Set
     End Property
     <Category("TNX Cantilever Pole Options"), Description("Cantilevered Poles K Factor"), DisplayName("CantKFactor")>
-    Public Property CantKFactor() As Double?
+     <DataMember()> Public Property CantKFactor() As Double?
         Get
             Return Me._CantKFactor
         End Get
@@ -1669,11 +1711,15 @@ Partial Public Class tnxCantileverPoles
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxWindDirections
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Wind Directions"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Wind Directions"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -1729,7 +1775,7 @@ Partial Public Class tnxWindDirections
     Private _SuppressWindPatternLoading As Boolean?
 
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Direction Options")>
-    Public Property WindDirOption() As Integer?
+     <DataMember()> Public Property WindDirOption() As Integer?
         Get
             Return Me._WindDirOption
         End Get
@@ -1738,7 +1784,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 0 deg")>
-    Public Property WindDir0_0() As Boolean?
+     <DataMember()> Public Property WindDir0_0() As Boolean?
         Get
             Return Me._WindDir0_0
         End Get
@@ -1747,7 +1793,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 30 deg")>
-    Public Property WindDir0_1() As Boolean?
+     <DataMember()> Public Property WindDir0_1() As Boolean?
         Get
             Return Me._WindDir0_1
         End Get
@@ -1756,7 +1802,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 45 deg")>
-    Public Property WindDir0_2() As Boolean?
+     <DataMember()> Public Property WindDir0_2() As Boolean?
         Get
             Return Me._WindDir0_2
         End Get
@@ -1765,7 +1811,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 60 deg")>
-    Public Property WindDir0_3() As Boolean?
+     <DataMember()> Public Property WindDir0_3() As Boolean?
         Get
             Return Me._WindDir0_3
         End Get
@@ -1774,7 +1820,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 90 deg")>
-    Public Property WindDir0_4() As Boolean?
+     <DataMember()> Public Property WindDir0_4() As Boolean?
         Get
             Return Me._WindDir0_4
         End Get
@@ -1783,7 +1829,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 120 deg")>
-    Public Property WindDir0_5() As Boolean?
+     <DataMember()> Public Property WindDir0_5() As Boolean?
         Get
             Return Me._WindDir0_5
         End Get
@@ -1792,7 +1838,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 135 deg")>
-    Public Property WindDir0_6() As Boolean?
+     <DataMember()> Public Property WindDir0_6() As Boolean?
         Get
             Return Me._WindDir0_6
         End Get
@@ -1801,7 +1847,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 150 deg")>
-    Public Property WindDir0_7() As Boolean?
+     <DataMember()> Public Property WindDir0_7() As Boolean?
         Get
             Return Me._WindDir0_7
         End Get
@@ -1810,7 +1856,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 180 deg")>
-    Public Property WindDir0_8() As Boolean?
+     <DataMember()> Public Property WindDir0_8() As Boolean?
         Get
             Return Me._WindDir0_8
         End Get
@@ -1819,7 +1865,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 210 deg")>
-    Public Property WindDir0_9() As Boolean?
+     <DataMember()> Public Property WindDir0_9() As Boolean?
         Get
             Return Me._WindDir0_9
         End Get
@@ -1828,7 +1874,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 225 deg")>
-    Public Property WindDir0_10() As Boolean?
+     <DataMember()> Public Property WindDir0_10() As Boolean?
         Get
             Return Me._WindDir0_10
         End Get
@@ -1837,7 +1883,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 240 deg")>
-    Public Property WindDir0_11() As Boolean?
+     <DataMember()> Public Property WindDir0_11() As Boolean?
         Get
             Return Me._WindDir0_11
         End Get
@@ -1846,7 +1892,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 270 deg")>
-    Public Property WindDir0_12() As Boolean?
+     <DataMember()> Public Property WindDir0_12() As Boolean?
         Get
             Return Me._WindDir0_12
         End Get
@@ -1855,7 +1901,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 300 deg")>
-    Public Property WindDir0_13() As Boolean?
+     <DataMember()> Public Property WindDir0_13() As Boolean?
         Get
             Return Me._WindDir0_13
         End Get
@@ -1864,7 +1910,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 315 deg")>
-    Public Property WindDir0_14() As Boolean?
+     <DataMember()> Public Property WindDir0_14() As Boolean?
         Get
             Return Me._WindDir0_14
         End Get
@@ -1873,7 +1919,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind No Ice 330 deg")>
-    Public Property WindDir0_15() As Boolean?
+     <DataMember()> Public Property WindDir0_15() As Boolean?
         Get
             Return Me._WindDir0_15
         End Get
@@ -1882,7 +1928,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 0 deg")>
-    Public Property WindDir1_0() As Boolean?
+     <DataMember()> Public Property WindDir1_0() As Boolean?
         Get
             Return Me._WindDir1_0
         End Get
@@ -1891,7 +1937,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 30 deg")>
-    Public Property WindDir1_1() As Boolean?
+     <DataMember()> Public Property WindDir1_1() As Boolean?
         Get
             Return Me._WindDir1_1
         End Get
@@ -1900,7 +1946,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 45 deg")>
-    Public Property WindDir1_2() As Boolean?
+     <DataMember()> Public Property WindDir1_2() As Boolean?
         Get
             Return Me._WindDir1_2
         End Get
@@ -1909,7 +1955,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 60 deg")>
-    Public Property WindDir1_3() As Boolean?
+     <DataMember()> Public Property WindDir1_3() As Boolean?
         Get
             Return Me._WindDir1_3
         End Get
@@ -1918,7 +1964,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 90 deg")>
-    Public Property WindDir1_4() As Boolean?
+     <DataMember()> Public Property WindDir1_4() As Boolean?
         Get
             Return Me._WindDir1_4
         End Get
@@ -1927,7 +1973,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 120 deg")>
-    Public Property WindDir1_5() As Boolean?
+     <DataMember()> Public Property WindDir1_5() As Boolean?
         Get
             Return Me._WindDir1_5
         End Get
@@ -1936,7 +1982,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 135 deg")>
-    Public Property WindDir1_6() As Boolean?
+     <DataMember()> Public Property WindDir1_6() As Boolean?
         Get
             Return Me._WindDir1_6
         End Get
@@ -1945,7 +1991,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 150 deg")>
-    Public Property WindDir1_7() As Boolean?
+     <DataMember()> Public Property WindDir1_7() As Boolean?
         Get
             Return Me._WindDir1_7
         End Get
@@ -1954,7 +2000,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 180 deg")>
-    Public Property WindDir1_8() As Boolean?
+     <DataMember()> Public Property WindDir1_8() As Boolean?
         Get
             Return Me._WindDir1_8
         End Get
@@ -1963,7 +2009,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 210 deg")>
-    Public Property WindDir1_9() As Boolean?
+     <DataMember()> Public Property WindDir1_9() As Boolean?
         Get
             Return Me._WindDir1_9
         End Get
@@ -1972,7 +2018,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 225 deg")>
-    Public Property WindDir1_10() As Boolean?
+     <DataMember()> Public Property WindDir1_10() As Boolean?
         Get
             Return Me._WindDir1_10
         End Get
@@ -1981,7 +2027,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 240 deg")>
-    Public Property WindDir1_11() As Boolean?
+     <DataMember()> Public Property WindDir1_11() As Boolean?
         Get
             Return Me._WindDir1_11
         End Get
@@ -1990,7 +2036,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 270 deg")>
-    Public Property WindDir1_12() As Boolean?
+     <DataMember()> Public Property WindDir1_12() As Boolean?
         Get
             Return Me._WindDir1_12
         End Get
@@ -1999,7 +2045,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 300 deg")>
-    Public Property WindDir1_13() As Boolean?
+     <DataMember()> Public Property WindDir1_13() As Boolean?
         Get
             Return Me._WindDir1_13
         End Get
@@ -2008,7 +2054,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 315 deg")>
-    Public Property WindDir1_14() As Boolean?
+     <DataMember()> Public Property WindDir1_14() As Boolean?
         Get
             Return Me._WindDir1_14
         End Get
@@ -2017,7 +2063,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Ice 330 deg")>
-    Public Property WindDir1_15() As Boolean?
+     <DataMember()> Public Property WindDir1_15() As Boolean?
         Get
             Return Me._WindDir1_15
         End Get
@@ -2026,7 +2072,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 0 deg")>
-    Public Property WindDir2_0() As Boolean?
+     <DataMember()> Public Property WindDir2_0() As Boolean?
         Get
             Return Me._WindDir2_0
         End Get
@@ -2035,7 +2081,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 30 deg")>
-    Public Property WindDir2_1() As Boolean?
+     <DataMember()> Public Property WindDir2_1() As Boolean?
         Get
             Return Me._WindDir2_1
         End Get
@@ -2044,7 +2090,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 45 deg")>
-    Public Property WindDir2_2() As Boolean?
+     <DataMember()> Public Property WindDir2_2() As Boolean?
         Get
             Return Me._WindDir2_2
         End Get
@@ -2053,7 +2099,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 60 deg")>
-    Public Property WindDir2_3() As Boolean?
+     <DataMember()> Public Property WindDir2_3() As Boolean?
         Get
             Return Me._WindDir2_3
         End Get
@@ -2062,7 +2108,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 90 deg")>
-    Public Property WindDir2_4() As Boolean?
+     <DataMember()> Public Property WindDir2_4() As Boolean?
         Get
             Return Me._WindDir2_4
         End Get
@@ -2071,7 +2117,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 120 deg")>
-    Public Property WindDir2_5() As Boolean?
+     <DataMember()> Public Property WindDir2_5() As Boolean?
         Get
             Return Me._WindDir2_5
         End Get
@@ -2080,7 +2126,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 135 deg")>
-    Public Property WindDir2_6() As Boolean?
+     <DataMember()> Public Property WindDir2_6() As Boolean?
         Get
             Return Me._WindDir2_6
         End Get
@@ -2089,7 +2135,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 150 deg")>
-    Public Property WindDir2_7() As Boolean?
+     <DataMember()> Public Property WindDir2_7() As Boolean?
         Get
             Return Me._WindDir2_7
         End Get
@@ -2098,7 +2144,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 180 deg")>
-    Public Property WindDir2_8() As Boolean?
+     <DataMember()> Public Property WindDir2_8() As Boolean?
         Get
             Return Me._WindDir2_8
         End Get
@@ -2107,7 +2153,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 210 deg")>
-    Public Property WindDir2_9() As Boolean?
+     <DataMember()> Public Property WindDir2_9() As Boolean?
         Get
             Return Me._WindDir2_9
         End Get
@@ -2116,7 +2162,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 225 deg")>
-    Public Property WindDir2_10() As Boolean?
+     <DataMember()> Public Property WindDir2_10() As Boolean?
         Get
             Return Me._WindDir2_10
         End Get
@@ -2125,7 +2171,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 240 deg")>
-    Public Property WindDir2_11() As Boolean?
+     <DataMember()> Public Property WindDir2_11() As Boolean?
         Get
             Return Me._WindDir2_11
         End Get
@@ -2134,7 +2180,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 270 deg")>
-    Public Property WindDir2_12() As Boolean?
+     <DataMember()> Public Property WindDir2_12() As Boolean?
         Get
             Return Me._WindDir2_12
         End Get
@@ -2143,7 +2189,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 300 deg")>
-    Public Property WindDir2_13() As Boolean?
+     <DataMember()> Public Property WindDir2_13() As Boolean?
         Get
             Return Me._WindDir2_13
         End Get
@@ -2152,7 +2198,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 315 deg")>
-    Public Property WindDir2_14() As Boolean?
+     <DataMember()> Public Property WindDir2_14() As Boolean?
         Get
             Return Me._WindDir2_14
         End Get
@@ -2161,7 +2207,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Wind Service 330 deg")>
-    Public Property WindDir2_15() As Boolean?
+     <DataMember()> Public Property WindDir2_15() As Boolean?
         Get
             Return Me._WindDir2_15
         End Get
@@ -2170,7 +2216,7 @@ Partial Public Class tnxWindDirections
         End Set
     End Property
     <Category("TNX Wind Direction Options"), Description(""), DisplayName("Suppress Generation of Pattern Loading")>
-    Public Property SuppressWindPatternLoading() As Boolean?
+     <DataMember()> Public Property SuppressWindPatternLoading() As Boolean?
         Get
             Return Me._SuppressWindPatternLoading
         End Get
@@ -2246,11 +2292,15 @@ Partial Public Class tnxWindDirections
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxMisclOptions
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Miscl"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Miscl"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2258,7 +2308,7 @@ Partial Public Class tnxMisclOptions
     Private _RadiusSampleDist As Double?
 
     <Category("TNX Miscl Options"), Description("Tension Only Take-Up"), DisplayName("Hog Rod Takeup")>
-    Public Property HogRodTakeup() As Double?
+    <DataMember()> Public Property HogRodTakeup() As Double?
         Get
             Return Me._HogRodTakeup
         End Get
@@ -2267,7 +2317,7 @@ Partial Public Class tnxMisclOptions
         End Set
     End Property
     <Category("TNX Miscl Options"), Description("Sampling Distance"), DisplayName("Radius Sample Dist")>
-    Public Property RadiusSampleDist() As Double?
+    <DataMember()> Public Property RadiusSampleDist() As Double?
         Get
             Return Me._RadiusSampleDist
         End Get
@@ -2292,17 +2342,18 @@ Partial Public Class tnxMisclOptions
         Return Equals
     End Function
 End Class
-
-
-
 #End Region
 
 #Region "Settings"
-
+<DataContract()>
 Partial Public Class tnxSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Settings"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Settings"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2313,7 +2364,7 @@ Partial Public Class tnxSettings
     Private _userInfo As New tnxUserInfo()
 
     <Category("TNX Setings"), Description(""), DisplayName("US Units")>
-    Public Property USUnits() As tnxUnits
+    <DataMember()> Public Property USUnits() As tnxUnits
         Get
             Return Me._USUnits
         End Get
@@ -2322,7 +2373,7 @@ Partial Public Class tnxSettings
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("Project Info")>
-    Public Property projectInfo() As tnxProjectInfo
+    <DataMember()> Public Property projectInfo() As tnxProjectInfo
         Get
             Return Me._projectInfo
         End Get
@@ -2331,7 +2382,7 @@ Partial Public Class tnxSettings
         End Set
     End Property
     <Category("TNX Setings"), Description(""), DisplayName("User Info")>
-    Public Property userInfo() As tnxUserInfo
+    <DataMember()> Public Property userInfo() As tnxUserInfo
         Get
             Return Me._userInfo
         End Get
@@ -2366,11 +2417,15 @@ Partial Public Class tnxSettings
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxSolutionSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Solution"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Solution"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2382,7 +2437,7 @@ Partial Public Class tnxSolutionSettings
     Private _SolutionTolerance As Double?
 
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionUsePDelta")>
-    Public Property SolutionUsePDelta() As Boolean?
+     <DataMember()> Public Property SolutionUsePDelta() As Boolean?
         Get
             Return Me._SolutionUsePDelta
         End Get
@@ -2391,7 +2446,7 @@ Partial Public Class tnxSolutionSettings
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMinStiffness")>
-    Public Property SolutionMinStiffness() As Double?
+     <DataMember()> Public Property SolutionMinStiffness() As Double?
         Get
             Return Me._SolutionMinStiffness
         End Get
@@ -2400,7 +2455,7 @@ Partial Public Class tnxSolutionSettings
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxStiffness")>
-    Public Property SolutionMaxStiffness() As Double?
+     <DataMember()> Public Property SolutionMaxStiffness() As Double?
         Get
             Return Me._SolutionMaxStiffness
         End Get
@@ -2409,7 +2464,7 @@ Partial Public Class tnxSolutionSettings
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionMaxCycles")>
-    Public Property SolutionMaxCycles() As Integer?
+     <DataMember()> Public Property SolutionMaxCycles() As Integer?
         Get
             Return Me._SolutionMaxCycles
         End Get
@@ -2418,7 +2473,7 @@ Partial Public Class tnxSolutionSettings
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionPower")>
-    Public Property SolutionPower() As Double?
+     <DataMember()> Public Property SolutionPower() As Double?
         Get
             Return Me._SolutionPower
         End Get
@@ -2427,7 +2482,7 @@ Partial Public Class tnxSolutionSettings
         End Set
     End Property
     <Category("TNX Solution Options"), Description(""), DisplayName("SolutionTolerance")>
-    Public Property SolutionTolerance() As Double?
+     <DataMember()> Public Property SolutionTolerance() As Double?
         Get
             Return Me._SolutionTolerance
         End Get
@@ -2465,11 +2520,15 @@ Partial Public Class tnxSolutionSettings
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxReportSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Report"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Report"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2500,7 +2559,7 @@ Partial Public Class tnxReportSettings
     Private _ReportPrintOutputGVerificationTables As Boolean?
 
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputCosts")>
-    Public Property ReportInputCosts() As Boolean?
+     <DataMember()> Public Property ReportInputCosts() As Boolean?
         Get
             Return Me._ReportInputCosts
         End Get
@@ -2509,7 +2568,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputGeometry")>
-    Public Property ReportInputGeometry() As Boolean?
+     <DataMember()> Public Property ReportInputGeometry() As Boolean?
         Get
             Return Me._ReportInputGeometry
         End Get
@@ -2518,7 +2577,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputOptions")>
-    Public Property ReportInputOptions() As Boolean?
+     <DataMember()> Public Property ReportInputOptions() As Boolean?
         Get
             Return Me._ReportInputOptions
         End Get
@@ -2527,7 +2586,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportMaxForces")>
-    Public Property ReportMaxForces() As Boolean?
+     <DataMember()> Public Property ReportMaxForces() As Boolean?
         Get
             Return Me._ReportMaxForces
         End Get
@@ -2536,7 +2595,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportInputMap")>
-    Public Property ReportInputMap() As Boolean?
+     <DataMember()> Public Property ReportInputMap() As Boolean?
         Get
             Return Me._ReportInputMap
         End Get
@@ -2545,7 +2604,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description("{No Capacity Output, Capacity Summary, Capacity Details}"), DisplayName("CostReportOutputType")>
-    Public Property CostReportOutputType() As String
+     <DataMember()> Public Property CostReportOutputType() As String
         Get
             Return Me._CostReportOutputType
         End Get
@@ -2554,7 +2613,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description("{No Cost Output, Cost Summary, Cost Details}"), DisplayName("CapacityReportOutputType")>
-    Public Property CapacityReportOutputType() As String
+     <DataMember()> Public Property CapacityReportOutputType() As String
         Get
             Return Me._CapacityReportOutputType
         End Get
@@ -2563,7 +2622,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceTotals")>
-    Public Property ReportPrintForceTotals() As Boolean?
+     <DataMember()> Public Property ReportPrintForceTotals() As Boolean?
         Get
             Return Me._ReportPrintForceTotals
         End Get
@@ -2572,7 +2631,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintForceDetails")>
-    Public Property ReportPrintForceDetails() As Boolean?
+     <DataMember()> Public Property ReportPrintForceDetails() As Boolean?
         Get
             Return Me._ReportPrintForceDetails
         End Get
@@ -2581,7 +2640,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintMastVectors")>
-    Public Property ReportPrintMastVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintMastVectors() As Boolean?
         Get
             Return Me._ReportPrintMastVectors
         End Get
@@ -2590,7 +2649,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAntPoleVectors")>
-    Public Property ReportPrintAntPoleVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintAntPoleVectors() As Boolean?
         Get
             Return Me._ReportPrintAntPoleVectors
         End Get
@@ -2599,7 +2658,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDiscreteVectors")>
-    Public Property ReportPrintDiscreteVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintDiscreteVectors() As Boolean?
         Get
             Return Me._ReportPrintDiscreteVectors
         End Get
@@ -2608,7 +2667,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDishVectors")>
-    Public Property ReportPrintDishVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintDishVectors() As Boolean?
         Get
             Return Me._ReportPrintDishVectors
         End Get
@@ -2617,7 +2676,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintFeedTowerVectors")>
-    Public Property ReportPrintFeedTowerVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintFeedTowerVectors() As Boolean?
         Get
             Return Me._ReportPrintFeedTowerVectors
         End Get
@@ -2626,7 +2685,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintUserLoadVectors")>
-    Public Property ReportPrintUserLoadVectors() As Boolean?
+     <DataMember()> Public Property ReportPrintUserLoadVectors() As Boolean?
         Get
             Return Me._ReportPrintUserLoadVectors
         End Get
@@ -2635,7 +2694,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintPressures")>
-    Public Property ReportPrintPressures() As Boolean?
+     <DataMember()> Public Property ReportPrintPressures() As Boolean?
         Get
             Return Me._ReportPrintPressures
         End Get
@@ -2644,7 +2703,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintAppurtForces")>
-    Public Property ReportPrintAppurtForces() As Boolean?
+     <DataMember()> Public Property ReportPrintAppurtForces() As Boolean?
         Get
             Return Me._ReportPrintAppurtForces
         End Get
@@ -2653,7 +2712,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyForces")>
-    Public Property ReportPrintGuyForces() As Boolean?
+     <DataMember()> Public Property ReportPrintGuyForces() As Boolean?
         Get
             Return Me._ReportPrintGuyForces
         End Get
@@ -2662,7 +2721,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintGuyStressing")>
-    Public Property ReportPrintGuyStressing() As Boolean?
+     <DataMember()> Public Property ReportPrintGuyStressing() As Boolean?
         Get
             Return Me._ReportPrintGuyStressing
         End Get
@@ -2671,7 +2730,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintDeflections")>
-    Public Property ReportPrintDeflections() As Boolean?
+     <DataMember()> Public Property ReportPrintDeflections() As Boolean?
         Get
             Return Me._ReportPrintDeflections
         End Get
@@ -2680,7 +2739,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintReactions")>
-    Public Property ReportPrintReactions() As Boolean?
+     <DataMember()> Public Property ReportPrintReactions() As Boolean?
         Get
             Return Me._ReportPrintReactions
         End Get
@@ -2689,7 +2748,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintStressChecks")>
-    Public Property ReportPrintStressChecks() As Boolean?
+     <DataMember()> Public Property ReportPrintStressChecks() As Boolean?
         Get
             Return Me._ReportPrintStressChecks
         End Get
@@ -2698,7 +2757,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintBoltChecks")>
-    Public Property ReportPrintBoltChecks() As Boolean?
+     <DataMember()> Public Property ReportPrintBoltChecks() As Boolean?
         Get
             Return Me._ReportPrintBoltChecks
         End Get
@@ -2707,7 +2766,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintInputGVerificationTables")>
-    Public Property ReportPrintInputGVerificationTables() As Boolean?
+     <DataMember()> Public Property ReportPrintInputGVerificationTables() As Boolean?
         Get
             Return Me._ReportPrintInputGVerificationTables
         End Get
@@ -2716,7 +2775,7 @@ Partial Public Class tnxReportSettings
         End Set
     End Property
     <Category("TNX Report Settings"), Description(""), DisplayName("ReportPrintOutputGVerificationTables")>
-    Public Property ReportPrintOutputGVerificationTables() As Boolean?
+     <DataMember()> Public Property ReportPrintOutputGVerificationTables() As Boolean?
         Get
             Return Me._ReportPrintOutputGVerificationTables
         End Get
@@ -2773,11 +2832,15 @@ Partial Public Class tnxReportSettings
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxMTOSettings
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "MTO"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "MTO"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2792,7 +2855,7 @@ Partial Public Class tnxMTOSettings
     'Private _Notes As New List(Of tnxNote)
 
     <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeCapacityNote")>
-    Public Property IncludeCapacityNote() As Boolean?
+     <DataMember()> Public Property IncludeCapacityNote() As Boolean?
         Get
             Return Me._IncludeCapacityNote
         End Get
@@ -2801,7 +2864,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("IncludeAppurtGraphics")>
-    Public Property IncludeAppurtGraphics() As Boolean?
+     <DataMember()> Public Property IncludeAppurtGraphics() As Boolean?
         Get
             Return Me._IncludeAppurtGraphics
         End Get
@@ -2810,7 +2873,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayNotes")>
-    Public Property DisplayNotes() As Boolean?
+     <DataMember()> Public Property DisplayNotes() As Boolean?
         Get
             Return Me._DisplayNotes
         End Get
@@ -2819,7 +2882,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayReactions")>
-    Public Property DisplayReactions() As Boolean?
+     <DataMember()> Public Property DisplayReactions() As Boolean?
         Get
             Return Me._DisplayReactions
         End Get
@@ -2828,7 +2891,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplaySchedule")>
-    Public Property DisplaySchedule() As Boolean?
+     <DataMember()> Public Property DisplaySchedule() As Boolean?
         Get
             Return Me._DisplaySchedule
         End Get
@@ -2837,7 +2900,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayAppurtenanceTable")>
-    Public Property DisplayAppurtenanceTable() As Boolean?
+     <DataMember()> Public Property DisplayAppurtenanceTable() As Boolean?
         Get
             Return Me._DisplayAppurtenanceTable
         End Get
@@ -2846,7 +2909,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("DisplayMaterialStrengthTable")>
-    Public Property DisplayMaterialStrengthTable() As Boolean?
+     <DataMember()> Public Property DisplayMaterialStrengthTable() As Boolean?
         Get
             Return Me._DisplayMaterialStrengthTable
         End Get
@@ -2855,7 +2918,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     <Category("TNX MTO Settings"), Description(""), DisplayName("Notes")>
-    Public Property Notes() As String
+     <DataMember()> Public Property Notes() As String
         Get
             Return Me._Notes
         End Get
@@ -2864,7 +2927,7 @@ Partial Public Class tnxMTOSettings
         End Set
     End Property
     '<Category("TNX MTO Settings"), Description(""), DisplayName("Notes")>
-    'Public Property Notes() As List(Of tnxNote)
+    ' <DataMember()> Public Property Notes() As List(Of tnxNote)
     '    Get
     '        Return Me._Notes
     '    End Get
@@ -2931,7 +2994,7 @@ End Class
 '    Private _Note As String
 
 '    <Category("TNX Note"), Description(""), DisplayName("Note")>
-'    Public Property Note As String
+'     <DataMember()> Public Property Note As String
 '        Get
 '            Return Me._Note
 '        End Get
@@ -2941,11 +3004,15 @@ End Class
 '    End Property
 
 'End Class
-
+<DataContract()>
 Partial Public Class tnxProjectInfo
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Project Info"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Project Info"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -2961,7 +3028,7 @@ Partial Public Class tnxProjectInfo
     Private _VersionUsed As String
 
     <Category("TNX Project Info"), Description("TIA/EIA or CSA-S37"), DisplayName("DesignStandardSeries")>
-    Public Property DesignStandardSeries() As String
+     <DataMember()> Public Property DesignStandardSeries() As String
         Get
             Return Me._DesignStandardSeries
         End Get
@@ -2970,7 +3037,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description("US or SI"), DisplayName("UnitsSystem")>
-    Public Property UnitsSystem() As String
+     <DataMember()> Public Property UnitsSystem() As String
         Get
             Return Me._UnitsSystem
         End Get
@@ -2979,7 +3046,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ClientName")>
-    Public Property ClientName() As String
+     <DataMember()> Public Property ClientName() As String
         Get
             Return Me._ClientName
         End Get
@@ -2988,7 +3055,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ProjectName")>
-    Public Property ProjectName() As String
+     <DataMember()> Public Property ProjectName() As String
         Get
             Return Me._ProjectName
         End Get
@@ -2997,7 +3064,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("ProjectNumber")>
-    Public Property ProjectNumber() As String
+     <DataMember()> Public Property ProjectNumber() As String
         Get
             Return Me._ProjectNumber
         End Get
@@ -3006,7 +3073,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("CreatedBy")>
-    Public Property CreatedBy() As String
+     <DataMember()> Public Property CreatedBy() As String
         Get
             Return Me._CreatedBy
         End Get
@@ -3015,7 +3082,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("CreatedOn")>
-    Public Property CreatedOn() As String
+     <DataMember()> Public Property CreatedOn() As String
         Get
             Return Me._CreatedOn
         End Get
@@ -3024,7 +3091,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("LastUsedBy")>
-    Public Property LastUsedBy() As String
+     <DataMember()> Public Property LastUsedBy() As String
         Get
             Return Me._LastUsedBy
         End Get
@@ -3033,7 +3100,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("LastUsedOn")>
-    Public Property LastUsedOn() As String
+     <DataMember()> Public Property LastUsedOn() As String
         Get
             Return Me._LastUsedOn
         End Get
@@ -3042,7 +3109,7 @@ Partial Public Class tnxProjectInfo
         End Set
     End Property
     <Category("TNX Project Info"), Description(""), DisplayName("VersionUsed")>
-    Public Property VersionUsed() As String
+     <DataMember()> Public Property VersionUsed() As String
         Get
             Return Me._VersionUsed
         End Get
@@ -3077,11 +3144,15 @@ Partial Public Class tnxProjectInfo
     End Function
 
 End Class
-
+<DataContract()>
 Partial Public Class tnxUserInfo
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "User Info"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "User Info"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -3095,7 +3166,7 @@ Partial Public Class tnxUserInfo
     Private _ViewerCompanyBitmap As String
 
     <Category("TNX User Info"), Description(""), DisplayName("ViewerUserName")>
-    Public Property ViewerUserName() As String
+     <DataMember()> Public Property ViewerUserName() As String
         Get
             Return Me._ViewerUserName
         End Get
@@ -3104,7 +3175,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyName")>
-    Public Property ViewerCompanyName() As String
+     <DataMember()> Public Property ViewerCompanyName() As String
         Get
             Return Me._ViewerCompanyName
         End Get
@@ -3113,7 +3184,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerStreetAddress")>
-    Public Property ViewerStreetAddress() As String
+     <DataMember()> Public Property ViewerStreetAddress() As String
         Get
             Return Me._ViewerStreetAddress
         End Get
@@ -3122,7 +3193,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCityState")>
-    Public Property ViewerCityState() As String
+     <DataMember()> Public Property ViewerCityState() As String
         Get
             Return Me._ViewerCityState
         End Get
@@ -3131,7 +3202,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerPhone")>
-    Public Property ViewerPhone() As String
+     <DataMember()> Public Property ViewerPhone() As String
         Get
             Return Me._ViewerPhone
         End Get
@@ -3140,7 +3211,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerFAX")>
-    Public Property ViewerFAX() As String
+     <DataMember()> Public Property ViewerFAX() As String
         Get
             Return Me._ViewerFAX
         End Get
@@ -3149,7 +3220,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerLogo")>
-    Public Property ViewerLogo() As String
+     <DataMember()> Public Property ViewerLogo() As String
         Get
             Return Me._ViewerLogo
         End Get
@@ -3158,7 +3229,7 @@ Partial Public Class tnxUserInfo
         End Set
     End Property
     <Category("TNX User Info"), Description(""), DisplayName("ViewerCompanyBitmap")>
-    Public Property ViewerCompanyBitmap() As String
+     <DataMember()> Public Property ViewerCompanyBitmap() As String
         Get
             Return Me._ViewerCompanyBitmap
         End Get
@@ -3191,7 +3262,7 @@ Partial Public Class tnxUserInfo
 End Class
 
 
-
+<DataContract()>
 Partial Public Class tnxUnits
 
     Private _Length As New tnxLengthUnit()
@@ -3216,7 +3287,7 @@ Partial Public Class tnxUnits
     Private _Spacing As New tnxSpacingUnit()
 
     <Category("TNX Units"), Description(""), DisplayName("Length")>
-    Public Property Length() As tnxLengthUnit
+    <DataMember()> Public Property Length() As tnxLengthUnit
         Get
             Return Me._Length
         End Get
@@ -3225,7 +3296,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Coordinate")>
-    Public Property Coordinate() As tnxCoordinateUnit
+    <DataMember()> Public Property Coordinate() As tnxCoordinateUnit
         Get
             Return Me._Coordinate
         End Get
@@ -3234,7 +3305,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Force")>
-    Public Property Force() As tnxForceUnit
+    <DataMember()> Public Property Force() As tnxForceUnit
         Get
             Return Me._Force
         End Get
@@ -3243,7 +3314,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Load")>
-    Public Property Load() As tnxLoadUnit
+    <DataMember()> Public Property Load() As tnxLoadUnit
         Get
             Return Me._Load
         End Get
@@ -3252,7 +3323,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Moment")>
-    Public Property Moment() As tnxMomentUnit
+    <DataMember()> Public Property Moment() As tnxMomentUnit
         Get
             Return Me._Moment
         End Get
@@ -3261,7 +3332,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Properties")>
-    Public Property Properties() As tnxPropertiesUnit
+    <DataMember()> Public Property Properties() As tnxPropertiesUnit
         Get
             Return Me._Properties
         End Get
@@ -3270,7 +3341,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Pressure")>
-    Public Property Pressure() As tnxPressureUnit
+    <DataMember()> Public Property Pressure() As tnxPressureUnit
         Get
             Return Me._Pressure
         End Get
@@ -3279,7 +3350,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Velocity")>
-    Public Property Velocity() As tnxVelocityUnit
+    <DataMember()> Public Property Velocity() As tnxVelocityUnit
         Get
             Return Me._Velocity
         End Get
@@ -3288,7 +3359,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Displacement")>
-    Public Property Displacement() As tnxDisplacementUnit
+    <DataMember()> Public Property Displacement() As tnxDisplacementUnit
         Get
             Return Me._Displacement
         End Get
@@ -3297,7 +3368,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Mass")>
-    Public Property Mass() As tnxMassUnit
+    <DataMember()> Public Property Mass() As tnxMassUnit
         Get
             Return Me._Mass
         End Get
@@ -3306,7 +3377,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Acceleration")>
-    Public Property Acceleration() As tnxAccelerationUnit
+    <DataMember()> Public Property Acceleration() As tnxAccelerationUnit
         Get
             Return Me._Acceleration
         End Get
@@ -3315,7 +3386,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Stress")>
-    Public Property Stress() As tnxStressUnit
+    <DataMember()> Public Property Stress() As tnxStressUnit
         Get
             Return Me._Stress
         End Get
@@ -3324,7 +3395,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Density")>
-    Public Property Density() As tnxDensityUnit
+    <DataMember()> Public Property Density() As tnxDensityUnit
         Get
             Return Me._Density
         End Get
@@ -3333,7 +3404,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Unitwt")>
-    Public Property UnitWt() As tnxUnitWTUnit
+    <DataMember()> Public Property UnitWt() As tnxUnitWTUnit
         Get
             Return Me._UnitWt
         End Get
@@ -3342,7 +3413,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Strength")>
-    Public Property Strength() As tnxStrengthUnit
+    <DataMember()> Public Property Strength() As tnxStrengthUnit
         Get
             Return Me._Strength
         End Get
@@ -3351,7 +3422,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Modulus")>
-    Public Property Modulus() As tnxModulusUnit
+    <DataMember()> Public Property Modulus() As tnxModulusUnit
         Get
             Return Me._Modulus
         End Get
@@ -3360,7 +3431,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Temperature")>
-    Public Property Temperature() As tnxTempUnit
+    <DataMember()> Public Property Temperature() As tnxTempUnit
         Get
             Return Me._Temperature
         End Get
@@ -3369,7 +3440,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Printer")>
-    Public Property Printer() As tnxPrinterUnit
+    <DataMember()> Public Property Printer() As tnxPrinterUnit
         Get
             Return Me._Printer
         End Get
@@ -3378,7 +3449,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Rotation")>
-    Public Property Rotation() As tnxRotationUnit
+    <DataMember()> Public Property Rotation() As tnxRotationUnit
         Get
             Return Me._Rotation
         End Get
@@ -3387,7 +3458,7 @@ Partial Public Class tnxUnits
         End Set
     End Property
     <Category("TNX Units"), Description(""), DisplayName("Spacing")>
-    Public Property Spacing() As tnxSpacingUnit
+    <DataMember()> Public Property Spacing() As tnxSpacingUnit
         Get
             Return Me._Spacing
         End Get
@@ -3436,7 +3507,6 @@ Partial Public Class tnxUnits
     End Function
 
 End Class
-
 Partial Public Class tnxUnitProperty
     'Variables need to be public for inheritance
     Public _value As String
@@ -3583,7 +3653,6 @@ Partial Public Class tnxLengthUnit
     End Sub
 
 End Class
-
 Partial Public Class tnxCoordinateUnit
     Inherits tnxLengthUnit
     Public Sub New()
@@ -3594,7 +3663,6 @@ Partial Public Class tnxCoordinateUnit
 
     End Sub
 End Class
-
 Partial Public Class tnxForceUnit
     Inherits tnxUnitProperty
 
@@ -4109,10 +4177,15 @@ End Class
 
 #End Region
 
+<DataContract()>
 Partial Public Class tnxCCIReport
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "CCI Report"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "CCI Report"
+        End Get
+    End Property
 #Region "Define"
     Private _sReportProjectNumber As String
     Private _sReportJobType As String
@@ -4176,7 +4249,7 @@ Partial Public Class tnxCCIReport
     Private _sReportAddlCapacityNote4 As String
 
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportProjectNumber")>
-    Public Property sReportProjectNumber() As String
+     <DataMember()> Public Property sReportProjectNumber() As String
         Get
             Return Me._sReportProjectNumber
         End Get
@@ -4185,7 +4258,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportJobType")>
-    Public Property sReportJobType() As String
+     <DataMember()> Public Property sReportJobType() As String
         Get
             Return Me._sReportJobType
         End Get
@@ -4194,7 +4267,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierName")>
-    Public Property sReportCarrierName() As String
+     <DataMember()> Public Property sReportCarrierName() As String
         Get
             Return Me._sReportCarrierName
         End Get
@@ -4203,7 +4276,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteNumber")>
-    Public Property sReportCarrierSiteNumber() As String
+     <DataMember()> Public Property sReportCarrierSiteNumber() As String
         Get
             Return Me._sReportCarrierSiteNumber
         End Get
@@ -4212,7 +4285,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCarrierSiteName")>
-    Public Property sReportCarrierSiteName() As String
+     <DataMember()> Public Property sReportCarrierSiteName() As String
         Get
             Return Me._sReportCarrierSiteName
         End Get
@@ -4221,7 +4294,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteAddress")>
-    Public Property sReportSiteAddress() As String
+     <DataMember()> Public Property sReportSiteAddress() As String
         Get
             Return Me._sReportSiteAddress
         End Get
@@ -4230,7 +4303,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeDegree")>
-    Public Property sReportLatitudeDegree() As Double?
+     <DataMember()> Public Property sReportLatitudeDegree() As Double?
         Get
             Return Me._sReportLatitudeDegree
         End Get
@@ -4239,7 +4312,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeMinute")>
-    Public Property sReportLatitudeMinute() As Double?
+     <DataMember()> Public Property sReportLatitudeMinute() As Double?
         Get
             Return Me._sReportLatitudeMinute
         End Get
@@ -4248,7 +4321,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLatitudeSecond")>
-    Public Property sReportLatitudeSecond() As Double?
+     <DataMember()> Public Property sReportLatitudeSecond() As Double?
         Get
             Return Me._sReportLatitudeSecond
         End Get
@@ -4257,7 +4330,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeDegree")>
-    Public Property sReportLongitudeDegree() As Double?
+     <DataMember()> Public Property sReportLongitudeDegree() As Double?
         Get
             Return Me._sReportLongitudeDegree
         End Get
@@ -4266,7 +4339,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeMinute")>
-    Public Property sReportLongitudeMinute() As Double?
+     <DataMember()> Public Property sReportLongitudeMinute() As Double?
         Get
             Return Me._sReportLongitudeMinute
         End Get
@@ -4275,7 +4348,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLongitudeSecond")>
-    Public Property sReportLongitudeSecond() As Double?
+     <DataMember()> Public Property sReportLongitudeSecond() As Double?
         Get
             Return Me._sReportLongitudeSecond
         End Get
@@ -4284,7 +4357,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLocalCodeRequirement")>
-    Public Property sReportLocalCodeRequirement() As String
+     <DataMember()> Public Property sReportLocalCodeRequirement() As String
         Get
             Return Me._sReportLocalCodeRequirement
         End Get
@@ -4293,7 +4366,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportSiteHistory")>
-    Public Property sReportSiteHistory() As String
+     <DataMember()> Public Property sReportSiteHistory() As String
         Get
             Return Me._sReportSiteHistory
         End Get
@@ -4302,7 +4375,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerManufacturer")>
-    Public Property sReportTowerManufacturer() As String
+     <DataMember()> Public Property sReportTowerManufacturer() As String
         Get
             Return Me._sReportTowerManufacturer
         End Get
@@ -4311,7 +4384,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportMonthManufactured")>
-    Public Property sReportMonthManufactured() As String
+     <DataMember()> Public Property sReportMonthManufactured() As String
         Get
             Return Me._sReportMonthManufactured
         End Get
@@ -4320,7 +4393,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportYearManufactured")>
-    Public Property sReportYearManufactured() As Integer?
+     <DataMember()> Public Property sReportYearManufactured() As Integer?
         Get
             Return Me._sReportYearManufactured
         End Get
@@ -4329,7 +4402,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalSpeed")>
-    Public Property sReportOriginalSpeed() As Double?
+     <DataMember()> Public Property sReportOriginalSpeed() As Double?
         Get
             Return Me._sReportOriginalSpeed
         End Get
@@ -4338,7 +4411,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportOriginalCode")>
-    Public Property sReportOriginalCode() As String
+     <DataMember()> Public Property sReportOriginalCode() As String
         Get
             Return Me._sReportOriginalCode
         End Get
@@ -4347,7 +4420,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportTowerType")>
-    Public Property sReportTowerType() As String
+     <DataMember()> Public Property sReportTowerType() As String
         Get
             Return Me._sReportTowerType
         End Get
@@ -4356,7 +4429,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrName")>
-    Public Property sReportEngrName() As String
+     <DataMember()> Public Property sReportEngrName() As String
         Get
             Return Me._sReportEngrName
         End Get
@@ -4365,7 +4438,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEngrTitle")>
-    Public Property sReportEngrTitle() As String
+     <DataMember()> Public Property sReportEngrTitle() As String
         Get
             Return Me._sReportEngrTitle
         End Get
@@ -4374,7 +4447,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportHQPhoneNumber")>
-    Public Property sReportHQPhoneNumber() As String
+     <DataMember()> Public Property sReportHQPhoneNumber() As String
         Get
             Return Me._sReportHQPhoneNumber
         End Get
@@ -4383,7 +4456,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportEmailAddress")>
-    Public Property sReportEmailAddress() As String
+     <DataMember()> Public Property sReportEmailAddress() As String
         Get
             Return Me._sReportEmailAddress
         End Get
@@ -4392,7 +4465,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportLogoPath")>
-    Public Property sReportLogoPath() As String
+     <DataMember()> Public Property sReportLogoPath() As String
         Get
             Return Me._sReportLogoPath
         End Get
@@ -4401,7 +4474,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiContactName")>
-    Public Property sReportCCiContactName() As String
+     <DataMember()> Public Property sReportCCiContactName() As String
         Get
             Return Me._sReportCCiContactName
         End Get
@@ -4410,7 +4483,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress1")>
-    Public Property sReportCCiAddress1() As String
+     <DataMember()> Public Property sReportCCiAddress1() As String
         Get
             Return Me._sReportCCiAddress1
         End Get
@@ -4419,7 +4492,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAddress2")>
-    Public Property sReportCCiAddress2() As String
+     <DataMember()> Public Property sReportCCiAddress2() As String
         Get
             Return Me._sReportCCiAddress2
         End Get
@@ -4428,7 +4501,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiBUNumber")>
-    Public Property sReportCCiBUNumber() As String
+     <DataMember()> Public Property sReportCCiBUNumber() As String
         Get
             Return Me._sReportCCiBUNumber
         End Get
@@ -4437,7 +4510,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiSiteName")>
-    Public Property sReportCCiSiteName() As String
+     <DataMember()> Public Property sReportCCiSiteName() As String
         Get
             Return Me._sReportCCiSiteName
         End Get
@@ -4446,7 +4519,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiJDENumber")>
-    Public Property sReportCCiJDENumber() As String
+     <DataMember()> Public Property sReportCCiJDENumber() As String
         Get
             Return Me._sReportCCiJDENumber
         End Get
@@ -4455,7 +4528,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiWONumber")>
-    Public Property sReportCCiWONumber() As String
+     <DataMember()> Public Property sReportCCiWONumber() As String
         Get
             Return Me._sReportCCiWONumber
         End Get
@@ -4464,7 +4537,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiPONumber")>
-    Public Property sReportCCiPONumber() As String
+     <DataMember()> Public Property sReportCCiPONumber() As String
         Get
             Return Me._sReportCCiPONumber
         End Get
@@ -4473,7 +4546,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiAppNumber")>
-    Public Property sReportCCiAppNumber() As String
+     <DataMember()> Public Property sReportCCiAppNumber() As String
         Get
             Return Me._sReportCCiAppNumber
         End Get
@@ -4482,7 +4555,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportCCiRevNumber")>
-    Public Property sReportCCiRevNumber() As String
+     <DataMember()> Public Property sReportCCiRevNumber() As String
         Get
             Return Me._sReportCCiRevNumber
         End Get
@@ -4491,7 +4564,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Reference Document Row. String format: Doc Type<~~>Remarks<~~>Ref No<~~>Source"), DisplayName("sReportDocsProvided")>
-    Public Property sReportDocsProvided() As List(Of String)
+     <DataMember()> Public Property sReportDocsProvided() As List(Of String)
         Get
             Return Me._sReportDocsProvided
         End Get
@@ -4500,7 +4573,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportRecommendations")>
-    Public Property sReportRecommendations() As String
+     <DataMember()> Public Property sReportRecommendations() As String
         Get
             Return Me._sReportRecommendations
         End Get
@@ -4509,7 +4582,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Proposed Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Proposed"), DisplayName("sReportAppurt1")>
-    Public Property sReportAppurt1() As List(Of String)
+     <DataMember()> Public Property sReportAppurt1() As List(Of String)
         Get
             Return Me._sReportAppurt1
         End Get
@@ -4518,7 +4591,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Existing Equipment Row. String format:MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>Note #<~~>?<~~>Existing"), DisplayName("sReportAppurt2")>
-    Public Property sReportAppurt2() As List(Of String)
+     <DataMember()> Public Property sReportAppurt2() As List(Of String)
         Get
             Return Me._sReportAppurt2
         End Get
@@ -4527,7 +4600,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Design Equipment Row. String format: MCL<~~>ECL<~~>qty<~~>manufacturer<~~>model<~~>FL qty<~~>FL Size<~~>"), DisplayName("sReportAppurt2")>
-    Public Property sReportAppurt3() As List(Of String)
+     <DataMember()> Public Property sReportAppurt3() As List(Of String)
         Get
             Return Me._sReportAppurt3
         End Get
@@ -4536,7 +4609,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description("Additional Capacity Row. String format: Component<~~>Note #<~~>Elevation<~~>Cap%<~~>Pass/Fail<~~>Include in Report {Yes/No}"), DisplayName("sReportAddlCapacity")>
-    Public Property sReportAddlCapacity() As List(Of String)
+     <DataMember()> Public Property sReportAddlCapacity() As List(Of String)
         Get
             Return Me._sReportAddlCapacity
         End Get
@@ -4545,7 +4618,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAssumption")>
-    Public Property sReportAssumption() As List(Of String)
+     <DataMember()> Public Property sReportAssumption() As List(Of String)
         Get
             Return Me._sReportAssumption
         End Get
@@ -4554,7 +4627,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note1")>
-    Public Property sReportAppurt1Note1() As String
+     <DataMember()> Public Property sReportAppurt1Note1() As String
         Get
             Return Me._sReportAppurt1Note1
         End Get
@@ -4563,7 +4636,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note2")>
-    Public Property sReportAppurt1Note2() As String
+     <DataMember()> Public Property sReportAppurt1Note2() As String
         Get
             Return Me._sReportAppurt1Note2
         End Get
@@ -4572,7 +4645,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note3")>
-    Public Property sReportAppurt1Note3() As String
+     <DataMember()> Public Property sReportAppurt1Note3() As String
         Get
             Return Me._sReportAppurt1Note3
         End Get
@@ -4581,7 +4654,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note4")>
-    Public Property sReportAppurt1Note4() As String
+     <DataMember()> Public Property sReportAppurt1Note4() As String
         Get
             Return Me._sReportAppurt1Note4
         End Get
@@ -4590,7 +4663,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note5")>
-    Public Property sReportAppurt1Note5() As String
+     <DataMember()> Public Property sReportAppurt1Note5() As String
         Get
             Return Me._sReportAppurt1Note5
         End Get
@@ -4599,7 +4672,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note6")>
-    Public Property sReportAppurt1Note6() As String
+     <DataMember()> Public Property sReportAppurt1Note6() As String
         Get
             Return Me._sReportAppurt1Note6
         End Get
@@ -4608,7 +4681,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt1Note7")>
-    Public Property sReportAppurt1Note7() As String
+     <DataMember()> Public Property sReportAppurt1Note7() As String
         Get
             Return Me._sReportAppurt1Note7
         End Get
@@ -4617,7 +4690,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note1")>
-    Public Property sReportAppurt2Note1() As String
+     <DataMember()> Public Property sReportAppurt2Note1() As String
         Get
             Return Me._sReportAppurt2Note1
         End Get
@@ -4626,7 +4699,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note2")>
-    Public Property sReportAppurt2Note2() As String
+     <DataMember()> Public Property sReportAppurt2Note2() As String
         Get
             Return Me._sReportAppurt2Note2
         End Get
@@ -4635,7 +4708,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note3")>
-    Public Property sReportAppurt2Note3() As String
+     <DataMember()> Public Property sReportAppurt2Note3() As String
         Get
             Return Me._sReportAppurt2Note3
         End Get
@@ -4644,7 +4717,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note4")>
-    Public Property sReportAppurt2Note4() As String
+     <DataMember()> Public Property sReportAppurt2Note4() As String
         Get
             Return Me._sReportAppurt2Note4
         End Get
@@ -4653,7 +4726,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note5")>
-    Public Property sReportAppurt2Note5() As String
+     <DataMember()> Public Property sReportAppurt2Note5() As String
         Get
             Return Me._sReportAppurt2Note5
         End Get
@@ -4662,7 +4735,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note6")>
-    Public Property sReportAppurt2Note6() As String
+     <DataMember()> Public Property sReportAppurt2Note6() As String
         Get
             Return Me._sReportAppurt2Note6
         End Get
@@ -4671,7 +4744,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAppurt2Note7")>
-    Public Property sReportAppurt2Note7() As String
+     <DataMember()> Public Property sReportAppurt2Note7() As String
         Get
             Return Me._sReportAppurt2Note7
         End Get
@@ -4680,7 +4753,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote1")>
-    Public Property sReportAddlCapacityNote1() As String
+     <DataMember()> Public Property sReportAddlCapacityNote1() As String
         Get
             Return Me._sReportAddlCapacityNote1
         End Get
@@ -4689,7 +4762,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote2")>
-    Public Property sReportAddlCapacityNote2() As String
+     <DataMember()> Public Property sReportAddlCapacityNote2() As String
         Get
             Return Me._sReportAddlCapacityNote2
         End Get
@@ -4698,7 +4771,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote3")>
-    Public Property sReportAddlCapacityNote3() As String
+     <DataMember()> Public Property sReportAddlCapacityNote3() As String
         Get
             Return Me._sReportAddlCapacityNote3
         End Get
@@ -4707,7 +4780,7 @@ Partial Public Class tnxCCIReport
         End Set
     End Property
     <Category("TNX CCI Report"), Description(""), DisplayName("sReportAddlCapacityNote4")>
-    Public Property sReportAddlCapacityNote4() As String
+     <DataMember()> Public Property sReportAddlCapacityNote4() As String
         Get
             Return Me._sReportAddlCapacityNote4
         End Get

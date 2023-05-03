@@ -2,21 +2,19 @@
 Imports System.Security.Principal
 Imports DevExpress.Spreadsheet
 Imports System.IO
-Imports DevExpress.DataAccess.Excel
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
-Imports System.Reflection
 Imports System.Runtime.InteropServices
-Imports System.Threading
 Imports Microsoft.Office.Interop
+Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
+<DataContract()>
+<RefreshProperties(RefreshProperties.Repaint)>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
-    <Category("EDS"), Description(""), DisplayName("ID")>
-    Public Property ID As Integer?
+
+#Region "ReadOnly Properties"
     <Category("EDS"), Description(""), DisplayName("Name")>
     Public MustOverride ReadOnly Property EDSObjectName As String
     <Category("EDS"), Description(""), DisplayName("Full Name")>
@@ -24,31 +22,52 @@ Partial Public MustInherit Class EDSObject
         Get
             Return If(Me.Parent Is Nothing, Me.EDSObjectName, Me.Parent.EDSObjectFullName & " - " & Me.EDSObjectName)
         End Get
+        'Set(value As String)
+        '    Throw New NotSupportedException("Setting the EDSObjectFullName is not supported")
+        'End Set
     End Property
-    <Category("EDS"), Description(""), Browsable(False)>
-    Public Overridable Property Parent As EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Overridable ReadOnly Property ParentStructure As EDSStructure
         Get
             Return Me.Parent?.ParentStructure
         End Get
     End Property
-    <Category("EDS"), Description(""), DisplayName("BU")>
-    Public Property bus_unit As String
-    <Category("EDS"), Description(""), DisplayName("Structure ID")>
-    Public Property structure_id As String
-    <Category("EDS"), Description(""), DisplayName("Work Order")>
-    Public Property work_order_seq_num As String
+#End Region
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property activeDatabase As String
+    Public Overridable Property Parent As EDSObject
+
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property databaseIdentity As WindowsIdentity
+
+
+    <Category("EDS"), Description(""), DisplayName("ID")>
+    <DataMember()>
+    Public Property ID As Integer?
+
+    <Category("EDS"), Description(""), DisplayName("BU")>
+    <DataMember()>
+    Public Property bus_unit As String
+    <Category("EDS"), Description(""), DisplayName("Structure ID")>
+    <DataMember()>
+    Public Property structure_id As String
+
+    <Category("EDS"), Description(""), DisplayName("Work Order")>
+    <DataMember()>
+    Public Property work_order_seq_num As String
+
     <Category("EDS"), Description(""), Browsable(False)>
+    <DataMember()>
+    Public Property activeDatabase As String
+
+    <Category("EDS"), Description(""), Browsable(False)>
+    <DataMember()>
     Public Property modified_person_id As Integer?
+
     <Category("EDS"), Description(""), Browsable(False)>
+    <DataMember()>
     Public Property process_stage As String = "test" 'added "test" since error occured during testing
 
-    'Public Property differences As List(Of ObjectsComparer.Difference)
+    ' <DataMember()> Public Property differences As List(Of ObjectsComparer.Difference)
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
@@ -87,6 +106,7 @@ Partial Public MustInherit Class EDSObject
         End If
 
     End Function
+
     Public Overloads Overrides Function Equals(other As Object) As Boolean
         'This will be called if an object other than an EDS object is passed in
         Dim EDSOther As EDSObject = TryCast(other, EDSObject)
@@ -99,6 +119,7 @@ Partial Public MustInherit Class EDSObject
         End If
 
     End Function
+
     Public Overrides Function GetHashCode() As Integer
         'Fun Story about hash codes: https://stackoverflow.com/questions/7425142/what-is-hashcode-used-for-is-it-unique
         'Creating hash codes: https://thomaslevesque.com/2020/05/15/things-every-csharp-developer-should-know-1-hash-codes/
@@ -108,19 +129,25 @@ Partial Public MustInherit Class EDSObject
 
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
-
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
     <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
     Public MustOverride ReadOnly Property EDSTableName As String
+
     <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
-    Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    Public Overridable ReadOnly Property EDSQueryPath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+        End Get
+    End Property
+
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
     Public Overridable ReadOnly Property EDSTableDepth As Integer = 0
-    Public Overridable Property Results As New List(Of EDSResult)
 
+    Public Overridable Property Results As New List(Of EDSResult)
 
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable Function SQLInsert() As String
@@ -138,9 +165,11 @@ Partial Public MustInherit Class EDSObjectWithQueries
         SQLInsert = SQLInsert.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLInsert
     End Function
+
     Public Overridable Function SQLSetID(Optional ID As Integer? = Nothing) As String
         Return "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = " & If(ID Is Nothing, Me.ID.ToString.FormatDBValue, ID.ToString.FormatDBValue) & vbCrLf
     End Function
+
     <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable Function SQLUpdate() As String
         SQLUpdate = "BEGIN" & vbCrLf &
@@ -220,25 +249,44 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
     Inherits EDSObjectWithQueries
 
-    <Category("Tool"), Description("Workbook Path."), DisplayName("Tool Path")>
-    Public Property WorkBookPath As String
+#Region "ReadOnly Properties"
     <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
     Public MustOverride ReadOnly Property TemplatePath As String
     <Category("Tool"), Description("Template resource."), Browsable(False)>
     Public MustOverride ReadOnly Property Template As Byte()
-    <Category("Tool"), Description("Workbook Type."), DisplayName("File Type")>
-    Public Property FileType As DocumentFormat = DocumentFormat.Xlsm
     <Category("Tool"), Description("Data transfer parameters, a list of ranges to import from excel."), DisplayName("Import Ranges")>
     Public MustOverride ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
+#End Region
+
+    <Category("Tool"), Description("Workbook Path."), DisplayName("Tool Path")>
+    <DataMember()>
+    Public Property WorkBookPath As String
+
+    Private _FileType As DocumentFormat
+    <Category("Tool"), Description("Workbook Type."), DisplayName("File Type")>
+    <DataMember()>
+    Public Property FileType As DocumentFormat
+        Get
+            Return DocumentFormat.Xlsm
+        End Get
+        Set(value As DocumentFormat)
+            Me._FileType = DocumentFormat.Xlsm
+        End Set
+    End Property
+
     <Category("Tool"), Description("Version number of tool."), DisplayName("Version")>
+    <DataMember()>
     Public Property Version As String
+
     '<Category("Tool"), Description("Title of tool."), DisplayName("Title")>
     'Public Overridable ReadOnly Property Title As String
     <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
+    <DataMember()>
     Public Property Modified As Boolean?
 
 #Region "Run Excel Macro"
@@ -391,6 +439,7 @@ Partial Public MustInherit Class EDSExcelObject
 
 End Class
 
+<DataContract()>
 Partial Public Class EDSResult
     Inherits EDSObject
 
@@ -402,12 +451,9 @@ Partial Public Class EDSResult
     Private _rating As Double?
     Private _EDSTableName As String
     Private _ForeignKeyName As String
-    'modified_person_id
-    'process_stag
-
-    'Public Shadows Property Parent As EDSObjectWithQueries
 
     <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Result ID")>
+    <DataMember()>
     Public Property foreign_key() As Integer?
         Get
             Return Me._foreign_key
@@ -417,6 +463,7 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Result Type")>
+    <DataMember()>
     Public Property result_lkup() As String
         Get
             Return Me._result_lkup
@@ -426,6 +473,7 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Rating (%)")>
+    <DataMember()>
     Public Overridable Property rating() As Double?
         Get
             Return Me._rating
@@ -436,6 +484,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result Table Name")>
+    <DataMember()>
     Public Property EDSTableName() As String
         Get
             Return Me._EDSTableName
@@ -446,6 +495,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result ID Name")>
+    <DataMember()>
     Public Property ForeignKeyName() As String
         Get
             Return Me._ForeignKeyName
@@ -454,7 +504,9 @@ Partial Public Class EDSResult
             Me._ForeignKeyName = Value
         End Set
     End Property
+
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
+    <DataMember()>
     Public Overridable Property EDSTableDepth As Integer = 1
 
 #End Region

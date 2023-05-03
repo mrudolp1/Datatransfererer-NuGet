@@ -1,6 +1,7 @@
-﻿Imports Microsoft.VisualBasic
+﻿Imports System.Runtime.Serialization
 
 'All SiteInfo information comes from Oracle
+<DataContractAttribute()>
 Public Class SiteInfo
 
 #Region "Constructors"
@@ -262,32 +263,32 @@ Public Class SiteInfo
 #End Region
 
 #Region "Properties"
-    Public Property wo As String
-    Public Property bu_num As Integer
-    Public Property structure_id As String
+     <DataMember()> Public Property wo As String
+     <DataMember()> Public Property bu_num As Integer
+     <DataMember()> Public Property structure_id As String
 
-    Public Property app_num As String
-    Public Property app_rev As String
-    Public Property site_name As String
-    Public Property jde_num As String
-    Public Property tower_man As String
-    Public property tower_type As String
+     <DataMember()> Public Property app_num As String
+     <DataMember()> Public Property app_rev As String
+     <DataMember()> Public Property site_name As String
+     <DataMember()> Public Property jde_num As String
+     <DataMember()> Public Property tower_man As String
+     <DataMember()> Public Property tower_type As String
 
-    Public Property site_add As String
-    Public Property site_city As String
-    Public Property site_county As String
-    Public Property site_state As String
+     <DataMember()> Public Property site_add As String
+     <DataMember()> Public Property site_city As String
+     <DataMember()> Public Property site_county As String
+     <DataMember()> Public Property site_state As String
 
-    Public Property customer As String
-    Public Property cust_site_num As String
-    Public Property cust_site_name As String
+     <DataMember()> Public Property customer As String
+     <DataMember()> Public Property cust_site_num As String
+     <DataMember()> Public Property cust_site_name As String
 
 
-    Public Property fa_num As String
+     <DataMember()> Public Property fa_num As String
 #End Region
 
 #Region "Lat Long calculations"
-    Public Property lat_decimal As Double
+     <DataMember()> Public Property lat_decimal As Double
     Public ReadOnly Property lat_deg As Integer
         Get
             Return Math.Truncate(lat_decimal)
@@ -305,7 +306,7 @@ Public Class SiteInfo
     End Property
 
 
-    Public Property long_decimal As Double
+     <DataMember()> Public Property long_decimal As Double
     Public ReadOnly Property long_deg As Integer
         Get
             Return Math.Truncate(long_decimal)
