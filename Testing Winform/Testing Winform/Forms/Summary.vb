@@ -41,7 +41,7 @@ Namespace UnitTesting
 
         Private Sub Export(sender As Object, e As EventArgs) Handles ToolStripSplitButton1.Click
             ButtonclickToggle(Me.Cursor)
-            Dim dir As String = IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, lFolder, rFolder)
+            Dim dir As String = frmMain.dirUse 'IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, frmMain.lFolder, frmMain.rFolder)
             Dim testid As Integer = CType(frmMain.testID.Text, Integer)
             Dim testiteration As Integer = CType(frmMain.testIteration.Text, Integer)
             Dim filepath As String
