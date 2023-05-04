@@ -31,7 +31,7 @@ Partial Public Class EDSStructure
         Dim poleMacRunAnalysis As String = "MaestMe_Step3" ' step 3
         'Dim poleMacRunTNXReactionsBARB As String = ""
         '//plate macros
-        Dim plateMac As String = ""
+        Dim plateMac As String = "MaestMe"
         '//splice check
         Dim spliceMacImportTNX As String = ""
         Dim spliceMacRun As String = ""
@@ -45,7 +45,7 @@ Partial Public Class EDSStructure
         Dim pileMac As String = "MaestMe"
         Dim guyAnchorMac As String = "MaestMe"
         '//lattice
-        Dim legReinforcementMac As String = ""
+        Dim legReinforcementMac As String = "MaestMe"
         Dim unitBaseMac As String = "MaestMe"
         Dim drilledPierMac As String = "MaestMe"
         'Dim pierAndPadMac As String = "MaestMe"
