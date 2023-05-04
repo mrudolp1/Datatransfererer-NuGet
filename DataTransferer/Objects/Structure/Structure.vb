@@ -340,31 +340,31 @@ Partial Public Class EDSStructure
         For Each item As String In filePaths
             If item.EndsWith(".eri") Then
                 Me.tnx = New tnxModel(item, Me)
-            ElseIf item.Contains("Pier and Pad Foundation") Then
+            ElseIf item.Contains("Pier and Pad Foundation") And item.EndsWith(".xlsm") Then
                 Me.PierandPads = New List(Of PierAndPad)
                 Me.PierandPads.Add(New PierAndPad(item, Me))
-            ElseIf item.Contains("Pile Foundation") Then
+            ElseIf item.Contains("Pile Foundation") And item.EndsWith(".xlsm") Then
                 Me.Piles = New List(Of Pile)
                 Me.Piles.Add(New Pile(item, Me))
-            ElseIf item.Contains("SST Unit Base Foundation") Then
+            ElseIf item.Contains("SST Unit Base Foundation") And item.EndsWith(".xlsm") Then
                 Me.UnitBases = New List(Of UnitBase)
                 Me.UnitBases.Add(New UnitBase(item, Me))
-            ElseIf item.Contains("Drilled Pier Foundation") Then
+            ElseIf item.Contains("Drilled Pier Foundation") And item.EndsWith(".xlsm") Then
                 Me.DrilledPierTools = New List(Of DrilledPierFoundation)
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
-            ElseIf item.Contains("Guyed Anchor Block Foundation") Then
+            ElseIf item.Contains("Guyed Anchor Block Foundation") And item.EndsWith(".xlsm") Then
                 GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
-            ElseIf item.Contains("CCIplate") Then
+            ElseIf item.Contains("CCIplate") And item.EndsWith(".xlsm") Then
                 Me.CCIplates = New List(Of CCIplate)
                 Me.CCIplates.Add(New CCIplate(item, Me))
-            ElseIf item.Contains("CCIpole") Then
+            ElseIf item.Contains("CCIpole") And item.EndsWith(".xlsm") Then
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
-            ElseIf item.Contains("Leg Reinforcement") Then
+            ElseIf item.Contains("Leg Reinforcement") And item.EndsWith(".xlsm") Then
                 Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
-            ElseIf item.Contains("CCISeismic") Then
+            ElseIf item.Contains("CCISeismic") And item.EndsWith(".xlsm") Then
                 Me.CCISeismics = New List(Of CCISeismic)
                 Me.CCISeismics.Add(New CCISeismic(item, Me))
             End If
