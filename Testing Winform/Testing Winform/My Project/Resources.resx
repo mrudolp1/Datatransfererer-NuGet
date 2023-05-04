@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="bugreport_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bugreport_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="about" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\about.svg;DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a</value>
   </data>
@@ -139,6 +142,9 @@
   <data name="navigateUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\navigateUp.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Pile_Foundation__2_2_1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Pile Foundation (2.2.1).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="rightangleconnector" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\rightangleconnector.svg;DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a</value>
   </data>
@@ -151,8 +157,8 @@
   <data name="warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warning.svg;DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a</value>
   </data>
-  <data name="construction_svgrepo_com__1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\construction-svgrepo-com (1).svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="highimportance" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\highimportance.svg;DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a</value>
   </data>
   <data name="Guyed_Anchor_Block_Foundation__4_0_0_" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Guyed Anchor Block Foundation (4.0.0).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -169,8 +175,8 @@
   <data name="navigateBack" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\navigateBack.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Pile_Foundation__2_2_1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\Pile Foundation (2.2.1).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="CCIplate__4_1_2_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\CCIplate (4.1.2).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Leg_Reinforcement_Tool__10_0_4_" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Leg Reinforcement Tool (10.0.4).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -178,10 +184,10 @@
   <data name="Drilled_Pier_Foundation__5_0_5_" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Drilled Pier Foundation (5.0.5).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="CCIplate__4_1_2_" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Templates\CCIplate (4.1.2).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="construction_svgrepo_com__1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\construction-svgrepo-com (1).svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="highimportance" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\highimportance.svg;DevExpress.Utils.Svg.SvgImage, DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a</value>
+  <data name="refresh2_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh2_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
