@@ -91,10 +91,6 @@ Partial Public Class EDSStructure
                         GoTo ErrorSkip
                     End If
 
-                    'If excelResult = "Fail" Then
-                    '    WriteLineLogLine("ERROR | Exception running macro for CCIPole: " & poleMacCreateTNX & vbCrLf & "INFO | Maestro Log [END]")
-                    '    Exit Sub
-                    'End If
                 End If
 
                 If Me.CCISeismics.Count > 0 Then
@@ -109,15 +105,15 @@ Partial Public Class EDSStructure
                 End If
 
 
-                ''Run TNX
-                'If File.Exists(tnxFullPath) Then
-                '    If Not RunTNX(tnxFullPath, isDevMode) Then
-                '        GoTo ErrorSkip
-                '    End If
-                'Else
-                '    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
-                '    GoTo ErrorSkip
-                'End If
+                'Run TNX
+                If File.Exists(tnxFullPath) Then
+                    If Not RunTNX(tnxFullPath, isDevMode) Then
+                        GoTo ErrorSkip
+                    End If
+                Else
+                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                    GoTo ErrorSkip
+                End If
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
@@ -217,14 +213,14 @@ Partial Public Class EDSStructure
 
 
                 '/run tnx
-                'If File.Exists(tnxFullPath) Then
-                '    If Not RunTNX(tnxFullPath, isDevMode) Then
-                '        GoTo ErrorSkip
-                '    End If
-                'Else
-                '    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
-                '    GoTo ErrorSkip
-                'End If
+                If File.Exists(tnxFullPath) Then
+                    If Not RunTNX(tnxFullPath, isDevMode) Then
+                        GoTo ErrorSkip
+                    End If
+                Else
+                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                    GoTo ErrorSkip
+                End If
                 '/run seismic macro to create eri with seismic loads if needed
 
                 If Me.CCISeismics.Count > 0 Then
@@ -653,9 +649,19 @@ ErrorSkip:
                 Return False
             End If
 
+            'Need to determine if word is open prior to running TNX
+            'If it is open then it shouldn't be killed when closing the RTF
+            'If it isn't open before tnx then it should be killed
+            Dim isWordOpen As Boolean
+            Try
+                Dim word As Object = GetObject(, "Word.Application")
+                isWordOpen = True
+            Catch ex As Exception
+                isWordOpen = False
+            End Try
 
             With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateCCIReport") 'RunAnalysis 'SilentAnalysisRun
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
 
                 With .StartInfo
                     .CreateNoWindow = True
@@ -665,13 +671,21 @@ ErrorSkip:
                 End With
                 .Start()
 
-                CheckLogFileForFinished(tnxLogFilePath, 300000)
+                CheckLogFileForFinished(tnxLogFilePath, 300000, True)
                 Try
                     WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
                     .Kill()
                     WriteLineLogLine("INFO | TNX termination complete..")
                 Catch ex As Exception
                     WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                Finally
+                    Try
+                        'For the time being the RTF file still opens 
+                        'This needs to be closed before returning TRUE
+                        CloseRTF(tnxFilePath, isWordOpen)
+                    Catch ex As Exception
+                        WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                    End Try
                 End Try
 
                 '.WaitForInputIdle()
@@ -681,13 +695,62 @@ ErrorSkip:
 
 
             'WriteLineLogLine("INFO | " & ipconfigOutput)
+            'For the time being the RTF file still opens 
+            'This needs to be closed before returning TRUE
+            'I put this around a try catch in cases where an ERI is run and files already exist. 
+
 
             Return True
 
         Catch ex As Exception
-            WriteLineLogLine("ERROR: Exception Running TNX: " & ex.Message)
-
+            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
             Return False
+        End Try
+    End Function
+    'Close an RTF file based on a tnx file
+    'If isWordOpen is true then it will not close word
+    Public Sub CloseRTF(ByVal tnxfilepath As String, ByVal iswordOpen As Boolean)
+        Dim word As Object
+        Dim doc As Object
+        Dim rtfPath As String = tnxfilepath & ".rtf"
+
+        Dim file As New FileInfo(rtfPath)
+        Dim wordCheck As Boolean = False
+        Dim filecheck As Boolean = False
+        If file.Exists Then
+            While wordCheck = False
+                Try
+                    word = GetObject(, "Word.Application")
+                    wordCheck = True
+
+                    While fileCheck = False
+                        fileCheck = FileIsOpen(file)
+                    End While
+
+                    doc = word.Documents(rtfPath)
+                    doc.close
+                Catch ex As Exception
+
+                End Try
+            End While
+        End If
+        'Thread.Sleep(4000)
+        'word = GetObject(, "Word.Application")
+
+        If Not iswordOpen Then word.quit
+        word = Nothing
+        doc = Nothing
+
+    End Sub
+
+    Private Function FileIsOpen(ByVal file As FileInfo) As Boolean
+        Dim stream As FileStream = Nothing
+        Try
+            stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)
+            stream.Close()
+            Return False
+        Catch ex As Exception
+            Return True
         End Try
     End Function
     ''' <summary>
@@ -696,7 +759,7 @@ ErrorSkip:
     ''' </summary>
     ''' <param name="logFilePath"></param>
     ''' <param name="maxTimeout"></param>
-    Private Function CheckLogFileForFinished(logFilePath As String, maxTimeout As Integer) As Boolean
+    Private Function CheckLogFileForFinished(logFilePath As String, maxTimeout As Integer, generateReport As Boolean) As Boolean
 
         ' Set the time interval to check the log file
         Dim checkInterval As Integer = 2000 ' 2 seconds
@@ -710,6 +773,11 @@ ErrorSkip:
         Dim fs As FileStream
         Dim logReader As StreamReader
 
+        If generateReport Then
+            finishedPhrase = "ANALYSIS AND DESIGN REPORT END"
+        Else
+            finishedPhrase = "DESIGN END"
+        End If
         While True
             If File.Exists(logFilePath) Then
                 fs = New FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
@@ -1059,12 +1127,13 @@ ErrorSkip:
         Return If(val1 > val2, val1, val2)
 
     End Function
+
     ''' <summary>
     ''' Loops through a set of eri files and runs TNX logic on them
     ''' pass in the parent directory. this folder should have a group of folders with an eri in each and no other files - delete generated files if rerun needed
     ''' </summary>
     ''' <param name="parentDirectory"></param>
-    Private Sub LoopThroughERIFiles(parentDirectory As String)
+    Public Sub LoopThroughERIFiles(parentDirectory As String)
         Dim str As New EDSStructure
         str.LogPath = "C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\ERI Testing\ERI Log.txt"
         For Each fold In Directory.GetDirectories(parentDirectory)

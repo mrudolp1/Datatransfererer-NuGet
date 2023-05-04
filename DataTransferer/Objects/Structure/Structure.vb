@@ -6,29 +6,19 @@ Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
 <Serializable()>
+<TypeConverterAttribute(GetType(ExpandableObjectConverter))>
+<DataContract()>
 Partial Public Class EDSStructure
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Structure Model"
-
-    Public Property tnx As tnxModel
-    Public Property CCIplates As New List(Of CCIplate)
-    Public Property structureCodeCriteria As SiteCodeCriteria
-    Public Property PierandPads As New List(Of PierAndPad)
-    Public Property Piles As New List(Of Pile)
-    Public Property Poles As New List(Of Pole)
-    Public Property UnitBases As New List(Of UnitBase)
-    Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
-    Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
-    Public Property ReportOptions As ReportOptions
-    Public Property SiteInfo As SiteInfo
-    Public Property NotMe As EDSStructure
-    Public Property WorkingDirectory As String
-    Public Property LegReinforcements As New List(Of LegReinforcement)
-    Public Property CCISeismics As New List(Of CCISeismic)
-
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Structure Model"
+        End Get
+    End Property
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
     Public Overrides ReadOnly Property ParentStructure As EDSStructure
@@ -39,6 +29,23 @@ Partial Public Class EDSStructure
         '    _ParentStructure = value
         'End Set
     End Property
+
+    <DataMember()> Public Property tnx As tnxModel
+    <DataMember()> Public Property CCIplates As New List(Of CCIplate)
+    <DataMember()> Public Property structureCodeCriteria As SiteCodeCriteria
+    <DataMember()> Public Property PierandPads As New List(Of PierAndPad)
+    <DataMember()> Public Property Piles As New List(Of Pile)
+    <DataMember()> Public Property Poles As New List(Of Pole)
+    <DataMember()> Public Property UnitBases As New List(Of UnitBase)
+    <DataMember()> Public Property DrilledPierTools As New List(Of DrilledPierFoundation)
+    <DataMember()> Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
+    <DataMember()> Public Property ReportOptions As ReportOptions
+    <DataMember()> Public Property SiteInfo As SiteInfo
+    <DataMember()> Public Property NotMe As EDSStructure
+    <DataMember()> Public Property WorkingDirectory As String
+    <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
+    <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
+
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}
 
@@ -113,51 +120,51 @@ Partial Public Class EDSStructure
         ''Dim query As String = QueryBuilderFromFile(queryPath & "Structure\Structure (SELECT).sql").Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim query As String = CCI_Engineering_Templates.My.Resources.Structure_SELECT.Replace("[BU]", BU.FormatDBValue()).Replace("[STRID]", structureID.FormatDBValue())
         Dim tableNames() As String = {"TNX",
-                        "Base Structure",
-                        "Upper Structure",
-                        "Guys",
-                        "Members",
-                        "Materials",
-                        "Pier and Pad",
-                        "Unit Base",
-                        "Pile",
-                        "Pile Locations", '"Drilled Pier",'"Anchor Block",
-                        "Soil Profiles",
-                        "Soil Layers",
-                        "CCIplates",
-                        "Connections",
-                        "Plate Details",
-                        "Bolt Groups",
-                        "Bolt Details",
-                        "CCIplate Materials",
-                        "Stiffener Groups",
-                        "Stiffener Details",
-                        "Bridge Stiffener Details",
-                        "Pole General",
-                        "Pole Unreinforced Sections",
-                        "Pole Reinforced Sections",
-                        "Pole Reinforcement Groups",
-                        "Pole Reinforcement Details",
-                        "Pole Interference Groups",
-                        "Pole Interference Details", ' "Pole Results",
-                        "Pole Custom Matls",
-                        "Pole Custom Bolts",
-                        "Pole Custom Reinfs",
-                        "Site Code Criteria",
-                        "File Upload",
-                        "Drilled Pier",
-                        "Drilled Pier Profile",
-                        "Drilled Pier Section",
-                        "Drilled Pier Rebar",
-                        "Belled Pier",
-                        "Embedded Pole",
-                        "Drilled Pier Foundation",
-                        "Guy Anchor Block Tool",
-                        "Guy Anchor Blocks",
-                        "Guy Anchor Profiles",
-                        "Leg Reinforcements",
-                        "Leg Reinforcement Details",
-                        "CCISeismics"}
+                            "Base Structure",
+                            "Upper Structure",
+                            "Guys",
+                            "Members",
+                            "Materials",
+                            "Pier and Pad",
+                            "Unit Base",
+                            "Pile",
+                            "Pile Locations", '"Drilled Pier",'"Anchor Block",
+                            "Soil Profiles",
+                            "Soil Layers",
+                            "CCIplates",
+                            "Connections",
+                            "Plate Details",
+                            "Bolt Groups",
+                            "Bolt Details",
+                            "CCIplate Materials",
+                            "Stiffener Groups",
+                            "Stiffener Details",
+                            "Bridge Stiffener Details",
+                            "Pole General",
+                            "Pole Unreinforced Sections",
+                            "Pole Reinforced Sections",
+                            "Pole Reinforcement Groups",
+                            "Pole Reinforcement Details",
+                            "Pole Interference Groups",
+                            "Pole Interference Details", ' "Pole Results",
+                            "Pole Custom Matls",
+                            "Pole Custom Bolts",
+                            "Pole Custom Reinfs",
+                            "Site Code Criteria",
+                            "File Upload",
+                            "Drilled Pier",
+                            "Drilled Pier Profile",
+                            "Drilled Pier Section",
+                            "Drilled Pier Rebar",
+                            "Belled Pier",
+                            "Embedded Pole",
+                            "Drilled Pier Foundation",
+                            "Guy Anchor Block Tool",
+                            "Guy Anchor Blocks",
+                            "Guy Anchor Profiles",
+                            "Leg Reinforcements",
+                            "Leg Reinforcement Details",
+                            "CCISeismics"}
 
 
         Using strDS As New DataSet
@@ -174,40 +181,40 @@ Partial Public Class EDSStructure
             'Just set other parameters as default values 
             If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
                 OracleLoader("
-                    SELECT
-                            str.bus_unit
-                            ,str.structure_id
-                            ,tr.standard_code tia_current
-                            ,tr.bldg_code ibc_current
-                            ,str.ground_elev elev_agl
-                            ,str.hgt_no_appurt
-                            ,str.crest_height
-                            ,str.distance_from_crest
-                            ,sit.site_name
-                            ,'True' rev_h_section_15_5
-                            ,0 tower_point_elev
-                            --,pi.eng_app_id
-                            --,pi.crrnt_rvsn_num
-                            ,str.structure_type
-                            ,str.LAT_DEC
-                            ,str.LONG_DEC
-                        FROM
-                            isit_aim.structure                      str
-                            ,isit_aim.site                          sit
-                            ,rpt_appl.eng_tower_rating_vw           tr
-                            --,isit_aim.work_orders                 wo
-                            --,isit_isite.project_info              pi
-                        WHERE
-                            --wo.work_order_seqnum = 'XXXXXXX'
-                            str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
-                            AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
-                            AND str.bus_unit = sit.bus_unit
-                            AND str.bus_unit = tr.bus_unit
-                            --AND wo.bus_unit = str.bus_unit
-                            --AND wo.structure_id = str.structure_id
-                            --AND pi.eng_app_id = wo.eng_app_id(+)
+                        SELECT
+                                str.bus_unit
+                                ,str.structure_id
+                                ,tr.standard_code tia_current
+                                ,tr.bldg_code ibc_current
+                                ,str.ground_elev elev_agl
+                                ,str.hgt_no_appurt
+                                ,str.crest_height
+                                ,str.distance_from_crest
+                                ,sit.site_name
+                                ,'True' rev_h_section_15_5
+                                ,0 tower_point_elev
+                                --,pi.eng_app_id
+                                --,pi.crrnt_rvsn_num
+                                ,str.structure_type
+                                ,str.LAT_DEC
+                                ,str.LONG_DEC
+                            FROM
+                                isit_aim.structure                      str
+                                ,isit_aim.site                          sit
+                                ,rpt_appl.eng_tower_rating_vw           tr
+                                --,isit_aim.work_orders                 wo
+                                --,isit_isite.project_info              pi
+                            WHERE
+                                --wo.work_order_seqnum = 'XXXXXXX'
+                                str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+                                AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
+                                AND str.bus_unit = sit.bus_unit
+                                AND str.bus_unit = tr.bus_unit
+                                --AND wo.bus_unit = str.bus_unit
+                                --AND wo.structure_id = str.structure_id
+                                --AND pi.eng_app_id = wo.eng_app_id(+)
 
-                    ", "Site Code Criteria", strDS, 3000, "ords")
+                        ", "Site Code Criteria", strDS, 3000, "ords")
             End If
             Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
 

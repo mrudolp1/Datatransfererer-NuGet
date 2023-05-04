@@ -20,12 +20,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Objects\Foundation - Drilled Pier\DNU\**" />
     <Compile Remove="Queries\**" />
-    <EmbeddedResource Remove="Objects\Foundation - Drilled Pier\DNU\**" />
+    <Compile Remove="Templates\Archive\**" />
+    <Compile Remove="Testing\**" />
     <EmbeddedResource Remove="Queries\**" />
-    <None Remove="Objects\Foundation - Drilled Pier\DNU\**" />
+    <EmbeddedResource Remove="Templates\Archive\**" />
+    <EmbeddedResource Remove="Testing\**" />
     <None Remove="Queries\**" />
+    <None Remove="Templates\Archive\**" />
+    <None Remove="Testing\**" />
   </ItemGroup>
 
   <ItemGroup>
