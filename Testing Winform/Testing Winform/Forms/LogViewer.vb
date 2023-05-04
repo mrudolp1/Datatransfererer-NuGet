@@ -44,6 +44,17 @@ Namespace UnitTesting
             ButtonclickToggle(Me.Cursor)
         End Sub
 
+        Public Sub Clear()
+            booInfo.Text = "INFO"
+            booDebug.Text = "DEBUG"
+            booEvent.Text = "EVENT"
+            booError.Text = "ERROR"
+            booWarning.Text = "WARNGING"
+
+            GridView2.Columns.Clear()
+            gcTestLog.DataSource = Nothing
+        End Sub
+
 
         Private Sub GridView2_CustomDrawRowIndicator(sender As Object, e As DevExpress.XtraGrid.Views.Grid.RowIndicatorCustomDrawEventArgs) Handles GridView2.CustomDrawRowIndicator
             If isopening Then Exit Sub

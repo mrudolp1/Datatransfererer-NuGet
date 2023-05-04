@@ -98,6 +98,7 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.testClose = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton3 = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton2 = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton1 = New DevExpress.XtraEditors.SimpleButton()
@@ -823,6 +824,7 @@
             'XtraTabControl1
             '
             Me.XtraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.XtraTabControl1.Enabled = False
             Me.XtraTabControl1.HeaderOrientation = DevExpress.XtraTab.TabOrientation.Horizontal
             Me.XtraTabControl1.Location = New System.Drawing.Point(0, 0)
             Me.XtraTabControl1.Name = "XtraTabControl1"
@@ -918,18 +920,20 @@
             'rtbNotes
             '
             Me.rtbNotes.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.rtbNotes.Location = New System.Drawing.Point(0, 13)
+            Me.rtbNotes.Location = New System.Drawing.Point(0, 18)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(703, 193)
+            Me.rtbNotes.Size = New System.Drawing.Size(703, 188)
             Me.rtbNotes.TabIndex = 21
             Me.rtbNotes.Text = ""
             '
             'LabelControl14
             '
+            Me.LabelControl14.Appearance.Font = New System.Drawing.Font("Tahoma", 11.0!, System.Drawing.FontStyle.Bold)
+            Me.LabelControl14.Appearance.Options.UseFont = True
             Me.LabelControl14.Dock = System.Windows.Forms.DockStyle.Top
             Me.LabelControl14.Location = New System.Drawing.Point(0, 0)
             Me.LabelControl14.Name = "LabelControl14"
-            Me.LabelControl14.Size = New System.Drawing.Size(52, 13)
+            Me.LabelControl14.Size = New System.Drawing.Size(80, 18)
             Me.LabelControl14.TabIndex = 22
             Me.LabelControl14.Text = "Test Notes"
             '
@@ -1002,6 +1006,7 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.testClose)
             Me.PanelControl1.Controls.Add(Me.SimpleButton3)
             Me.PanelControl1.Controls.Add(Me.SimpleButton2)
             Me.PanelControl1.Controls.Add(Me.SimpleButton1)
@@ -1048,6 +1053,17 @@
             Me.PanelControl1.Name = "PanelControl1"
             Me.PanelControl1.Size = New System.Drawing.Size(1721, 120)
             Me.PanelControl1.TabIndex = 16
+            '
+            'testClose
+            '
+            Me.testClose.Enabled = False
+            Me.testClose.ImageOptions.SvgImage = CType(resources.GetObject("testClose.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+            Me.testClose.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.testClose.Location = New System.Drawing.Point(650, 79)
+            Me.testClose.Name = "testClose"
+            Me.testClose.Size = New System.Drawing.Size(112, 23)
+            Me.testClose.TabIndex = 43
+            Me.testClose.Text = "Close Test Case"
             '
             'SimpleButton3
             '
@@ -1100,7 +1116,9 @@
             Me.step6.Name = "step6"
             Me.step6.Size = New System.Drawing.Size(177, 23)
             Me.step6.TabIndex = 39
+            Me.step6.Tag = "Generate and compare the results for all tools. "
             Me.step6.Text = "6. Create Results"
+            Me.step6.ToolTip = "CREATE RESULTS"
             '
             'testJason
             '
@@ -1134,7 +1152,9 @@
             Me.step5.Name = "step5"
             Me.step5.Size = New System.Drawing.Size(177, 23)
             Me.step5.TabIndex = 38
+            Me.step5.Tag = "Conduct the files in the Maestro folder. "
             Me.step5.Text = "5. Conduct"
+            Me.step5.ToolTip = "CONDUCT"
             '
             'testStructureOnly
             '
@@ -1155,7 +1175,10 @@
             Me.step4.Name = "step4"
             Me.step4.Size = New System.Drawing.Size(177, 23)
             Me.step4.TabIndex = 37
+            Me.step4.Tag = "Analyze the 'Manual ERI' file to be used for reference with the manual processes." &
+    " "
             Me.step4.Text = "4. Run Reference ERI "
+            Me.step4.ToolTip = "ANALYZE ERI"
             '
             'btnNextIteration
             '
@@ -1176,7 +1199,9 @@
             Me.step3b.Name = "step3b"
             Me.step3b.Size = New System.Drawing.Size(177, 23)
             Me.step3b.TabIndex = 36
+            Me.step3b.Tag = "Import inputs for SAPI versions in the iteration folder"
             Me.step3b.Text = "3b. Import Inputs (Maestro)"
+            Me.step3b.ToolTip = "IMPORT INPUTS (SAPI)"
             '
             'testCompareAll
             '
@@ -1197,7 +1222,9 @@
             Me.step3a.Name = "step3a"
             Me.step3a.Size = New System.Drawing.Size(177, 23)
             Me.step3a.TabIndex = 35
+            Me.step3a.Tag = "Import inputs for current production tools)"
             Me.step3a.Text = "3a. Import Inputs (Published)"
+            Me.step3a.ToolTip = "IMPORT INPUTS (CURRENT)"
             '
             'testConduct
             '
@@ -1222,7 +1249,9 @@
             Me.step3.Name = "step3"
             Me.step3.Size = New System.Drawing.Size(177, 23)
             Me.step3.TabIndex = 34
+            Me.step3.Tag = "Create new templates (Only SAPI if current files already exist)"
             Me.step3.Text = "3. Create Template Files"
+            Me.step3.ToolTip = "CREATE TEMPLATE FILES"
             '
             'testPublishedResults
             '
@@ -1243,7 +1272,9 @@
             Me.step2.Name = "step2"
             Me.step2.Size = New System.Drawing.Size(177, 23)
             Me.step2.TabIndex = 33
+            Me.step2.Tag = "Create a new iteration (Maestro & Manual (SAPI)) folders"
             Me.step2.Text = "2. Create New Iteration"
+            Me.step2.ToolTip = "CREATE ITERATION"
             '
             'testPrevResults
             '
@@ -1264,7 +1295,9 @@
             Me.step1.Name = "step1"
             Me.step1.Size = New System.Drawing.Size(177, 23)
             Me.step1.TabIndex = 32
-            Me.step1.Text = "1. Get SA Reference Files"
+            Me.step1.Tag = "Get all files from reference SA file from specified folder"
+            Me.step1.Text = "1. Get Reference SA Files"
+            Me.step1.ToolTip = "GET SA FILES"
             '
             'chkWorkLocal
             '
@@ -1651,6 +1684,7 @@
         Friend WithEvents SimpleButton2 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents SimpleButton3 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents mainLogViewer As LogViewer
+        Friend WithEvents testClose As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class

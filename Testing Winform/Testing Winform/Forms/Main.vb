@@ -579,25 +579,7 @@ Namespace UnitTesting
             testNextIteration.Text = itCount + 1
 
             'Enable all of the buttons for use in the iteration
-            btnNextIteration.Enabled = True
-            testIterationResults.Enabled = True
-            testPrevResults.Enabled = True
-            testPublishedResults.Enabled = True
-            testConduct.Enabled = True
-            testCompareAll.Enabled = True
-            testStructureOnly.Enabled = True
-            testJason.Enabled = True
-            mainLogViewer.Enabled = True
-
-            step1.Enabled = True
-            step2.Enabled = True
-            step3.Enabled = True
-            step3a.Enabled = True
-            step3b.Enabled = True
-            step4.Enabled = True
-            step5.Enabled = True
-            step6.Enabled = True
-            rtfactivityLog.Visible = True
+            ResetControls()
 
             'Update the local directory to the local test case. 
             Try
@@ -611,6 +593,7 @@ Namespace UnitTesting
         'Log that a test case is ending
         Private Sub testID_EditValueChanging(sender As Object, e As DevExpress.XtraEditors.Controls.ChangingEventArgs) Handles testID.EditValueChanging
             If isopening Then Exit Sub
+
             Dim testcase As String
             Try
                 testcase = e.OldValue.ToString
@@ -623,7 +606,9 @@ Namespace UnitTesting
         End Sub
 
         'Rich textbox changed event for test notes
-        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs)
+        Private Sub rtbNotes_TextChanged(sender As Object, e As EventArgs) Handles rtbNotes.TextChanged
+            If isopening Then Exit Sub
+
             Dim testCase As Integer = testID.Text
             Dim dirUse As String
             If chkWorkLocal.Checked Then
@@ -642,7 +627,8 @@ Namespace UnitTesting
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
-            LogActivity("PROCESS | Start " & sender.text.ToString)
+            LogActivity("PROCESS | Start " & sender.tooltip.ToString)
+            LogActivity("INFO | " & sender.tag.ToString)
 
             Select Case sender.name.ToString
                 Case "step1"
@@ -829,7 +815,7 @@ Namespace UnitTesting
             End Select
 
 finishMe:
-            LogActivity("PROCESS | End " & sender.text.ToString, True)
+            LogActivity("PROCESS | End " & sender.tooltip.ToString, True)
             ButtonclickToggle(Me.Cursor, Cursors.Default)
         End Sub
 
@@ -841,6 +827,86 @@ finishMe:
             End If
         End Sub
 
+        'Close test case and unload eryting
+        '''Basically just the opposite of the test case dropdown
+        Private Sub testClose_Click(sender As Object, e As EventArgs) Handles testClose.Click
+            isopening = True 'Only used because isloading wasn't there and I didn't feel like adding it
+            ButtonclickToggle(Me.Cursor)
+
+            Dim testcase As String = testID.Text.ToString
+            LogActivity("FINISH | Test Case" & testcase)
+
+            DirectorySync.Stop()
+            KillRoboCops()
+            InitializeLocaltoCentralSync()
+            'DirectorySync.Start()
+
+            ResetControls()
+
+            testBu.Text = ""
+            testSid.Text = ""
+            testWo.Text = ""
+            testSaFolder.Text = ""
+            testFolder.Text = ""
+            testComb.Text = ""
+            testID.SelectedIndex = -1
+            testIteration.Text = ""
+            testNextIteration.Text = ""
+
+            Try
+                seNetwork.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
+                'seNetwork.Dispose()
+            Catch ex As Exception
+            End Try
+
+            Try
+                seSA.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
+                'seSA.Dispose()
+            Catch ex As Exception
+            End Try
+
+            mainLogViewer.Clear()
+            Dim startTime As DateTime = DateTime.Now
+
+            Do Until Not DirectorySync.IsRunning
+                If (DateTime.Now - startTime).TotalMilliseconds > 300000 Then
+                    LogActivity("WARNING | Syncing to R: drive exceeded timeout - Please verify all files have synced correctly")
+                    Exit Do
+                End If
+            Loop
+
+            DirectorySync.Stop()
+            DirectorySync.Dispose()
+            KillRoboCops()
+
+            ButtonclickToggle(Me.Cursor)
+            isopening = False
+        End Sub
+
+        Public Sub ResetControls()
+            btnNextIteration.Enabled = Not btnNextIteration.Enabled
+            testIterationResults.Enabled = Not testIterationResults.Enabled
+            testPrevResults.Enabled = Not testPrevResults.Enabled
+            testPublishedResults.Enabled = Not testPublishedResults.Enabled
+            testConduct.Enabled = Not testConduct.Enabled
+            testCompareAll.Enabled = Not testCompareAll.Enabled
+            testStructureOnly.Enabled = Not testStructureOnly.Enabled
+            testJason.Enabled = Not testJason.Enabled
+            mainLogViewer.Enabled = Not mainLogViewer.Enabled
+
+            step1.Enabled = Not step1.Enabled
+            step2.Enabled = Not step2.Enabled
+            step3.Enabled = Not step3.Enabled
+            step3a.Enabled = Not step3a.Enabled
+            step3b.Enabled = Not step3b.Enabled
+            step4.Enabled = Not step4.Enabled
+            step5.Enabled = Not step5.Enabled
+            step6.Enabled = Not step6.Enabled
+            XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
+            testClose.Enabled = Not testClose.Enabled
+
+            rtfactivityLog.Visible = Not rtfactivityLog.Visible
+        End Sub
 #End Region
 
 #Region "My Largely Little Helpers"
@@ -860,7 +926,6 @@ finishMe:
                 Return dirUse & "\Test ID " & testID.Text & "\Test Activity.txt"
             End Get
         End Property
-
 
         Public unitTestCases As New List(Of TestCase)
         Public rFolder As String = "R:\Development\SAPI Testing\Unit Testing"
@@ -1012,10 +1077,10 @@ finishMe:
 
         'Determine if the maestro conductor ran successfully
         Public Function DidConductProperly(ByVal logpath As String) As Boolean
-            Dim isFailure As Boolean = False
+            Dim isFailure As Boolean = True
             Using maeSr As New StreamReader(logpath)
                 If maeSr.ReadToEnd.Contains("ERROR") Then
-                    isFailure = True
+                    isFailure = False
                 End If
                 maeSr.Close()
             End Using
@@ -1725,6 +1790,7 @@ finishMe:
                         resDs
                         )
         End Function
+
 #End Region
     End Class
 
