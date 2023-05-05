@@ -140,13 +140,20 @@ Namespace UnitTesting
 
         Private Sub frmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
             CloseHandle(EDStokenHandle)
-            DirectorySync.Stop()
+            Try
+                KillRoboCops()
+                DirectorySync.Stop()
+            Catch ex As Exception
+            End Try
         End Sub
 
         Private Sub KillRoboCops()
             Dim proc = Process.GetProcessesByName("RoboCopy")
             For i As Integer = 0 To proc.Count - 1
-                proc(i).Kill()
+                Try
+                    proc(i).Kill()
+                Catch
+                End Try
             Next i
         End Sub
 #End Region
@@ -531,7 +538,7 @@ Namespace UnitTesting
                 DirectoryCreator("\Test ID " & Me.testCase & "\Manual (Current)")
                 DirectoryCreator("\Test ID " & Me.testCase & "\Reference SA Files")
                 DirectoryCreator("\Test ID " & Me.testCase & "\Manual ERI")
-                DirectoryCreator("\Test ID " & Me.testCase & "\Bug Tracking")
+                'DirectoryCreator("\Test ID " & Me.testCase & "\Bug Tracking")
                 File.Create(Me.dirUse & "\Test ID " & Me.testCase & "\Test Notes.txt").Dispose()
                 File.Create(Me.dirUse & "\Test ID " & Me.testCase & "\Test Activity.txt").Dispose()
 
@@ -547,7 +554,7 @@ Namespace UnitTesting
 
                 'Create the 1st iteration folder. 
                 '''Specifying that this is the first time (The boolean in the called method) 
-                CreateIteration(1, True)
+               ' CreateIteration(1, True)
             Else
                 'If the directory exists, it just loads in the text file for reference
                 rtbNotes.Text = System.IO.File.ReadAllText(Me.dirUse & "\Test ID " & Me.testCase & "\Test Notes.txt")
@@ -555,11 +562,13 @@ Namespace UnitTesting
 
             'Start file sinking....drip drip drip into the R drive
 
+
             KillRoboCops()
-            InitializeLocaltoCentralSync()
-            'Attempted to thread to save time but turns out it is just because of the network connection issues at home
             DirectorySync = New RoboCommand()
             DirectorySync.StartAsync()
+            InitializeLocaltoCentralSync()
+
+            'Attempted to thread directory syncing to save time but turns out it is just because of the network connection issues at home
             'thr1 = New Thread(AddressOf )
             'thr1.Start()
 
@@ -618,7 +627,10 @@ Namespace UnitTesting
             End Try
         End Sub
 
-        Private Sub TestSteps(sender As Object, e As EventArgs) Handles btnProcess1.Click, btnProcess2.Click, btnProcess3.Click, btnProcess4.Click, btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click
+        Private Sub TestSteps(sender As Object, e As EventArgs) Handles _
+                    btnProcess1.Click, btnProcess2.Click, btnProcess3.Click, btnProcess4.Click,
+                    btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click,
+                    btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -628,23 +640,25 @@ Namespace UnitTesting
 
             Select Case tags(0).ToLower
                 Case "step1"
-                    Dim answer As DialogResult
-                    Dim msg As String = "Are you sure you would Like to get SA Reference files?" &
+                    Dim eriCount As Integer = New DirectoryInfo(Me.RefFolder).GetFiles.Count
+                    Dim answer As DialogResult = vbYes
+
+                    If eriCount > 0 Then
+                        Dim msg As String = "Are you sure you would Like to get SA Reference files?" &
                                         vbCrLf & vbCrLf &
                                         "This process will archive files in the following folders: " &
                                         vbCrLf & vbCrLf &
                                         "Reference SA Files" &
                                         vbCrLf & vbCrLf &
                                         "Doing so may require creating new published and SAPI files for this test case."
-                    answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
+                        answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
+                    End If
 
                     If answer = vbNo Then
                         Exit Select
+                        LogActivity("INFO | Opted to not get SA Reference files.")
                     Else
-                        Dim archRef As DirectoryInfo = Directory.CreateDirectory(Me.RefFolder & "\Archive " & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString)
-                        archRef.ArchiveFiles(Me.RefFolder)
-                        LogActivity("INFO | SA Reference Files archived.")
-
+                        If eriCount > 0 Then DoArchiving(Me.RefFolder)
                         Dim myfilesLst As New List(Of FileInfo)
                         'Loop through all files in the maestro folder for the current test case and iteration
                         For Each info As FileInfo In New DirectoryInfo(testSaFolder.Text).GetFiles
@@ -718,23 +732,28 @@ Namespace UnitTesting
                         Exit Select
                         LogActivity("INFO | Opted to not create new templates.")
                     Else
-                        If tags(0) = "step3" Or tags(0) = "step3a" Then
-                            CreateCurrentTemplates(RefernceSADT, booPub, Not booPub)
+                        Dim refDT As New DataTable
+                        refDT = RefernceSADT()
+
+                        If tags(0).ToLower = "step3" Or tags(0).ToLower = "step3a" Then
+                            CreateCurrentTemplates(refDT, booPub, Not booPub)
                             LogActivity("INFO | All current template files have been created in the directory '\Manual (Current)'.")
                         End If
 
-                        If tags(0) = "step3" Or tags(0) = "step3b" Then
-                            CreateManualERI(RefernceSADT, Me.EriFolder, booEri, Not booEri)
+                        If tags(0).ToLower = "step3" Or tags(0).ToLower = "step3b" Then
+                            CreateManualERI(refDT, Me.EriFolder, booEri, Not booEri)
                             LogActivity("INFO | All reference ERIs files have been created in the directory '\Manual ERI'.")
                         End If
 
-                        If tags(0) = "step3" Or tags(0) = "step3c" Then
-                            CreateCurrentTemplates(RefernceSADT, booMae, Not booMae)
+                        If tags(0).ToLower = "step3" Or tags(0).ToLower = "step3c" Then
+                            CreateSAPITemplates(refDT, booMae, Not booMae)
                             LogActivity("INFO | All files required for Maestro have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
                             LogActivity("INFO | All files SAPI files have been created in the directory '\Iteration" & Me.iteration & "\Manual (SAPI)'.")
                             CreateManualERI(RefernceSADT, Me.MaeFolder, booEri, Not booEri)
                             LogActivity("INFO | All reference ERIs files have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
                         End If
+
+                        DatatableToCSV(refDT, RefFolder & "\File List.csv")
                     End If
                 Case "step4", "step4a", "step4b"
                     'Create Published versions of the files
@@ -748,18 +767,18 @@ Namespace UnitTesting
                     Dim maeCount As Integer = New DirectoryInfo(Me.MaeFolder).GetFiles.Count
 
 
-                    If tags(0) = "step4" Or tags(0) = "step4a" Then
-                        ImportInputs("PublishedPath")
-                        LogActivity("INFO | Import inputs complete for current published versions.")
-                    End If
-
-                    If tags(0) = "step4" Or tags(0) = "step4b" Then
-                        If Not pubCount > 0 And (tags(0) = "step4" Or tags(0) = "step4a") Then
+                    If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4b" Then
+                        If Not pubCount > 0 Then
                             MsgBox("Please create current template files to continue.", vbInformation)
                             LogActivity("ERROR | Current template files not created.")
                             Exit Select
                         End If
 
+                        ImportInputs("PublishedPath")
+                        LogActivity("INFO | Import inputs complete for current published versions.")
+                    End If
+
+                    If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4a" Then
                         If Not maeCount > 0 Then
                             MsgBox("Please create template SAPI files to continue.", vbInformation)
                             LogActivity("ERROR | SAPI template files not created.")
@@ -767,7 +786,7 @@ Namespace UnitTesting
                         End If
 
                         ImportInputs("MaestroPath")
-                        LogActivity("INFO | Import inputs complete for current SAPI versions.")
+                        LogActivity("INFO | Import inputs complete for SAPI versions.")
                         LogActivity("INFO | Files were created in the '\Maestro' and '\Manual (SAPI)' folders.")
                     End If
 
@@ -867,8 +886,8 @@ finishMe:
         Private Sub testSync_Click(sender As Object, e As EventArgs) Handles testSync.Click
             DirectorySync.Stop()
             KillRoboCops()
-            InitializeLocaltoCentralSync()
             DirectorySync.StartAsync()
+            InitializeLocaltoCentralSync()
 
             LogActivity("INFO | R: drive test folder force synced")
         End Sub
@@ -884,9 +903,8 @@ finishMe:
             LogActivity("FINISH | Test Case" & testcase)
 
             DirectorySync.Stop()
-            KillRoboCops()
+            DirectorySync.Start()
             InitializeLocaltoCentralSync()
-            DirectorySync.StartAsync()
 
             ResetControls()
 
@@ -918,10 +936,10 @@ finishMe:
             Dim startTime As DateTime = DateTime.Now
 
             Do Until Not DirectorySync.IsRunning
-                If (DateTime.Now - startTime).TotalMilliseconds > 300000 Then
-                    LogActivity("WARNING | Syncing to R: drive exceeded timeout - Please verify all files have synced correctly")
-                    Exit Do
-                End If
+                'If (DateTime.Now - startTime).TotalMilliseconds > 300000 Then
+                'LogActivity("WARNING | Syncing to R: drive exceeded timeout - Please verify all files have synced correctly")
+                Exit Do
+                'End If
             Loop
 
             DirectorySync.Stop()
@@ -952,6 +970,10 @@ finishMe:
             btnProcess6.Enabled = Not btnProcess6.Enabled
             btnProcess7.Enabled = Not btnProcess7.Enabled
             btnProcess8.Enabled = Not btnProcess8.Enabled
+            btnProcess9.Enabled = Not btnProcess9.Enabled
+            btnProcess10.Enabled = Not btnProcess10.Enabled
+            btnProcess11.Enabled = Not btnProcess11.Enabled
+            btnProcess12.Enabled = Not btnProcess12.Enabled
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testClose.Enabled = Not testClose.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
@@ -1065,6 +1087,14 @@ finishMe:
 
                     If Import_Previous_Version(myXL.Item1, importingTo, macroname, params, True) Then
                         LogActivity("INFO | Import Inputs Completed for: " & importingTo.FullName)
+                        If FileType = "MaestroPath" Then
+                            Try
+                                Dim manFile As New FileInfo(Me.ManFolder & "\" & importingTo.Name)
+                                manFile.Delete()
+                                importingTo.CopyTo(manFile.FullName)
+                            Catch ex As Exception
+                            End Try
+                        End If
                     Else
                         LogActivity("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName)
                     End If
@@ -1243,7 +1273,6 @@ finishMe:
         'Create folders required for unit testing to be conducted
         '''Maestro folder 
         '''Manual folder 
-        '''Iteration creation will always generate files. 
         '''Users will have the option to replace the files in the folder. 
         Public Sub CreateIteration(ByVal nextIteration As Integer, ByVal Optional isFirstTime As Boolean = False)
             testIteration.Text = nextIteration
@@ -1259,13 +1288,13 @@ finishMe:
                 Directory.CreateDirectory(Me.itFolder)
                 Directory.CreateDirectory(Me.MaeFolder)
                 Directory.CreateDirectory(Me.ManFolder)
-                CreateTemplateFiles(isFirstTime, False)
+                'CreateTemplateFiles(isFirstTime, False)
             End If
 
         End Sub
 
         'Folder option for this one since it could send ERIs to multiple locations. 
-        Public Sub CreateManualERI(ByVal refFiles As DataTable, ByVal folder As String, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
+        Public Sub CreateManualERI(ByRef refFiles As DataTable, ByVal folder As String, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
             If archive And Not isFirstTime Then DoArchiving(folder)
 
             For Each dr As DataRow In refFiles.Rows
@@ -1281,27 +1310,29 @@ finishMe:
         End Sub
 
         'No folder option for these since they are always going to go to the current folder path
-        Public Sub CreateCurrentTemplates(ByVal refFiles As DataTable, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
+        Public Sub CreateCurrentTemplates(ByRef refFiles As DataTable, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
             If archive And Not isFirstTime Then DoArchiving(Me.PubFolder)
 
             For Each dr As DataRow In refFiles.Rows
                 Dim file As New FileInfo(dr.Item("FilePath").ToString)
-                With WhichFile(file)
-                    If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
-                        TemplateNotFoundWarning(file)
-                    Else
-                        'Copy published versions of the tools into the manual folder 
-                        Dim pubPath As String = GetNewFileName(Me.PubFolder, fileName:= .Item3)
-                        IO.File.WriteAllBytes(pubPath, .Item1)
-                        dr.Item("PublishedPath") = pubPath
-                        LogActivity("DEBUG | Production version created: " & pubPath)
-                    End If
-                End With
+                If file.Extension.ToLower = ".xlsm" Then
+                    With WhichFile(file)
+                        If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
+                            TemplateNotFoundWarning(file)
+                        Else
+                            'Copy published versions of the tools into the manual folder 
+                            Dim pubPath As String = GetNewFileName(Me.PubFolder, fileName:= .Item3)
+                            IO.File.WriteAllBytes(pubPath, .Item1)
+                            dr.Item("PublishedPath") = pubPath
+                            LogActivity("DEBUG | Production version created: " & pubPath)
+                        End If
+                    End With
+                End If
             Next
         End Sub
 
         'No folder option for these since they are always going to go to the current folder path
-        Public Sub CreateSAPITemplates(ByVal refFiles As DataTable, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
+        Public Sub CreateSAPITemplates(ByRef refFiles As DataTable, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
             If archive And Not isFirstTime Then
                 DoArchiving(Me.MaeFolder)
                 DoArchiving(Me.ManFolder)
@@ -1309,27 +1340,29 @@ finishMe:
 
             For Each dr As DataRow In refFiles.Rows
                 Dim file As New FileInfo(dr.Item("FilePath").ToString)
-                With WhichFile(file)
-                    If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
-                        TemplateNotFoundWarning(file)
-                    Else
-                        'Templates are saved as Bytes() and need to be converted appropriately. 
-                        Dim maePath As String = GetNewFileName(Me.MaeFolder, fileName:= .Item3)
-                        IO.File.WriteAllBytes(maePath, .Item2)
-                        dr.Item("MaestroPath") = maePath
-                        LogActivity("DEBUG | SAPI version created: " & maePath)
+                If file.Extension.ToLower = ".xlsm" Then
+                    With WhichFile(file)
+                        If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
+                            TemplateNotFoundWarning(file)
+                        Else
+                            'Templates are saved as Bytes() and need to be converted appropriately. 
+                            Dim maePath As String = GetNewFileName(Me.MaeFolder, fileName:= .Item3)
+                            IO.File.WriteAllBytes(maePath, .Item2)
+                            dr.Item("MaestroPath") = maePath
+                            LogActivity("DEBUG | SAPI version created: " & maePath)
 
-                        'File will be copied to the manual folder once the files are populated with data via 
-                        'Manual files will be replaces when user imports data into the maestro files.
-                        'Alternative will be to load maestro and manual files manually.
-                        '''Import Inputs
-                        '''Structure import
-                        Dim manPath As String = GetNewFileName(Me.ManFolder, fileName:= .Item3)
-                        IO.File.WriteAllBytes(manPath, .Item2)
-                        dr.Item("ManualPath") = manPath
-                        LogActivity("DEBUG | SAPI version created: " & manPath)
-                    End If
-                End With
+                            'File will be copied to the manual folder once the files are populated with data via 
+                            'Manual files will be replaces when user imports data into the maestro files.
+                            'Alternative will be to load maestro and manual files manually.
+                            '''Import Inputs
+                            '''Structure import
+                            Dim manPath As String = GetNewFileName(Me.ManFolder, fileName:= .Item3)
+                            IO.File.WriteAllBytes(manPath, .Item2)
+                            dr.Item("ManualPath") = manPath
+                            LogActivity("DEBUG | SAPI version created: " & manPath)
+                        End If
+                    End With
+                End If
             Next
         End Sub
 
@@ -1352,7 +1385,7 @@ finishMe:
         Public Function RefernceSADT() As DataTable
             Dim SAFiles As New DataTable
             SAFiles = CSVtoDatatable(New FileInfo(Me.RefFolder & "\File List.csv"))
-            If Not SAFiles.Columns.Contains("MaestroPath") Then
+            If SAFiles.Columns.Count < 4 Then
                 SAFiles.Columns.Add("MaestroPath", GetType(System.String))
                 SAFiles.Columns.Add("ManualPath", GetType(System.String))
                 SAFiles.Columns.Add("PublishedPath", GetType(System.String))
@@ -1374,7 +1407,7 @@ finishMe:
                         With WhichFile(file)
                             If file.Extension.ToLower = ".eri" Or .Item1 IsNot Nothing Or .Item2 IsNot Nothing Or .Item3 IsNot Nothing Then
                                 LogActivity("DEBUG | File added manually: " & file.Name)
-                                If Not SAFiles.Columns.Contains("MaestroPath") Then
+                                If SAFiles.Columns.Count < 4 Then
                                     SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "")
                                 Else
                                     SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "", "", "", "")
@@ -1385,6 +1418,7 @@ finishMe:
                     End If
                 Next
             End If
+            Return SAFiles
         End Function
 
         'Get a file count of all files in the:
@@ -1587,7 +1621,7 @@ finishMe:
 
             While IO.File.Exists(filePath)
                 counter += 1
-                If file Is Nothing Then
+                If file IsNot Nothing Then
                     filePath = newFolder & "\" & file.Name.Split(".")(0) & "(" & counter.ToString() & ")" & file.Name.Split(".")(1)
                 Else
                     filePath = newFolder & "\" & fileName.Split(".")(0) & "(" & counter.ToString() & ")" & fileName.Split(".")(1)
@@ -1967,6 +2001,8 @@ finishMe:
                         resDs
                         )
         End Function
+
+
 #End Region
     End Class
 
@@ -2339,21 +2375,24 @@ RetryFileOpenCheck:
         'Append the maestro log generated to the 
         <Extension()>
         Public Sub AppendLog(ByVal strc As EDSStructure, ByVal pathToAppend As String)
+            Dim dateTim As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
+            Dim splt() As String = dateTim.Split(" ")
+
             Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy")
 
-            Dim inputs As Char() = {" ", "|", " "}
-            Dim separator As String = " | "
+            Dim inputs As Char() = {"|"}
+            Dim separator As String = "|"
 
             Using sw As New StreamWriter(pathToAppend, True)
                 Using sr As New StreamReader(strc.LogPath)
                     While Not sr.EndOfStream
                         Dim myLine As String = sr.ReadLine
                         If myLine.Length > 0 Then
-                            Dim vars As String() = myLine.Split(inputs)
-                            If vars.Count > 2 Then
-                                sw.WriteLine(dt & " " & vars(0) & separator & Environment.UserName & separator & "INFO" & separator & vars(1))
+                            Dim vars As String() = myLine.Split(separator)
+                            If vars.Count < 3 Then
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1))
                             Else
-                                sw.WriteLine(dt & " " & vars(0) & separator & Environment.UserName & separator & vars(1) & separator & vars(2))
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2))
                             End If
                         End If
                     End While
