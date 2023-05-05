@@ -98,10 +98,11 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.SimpleButton3 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess12 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess11 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess9 = New DevExpress.XtraEditors.SimpleButton()
-            Me.btnProccess10 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess10 = New DevExpress.XtraEditors.SimpleButton()
             Me.testSync = New DevExpress.XtraEditors.SimpleButton()
             Me.testClose = New DevExpress.XtraEditors.SimpleButton()
             Me.testBugFile = New DevExpress.XtraEditors.SimpleButton()
@@ -1014,10 +1015,11 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.SimpleButton3)
             Me.PanelControl1.Controls.Add(Me.btnProcess12)
             Me.PanelControl1.Controls.Add(Me.btnProcess11)
             Me.PanelControl1.Controls.Add(Me.btnProcess9)
-            Me.PanelControl1.Controls.Add(Me.btnProccess10)
+            Me.PanelControl1.Controls.Add(Me.btnProcess10)
             Me.PanelControl1.Controls.Add(Me.testSync)
             Me.PanelControl1.Controls.Add(Me.testClose)
             Me.PanelControl1.Controls.Add(Me.testBugFile)
@@ -1067,6 +1069,14 @@
             Me.PanelControl1.Size = New System.Drawing.Size(1721, 120)
             Me.PanelControl1.TabIndex = 16
             '
+            'SimpleButton3
+            '
+            Me.SimpleButton3.Location = New System.Drawing.Point(1260, 58)
+            Me.SimpleButton3.Name = "SimpleButton3"
+            Me.SimpleButton3.Size = New System.Drawing.Size(90, 23)
+            Me.SimpleButton3.TabIndex = 49
+            Me.SimpleButton3.Text = "Test"
+            '
             'btnProcess12
             '
             Me.btnProcess12.Appearance.Options.UseTextOptions = True
@@ -1078,7 +1088,7 @@
             Me.btnProcess12.TabIndex = 48
             Me.btnProcess12.Tag = "STEP4|Import inputs for all files for the current iteration and publsihed version" &
     "s."
-            Me.btnProcess12.Text = "4. Import Inputs (Maestro)"
+            Me.btnProcess12.Text = "4. Import Inputs"
             Me.btnProcess12.ToolTip = "IMPORT INPUTS (BOTH)"
             '
             'btnProcess11
@@ -1103,16 +1113,16 @@
             Me.btnProcess9.Text = "3a. Cur."
             Me.btnProcess9.ToolTip = "CREATE TEMPLATE FILES (PROD)"
             '
-            'btnProccess10
+            'btnProcess10
             '
-            Me.btnProccess10.Enabled = False
-            Me.btnProccess10.Location = New System.Drawing.Point(916, 92)
-            Me.btnProccess10.Name = "btnProccess10"
-            Me.btnProccess10.Size = New System.Drawing.Size(55, 23)
-            Me.btnProccess10.TabIndex = 45
-            Me.btnProccess10.Tag = "STEP3B|Create new ERI file(s) in the 'Manual ERI' folder."
-            Me.btnProccess10.Text = "3b. ERI"
-            Me.btnProccess10.ToolTip = "CREATE TEAMPLATE FILES (ERI)"
+            Me.btnProcess10.Enabled = False
+            Me.btnProcess10.Location = New System.Drawing.Point(916, 92)
+            Me.btnProcess10.Name = "btnProcess10"
+            Me.btnProcess10.Size = New System.Drawing.Size(55, 23)
+            Me.btnProcess10.TabIndex = 45
+            Me.btnProcess10.Tag = "STEP3B|Create new ERI file(s) in the 'Manual ERI' folder."
+            Me.btnProcess10.Text = "3b. ERI"
+            Me.btnProcess10.ToolTip = "CREATE TEAMPLATE FILES (ERI)"
             '
             'testSync
             '
@@ -1761,7 +1771,8 @@
         Friend WithEvents btnProcess12 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess11 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess9 As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents btnProccess10 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess10 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents SimpleButton3 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
