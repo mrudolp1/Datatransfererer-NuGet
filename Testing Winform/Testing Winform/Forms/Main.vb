@@ -2002,32 +2002,7 @@ finishMe:
                         )
         End Function
 
-        Private Sub SimpleButton3_Click(sender As Object, e As EventArgs) Handles SimpleButton3.Click
-            Dim dateTim As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
-            Dim splt() As String = dateTim.Split(" ")
 
-            Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy")
-
-            Dim inputs As Char() = {"|"}
-            Dim separator As String = "|"
-
-            Using sw As New StreamWriter("C:\Users\Imiller\Work Area\SAPI Testing\Unit Testing\Test ID 45\Test Activity - Copy.txt", True)
-                Using sr As New StreamReader("C:\Users\Imiller\Work Area\SAPI Testing\Unit Testing\Test ID 45\Iteration 1\Maestro\841918_A_2201360_5-5-2023 8.59.53 AM.txt")
-                    While Not sr.EndOfStream
-                        Dim myLine As String = sr.ReadLine
-                        If myLine.Length > 0 Then
-                            Dim vars As String() = myLine.Split(separator)
-                            If vars.Count < 3 Then
-                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1))
-                            Else
-                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2))
-                            End If
-                        End If
-                    End While
-                    sr.Close()
-                End Using
-            End Using
-        End Sub
 #End Region
     End Class
 
@@ -2400,21 +2375,24 @@ RetryFileOpenCheck:
         'Append the maestro log generated to the 
         <Extension()>
         Public Sub AppendLog(ByVal strc As EDSStructure, ByVal pathToAppend As String)
+            Dim dateTim As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
+            Dim splt() As String = dateTim.Split(" ")
+
             Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy")
 
-            Dim inputs As Char() = {" ", "|", " "}
-            Dim separator As String = " | "
+            Dim inputs As Char() = {"|"}
+            Dim separator As String = "|"
 
             Using sw As New StreamWriter(pathToAppend, True)
                 Using sr As New StreamReader(strc.LogPath)
                     While Not sr.EndOfStream
                         Dim myLine As String = sr.ReadLine
                         If myLine.Length > 0 Then
-                            Dim vars As String() = myLine.Split(inputs)
-                            If vars.Count > 2 Then
-                                sw.WriteLine(dt & " " & vars(0) & separator & Environment.UserName & separator & "INFO" & separator & vars(1))
+                            Dim vars As String() = myLine.Split(separator)
+                            If vars.Count < 3 Then
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1))
                             Else
-                                sw.WriteLine(dt & " " & vars(0) & separator & Environment.UserName & separator & vars(1) & separator & vars(2))
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2))
                             End If
                         End If
                     End While
