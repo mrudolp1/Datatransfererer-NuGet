@@ -133,6 +133,66 @@ Partial Friend NotInheritable Class Settings
             Me("workLocal") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booInfo() As Boolean
+        Get
+            Return CType(Me("booInfo"),Boolean)
+        End Get
+        Set
+            Me("booInfo") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booEvent() As Boolean
+        Get
+            Return CType(Me("booEvent"),Boolean)
+        End Get
+        Set
+            Me("booEvent") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booWarning() As Boolean
+        Get
+            Return CType(Me("booWarning"),Boolean)
+        End Get
+        Set
+            Me("booWarning") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booDebug() As Boolean
+        Get
+            Return CType(Me("booDebug"),Boolean)
+        End Get
+        Set
+            Me("booDebug") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booError() As Boolean
+        Get
+            Return CType(Me("booError"),Boolean)
+        End Get
+        Set
+            Me("booError") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
