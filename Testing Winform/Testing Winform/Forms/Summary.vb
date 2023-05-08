@@ -33,14 +33,33 @@ Namespace UnitTesting
                 tcData.TabPages.Add(newPg)
 
                 counter += 1
+
+                For Each dr As DataGridViewRow In dgv.Rows
+                    For Each dc As DataGridViewColumn In dgv.Columns
+                        If dc.Name.Contains("Status") Then
+                            If dr.Cells(dc.Name).Value.ToString.ToLower = "fail" Then
+                                dr.Cells(dc.Name).Style.BackColor = Color.Red
+                            Else
+                                dr.Cells(dc.Name).Style.BackColor = Color.Green
+                            End If
+                            Exit For
+                        End If
+                    Next
+                Next
             Next
 
             Me.Text = Me.Text & " - " & Now.ToString
             ButtonclickToggle(Me.Cursor)
         End Sub
 
-        Private Sub Export(sender As Object, e As EventArgs) Handles ToolStripSplitButton1.Click
+        Private Sub btn_Export(sender As Object, e As EventArgs) Handles ToolStripSplitButton1.Click
             ButtonclickToggle(Me.Cursor)
+            Export()
+            ButtonclickToggle(Me.Cursor)
+        End Sub
+
+
+        Public Sub Export()
             Dim dir As String = frmMain.dirUse 'IIf(CType(frmMain.chkWorkLocal.Checked, Boolean) = True, frmMain.lFolder, frmMain.rFolder)
             Dim testid As Integer = CType(frmMain.testID.Text, Integer)
             Dim testiteration As Integer = CType(frmMain.testIteration.Text, Integer)
@@ -58,9 +77,7 @@ Namespace UnitTesting
                 Catch
                 End Try
             Next
-            ButtonclickToggle(Me.Cursor)
         End Sub
-
     End Class
 
 End Namespace

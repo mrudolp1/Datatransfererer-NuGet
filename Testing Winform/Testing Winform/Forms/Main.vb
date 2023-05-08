@@ -724,7 +724,10 @@ Namespace UnitTesting
                     If tags(0).Contains("b") And pubCount > 0 Then msg += pubMsg
                     If tags(0).Contains("c") And maeCount > 0 Then msg += maeMsg
 
-                    If eriCount > 0 Or pubCount > 0 Or maeCount > 0 Then
+                    If ((eriCount > 0 Or pubCount > 0 Or maeCount > 0) And tags(0) = "step3") Or
+                        (pubCount > 0 And tags(0).ToLower = "step3a") Or
+                        (eriCount > 0 And tags(0).ToLower = "step3b") Or
+                        (maeCount > 0 And tags(0).ToLower = "step3c") Then
                         answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
                     End If
 
@@ -749,7 +752,7 @@ Namespace UnitTesting
                             CreateSAPITemplates(refDT, booMae, Not booMae)
                             LogActivity("INFO | All files required for Maestro have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
                             LogActivity("INFO | All files SAPI files have been created in the directory '\Iteration" & Me.iteration & "\Manual (SAPI)'.")
-                            CreateManualERI(RefernceSADT, Me.MaeFolder, booEri, Not booEri)
+                            CreateManualERI(RefernceSADT, Me.MaeFolder, booMae, Not booMae)
                             LogActivity("INFO | All reference ERIs files have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
                         End If
 
@@ -853,7 +856,8 @@ Namespace UnitTesting
 
                     DatatableToCSV(checks.Item4.Tables("Combined Results"), Me.itFolder & "\All Summarized Results.csv")
                     LogActivity("DEBUG | Results output for reference SA files created: " & Me.itFolder & "\All Summarized Results.csv")
-
+                    newSum.Refresh()
+                    newSum.Export()
                     LogActivity("INFO | Results for all files compared and created in testing directory.")
             End Select
 
@@ -1888,7 +1892,7 @@ finishMe:
                                 If Not dr.Item("Column1").ToString = String.Empty Then
                                     Dim val As Double
                                     Try
-                                        val = dr.Item("Rating*").ToString.Replace("%", "")
+                                        val = dr.Item("Rating*").ToString.Replace("%", "") * 100
                                     Catch ex As Exception
                                         val = 0
                                     End Try
@@ -2241,10 +2245,10 @@ RetryFileOpenCheck:
             diffDt.TableName = dt.TableName & " v. " & comparer.TableName
             diffDt.Columns.Add(dt.TableName & " File", GetType(System.String))
             diffDt.Columns.Add("Check/Failure Mode", GetType(System.String))
-            diffDt.Columns.Add(dt.TableName & " Val", GetType(System.Double))
-            diffDt.Columns.Add(comparer.TableName & " Val", GetType(System.Double))
-            diffDt.Columns.Add("Delta", GetType(System.Double))
-            diffDt.Columns.Add("% Difference", GetType(System.Double))
+            diffDt.Columns.Add(dt.TableName & " Val", GetType(System.String))
+            diffDt.Columns.Add(comparer.TableName & " Val", GetType(System.String))
+            diffDt.Columns.Add("Delta", GetType(System.String))
+            diffDt.Columns.Add("% Difference", GetType(System.String))
             diffDt.Columns.Add("Status", GetType(System.String))
             For i As Integer = 0 To Math.Max(dt.Rows.Count, comparer.Rows.Count) - 1
                 Dim dtRow As DataRow
@@ -2287,10 +2291,10 @@ RetryFileOpenCheck:
                 diffDt.Rows.Add(
                                 dtRow.Item("Tool").ToString,
                                 dtRow.Item("Type").ToString,
-                                IIf(Double.IsNaN(dtVal), Nothing, dtVal),
-                                IIf(Double.IsNaN(comparerVal), Nothing, comparerVal),
-                                IIf(Double.IsNaN(delta), Nothing, delta),
-                                IIf(Double.IsNaN(perDelta), Nothing, perDelta),
+                                IIf(Double.IsNaN(dtVal), "N/A", dtVal),
+                                IIf(Double.IsNaN(comparerVal), "N/A", comparerVal),
+                                IIf(Double.IsNaN(delta), "N/A", delta),
+                                IIf(Double.IsNaN(perDelta), "N/A", perDelta),
                                 IIf(Double.IsNaN(delta) Or delta > 0.1, "Fail", "Pass")
                                )
 

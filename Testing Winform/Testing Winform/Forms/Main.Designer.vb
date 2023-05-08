@@ -1076,6 +1076,7 @@
             Me.SimpleButton3.Size = New System.Drawing.Size(90, 23)
             Me.SimpleButton3.TabIndex = 49
             Me.SimpleButton3.Text = "Test"
+            Me.SimpleButton3.Visible = False
             '
             'btnProcess12
             '
