@@ -719,7 +719,7 @@ Partial Public Class CCIplate
                     GeoRow += 1
                 Next
             End If
-
+            'test rebase (remove line after test)
             If Me.Connections.Count > 0 Then
                 'identify first row to copy data into Excel Sheet
                 'Connection
