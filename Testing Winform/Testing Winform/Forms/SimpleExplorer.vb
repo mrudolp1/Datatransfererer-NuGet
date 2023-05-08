@@ -140,40 +140,42 @@ Namespace UnitTesting
                     If fName.Contains(".") And fName.Contains("xlsm") Then
 
                         SelectedFile = info
-                        loadDt = SummarizedResults(info)
+                        loadDt = frmMain.SummarizedResults(info)
                     ElseIf fName.Contains(".csv") Then
                         loadDt = CSVtoDatatable(info)
-                    ElseIf fName.Contains(".txt") Then
+                    ElseIf fName.Contains(".txt") Or info.Extension.ToLower = ".eri" Then
                         Using sr As New IO.StreamReader(info.FullName)
                             Dim tempDt As New DataTable
+                            tempDt.Columns.Add("Text")
                             Dim newRow As String()
 
                             While Not sr.EndOfStream
-                                newRow = sr.ReadLine.Split("|")
-                                If newRow.Count > 0 Then
-                                    If tempDt.Columns.Count = 0 Then
-                                        tempDt.Columns.Add("Time", GetType(System.String))
-                                        tempDt.Columns.Add("Message", GetType(System.String))
-                                    End If
-                                    Dim combined As String
+                                'newRow = sr.ReadLine.Split("|")
+                                'If newRow.Count > 0 Then
+                                '    If tempDt.Columns.Count = 0 Then
+                                '        tempDt.Columns.Add("Time", GetType(System.String))
+                                '        tempDt.Columns.Add("Message", GetType(System.String))
+                                '    End If
+                                '    Dim combined As String
 
-                                    Try
-                                        combined = newRow(1) & "|" & newRow(2)
-                                    Catch ex As Exception
-                                        Try
-                                            combined = newRow(1)
-                                        Catch ex1 As Exception
-                                            combined = ""
-                                        End Try
-                                    End Try
+                                '    Try
+                                '        combined = newRow(1) & "|" & newRow(2)
+                                '    Catch ex As Exception
+                                '        Try
+                                '            combined = newRow(1)
+                                '        Catch ex1 As Exception
+                                '            combined = ""
+                                '        End Try
+                                '    End Try
 
-                                    tempDt.Rows.Add(newRow(0), combined)
-                                Else
-                                    If tempDt.Columns.Count = 0 Then
-                                        tempDt.Columns.Add("Text", GetType(System.String))
-                                    End If
-                                    tempDt.Rows.Add(sr.ReadLine)
-                                End If
+                                '    tempDt.Rows.Add(newRow(0), combined)
+                                'Else
+                                '    If tempDt.Columns.Count = 0 Then
+                                '        tempDt.Columns.Add("Text", GetType(System.String))
+                                '    End If
+                                '    tempDt.Rows.Add(sr.ReadLine)
+                                'End If
+                                tempDt.Rows.Add(sr.ReadLine)
                             End While
 
                             loadDt = tempDt
@@ -183,9 +185,9 @@ Namespace UnitTesting
 
                     'Set the reference grid on the main form to the returned datatable
                     frmMain.GridView1.Columns.Clear()
-                    frmMain.GridControl1.DataSource = Nothing
-                    frmMain.GridControl1.DataSource = loadDt
-                    frmMain.GridControl1.RefreshDataSource()
+                    frmMain.gcViewer.DataSource = Nothing
+                    frmMain.gcViewer.DataSource = loadDt
+                    frmMain.gcViewer.RefreshDataSource()
                     frmMain.GridView1.BestFitColumns(True)
                 End If
             Else

@@ -31,7 +31,7 @@ Partial Public Class EDSStructure
         Dim poleMacRunAnalysis As String = "MaestMe_Step3" ' step 3
         'Dim poleMacRunTNXReactionsBARB As String = ""
         '//plate macros
-        Dim plateMac As String = ""
+        Dim plateMac As String = "MaestMe"
         '//splice check
         Dim spliceMacImportTNX As String = ""
         Dim spliceMacRun As String = ""
@@ -45,7 +45,7 @@ Partial Public Class EDSStructure
         Dim pileMac As String = "MaestMe"
         Dim guyAnchorMac As String = "MaestMe"
         '//lattice
-        Dim legReinforcementMac As String = ""
+        Dim legReinforcementMac As String = "MaestMe"
         Dim unitBaseMac As String = "MaestMe"
         Dim drilledPierMac As String = "MaestMe"
         'Dim pierAndPadMac As String = "MaestMe"
@@ -149,7 +149,7 @@ Partial Public Class EDSStructure
                     'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
                     If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
                         WriteLineLogLine("INFO | BARB elevation found..")
-                        DoBARB(poleWeUsin, isDevMode)
+                        DoBARB(poleWeUsin, plateWeUsin, isDevMode)
                     End If
                 End If
 
@@ -367,14 +367,14 @@ ErrorSkip:
 
     End Function
 
-    Public Function DoBARB(ByVal poleWeUsin As Pole, Optional ByVal isDevMode As Boolean = False) As Boolean
+    Public Function DoBARB(ByVal poleWeUsin As Pole, ByVal plateWeUsin As CCIplate, Optional ByVal isDevMode As Boolean = False) As Boolean
 
         Dim barbCL As Double
         Dim plateComp As Double
         Dim plateSheer As Double
         Dim plateMom As Double
 
-        Dim plateWeUsin As CCIplate = Nothing
+        'Dim plateWeUsin As CCIplate = Nothing
         Dim basePlateConnection As Connection = Nothing
         Dim basePlateBoltGroup As BoltGroup = Nothing
 
@@ -468,11 +468,11 @@ ErrorSkip:
 
                 If Not IsNothing(tnxFilePath) Then
                     logString = xlApp.Run(bigMac, tnxFilePath)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
                 Else
                     WriteLineLogLine("WARNING | No TNX file path in structure..")
                     logString = xlApp.Run(bigMac)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
                 End If
 
                 xlWorkBook.Save()
@@ -560,20 +560,26 @@ ErrorSkip:
                     For Each sec As PoleReinfSection In pole.reinf_sections 'exStruct.pole.reinfsection
                         'if top of section is at or below barbCL, edit values in coumns: IJK, row: local section ID +4
                         If sec.elev_top <= barbCL Then
-                            secID = sec.ID
+                            'secID = sec.ID
+
+                            If Not IsNothing(sec.local_section_id) Then
+                                secID = sec.local_section_id
+                            Else
+                                Continue For
+                            End If
                             rowNum = secID + 4
 
                             'Comp/Pu = column I
                             cellRangeComp = "I" & rowNum
-                            xlWorkSheet.Cells(cellRangeComp).Value = plateComp
+                            xlWorkSheet.Range(cellRangeComp).Value = plateComp
 
                             'Moment/Mux= column J
                             cellRangeMom = "J" & rowNum
-                            xlWorkSheet.Cells(cellRangeMom).Value = plateMom
+                            xlWorkSheet.Range(cellRangeMom).Value = plateMom
 
                             'Shear/Vu = column K
                             cellRangeShear = "K" & rowNum
-                            xlWorkSheet.Cells(cellRangeShear).Value = plateShear
+                            xlWorkSheet.Range(cellRangeShear).Value = plateShear
 
                         End If
                     Next
@@ -977,7 +983,7 @@ ErrorSkip:
         Dim splt() As String = dt.Split(" ")
         dt = splt(1) '& " " & splt(2)
 
-        Dim msg As String = "Maestro Log [START] " & "Version: " & VerNum
+        Dim msg As String = "INFO | Maestro Log [START] " & "Version: " & VerNum
 
         ' Print the message to the console
         Console.WriteLine(dt & " | " & msg)

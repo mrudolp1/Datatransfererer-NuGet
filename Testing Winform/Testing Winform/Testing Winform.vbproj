@@ -176,6 +176,12 @@
     <Import Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\LogViewer.designer.vb">
+      <DependentUpon>LogViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LogViewer.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Forms\Summary.Designer.vb">
       <DependentUpon>Summary.vb</DependentUpon>
     </Compile>
@@ -200,6 +206,9 @@
     <Compile Include="Forms\SimpleExplorer.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <EmbeddedResource Include="Forms\LogViewer.resx">
+      <DependentUpon>LogViewer.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Summary.resx">
       <DependentUpon>Summary.vb</DependentUpon>
     </EmbeddedResource>
@@ -259,6 +268,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\bugreport_32x32.png" />
+    <None Include="Resources\refresh2_16x16.png" />
+    <Content Include="Resources\warning.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\construction-svgrepo-com %281%29.svg" />
     <None Include="Resources\ladder-svgrepo-com.svg" />
     <None Include="Resources\navigateBack.svg" />
@@ -267,6 +281,18 @@
     <None Include="Resources\download.jfif" />
     <None Include="Resources\l-intro-1658899230.jpg" />
     <None Include="Resources\intro-1669842870.jpg" />
+    <Content Include="Resources\about.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\rightangleconnector.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\charttype_line.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\highimportance.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\wanda_LjA_icon.ico" />
   </ItemGroup>
   <ItemGroup>
