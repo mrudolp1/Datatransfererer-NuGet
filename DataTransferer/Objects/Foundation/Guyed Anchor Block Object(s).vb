@@ -909,7 +909,7 @@ Partial Public Class AnchorBlock
 
             For Each resRow As DataRow In strDS.Tables("Guy Anchor Result").Rows
                 If DBtoNullableInt(resRow.Item("local_anchor_id")) = Me.local_anchor_id Then
-                    res = New EDSResult(resRow, Me)
+                    res = New EDSResult(resRow, Me.Parent)
                     res.EDSTableName = "fnd.anchor_block_results"
                     res.ForeignKeyName = "anchor_block_id"
                     res.foreign_key = Me.ID

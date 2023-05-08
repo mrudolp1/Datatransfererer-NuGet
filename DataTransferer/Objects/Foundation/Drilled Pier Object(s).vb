@@ -798,7 +798,8 @@ Partial Public Class DrilledPier
             Next
 
             For Each resRow As DataRow In dt.Rows
-                res = New EDSResult(resRow, Me)
+                resRow.Item("rating") = resRow.Item("rating") / 100
+                res = New EDSResult(resRow, Me.Parent)
                 res.EDSTableName = "fnd.drilled_pier_results"
                 res.ForeignKeyName = "drilled_pier_id"
                 res.foreign_key = Me.ID
@@ -806,6 +807,7 @@ Partial Public Class DrilledPier
                 res.modified_person_id = Me.modified_person_id
                 Dim x As DrilledPierFoundation = Me.Parent
                 x.Results.Add(res)
+                Me.Results.Add(res)
             Next
         End If
     End Sub
