@@ -685,7 +685,7 @@ Partial Public Class CCIplate
             'End If
 
             'Pole Geometry (when CCIpole exists)
-
+            'test 2 (dev branch)
             'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
             'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
             If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
