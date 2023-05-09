@@ -87,7 +87,7 @@ Partial Public Class EDSStructure
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
                         GoTo ErrorSkip
                     End If
 
@@ -99,7 +99,7 @@ Partial Public Class EDSStructure
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
 
-                    If CheckForSuccess(OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode), "CCISeismic") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of CCISeismic)(seismicWeUsin, seisMac, isDevMode), "CCISeismic") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -117,7 +117,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -139,7 +139,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of CCIplate)(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
                         GoTo ErrorSkip
                     End If
 
@@ -155,7 +155,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -169,7 +169,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
                     For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(dp, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(dp, drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -181,7 +181,7 @@ Partial Public Class EDSStructure
                         'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
 
-                        If CheckForSuccess(OpenExcelRunMacro(pierPad, pierPadMac, isDevMode), "Pier & Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(pierPad, pierPadMac, isDevMode), "Pier & Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -190,7 +190,7 @@ Partial Public Class EDSStructure
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
                     For Each pile As Pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(pile, pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(pile, pileMac, isDevMode), "Pile") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -200,7 +200,7 @@ Partial Public Class EDSStructure
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
                     For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(guyAnc, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(guyAnc, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -231,7 +231,7 @@ Partial Public Class EDSStructure
                     ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
                     'run seismic. if output reads "Seismic analysis required" rerun TNX
-                    excelResult = OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode, True)
+                    excelResult = OpenExcelRunMacro(Of CCISeismic)(seismicWeUsin, seisMac, isDevMode, True)
                     If excelResult = "SEISMIC ANALYSIS REQUIRED" Then
                         '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
@@ -262,7 +262,7 @@ Partial Public Class EDSStructure
                     End If
 
                     For Each legReinforcement As LegReinforcement In LegReinforcements
-                        If CheckForSuccess(OpenExcelRunMacro(legReinforcement, legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of LegReinforcement)(legReinforcement, legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -276,7 +276,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(Of CCIplate)(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
                         GoTo ErrorSkip
                     End If
                 End If
@@ -286,7 +286,7 @@ Partial Public Class EDSStructure
                 If Me.UnitBases.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
                     For Each unitbase In Me.UnitBases
-                        If CheckForSuccess(OpenExcelRunMacro(unitbase, unitBaseMac, isDevMode), "Unit Base") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of UnitBase)(unitbase, unitBaseMac, isDevMode), "Unit Base") = False Then
                             GoTo ErrorSkip
                         End If
                         'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
@@ -298,7 +298,7 @@ Partial Public Class EDSStructure
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
                     For Each drilledPier In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPier)(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -307,7 +307,7 @@ Partial Public Class EDSStructure
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
                     For Each pierAndPad In Me.PierandPads
-                        If CheckForSuccess(OpenExcelRunMacro(pierAndPad, pierPadMac, isDevMode), "Pier and Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(pierAndPad, pierPadMac, isDevMode), "Pier and Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -316,7 +316,7 @@ Partial Public Class EDSStructure
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
                     For Each pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(pile, pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(pile, pileMac, isDevMode), "Pile") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -325,7 +325,7 @@ Partial Public Class EDSStructure
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
                     For Each guyAnchor In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(guyAnchor, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(guyAnchor, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -432,8 +432,11 @@ ErrorSkip:
         Return True
     End Function
 
-    Public Function OpenExcelRunMacro(objectTorun As EDSExcelObject, bigMac As String,
+    Public Function OpenExcelRunMacro(Of T As New)(ByRef objectTorun As EDSExcelObject, ByVal bigMac As String,
                                       Optional ByVal xlVisibility As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
+        'Dim newObjweusin As New T
+
+
         Dim tnxFilePath As String = Me.tnx.filePath
         Dim excelPath As String = objectTorun.WorkBookPath
         Dim toolFileName As String = Path.GetFileName(excelPath)
@@ -507,12 +510,23 @@ ErrorSkip:
         If logString.Contains("| ERROR |") Then
             Return "Fail"
         End If
+        'reload structure object
         Try
-            objectTorun.LoadFromExcel()
+            Dim newObjweusin As Object
+            newObjweusin = CreateNewObject(Of T)()
+            newObjweusin.WorkBookPath = objectTorun.WorkBookPath
+            newObjweusin.Absorb(objectTorun.Parent)
+            newObjweusin.LoadFromExcel()
+            objectTorun = TryCast(newObjweusin, EDSExcelObject)
+
+            'objectTorun = TryCast(CreateNewObject(Of T)(), EDSExcelObject)
+            'objectTorun.WorkBookPath = excelPath
+            'objectTorun.LoadFromExcel()
         Catch ex As Exception
             WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message)
             Return "Fail"
         End Try
+
         'check for seismic
         If isSeismic And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
             Return "SEISMIC ANALYSIS REQUIRED"
@@ -520,7 +534,9 @@ ErrorSkip:
 
         Return "Success"
     End Function
-
+    Public Function CreateNewObject(Of T As New)() As T
+        Return New T()
+    End Function
     Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
                                       plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
         Dim xlApp As Microsoft.Office.Interop.Excel.Application
@@ -1056,7 +1072,9 @@ ErrorSkip:
                 End Select
             Next
 
-            CompareRatingsBARB(plateMom, plateComp, plateSheer, plateMomSeis, plateCompSeis, plateSheerSeis, mom, comp, sheer)
+            If Not CompareRatingsBARB(plateMom, plateComp, plateSheer, plateMomSeis, plateCompSeis, plateSheerSeis, mom, comp, sheer) Then
+                Return False
+            End If
 
         Catch ex As Exception
             WriteLineLogLine("ERROR | Exception finding BARB Ratings: " & ex.Message)
@@ -1082,10 +1100,27 @@ ErrorSkip:
                 IsSomething(plateCompSeis) And
                 IsSomething(plateSheerSeis) Then
                 'compare wind and seis to see which one is larger
+                'only compare moment and use the larger set of values
                 'return larger
                 momToUse = GetLarger(plateMom, plateMomSeis)
-                compToUse = GetLarger(plateComp, plateCompSeis)
-                sheerToUse = GetLarger(plateSheer, plateSheerSeis)
+
+                If momToUse = plateMom Then
+                    'use wind
+                    compToUse = plateComp
+                    sheerToUse = plateSheer
+                    WriteLineLogLine("INFO | Using Wind reactions")
+
+                ElseIf momToUse = plateMomSeis Then
+                    'use seismic
+                    compToUse = plateCompSeis
+                    sheerToUse = plateSheerSeis
+                    WriteLineLogLine("INFO | Using Seismic reactions")
+
+                Else GoTo SkipCompare
+                End If
+
+                'compToUse = GetLarger(plateComp, plateCompSeis)
+                'sheerToUse = GetLarger(plateSheer, plateSheerSeis)
 
             ElseIf IsSomething(plateMomSeis) And
                 IsSomething(plateCompSeis) And
@@ -1112,6 +1147,11 @@ ErrorSkip:
 
             End If
 
+            If momToUse = -1 Or compToUse = -1 Or sheerToUse = -1 Then
+SkipCompare:
+                WriteLineLogLine("ERROR | Could not compare  reaction values! Moment: " & momToUse & " Compression:  " & compToUse & " Sheer: " & sheerToUse & "")
+                Return False
+            End If
 
         Catch ex As Exception
             WriteLineLogLine("ERROR | Exception comparing BARB Ratings: " & ex.Message)
