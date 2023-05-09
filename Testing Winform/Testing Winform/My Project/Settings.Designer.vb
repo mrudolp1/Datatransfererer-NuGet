@@ -193,6 +193,18 @@ Partial Friend NotInheritable Class Settings
             Me("booError") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property MyTestCase() As Integer
+        Get
+            Return CType(Me("MyTestCase"),Integer)
+        End Get
+        Set
+            Me("MyTestCase") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

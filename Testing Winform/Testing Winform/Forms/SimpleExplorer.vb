@@ -123,6 +123,7 @@ Namespace UnitTesting
             'Only perform this action for specific files
             'It was taking too long to load tools and csvs from network drives while working at home
             If Me.Name.ToLower = "selocal" Then
+                ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
                 Dim info As IO.FileInfo
                 Dim fName As String
                 Dim path As String
@@ -189,11 +190,18 @@ Namespace UnitTesting
                     frmMain.gcViewer.DataSource = loadDt
                     frmMain.gcViewer.RefreshDataSource()
                     frmMain.GridView1.BestFitColumns(True)
+
+                    Try
+                        If loadDt IsNot Nothing Then frmMain.LogActivity("DEBUG | Loaded file for viewing: " & info.FullName, True)
+                    Catch ex As Exception
+                    End Try
                 End If
+                ButtonclickToggle(Me.Cursor, Cursors.Default)
             Else
             End If
 
             HideDateAndSize()
+
         End Sub
 
         'When a row is double clicked it was displaying all columns again

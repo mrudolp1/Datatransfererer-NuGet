@@ -270,6 +270,9 @@
   <ItemGroup>
     <None Include="Resources\bugreport_32x32.png" />
     <None Include="Resources\refresh2_16x16.png" />
+    <None Include="Resources\moveup.svg" />
+    <None Include="Resources\movedown.svg" />
+    <None Include="Resources\shopping_shoppingcart.svg" />
     <Content Include="Resources\warning.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
