@@ -98,13 +98,16 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnCheckout = New DevExpress.XtraEditors.SimpleButton()
+            Me.testPull = New DevExpress.XtraEditors.SimpleButton()
+            Me.testPush = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton3 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess12 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess11 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess9 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess10 = New DevExpress.XtraEditors.SimpleButton()
             Me.testSync = New DevExpress.XtraEditors.SimpleButton()
-            Me.testClose = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnClose = New DevExpress.XtraEditors.SimpleButton()
             Me.testBugFile = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton2 = New DevExpress.XtraEditors.SimpleButton()
             Me.SimpleButton1 = New DevExpress.XtraEditors.SimpleButton()
@@ -1015,13 +1018,16 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnCheckout)
+            Me.PanelControl1.Controls.Add(Me.testPull)
+            Me.PanelControl1.Controls.Add(Me.testPush)
             Me.PanelControl1.Controls.Add(Me.SimpleButton3)
             Me.PanelControl1.Controls.Add(Me.btnProcess12)
             Me.PanelControl1.Controls.Add(Me.btnProcess11)
             Me.PanelControl1.Controls.Add(Me.btnProcess9)
             Me.PanelControl1.Controls.Add(Me.btnProcess10)
             Me.PanelControl1.Controls.Add(Me.testSync)
-            Me.PanelControl1.Controls.Add(Me.testClose)
+            Me.PanelControl1.Controls.Add(Me.btnClose)
             Me.PanelControl1.Controls.Add(Me.testBugFile)
             Me.PanelControl1.Controls.Add(Me.SimpleButton2)
             Me.PanelControl1.Controls.Add(Me.SimpleButton1)
@@ -1069,9 +1075,42 @@
             Me.PanelControl1.Size = New System.Drawing.Size(1721, 120)
             Me.PanelControl1.TabIndex = 16
             '
+            'btnCheckout
+            '
+            Me.btnCheckout.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources.shopping_shoppingcart
+            Me.btnCheckout.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.btnCheckout.Location = New System.Drawing.Point(188, 5)
+            Me.btnCheckout.Name = "btnCheckout"
+            Me.btnCheckout.Size = New System.Drawing.Size(96, 23)
+            Me.btnCheckout.TabIndex = 52
+            Me.btnCheckout.Tag = "START|"
+            Me.btnCheckout.Text = "Checkout"
+            '
+            'testPull
+            '
+            Me.testPull.Enabled = False
+            Me.testPull.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources.movedown
+            Me.testPull.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.testPull.Location = New System.Drawing.Point(556, 87)
+            Me.testPull.Name = "testPull"
+            Me.testPull.Size = New System.Drawing.Size(60, 23)
+            Me.testPull.TabIndex = 51
+            Me.testPull.Text = "Pull"
+            '
+            'testPush
+            '
+            Me.testPush.Enabled = False
+            Me.testPush.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources.moveup
+            Me.testPush.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.testPush.Location = New System.Drawing.Point(556, 58)
+            Me.testPush.Name = "testPush"
+            Me.testPush.Size = New System.Drawing.Size(60, 23)
+            Me.testPush.TabIndex = 50
+            Me.testPush.Text = "Push"
+            '
             'SimpleButton3
             '
-            Me.SimpleButton3.Location = New System.Drawing.Point(1260, 58)
+            Me.SimpleButton3.Location = New System.Drawing.Point(1754, 66)
             Me.SimpleButton3.Name = "SimpleButton3"
             Me.SimpleButton3.Size = New System.Drawing.Size(90, 23)
             Me.SimpleButton3.TabIndex = 49
@@ -1130,29 +1169,31 @@
             Me.testSync.Enabled = False
             Me.testSync.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.refresh2_16x16
             Me.testSync.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
-            Me.testSync.Location = New System.Drawing.Point(691, 92)
+            Me.testSync.Location = New System.Drawing.Point(1353, 63)
             Me.testSync.Name = "testSync"
             Me.testSync.Size = New System.Drawing.Size(139, 23)
             Me.testSync.TabIndex = 44
             Me.testSync.Text = "Force R: Sync"
+            Me.testSync.Visible = False
             '
-            'testClose
+            'btnClose
             '
-            Me.testClose.Enabled = False
-            Me.testClose.ImageOptions.SvgImage = CType(resources.GetObject("testClose.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
-            Me.testClose.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
-            Me.testClose.Location = New System.Drawing.Point(562, 78)
-            Me.testClose.Name = "testClose"
-            Me.testClose.Size = New System.Drawing.Size(112, 23)
-            Me.testClose.TabIndex = 43
-            Me.testClose.Text = "Close Test Case"
+            Me.btnClose.Enabled = False
+            Me.btnClose.ImageOptions.SvgImage = CType(resources.GetObject("btnClose.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+            Me.btnClose.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.btnClose.Location = New System.Drawing.Point(296, 5)
+            Me.btnClose.Name = "btnClose"
+            Me.btnClose.Size = New System.Drawing.Size(96, 23)
+            Me.btnClose.TabIndex = 43
+            Me.btnClose.Tag = "FINISH|"
+            Me.btnClose.Text = "Close"
             '
             'testBugFile
             '
             Me.testBugFile.Enabled = False
             Me.testBugFile.ImageOptions.Image = CType(resources.GetObject("testBugFile.ImageOptions.Image"), System.Drawing.Image)
             Me.testBugFile.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
-            Me.testBugFile.Location = New System.Drawing.Point(691, 63)
+            Me.testBugFile.Location = New System.Drawing.Point(405, 5)
             Me.testBugFile.Name = "testBugFile"
             Me.testBugFile.Size = New System.Drawing.Size(139, 23)
             Me.testBugFile.TabIndex = 42
@@ -1161,7 +1202,7 @@
             'SimpleButton2
             '
             Me.SimpleButton2.Enabled = False
-            Me.SimpleButton2.Location = New System.Drawing.Point(1282, 34)
+            Me.SimpleButton2.Location = New System.Drawing.Point(1776, 42)
             Me.SimpleButton2.Name = "SimpleButton2"
             Me.SimpleButton2.Size = New System.Drawing.Size(90, 23)
             Me.SimpleButton2.TabIndex = 41
@@ -1181,7 +1222,7 @@
             '
             Me.testJasonLoad.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.intro_1669842870
             Me.testJasonLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testJasonLoad.Location = New System.Drawing.Point(1606, 78)
+            Me.testJasonLoad.Location = New System.Drawing.Point(1734, 86)
             Me.testJasonLoad.Name = "testJasonLoad"
             Me.testJasonLoad.Size = New System.Drawing.Size(83, 33)
             Me.testJasonLoad.TabIndex = 31
@@ -1207,7 +1248,7 @@
             '
             Me.testJason.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.l_intro_1658899230
             Me.testJason.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testJason.Location = New System.Drawing.Point(1606, 24)
+            Me.testJason.Location = New System.Drawing.Point(1734, 32)
             Me.testJason.Name = "testJason"
             Me.testJason.Size = New System.Drawing.Size(83, 33)
             Me.testJason.TabIndex = 30
@@ -1219,7 +1260,7 @@
             'testIterationResults
             '
             Me.testIterationResults.Enabled = False
-            Me.testIterationResults.Location = New System.Drawing.Point(1423, 15)
+            Me.testIterationResults.Location = New System.Drawing.Point(1551, 23)
             Me.testIterationResults.Name = "testIterationResults"
             Me.testIterationResults.Size = New System.Drawing.Size(177, 10)
             Me.testIterationResults.TabIndex = 25
@@ -1242,7 +1283,7 @@
             'testStructureOnly
             '
             Me.testStructureOnly.Enabled = False
-            Me.testStructureOnly.Location = New System.Drawing.Point(1685, 78)
+            Me.testStructureOnly.Location = New System.Drawing.Point(1813, 86)
             Me.testStructureOnly.Name = "testStructureOnly"
             Me.testStructureOnly.Size = New System.Drawing.Size(71, 33)
             Me.testStructureOnly.TabIndex = 29
@@ -1266,7 +1307,7 @@
             'btnNextIteration
             '
             Me.btnNextIteration.Enabled = False
-            Me.btnNextIteration.Location = New System.Drawing.Point(1423, 98)
+            Me.btnNextIteration.Location = New System.Drawing.Point(1551, 106)
             Me.btnNextIteration.Name = "btnNextIteration"
             Me.btnNextIteration.Size = New System.Drawing.Size(177, 10)
             Me.btnNextIteration.TabIndex = 18
@@ -1289,7 +1330,7 @@
             'testCompareAll
             '
             Me.testCompareAll.Enabled = False
-            Me.testCompareAll.Location = New System.Drawing.Point(1423, 79)
+            Me.testCompareAll.Location = New System.Drawing.Point(1551, 87)
             Me.testCompareAll.Name = "testCompareAll"
             Me.testCompareAll.Size = New System.Drawing.Size(177, 10)
             Me.testCompareAll.TabIndex = 28
@@ -1316,7 +1357,7 @@
             Me.testConduct.Enabled = False
             Me.testConduct.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.download
             Me.testConduct.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.Full
-            Me.testConduct.Location = New System.Drawing.Point(1685, 24)
+            Me.testConduct.Location = New System.Drawing.Point(1813, 32)
             Me.testConduct.Name = "testConduct"
             Me.testConduct.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
             Me.testConduct.Size = New System.Drawing.Size(71, 33)
@@ -1339,7 +1380,7 @@
             'testPublishedResults
             '
             Me.testPublishedResults.Enabled = False
-            Me.testPublishedResults.Location = New System.Drawing.Point(1423, 57)
+            Me.testPublishedResults.Location = New System.Drawing.Point(1551, 65)
             Me.testPublishedResults.Name = "testPublishedResults"
             Me.testPublishedResults.Size = New System.Drawing.Size(177, 10)
             Me.testPublishedResults.TabIndex = 27
@@ -1362,7 +1403,7 @@
             'testPrevResults
             '
             Me.testPrevResults.Enabled = False
-            Me.testPrevResults.Location = New System.Drawing.Point(1423, 36)
+            Me.testPrevResults.Location = New System.Drawing.Point(1551, 44)
             Me.testPrevResults.Name = "testPrevResults"
             Me.testPrevResults.Size = New System.Drawing.Size(177, 10)
             Me.testPrevResults.TabIndex = 26
@@ -1445,8 +1486,7 @@
             Me.testID.Name = "testID"
             Me.testID.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
             Me.testID.Properties.Items.AddRange(New Object() {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100"})
-            Me.testID.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
-            Me.testID.Size = New System.Drawing.Size(89, 20)
+            Me.testID.Size = New System.Drawing.Size(79, 20)
             Me.testID.TabIndex = 15
             '
             'LabelControl7
@@ -1459,7 +1499,7 @@
             '
             'LabelControl1
             '
-            Me.LabelControl1.Location = New System.Drawing.Point(188, 12)
+            Me.LabelControl1.Location = New System.Drawing.Point(631, 64)
             Me.LabelControl1.Name = "LabelControl1"
             Me.LabelControl1.Size = New System.Drawing.Size(13, 13)
             Me.LabelControl1.TabIndex = 3
@@ -1484,7 +1524,7 @@
             '
             'testBu
             '
-            Me.testBu.Location = New System.Drawing.Point(207, 9)
+            Me.testBu.Location = New System.Drawing.Point(650, 61)
             Me.testBu.Name = "testBu"
             Me.testBu.Properties.ReadOnly = True
             Me.testBu.Size = New System.Drawing.Size(100, 20)
@@ -1500,11 +1540,11 @@
             '
             'LabelControl2
             '
-            Me.LabelControl2.Location = New System.Drawing.Point(313, 12)
+            Me.LabelControl2.Location = New System.Drawing.Point(753, 65)
             Me.LabelControl2.Name = "LabelControl2"
-            Me.LabelControl2.Size = New System.Drawing.Size(59, 13)
+            Me.LabelControl2.Size = New System.Drawing.Size(37, 13)
             Me.LabelControl2.TabIndex = 4
-            Me.LabelControl2.Text = "Structure ID"
+            Me.LabelControl2.Text = "Strc. ID"
             '
             'LabelControl6
             '
@@ -1516,7 +1556,7 @@
             '
             'testSid
             '
-            Me.testSid.Location = New System.Drawing.Point(378, 9)
+            Me.testSid.Location = New System.Drawing.Point(794, 62)
             Me.testSid.Name = "testSid"
             Me.testSid.Properties.ReadOnly = True
             Me.testSid.Size = New System.Drawing.Size(36, 20)
@@ -1532,7 +1572,7 @@
             '
             'testWo
             '
-            Me.testWo.Location = New System.Drawing.Point(444, 9)
+            Me.testWo.Location = New System.Drawing.Point(650, 87)
             Me.testWo.Name = "testWo"
             Me.testWo.Properties.ReadOnly = True
             Me.testWo.Size = New System.Drawing.Size(100, 20)
@@ -1548,7 +1588,7 @@
             '
             'LabelControl3
             '
-            Me.LabelControl3.Location = New System.Drawing.Point(420, 12)
+            Me.LabelControl3.Location = New System.Drawing.Point(626, 90)
             Me.LabelControl3.Name = "LabelControl3"
             Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
             Me.LabelControl3.TabIndex = 7
@@ -1767,13 +1807,16 @@
         Friend WithEvents SimpleButton2 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testBugFile As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents mainLogViewer As LogViewer
-        Friend WithEvents testClose As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnClose As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testSync As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess12 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess11 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess9 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess10 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents SimpleButton3 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents testPull As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents testPush As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnCheckout As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
