@@ -196,8 +196,8 @@ Partial Public Class EDSStructure
                                 --,pi.eng_app_id
                                 --,pi.crrnt_rvsn_num
                                 ,str.structure_type
-                                ,str.LAT_DEC
-                                ,str.LONG_DEC
+                                ,ROUND(str.LAT_DEC, 8)
+                                ,ROUND(str.LONG_DEC, 8)
                             FROM
                                 isit_aim.structure                      str
                                 ,isit_aim.site                          sit
