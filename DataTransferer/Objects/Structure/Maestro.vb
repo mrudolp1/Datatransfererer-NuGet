@@ -233,6 +233,9 @@ Partial Public Class EDSStructure
                     'run seismic. if output reads "Seismic analysis required" rerun TNX
                     excelResult = OpenExcelRunMacro(Of CCISeismic)(seismicWeUsin, seisMac, isDevMode, True)
                     If excelResult = "SEISMIC ANALYSIS REQUIRED" Then
+                        WriteLineLogLine("INFO | Seismic Analysis required. Rerunning TNX.")
+                        WriteLineLogLine("WARNING | Seismic loading included in TNX analysis. Further evaluation required to determine if 1.5 overstrength factor controls.")
+
                         '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
                             GoTo ErrorSkip
@@ -670,62 +673,70 @@ ErrorSkip:
                 WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.")
                 Return False
             End If
-
-            'Need to determine if word is open prior to running TNX
-            'If it is open then it shouldn't be killed when closing the RTF
-            'If it isn't open before tnx then it should be killed
-            Dim isWordOpen As Boolean
             Try
-                Dim word As Object = GetObject(, "Word.Application")
-                isWordOpen = True
+                'delete tnx log file if it exist
+                If File.Exists(tnxLogFilePath) Then
+                    File.Delete(tnxLogFilePath)
+                End If
             Catch ex As Exception
-                isWordOpen = False
+                WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
+                Return False
             End Try
-
-            With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
-
-                With .StartInfo
-                    .CreateNoWindow = True
-                    .UseShellExecute = False
-                    .RedirectStandardOutput = True
-
-                End With
-                .Start()
-
-                CheckLogFileForFinished(tnxLogFilePath, 300000, True)
+            'Need to determine if word is open prior to running TNX
+            'If it is open then it shouldn't be killed when closing the RTF
+            'If it isn't open before tnx then it should be killed
+            Dim isWordOpen As Boolean
                 Try
-                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
-                    .Kill()
-                    WriteLineLogLine("INFO | TNX termination complete..")
+                    Dim word As Object = GetObject(, "Word.Application")
+                    isWordOpen = True
                 Catch ex As Exception
-                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
-                Finally
-                    Try
-                        'For the time being the RTF file still opens 
-                        'This needs to be closed before returning TRUE
-                        CloseRTF(tnxFilePath, isWordOpen)
-                    Catch ex As Exception
-                        WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                    End Try
+                    isWordOpen = False
                 End Try
 
-                '.WaitForInputIdle()
-                '.WaitForExit()
-            End With ' Read output to a string variable.
-            Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
+                With cmdProcess
+                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
+
+                    With .StartInfo
+                        .CreateNoWindow = True
+                        .UseShellExecute = False
+                        .RedirectStandardOutput = True
+
+                    End With
+                    .Start()
+
+                    CheckLogFileForFinished(tnxLogFilePath, 300000, True)
+                    Try
+                        WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
+                        .Kill()
+                        WriteLineLogLine("INFO | TNX termination complete..")
+                    Catch ex As Exception
+                        WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                    Finally
+                        Try
+                            'For the time being the RTF file still opens 
+                            'This needs to be closed before returning TRUE
+                            CloseRTF(tnxFilePath, isWordOpen)
+                        Catch ex As Exception
+                            WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                        End Try
+                    End Try
+
+                    '.WaitForInputIdle()
+                    '.WaitForExit()
+                End With ' Read output to a string variable.
+                Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
-            'WriteLineLogLine("INFO | " & ipconfigOutput)
-            'For the time being the RTF file still opens 
-            'This needs to be closed before returning TRUE
-            'I put this around a try catch in cases where an ERI is run and files already exist. 
+                'WriteLineLogLine("INFO | " & ipconfigOutput)
+                'For the time being the RTF file still opens 
+                'This needs to be closed before returning TRUE
+                'I put this around a try catch in cases where an ERI is run and files already exist. 
 
 
-            Return True
+                Return True
 
-        Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
+            Catch ex As Exception
+                WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
             Return False
         End Try
     End Function
