@@ -113,7 +113,12 @@ Namespace UnitTesting
                 EDSuserPwActive = EDSuserPwProduction
             End If
 
-            If Environment.UserName.ToLower = "imiller" Or Environment.UserName.ToLower = "stanley" Or Environment.UserName.ToLower = "dsmilowitz" Then
+            If Environment.UserName.ToLower = "imiller" Or
+               Environment.UserName.ToLower = "stanley" Or
+               Environment.UserName.ToLower = "dsmilowitz" Or
+               Environment.UserName.ToLower = "chall" Or
+               Environment.UserName.ToLower = "mrudolph" Then
+
                 txtFndBU.Text = My.Settings.myBU
                 txtFndStrc.Text = My.Settings.myStrID
                 txtFndWO.Text = My.Settings.myWO
@@ -124,7 +129,11 @@ Namespace UnitTesting
                 End If
                 testLocalWorkarea.Text = My.Settings.localWorkArea
                 lFolder = My.Settings.localWorkArea
-                chkWorkLocal.Checked = My.Settings.workLocal
+
+                'force local work area it to be true
+                chkWorkLocal.Checked = True
+                My.Settings.workLocal = True
+                My.Settings.Save()
             Else
                 txtFndBU.Text = "800000"
                 txtFndStrc.Text = "A"
@@ -142,10 +151,12 @@ Namespace UnitTesting
             isopening = False
 
             If My.Settings.MyTestCase > 0 Then
-                testID.Text = My.Settings.MyTestCase
-                SetUpWorkArea(My.Settings.MyTestCase - 1)
-                btnClose.Enabled = True
-                btnCheckout.Enabled = False
+                If Directory.Exists(lFolder & "\Test ID " & My.Settings.MyTestCase) Then
+                    testID.Text = My.Settings.MyTestCase
+                    SetUpWorkArea(My.Settings.MyTestCase - 1)
+                    btnClose.Enabled = True
+                    btnCheckout.Enabled = False
+                End If
             End If
         End Sub
 
@@ -500,6 +511,8 @@ Namespace UnitTesting
         Private Sub testLocalWorkarea_EditValueChanged(sender As Object, e As EventArgs) Handles testLocalWorkarea.EditValueChanged
             Try
                 seLocal.SetCurrentDirectory(testLocalWorkarea.Text)
+                My.Settings.localWorkArea = testLocalWorkarea.Text
+                My.Settings.Save()
             Catch
             End Try
         End Sub
