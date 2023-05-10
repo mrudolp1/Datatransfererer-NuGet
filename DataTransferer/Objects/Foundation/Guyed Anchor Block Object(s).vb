@@ -104,7 +104,7 @@ Partial Public Class AnchorBlockFoundation
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Guy Anchor Block Foundation"
+            Return "Guyed Anchor Block Foundation"
         End Get
     End Property
 
