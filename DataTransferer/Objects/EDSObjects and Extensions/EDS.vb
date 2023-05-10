@@ -7,6 +7,10 @@ Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
+'To expand collections in the main property grid, this process may help but doesn't need to be implemented right now
+'https://www.codeproject.com/Articles/4448/Customized-display-of-collection-data-in-a-Propert?fid=16073&df=90&mpp=25&sort=Position&view=Normal&spc=Relaxed&prof=True&fr=176
+
+
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 <DataContract()>
