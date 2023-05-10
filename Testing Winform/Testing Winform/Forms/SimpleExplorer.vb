@@ -3,6 +3,7 @@ Imports DevExpress.XtraEditors
 Imports DevExpress.XtraDialogs.FileExplorerExtensions
 Imports DevExpress.Data
 Imports CCI_Engineering_Templates
+Imports System.IO
 
 Namespace UnitTesting
     Partial Public Class SimpleExplorer
@@ -44,7 +45,7 @@ Namespace UnitTesting
                 '</currentPathEdit>
 
                 '<treeList>
-                folderTree = fileExplorerAssistant.Attach(TreeList, Sub(x)
+                folderTree = fileExplorerAssistant.Attach(treeList, Sub(x)
                                                                         x.RootNodes.Add(New EnvironmentSpecialFolderNode(Environment.SpecialFolder.Desktop))
                                                                     End Sub)
                 AddHandler folderTree.CurrentItemChanged, AddressOf OnTreeCurrentItemChanged
@@ -138,14 +139,40 @@ Namespace UnitTesting
 
                 'If the info is something (i.e. not a file folder) then attempt to load results or csv data
                 If info IsNot Nothing Then
-                    If fName.Contains(".") And fName.Contains("xlsm") Then
-
+                    If info.Extension.ToLower = ".xlsm" Then
                         SelectedFile = info
                         loadDt = frmMain.SummarizedResults(info)
-                    ElseIf fName.Contains(".csv") Then
+                    ElseIf info.Extension.ToLower = ".csv" Then
                         loadDt = CSVtoDatatable(info)
-                    ElseIf fName.Contains(".txt") Or info.Extension.ToLower = ".eri" Then
-                        Using sr As New IO.StreamReader(info.FullName)
+                    ElseIf info.Extension.ToLower = ".ccistr" Then
+                        Dim myfrm As New Form
+                        Dim myPg As New PropertyGrid
+
+
+                        Dim tempStr As New EDSStructure
+                        Using sr As New StreamReader(info.FullName)
+                            tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
+                            sr.Close()
+                        End Using
+
+                        myPg.SelectedObject = tempStr
+                        myPg.Dock = DockStyle.Fill
+
+                        With myfrm
+                            .FormBorderStyle = FormBorderStyle.SizableToolWindow
+                            .Height = 600.0!
+                            .Width = 500.0!
+                            .Controls.Add(myPg)
+                            .Text = info.Name
+                            .Show()
+                        End With
+
+                    ElseIf info.Extension.ToLower = ".txt" Or info.Extension.ToLower = ".eri" Or
+                           info.Extension.ToLower = ".log" Or info.Extension.ToLower = ".xml" Or
+                           info.Extension.ToLower = ".sql" Or info.Extension.ToLower = ".ccimod" Or
+                           info.Extension.ToLower = ".json" Or info.Extension.ToLower = ".svi" Then
+
+                        Using sr As New StreamReader(info.FullName)
                             Dim tempDt As New DataTable
                             tempDt.Columns.Add("Text")
                             Dim newRow As String()
@@ -184,18 +211,21 @@ Namespace UnitTesting
                         End Using
                     End If
 
-                    'Set the reference grid on the main form to the returned datatable
-                    frmMain.GridView1.Columns.Clear()
-                    frmMain.gcViewer.DataSource = Nothing
-                    frmMain.gcViewer.DataSource = loadDt
-                    frmMain.gcViewer.RefreshDataSource()
-                    frmMain.GridView1.BestFitColumns(True)
+                    If loadDt IsNot Nothing Then
+                        'Set the reference grid on the main form to the returned datatable
+                        frmMain.GridView1.Columns.Clear()
+                        frmMain.gcViewer.DataSource = Nothing
+                        frmMain.gcViewer.DataSource = loadDt
+                        frmMain.gcViewer.RefreshDataSource()
+                        frmMain.GridView1.BestFitColumns(True)
 
-                    Try
-                        If loadDt IsNot Nothing Then frmMain.LogActivity("DEBUG | Loaded file for viewing: " & info.FullName, True)
-                    Catch ex As Exception
-                    End Try
+                        Try
+                            If loadDt IsNot Nothing Then frmMain.LogActivity("DEBUG | Loaded file for viewing: " & info.FullName, True)
+                        Catch ex As Exception
+                        End Try
+                    End If
                 End If
+
                 ButtonclickToggle(Me.Cursor, Cursors.Default)
             Else
             End If
