@@ -13,10 +13,10 @@ Partial Public Class AnchorBlockFoundation
     Private _file_ver As String
     Private _modified As Boolean?
 
-     <DataMember()> Public Property AnchorBlocks As New List(Of AnchorBlock)
+    <DataMember()> Public Property AnchorBlocks As New List(Of AnchorBlock)
 
     <Category("Guy Anchor Block Tool"), Description(""), DisplayName("File Ver")>
-     <DataMember()> Public Property file_ver() As String
+    <DataMember()> Public Property file_ver() As String
         Get
             Return Me._file_ver
         End Get
@@ -25,7 +25,7 @@ Partial Public Class AnchorBlockFoundation
         End Set
     End Property
     <Category("Guy Anchor Block Tool"), Description(""), DisplayName("Modified")>
-     <DataMember()> Public Property modified() As Boolean?
+    <DataMember()> Public Property modified() As Boolean?
         Get
             Return Me._modified
         End Get
@@ -104,7 +104,7 @@ Partial Public Class AnchorBlockFoundation
 #Region "Inherited"
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Guy Anchor Block Foundation"
+            Return "Guyed Anchor Block Foundation"
         End Get
     End Property
 
@@ -233,10 +233,10 @@ Partial Public Class AnchorBlockFoundation
         'If tables exist then construct otherwise just return blank GAB Tool 
         '''''''''''''''''''''
         '''''''''''''''''''''
-        If excelDS.Tables.Contains("Guy Anchor Block Tool") Then
+        If excelDS.Tables.Contains("Guyed Anchor Block Foundation") Then
             Dim dr As DataRow
             Try
-                dr = excelDS.Tables("Guy Anchor Block Tool").Rows(0)
+                dr = excelDS.Tables("Guyed Anchor Block Foundation").Rows(0)
             Catch ex As Exception
             End Try
 
@@ -616,35 +616,35 @@ Partial Public Class AnchorBlockFoundation
                 End With
                 'Increment the soil profile row to ensure it goes to the next row of the table
                 soilProfRow += 1
-                    'If it is added to the sheet then it adds it to a list of intergers containing local soil profile IDs
-                    'This ensures it won't be added twice.
-                    soilProfExists.Add(gab.local_soil_profile_id)
+                'If it is added to the sheet then it adds it to a list of intergers containing local soil profile IDs
+                'This ensures it won't be added twice.
+                soilProfExists.Add(gab.local_soil_profile_id)
 
-                    'Soil Layers
-                    Dim SoilInc As Integer = 1
-                    For Each layer In sp.SoilLayers
-                        With .Worksheets("Soil Layers (SAPI)")
-                            If Not IsNothing(layer.ID) Then .Range("A" & layerRow).Value = CType(layer.ID, Integer)
-                            If Not IsNothing(layer.Soil_Profile_id) Then .Range("B" & layerRow).Value = CType(layer.Soil_Profile_id, Integer)
-                            If Not IsNothing(gab.local_soil_profile_id) Then .Range("C" & layerRow).Value = CType(gab.local_soil_profile_id, Integer)
-                            .Range("D" & layerRow).Value = CType(SoilInc, Integer)
-                            If Not IsNothing(layer.bottom_depth) Then .Range("E" & layerRow).Value = CType(layer.bottom_depth, Double)
-                            If Not IsNothing(layer.effective_soil_density) Then .Range("F" & layerRow).Value = CType(layer.effective_soil_density, Double)
-                            If Not IsNothing(layer.cohesion) Then .Range("G" & layerRow).Value = CType(layer.cohesion, Double)
-                            If Not IsNothing(layer.friction_angle) Then .Range("H" & layerRow).Value = CType(layer.friction_angle, Double)
-                            If Not IsNothing(layer.skin_friction_override_comp) Then .Range("I" & layerRow).Value = CType(layer.skin_friction_override_comp, Double)
-                            If Not IsNothing(layer.skin_friction_override_uplift) Then .Range("J" & layerRow).Value = CType(layer.skin_friction_override_uplift, Double)
-                            If Not IsNothing(layer.nominal_bearing_capacity) Then .Range("K" & layerRow).Value = CType(layer.nominal_bearing_capacity, Double)
-                            If Not IsNothing(layer.spt_blow_count) Then .Range("L" & layerRow).Value = CType(layer.spt_blow_count, Double)
-                        End With
-                        'SoilInc is used to determine the local soil layer id.
-                        'This is not a "Global" variable in the sense of the soil layer tab
-                        'It is isolated to soil profiles and will reset for each soil proile being added
-                        'This ensures soil layers will always be labeled appropriately and doesn't need to be done in tool.
-                        SoilInc += 1
-                        'Increment the soil layer row for the next layer in this profile as well as the next layer in the next profile
-                        layerRow += 1
-                    Next
+                'Soil Layers
+                Dim SoilInc As Integer = 1
+                For Each layer In sp.SoilLayers
+                    With .Worksheets("Soil Layers (SAPI)")
+                        If Not IsNothing(layer.ID) Then .Range("A" & layerRow).Value = CType(layer.ID, Integer)
+                        If Not IsNothing(layer.Soil_Profile_id) Then .Range("B" & layerRow).Value = CType(layer.Soil_Profile_id, Integer)
+                        If Not IsNothing(gab.local_soil_profile_id) Then .Range("C" & layerRow).Value = CType(gab.local_soil_profile_id, Integer)
+                        .Range("D" & layerRow).Value = CType(SoilInc, Integer)
+                        If Not IsNothing(layer.bottom_depth) Then .Range("E" & layerRow).Value = CType(layer.bottom_depth, Double)
+                        If Not IsNothing(layer.effective_soil_density) Then .Range("F" & layerRow).Value = CType(layer.effective_soil_density, Double)
+                        If Not IsNothing(layer.cohesion) Then .Range("G" & layerRow).Value = CType(layer.cohesion, Double)
+                        If Not IsNothing(layer.friction_angle) Then .Range("H" & layerRow).Value = CType(layer.friction_angle, Double)
+                        If Not IsNothing(layer.skin_friction_override_comp) Then .Range("I" & layerRow).Value = CType(layer.skin_friction_override_comp, Double)
+                        If Not IsNothing(layer.skin_friction_override_uplift) Then .Range("J" & layerRow).Value = CType(layer.skin_friction_override_uplift, Double)
+                        If Not IsNothing(layer.nominal_bearing_capacity) Then .Range("K" & layerRow).Value = CType(layer.nominal_bearing_capacity, Double)
+                        If Not IsNothing(layer.spt_blow_count) Then .Range("L" & layerRow).Value = CType(layer.spt_blow_count, Double)
+                    End With
+                    'SoilInc is used to determine the local soil layer id.
+                    'This is not a "Global" variable in the sense of the soil layer tab
+                    'It is isolated to soil profiles and will reset for each soil proile being added
+                    'This ensures soil layers will always be labeled appropriately and doesn't need to be done in tool.
+                    SoilInc += 1
+                    'Increment the soil layer row for the next layer in this profile as well as the next layer in the next profile
+                    layerRow += 1
+                Next
                 'End If
             Next
 
@@ -681,8 +681,8 @@ End Class
 Partial Public Class AnchorBlock
     Inherits EDSObjectWithQueries
 
-     <DataMember()> Public Property AnchorProfile As AnchorBlockProfile
-     <DataMember()> Public Property SoilProfile As AnchorBlockSoilProfile
+    <DataMember()> Public Property AnchorProfile As AnchorBlockProfile
+    <DataMember()> Public Property SoilProfile As AnchorBlockSoilProfile
 
 #Region "Inheritted"
     '''Must override these inherited properties
@@ -772,7 +772,7 @@ Partial Public Class AnchorBlock
     Private _local_soil_profile_id As Integer?
     Private _local_anchor_profile_id As Integer?
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Profile Id")>
-     <DataMember()> Public Property anchor_profile_id() As Integer?
+    <DataMember()> Public Property anchor_profile_id() As Integer?
         Get
             Return Me._anchor_profile_id
         End Get
@@ -781,7 +781,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Anchor Block Tool Id")>
-     <DataMember()> Public Property anchor_block_tool_id() As Integer?
+    <DataMember()> Public Property anchor_block_tool_id() As Integer?
         Get
             Return Me._anchor_block_tool_id
         End Get
@@ -790,7 +790,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Soil Profile Id")>
-     <DataMember()> Public Property soil_profile_id() As Integer?
+    <DataMember()> Public Property soil_profile_id() As Integer?
         Get
             Return Me._soil_profile_id
         End Get
@@ -799,7 +799,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Id")>
-     <DataMember()> Public Property local_anchor_id() As Integer?
+    <DataMember()> Public Property local_anchor_id() As Integer?
         Get
             Return Me._local_anchor_id
         End Get
@@ -817,7 +817,7 @@ Partial Public Class AnchorBlock
     '    End Set
     'End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Reaction Location")>
-     <DataMember()> Public Property reaction_location() As String
+    <DataMember()> Public Property reaction_location() As String
         Get
             Return Me._reaction_location
         End Get
@@ -826,7 +826,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Soil Profile Id")>
-     <DataMember()> Public Property local_soil_profile_id() As Integer?
+    <DataMember()> Public Property local_soil_profile_id() As Integer?
         Get
             Return Me._local_soil_profile_id
         End Get
@@ -835,7 +835,7 @@ Partial Public Class AnchorBlock
         End Set
     End Property
     <Category("Guy Anchor Blocks"), Description(""), DisplayName("Local Anchor Profile Id")>
-     <DataMember()> Public Property local_anchor_profile_id() As Integer?
+    <DataMember()> Public Property local_anchor_profile_id() As Integer?
         Get
             Return Me._local_anchor_profile_id
         End Get
@@ -1078,7 +1078,7 @@ Partial Public Class AnchorBlockProfile
     Private _local_anchor_profile_id As Integer?
 
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Depth")>
-     <DataMember()> Public Property anchor_depth() As Double?
+    <DataMember()> Public Property anchor_depth() As Double?
         Get
             Return Me._anchor_depth
         End Get
@@ -1087,7 +1087,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Width")>
-     <DataMember()> Public Property anchor_width() As Double?
+    <DataMember()> Public Property anchor_width() As Double?
         Get
             Return Me._anchor_width
         End Get
@@ -1096,7 +1096,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Thickness")>
-     <DataMember()> Public Property anchor_thickness() As Double?
+    <DataMember()> Public Property anchor_thickness() As Double?
         Get
             Return Me._anchor_thickness
         End Get
@@ -1105,7 +1105,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Length")>
-     <DataMember()> Public Property anchor_length() As Double?
+    <DataMember()> Public Property anchor_length() As Double?
         Get
             Return Me._anchor_length
         End Get
@@ -1114,7 +1114,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Toe Width")>
-     <DataMember()> Public Property anchor_toe_width() As Double?
+    <DataMember()> Public Property anchor_toe_width() As Double?
         Get
             Return Me._anchor_toe_width
         End Get
@@ -1123,7 +1123,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Top Rebar Size")>
-     <DataMember()> Public Property anchor_top_rebar_size() As Integer?
+    <DataMember()> Public Property anchor_top_rebar_size() As Integer?
         Get
             Return Me._anchor_top_rebar_size
         End Get
@@ -1132,7 +1132,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description("column - 6+local drilled pier id"), DisplayName("Anchor Top Rebar Quantity")>
-     <DataMember()> Public Property anchor_top_rebar_quantity() As Integer?
+    <DataMember()> Public Property anchor_top_rebar_quantity() As Integer?
         Get
             Return Me._anchor_top_rebar_quantity
         End Get
@@ -1141,7 +1141,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Size")>
-     <DataMember()> Public Property anchor_front_rebar_size() As Integer?
+    <DataMember()> Public Property anchor_front_rebar_size() As Integer?
         Get
             Return Me._anchor_front_rebar_size
         End Get
@@ -1150,7 +1150,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Front Rebar Quantity")>
-     <DataMember()> Public Property anchor_front_rebar_quantity() As Integer?
+    <DataMember()> Public Property anchor_front_rebar_quantity() As Integer?
         Get
             Return Me._anchor_front_rebar_quantity
         End Get
@@ -1159,7 +1159,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Stirrup Size")>
-     <DataMember()> Public Property anchor_stirrup_size() As Integer?
+    <DataMember()> Public Property anchor_stirrup_size() As Integer?
         Get
             Return Me._anchor_stirrup_size
         End Get
@@ -1168,7 +1168,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Diameter")>
-     <DataMember()> Public Property anchor_shaft_diameter() As Double?
+    <DataMember()> Public Property anchor_shaft_diameter() As Double?
         Get
             Return Me._anchor_shaft_diameter
         End Get
@@ -1177,7 +1177,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Quantity")>
-     <DataMember()> Public Property anchor_shaft_quantity() As Integer?
+    <DataMember()> Public Property anchor_shaft_quantity() As Integer?
         Get
             Return Me._anchor_shaft_quantity
         End Get
@@ -1186,7 +1186,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Area Override")>
-     <DataMember()> Public Property anchor_shaft_area_override() As Double?
+    <DataMember()> Public Property anchor_shaft_area_override() As Double?
         Get
             Return Me._anchor_shaft_area_override
         End Get
@@ -1195,7 +1195,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Shear Leg Factor")>
-     <DataMember()> Public Property anchor_shaft_shear_leg_factor() As Double?
+    <DataMember()> Public Property anchor_shaft_shear_leg_factor() As Double?
         Get
             Return Me._anchor_shaft_shear_leg_factor
         End Get
@@ -1204,7 +1204,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Section")>
-     <DataMember()> Public Property anchor_shaft_section() As String
+    <DataMember()> Public Property anchor_shaft_section() As String
         Get
             Return Me._anchor_shaft_section
         End Get
@@ -1213,7 +1213,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Rebar Grade")>
-     <DataMember()> Public Property anchor_rebar_grade() As Double?
+    <DataMember()> Public Property anchor_rebar_grade() As Double?
         Get
             Return Me._anchor_rebar_grade
         End Get
@@ -1222,7 +1222,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Concrete Compressive Strength")>
-     <DataMember()> Public Property concrete_compressive_strength() As Double?
+    <DataMember()> Public Property concrete_compressive_strength() As Double?
         Get
             Return Me._concrete_compressive_strength
         End Get
@@ -1231,7 +1231,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Clear Cover")>
-     <DataMember()> Public Property clear_cover() As Double?
+    <DataMember()> Public Property clear_cover() As Double?
         Get
             Return Me._clear_cover
         End Get
@@ -1240,7 +1240,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Yield Strength")>
-     <DataMember()> Public Property anchor_shaft_yield_strength() As Double?
+    <DataMember()> Public Property anchor_shaft_yield_strength() As Double?
         Get
             Return Me._anchor_shaft_yield_strength
         End Get
@@ -1249,7 +1249,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Ultimate Strength")>
-     <DataMember()> Public Property anchor_shaft_ultimate_strength() As Double?
+    <DataMember()> Public Property anchor_shaft_ultimate_strength() As Double?
         Get
             Return Me._anchor_shaft_ultimate_strength
         End Get
@@ -1258,7 +1258,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Rebar Known")>
-     <DataMember()> Public Property rebar_known() As Boolean?
+    <DataMember()> Public Property rebar_known() As Boolean?
         Get
             Return Me._rebar_known
         End Get
@@ -1267,7 +1267,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Anchor Shaft Known")>
-     <DataMember()> Public Property anchor_shaft_known() As Boolean?
+    <DataMember()> Public Property anchor_shaft_known() As Boolean?
         Get
             Return Me._anchor_shaft_known
         End Get
@@ -1276,7 +1276,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Basic Soil Check")>
-     <DataMember()> Public Property basic_soil_check() As Boolean?
+    <DataMember()> Public Property basic_soil_check() As Boolean?
         Get
             Return Me._basic_soil_check
         End Get
@@ -1285,7 +1285,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("Guy Anchor Profiles"), Description(""), DisplayName("Structural Check")>
-     <DataMember()> Public Property structural_check() As Boolean?
+    <DataMember()> Public Property structural_check() As Boolean?
         Get
             Return Me._structural_check
         End Get
@@ -1294,7 +1294,7 @@ Partial Public Class AnchorBlockProfile
         End Set
     End Property
     <Category("AnchorBlockProfile"), Description(""), DisplayName("Local Anchor Profile Id")>
-     <DataMember()> Public Property local_anchor_profile_id() As Integer?
+    <DataMember()> Public Property local_anchor_profile_id() As Integer?
         Get
             Return Me._local_anchor_profile_id
         End Get
@@ -1487,8 +1487,8 @@ End Class
 Partial Public Class AnchorBlockSoilProfile
     Inherits SoilProfile
 
-     <DataMember()> Public Property local_soil_profile_id As Integer?
-     <DataMember()> Public Property ABSoilLayers As New List(Of AnchorBlockSoilLayer)
+    <DataMember()> Public Property local_soil_profile_id As Integer?
+    <DataMember()> Public Property ABSoilLayers As New List(Of AnchorBlockSoilLayer)
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
@@ -1554,8 +1554,8 @@ End Class
 Partial Public Class AnchorBlockSoilLayer
     Inherits SoilLayer
 
-     <DataMember()> Public Property local_soil_profile_id As Integer?
-     <DataMember()> Public Property local_soil_layer_id As Integer?
+    <DataMember()> Public Property local_soil_profile_id As Integer?
+    <DataMember()> Public Property local_soil_layer_id As Integer?
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get

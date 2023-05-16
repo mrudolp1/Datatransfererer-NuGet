@@ -13,7 +13,7 @@ Partial Public Class PierAndPad
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Pier And Pad Foundation"
+            Return "Pier and Pad Foundation"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
