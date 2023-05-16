@@ -24,6 +24,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
+        Public testingVersion As String = "1.0.0.1"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -359,7 +360,7 @@ Namespace UnitTesting
 
 #Region "Unit Testing - Old Buttons"
         'Create bug folder
-        Private Sub SimpleButton2_Click(sender As Object, e As EventArgs) Handles SimpleButton2.Click
+        Private Sub SimpleButton2_Click(sender As Object, e As EventArgs)
             Dim answer = InputBox("Enter the ID of the bug from the spreadsheet.", "Bug ID", Nothing)
             If answer IsNot Nothing Then
                 Directory.CreateDirectory(Me.itFolder & "\Bug Reference Files")
@@ -367,7 +368,7 @@ Namespace UnitTesting
         End Sub
 
         'work local or remote option 
-        Private Sub CheckEdit1_CheckedChanged(sender As Object, e As EventArgs) Handles chkWorkLocal.CheckedChanged
+        Private Sub CheckEdit1_CheckedChanged(sender As Object, e As EventArgs)
             If isopening Then Exit Sub
             My.Settings.workLocal = sender.checked
             My.Settings.Save()
@@ -375,14 +376,14 @@ Namespace UnitTesting
 
 
         'Create a new iteration button click
-        Private Sub btnNextIteration_Click(sender As Object, e As EventArgs) Handles btnNextIteration.Click
+        Private Sub btnNextIteration_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
             CreateIteration(testNextIteration.Text)
             ButtonclickToggle(Me.Cursor)
         End Sub
 
         'Conduct button click for current iteration
-        Private Sub testConduct_Click(sender As Object, e As EventArgs) Handles testConduct.Click
+        Private Sub testConduct_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
 
             CreateStructure()
@@ -396,7 +397,7 @@ Namespace UnitTesting
             ButtonclickToggle(Me.Cursor)
         End Sub
         'Create a json file of the lodaed structure
-        Private Sub testJason_Click(sender As Object, e As EventArgs) Handles testJason.Click
+        Private Sub testJason_Click(sender As Object, e As EventArgs)
             Dim strJson As String
 
             Try
@@ -409,7 +410,7 @@ Namespace UnitTesting
                 sw.Close()
             End Using
         End Sub
-        Private Sub testJasonLoad_click(sender As Object, e As EventArgs) Handles testJasonLoad.Click
+        Private Sub testJasonLoad_click(sender As Object, e As EventArgs)
             Dim dateCheck As DateTime = "1/1/1900 12:00 AM"
             Dim myFile As FileInfo = Nothing
 
@@ -441,7 +442,7 @@ Namespace UnitTesting
         End Sub
 
 
-        Private Sub testStructureOnly_Click(sender As Object, e As EventArgs) Handles testStructureOnly.Click
+        Private Sub testStructureOnly_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
 
             CreateStructure()
@@ -455,23 +456,23 @@ Namespace UnitTesting
         End Sub
 
         'Create and compare CSV Results files
-        Private Sub testPrevResults_Click(sender As Object, e As EventArgs) Handles testPrevResults.Click
+        Private Sub testPrevResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Reference SA Files")
             ButtonclickToggle(Me.Cursor)
         End Sub
-        Private Sub testPublishedResults_Click(sender As Object, e As EventArgs) Handles testPublishedResults.Click
+        Private Sub testPublishedResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Manual (Current)")
             ButtonclickToggle(Me.Cursor)
         End Sub
-        Private Sub testIterationResults_Click(sender As Object, e As EventArgs) Handles testIterationResults.Click
+        Private Sub testIterationResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Maestro")
             GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Manual (SAPI)")
             ButtonclickToggle(Me.Cursor)
         End Sub
-        Private Sub testCompareAll_Click(sender As Object, e As EventArgs) Handles testCompareAll.Click
+        Private Sub testCompareAll_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
             Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
             ButtonclickToggle(Me.Cursor)
@@ -523,7 +524,9 @@ Namespace UnitTesting
         Private Sub TestSteps(sender As Object, e As EventArgs) Handles _
                     btnProcess1.Click, btnProcess2.Click, btnProcess3.Click, btnProcess4.Click,
                     btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click,
-                    btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click
+                    btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
+                    btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
+                    btnProcess17.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -555,18 +558,20 @@ Namespace UnitTesting
                         Dim myfilesLst As New List(Of FileInfo)
                         'Loop through all files in the maestro folder for the current test case and iteration
                         For Each info As FileInfo In New DirectoryInfo(testSaFolder.Text).GetFiles
-                            If info.Extension.ToLower = ".eri" Then
-                                'All eris permitted
-                                myfilesLst.Add(info)
-                                LogActivity("DEBUG | ERI Found: " & info.FullName)
-                            ElseIf info.Extension.ToLower = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
-                                'Determine if the file is one of the templates
-                                Dim template As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
-
-                                'If the properties of the tuple are nothing then they aren't templates
-                                If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
+                            If Not info.FullName.Contains("~") Then
+                                If info.Extension.ToLower = ".eri" Then
+                                    'All eris permitted
                                     myfilesLst.Add(info)
-                                    LogActivity("DEBUG | Template Found: " & info.FullName)
+                                    LogActivity("DEBUG | ERI Found: " & info.FullName)
+                                ElseIf info.Extension.ToLower = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
+                                    'Determine if the file is one of the templates
+                                    Dim template As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
+
+                                    'If the properties of the tuple are nothing then they aren't templates
+                                    If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
+                                        myfilesLst.Add(info)
+                                        LogActivity("DEBUG | Template Found: " & info.FullName)
+                                    End If
                                 End If
                             End If
                         Next
@@ -587,11 +592,14 @@ Namespace UnitTesting
 
                 Case "step2"
                     '''Create new iteration
-                    CreateIteration(testNextIteration.Text)
-                    LogActivity("INFO | Iteration " & Me.iteration & " has been created.")
+                    If Not Directory.Exists(Me.itFolder) Then
+                        CreateIteration(testNextIteration.Text)
+                        LogActivity("INFO | Iteration " & Me.iteration & " has been created.")
+                    Else
+                        LogActivity("WARNING | Iteration " & Me.iteration.ToString & " folders already exist")
+                    End If
 
-
-                Case "step3", "step3a", "step3b", "step3c"
+                Case "step3", "step3a", "step3b", "step3c", "step3d"
                     'Make sure all necessary files exist in the required folders
                     If Me.iteration = 0 Then
                         MsgBox("Please create an iteration to continue.", vbInformation)
@@ -602,9 +610,11 @@ Namespace UnitTesting
                     Dim eriCount As Integer = New DirectoryInfo(Me.EriFolder).GetFiles.Count
                     Dim pubCount As Integer = New DirectoryInfo(Me.PubFolder).GetFiles.Count
                     Dim maeCount As Integer = New DirectoryInfo(Me.MaeFolder).GetFiles.Count
-                    Dim eriMsg As String = vbCrLf & "    Iteration " & Me.iteration & "\Manual ERI"
-                    Dim pubMsg As String = vbCrLf & "    Iteration " & "\Manual (Current)"
-                    Dim maeMsg As String = vbCrLf & vbCrLf & "    Iteration " & Me.iteration & "\Maestro" & vbCrLf & "    Iteration " & Me.iteration & "\Manual (SAPI)"
+                    Dim manCount As Integer = New DirectoryInfo(Me.ManFolder).GetFiles.Count
+                    Dim eriMsg As String = vbCrLf & vbCrLf & "    \Manual ERI"
+                    Dim pubMsg As String = vbCrLf & vbCrLf & "    \Manual (Current)"
+                    Dim maeMsg As String = vbCrLf & vbCrLf & "    \Iteration " & Me.iteration & "\Maestro"
+                    Dim manMsg As String = vbCrLf & vbCrLf & "    \Iteration " & Me.iteration & "\Manual (SAPI)"
                     Dim msg As String = "Are you sure you would like to create new template files?" &
                                             vbCrLf & vbCrLf &
                                             "This process will archive files in the following folders:"
@@ -612,15 +622,18 @@ Namespace UnitTesting
                     Dim booEri As Boolean = IIf(eriCount = 0, True, False)
                     Dim booPub As Boolean = IIf(pubCount = 0, True, False)
                     Dim booMae As Boolean = IIf(maeCount = 0, True, False)
+                    Dim booMan As Boolean = IIf(manCount = 0, True, False)
 
                     If tags(0).ToLower.Contains("a") And pubCount > 0 Then msg += pubMsg
                     If tags(0).ToLower.Contains("b") And eriCount > 0 Then msg += eriMsg
                     If tags(0).ToLower.Contains("c") And maeCount > 0 Then msg += maeMsg
+                    If tags(0).ToLower.Contains("d") And manCount > 0 Then msg += manMsg
 
                     If ((eriCount > 0 Or pubCount > 0 Or maeCount > 0) And tags(0) = "step3") Or
                         (pubCount > 0 And tags(0).ToLower = "step3a") Or
                         (eriCount > 0 And tags(0).ToLower = "step3b") Or
-                        (maeCount > 0 And tags(0).ToLower = "step3c") Then
+                        (maeCount > 0 And tags(0).ToLower = "step3c") Or
+                        (manCount > 0 And tags(0).ToLower = "step3d") Then
                         answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
                     End If
 
@@ -642,16 +655,24 @@ Namespace UnitTesting
                         End If
 
                         If tags(0).ToLower = "step3" Or tags(0).ToLower = "step3c" Then
-                            CreateSAPITemplates(refDT, booMae, Not booMae)
+                            CreateSAPITemplates(refDT, Me.MaeFolder, "MaestroPath", booMae, Not booMae)
                             LogActivity("INFO | All files required for Maestro have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
-                            LogActivity("INFO | All files SAPI files have been created in the directory '\Iteration" & Me.iteration & "\Manual (SAPI)'.")
+
                             CreateManualERI(RefernceSADT, Me.MaeFolder, booMae, False)
                             LogActivity("INFO | All reference ERIs files have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
                         End If
 
+                        If tags(0).ToLower = "step3" Or tags(0).ToLower = "step3d" Then
+                            CreateSAPITemplates(refDT, Me.ManFolder, "ManualPath", booMan, Not booMan)
+                            LogActivity("INFO | All files SAPI files have been created in the directory '\Iteration" & Me.iteration & "\Manual (SAPI)'.")
+
+                            'CreateManualERI(RefernceSADT, Me.ManFolder, booMan, False)
+                            'LogActivity("INFO | All reference ERIs files have been created in the directory '\Iteration" & Me.iteration & "\Maestro'.")
+                        End If
+
                         DatatableToCSV(refDT, RefFolder & "\File List.csv")
                     End If
-                Case "step4", "step4a", "step4b"
+                Case "step4", "step4a", "step4b", "step4c"
                     'Create Published versions of the files
                     If Me.iteration = 0 Then
                         MsgBox("Please create an iteration to continue.", vbInformation)
@@ -659,11 +680,8 @@ Namespace UnitTesting
                         Exit Select
                     End If
 
-                    Dim pubCount As Integer = New DirectoryInfo(Me.PubFolder).GetFiles.Count
-                    Dim maeCount As Integer = New DirectoryInfo(Me.MaeFolder).GetFiles.Count
-
-
                     If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4b" Then
+                        Dim pubCount As Integer = New DirectoryInfo(Me.PubFolder).GetFiles.Count
                         If Not pubCount > 0 Then
                             MsgBox("Please create current template files to continue.", vbInformation)
                             LogActivity("ERROR | Current template files not created.")
@@ -675,6 +693,7 @@ Namespace UnitTesting
                     End If
 
                     If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4a" Then
+                        Dim maeCount As Integer = New DirectoryInfo(Me.MaeFolder).GetFiles.Count
                         If Not maeCount > 0 Then
                             MsgBox("Please create template SAPI files to continue.", vbInformation)
                             LogActivity("ERROR | SAPI template files not created.")
@@ -682,34 +701,55 @@ Namespace UnitTesting
                         End If
 
                         ImportInputs("MaestroPath")
-                        LogActivity("INFO | Import inputs complete for SAPI versions.")
-                        LogActivity("INFO | Files were created in the '\Maestro' and '\Manual (SAPI)' folders.")
+                        LogActivity("INFO | Import inputs complete for Maestro SAPI versions.")
                     End If
 
-                Case "step5"
+                    If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4c" Then
+                        Dim mancount As Integer = New DirectoryInfo(Me.ManFolder).GetFiles.Count
+                        If Not mancount > 0 Then
+                            MsgBox("Please create template SAPI files to continue.", vbInformation)
+                            LogActivity("ERROR | SAPI template files not created.")
+                            Exit Select
+                        End If
+
+                        ImportInputs("ManualPath")
+                        LogActivity("INFO | Import inputs complete for Manual SAPI versions.")
+                    End If
+                Case "step5", "step5a", "step5b", "step5c"
                     'Run the ERI file in the Manual Reference Folder
                     Dim tempStrc As New EDSStructure
                     Dim myERIs As New List(Of String)
-                    For Each info As FileInfo In New DirectoryInfo(Me.EriFolder).GetFiles
-                        If info.Extension.ToLower() = ".eri" Then
-                            'All eris permitted
-                            myERIs.Add(info.FullName)
-                            LogActivity("DEBUG | ERI: " & info.Name & " found")
-                        ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
-                            info.Delete()
-                            LogActivity("DEBUG | File Deleted: " & info.Name & "")
-                        End If
-                    Next
+                    Dim mydir As String
+
+                    If tags(0).ToLower = "step5" Or tags(0).ToLower = "step5a" Then
+                        mydir = Me.EriFolder
+                        myERIs.AddERIs(mydir)
+                    End If
+
+                    If tags(0).ToLower = "step5" Or tags(0).ToLower = "step5b" Then
+                        mydir = Me.PubFolder
+                        myERIs.AddERIs(mydir)
+                    End If
+
+                    If tags(0).ToLower = "step5" Or tags(0).ToLower = "step5c" Then
+                        mydir = Me.ManFolder
+                        myERIs.AddERIs(mydir)
+                    End If
+
+                    If myERIs.Count = 0 Then LogActivity("WARNING | No ERI files found to analyze.")
 
                     For Each eri As String In myERIs
-                        If Not tempStrc.RunTNX(eri, True) Then
-                            LogActivity("ERROR | Failed to run ERI: " & eri)
-                            GoTo finishMe
-                        Else
-                            LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
-                        End If
-                    Next
-                Case "step6"
+                            If Not tempStrc.RunTNX(eri, True) Then
+                                LogActivity("ERROR | Failed to run ERI: " & eri)
+                                tempStrc.AppendLog(Me.TestLogActivityPath)
+                                'GoTo finishMe
+                            Else
+                                LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
+                                tempStrc.AppendLog(Me.TestLogActivityPath)
+                            End If
+                        Next
+
+                        Case "step6"
                     'Conduct the Maestro files
                     CreateStructure()
 
@@ -793,7 +833,7 @@ finishMe:
             btnCheckout.Enabled = True
             My.Settings.MyTestCase = 0
             My.Settings.Save()
-
+            testPush.Enabled = False
             ButtonclickToggle(Me.Cursor)
             isopening = False
         End Sub
@@ -811,6 +851,7 @@ finishMe:
 
                 LogActivity("START | Test Case" & Me.testCase, True)
                 LogActivity("INFO | Using CCI Engineering Datatransferer " & CCI_Engineering_Templates.myVersion)
+                LogActivity("INFO | Using Testing Winform " & testingVersion)
                 ButtonclickToggle(Me.Cursor)
             End If
 
@@ -872,8 +913,6 @@ finishMe:
             Catch
             End Try
         End Sub
-
-
 
 #End Region
 
@@ -1074,8 +1113,12 @@ finishMe:
                 If subDir.Name.Contains("Iteration ") Then itCount += 1
             Next
 
-            testIteration.Text = itCount
-            testNextIteration.Text = itCount + 1
+            If Not Directory.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Iteration " & Me.iteration) Then
+                CreateIteration(Me.iteration)
+            End If
+
+            'testIteration.Text = itCount
+            'testNextIteration.Text = itCount + 1
 
             'Update the local directory to the local test case. 
             Try
@@ -1099,8 +1142,12 @@ finishMe:
             testFolder.Text = ""
             testComb.Text = ""
             testID.SelectedIndex = -1
-            testIteration.Text = ""
-            testNextIteration.Text = ""
+            'testIteration.Text = ""
+            'testNextIteration.Text = ""
+            rtbNotes.Text = ""
+            GridView1.Columns.Clear()
+            gcViewer.DataSource = Nothing
+            pgcUnitTesting.SelectedObject = Nothing
 
             Try
                 seNetwork.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
@@ -1120,22 +1167,10 @@ finishMe:
             mainLogViewer.Clear()
         End Sub
 
-
-
         'Reset form to disable or enable controls required for testing. 
         Public Sub ResetControls(Optional ByVal reset As Boolean = True)
-            btnNextIteration.Enabled = Not btnNextIteration.Enabled
-            testIterationResults.Enabled = Not testIterationResults.Enabled
-            testPrevResults.Enabled = Not testPrevResults.Enabled
-            testPublishedResults.Enabled = Not testPublishedResults.Enabled
-            testConduct.Enabled = Not testConduct.Enabled
-            testCompareAll.Enabled = Not testCompareAll.Enabled
-            testStructureOnly.Enabled = Not testStructureOnly.Enabled
-            testJason.Enabled = Not testJason.Enabled
-            mainLogViewer.Enabled = Not mainLogViewer.Enabled
-
             btnProcess1.Enabled = Not btnProcess1.Enabled
-            btnProcess2.Enabled = Not btnProcess2.Enabled
+            'btnProcess2.Enabled = Not btnProcess2.Enabled
             btnProcess3.Enabled = Not btnProcess3.Enabled
             btnProcess4.Enabled = Not btnProcess4.Enabled
             btnProcess5.Enabled = Not btnProcess5.Enabled
@@ -1146,12 +1181,16 @@ finishMe:
             btnProcess10.Enabled = Not btnProcess10.Enabled
             btnProcess11.Enabled = Not btnProcess11.Enabled
             btnProcess12.Enabled = Not btnProcess12.Enabled
+            btnProcess13.Enabled = Not btnProcess13.Enabled
+            btnProcess14.Enabled = Not btnProcess14.Enabled
+            btnProcess15.Enabled = Not btnProcess15.Enabled
+            btnProcess16.Enabled = Not btnProcess16.Enabled
+            btnProcess17.Enabled = Not btnProcess17.Enabled
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
-            testSync.Enabled = Not testSync.Enabled
             If New FileInfo(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt").Exists Then testPush.Enabled = Not testPush.Enabled
             testPull.Enabled = Not testPull.Enabled
-
+            mainLogViewer.Enabled = Not mainLogViewer.Enabled
             rtfactivityLog.Visible = Not rtfactivityLog.Visible
         End Sub
 #End Region
@@ -1177,7 +1216,7 @@ finishMe:
                 ' The 'True' argument appends to the file if it already exists
                 Using sw As New StreamWriter(TestLogActivityPath, True)
                     ' Write the log message to the file
-                    sw.WriteLine(dt & " | " & Environment.UserName & " | " & msg)
+                    sw.WriteLine(dt & " | " & Environment.UserName & " | " & msg & " | " & Me.iteration.ToString)
                 End Using
                 If loadLog Then
                     mainLogViewer.ReloadActivityLog()
@@ -1310,21 +1349,21 @@ finishMe:
                     If importingTo.Name.ToLower.Contains("pile") Then
                         macroname = "Button173_Click"
                     ElseIf importingTo.Name.ToLower.Contains("drilled pier") Then
-                        If FileType = "MaestroPath" Then
+                        If FileType = "MaestroPath" Or FileType = "ManualPath" Then
                             macroname += "_Performer"
                         End If
                     End If
 
                     If Import_Previous_Version(myXL.Item1, importingTo, macroname, params, True) Then
                         LogActivity("INFO | Import Inputs Completed for: " & importingTo.FullName)
-                        If FileType = "MaestroPath" Then
-                            Try
-                                Dim manFile As New FileInfo(Me.ManFolder & "\" & importingTo.Name)
-                                manFile.Delete()
-                                importingTo.CopyTo(manFile.FullName)
-                            Catch ex As Exception
-                            End Try
-                        End If
+                        'If FileType = "MaestroPath" Then
+                        '    Try
+                        '        Dim manFile As New FileInfo(Me.ManFolder & "\" & importingTo.Name)
+                        '        manFile.Delete()
+                        '        importingTo.CopyTo(manFile.FullName)
+                        '    Catch ex As Exception
+                        '    End Try
+                        'End If
                     Else
                         LogActivity("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName)
                     End If
@@ -1428,21 +1467,24 @@ finishMe:
         '''Manual folder 
         '''Users will have the option to replace the files in the folder. 
         Public Sub CreateIteration(ByVal nextIteration As Integer, ByVal Optional isFirstTime As Boolean = False)
-            testIteration.Text = nextIteration
-            testNextIteration.Text = nextIteration + 1
-            testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
+            'testIteration.Text = nextIteration
+            'testNextIteration.Text = nextIteration + 1
+            'testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
 
-            If GetReferenceFileCount() = 0 Then
-                FirstTimeWarning(isFirstTime, nextIteration)
-            Else
-                '''Create the directories
-                '''Increase the iteration (Should be at 0 if this is the first time)
-                '''get all required files for testing
-                Directory.CreateDirectory(Me.itFolder)
-                Directory.CreateDirectory(Me.MaeFolder)
-                Directory.CreateDirectory(Me.ManFolder)
-                'CreateTemplateFiles(isFirstTime, False)
-            End If
+            'If GetReferenceFileCount() = 0 Then
+            '    FirstTimeWarning(isFirstTime, nextIteration)
+            'Else
+            '''Create the directories
+            '''Increase the iteration (Should be at 0 if this is the first time)
+            '''get all required files for testing
+            Directory.CreateDirectory(Me.itFolder)
+            LogActivity("DEBUG | Directory created: " & Me.itFolder)
+            Directory.CreateDirectory(Me.MaeFolder)
+            LogActivity("DEBUG | Directory created: " & Me.MaeFolder)
+            Directory.CreateDirectory(Me.ManFolder)
+            LogActivity("DEBUG | Directory created: " & Me.ManFolder)
+            'CreateTemplateFiles(isFirstTime, False)
+            'End If
 
         End Sub
 
@@ -1485,10 +1527,9 @@ finishMe:
         End Sub
 
         'No folder option for these since they are always going to go to the current folder path
-        Public Sub CreateSAPITemplates(ByRef refFiles As DataTable, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
+        Public Sub CreateSAPITemplates(ByRef refFiles As DataTable, ByVal dirtouse As String, ByVal dtHeader As String, Optional ByVal isFirstTime As Boolean = False, Optional ByVal archive As Boolean = True)
             If archive And Not isFirstTime Then
-                DoArchiving(Me.MaeFolder)
-                DoArchiving(Me.ManFolder)
+                DoArchiving(dirtouse)
             End If
 
             For Each dr As DataRow In refFiles.Rows
@@ -1499,20 +1540,20 @@ finishMe:
                             TemplateNotFoundWarning(file)
                         Else
                             'Templates are saved as Bytes() and need to be converted appropriately. 
-                            Dim maePath As String = GetNewFileName(Me.MaeFolder, fileName:= .Item3)
-                            IO.File.WriteAllBytes(maePath, .Item2)
-                            dr.Item("MaestroPath") = maePath
-                            LogActivity("DEBUG | SAPI version created: " & maePath)
+                            Dim mypath As String = GetNewFileName(dirtouse, fileName:= .Item3)
+                            IO.File.WriteAllBytes(mypath, .Item2)
+                            dr.Item(dtHeader) = mypath
+                            LogActivity("DEBUG | SAPI version created: " & mypath)
 
-                            'File will be copied to the manual folder once the files are populated with data via 
-                            'Manual files will be replaces when user imports data into the maestro files.
-                            'Alternative will be to load maestro and manual files manually.
-                            '''Import Inputs
-                            '''Structure import
-                            Dim manPath As String = GetNewFileName(Me.ManFolder, fileName:= .Item3)
-                            IO.File.WriteAllBytes(manPath, .Item2)
-                            dr.Item("ManualPath") = manPath
-                            LogActivity("DEBUG | SAPI version created: " & manPath)
+                            '''File will be copied to the manual folder once the files are populated with data via 
+                            '''Manual files will be replaces when user imports data into the maestro files.
+                            '''Alternative will be to load maestro and manual files manually.
+                            '''''Import Inputs
+                            '''''Structure import
+                            ''Dim manPath As String = GetNewFileName(Me.ManFolder, fileName:= .Item3)
+                            ''IO.File.WriteAllBytes(manPath, .Item2)
+                            ''dr.Item("ManualPath") = manPath
+                            ''LogActivity("DEBUG | SAPI version created: " & manPath)
                         End If
                     End With
                 End If
@@ -1538,8 +1579,8 @@ finishMe:
         Public Sub FirstTimeWarning(ByVal isFirstTime As Boolean, ByVal nextIteration As Integer)
             If Not isFirstTime Then MsgBox("Files Do Not exist In the 'Reference SA Files' folder yet. Please copy reference files to continue.", vbCritical, "No Reference Files")
             LogActivity("ERROR | Files Do Not exist In the 'Reference SA Files' folder yet. Please copy reference files to continue.")
-            testIteration.Text = nextIteration - 1
-            testNextIteration.Text = nextIteration
+            'testIteration.Text = nextIteration - 1
+            'testNextIteration.Text = nextIteration
         End Sub
 
 #End Region
@@ -1588,7 +1629,7 @@ finishMe:
                     Catch
                         resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "H10:L31")
                     End Try
-                ElseIf myTemplate.Item3.ToLower.Contains("CCIplate") Then
+                ElseIf myTemplate.Item3.ToLower.Contains("cciplate") Then
                     resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
                 Else
                     resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
@@ -1606,45 +1647,46 @@ finishMe:
                             For i = 0 To .Rows.Count - 1
                                 Dim dr As DataRow = .Rows(i)
                                 Dim addl As String = ""
+                                Dim val As String
                                 If i > 31 Then addl = "_Seismic"
 
-                                If Not dr.Item("Plate Summary").ToString = String.Empty And Not dr.Item("Plate Summary").ToString = "Max Stress" Then
-                                    Dim val As String
+                                'Plate stress
+                                If Not dr.Item("Plate Summary").ToString = "" And Not dr.Item("Plate Summary").ToString = "Max Stress" Then
 
-                                    'bolt group 1
-                                    If Not dr.Item("Bolt GR. 1").ToString = String.Empty Then
-                                        val = dr.Item("Column21").ToString.Replace("%", "")
-                                        finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 1" & addl, val, info.Name.Replace(".xlsm", ""))
-                                    End If
-
-                                    'bolt group 2
-                                    If Not dr.Item("Bolt GR. 2").ToString = String.Empty Then
-                                        val = dr.Item("Column31").ToString.Replace("%", "")
-                                        finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 2" & addl, val, info.Name.Replace(".xlsm", ""))
-                                    End If
-
-                                    'bolt group 3
-                                    If Not dr.Item("Bolt GR. 3").ToString = String.Empty Then
-                                        val = dr.Item("Column41").ToString.Replace("%", "")
-                                        finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 3" & addl, val, info.Name.Replace(".xlsm", ""))
-                                    End If
-
-                                    'bolt group 4
-                                    If Not dr.Item("Bolt GR. 4").ToString = String.Empty Then
-                                        val = dr.Item("Column51").ToString.Replace("%", "")
-                                        finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 4" & addl, val, info.Name.Replace(".xlsm", ""))
-                                    End If
-
-                                    'bolt group 5
-                                    If Not dr.Item("Bolt GR. 5").ToString = String.Empty Then
-                                        val = dr.Item("Column61").ToString.Replace("%", "")
-                                        finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 5" & addl, val, info.Name.Replace(".xlsm", ""))
-                                    End If
-
-                                    'Plate stress
                                     val = dr.Item("Plate").ToString.Replace("%", "")
                                     finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & dr.Item("Column63").ToString & addl, val, info.Name.Replace(".xlsm", ""))
                                 End If
+
+                                'bolt group 1
+                                If Not dr.Item("Bolt GR. 1").ToString = "" And Not dr.Item("Column21").ToString = "%" Then
+                                    val = dr.Item("Column21").ToString.Replace("%", "")
+                                    finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 1" & addl, val, info.Name.Replace(".xlsm", ""))
+                                End If
+
+                                'bolt group 2
+                                If Not dr.Item("Bolt GR. 2").ToString = "" And Not dr.Item("Column31").ToString = "%" Then
+                                    val = dr.Item("Column31").ToString.Replace("%", "")
+                                    finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 2" & addl, val, info.Name.Replace(".xlsm", ""))
+                                End If
+
+                                'bolt group 3
+                                If Not dr.Item("Bolt GR. 3").ToString = "" And Not dr.Item("Column41").ToString = "%" Then
+                                    val = dr.Item("Column41").ToString.Replace("%", "")
+                                    finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 3" & addl, val, info.Name.Replace(".xlsm", ""))
+                                End If
+
+                                'bolt group 4
+                                If Not dr.Item("Bolt GR. 4").ToString = "" And Not dr.Item("Column51").ToString = "%" Then
+                                    val = dr.Item("Column51").ToString.Replace("%", "")
+                                    finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 4" & addl, val, info.Name.Replace(".xlsm", ""))
+                                End If
+
+                                'bolt group 5
+                                If Not dr.Item("Bolt GR. 5").ToString = "" And Not dr.Item("Column61").ToString = "%" Then
+                                    val = dr.Item("Column61").ToString.Replace("%", "")
+                                    finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 5" & addl, val, info.Name.Replace(".xlsm", ""))
+                                End If
+
                             Next
                         Case "Selected Results " & "CCIpole.xlsm" & "_" & "AZ4:BT108"
                             For Each dr As DataRow In .Rows()
@@ -1872,17 +1914,18 @@ finishMe:
                     Next
 
                     If Not isFound Then
-                        With WhichFile(file)
-                            If file.Extension.ToLower = ".eri" Or .Item1 IsNot Nothing Or .Item2 IsNot Nothing Or .Item3 IsNot Nothing Then
-                                LogActivity("DEBUG | File added manually: " & file.Name)
-                                If SAFiles.Columns.Count < 4 Then
-                                    SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "")
-                                Else
-                                    SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "", "", "", "")
+                        If Not file.FullName.Contains("~") Then
+                            With WhichFile(file)
+                                If file.Extension.ToLower = ".eri" Or .Item1 IsNot Nothing Or .Item2 IsNot Nothing Or .Item3 IsNot Nothing Then
+                                    LogActivity("DEBUG | File added manually: " & file.Name)
+                                    If SAFiles.Columns.Count < 4 Then
+                                        SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "")
+                                    Else
+                                        SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "", "", "", "")
+                                    End If
                                 End If
-                            End If
-                        End With
-
+                            End With
+                        End If
                     End If
                 Next
             End If
@@ -1910,6 +1953,9 @@ finishMe:
             Dim myFiles As String()
             Dim myFilesLst As New List(Of String)
 
+            'default resonse to determine if a question needs asked.
+            'Dim response As DialogResult = DialogResult.Cancel
+
             'Loop through all files in the maestro folder for the current test case and iteration
             For Each info As FileInfo In New DirectoryInfo(Me.MaeFolder).GetFiles
                 If info.Extension = ".eri" Then
@@ -1926,8 +1972,18 @@ finishMe:
                         LogActivity("DEBUG | File found for structure: " & info.Name)
                     End If
                 ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
+                    'If response = DialogResult.Cancel Then
+                    '    response = MsgBox("Would you like to rerun the ERI file as well?", vbYesNo + vbInformation, "Rerun TNX?")
+                    '    If response = DialogResult.No Then
+                    '        LogActivity("DEBUG | tnx NOT rerun for Maestro")
+                    '    Else
+                    '        LogActivity("DEBUG | tnx will be rerun for Maestro")
+                    '    End If
+                    'End If
+                    'If response = DialogResult.Yes Then
                     info.Delete()
                     LogActivity("DEBUG | File Deleted: " & info.FullName)
+                    'End If
                 End If
             Next
 
@@ -2494,6 +2550,8 @@ RetryFileOpenCheck:
                             Dim vars As String() = myLine.Split(separator)
                             If vars.Count < 3 Then
                                 sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1))
+                            ElseIf vars.Count = 1 Then
+                                sw.WriteLine(dt & " " & separator & " " & Environment.UserName & " " & separator & "DEBUG" & " " & separator & vars(0))
                             Else
                                 sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2))
                             End If
@@ -2502,6 +2560,20 @@ RetryFileOpenCheck:
                     sr.Close()
                 End Using
             End Using
+        End Sub
+
+        <Extension()>
+        Public Sub AddERIs(ByVal myList As List(Of String), ByVal myDir As String)
+            For Each info As FileInfo In New DirectoryInfo(myDir).GetFiles
+                If info.Extension.ToLower() = ".eri" Then
+                    'All eris permitted
+                    myList.Add(info.FullName)
+                    frmMain.LogActivity("DEBUG | ERI: " & info.Name & " found")
+                ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
+                    info.Delete()
+                    frmMain.LogActivity("DEBUG | File Deleted: " & info.Name & "")
+                End If
+            Next
         End Sub
     End Module
 
