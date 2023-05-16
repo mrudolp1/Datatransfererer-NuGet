@@ -369,7 +369,7 @@ Partial Public Class EDSStructure
             ElseIf itemName.Contains("CCIpole") And itemName.EndsWith(".xlsm") Then
                 Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
-            ElseIf itemName.Contains("Leg Reinforcement") And itemName.EndsWith(".xlsm") Then
+            ElseIf itemName.Contains("Leg Reinforcement Tool") And itemName.EndsWith(".xlsm") Then
                 Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
             ElseIf itemName.Contains("CCISeismic") And itemName.EndsWith(".xlsm") Then
