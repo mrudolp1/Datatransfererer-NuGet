@@ -583,7 +583,7 @@ Namespace UnitTesting
                         For Each file As FileInfo In myfilesLst
                             Dim newFile As FileInfo = file.CopyTo(Me.RefFolder & "\" & file.Name)
                             LogActivity("DEBUG | " & newFile.Name & " has been copied to the SA Reference Files Folder")
-                            newFileCsv.Rows.Add(newFile.FullName, file.TemplateVersion, file.FullName)
+                            newFileCsv.Rows.Add(newFile.FullName.Replace(dirUse, ""), file.TemplateVersion, file.FullName)
                         Next
 
                         DatatableToCSV(newFileCsv, Me.RefFolder & "\File List.csv")
@@ -739,17 +739,17 @@ Namespace UnitTesting
                     If myERIs.Count = 0 Then LogActivity("WARNING | No ERI files found to analyze.")
 
                     For Each eri As String In myERIs
-                            If Not tempStrc.RunTNX(eri, True) Then
-                                LogActivity("ERROR | Failed to run ERI: " & eri)
-                                tempStrc.AppendLog(Me.TestLogActivityPath)
-                                'GoTo finishMe
-                            Else
-                                LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
-                                tempStrc.AppendLog(Me.TestLogActivityPath)
-                            End If
-                        Next
+                        If Not tempStrc.RunTNX(eri, True) Then
+                            LogActivity("ERROR | Failed to run ERI: " & eri)
+                            'tempStrc.AppendLog(Me.TestLogActivityPath)
+                            'GoTo finishMe
+                        Else
+                            LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
+                            'tempStrc.AppendLog(Me.TestLogActivityPath)
+                        End If
+                    Next
 
-                        Case "step6"
+                Case "step6"
                     'Conduct the Maestro files
                     CreateStructure()
 
@@ -763,7 +763,7 @@ Namespace UnitTesting
                     Else
                         LogActivity("ERROR | Structure NOT conducted successfully.")
                     End If
-                    strcLocal.AppendLog(Me.TestLogActivityPath)
+                    strcLocal.AppendLog(Me.TestLogActivityPath, iteration)
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
                 Case "step7"
                     Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
@@ -852,6 +852,11 @@ finishMe:
                 LogActivity("START | Test Case" & Me.testCase, True)
                 LogActivity("INFO | Using CCI Engineering Datatransferer " & CCI_Engineering_Templates.myVersion)
                 LogActivity("INFO | Using Testing Winform " & testingVersion)
+
+                If Not Directory.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Iteration " & Me.iteration) Then
+                    CreateIteration(Me.iteration)
+                End If
+
                 ButtonclickToggle(Me.Cursor)
             End If
 
@@ -1113,10 +1118,6 @@ finishMe:
                 If subDir.Name.Contains("Iteration ") Then itCount += 1
             Next
 
-            If Not Directory.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Iteration " & Me.iteration) Then
-                CreateIteration(Me.iteration)
-            End If
-
             'testIteration.Text = itCount
             'testNextIteration.Text = itCount + 1
 
@@ -1266,11 +1267,11 @@ finishMe:
 
             If direction = SyncDirection.LocaltoR Then
                 InitializeLocaltoCentralSync(newSync, lFolder & "\Test ID " & Me.testCase, rFolder & "\Test ID " & Me.testCase, Purge)
-                LogActivity("DEBUG | Purged Folder: " & newSync.CopyOptions.Destination)
+                If Purge Then LogActivity("DEBUG | Purged Folder: " & newSync.CopyOptions.Destination)
                 LogActivity("DEBUG | Forced Sync local drive to R: Drive")
             Else
-                LogActivity("DEBUG | Purged Folder: " & newSync.CopyOptions.Destination)
                 InitializeLocaltoCentralSync(newSync, rFolder & "\Test ID " & Me.testCase, lFolder & "\Test ID " & Me.testCase, Purge)
+                If Purge Then LogActivity("DEBUG | Purged Folder: " & newSync.CopyOptions.Destination)
                 LogActivity("DEBUG | Forced Sync R: drive to local drive")
             End If
 
@@ -1340,9 +1341,9 @@ finishMe:
             'Item 2 = Boolean (If true that means excel was previously open
 
             For Each dr As DataRow In SAFiles.Rows()
-                Dim importingFrom As New FileInfo(dr.Item("FilePath").ToString)
+                Dim importingFrom As New FileInfo(dirUse & dr.Item("FilePath").ToString)
                 If importingFrom.Extension.ToLower = ".xlsm" Then
-                    Dim importingTo As New FileInfo(dr.Item(FileType).ToString)
+                    Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString)
                     Dim macroname As String = "Import_Previous_Version"
                     Dim params As Tuple(Of String, String, Boolean) = New Tuple(Of String, String, Boolean)(importingFrom.FullName.ToString, importingFrom.TemplateVersion, True)
 
@@ -1493,7 +1494,7 @@ finishMe:
             If archive And Not isFirstTime Then DoArchiving(folder)
 
             For Each dr As DataRow In refFiles.Rows
-                Dim file As New FileInfo(dr.Item("FilePath").ToString)
+                Dim file As New FileInfo(dirUse & dr.Item("FilePath").ToString)
                 'All ERIs welcome
                 'ERI is copied to the:
                 '''Manual ERI Folder
@@ -1509,7 +1510,7 @@ finishMe:
             If archive And Not isFirstTime Then DoArchiving(Me.PubFolder)
 
             For Each dr As DataRow In refFiles.Rows
-                Dim file As New FileInfo(dr.Item("FilePath").ToString)
+                Dim file As New FileInfo(dirUse & dr.Item("FilePath").ToString)
                 If file.Extension.ToLower = ".xlsm" Then
                     With WhichFile(file)
                         If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
@@ -1518,7 +1519,7 @@ finishMe:
                             'Copy published versions of the tools into the manual folder 
                             Dim pubPath As String = GetNewFileName(Me.PubFolder, fileName:= .Item3)
                             IO.File.WriteAllBytes(pubPath, .Item1)
-                            dr.Item("PublishedPath") = pubPath
+                            dr.Item("PublishedPath") = pubPath.Replace(dirUse, "")
                             LogActivity("DEBUG | Production version created: " & pubPath)
                         End If
                     End With
@@ -1533,7 +1534,7 @@ finishMe:
             End If
 
             For Each dr As DataRow In refFiles.Rows
-                Dim file As New FileInfo(dr.Item("FilePath").ToString)
+                Dim file As New FileInfo(dirUse & dr.Item("FilePath").ToString)
                 If file.Extension.ToLower = ".xlsm" Then
                     With WhichFile(file)
                         If .Item1 Is Nothing Or .Item2 Is Nothing Or .Item3 Is Nothing Then
@@ -1542,7 +1543,7 @@ finishMe:
                             'Templates are saved as Bytes() and need to be converted appropriately. 
                             Dim mypath As String = GetNewFileName(dirtouse, fileName:= .Item3)
                             IO.File.WriteAllBytes(mypath, .Item2)
-                            dr.Item(dtHeader) = mypath
+                            dr.Item(dtHeader) = mypath.Replace(dirUse, "")
                             LogActivity("DEBUG | SAPI version created: " & mypath)
 
                             '''File will be copied to the manual folder once the files are populated with data via 
@@ -1907,7 +1908,7 @@ finishMe:
                 For Each file As FileInfo In New DirectoryInfo(Me.RefFolder).GetFiles
                     Dim isFound As Boolean = False
                     For Each dr As DataRow In SAFiles.Rows
-                        If dr.Item("FilePath").ToString = file.FullName Then
+                        If dirUse & dr.Item("FilePath").ToString = file.FullName Then
                             isFound = True
                             Exit For
                         End If
@@ -1919,9 +1920,9 @@ finishMe:
                                 If file.Extension.ToLower = ".eri" Or .Item1 IsNot Nothing Or .Item2 IsNot Nothing Or .Item3 IsNot Nothing Then
                                     LogActivity("DEBUG | File added manually: " & file.Name)
                                     If SAFiles.Columns.Count < 4 Then
-                                        SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "")
+                                        SAFiles.Rows.Add(file.FullName.Replace(dirUse, ""), file.TemplateVersion, "")
                                     Else
-                                        SAFiles.Rows.Add(file.FullName, file.TemplateVersion, "", "", "", "")
+                                        SAFiles.Rows.Add(file.FullName.Replace(dirUse, ""), file.TemplateVersion, "", "", "", "")
                                     End If
                                 End If
                             End With
@@ -2533,7 +2534,7 @@ RetryFileOpenCheck:
 
         'Append the maestro log generated to the 
         <Extension()>
-        Public Sub AppendLog(ByVal strc As EDSStructure, ByVal pathToAppend As String)
+        Public Sub AppendLog(ByVal strc As EDSStructure, ByVal pathToAppend As String, ByVal iteration As Integer)
             Dim dateTim As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
             Dim splt() As String = dateTim.Split(" ")
 
@@ -2549,11 +2550,11 @@ RetryFileOpenCheck:
                         If myLine.Length > 0 Then
                             Dim vars As String() = myLine.Split(separator)
                             If vars.Count < 3 Then
-                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1))
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & "INFO" & " " & separator & vars(1) & " " & separator & " " & iteration)
                             ElseIf vars.Count = 1 Then
-                                sw.WriteLine(dt & " " & separator & " " & Environment.UserName & " " & separator & "DEBUG" & " " & separator & vars(0))
+                                sw.WriteLine(dt & " " & separator & " " & Environment.UserName & " " & separator & "DEBUG" & " " & separator & vars(0) & " " & separator & " " & iteration)
                             Else
-                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2))
+                                sw.WriteLine(dt & " " & vars(0) & splt(2) & " " & separator & " " & Environment.UserName & " " & separator & vars(1) & separator & vars(2) & " " & separator & " " & iteration)
                             End If
                         End If
                     End While
