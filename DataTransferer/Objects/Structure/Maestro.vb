@@ -301,7 +301,7 @@ Partial Public Class EDSStructure
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
                     For Each drilledPier In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPier)(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -494,7 +494,7 @@ ErrorSkip:
         Finally
             Try
                 If xlWorkBook IsNot Nothing Then
-                    xlWorkBook.Close()
+                    xlWorkBook.Close(True)
                     Marshal.ReleaseComObject(xlWorkBook)
                     xlWorkBook = Nothing
                 End If
