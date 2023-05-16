@@ -494,7 +494,7 @@ ErrorSkip:
         Finally
             Try
                 If xlWorkBook IsNot Nothing Then
-                    xlWorkBook.Close()
+                    xlWorkBook.Close(True)
                     Marshal.ReleaseComObject(xlWorkBook)
                     xlWorkBook = Nothing
                 End If
