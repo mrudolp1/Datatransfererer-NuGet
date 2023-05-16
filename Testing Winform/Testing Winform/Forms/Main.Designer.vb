@@ -98,37 +98,29 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.chkWorkLocal = New DevExpress.XtraEditors.CheckEdit()
+            Me.btnProcess17 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess16 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess15 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess14 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess13 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnCheckout = New DevExpress.XtraEditors.SimpleButton()
             Me.testPull = New DevExpress.XtraEditors.SimpleButton()
             Me.testPush = New DevExpress.XtraEditors.SimpleButton()
-            Me.SimpleButton3 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess12 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess11 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess9 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess10 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testSync = New DevExpress.XtraEditors.SimpleButton()
             Me.btnClose = New DevExpress.XtraEditors.SimpleButton()
             Me.testBugFile = New DevExpress.XtraEditors.SimpleButton()
-            Me.SimpleButton2 = New DevExpress.XtraEditors.SimpleButton()
-            Me.SimpleButton1 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testJasonLoad = New System.Windows.Forms.Button()
             Me.btnProcess8 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testJason = New System.Windows.Forms.Button()
-            Me.testIterationResults = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess7 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testStructureOnly = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess6 = New DevExpress.XtraEditors.SimpleButton()
-            Me.btnNextIteration = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess5 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testCompareAll = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess4 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testConduct = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess3 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testPublishedResults = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess2 = New DevExpress.XtraEditors.SimpleButton()
-            Me.testPrevResults = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess1 = New DevExpress.XtraEditors.SimpleButton()
-            Me.chkWorkLocal = New DevExpress.XtraEditors.CheckEdit()
             Me.testLocalWorkarea = New DevExpress.XtraEditors.TextEdit()
             Me.LabelControl10 = New DevExpress.XtraEditors.LabelControl()
             Me.testComb = New DevExpress.XtraEditors.TextEdit()
@@ -235,7 +227,7 @@
             Me.pgStructure.Location = New System.Drawing.Point(4, 22)
             Me.pgStructure.Name = "pgStructure"
             Me.pgStructure.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgStructure.Size = New System.Drawing.Size(1727, 742)
+            Me.pgStructure.Size = New System.Drawing.Size(1548, 742)
             Me.pgStructure.TabIndex = 4
             Me.pgStructure.Text = "Structure"
             Me.pgStructure.UseVisualStyleBackColor = True
@@ -256,8 +248,8 @@
             '
             Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer5)
             Me.SplitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer3.Size = New System.Drawing.Size(1721, 659)
-            Me.SplitContainer3.SplitterDistance = 854
+            Me.SplitContainer3.Size = New System.Drawing.Size(1542, 659)
+            Me.SplitContainer3.SplitterDistance = 765
             Me.SplitContainer3.TabIndex = 7
             '
             'btnImportStrcFiles
@@ -287,7 +279,7 @@
             '
             Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
             Me.SplitContainer4.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer4.Size = New System.Drawing.Size(854, 659)
+            Me.SplitContainer4.Size = New System.Drawing.Size(765, 659)
             Me.SplitContainer4.SplitterDistance = 164
             Me.SplitContainer4.TabIndex = 4
             '
@@ -332,7 +324,7 @@
             Me.propgridFndXL.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndXL.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndXL.Name = "propgridFndXL"
-            Me.propgridFndXL.Size = New System.Drawing.Size(686, 659)
+            Me.propgridFndXL.Size = New System.Drawing.Size(597, 659)
             Me.propgridFndXL.TabIndex = 4
             '
             'SplitContainer5
@@ -349,8 +341,8 @@
             '
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportStrcFiles)
-            Me.SplitContainer5.Size = New System.Drawing.Size(863, 659)
-            Me.SplitContainer5.SplitterDistance = 543
+            Me.SplitContainer5.Size = New System.Drawing.Size(773, 659)
+            Me.SplitContainer5.SplitterDistance = 484
             Me.SplitContainer5.TabIndex = 0
             '
             'propgridFndEDS
@@ -358,7 +350,7 @@
             Me.propgridFndEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndEDS.Name = "propgridFndEDS"
-            Me.propgridFndEDS.Size = New System.Drawing.Size(543, 659)
+            Me.propgridFndEDS.Size = New System.Drawing.Size(484, 659)
             Me.propgridFndEDS.TabIndex = 4
             '
             'btnLoadFndFromEDS
@@ -394,7 +386,7 @@
             Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel2.Location = New System.Drawing.Point(3, 3)
             Me.Panel2.Name = "Panel2"
-            Me.Panel2.Size = New System.Drawing.Size(1721, 77)
+            Me.Panel2.Size = New System.Drawing.Size(1542, 77)
             Me.Panel2.TabIndex = 6
             '
             'btnBrowse
@@ -486,7 +478,7 @@
             Me.pgTNX.Location = New System.Drawing.Point(4, 22)
             Me.pgTNX.Name = "pgTNX"
             Me.pgTNX.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgTNX.Size = New System.Drawing.Size(1727, 742)
+            Me.pgTNX.Size = New System.Drawing.Size(1548, 742)
             Me.pgTNX.TabIndex = 1
             Me.pgTNX.Text = "TNX"
             Me.pgTNX.UseVisualStyleBackColor = True
@@ -508,8 +500,8 @@
             '
             Me.SplitContainer1.Panel2.Controls.Add(Me.scFromEDS)
             Me.SplitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer1.Size = New System.Drawing.Size(1721, 691)
-            Me.SplitContainer1.SplitterDistance = 854
+            Me.SplitContainer1.Size = New System.Drawing.Size(1542, 691)
+            Me.SplitContainer1.SplitterDistance = 765
             Me.SplitContainer1.TabIndex = 6
             '
             'btnSavetoEDS
@@ -541,7 +533,7 @@
             '
             Me.scFromERI.Panel2.Controls.Add(Me.propgridTNXERI)
             Me.scFromERI.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.scFromERI.Size = New System.Drawing.Size(854, 691)
+            Me.scFromERI.Size = New System.Drawing.Size(765, 691)
             Me.scFromERI.SplitterDistance = 164
             Me.scFromERI.TabIndex = 4
             '
@@ -550,7 +542,7 @@
             Me.propgridTNXERI.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXERI.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXERI.Name = "propgridTNXERI"
-            Me.propgridTNXERI.Size = New System.Drawing.Size(686, 691)
+            Me.propgridTNXERI.Size = New System.Drawing.Size(597, 691)
             Me.propgridTNXERI.TabIndex = 4
             '
             'scFromEDS
@@ -567,8 +559,8 @@
             '
             Me.scFromEDS.Panel2.Controls.Add(Me.btnLoadfromEDS)
             Me.scFromEDS.Panel2.Controls.Add(Me.btnExportERI)
-            Me.scFromEDS.Size = New System.Drawing.Size(863, 691)
-            Me.scFromEDS.SplitterDistance = 543
+            Me.scFromEDS.Size = New System.Drawing.Size(773, 691)
+            Me.scFromEDS.SplitterDistance = 484
             Me.scFromEDS.TabIndex = 0
             '
             'propgridTNXEDS
@@ -576,7 +568,7 @@
             Me.propgridTNXEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXEDS.Name = "propgridTNXEDS"
-            Me.propgridTNXEDS.Size = New System.Drawing.Size(543, 691)
+            Me.propgridTNXEDS.Size = New System.Drawing.Size(484, 691)
             Me.propgridTNXEDS.TabIndex = 4
             '
             'btnLoadfromEDS
@@ -608,7 +600,7 @@
             Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel1.Location = New System.Drawing.Point(3, 3)
             Me.Panel1.Name = "Panel1"
-            Me.Panel1.Size = New System.Drawing.Size(1721, 45)
+            Me.Panel1.Size = New System.Drawing.Size(1542, 45)
             Me.Panel1.TabIndex = 5
             '
             'btnTest
@@ -675,7 +667,7 @@
             Me.pgSQLBackUp.Location = New System.Drawing.Point(4, 22)
             Me.pgSQLBackUp.Name = "pgSQLBackUp"
             Me.pgSQLBackUp.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgSQLBackUp.Size = New System.Drawing.Size(1727, 742)
+            Me.pgSQLBackUp.Size = New System.Drawing.Size(1548, 742)
             Me.pgSQLBackUp.TabIndex = 0
             Me.pgSQLBackUp.Text = "SQL"
             Me.pgSQLBackUp.UseVisualStyleBackColor = True
@@ -753,7 +745,7 @@
             Me.TabControl1.Location = New System.Drawing.Point(0, 0)
             Me.TabControl1.Name = "TabControl1"
             Me.TabControl1.SelectedIndex = 0
-            Me.TabControl1.Size = New System.Drawing.Size(1735, 768)
+            Me.TabControl1.Size = New System.Drawing.Size(1556, 768)
             Me.TabControl1.TabIndex = 0
             '
             'pgUnitTesting
@@ -763,7 +755,7 @@
             Me.pgUnitTesting.Location = New System.Drawing.Point(4, 22)
             Me.pgUnitTesting.Name = "pgUnitTesting"
             Me.pgUnitTesting.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgUnitTesting.Size = New System.Drawing.Size(1727, 742)
+            Me.pgUnitTesting.Size = New System.Drawing.Size(1548, 742)
             Me.pgUnitTesting.TabIndex = 5
             Me.pgUnitTesting.Text = "Testing"
             Me.pgUnitTesting.UseVisualStyleBackColor = True
@@ -786,7 +778,7 @@
             Me.sccMain.Panel2.Controls.Add(Me.SplitterControl1)
             Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
             Me.sccMain.Panel2.Text = "Panel2"
-            Me.sccMain.Size = New System.Drawing.Size(1721, 616)
+            Me.sccMain.Size = New System.Drawing.Size(1542, 616)
             Me.sccMain.SplitterPosition = 377
             Me.sccMain.TabIndex = 21
             '
@@ -807,7 +799,7 @@
             '
             Me.sccTesting.Panel2.Controls.Add(Me.SplitContainerControl2)
             Me.sccTesting.Panel2.Text = "Panel2"
-            Me.sccTesting.Size = New System.Drawing.Size(1334, 616)
+            Me.sccTesting.Size = New System.Drawing.Size(1155, 616)
             Me.sccTesting.SplitterPosition = 206
             Me.sccTesting.TabIndex = 18
             '
@@ -826,7 +818,7 @@
             '
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.XtraTabControl2)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(1334, 400)
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(1155, 400)
             Me.SplitContainerControl1.SplitterPosition = 435
             Me.SplitContainerControl1.TabIndex = 15
             '
@@ -883,7 +875,7 @@
             Me.XtraTabControl2.Location = New System.Drawing.Point(0, 0)
             Me.XtraTabControl2.Name = "XtraTabControl2"
             Me.XtraTabControl2.SelectedTabPage = Me.XtraTabPage3
-            Me.XtraTabControl2.Size = New System.Drawing.Size(889, 400)
+            Me.XtraTabControl2.Size = New System.Drawing.Size(710, 400)
             Me.XtraTabControl2.TabIndex = 17
             Me.XtraTabControl2.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage3})
             '
@@ -891,7 +883,7 @@
             '
             Me.XtraTabPage3.Controls.Add(Me.seLocal)
             Me.XtraTabPage3.Name = "XtraTabPage3"
-            Me.XtraTabPage3.Size = New System.Drawing.Size(887, 375)
+            Me.XtraTabPage3.Size = New System.Drawing.Size(708, 375)
             Me.XtraTabPage3.Text = "Local Testing Folder"
             '
             'seLocal
@@ -901,7 +893,7 @@
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(887, 375)
+            Me.seLocal.Size = New System.Drawing.Size(708, 375)
             Me.seLocal.TabIndex = 16
             '
             'SplitContainerControl2
@@ -922,7 +914,7 @@
             Me.SplitContainerControl2.Panel2.Controls.Add(Me.mainLogViewer)
             Me.SplitContainerControl2.Panel2.Controls.Add(Me.rtfactivityLog)
             Me.SplitContainerControl2.Panel2.Text = "Panel2"
-            Me.SplitContainerControl2.Size = New System.Drawing.Size(1334, 206)
+            Me.SplitContainerControl2.Size = New System.Drawing.Size(1155, 206)
             Me.SplitContainerControl2.SplitterPosition = 621
             Me.SplitContainerControl2.TabIndex = 22
             '
@@ -932,7 +924,7 @@
             Me.rtbNotes.Font = New System.Drawing.Font("Tahoma", 9.0!)
             Me.rtbNotes.Location = New System.Drawing.Point(0, 17)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(703, 189)
+            Me.rtbNotes.Size = New System.Drawing.Size(524, 189)
             Me.rtbNotes.TabIndex = 21
             Me.rtbNotes.TabStop = False
             Me.rtbNotes.Text = ""
@@ -1018,37 +1010,29 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.chkWorkLocal)
+            Me.PanelControl1.Controls.Add(Me.btnProcess17)
+            Me.PanelControl1.Controls.Add(Me.btnProcess16)
+            Me.PanelControl1.Controls.Add(Me.btnProcess15)
+            Me.PanelControl1.Controls.Add(Me.btnProcess14)
+            Me.PanelControl1.Controls.Add(Me.btnProcess13)
             Me.PanelControl1.Controls.Add(Me.btnCheckout)
             Me.PanelControl1.Controls.Add(Me.testPull)
             Me.PanelControl1.Controls.Add(Me.testPush)
-            Me.PanelControl1.Controls.Add(Me.SimpleButton3)
             Me.PanelControl1.Controls.Add(Me.btnProcess12)
             Me.PanelControl1.Controls.Add(Me.btnProcess11)
             Me.PanelControl1.Controls.Add(Me.btnProcess9)
             Me.PanelControl1.Controls.Add(Me.btnProcess10)
-            Me.PanelControl1.Controls.Add(Me.testSync)
             Me.PanelControl1.Controls.Add(Me.btnClose)
             Me.PanelControl1.Controls.Add(Me.testBugFile)
-            Me.PanelControl1.Controls.Add(Me.SimpleButton2)
-            Me.PanelControl1.Controls.Add(Me.SimpleButton1)
-            Me.PanelControl1.Controls.Add(Me.testJasonLoad)
             Me.PanelControl1.Controls.Add(Me.btnProcess8)
-            Me.PanelControl1.Controls.Add(Me.testJason)
-            Me.PanelControl1.Controls.Add(Me.testIterationResults)
             Me.PanelControl1.Controls.Add(Me.btnProcess7)
-            Me.PanelControl1.Controls.Add(Me.testStructureOnly)
             Me.PanelControl1.Controls.Add(Me.btnProcess6)
-            Me.PanelControl1.Controls.Add(Me.btnNextIteration)
             Me.PanelControl1.Controls.Add(Me.btnProcess5)
-            Me.PanelControl1.Controls.Add(Me.testCompareAll)
             Me.PanelControl1.Controls.Add(Me.btnProcess4)
-            Me.PanelControl1.Controls.Add(Me.testConduct)
             Me.PanelControl1.Controls.Add(Me.btnProcess3)
-            Me.PanelControl1.Controls.Add(Me.testPublishedResults)
             Me.PanelControl1.Controls.Add(Me.btnProcess2)
-            Me.PanelControl1.Controls.Add(Me.testPrevResults)
             Me.PanelControl1.Controls.Add(Me.btnProcess1)
-            Me.PanelControl1.Controls.Add(Me.chkWorkLocal)
             Me.PanelControl1.Controls.Add(Me.testLocalWorkarea)
             Me.PanelControl1.Controls.Add(Me.LabelControl10)
             Me.PanelControl1.Controls.Add(Me.testComb)
@@ -1072,8 +1056,82 @@
             Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Top
             Me.PanelControl1.Location = New System.Drawing.Point(3, 3)
             Me.PanelControl1.Name = "PanelControl1"
-            Me.PanelControl1.Size = New System.Drawing.Size(1721, 120)
+            Me.PanelControl1.Size = New System.Drawing.Size(1542, 120)
             Me.PanelControl1.TabIndex = 16
+            '
+            'chkWorkLocal
+            '
+            Me.chkWorkLocal.EditValue = True
+            Me.chkWorkLocal.Enabled = False
+            Me.chkWorkLocal.Location = New System.Drawing.Point(1821, 21)
+            Me.chkWorkLocal.Name = "chkWorkLocal"
+            Me.chkWorkLocal.Properties.Caption = "CheckEdit1"
+            Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
+            Me.chkWorkLocal.TabIndex = 64
+            Me.chkWorkLocal.Visible = False
+            '
+            'btnProcess17
+            '
+            Me.btnProcess17.Appearance.Options.UseTextOptions = True
+            Me.btnProcess17.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess17.Enabled = False
+            Me.btnProcess17.Location = New System.Drawing.Point(1243, 92)
+            Me.btnProcess17.Name = "btnProcess17"
+            Me.btnProcess17.Size = New System.Drawing.Size(58, 23)
+            Me.btnProcess17.TabIndex = 63
+            Me.btnProcess17.Tag = "STEP5C|Analyze the ERIs in the 'Manual (SAPI)' folder"
+            Me.btnProcess17.Text = "5c. Man"
+            Me.btnProcess17.ToolTip = "ANALYZE ERI"
+            '
+            'btnProcess16
+            '
+            Me.btnProcess16.Appearance.Options.UseTextOptions = True
+            Me.btnProcess16.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess16.Enabled = False
+            Me.btnProcess16.Location = New System.Drawing.Point(1179, 92)
+            Me.btnProcess16.Name = "btnProcess16"
+            Me.btnProcess16.Size = New System.Drawing.Size(58, 23)
+            Me.btnProcess16.TabIndex = 62
+            Me.btnProcess16.Tag = "STEP5B|Analyze the ERIs in the 'Manual (Current)' folder"
+            Me.btnProcess16.Text = "5b. Cur."
+            Me.btnProcess16.ToolTip = "ANALYZE ERI"
+            '
+            'btnProcess15
+            '
+            Me.btnProcess15.Appearance.Options.UseTextOptions = True
+            Me.btnProcess15.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess15.Enabled = False
+            Me.btnProcess15.Location = New System.Drawing.Point(1115, 92)
+            Me.btnProcess15.Name = "btnProcess15"
+            Me.btnProcess15.Size = New System.Drawing.Size(58, 23)
+            Me.btnProcess15.TabIndex = 61
+            Me.btnProcess15.Tag = "STEP5A|Analyze the ERIs in the 'Manual ERI' Folder"
+            Me.btnProcess15.Text = "5a. ERI"
+            Me.btnProcess15.ToolTip = "ANALYZE ERI"
+            '
+            'btnProcess14
+            '
+            Me.btnProcess14.Appearance.Options.UseTextOptions = True
+            Me.btnProcess14.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess14.Enabled = False
+            Me.btnProcess14.Location = New System.Drawing.Point(1243, 34)
+            Me.btnProcess14.Name = "btnProcess14"
+            Me.btnProcess14.Size = New System.Drawing.Size(58, 23)
+            Me.btnProcess14.TabIndex = 54
+            Me.btnProcess14.Tag = "STEP4C|Import inputs for Manual SAPI versions in the iteration folder"
+            Me.btnProcess14.Text = "4c. II Man"
+            Me.btnProcess14.ToolTip = "IMPORT INPUTS (SAPI Manual)"
+            '
+            'btnProcess13
+            '
+            Me.btnProcess13.Enabled = False
+            Me.btnProcess13.Location = New System.Drawing.Point(1038, 92)
+            Me.btnProcess13.Name = "btnProcess13"
+            Me.btnProcess13.Size = New System.Drawing.Size(55, 23)
+            Me.btnProcess13.TabIndex = 53
+            Me.btnProcess13.Tag = "STEP3D|Create new Manual SAPI teamplates in the iteration folder."
+            Me.btnProcess13.Text = "3d. Man"
+            Me.btnProcess13.ToolTip = "CREATE TEMPLATE FILES (SAPI Manual)"
             '
             'btnCheckout
             '
@@ -1108,27 +1166,18 @@
             Me.testPush.TabIndex = 50
             Me.testPush.Text = "Push"
             '
-            'SimpleButton3
-            '
-            Me.SimpleButton3.Location = New System.Drawing.Point(1754, 66)
-            Me.SimpleButton3.Name = "SimpleButton3"
-            Me.SimpleButton3.Size = New System.Drawing.Size(90, 23)
-            Me.SimpleButton3.TabIndex = 49
-            Me.SimpleButton3.Text = "Test"
-            Me.SimpleButton3.Visible = False
-            '
             'btnProcess12
             '
             Me.btnProcess12.Appearance.Options.UseTextOptions = True
             Me.btnProcess12.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess12.Enabled = False
-            Me.btnProcess12.Location = New System.Drawing.Point(1038, 5)
+            Me.btnProcess12.Location = New System.Drawing.Point(1115, 5)
             Me.btnProcess12.Name = "btnProcess12"
-            Me.btnProcess12.Size = New System.Drawing.Size(177, 23)
+            Me.btnProcess12.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess12.TabIndex = 48
             Me.btnProcess12.Tag = "STEP4|Import inputs for all files for the current iteration and publsihed version" &
     "s."
-            Me.btnProcess12.Text = "4. Import Inputs"
+            Me.btnProcess12.Text = "4. Import Inputs (II)"
             Me.btnProcess12.ToolTip = "IMPORT INPUTS (BOTH)"
             '
             'btnProcess11
@@ -1138,9 +1187,9 @@
             Me.btnProcess11.Name = "btnProcess11"
             Me.btnProcess11.Size = New System.Drawing.Size(55, 23)
             Me.btnProcess11.TabIndex = 47
-            Me.btnProcess11.Tag = "STEP3C|Create new SAPI teamplates in the iteration folder."
-            Me.btnProcess11.Text = "3c. SAPI"
-            Me.btnProcess11.ToolTip = "CREATE TEMPLATE FILES (SAPI)"
+            Me.btnProcess11.Tag = "STEP3C|Create new Maestro SAPI teamplates in the iteration folder."
+            Me.btnProcess11.Text = "3c. Mae"
+            Me.btnProcess11.ToolTip = "CREATE TEMPLATE FILES (SAPI Maestro)"
             '
             'btnProcess9
             '
@@ -1163,18 +1212,6 @@
             Me.btnProcess10.Tag = "STEP3B|Create new ERI file(s) in the 'Manual ERI' folder."
             Me.btnProcess10.Text = "3b. ERI"
             Me.btnProcess10.ToolTip = "CREATE TEAMPLATE FILES (ERI)"
-            '
-            'testSync
-            '
-            Me.testSync.Enabled = False
-            Me.testSync.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.refresh2_16x16
-            Me.testSync.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
-            Me.testSync.Location = New System.Drawing.Point(1353, 63)
-            Me.testSync.Name = "testSync"
-            Me.testSync.Size = New System.Drawing.Size(139, 23)
-            Me.testSync.TabIndex = 44
-            Me.testSync.Text = "Force R: Sync"
-            Me.testSync.Visible = False
             '
             'btnClose
             '
@@ -1199,170 +1236,70 @@
             Me.testBugFile.TabIndex = 42
             Me.testBugFile.Text = "Add Bug Reference File"
             '
-            'SimpleButton2
-            '
-            Me.SimpleButton2.Enabled = False
-            Me.SimpleButton2.Location = New System.Drawing.Point(1776, 42)
-            Me.SimpleButton2.Name = "SimpleButton2"
-            Me.SimpleButton2.Size = New System.Drawing.Size(90, 23)
-            Me.SimpleButton2.TabIndex = 41
-            Me.SimpleButton2.Text = "Log Bug"
-            Me.SimpleButton2.Visible = False
-            '
-            'SimpleButton1
-            '
-            Me.SimpleButton1.Location = New System.Drawing.Point(1710, 31)
-            Me.SimpleButton1.Name = "SimpleButton1"
-            Me.SimpleButton1.Size = New System.Drawing.Size(172, 10)
-            Me.SimpleButton1.TabIndex = 40
-            Me.SimpleButton1.Text = "Version Number Test"
-            Me.SimpleButton1.Visible = False
-            '
-            'testJasonLoad
-            '
-            Me.testJasonLoad.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.intro_1669842870
-            Me.testJasonLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testJasonLoad.Location = New System.Drawing.Point(1734, 86)
-            Me.testJasonLoad.Name = "testJasonLoad"
-            Me.testJasonLoad.Size = New System.Drawing.Size(83, 33)
-            Me.testJasonLoad.TabIndex = 31
-            Me.testJasonLoad.Text = "Load JSON"
-            Me.testJasonLoad.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-            Me.testJasonLoad.UseVisualStyleBackColor = True
-            Me.testJasonLoad.Visible = False
-            '
             'btnProcess8
             '
             Me.btnProcess8.Appearance.Options.UseTextOptions = True
             Me.btnProcess8.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess8.Enabled = False
-            Me.btnProcess8.Location = New System.Drawing.Point(1038, 92)
+            Me.btnProcess8.Location = New System.Drawing.Point(1322, 34)
             Me.btnProcess8.Name = "btnProcess8"
-            Me.btnProcess8.Size = New System.Drawing.Size(177, 23)
+            Me.btnProcess8.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess8.TabIndex = 39
             Me.btnProcess8.Tag = "STEP7|Generate and compare the results for all tools. "
             Me.btnProcess8.Text = "7. Create Results"
             Me.btnProcess8.ToolTip = "CREATE RESULTS"
-            '
-            'testJason
-            '
-            Me.testJason.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.l_intro_1658899230
-            Me.testJason.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testJason.Location = New System.Drawing.Point(1734, 32)
-            Me.testJason.Name = "testJason"
-            Me.testJason.Size = New System.Drawing.Size(83, 33)
-            Me.testJason.TabIndex = 30
-            Me.testJason.Text = "Create JSON"
-            Me.testJason.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-            Me.testJason.UseVisualStyleBackColor = True
-            Me.testJason.Visible = False
-            '
-            'testIterationResults
-            '
-            Me.testIterationResults.Enabled = False
-            Me.testIterationResults.Location = New System.Drawing.Point(1551, 23)
-            Me.testIterationResults.Name = "testIterationResults"
-            Me.testIterationResults.Size = New System.Drawing.Size(177, 10)
-            Me.testIterationResults.TabIndex = 25
-            Me.testIterationResults.Text = "Create Iteration Results"
-            Me.testIterationResults.Visible = False
             '
             'btnProcess7
             '
             Me.btnProcess7.Appearance.Options.UseTextOptions = True
             Me.btnProcess7.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess7.Enabled = False
-            Me.btnProcess7.Location = New System.Drawing.Point(1131, 63)
+            Me.btnProcess7.Location = New System.Drawing.Point(1322, 5)
             Me.btnProcess7.Name = "btnProcess7"
-            Me.btnProcess7.Size = New System.Drawing.Size(84, 23)
+            Me.btnProcess7.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess7.TabIndex = 38
             Me.btnProcess7.Tag = "STEP6|Conduct the files in the Maestro folder. "
             Me.btnProcess7.Text = "6. Conduct"
             Me.btnProcess7.ToolTip = "CONDUCT"
-            '
-            'testStructureOnly
-            '
-            Me.testStructureOnly.Enabled = False
-            Me.testStructureOnly.Location = New System.Drawing.Point(1813, 86)
-            Me.testStructureOnly.Name = "testStructureOnly"
-            Me.testStructureOnly.Size = New System.Drawing.Size(71, 33)
-            Me.testStructureOnly.TabIndex = 29
-            Me.testStructureOnly.Text = "Load" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Structure" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Only"
-            Me.testStructureOnly.Visible = False
             '
             'btnProcess6
             '
             Me.btnProcess6.Appearance.Options.UseTextOptions = True
             Me.btnProcess6.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess6.Enabled = False
-            Me.btnProcess6.Location = New System.Drawing.Point(1038, 63)
+            Me.btnProcess6.Location = New System.Drawing.Point(1115, 63)
             Me.btnProcess6.Name = "btnProcess6"
-            Me.btnProcess6.Size = New System.Drawing.Size(84, 23)
+            Me.btnProcess6.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess6.TabIndex = 37
-            Me.btnProcess6.Tag = "STEP5|Analyze the 'Manual ERI' file to be used for reference with the manual proc" &
-    "esses. "
-            Me.btnProcess6.Text = "5. Run ERI"
+            Me.btnProcess6.Tag = "STEP5|Analyze the all ERIs for the test case other than the Maestro folder."
+            Me.btnProcess6.Text = "5. Run All ERI(s)"
             Me.btnProcess6.ToolTip = "ANALYZE ERI"
-            '
-            'btnNextIteration
-            '
-            Me.btnNextIteration.Enabled = False
-            Me.btnNextIteration.Location = New System.Drawing.Point(1551, 106)
-            Me.btnNextIteration.Name = "btnNextIteration"
-            Me.btnNextIteration.Size = New System.Drawing.Size(177, 10)
-            Me.btnNextIteration.TabIndex = 18
-            Me.btnNextIteration.Text = "Create New Iteration"
-            Me.btnNextIteration.Visible = False
             '
             'btnProcess5
             '
             Me.btnProcess5.Appearance.Options.UseTextOptions = True
             Me.btnProcess5.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess5.Enabled = False
-            Me.btnProcess5.Location = New System.Drawing.Point(1038, 34)
+            Me.btnProcess5.Location = New System.Drawing.Point(1115, 34)
             Me.btnProcess5.Name = "btnProcess5"
-            Me.btnProcess5.Size = New System.Drawing.Size(84, 23)
+            Me.btnProcess5.Size = New System.Drawing.Size(58, 23)
             Me.btnProcess5.TabIndex = 36
-            Me.btnProcess5.Tag = "STEP4A|Import inputs for SAPI versions in the iteration folder"
-            Me.btnProcess5.Text = "4a. II Maestro"
-            Me.btnProcess5.ToolTip = "IMPORT INPUTS (SAPI)"
-            '
-            'testCompareAll
-            '
-            Me.testCompareAll.Enabled = False
-            Me.testCompareAll.Location = New System.Drawing.Point(1551, 87)
-            Me.testCompareAll.Name = "testCompareAll"
-            Me.testCompareAll.Size = New System.Drawing.Size(177, 10)
-            Me.testCompareAll.TabIndex = 28
-            Me.testCompareAll.Text = "Compare All Results"
-            Me.testCompareAll.Visible = False
+            Me.btnProcess5.Tag = "STEP4A|Import inputs for Maestro SAPI versions in the iteration folder"
+            Me.btnProcess5.Text = "4a. II Mae"
+            Me.btnProcess5.ToolTip = "IMPORT INPUTS (SAPI Maestro)"
             '
             'btnProcess4
             '
             Me.btnProcess4.Appearance.Options.UseTextOptions = True
             Me.btnProcess4.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess4.Enabled = False
-            Me.btnProcess4.Location = New System.Drawing.Point(1131, 34)
+            Me.btnProcess4.Location = New System.Drawing.Point(1179, 34)
             Me.btnProcess4.Name = "btnProcess4"
-            Me.btnProcess4.Size = New System.Drawing.Size(84, 23)
+            Me.btnProcess4.Size = New System.Drawing.Size(58, 23)
             Me.btnProcess4.TabIndex = 35
             Me.btnProcess4.Tag = "STEP4B|Import inputs for current production tools)"
-            Me.btnProcess4.Text = "4b. II Current"
+            Me.btnProcess4.Text = "4b. II Cur."
             Me.btnProcess4.ToolTip = "IMPORT INPUTS (CURRENT)"
-            '
-            'testConduct
-            '
-            Me.testConduct.BackgroundImage = Global.Testing_Winform.My.Resources.Resources.download
-            Me.testConduct.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-            Me.testConduct.Enabled = False
-            Me.testConduct.ImageOptions.Image = Global.Testing_Winform.My.Resources.Resources.download
-            Me.testConduct.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.Full
-            Me.testConduct.Location = New System.Drawing.Point(1813, 32)
-            Me.testConduct.Name = "testConduct"
-            Me.testConduct.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-            Me.testConduct.Size = New System.Drawing.Size(71, 33)
-            Me.testConduct.TabIndex = 24
-            Me.testConduct.Visible = False
             '
             'btnProcess3
             '
@@ -1371,21 +1308,11 @@
             Me.btnProcess3.Enabled = False
             Me.btnProcess3.Location = New System.Drawing.Point(855, 63)
             Me.btnProcess3.Name = "btnProcess3"
-            Me.btnProcess3.Size = New System.Drawing.Size(177, 23)
+            Me.btnProcess3.Size = New System.Drawing.Size(238, 23)
             Me.btnProcess3.TabIndex = 34
             Me.btnProcess3.Tag = "STEP3|Create new templates (Only SAPI if current files already exist)"
             Me.btnProcess3.Text = "3. Create Template Files"
             Me.btnProcess3.ToolTip = "CREATE TEMPLATE FILES"
-            '
-            'testPublishedResults
-            '
-            Me.testPublishedResults.Enabled = False
-            Me.testPublishedResults.Location = New System.Drawing.Point(1551, 65)
-            Me.testPublishedResults.Name = "testPublishedResults"
-            Me.testPublishedResults.Size = New System.Drawing.Size(177, 10)
-            Me.testPublishedResults.TabIndex = 27
-            Me.testPublishedResults.Text = "Create Published Tools Results"
-            Me.testPublishedResults.Visible = False
             '
             'btnProcess2
             '
@@ -1394,21 +1321,11 @@
             Me.btnProcess2.Enabled = False
             Me.btnProcess2.Location = New System.Drawing.Point(855, 34)
             Me.btnProcess2.Name = "btnProcess2"
-            Me.btnProcess2.Size = New System.Drawing.Size(177, 23)
+            Me.btnProcess2.Size = New System.Drawing.Size(238, 23)
             Me.btnProcess2.TabIndex = 33
             Me.btnProcess2.Tag = "STEP2|Create a new iteration (Maestro & Manual (SAPI)) folders"
             Me.btnProcess2.Text = "2. Create New Iteration"
             Me.btnProcess2.ToolTip = "CREATE ITERATION"
-            '
-            'testPrevResults
-            '
-            Me.testPrevResults.Enabled = False
-            Me.testPrevResults.Location = New System.Drawing.Point(1551, 44)
-            Me.testPrevResults.Name = "testPrevResults"
-            Me.testPrevResults.Size = New System.Drawing.Size(177, 10)
-            Me.testPrevResults.TabIndex = 26
-            Me.testPrevResults.Text = "Create Reference SA Results"
-            Me.testPrevResults.Visible = False
             '
             'btnProcess1
             '
@@ -1417,21 +1334,11 @@
             Me.btnProcess1.Enabled = False
             Me.btnProcess1.Location = New System.Drawing.Point(855, 5)
             Me.btnProcess1.Name = "btnProcess1"
-            Me.btnProcess1.Size = New System.Drawing.Size(177, 23)
+            Me.btnProcess1.Size = New System.Drawing.Size(238, 23)
             Me.btnProcess1.TabIndex = 32
             Me.btnProcess1.Tag = "STEP1|Get all files from reference SA file from specified folder"
             Me.btnProcess1.Text = "1. Get Reference SA Files"
             Me.btnProcess1.ToolTip = "GET SA FILES"
-            '
-            'chkWorkLocal
-            '
-            Me.chkWorkLocal.Enabled = False
-            Me.chkWorkLocal.Location = New System.Drawing.Point(1782, 53)
-            Me.chkWorkLocal.Name = "chkWorkLocal"
-            Me.chkWorkLocal.Properties.Caption = "Work Local"
-            Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
-            Me.chkWorkLocal.TabIndex = 23
-            Me.chkWorkLocal.Visible = False
             '
             'testLocalWorkarea
             '
@@ -1471,6 +1378,7 @@
             Me.testNextIteration.Properties.ReadOnly = True
             Me.testNextIteration.Size = New System.Drawing.Size(50, 20)
             Me.testNextIteration.TabIndex = 17
+            Me.testNextIteration.Visible = False
             '
             'LabelControl8
             '
@@ -1479,6 +1387,7 @@
             Me.LabelControl8.Size = New System.Drawing.Size(68, 13)
             Me.LabelControl8.TabIndex = 16
             Me.LabelControl8.Text = "Next Iteration"
+            Me.LabelControl8.Visible = False
             '
             'testID
             '
@@ -1532,8 +1441,11 @@
             '
             'testIteration
             '
+            Me.testIteration.EditValue = "2"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
+            Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
+            Me.testIteration.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.testIteration.Properties.ReadOnly = True
             Me.testIteration.Size = New System.Drawing.Size(50, 20)
             Me.testIteration.TabIndex = 12
@@ -1601,7 +1513,7 @@
             Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
             Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
             Me.AutoScroll = True
-            Me.ClientSize = New System.Drawing.Size(1735, 768)
+            Me.ClientSize = New System.Drawing.Size(1556, 768)
             Me.Controls.Add(Me.TabControl1)
             Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
             Me.Name = "frmMain"
@@ -1757,7 +1669,6 @@
         Friend WithEvents PanelControl1 As DevExpress.XtraEditors.PanelControl
         Friend WithEvents testID As DevExpress.XtraEditors.ComboBoxEdit
         Friend WithEvents LabelControl7 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents btnNextIteration As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testNextIteration As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl8 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents testComb As DevExpress.XtraEditors.TextEdit
@@ -1765,20 +1676,13 @@
         Friend WithEvents sccTesting As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents testLocalWorkarea As DevExpress.XtraEditors.TextEdit
         Friend WithEvents LabelControl10 As DevExpress.XtraEditors.LabelControl
-        Friend WithEvents chkWorkLocal As DevExpress.XtraEditors.CheckEdit
-        Friend WithEvents testConduct As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents testPrevResults As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents testIterationResults As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents testPublishedResults As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents sccMain As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents pgcUnitTesting As PropertyGrid
-        Friend WithEvents testCompareAll As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents XtraTabControl1 As DevExpress.XtraTab.XtraTabControl
         Friend WithEvents XtraTabPage1 As DevExpress.XtraTab.XtraTabPage
         Friend WithEvents seNetwork As SimpleExplorer
         Friend WithEvents XtraTabPage2 As DevExpress.XtraTab.XtraTabPage
         Friend WithEvents Button1 As Button
-        Friend WithEvents testStructureOnly As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnLoopThroughERI As Button
         Friend WithEvents seSA As SimpleExplorer
         Friend WithEvents XtraTabControl2 As DevExpress.XtraTab.XtraTabControl
@@ -1789,8 +1693,6 @@
         Friend WithEvents Panel2 As Panel
         Friend WithEvents Panel1 As Panel
         Friend WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
-        Friend WithEvents testJason As Button
-        Friend WithEvents testJasonLoad As Button
         Friend WithEvents btnProcess8 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess7 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess6 As DevExpress.XtraEditors.SimpleButton
@@ -1799,24 +1701,26 @@
         Friend WithEvents btnProcess3 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess2 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess1 As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents SimpleButton1 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents SplitContainerControl2 As DevExpress.XtraEditors.SplitContainerControl
         Friend WithEvents rtbNotes As RichTextBox
         Friend WithEvents LabelControl14 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents rtfactivityLog As RichTextBox
-        Friend WithEvents SimpleButton2 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testBugFile As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents mainLogViewer As LogViewer
         Friend WithEvents btnClose As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents testSync As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess12 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess11 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess9 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess10 As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents SimpleButton3 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testPull As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents testPush As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnCheckout As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess14 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess13 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess17 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess16 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess15 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents chkWorkLocal As DevExpress.XtraEditors.CheckEdit
 #End Region
 
     End Class

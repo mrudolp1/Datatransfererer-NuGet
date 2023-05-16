@@ -54,7 +54,7 @@ Public Class SiteInfo
                             AND si.address_id=addr.address_id(+)
                             AND wo.eng_app_id = ea.eng_app_id (+)
                             AND addr.ctry_id='US'
-                            AND ea.org_seq_num = org.org_seq_num
+                            AND ea.org_seq_num = org.org_seq_num (+)
                             AND wo.work_order_seq_num='" & wo & "'"
 
 

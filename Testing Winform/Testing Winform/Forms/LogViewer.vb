@@ -125,6 +125,7 @@ Namespace UnitTesting
             logDt.Columns.Add("Date")
             logDt.Columns.Add("Time")
             logDt.Columns.Add("User")
+            logDt.Columns.Add("Iteration")
             logDt.Columns.Add("Description")
 
             If logPath = "" Then logPath = frmMain.TestLogActivityPath
@@ -179,6 +180,7 @@ Namespace UnitTesting
                 Me.GridView2.Columns(1).Width = 75
                 Me.GridView2.Columns(2).Width = 75
                 Me.GridView2.Columns(3).Width = 75
+                Me.GridView2.Columns(4).Width = 75
             End If
             'rtfactivityLog.ScrollToCaret()
         End Sub
@@ -201,7 +203,12 @@ Namespace UnitTesting
                 mtime = dt(0)
             End If
 
-            logdt.Rows.Add(lineVars(2).Trim, mdate.Replace(" ", ""), mtime.Replace(" ", ""), lineVars(1).Replace(" ", ""), lineVars(3))
+            If lineVars.Count > 4 Then
+                logdt.Rows.Add(lineVars(2).Trim, mdate.Replace(" ", ""), mtime.Replace(" ", ""), lineVars(1).Replace(" ", ""), lineVars(4).Replace(" ", ""), lineVars(3))
+            Else
+                logdt.Rows.Add(lineVars(2).Trim, mdate.Replace(" ", ""), mtime.Replace(" ", ""), lineVars(1).Replace(" ", ""), "1", lineVars(3))
+            End If
+
         End Sub
     End Class
 End Namespace

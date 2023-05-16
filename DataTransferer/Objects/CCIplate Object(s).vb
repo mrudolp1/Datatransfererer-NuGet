@@ -1973,7 +1973,6 @@ Partial Public Class Connection
 
 #Region "Define"
     Private _local_id As Integer?
-    Private _ID As Integer?
     Private _connection_elevation As Double?
     Private _connection_type As String
     Private _bolt_configuration As String
@@ -1991,16 +1990,6 @@ Partial Public Class Connection
         End Get
         Set
             Me._local_id = Value
-        End Set
-    End Property
-
-    <Category("Connection"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
         End Set
     End Property
     <Category("Connection"), Description(""), DisplayName("Connection Elevation")>
@@ -2263,7 +2252,6 @@ Partial Public Class PlateDetail
 #Region "Define"
     Private _local_id As Integer?
     Private _local_connection_id As Integer?
-    Private _ID As Integer?
     Private _connection_id As Integer? 'currently called plate_id in EDS
     Private _plate_location As String
     Private _plate_type As String
@@ -2297,15 +2285,6 @@ Partial Public Class PlateDetail
         End Set
     End Property
 
-    <Category("Plate Details"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Plate Details"), Description(""), DisplayName("Connection Id")>
     <DataMember()> Public Property connection_id() As Integer?
         Get
@@ -2627,7 +2606,6 @@ Partial Public Class BoltGroup
 #Region "Define"
     Private _local_id As Integer?
     Private _local_connection_id As Integer?
-    Private _ID As Integer?
     Private _connection_id As Integer?
     Private _resist_axial As Boolean?
     Private _resist_shear As Boolean?
@@ -2659,15 +2637,6 @@ Partial Public Class BoltGroup
         End Set
     End Property
 
-    <Category("Bolt Groups"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Bolt Groups"), Description(""), DisplayName("Connection Id")>
     <DataMember()> Public Property connection_id() As Integer?
         Get
@@ -2908,7 +2877,6 @@ Partial Public Class BoltDetail
     'Private _local_id As Integer?
     Private _local_connection_id As Integer?
     Private _local_group_id As Integer?
-    Private _ID As Integer?
     Private _bolt_group_id As Integer?
     Private _bolt_location As Double?
     Private _bolt_diameter As Double?
@@ -2950,15 +2918,6 @@ Partial Public Class BoltDetail
         End Set
     End Property
 
-    <Category("Bolt Details"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Bolt Details"), Description(""), DisplayName("Bolt Group Id")>
     <DataMember()> Public Property bolt_group_id() As Integer?
         Get
@@ -3209,7 +3168,6 @@ Partial Public Class CCIplateMaterial
 #End Region
 
 #Region "Define"
-    Private _ID As Integer?
     Private _local_id As Integer? 'removed
     Private _name As String
     Private _fy_0 As Double?
@@ -3223,15 +3181,7 @@ Partial Public Class CCIplateMaterial
     Private _fu_2_625 As Double?
     Private _fu_4_125 As Double?
     Private _default_material As Boolean?
-    <Category("CCIplate Material Properties"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
+
     <Category("Connection Material Properties"), Description(""), DisplayName("Local Id")>
     <DataMember()> Public Property local_id() As Integer?
         Get
@@ -4014,7 +3964,6 @@ Partial Public Class StiffenerGroup
 #Region "Define"
     Private _local_id As Integer?
     Private _local_plate_id As Integer?
-    Private _ID As Integer?
     Private _plate_details_id As Integer?
     Private _stiffener_name As String
 
@@ -4040,15 +3989,6 @@ Partial Public Class StiffenerGroup
         End Set
     End Property
 
-    <Category("Stiffener Groups"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Stiffener Groups"), Description(""), DisplayName("Plate Details Id")>
     <DataMember()> Public Property plate_details_id() As Integer?
         Get
@@ -4208,7 +4148,6 @@ Partial Public Class StiffenerDetail
     'Private _local_id As Integer?
     Private _local_plate_id As Integer?
     Private _local_group_id As Integer?
-    Private _ID As Integer?
     Private _stiffener_id As Integer?
     Private _stiffener_location As Double?
     Private _stiffener_width As Double?
@@ -4255,15 +4194,6 @@ Partial Public Class StiffenerDetail
         End Set
     End Property
 
-    <Category("Stiffener Details"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Stiffener Details"), Description(""), DisplayName("Stiffener Id")>
     <DataMember()> Public Property stiffener_id() As Integer?
         Get
@@ -4837,7 +4767,6 @@ Partial Public Class BridgeStiffenerDetail
 #Region "Define"
     Private _local_id As Integer?
     Private _local_connection_id As Integer?
-    Private _ID As Integer?
     Private _connection_id As Integer?
     Private _stiffener_type As String
     Private _analysis_type As String
@@ -4887,15 +4816,6 @@ Partial Public Class BridgeStiffenerDetail
         End Set
     End Property
 
-    <Category("Bridge Stiffener Details"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Bridge Stiffener Details"), Description(""), DisplayName("Connection Id")>
     <DataMember()> Public Property connection_id() As Integer?
         Get

@@ -2705,10 +2705,22 @@ Public Class DrilledPierSoilLayer
         ConstructMe(dr, Parent)
 
         Try
-            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile_id"))
+            Me.local_soil_profile_id = DBtoNullableDbl(dr.Item("local_soil_profile"))
+        Catch ex As Exception
+        End Try
+        Try
             Me.local_soil_layer_id = DBtoNullableDbl(dr.Item("local_soil_layer_id"))
+        Catch ex As Exception
+        End Try
+        Try
             Me.drilled_pier_id = DBtoNullableDbl(dr.Item("drilled_pier_id"))
+        Catch ex As Exception
+        End Try
+        Try
             Me.local_drilled_pier_id = DBtoNullableDbl(dr.Item("local_drilled_pier_id"))
+        Catch ex As Exception
+        End Try
+        Try
             Me.soil_profile_id = DBtoNullableDbl(dr.Item("soil_profile_id"))
         Catch
         End Try
