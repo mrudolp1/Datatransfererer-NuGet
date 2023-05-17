@@ -1986,6 +1986,13 @@ Partial Public Class Pile
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Me.Results.Clear()
+        Me.SoilLayers.Clear()
+        Me.SoilProfiles.Clear()
+        Me.PileLocations.Clear()
+    End Sub
+
 End Class
 
 <DataContractAttribute()>
@@ -2048,7 +2055,7 @@ Partial Public Class PileLocation
 
 
     <Category("Pile Location"), Description(""), DisplayName("Pile X Coordinate")>
-     <DataMember()> Public Property pile_x_coordinate() As Double?
+    <DataMember()> Public Property pile_x_coordinate() As Double?
         Get
             Return Me._pile_x_coordinate
         End Get
@@ -2057,7 +2064,7 @@ Partial Public Class PileLocation
         End Set
     End Property
     <Category("Pile Location"), Description(""), DisplayName("Pile Y Coordinate")>
-     <DataMember()> Public Property pile_y_coordinate() As Double?
+    <DataMember()> Public Property pile_y_coordinate() As Double?
         Get
             Return Me._pile_y_coordinate
         End Get

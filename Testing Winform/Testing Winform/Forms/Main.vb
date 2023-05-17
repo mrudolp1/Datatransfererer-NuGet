@@ -24,7 +24,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.1"
+        Public testingVersion As String = "1.0.0.2"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -855,6 +855,10 @@ finishMe:
 
                 If Not Directory.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Iteration " & Me.iteration) Then
                     CreateIteration(Me.iteration)
+                End If
+
+                If File.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt") Then
+                    testPush.Enabled = True
                 End If
 
                 ButtonclickToggle(Me.Cursor)

@@ -168,4 +168,9 @@ Partial Public Class SoilProfile
 
     End Function
 
+    Public Overrides Sub Clear()
+        Me.SoilLayers.Clear()
+        Me.Results.Clear()
+    End Sub
+
 End Class

@@ -46,6 +46,15 @@ Partial Public Class EDSStructure
     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
 
+    Public Overrides Sub Clear()
+        Me.CCIplates.Clear()
+        Me.PierandPads.Clear()
+        Me.Piles.Clear()
+        Me.Poles.Clear()
+        Me.UnitBases.Clear()
+        Me.DrilledPierTools.Clear()
+        Me.GuyAnchorBlockTools.Clear()
+    End Sub
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}
 

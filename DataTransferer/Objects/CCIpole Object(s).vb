@@ -1528,6 +1528,18 @@ Partial Public Class Pole
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Me.unreinf_sections.Clear()
+        Me.reinf_sections.Clear()
+        Me.reinf_groups.Clear()
+        Me.int_groups.Clear()
+        Me.reinf_section_results.Clear()
+        Me.matls.Clear()
+        Me.bolts.Clear()
+        Me.reinfs.Clear()
+        Me.Results.Clear()
+    End Sub
+
 End Class
 
 <DataContractAttribute()>

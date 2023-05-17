@@ -568,7 +568,6 @@ Partial Public Class tnxGeometry
     Private _baseStructure As New List(Of tnxTowerRecord)
     Private _guyWires As New List(Of tnxGuyRecord)
 
-
     <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
     <DataMember()> Public Property TowerType() As String
         Get
@@ -871,6 +870,12 @@ Partial Public Class tnxGeometry
             Return Me.baseStructure(SectionNumber - Me.upperStructure.Count - 1)
         End If
     End Function
+
+    Public Overrides Sub Clear()
+        Me.upperStructure.Clear()
+        Me.baseStructure.Clear()
+        Me.guyWires.Clear()
+    End Sub
 
 End Class
 
