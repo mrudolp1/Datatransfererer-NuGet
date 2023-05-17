@@ -98,6 +98,7 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnProcess18 = New DevExpress.XtraEditors.SimpleButton()
             Me.chkWorkLocal = New DevExpress.XtraEditors.CheckEdit()
             Me.btnProcess17 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess16 = New DevExpress.XtraEditors.SimpleButton()
@@ -1010,6 +1011,7 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnProcess18)
             Me.PanelControl1.Controls.Add(Me.chkWorkLocal)
             Me.PanelControl1.Controls.Add(Me.btnProcess17)
             Me.PanelControl1.Controls.Add(Me.btnProcess16)
@@ -1058,6 +1060,19 @@
             Me.PanelControl1.Name = "PanelControl1"
             Me.PanelControl1.Size = New System.Drawing.Size(1542, 120)
             Me.PanelControl1.TabIndex = 16
+            '
+            'btnProcess18
+            '
+            Me.btnProcess18.Appearance.Options.UseTextOptions = True
+            Me.btnProcess18.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess18.Enabled = False
+            Me.btnProcess18.Location = New System.Drawing.Point(1322, 63)
+            Me.btnProcess18.Name = "btnProcess18"
+            Me.btnProcess18.Size = New System.Drawing.Size(186, 23)
+            Me.btnProcess18.TabIndex = 65
+            Me.btnProcess18.Tag = "STEP8|Save local structure to EDS"
+            Me.btnProcess18.Text = "8. Save to EDS"
+            Me.btnProcess18.ToolTip = "SAVE TO EDS"
             '
             'chkWorkLocal
             '
@@ -1441,7 +1456,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "3"
+            Me.testIteration.EditValue = "2"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
@@ -1721,6 +1736,7 @@
         Friend WithEvents btnProcess16 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess15 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents chkWorkLocal As DevExpress.XtraEditors.CheckEdit
+        Friend WithEvents btnProcess18 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
