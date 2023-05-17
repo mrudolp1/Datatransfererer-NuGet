@@ -10463,6 +10463,14 @@ Partial Public Class tnxModel
         Return TNXEquals
     End Function
 
+    Public Overrides Sub Clear()
+        Me.feedLines.Clear()
+        Me.discreteLoads.Clear()
+        Me.dishes.Clear()
+        Me.userForces.Clear()
+        Me.otherLines.Clear()
+        Me.geometry.Clear()
+    End Sub
 End Class
 
 Public Class DefaultERItxtValues

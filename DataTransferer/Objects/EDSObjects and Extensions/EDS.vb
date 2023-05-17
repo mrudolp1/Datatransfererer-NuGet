@@ -133,6 +133,12 @@ Partial Public MustInherit Class EDSObject
 
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
+
+    'Used to just clear properties specific to each individual object and lists associated with the object
+    Public Overridable Sub Clear()
+
+    End Sub
+
 End Class
 
 <DataContract()>

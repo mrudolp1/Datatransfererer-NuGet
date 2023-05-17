@@ -459,6 +459,11 @@ Partial Public Class DrilledPierFoundation
         Return Equals
     End Function
 #End Region
+
+    Public Overrides Sub Clear()
+        Me.DrilledPiers.Clear()
+        Me.Results.Clear()
+    End Sub
 End Class
 
 <DataContractAttribute()>

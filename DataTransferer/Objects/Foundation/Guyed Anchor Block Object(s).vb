@@ -675,6 +675,10 @@ Partial Public Class AnchorBlockFoundation
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Me.AnchorBlocks.Clear()
+        Me.Results.Clear()
+    End Sub
 End Class
 
 <DataContractAttribute()>

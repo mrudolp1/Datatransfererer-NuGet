@@ -1789,6 +1789,10 @@ Partial Public Class CCIplate
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Me.Connections.Clear()
+        Me.Results.Clear()
+    End Sub
 End Class
 
 <DataContractAttribute()>

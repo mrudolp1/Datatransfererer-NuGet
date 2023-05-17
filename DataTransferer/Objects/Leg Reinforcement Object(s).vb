@@ -769,6 +769,11 @@ Partial Public Class LegReinforcement
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Me.LegReinforcementDetails.Clear()
+        Me.Results.Clear()
+    End Sub
+
 End Class
 
 <DataContractAttribute()>
