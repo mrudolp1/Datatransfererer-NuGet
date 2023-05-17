@@ -526,7 +526,7 @@ Namespace UnitTesting
                     btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click,
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
-                    btnProcess17.Click
+                    btnProcess17.Click, btnProcess18.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -583,7 +583,7 @@ Namespace UnitTesting
                         For Each file As FileInfo In myfilesLst
                             Dim newFile As FileInfo = file.CopyTo(Me.RefFolder & "\" & file.Name)
                             LogActivity("DEBUG | " & newFile.Name & " has been copied to the SA Reference Files Folder")
-                            newFileCsv.Rows.Add(newFile.FullName.Replace(dirUse, ""), file.TemplateVersion, file.FullName)
+                            newFileCsv.Rows.Add(newFile.FullName.Replace(dirUse, "").Replace("Iteration " & iteration, "[ITERATION]"), file.TemplateVersion, file.FullName)
                         Next
 
                         DatatableToCSV(newFileCsv, Me.RefFolder & "\File List.csv")
@@ -792,6 +792,9 @@ Namespace UnitTesting
                     newSum.Refresh()
                     newSum.Export()
                     LogActivity("INFO | Results for all files compared and created in testing directory.")
+                Case "step8"
+                    strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
+                    LogActivity("INFO | EDS results attempted to save.")
             End Select
 
 finishMe:
@@ -1347,7 +1350,7 @@ finishMe:
             For Each dr As DataRow In SAFiles.Rows()
                 Dim importingFrom As New FileInfo(dirUse & dr.Item("FilePath").ToString)
                 If importingFrom.Extension.ToLower = ".xlsm" Then
-                    Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString)
+                    Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString.Replace("[ITERATION]", "Iteration " & iteration))
                     Dim macroname As String = "Import_Previous_Version"
                     Dim params As Tuple(Of String, String, Boolean) = New Tuple(Of String, String, Boolean)(importingFrom.FullName.ToString, importingFrom.TemplateVersion, True)
 
@@ -1523,7 +1526,7 @@ finishMe:
                             'Copy published versions of the tools into the manual folder 
                             Dim pubPath As String = GetNewFileName(Me.PubFolder, fileName:= .Item3)
                             IO.File.WriteAllBytes(pubPath, .Item1)
-                            dr.Item("PublishedPath") = pubPath.Replace(dirUse, "")
+                            dr.Item("PublishedPath") = pubPath.Replace(dirUse, "").Replace("Iteration " & iteration, "[ITERATION]")
                             LogActivity("DEBUG | Production version created: " & pubPath)
                         End If
                     End With
@@ -1547,7 +1550,7 @@ finishMe:
                             'Templates are saved as Bytes() and need to be converted appropriately. 
                             Dim mypath As String = GetNewFileName(dirtouse, fileName:= .Item3)
                             IO.File.WriteAllBytes(mypath, .Item2)
-                            dr.Item(dtHeader) = mypath.Replace(dirUse, "")
+                            dr.Item(dtHeader) = mypath.Replace(dirUse, "").Replace("Iteration " & iteration, "[ITERATION]")
                             LogActivity("DEBUG | SAPI version created: " & mypath)
 
                             '''File will be copied to the manual folder once the files are populated with data via 
