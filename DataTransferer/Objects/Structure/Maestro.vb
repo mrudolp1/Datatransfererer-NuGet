@@ -168,8 +168,9 @@ Partial Public Class EDSStructure
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..")
 
-                    For Each dp As DrilledPierFoundation In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(dp, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                    'For Each dp As DrilledPierFoundation In Me.DrilledPierTools
+                    For i As Integer = 0 To DrilledPierTools.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -177,11 +178,12 @@ Partial Public Class EDSStructure
                 '//pier & pad
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..")
-                    For Each pierPad As PierAndPad In Me.PierandPads
+                    'For Each pierPad As PierAndPad In Me.PierandPads
+                    For i As Integer = 0 To PierandPads.Count - 1
                         'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
 
-                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(pierPad, pierPadMac, isDevMode), "Pier & Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(PierandPads(i), pierPadMac, isDevMode), "Pier & Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -189,8 +191,9 @@ Partial Public Class EDSStructure
                 '//Pile
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
-                    For Each pile As Pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(pile, pileMac, isDevMode), "Pile") = False Then
+                    'For Each pile As Pile In Me.Piles
+                    For i As Integer = 0 To Me.Piles.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -199,8 +202,9 @@ Partial Public Class EDSStructure
 
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
-                    For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(guyAnc, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                    'For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
+                    For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -264,8 +268,9 @@ Partial Public Class EDSStructure
                         End If
                     End If
 
-                    For Each legReinforcement As LegReinforcement In LegReinforcements
-                        If CheckForSuccess(OpenExcelRunMacro(Of LegReinforcement)(legReinforcement, legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
+                    'For Each legReinforcement As LegReinforcement In LegReinforcements
+                    For i As Integer = 0 To LegReinforcements.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of LegReinforcement)(LegReinforcements(i), legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -288,8 +293,9 @@ Partial Public Class EDSStructure
                 '//Run Unit Base
                 If Me.UnitBases.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
-                    For Each unitbase In Me.UnitBases
-                        If CheckForSuccess(OpenExcelRunMacro(Of UnitBase)(unitbase, unitBaseMac, isDevMode), "Unit Base") = False Then
+                    'For Each unitbase In Me.UnitBases
+                    For i As Integer = 0 To UnitBases.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of UnitBase)(UnitBases(i), unitBaseMac, isDevMode), "Unit Base") = False Then
                             GoTo ErrorSkip
                         End If
                         'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
@@ -300,8 +306,9 @@ Partial Public Class EDSStructure
                 '//Run Drilled Pier
                 If Me.DrilledPierTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
-                    For Each drilledPier In Me.DrilledPierTools
-                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(drilledPier, drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                    'For Each drilledPier In Me.DrilledPierTools
+                    For i As Integer = 0 To DrilledPierTools.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -309,8 +316,9 @@ Partial Public Class EDSStructure
                 '//Run Pad/Pier
                 If Me.PierandPads.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
-                    For Each pierAndPad In Me.PierandPads
-                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(pierAndPad, pierPadMac, isDevMode), "Pier and Pad") = False Then
+                    'For Each pierAndPad In Me.PierandPads
+                    For i As Integer = 0 To PierandPads.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(PierandPads(i), pierPadMac, isDevMode), "Pier and Pad") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -318,17 +326,19 @@ Partial Public Class EDSStructure
                 '//Run Pile
                 If Me.Piles.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
-                    For Each pile In Me.Piles
-                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(pile, pileMac, isDevMode), "Pile") = False Then
-                            GoTo ErrorSkip
-                        End If
-                    Next
+                    'For Each pile In Me.Piles
+                    For i As Integer = 0 To Piles.Count - 1
+                            If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                                GoTo ErrorSkip
+                            End If
+                        Next
                 End If
                 '//Run Guy Anchor
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
-                    For Each guyAnchor In Me.GuyAnchorBlockTools
-                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(guyAnchor, guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                    'For Each guyAnchor In Me.GuyAnchorBlockTools
+                    For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
+                        If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
                             GoTo ErrorSkip
                         End If
                     Next
@@ -515,12 +525,14 @@ ErrorSkip:
         End If
         'reload structure object
         Try
-            Dim newObjweusin As Object
-            newObjweusin = CreateNewObject(Of T)()
-            newObjweusin.WorkBookPath = objectTorun.WorkBookPath
-            newObjweusin.Absorb(objectTorun.Parent)
-            newObjweusin.LoadFromExcel()
-            objectTorun = TryCast(newObjweusin, EDSExcelObject)
+            objectTorun.Clear()
+            objectTorun.LoadFromExcel()
+            'Dim newObjweusin As Object
+            'newObjweusin = CreateNewObject(Of T)()
+            'newObjweusin.WorkBookPath = objectTorun.WorkBookPath
+            'newObjweusin.Absorb(objectTorun.Parent)
+            'newObjweusin.LoadFromExcel()
+            'objectTorun = TryCast(newObjweusin, EDSExcelObject)
 
             'objectTorun = TryCast(CreateNewObject(Of T)(), EDSExcelObject)
             'objectTorun.WorkBookPath = excelPath
