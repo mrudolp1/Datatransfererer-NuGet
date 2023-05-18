@@ -68,6 +68,7 @@ Partial Public Class EDSStructure
 
         Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & "_" & dt & ".txt"
 
+        Dim errOccured As Boolean = False
 
         GetVerNum()
 
@@ -88,6 +89,7 @@ Partial Public Class EDSStructure
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
                     If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
 
@@ -100,6 +102,7 @@ Partial Public Class EDSStructure
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
 
                     If CheckForSuccess(OpenExcelRunMacro(Of CCISeismic)(seismicWeUsin, seisMac, isDevMode), "CCISeismic") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 End If
@@ -108,16 +111,19 @@ Partial Public Class EDSStructure
                 'Run TNX
                 If File.Exists(tnxFullPath) Then
                     If Not RunTNX(tnxFullPath, isDevMode) Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 Else
                     WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                    errOccured = True
                     GoTo ErrorSkip
                 End If
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 End If
@@ -140,6 +146,7 @@ Partial Public Class EDSStructure
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
                     If CheckForSuccess(OpenExcelRunMacro(Of CCIplate)(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
 
@@ -156,6 +163,7 @@ Partial Public Class EDSStructure
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     If CheckForSuccess(OpenExcelRunMacro(Of Pole)(poleWeUsin, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 End If
@@ -171,6 +179,7 @@ Partial Public Class EDSStructure
                     'For Each dp As DrilledPierFoundation In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -184,6 +193,7 @@ Partial Public Class EDSStructure
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
 
                         If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(PierandPads(i), pierPadMac, isDevMode), "Pier & Pad") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -194,6 +204,7 @@ Partial Public Class EDSStructure
                     'For Each pile As Pile In Me.Piles
                     For i As Integer = 0 To Me.Piles.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -205,12 +216,11 @@ Partial Public Class EDSStructure
                     'For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
                 End If
-
-                Return True
 
             Case "GUYED", "SELF SUPPORT"
 
@@ -221,10 +231,12 @@ Partial Public Class EDSStructure
                 '/run tnx
                 If File.Exists(tnxFullPath) Then
                     If Not RunTNX(tnxFullPath, isDevMode) Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 Else
                     WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath)
+                    errOccured = True
                     GoTo ErrorSkip
                 End If
                 '/run seismic macro to create eri with seismic loads if needed
@@ -244,9 +256,11 @@ Partial Public Class EDSStructure
 
                         '/run tnx
                         If Not RunTNX(tnxFullPath, isDevMode) Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     ElseIf CheckForSuccess(excelResult, "Seismic") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 End If
@@ -273,6 +287,7 @@ Partial Public Class EDSStructure
                     'For Each legReinforcement As LegReinforcement In LegReinforcements
                     For i As Integer = 0 To LegReinforcements.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of LegReinforcement)(LegReinforcements(i), legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -287,6 +302,7 @@ Partial Public Class EDSStructure
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
                     If CheckForSuccess(OpenExcelRunMacro(Of CCIplate)(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                        errOccured = True
                         GoTo ErrorSkip
                     End If
                 End If
@@ -298,6 +314,7 @@ Partial Public Class EDSStructure
                     'For Each unitbase In Me.UnitBases
                     For i As Integer = 0 To UnitBases.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of UnitBase)(UnitBases(i), unitBaseMac, isDevMode), "Unit Base") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                         'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
@@ -311,6 +328,7 @@ Partial Public Class EDSStructure
                     'For Each drilledPier In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of DrilledPierFoundation)(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -321,6 +339,7 @@ Partial Public Class EDSStructure
                     'For Each pierAndPad In Me.PierandPads
                     For i As Integer = 0 To PierandPads.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of PierAndPad)(PierandPads(i), pierPadMac, isDevMode), "Pier and Pad") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -331,6 +350,7 @@ Partial Public Class EDSStructure
                     'For Each pile In Me.Piles
                     For i As Integer = 0 To Piles.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
@@ -341,24 +361,22 @@ Partial Public Class EDSStructure
                     'For Each guyAnchor In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
                         If CheckForSuccess(OpenExcelRunMacro(Of AnchorBlockFoundation)(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                            errOccured = True
                             GoTo ErrorSkip
                         End If
                     Next
                 End If
 
-                Return True
-
             Case Else
                 'manual process
                 WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType)
-                Return False
-
+                errOccured = True
         End Select
 
 
 ErrorSkip:
         WriteLineLogLine("INFO | Maestro Log [END]")
-        Return False
+        Return Not errOccured
         'determine sufficiency
 
         'generate report
