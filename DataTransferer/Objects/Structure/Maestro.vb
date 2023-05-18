@@ -19,7 +19,7 @@ Partial Public Class EDSStructure
     ''' Optional "isDevMode" argument turns Excel displays on
     ''' </summary>
     ''' <param name="isDevMode"></param>
-    Public Overloads Sub Conduct(Optional isDevMode As Boolean = False)
+    Public Function Conduct(Optional isDevMode As Boolean = False) As Boolean
         Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
 
         Dim CCIPoleExists As Boolean = False
@@ -206,6 +206,8 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
+                Return True
+
             Case "GUYED", "SELF SUPPORT"
 
                 'Check if TNX has been ran. if not, run it
@@ -334,24 +336,35 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
+                Return True
+
             Case Else
                 'manual process
                 WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType)
-                Exit Sub
+                Return False
 
         End Select
 
 
 ErrorSkip:
         WriteLineLogLine("INFO | Maestro Log [END]")
-
+        Return False
         'determine sufficiency
 
         'generate report
 
         'save results
 
-    End Sub
+    End Function
+
+    Public Async Function ConductAsync(Optional isDevMode As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode))
+    End Function
+
+    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode), cancelToken)
+    End Function
+
     ''' <summary>
     ''' checks to see if the Excel macro returned success or not
     ''' Returns false if failed
@@ -435,7 +448,7 @@ ErrorSkip:
         Return True
     End Function
 
-    Public Function OpenExcelRunMacro(Of T As New)(ByRef objectTorun As EDSExcelObject, ByVal bigMac As String,
+    Public Function OpenExcelRunMacro(Of T As {EDSExcelObject, New})(ByRef objectTorun As T, ByVal bigMac As String,
                                       Optional ByVal xlVisibility As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
         'Dim newObjweusin As New T
 
@@ -516,12 +529,13 @@ ErrorSkip:
         'reload structure object
         Try
             Dim newObjweusin As Object
-            newObjweusin = CreateNewObject(Of T)()
+            newObjweusin = New T()
             newObjweusin.WorkBookPath = objectTorun.WorkBookPath
             newObjweusin.Absorb(objectTorun.Parent)
             newObjweusin.LoadFromExcel()
-            objectTorun = TryCast(newObjweusin, EDSExcelObject)
-
+            objectTorun = newObjweusin
+            'objectTorun = TryCast(newObjweusin, EDSExcelObject)
+            ''objectTorun.LoadFromExcel()
             'objectTorun = TryCast(CreateNewObject(Of T)(), EDSExcelObject)
             'objectTorun.WorkBookPath = excelPath
             'objectTorun.LoadFromExcel()
