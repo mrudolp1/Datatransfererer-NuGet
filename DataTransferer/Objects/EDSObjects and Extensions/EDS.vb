@@ -7,9 +7,10 @@ Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
+Public Delegate Function OverwriteFile(ByVal FileName As String) As Boolean
+
 'To expand collections in the main property grid, this process may help but doesn't need to be implemented right now
 'https://www.codeproject.com/Articles/4448/Customized-display-of-collection-data-in-a-Propert?fid=16073&df=90&mpp=25&sort=Position&view=Normal&spc=Relaxed&prof=True&fr=176
-
 
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
@@ -183,7 +184,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
     <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable Function SQLUpdate() As String
         SQLUpdate = "BEGIN" & vbCrLf &
-                  "  Update [Table]" &
+                  "  Update [TABLE]" &
                   "  SET [UPDATE]" & vbCrLf &
                   "  WHERE ID = [ID]" & vbCrLf &
                   "  [RESULTS]" & vbCrLf &
@@ -397,8 +398,9 @@ Partial Public MustInherit Class EDSExcelObject
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
 
-    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0)
+    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True)
         Dim wb As New Workbook
+
 
         If String.IsNullOrEmpty(workBookPath) Then
             If Me.ParentStructure?.WorkingDirectory Is Nothing Then
@@ -412,6 +414,40 @@ Partial Public MustInherit Class EDSExcelObject
         End If
 
         Me.WorkBookPath = workBookPath
+
+        If File.Exists(workBookPath) And Not replaceFiles Then Exit Sub
+
+        wb.LoadDocument(Template, FileType)
+        wb.BeginUpdate()
+
+        'Put the jelly in the donut
+        workBookFiller(wb)
+
+        wb.Calculate()
+        wb.EndUpdate()
+        wb.SaveDocument(workBookPath, FileType)
+
+    End Sub
+
+    Public Sub SavetoExcel(overwriteFile As OverwriteFile, Optional workBookPath As String = Nothing, Optional index As Integer = 0)
+        Dim wb As New Workbook
+
+
+        If String.IsNullOrEmpty(workBookPath) Then
+            If Me.ParentStructure?.WorkingDirectory Is Nothing Then
+                Debug.Print("No workbook path specified.")
+                Exit Sub
+            End If
+
+            'Build Path
+            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+
+        End If
+
+        Me.WorkBookPath = workBookPath
+
+        If File.Exists(workBookPath) And
+            Not overwriteFile(Path.GetFileName(workBookPath)) Then Exit Sub
 
         wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()
