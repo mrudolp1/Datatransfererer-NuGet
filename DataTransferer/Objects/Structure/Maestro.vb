@@ -19,7 +19,7 @@ Partial Public Class EDSStructure
     ''' Optional "isDevMode" argument turns Excel displays on
     ''' </summary>
     ''' <param name="isDevMode"></param>
-    Public Function Conduct(Optional isDevMode As Boolean = False) As Boolean
+    Public Function Conduct(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Boolean
         Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
 
         Dim CCIPoleExists As Boolean = False
@@ -88,7 +88,7 @@ Partial Public Class EDSStructure
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacCreateTNX, isDevMode), "CCIPole - Step 1") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacCreateTNX, xlVisibility), "CCIPole - Step 1") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -101,7 +101,7 @@ Partial Public Class EDSStructure
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
 
-                    If CheckForSuccess(OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode), "CCISeismic") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(seismicWeUsin, seisMac, xlVisibility), "CCISeismic") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -122,7 +122,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacImportTNXReactions, isDevMode), "CCIPole - Step 2") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacImportTNXReactions, xlVisibility), "CCIPole - Step 2") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -145,7 +145,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, xlVisibility), "CCIPlate") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -162,7 +162,7 @@ Partial Public Class EDSStructure
 
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
-                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacRunAnalysis, isDevMode), "CCIPole - Step 3") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(poleWeUsin, poleMacRunAnalysis, xlVisibility), "CCIPole - Step 3") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -178,7 +178,7 @@ Partial Public Class EDSStructure
 
                     'For Each dp As DrilledPierFoundation In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(DrilledPierTools(i), drilledPierMac, xlVisibility), "Drilled Pier") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -192,7 +192,7 @@ Partial Public Class EDSStructure
                         'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
 
-                        If CheckForSuccess(OpenExcelRunMacro(PierandPads(i), pierPadMac, isDevMode), "Pier & Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(PierandPads(i), pierPadMac, xlVisibility), "Pier & Pad") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -203,7 +203,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..")
                     'For Each pile As Pile In Me.Piles
                     For i As Integer = 0 To Me.Piles.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Piles(i), pileMac, xlVisibility), "Pile") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -215,7 +215,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..")
                     'For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(GuyAnchorBlockTools(i), guyAnchorMac, xlVisibility), "Guy Anchor Block") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -249,7 +249,7 @@ Partial Public Class EDSStructure
                     ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
                     'run seismic. if output reads "Seismic analysis required" rerun TNX
-                    excelResult = OpenExcelRunMacro(seismicWeUsin, seisMac, isDevMode, True)
+                    excelResult = OpenExcelRunMacro(seismicWeUsin, seisMac, xlVisibility, True)
                     If excelResult = "SEISMIC ANALYSIS REQUIRED" Then
                         WriteLineLogLine("INFO | Seismic Analysis required. Rerunning TNX.")
                         WriteLineLogLine("WARNING | Seismic loading included in TNX analysis. Further evaluation required to determine if 1.5 overstrength factor controls.")
@@ -286,7 +286,7 @@ Partial Public Class EDSStructure
 
                     'For Each legReinforcement As LegReinforcement In LegReinforcements
                     For i As Integer = 0 To LegReinforcements.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(LegReinforcements(i), legReinforcementMac, isDevMode), "Leg Reinforcement") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(LegReinforcements(i), legReinforcementMac, xlVisibility), "Leg Reinforcement") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -301,7 +301,7 @@ Partial Public Class EDSStructure
                         WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..")
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
-                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, isDevMode), "CCIPlate") = False Then
+                    If CheckForSuccess(OpenExcelRunMacro(plateWeUsin, plateMac, xlVisibility), "CCIPlate") = False Then
                         errOccured = True
                         GoTo ErrorSkip
                     End If
@@ -313,7 +313,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..")
                     'For Each unitbase In Me.UnitBases
                     For i As Integer = 0 To UnitBases.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(UnitBases(i), unitBaseMac, isDevMode), "Unit Base") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(UnitBases(i), unitBaseMac, xlVisibility), "Unit Base") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -327,7 +327,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..")
                     'For Each drilledPier In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(DrilledPierTools(i), drilledPierMac, isDevMode), "Drilled Pier") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(DrilledPierTools(i), drilledPierMac, xlVisibility), "Drilled Pier") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -338,7 +338,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..")
                     'For Each pierAndPad In Me.PierandPads
                     For i As Integer = 0 To PierandPads.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(PierandPads(i), pierPadMac, isDevMode), "Pier and Pad") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(PierandPads(i), pierPadMac, xlVisibility), "Pier and Pad") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -349,7 +349,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
                     'For Each pile In Me.Piles
                     For i As Integer = 0 To Piles.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(Piles(i), pileMac, xlVisibility), "Pile") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -360,7 +360,7 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..")
                     'For Each guyAnchor In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
-                        If CheckForSuccess(OpenExcelRunMacro(GuyAnchorBlockTools(i), guyAnchorMac, isDevMode), "Guy Anchor Block") = False Then
+                        If CheckForSuccess(OpenExcelRunMacro(GuyAnchorBlockTools(i), guyAnchorMac, xlVisibility), "Guy Anchor Block") = False Then
                             errOccured = True
                             GoTo ErrorSkip
                         End If
@@ -385,12 +385,12 @@ ErrorSkip:
 
     End Function
 
-    Public Async Function ConductAsync(Optional isDevMode As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode))
+    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility))
     End Function
 
-    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode), cancelToken)
+    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), cancelToken)
     End Function
 
     ''' <summary>
