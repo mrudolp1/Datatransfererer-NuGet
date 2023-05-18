@@ -8531,7 +8531,7 @@ Partial Public Class tnxModel
 
     Public Sub GenerateERI(FilePath As String, Optional replaceFile As Boolean = True)
 
-        If File.Exists(FilePath) And Not repalceFile Then Exit Sub
+        If File.Exists(FilePath) And Not replaceFile Then Exit Sub
 
         Dim newERIList As New List(Of String)
         Dim i As Integer
