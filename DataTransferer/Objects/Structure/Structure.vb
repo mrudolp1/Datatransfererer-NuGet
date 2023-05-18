@@ -388,7 +388,14 @@ Partial Public Class EDSStructure
         Next
     End Sub
 
-    Public Sub SaveTools(Optional folderPath As String = "")
+
+    ''' <summary>
+    ''' Save all tools.
+    ''' Will overwrite existing files by default.
+    ''' </summary>
+    ''' <param name="folderPath"></param>
+    ''' <param name="replaceFiles">Determines if existing files are overwritten or skipped.</param>
+    Public Sub SaveTools(Optional folderPath As String = "", Optional replaceFiles As Boolean = True)
 
         If folderPath = "" Then
             folderPath = Me.WorkingDirectory
@@ -400,34 +407,83 @@ Partial Public Class EDSStructure
         Dim i As Integer
         Dim fileNum As String = ""
 
-        If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"))
+        If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"), replaceFiles)
 
         For i = 0 To Me.PierandPads.Count - 1
-            PierandPads(i).SavetoExcel(index:=i)
+            PierandPads(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.Piles.Count - 1
-            Piles(i).SavetoExcel(index:=i)
+            Piles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.UnitBases.Count - 1
-            UnitBases(i).SavetoExcel(index:=i)
+            UnitBases(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.DrilledPierTools.Count - 1
-            DrilledPierTools(i).SavetoExcel(index:=i)
+            DrilledPierTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.GuyAnchorBlockTools.Count - 1
-            GuyAnchorBlockTools(i).SavetoExcel(index:=i)
+            GuyAnchorBlockTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.CCIplates.Count - 1
-            CCIplates(i).SavetoExcel(index:=i)
+            CCIplates(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.Poles.Count - 1
-            Poles(i).SavetoExcel(index:=i)
+            Poles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.LegReinforcements.Count - 1
-            LegReinforcements(i).SavetoExcel(index:=i)
+            LegReinforcements(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
         Next
         For i = 0 To Me.CCISeismics.Count - 1
-            CCISeismics(i).SavetoExcel(index:=i)
+            CCISeismics(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+        Next
+    End Sub
+
+    ''' <summary>
+    ''' Save all tools using a delegate function to determine if files should be overwritten.
+    ''' This allows the Dashboard UI to promt the user for each file replacement.
+    ''' </summary>
+    ''' <param name="overwriteFile">Delegate function which take a file path as a string and returns a boolean.</param>
+    ''' <param name="folderPath">Save to folder path.</param>
+    Public Sub SaveTools(overwriteFile As OverwriteFile, Optional folderPath As String = "")
+
+        If folderPath = "" Then
+            folderPath = Me.WorkingDirectory
+        End If
+
+        If Not Directory.Exists(folderPath) Then Exit Sub
+
+        'Uncomment your foundation type for testing when it's ready.
+        Dim i As Integer
+        Dim fileNum As String = ""
+
+        If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(overwriteFile, Path.Combine(folderPath, Me.bus_unit & ".eri"))
+
+        For i = 0 To Me.PierandPads.Count - 1
+            PierandPads(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.Piles.Count - 1
+            Piles(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.UnitBases.Count - 1
+            UnitBases(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.DrilledPierTools.Count - 1
+            DrilledPierTools(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.GuyAnchorBlockTools.Count - 1
+            GuyAnchorBlockTools(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.CCIplates.Count - 1
+            CCIplates(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.Poles.Count - 1
+            Poles(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.LegReinforcements.Count - 1
+            LegReinforcements(i).SavetoExcel(overwriteFile, index:=i)
+        Next
+        For i = 0 To Me.CCISeismics.Count - 1
+            CCISeismics(i).SavetoExcel(overwriteFile, index:=i)
         Next
     End Sub
 #End Region

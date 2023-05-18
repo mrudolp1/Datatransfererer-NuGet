@@ -8523,7 +8523,15 @@ Partial Public Class tnxModel
 #End Region
 
 #Region "Save to TNX"
-    Public Sub GenerateERI(FilePath As String)
+
+    Public Sub GenerateERI(overwriteFile As OverwriteFile, FilePath As String)
+        If File.Exists(FilePath) And Not overwriteFile(FilePath) Then Exit Sub
+        GenerateERI(FilePath)
+    End Sub
+
+    Public Sub GenerateERI(FilePath As String, Optional replaceFile As Boolean = True)
+
+        If File.Exists(FilePath) And Not replaceFile Then Exit Sub
 
         Dim newERIList As New List(Of String)
         Dim i As Integer

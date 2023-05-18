@@ -19,7 +19,7 @@ Partial Public Class EDSStructure
     ''' Optional "isDevMode" argument turns Excel displays on
     ''' </summary>
     ''' <param name="isDevMode"></param>
-    Public Overloads Sub Conduct(Optional isDevMode As Boolean = False)
+    Public Function Conduct(Optional isDevMode As Boolean = False) As Boolean
         Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
 
         Dim CCIPoleExists As Boolean = False
@@ -210,6 +210,8 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
+                Return True
+
             Case "GUYED", "SELF SUPPORT"
 
                 'Check if TNX has been ran. if not, run it
@@ -328,10 +330,10 @@ Partial Public Class EDSStructure
                     WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..")
                     'For Each pile In Me.Piles
                     For i As Integer = 0 To Piles.Count - 1
-                            If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
-                                GoTo ErrorSkip
-                            End If
-                        Next
+                        If CheckForSuccess(OpenExcelRunMacro(Of Pile)(Piles(i), pileMac, isDevMode), "Pile") = False Then
+                            GoTo ErrorSkip
+                        End If
+                    Next
                 End If
                 '//Run Guy Anchor
                 If Me.GuyAnchorBlockTools.Count > 0 Then
@@ -344,24 +346,35 @@ Partial Public Class EDSStructure
                     Next
                 End If
 
+                Return True
+
             Case Else
                 'manual process
                 WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType)
-                Exit Sub
+                Return False
 
         End Select
 
 
 ErrorSkip:
         WriteLineLogLine("INFO | Maestro Log [END]")
-
+        Return False
         'determine sufficiency
 
         'generate report
 
         'save results
 
-    End Sub
+    End Function
+
+    Public Async Function ConductAsync(Optional isDevMode As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode))
+    End Function
+
+    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False) As Task(Of Boolean)
+        Return Await Task.Run(Function() Conduct(isDevMode), cancelToken)
+    End Function
+
     ''' <summary>
     ''' checks to see if the Excel macro returned success or not
     ''' Returns false if failed
@@ -445,7 +458,7 @@ ErrorSkip:
         Return True
     End Function
 
-    Public Function OpenExcelRunMacro(Of T As New)(ByRef objectTorun As EDSExcelObject, ByVal bigMac As String,
+    Public Function OpenExcelRunMacro(Of T As {EDSExcelObject, New})(ByRef objectTorun As T, ByVal bigMac As String,
                                       Optional ByVal xlVisibility As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
         'Dim newObjweusin As New T
 
@@ -698,57 +711,57 @@ ErrorSkip:
             'If it is open then it shouldn't be killed when closing the RTF
             'If it isn't open before tnx then it should be killed
             Dim isWordOpen As Boolean
+            Try
+                Dim word As Object = GetObject(, "Word.Application")
+                isWordOpen = True
+            Catch ex As Exception
+                isWordOpen = False
+            End Try
+
+            With cmdProcess
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
+
+                With .StartInfo
+                    .CreateNoWindow = True
+                    .UseShellExecute = False
+                    .RedirectStandardOutput = True
+
+                End With
+                .Start()
+
+                CheckLogFileForFinished(tnxLogFilePath, 300000, True)
                 Try
-                    Dim word As Object = GetObject(, "Word.Application")
-                    isWordOpen = True
+                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
+                    .Kill()
+                    WriteLineLogLine("INFO | TNX termination complete..")
                 Catch ex As Exception
-                    isWordOpen = False
+                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                Finally
+                    Try
+                        'For the time being the RTF file still opens 
+                        'This needs to be closed before returning TRUE
+                        CloseRTF(tnxFilePath, isWordOpen)
+                    Catch ex As Exception
+                        WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                    End Try
                 End Try
 
-                With cmdProcess
-                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
-
-                    With .StartInfo
-                        .CreateNoWindow = True
-                        .UseShellExecute = False
-                        .RedirectStandardOutput = True
-
-                    End With
-                    .Start()
-
-                    CheckLogFileForFinished(tnxLogFilePath, 300000, True)
-                    Try
-                        WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
-                        .Kill()
-                        WriteLineLogLine("INFO | TNX termination complete..")
-                    Catch ex As Exception
-                        WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
-                    Finally
-                        Try
-                            'For the time being the RTF file still opens 
-                            'This needs to be closed before returning TRUE
-                            CloseRTF(tnxFilePath, isWordOpen)
-                        Catch ex As Exception
-                            WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                        End Try
-                    End Try
-
-                    '.WaitForInputIdle()
-                    '.WaitForExit()
-                End With ' Read output to a string variable.
-                Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
+                '.WaitForInputIdle()
+                '.WaitForExit()
+            End With ' Read output to a string variable.
+            Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
-                'WriteLineLogLine("INFO | " & ipconfigOutput)
-                'For the time being the RTF file still opens 
-                'This needs to be closed before returning TRUE
-                'I put this around a try catch in cases where an ERI is run and files already exist. 
+            'WriteLineLogLine("INFO | " & ipconfigOutput)
+            'For the time being the RTF file still opens 
+            'This needs to be closed before returning TRUE
+            'I put this around a try catch in cases where an ERI is run and files already exist. 
 
 
-                Return True
+            Return True
 
-            Catch ex As Exception
-                WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
             Return False
         End Try
     End Function
@@ -768,8 +781,8 @@ ErrorSkip:
                     word = GetObject(, "Word.Application")
                     wordCheck = True
 
-                    While fileCheck = False
-                        fileCheck = FileIsOpen(file)
+                    While filecheck = False
+                        filecheck = FileIsOpen(file)
                     End While
 
                     doc = word.Documents(rtfPath)
