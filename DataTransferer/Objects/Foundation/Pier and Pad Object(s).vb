@@ -858,6 +858,56 @@ Partial Public Class PierAndPad
             If Not IsNothing(Me.structural_check) Then
                 .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(Me.structural_check, Boolean)
             End If
+
+            'BU
+            .Worksheets("Input").Range("C3").Value = Me.bus_unit
+
+            'Height
+            If Me.ParentStructure?.tnx?.geometry?.OverallHeight IsNot Nothing Then
+                .Worksheets("Input").Range("H").Value = Me.ParentStructure.tnx.geometry.OverallHeight.Value
+            End If
+
+            'Site Code Criteria
+            'Site Name
+            If Me.ParentStructure?.structureCodeCriteria?.site_name IsNot Nothing Then
+                .Worksheets("Input").Range("C4").Value = Me.ParentStructure.structureCodeCriteria.site_name
+            End If
+            'Order Number
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.order_number) Then
+            '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
+            '    .Worksheets("Input").Range("D7").Value = CType(order_number, String)
+            'End If
+            'Tower Type - Defaulting to Monopole if not one of the main tower types
+            Dim structure_type As String = "Monopole"
+            If Me.ParentStructure?.structureCodeCriteria?.structure_type IsNot Nothing Then
+                If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then
+                    structure_type = "Self Suppot"
+                ElseIf Me.ParentStructure?.structureCodeCriteria?.structure_type = "GUYED" Then
+                    structure_type = "Guyed"
+                End If
+            End If
+            .Worksheets("Input").Range("TowerType").Value = structure_type
+            'TIA Revision- Defaulting to Rev. H if not available. 
+            Dim tia_current As String = "H"
+            If Me.ParentStructure?.structureCodeCriteria?.tia_current IsNot Nothing Then
+                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
+                    tia_current = "F"
+                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
+                    tia_current = "G"
+                End If
+            End If
+            .Worksheets("Input").Range("TIA_Input").Value = tia_current
+
+            'Load Z Normalization
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
+            '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
+            '    .Worksheets("General (SAPI)").Range("R3").Value = CType(load_z_norm, Boolean)
+            'End If
+            'H Section 15.5
+            If Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5 IsNot Nothing Then
+                .Worksheets("Input").Range("Section15.5Boolean").Value = Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5.Value
+            End If
+
         End With
 
     End Sub
