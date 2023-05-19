@@ -205,6 +205,30 @@ Partial Friend NotInheritable Class Settings
             Me("MyTestCase") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booConductDevMode() As Boolean
+        Get
+            Return CType(Me("booConductDevMode"),Boolean)
+        End Get
+        Set
+            Me("booConductDevMode") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booConductExcelVis() As Boolean
+        Get
+            Return CType(Me("booConductExcelVis"),Boolean)
+        End Get
+        Set
+            Me("booConductExcelVis") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

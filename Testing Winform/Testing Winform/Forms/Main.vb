@@ -130,6 +130,8 @@ Namespace UnitTesting
                 End If
                 testLocalWorkarea.Text = My.Settings.localWorkArea
                 lFolder = My.Settings.localWorkArea
+                CheckEditDevMode.Checked = My.Settings.booConductDevMode
+                CheckEditExcelVisible.Checked = My.Settings.booConductExcelVis
 
                 'force local work area it to be true
                 chkWorkLocal.Checked = True
@@ -165,7 +167,7 @@ Namespace UnitTesting
             CloseHandle(EDStokenHandle)
             Try
                 KillRoboCops()
-                DirectorySync.Stop()
+                'DirectorySync.Stop()
             Catch ex As Exception
             End Try
         End Sub
@@ -351,7 +353,7 @@ Namespace UnitTesting
 
         Private Sub btnConduct_Click(sender As Object, e As EventArgs) Handles btnConduct.Click
 
-            strcLocal.Conduct(True)
+            strcLocal.Conduct(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
 
         End Sub
 #End Region
@@ -756,7 +758,7 @@ Namespace UnitTesting
                     'Conduct it!!!
                     '''This is commented out since Seb is actively working on the conduct function
                     '''Uncommented 4-27-2023
-                    strcLocal.Conduct(True)
+                    strcLocal.Conduct(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
                     If DidConductProperly(strcLocal.LogPath) Then
                         ObjectToJson(Of EDSStructure)(strcLocal, Me.MaeFolder & "\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")
                         LogActivity("INFO | Structure conducted successfully.")
@@ -924,6 +926,16 @@ finishMe:
                 System.IO.File.WriteAllText(Me.dirUse & "\Test ID " & Me.testCase & "\Test Notes.txt", rtbNotes.Text)
             Catch
             End Try
+        End Sub
+
+        Private Sub CheckEditDevMode_CheckedChanged(sender As Object, e As EventArgs) Handles CheckEditDevMode.CheckedChanged
+            My.Settings.booConductDevMode = CheckEditDevMode.Checked
+            My.Settings.Save()
+        End Sub
+
+        Private Sub CheckEditExcelVisible_CheckedChanged(sender As Object, e As EventArgs) Handles CheckEditExcelVisible.CheckedChanged
+            My.Settings.booConductExcelVis = CheckEditExcelVisible.Checked
+            My.Settings.Save()
         End Sub
 
 #End Region
@@ -2125,6 +2137,8 @@ finishMe:
 
             Return returner
         End Function
+
+
 
 
 
