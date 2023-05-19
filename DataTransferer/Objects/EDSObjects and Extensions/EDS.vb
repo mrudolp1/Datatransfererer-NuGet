@@ -60,6 +60,14 @@ Partial Public MustInherit Class EDSObject
     <DataMember()>
     Public Property work_order_seq_num As String
 
+    <Category("EDS"), Description(""), DisplayName("Order")>
+    <DataMember()>
+    Public Property order As String
+
+    <Category("EDS"), Description(""), DisplayName("Order")>
+    <DataMember()>
+    Public Property orderRev As String
+
     <Category("EDS"), Description(""), Browsable(False)>
     <DataMember()>
     Public Property activeDatabase As String
@@ -80,6 +88,8 @@ Partial Public MustInherit Class EDSObject
         Me.bus_unit = Host.bus_unit
         Me.structure_id = Host.structure_id
         Me.work_order_seq_num = Host.work_order_seq_num
+        Me.order = Host.order
+        Me.orderRev = Host.orderRev
         Me.activeDatabase = Host.activeDatabase
         Me.databaseIdentity = Host.databaseIdentity
         Me.modified_person_id = Host.modified_person_id
@@ -415,7 +425,7 @@ Partial Public MustInherit Class EDSExcelObject
 
         Me.WorkBookPath = workBookPath
 
-        If File.Exists(workBookPath) And Not replaceFiles Then Exit Sub
+        If File.Exists(workBookPath) AndAlso Not replaceFiles Then Exit Sub
 
         wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()
@@ -446,7 +456,7 @@ Partial Public MustInherit Class EDSExcelObject
 
         Me.WorkBookPath = workBookPath
 
-        If File.Exists(workBookPath) And
+        If File.Exists(workBookPath) AndAlso
             Not overwriteFile(Path.GetFileName(workBookPath)) Then Exit Sub
 
         wb.LoadDocument(Template, FileType)
@@ -604,16 +614,21 @@ Partial Public Class EDSResult
         'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableDepth = Host.EDSTableDepth + 1
         'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
-        Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
-                             Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
-                             Host.EDSTableName) & "_results"
+        'Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
+        '                     Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
+        '                     Host.EDSTableName) & "_results"
+        Me.EDSTableName = RemovePlural(Host.EDSTableName) & "_results"
         'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
         'Seperate the table name from the schema then add _id
-        Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
-                                Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
-                                Host.EDSTableName & "_id")
+        'Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
+        '                        Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
+        '                        Host.EDSTableName & "_id")
+        Me.ForeignKeyName = RemovePlural(Host.EDSTableName.Split(".").Last) & "_id"
     End Sub
 
+    Private Function RemovePlural(possiblyPlural As String) As String
+        Return If(possiblyPlural.ToLower.Last = "s", possiblyPlural.Remove(possiblyPlural.Length - 1), possiblyPlural)
+    End Function
 
     ''' <summary>
     ''' 
