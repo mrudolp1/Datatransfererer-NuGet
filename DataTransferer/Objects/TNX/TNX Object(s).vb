@@ -8525,7 +8525,7 @@ Partial Public Class tnxModel
 #Region "Save to TNX"
 
     Public Sub GenerateERI(overwriteFile As OverwriteFile, FilePath As String)
-        If File.Exists(FilePath) And Not overwriteFile(FilePath) Then Exit Sub
+        If File.Exists(FilePath) AndAlso Not overwriteFile(FilePath) Then Exit Sub
         GenerateERI(FilePath)
     End Sub
 

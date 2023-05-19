@@ -415,7 +415,7 @@ Partial Public MustInherit Class EDSExcelObject
 
         Me.WorkBookPath = workBookPath
 
-        If File.Exists(workBookPath) And Not replaceFiles Then Exit Sub
+        If File.Exists(workBookPath) AndAlso Not replaceFiles Then Exit Sub
 
         wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()
@@ -446,7 +446,7 @@ Partial Public MustInherit Class EDSExcelObject
 
         Me.WorkBookPath = workBookPath
 
-        If File.Exists(workBookPath) And
+        If File.Exists(workBookPath) AndAlso
             Not overwriteFile(Path.GetFileName(workBookPath)) Then Exit Sub
 
         wb.LoadDocument(Template, FileType)

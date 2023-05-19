@@ -15,10 +15,10 @@ Partial Public Class EDSStructure
 
 
     ''' <summary>
-    ''' This method will break until Macro names are established
-    ''' Optional "isDevMode" argument turns Excel displays on
+    ''' Perform structural analysis on all files in the structure.
     ''' </summary>
-    ''' <param name="isDevMode"></param>
+    ''' <param name="isDevMode">Determines if the beta version of TNX should be used.</param>
+    ''' <param name="xlVisibility">Determines excel tools appear in the foreground (true) or are hidden (false).</param>
     Public Function Conduct(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Boolean
         Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
 
