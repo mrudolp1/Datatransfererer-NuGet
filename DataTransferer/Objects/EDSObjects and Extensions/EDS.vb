@@ -168,6 +168,7 @@ Partial Public MustInherit Class EDSObjectWithQueries
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
     Public Overridable ReadOnly Property EDSTableDepth As Integer = 0
 
+    <DataMember()>
     Public Overridable Property Results As New List(Of EDSResult)
 
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
