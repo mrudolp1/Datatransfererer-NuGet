@@ -457,7 +457,7 @@ Namespace UnitTesting
         Private Sub testStructureOnly_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
 
-            CreateStructure()
+            'CreateStructure()
             SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
 
             ButtonclickToggle(Me.Cursor)
