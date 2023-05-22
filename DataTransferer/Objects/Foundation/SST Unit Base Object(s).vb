@@ -85,14 +85,14 @@ Partial Public Class UnitBase
     Private _basic_soil_check As Boolean?
     Private _structural_check As Boolean?
 
-    Private _tia_current As String
-    Private _rev_h_section_15_5 As Boolean?
+    'Private _tia_current As String
+    'Private _rev_h_section_15_5 As Boolean?
     'Private _load_z As Boolean?
     'Private _overall_tower_height As Double? 'TNX
     'Private _base_face_width As Double? 'TNX
     'Private _bp_dist_above_fnd As Double? 'CCIplate
     'Private _ar_bolt_circle As Double? 'CCIplate
-    Private _seismic_design_category As String 'Seismic Tool?
+    'Private _seismic_design_category As String 'Seismic Tool?
 
 
     <Category("Pier"), Description(""), DisplayName("Pier Shape")>
@@ -483,38 +483,39 @@ Partial Public Class UnitBase
         End Set
     End Property
 
-    <Category("Unit Base"), Description(""), DisplayName("TIA")>
-     <DataMember()> Public Property tia_current() As String
-        Get
-            Return If(Me.ParentStructure.structureCodeCriteria.tia_current, Me._tia_current)
-        End Get
-        Set
-            Me._tia_current = Value
-        End Set
-    End Property
-    <Category("Unit Base"), Description(""), DisplayName("Rev H Section 15.5")>
-     <DataMember()> Public Property rev_h_section_15_5() As Boolean?
-        Get
-            Return If(Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5, Me._rev_h_section_15_5)
-        End Get
-        Set
-            Me._rev_h_section_15_5 = Value
-        End Set
-    End Property
-    'Load Z
-    'Tower Height
-    'Base Face Width
-    'BP Dist Above FND?
-    'AR Bolt Circle?
-    <Category("Unit Base"), Description(""), DisplayName("SDC")>
-     <DataMember()> Public Property seismic_design_category() As String
-        Get
-            Return Me._seismic_design_category
-        End Get
-        Set
-            Me._seismic_design_category = Value
-        End Set
-    End Property
+    '<Category("Unit Base"), Description(""), DisplayName("TIA")>
+    ' <DataMember()> Public Property tia_current() As String
+    '    Get
+    '        Return If(Me.ParentStructure?.structureCodeCriteria?.tia_current, Me._tia_current)
+    '    End Get
+    '    Set
+    '        Me._tia_current = Value
+    '    End Set
+    'End Property
+    '<Category("Unit Base"), Description(""), DisplayName("Rev H Section 15.5")>
+    ' <DataMember()> Public Property rev_h_section_15_5() As Boolean?
+    '    Get
+    '        Return If(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5, Me._rev_h_section_15_5)
+    '    End Get
+    '    Set
+    '        Me._rev_h_section_15_5 = Value
+    '    End Set
+    'End Property
+    ''Load Z
+    ''Tower Height
+    ''Base Face Width
+    ''BP Dist Above FND?
+    ''AR Bolt Circle?
+    '<Category("Unit Base"), Description(""), DisplayName("SDC")>
+    ' <DataMember()> Public Property seismic_design_category() As String
+    '    Get
+    '        Return If(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category, Me._seismic_design_category)
+    '        'Return Me._seismic_design_category
+    '    End Get
+    '    Set
+    '        Me._seismic_design_category = Value
+    '    End Set
+    'End Property
 #End Region
 
 #Region "Constructors"
@@ -528,9 +529,9 @@ Partial Public Class UnitBase
 
         'Get values from structure code criteria
         'Not sure this is necessary, could just read the values from the structure code criteria when creating the Excel sheet
-        Me.tia_current = Me.ParentStructure?.structureCodeCriteria?.tia_current
-        Me.rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
-        Me.seismic_design_category = Me.ParentStructure?.structureCodeCriteria?.seismic_design_category
+        'Me.tia_current = Me.ParentStructure?.structureCodeCriteria?.tia_current
+        'Me.rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
+        'Me.seismic_design_category = Me.ParentStructure?.structureCodeCriteria?.seismic_design_category
 
         ''''''Customize for each foundation type'''''
 
@@ -664,7 +665,7 @@ Partial Public Class UnitBase
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
-            Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
+            'Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
 
         End If
 
@@ -932,17 +933,25 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(Me.structural_check, Boolean)
             End If
 
+
             If Not IsNothing(Me.bus_unit) Then
                 .Worksheets("Input").Range("C3").Value = CType(Me.bus_unit, Integer)
             End If
-            If Not IsNothing(Me.tia_current) Then
-                .Worksheets("Input").Range("TIA_Input").Value = CType(Right(Me.tia_current, 1), String)
+            Dim tia_current As String = "H"
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
+                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
+                    tia_current = "F"
+                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
+                    tia_current = "G"
+                End If
             End If
-            If Not IsNothing(Me.rev_h_section_15_5) Then
-                .Worksheets("Input").Range("Section15.5Boolean").Value = CType(Me.rev_h_section_15_5, Boolean)
+            .Worksheets("Input").Range("TIA_Input").Value = tia_current
+
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
+                .Worksheets("Input").Range("Section15.5Boolean").Value = CType(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5, Boolean)
             End If
-            If Not IsNothing(Me.seismic_design_category) Then
-                .Worksheets("Input").Range("SDC").Value = CType(Me.seismic_design_category, String)
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category) Then
+                .Worksheets("Input").Range("SDC").Value = CType(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category, String)
             End If
 
             'Worksheet Change Events
@@ -1135,7 +1144,7 @@ Partial Public Class UnitBase
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.NullableToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.NullableToString.FormatDBValue)
@@ -1248,7 +1257,7 @@ Partial Public Class UnitBase
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.NullableToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.NullableToString.FormatDBValue)
 
