@@ -54,6 +54,13 @@ Partial Public Class EDSStructure
         Me.UnitBases.Clear()
         Me.DrilledPierTools.Clear()
         Me.GuyAnchorBlockTools.Clear()
+        Me.ReportOptions = Nothing
+        Me.SiteInfo = Nothing
+        Me.NotMe = Nothing
+        Me.WorkingDirectory = ""
+        Me.LegReinforcements.Clear()
+        Me.CCISeismics.Clear()
+        Me.tnx.Clear()
     End Sub
 
     Private Shared _SQLQueryVariables() As String = New String() {"@TopLevel", "@SubLevel1", "@SubLevel2", "@SubLevel3", "@SubLevel4"}
