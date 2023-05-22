@@ -233,7 +233,7 @@ Partial Public Class AnchorBlockFoundation
         'If tables exist then construct otherwise just return blank GAB Tool 
         '''''''''''''''''''''
         '''''''''''''''''''''
-        If excelDS.Tables.Contains("Guyed Anchor Block Foundation") Then
+        If excelDS.Tables.Contains("Guyed Anchor Block Foundation") And excelDS.Tables("Guyed Anchor Block Foundation").Rows.Count > 0 Then
             Dim dr As DataRow
             Try
                 dr = excelDS.Tables("Guyed Anchor Block Foundation").Rows(0)
