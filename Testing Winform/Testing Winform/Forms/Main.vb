@@ -1191,7 +1191,7 @@ finishMe:
                 End If
             End If
 
-            SetUpWorkArea(id)
+            SetUpWorkArea(id, Not btnProcess1.Enabled)
         End Sub
 
         Public Sub CreateInitialTestWorkArea(ByVal listID As Integer)
