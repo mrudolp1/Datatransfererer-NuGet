@@ -162,11 +162,11 @@ Namespace UnitTesting
                     If testID.Text.Contains("Checked Out") Then
                         btnClose.Enabled = True
                         btnCheckout.Enabled = False
-                        btnClose.Enabled = True
+                        testPush.Enabled = True
                     Else
                         btnClose.Enabled = False
                         btnCheckout.Enabled = True
-                        btnClose.Enabled = False
+                        testPush.Enabled = False
                     End If
 
                 End If
