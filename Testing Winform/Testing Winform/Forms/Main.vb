@@ -162,11 +162,11 @@ Namespace UnitTesting
                     If testID.Text.Contains("Checked Out") Then
                         btnClose.Enabled = True
                         btnCheckout.Enabled = False
-                        btnClose.Enabled = True
+                        testPush.Enabled = True
                     Else
                         btnClose.Enabled = False
                         btnCheckout.Enabled = True
-                        btnClose.Enabled = False
+                        testPush.Enabled = False
                     End If
 
                 End If
@@ -417,7 +417,7 @@ Namespace UnitTesting
             Catch ex As Exception
             End Try
 
-            Using sw As New StreamWriter(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")
+            Using sw As New StreamWriter(lFolder & "\Test ID " & testCase.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")
                 sw.Write(strJson)
                 sw.Close()
             End Using
@@ -426,7 +426,7 @@ Namespace UnitTesting
             Dim dateCheck As DateTime = "1/1/1900 12:00 AM"
             Dim myFile As FileInfo = Nothing
 
-            For Each file As FileInfo In New DirectoryInfo(lFolder & "\Test ID " & testID.Text.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\").GetFiles
+            For Each file As FileInfo In New DirectoryInfo(lFolder & "\Test ID " & testCase.ToString & "\Iteration " & testIteration.Text.ToString & "\Maestro\").GetFiles
                 If file.Extension.ToLower = ".ccistr" Then
                     If file.CreationTime > dateCheck Then
                         dateCheck = file.CreationTime
@@ -470,18 +470,18 @@ Namespace UnitTesting
         'Create and compare CSV Results files
         Private Sub testPrevResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
-            GetAllResults(lFolder & "\Test ID " & testID.Text & "\Reference SA Files")
+            GetAllResults(lFolder & "\Test ID " & testCase & "\Reference SA Files")
             ButtonclickToggle(Me.Cursor)
         End Sub
         Private Sub testPublishedResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
-            GetAllResults(lFolder & "\Test ID " & testID.Text & "\Manual (Current)")
+            GetAllResults(lFolder & "\Test ID " & testCase & "\Manual (Current)")
             ButtonclickToggle(Me.Cursor)
         End Sub
         Private Sub testIterationResults_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
-            GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Maestro")
-            GetAllResults(lFolder & "\Test ID " & testID.Text & "\Iteration " & testIteration.Text & "\Manual (SAPI)")
+            GetAllResults(lFolder & "\Test ID " & testCase & "\Iteration " & testIteration.Text & "\Maestro")
+            GetAllResults(lFolder & "\Test ID " & testCase & "\Iteration " & testIteration.Text & "\Manual (SAPI)")
             ButtonclickToggle(Me.Cursor)
         End Sub
         Private Sub testCompareAll_Click(sender As Object, e As EventArgs)
@@ -1191,7 +1191,7 @@ finishMe:
                 End If
             End If
 
-            SetUpWorkArea(id)
+            SetUpWorkArea(id, Not btnProcess1.Enabled)
         End Sub
 
         Public Sub CreateInitialTestWorkArea(ByVal listID As Integer)
@@ -1961,7 +1961,7 @@ finishMe:
             Dim resDs As New DataSet 'Item4
 
             Dim dir As String = IIf(CType(chkWorkLocal.Checked, Boolean) = True, lFolder, rFolder)
-            Dim testid As Integer = CType(Me.testID.Text, Integer)
+            Dim testid As Integer = CType(testCase, Integer)
             Dim testiteration As Integer = CType(Me.testIteration.Text, Integer)
 
             GetAllResults(Me.RefFolder)
