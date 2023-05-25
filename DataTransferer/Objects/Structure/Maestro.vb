@@ -724,6 +724,11 @@ ErrorSkip:
                 isWordOpen = False
             End Try
 
+            'Make sure ReportPrintReactions=Yes in eri file
+            If Not SetEriOutputVariables(tnxFilePath) Then
+                WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables")
+            End If
+
             With cmdProcess
                 .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
 
@@ -771,9 +776,43 @@ ErrorSkip:
             Return False
         End Try
     End Function
+
+    ''' <summary>
+    ''' Sets ReportPrintReactions=Yes in eri file prior to running
+    ''' </summary>
+    ''' <param name="tnxFilePath"></param>
+    ''' <returns></returns>
+    Public Function SetEriOutputVariables(tnxFilePath As String) As Boolean
+        Dim eriAllText As String
+
+        If Not File.Exists(tnxFilePath) Then Return False
+        Try
+
+            Using fs As FileStream = New FileStream(tnxFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+
+                Using r As StreamReader = New StreamReader(fs)
+                    'make sure we're at the beginning
+                    r.DiscardBufferedData()
+                    r.BaseStream.Seek(0, SeekOrigin.Begin)
+                    eriAllText = r.ReadToEnd
+
+                    eriAllText = eriAllText.Replace("ReportPrintReactions=No", "ReportPrintReactions=Yes")
+
+                    Using w As StreamWriter = New StreamWriter(tnxFilePath, False)
+                        w.Write(eriAllText)
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception setting ERI output variables: " & ex.Message)
+            Return False
+        End Try
+        Return True
+    End Function
+
     'Close an RTF file based on a tnx file
-    'If isWordOpen is true then it will not close word
-    Public Sub CloseRTF(ByVal tnxfilepath As String, ByVal iswordOpen As Boolean)
+    'If isWordOpen is true then it will not close word
+    Public Sub CloseRTF(ByVal tnxfilepath As String, ByVal iswordOpen As Boolean)
         Dim word As Object
         Dim doc As Object
         Dim rtfPath As String = tnxfilepath & ".rtf"
@@ -918,7 +957,7 @@ ErrorSkip:
                 Dim folderVersion As Version = Nothing
 
                 'skip if beta version is found and we're not in devmode
-                If Not isDevMode And folder.ToUpper.Contains("BETA") Then
+                If (Not isDevMode And folder.ToUpper.Contains("BETA")) Or folder.ToUpper.Contains("ARCHIVE") Then
                     Continue For
                 End If
 
