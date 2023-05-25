@@ -1141,4 +1141,8 @@ Partial Public Class PierAndPad
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Results.Clear()
+    End Sub
+
 End Class
