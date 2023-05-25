@@ -119,6 +119,7 @@ Partial Public Class CCISeismic
     Private _elasticity As Double?
     Private _create_seismic_loads As Boolean?
     Private _user_force_appurtenance As Boolean?
+    Private _sdc As String
 
     <Category("Seismic"), Description(""), DisplayName("Lat Sign")>
      <DataMember()> Public Property lat_sign() As String
@@ -363,7 +364,15 @@ Partial Public Class CCISeismic
             Me._user_force_appurtenance = Value
         End Set
     End Property
-
+    <Category("Seismic"), Description(""), DisplayName("Seismic Design Category")>
+    <DataMember()> Public Property sdc() As String
+        Get
+            Return Me._sdc
+        End Get
+        Set
+            Me._sdc = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -431,6 +440,11 @@ Partial Public Class CCISeismic
         Me.elasticity = DBtoNullableDbl(dr.Item("elasticity"))
         Me.create_seismic_loads = DBtoNullableBool(dr.Item("create_seismic_loads"))
         Me.user_force_appurtenance = DBtoNullableBool(dr.Item("user_force_appurtenance"))
+        Try
+            Me.sdc = DBtoStr(dr.Item("sdc"))
+        Catch ex As Exception
+        End Try
+
 
     End Sub
 

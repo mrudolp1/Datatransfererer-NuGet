@@ -24,7 +24,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.3"
+        Public testingVersion As String = "1.0.0.4"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -871,7 +871,7 @@ finishMe:
             isopening = True 'Only used because isloading wasn't there and I didn't feel like adding it
             ButtonclickToggle(Me.Cursor)
 
-            LogActivity("FINISH | Test Case" & Me.testCase)
+            LogActivity("FINISH | Test Case " & Me.testCase)
 
             PushIt(True)
             TearDownWorkArea()
@@ -890,13 +890,13 @@ finishMe:
 
             If IsNumeric(testID.Text) Then
                 ButtonclickToggle(Me.Cursor)
-                CheckOut()
+                If CheckOut() = vbNo Then GoTo StopLookingAtMeSwan
                 sender.enabled = False
                 btnClose.Enabled = True
                 My.Settings.MyTestCase = testCase
                 My.Settings.Save()
 
-                LogActivity("START | Test Case" & Me.testCase, True)
+                LogActivity("START | Test Case " & Me.testCase, True)
                 LogActivity("INFO | Using CCI Engineering Datatransferer " & CCI_Engineering_Templates.myVersion)
                 LogActivity("INFO | Using Testing Winform " & testingVersion)
 
@@ -908,6 +908,10 @@ finishMe:
                     testPush.Enabled = True
                 End If
                 SetTestIDLabels()
+                isopening = True
+                testID.SelectedIndex = testCase - 1
+                isopening = False
+StopLookingAtMeSwan:
                 ButtonclickToggle(Me.Cursor)
             End If
 
@@ -1151,7 +1155,7 @@ finishMe:
             File.Delete(rFolder & "\Test ID " & Me.testCase & "\Checked Out.txt")
         End Sub
 
-        Public Sub CheckOut()
+        Public Function CheckOut() As DialogResult
             'Get the id from the load case lists
             Dim id As Integer = Me.testCase - 1
 
@@ -1167,14 +1171,15 @@ finishMe:
                         If answer = vbYes Then
                             PullIt(False)
                         Else
-                            Exit Sub
+                            Return answer
                         End If
                     Else
-                        answer = MsgBox("Test Case " & Me.testCase & " exists on the R: drive and locally." & vbCrLf & vbCrLf & "Pulling data from the R: drive will delete all local files." & vbCrLf & vbCrLf & "Would you like to PULL the R: drive files locally?", vbYesNo + vbInformation, "Pull and Checkout")
+                        answer = MsgBox("Test Case " & Me.testCase & " exists on the R: drive and locally." & vbCrLf & vbCrLf & "Pulling data from the R: drive will delete all local files." & vbCrLf & vbCrLf & "Would you like to PULL the R: drive files locally and CHECKOUT the test case?", vbYesNo + vbInformation, "Pull and Checkout")
                         If answer = vbYes Then
                             PullIt(True)
                         Else
-                            CreateCheckOutFiles()
+                            Return answer
+                            'CreateCheckOutFiles()
                         End If
                     End If
                 End If
@@ -1192,7 +1197,7 @@ finishMe:
             End If
 
             SetUpWorkArea(id, Not btnProcess1.Enabled)
-        End Sub
+        End Function
 
         Public Sub CreateInitialTestWorkArea(ByVal listID As Integer)
             Directory.CreateDirectory(rFolder & "\Test ID " & Me.testCase)
@@ -1885,10 +1890,10 @@ finishMe:
                                     Try
                                         strVal = dr.Item("Structural Rating") * 100
                                     Catch ex As Exception
-                                        ancVal = 0
+                                        strVal = 0
                                     End Try
                                     Try
-                                        strVal = dr.Item("Anchor Rating") * 100
+                                        ancVal = dr.Item("Anchor Rating") * 100
                                     Catch ex As Exception
                                         ancVal = 0
                                     End Try
@@ -1902,7 +1907,11 @@ finishMe:
                                 If Not dr.Item("Column1").ToString = String.Empty Then
                                     Dim val As Double
                                     Try
-                                        val = dr.Item("Rating*").ToString.Replace("%", "") * 100
+                                        Try
+                                            val = dr.Item("Rating*").ToString.Replace("%", "") * 100
+                                        Catch exx As Exception
+                                            val = dr.Item("Rating").ToString.Replace("%", "") * 100
+                                        End Try
                                     Catch ex As Exception
                                         val = 0
                                     End Try
@@ -2021,7 +2030,7 @@ finishMe:
             Dim combinedResults As New DataTable
             'Loop through all files in the specified folder
             For Each info As FileInfo In New DirectoryInfo(folder).GetFiles
-                If info.Extension.ToLower = ".xlsm" Then
+                If info.Extension.ToLower = ".xlsm" And Not info.Name.Contains("~") Then
                     'Merge the datatable to append all data together
                     combinedResults.Merge(SummarizedResults(info))
                 End If
@@ -2156,10 +2165,12 @@ finishMe:
             If Directory.Exists(lFolder) Then
                 For Each fold As DirectoryInfo In New DirectoryInfo(lFolder).GetDirectories
                     If fold.Name.Contains("Test ID") Then
+                        Dim i As Integer
+                        i = CType(Split(fold.Name, " ")(2), Integer)
                         If File.Exists(fold.FullName & "\Checked Out.txt") Then
-                            Dim i As Integer
-                            i = CType(Split(fold.Name, " ")(2), Integer)
                             testID.Properties.Items(i - 1) = i & "|Checked Out"
+                        Else
+                            testID.Properties.Items(i - 1) = i
                         End If
                     End If
                 Next
@@ -2511,6 +2522,13 @@ RetryFileOpenCheck:
         'Archive files in a directory to another directory.
         <Extension()>
         Public Sub ArchiveFiles(ByVal dirTo As DirectoryInfo, ByVal dirFrom As String)
+            For Each fold As DirectoryInfo In New DirectoryInfo(dirFrom).GetDirectories
+                If Not fold.Name.ToLower.Contains("archive") Then
+                    fold.MoveTo(dirTo.FullName & "\" & fold.Name)
+                    frmMain.LogActivity("DEBUG | " & fold.Name & " moved to " & dirTo.FullName.Replace(dirFrom, ""))
+                End If
+            Next
+
             For Each file As FileInfo In New DirectoryInfo(dirFrom).GetFiles
                 file.MoveTo(dirTo.FullName & "\" & file.Name)
                 frmMain.LogActivity("DEBUG | " & file.Name & " moved to " & dirTo.FullName.Replace(dirFrom, ""))
