@@ -1326,4 +1326,7 @@ Partial Public Class UnitBase
     End Function
 #End Region
 
+    Public Overrides Sub Clear()
+        Results.Clear()
+    End Sub
 End Class
