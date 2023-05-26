@@ -18,6 +18,8 @@ Imports System.Runtime.InteropServices
 Imports DevExpress.XtraEditors
 Imports DevExpress.Utils.Svg
 Imports DevExpress.Utils.Drawing
+Imports System.Xml
+Imports System.Xml.Serialization
 
 Namespace UnitTesting
 
@@ -787,7 +789,7 @@ Namespace UnitTesting
                     End If
                     strcLocal.AppendLog(Me.TestLogActivityPath, iteration)
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
-                Case "step7"
+                Case "step7", "step7b", "step7a"
                     Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
                     ButtonclickToggle(Me.Cursor, Cursors.Default)
 
@@ -801,18 +803,24 @@ Namespace UnitTesting
                     '''Item 1 = Boolean specifying if they match
                     '''Item 2 = Data table of the comparisons
                     'Item 4 = Dataset will all tables
+                    If tags(0).ToLower = "step7" Or tags(0).ToLower = "step7a" Then
+                        Dim newSum As New frmSummary
+                        newSum.myDs = checks.Item4
+                        newSum.Show()
+                        LogActivity("DEBUG | Manual = Maestro --> " & checks.Item1.Item1.ToString)
+                        LogActivity("DEBUG | Prod = Manual --> " & checks.Item2.Item1.ToString)
+                        LogActivity("DEBUG | Prod = Maestro --> " & checks.Item3.Item1.ToString)
 
-                    Dim newSum As New frmSummary
-                    newSum.myDs = checks.Item4
-                    newSum.Show()
-                    LogActivity("DEBUG | Manual = Maestro --> " & checks.Item1.Item1.ToString)
-                    LogActivity("DEBUG | Prod = Manual --> " & checks.Item2.Item1.ToString)
-                    LogActivity("DEBUG | Prod = Maestro --> " & checks.Item3.Item1.ToString)
+                        DatatableToCSV(checks.Item4.Tables("Combined Results"), Me.itFolder & "\All Summarized Results.csv")
+                        LogActivity("DEBUG | Results output for reference SA files created: " & Me.itFolder & "\All Summarized Results.csv")
+                        newSum.Refresh()
+                        newSum.Export()
+                    End If
 
-                    DatatableToCSV(checks.Item4.Tables("Combined Results"), Me.itFolder & "\All Summarized Results.csv")
-                    LogActivity("DEBUG | Results output for reference SA files created: " & Me.itFolder & "\All Summarized Results.csv")
-                    newSum.Refresh()
-                    newSum.Export()
+                    If tags(0).ToLower = "step7" Or tags(0).ToLower = "step7b" Then
+                        CreatetnxResults()
+                    End If
+
                     LogActivity("INFO | Results for all files compared and created in testing directory.")
                 Case "step8"
                     strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
@@ -1309,6 +1317,9 @@ StopLookingAtMeSwan:
             btnProcess15.Enabled = Not btnProcess15.Enabled
             btnProcess16.Enabled = Not btnProcess16.Enabled
             btnProcess17.Enabled = Not btnProcess17.Enabled
+            btnProcess21.Enabled = Not btnProcess21.Enabled
+            btnProcess22.Enabled = Not btnProcess22.Enabled
+
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
             If New FileInfo(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt").Exists Then testPush.Enabled = Not testPush.Enabled
@@ -2041,6 +2052,76 @@ StopLookingAtMeSwan:
             LogActivity("DEBUG | Results output for reference SA files created: " & folder & "\Summarized Results.csv")
         End Sub
 
+
+        Private Sub CreatetnxResults()
+            'Add ability to loop through the following folders
+            '''ERI
+            '''MAN
+            '''MAE
+            '''CUR
+            'Create a datatable for each of them. (Just compare them all. 
+            Dim myERIs As New List(Of String)
+            Dim myTnxs As New List(Of tnxModel)
+            Dim myDTs As New List(Of DataTable)
+            Dim myChecks As New List(Of Tuple(Of Boolean, DataTable))
+            Dim tnxDS As New DataSet
+            myERIs.AddERIs(Me.EriFolder, False)
+            myERIs.AddERIs(Me.PubFolder, False)
+            myERIs.AddERIs(Me.ManFolder, False)
+            myERIs.AddERIs(Me.MaeFolder, False)
+
+            For Each eri In myERIs
+                If File.Exists(eri & ".XMLOUT.xml") Then
+                    myTnxs.Add(New tnxModel(eri, Nothing))
+                End If
+            Next
+
+            For Each tnx In myTnxs
+                myDTs.Add(tnx.ResultsToDataTable)
+            Next
+
+            For Each dt In myDTs
+                dt.ResultsSorting
+            Next
+
+            If myDTs.Count > 1 Then
+                For i As Integer = 0 To myDTs.Count - 1
+                    For j As Integer = i + 1 To myDTs.Count - 1
+                        myChecks.Add(myDTs(i).IsMatching(myDTs(j)))
+                    Next
+                    myDTs(i).ToCSV(dirUse & "\Test ID " & testCase & myDTs(i).TableName & ".csv")
+                    tnxDS.Tables.Add(myDTs(i))
+                Next
+
+                'Create a tnx Comparison for the iteration
+                'Save tnx Comparison dts to this folder
+                'Load up the userform that shows comparisons.
+                If myChecks.Count > 0 Then
+
+
+                    Dim dir As String
+                    Dim filepath As String
+                    dir = dirUse & "\Test ID " & testCase & "\Iteration " & iteration & "\TNX Results Summary " & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString()
+                    If Not IO.Directory.Exists(dir) Then IO.Directory.CreateDirectory(dir)
+
+                    For Each chk In myChecks
+                        filepath = dir & "\" & chk.Item2.TableName.ToDirectoryString & ".csv"
+                        Try
+                            chk.Item2.ToCSV(filepath)
+                        Catch ex As Exception
+                        End Try
+                        tnxDS.Tables.Add(chk.Item2)
+                    Next
+                End If
+
+                Dim newSum As New frmSummary
+                newSum.myDs = tnxDS
+                newSum.ToolStripSplitButton1.Enabled = False
+                newSum.Show()
+            End If
+
+        End Sub
+
 #End Region
 
         'A datatable of the reference files in the Reference SA Files folder. 
@@ -2558,7 +2639,7 @@ RetryFileOpenCheck:
             Next
 
             dt.Columns.Remove("Rating Old")
-            dt.TableName = addColumn
+            If addColumn IsNot Nothing Then dt.TableName = addColumn
             dt.AsDataView.Sort = "Type ASC, Tool ASC"
         End Sub
 
@@ -2698,6 +2779,29 @@ RetryFileOpenCheck:
             Return ver
         End Function
 
+        <Extension>
+        Public Function ResultsToDataTable(ByVal myTnx As tnxModel) As DataTable
+            Dim tnxDt As New DataTable
+            tnxDt.Columns.Add("Type", GetType(System.String))
+            tnxDt.Columns.Add("Rating", GetType(System.String))
+            tnxDt.Columns.Add("Tool", GetType(System.String))
+            tnxDt.TableName = myTnx.filePath.Replace(frmMain.dirUse & "\Test ID " & frmMain.testCase, "")
+
+            For Each up In myTnx.geometry.upperStructure
+                For Each res In up.Results
+                    If res.rating > 0 Then tnxDt.Rows.Add(res.result_lkup, res.rating, "TNX Upper Section " & up.Rec)
+                Next
+            Next
+
+            For Each down In myTnx.geometry.baseStructure
+                For Each res In down.Results
+                    If res.rating > 0 Then tnxDt.Rows.Add(res.result_lkup, res.rating, "TNX Base Section " & down.Rec)
+                Next
+            Next
+
+            Return tnxDt
+        End Function
+
         'Update the count of the items in the check buttons
         '''The button being updated
         '''the type of message (Info, Error, Debug, etc)
@@ -2744,15 +2848,17 @@ RetryFileOpenCheck:
         End Sub
 
         <Extension()>
-        Public Sub AddERIs(ByVal myList As List(Of String), ByVal myDir As String)
+        Public Sub AddERIs(ByVal myList As List(Of String), ByVal myDir As String, Optional ByVal purgeERI As Boolean = True)
             For Each info As FileInfo In New DirectoryInfo(myDir).GetFiles
                 If info.Extension.ToLower() = ".eri" Then
                     'All eris permitted
                     myList.Add(info.FullName)
                     frmMain.LogActivity("DEBUG | ERI: " & info.Name & " found")
                 ElseIf info.Name.ToLower.Contains(".eri.") Or info.Extension.ToLower = ".tfnx" Then
-                    info.Delete()
-                    frmMain.LogActivity("DEBUG | File Deleted: " & info.Name & "")
+                    If purgeERI Then
+                        info.Delete()
+                        frmMain.LogActivity("DEBUG | File Deleted: " & info.Name & "")
+                    End If
                 End If
             Next
         End Sub
