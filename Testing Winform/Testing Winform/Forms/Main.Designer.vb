@@ -98,6 +98,8 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnProcess21 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess22 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess20 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess19 = New DevExpress.XtraEditors.SimpleButton()
             Me.CheckEditExcelVisibleII = New DevExpress.XtraEditors.CheckEdit()
@@ -238,7 +240,7 @@
             Me.pgStructure.Location = New System.Drawing.Point(4, 22)
             Me.pgStructure.Name = "pgStructure"
             Me.pgStructure.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgStructure.Size = New System.Drawing.Size(1781, 742)
+            Me.pgStructure.Size = New System.Drawing.Size(1879, 742)
             Me.pgStructure.TabIndex = 4
             Me.pgStructure.Text = "Structure"
             Me.pgStructure.UseVisualStyleBackColor = True
@@ -259,8 +261,8 @@
             '
             Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer5)
             Me.SplitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer3.Size = New System.Drawing.Size(1775, 659)
-            Me.SplitContainer3.SplitterDistance = 879
+            Me.SplitContainer3.Size = New System.Drawing.Size(1873, 659)
+            Me.SplitContainer3.SplitterDistance = 927
             Me.SplitContainer3.TabIndex = 7
             '
             'btnImportStrcFiles
@@ -290,7 +292,7 @@
             '
             Me.SplitContainer4.Panel2.Controls.Add(Me.propgridFndXL)
             Me.SplitContainer4.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer4.Size = New System.Drawing.Size(879, 659)
+            Me.SplitContainer4.Size = New System.Drawing.Size(927, 659)
             Me.SplitContainer4.SplitterDistance = 164
             Me.SplitContainer4.TabIndex = 4
             '
@@ -335,7 +337,7 @@
             Me.propgridFndXL.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndXL.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndXL.Name = "propgridFndXL"
-            Me.propgridFndXL.Size = New System.Drawing.Size(711, 659)
+            Me.propgridFndXL.Size = New System.Drawing.Size(759, 659)
             Me.propgridFndXL.TabIndex = 4
             '
             'SplitContainer5
@@ -352,8 +354,8 @@
             '
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnLoadFndFromEDS)
             Me.SplitContainer5.Panel2.Controls.Add(Me.btnExportStrcFiles)
-            Me.SplitContainer5.Size = New System.Drawing.Size(892, 659)
-            Me.SplitContainer5.SplitterDistance = 558
+            Me.SplitContainer5.Size = New System.Drawing.Size(942, 659)
+            Me.SplitContainer5.SplitterDistance = 589
             Me.SplitContainer5.TabIndex = 0
             '
             'propgridFndEDS
@@ -361,7 +363,7 @@
             Me.propgridFndEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridFndEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridFndEDS.Name = "propgridFndEDS"
-            Me.propgridFndEDS.Size = New System.Drawing.Size(558, 659)
+            Me.propgridFndEDS.Size = New System.Drawing.Size(589, 659)
             Me.propgridFndEDS.TabIndex = 4
             '
             'btnLoadFndFromEDS
@@ -397,7 +399,7 @@
             Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel2.Location = New System.Drawing.Point(3, 3)
             Me.Panel2.Name = "Panel2"
-            Me.Panel2.Size = New System.Drawing.Size(1775, 77)
+            Me.Panel2.Size = New System.Drawing.Size(1873, 77)
             Me.Panel2.TabIndex = 6
             '
             'btnBrowse
@@ -489,7 +491,7 @@
             Me.pgTNX.Location = New System.Drawing.Point(4, 22)
             Me.pgTNX.Name = "pgTNX"
             Me.pgTNX.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgTNX.Size = New System.Drawing.Size(1781, 742)
+            Me.pgTNX.Size = New System.Drawing.Size(1879, 742)
             Me.pgTNX.TabIndex = 1
             Me.pgTNX.Text = "TNX"
             Me.pgTNX.UseVisualStyleBackColor = True
@@ -511,8 +513,8 @@
             '
             Me.SplitContainer1.Panel2.Controls.Add(Me.scFromEDS)
             Me.SplitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.SplitContainer1.Size = New System.Drawing.Size(1775, 691)
-            Me.SplitContainer1.SplitterDistance = 879
+            Me.SplitContainer1.Size = New System.Drawing.Size(1873, 691)
+            Me.SplitContainer1.SplitterDistance = 927
             Me.SplitContainer1.TabIndex = 6
             '
             'btnSavetoEDS
@@ -544,7 +546,7 @@
             '
             Me.scFromERI.Panel2.Controls.Add(Me.propgridTNXERI)
             Me.scFromERI.RightToLeft = System.Windows.Forms.RightToLeft.No
-            Me.scFromERI.Size = New System.Drawing.Size(879, 691)
+            Me.scFromERI.Size = New System.Drawing.Size(927, 691)
             Me.scFromERI.SplitterDistance = 164
             Me.scFromERI.TabIndex = 4
             '
@@ -553,7 +555,7 @@
             Me.propgridTNXERI.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXERI.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXERI.Name = "propgridTNXERI"
-            Me.propgridTNXERI.Size = New System.Drawing.Size(711, 691)
+            Me.propgridTNXERI.Size = New System.Drawing.Size(759, 691)
             Me.propgridTNXERI.TabIndex = 4
             '
             'scFromEDS
@@ -570,8 +572,8 @@
             '
             Me.scFromEDS.Panel2.Controls.Add(Me.btnLoadfromEDS)
             Me.scFromEDS.Panel2.Controls.Add(Me.btnExportERI)
-            Me.scFromEDS.Size = New System.Drawing.Size(892, 691)
-            Me.scFromEDS.SplitterDistance = 558
+            Me.scFromEDS.Size = New System.Drawing.Size(942, 691)
+            Me.scFromEDS.SplitterDistance = 589
             Me.scFromEDS.TabIndex = 0
             '
             'propgridTNXEDS
@@ -579,7 +581,7 @@
             Me.propgridTNXEDS.Dock = System.Windows.Forms.DockStyle.Fill
             Me.propgridTNXEDS.Location = New System.Drawing.Point(0, 0)
             Me.propgridTNXEDS.Name = "propgridTNXEDS"
-            Me.propgridTNXEDS.Size = New System.Drawing.Size(558, 691)
+            Me.propgridTNXEDS.Size = New System.Drawing.Size(589, 691)
             Me.propgridTNXEDS.TabIndex = 4
             '
             'btnLoadfromEDS
@@ -611,7 +613,7 @@
             Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
             Me.Panel1.Location = New System.Drawing.Point(3, 3)
             Me.Panel1.Name = "Panel1"
-            Me.Panel1.Size = New System.Drawing.Size(1775, 45)
+            Me.Panel1.Size = New System.Drawing.Size(1873, 45)
             Me.Panel1.TabIndex = 5
             '
             'btnTest
@@ -678,7 +680,7 @@
             Me.pgSQLBackUp.Location = New System.Drawing.Point(4, 22)
             Me.pgSQLBackUp.Name = "pgSQLBackUp"
             Me.pgSQLBackUp.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgSQLBackUp.Size = New System.Drawing.Size(1781, 742)
+            Me.pgSQLBackUp.Size = New System.Drawing.Size(1879, 742)
             Me.pgSQLBackUp.TabIndex = 0
             Me.pgSQLBackUp.Text = "SQL"
             Me.pgSQLBackUp.UseVisualStyleBackColor = True
@@ -756,7 +758,7 @@
             Me.TabControl1.Location = New System.Drawing.Point(0, 0)
             Me.TabControl1.Name = "TabControl1"
             Me.TabControl1.SelectedIndex = 0
-            Me.TabControl1.Size = New System.Drawing.Size(1789, 768)
+            Me.TabControl1.Size = New System.Drawing.Size(1887, 768)
             Me.TabControl1.TabIndex = 0
             '
             'pgUnitTesting
@@ -766,7 +768,7 @@
             Me.pgUnitTesting.Location = New System.Drawing.Point(4, 22)
             Me.pgUnitTesting.Name = "pgUnitTesting"
             Me.pgUnitTesting.Padding = New System.Windows.Forms.Padding(3)
-            Me.pgUnitTesting.Size = New System.Drawing.Size(1781, 742)
+            Me.pgUnitTesting.Size = New System.Drawing.Size(1879, 742)
             Me.pgUnitTesting.TabIndex = 5
             Me.pgUnitTesting.Text = "Testing"
             Me.pgUnitTesting.UseVisualStyleBackColor = True
@@ -789,7 +791,7 @@
             Me.sccMain.Panel2.Controls.Add(Me.SplitterControl1)
             Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
             Me.sccMain.Panel2.Text = "Panel2"
-            Me.sccMain.Size = New System.Drawing.Size(1775, 616)
+            Me.sccMain.Size = New System.Drawing.Size(1873, 616)
             Me.sccMain.SplitterPosition = 377
             Me.sccMain.TabIndex = 21
             '
@@ -810,7 +812,7 @@
             '
             Me.sccTesting.Panel2.Controls.Add(Me.SplitContainerControl2)
             Me.sccTesting.Panel2.Text = "Panel2"
-            Me.sccTesting.Size = New System.Drawing.Size(1388, 616)
+            Me.sccTesting.Size = New System.Drawing.Size(1486, 616)
             Me.sccTesting.SplitterPosition = 206
             Me.sccTesting.TabIndex = 18
             '
@@ -829,7 +831,7 @@
             '
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.XtraTabControl2)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(1388, 400)
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(1486, 400)
             Me.SplitContainerControl1.SplitterPosition = 435
             Me.SplitContainerControl1.TabIndex = 15
             '
@@ -886,7 +888,7 @@
             Me.XtraTabControl2.Location = New System.Drawing.Point(0, 0)
             Me.XtraTabControl2.Name = "XtraTabControl2"
             Me.XtraTabControl2.SelectedTabPage = Me.XtraTabPage3
-            Me.XtraTabControl2.Size = New System.Drawing.Size(943, 400)
+            Me.XtraTabControl2.Size = New System.Drawing.Size(1041, 400)
             Me.XtraTabControl2.TabIndex = 17
             Me.XtraTabControl2.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage3})
             '
@@ -894,7 +896,7 @@
             '
             Me.XtraTabPage3.Controls.Add(Me.seLocal)
             Me.XtraTabPage3.Name = "XtraTabPage3"
-            Me.XtraTabPage3.Size = New System.Drawing.Size(941, 375)
+            Me.XtraTabPage3.Size = New System.Drawing.Size(1039, 375)
             Me.XtraTabPage3.Text = "Local Testing Folder"
             '
             'seLocal
@@ -904,7 +906,7 @@
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(941, 375)
+            Me.seLocal.Size = New System.Drawing.Size(1039, 375)
             Me.seLocal.TabIndex = 16
             '
             'SplitContainerControl2
@@ -925,7 +927,7 @@
             Me.SplitContainerControl2.Panel2.Controls.Add(Me.mainLogViewer)
             Me.SplitContainerControl2.Panel2.Controls.Add(Me.rtfactivityLog)
             Me.SplitContainerControl2.Panel2.Text = "Panel2"
-            Me.SplitContainerControl2.Size = New System.Drawing.Size(1388, 206)
+            Me.SplitContainerControl2.Size = New System.Drawing.Size(1486, 206)
             Me.SplitContainerControl2.SplitterPosition = 621
             Me.SplitContainerControl2.TabIndex = 22
             '
@@ -935,7 +937,7 @@
             Me.rtbNotes.Font = New System.Drawing.Font("Tahoma", 9.0!)
             Me.rtbNotes.Location = New System.Drawing.Point(0, 17)
             Me.rtbNotes.Name = "rtbNotes"
-            Me.rtbNotes.Size = New System.Drawing.Size(757, 189)
+            Me.rtbNotes.Size = New System.Drawing.Size(855, 189)
             Me.rtbNotes.TabIndex = 21
             Me.rtbNotes.TabStop = False
             Me.rtbNotes.Text = ""
@@ -1021,6 +1023,8 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnProcess21)
+            Me.PanelControl1.Controls.Add(Me.btnProcess22)
             Me.PanelControl1.Controls.Add(Me.btnProcess20)
             Me.PanelControl1.Controls.Add(Me.btnProcess19)
             Me.PanelControl1.Controls.Add(Me.CheckEditExcelVisibleII)
@@ -1075,15 +1079,41 @@
             Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Top
             Me.PanelControl1.Location = New System.Drawing.Point(3, 3)
             Me.PanelControl1.Name = "PanelControl1"
-            Me.PanelControl1.Size = New System.Drawing.Size(1775, 120)
+            Me.PanelControl1.Size = New System.Drawing.Size(1873, 120)
             Me.PanelControl1.TabIndex = 16
+            '
+            'btnProcess21
+            '
+            Me.btnProcess21.Appearance.Options.UseTextOptions = True
+            Me.btnProcess21.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess21.Enabled = False
+            Me.btnProcess21.Location = New System.Drawing.Point(1322, 64)
+            Me.btnProcess21.Name = "btnProcess21"
+            Me.btnProcess21.Size = New System.Drawing.Size(90, 23)
+            Me.btnProcess21.TabIndex = 74
+            Me.btnProcess21.Tag = "STEP7A|Generate and compare the results for all excel tools. "
+            Me.btnProcess21.Text = "7a. Excel Results"
+            Me.btnProcess21.ToolTip = "CREATE RESULTS (Excel)"
+            '
+            'btnProcess22
+            '
+            Me.btnProcess22.Appearance.Options.UseTextOptions = True
+            Me.btnProcess22.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess22.Enabled = False
+            Me.btnProcess22.Location = New System.Drawing.Point(1418, 64)
+            Me.btnProcess22.Name = "btnProcess22"
+            Me.btnProcess22.Size = New System.Drawing.Size(90, 23)
+            Me.btnProcess22.TabIndex = 73
+            Me.btnProcess22.Tag = "STEP7B|Generate and compare the results for all eri files. "
+            Me.btnProcess22.Text = "7b. tnx Results"
+            Me.btnProcess22.ToolTip = "CREATE RESULTS (TNX)"
             '
             'btnProcess20
             '
             Me.btnProcess20.Appearance.Options.UseTextOptions = True
             Me.btnProcess20.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess20.Enabled = False
-            Me.btnProcess20.Location = New System.Drawing.Point(1322, 92)
+            Me.btnProcess20.Location = New System.Drawing.Point(1530, 34)
             Me.btnProcess20.Name = "btnProcess20"
             Me.btnProcess20.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess20.TabIndex = 72
@@ -1096,7 +1126,7 @@
             Me.btnProcess19.Appearance.Options.UseTextOptions = True
             Me.btnProcess19.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess19.Enabled = False
-            Me.btnProcess19.Location = New System.Drawing.Point(1417, 63)
+            Me.btnProcess19.Location = New System.Drawing.Point(1625, 5)
             Me.btnProcess19.Name = "btnProcess19"
             Me.btnProcess19.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess19.TabIndex = 71
@@ -1108,7 +1138,7 @@
             '
             Me.CheckEditExcelVisibleII.EditValue = True
             Me.CheckEditExcelVisibleII.Enabled = False
-            Me.CheckEditExcelVisibleII.Location = New System.Drawing.Point(1632, 31)
+            Me.CheckEditExcelVisibleII.Location = New System.Drawing.Point(1735, 90)
             Me.CheckEditExcelVisibleII.Name = "CheckEditExcelVisibleII"
             Me.CheckEditExcelVisibleII.Properties.Caption = "Excel Visible"
             Me.CheckEditExcelVisibleII.Size = New System.Drawing.Size(84, 20)
@@ -1116,17 +1146,21 @@
             '
             'LabelControl11
             '
-            Me.LabelControl11.Location = New System.Drawing.Point(1632, 10)
+            Me.LabelControl11.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
+            Me.LabelControl11.Appearance.Options.UseFont = True
+            Me.LabelControl11.Location = New System.Drawing.Point(1735, 74)
             Me.LabelControl11.Name = "LabelControl11"
-            Me.LabelControl11.Size = New System.Drawing.Size(110, 13)
+            Me.LabelControl11.Size = New System.Drawing.Size(114, 12)
             Me.LabelControl11.TabIndex = 69
             Me.LabelControl11.Text = "Import Inputs Options:"
             '
             'LabelConductOptions
             '
-            Me.LabelConductOptions.Location = New System.Drawing.Point(1529, 10)
+            Me.LabelConductOptions.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
+            Me.LabelConductOptions.Appearance.Options.UseFont = True
+            Me.LabelConductOptions.Location = New System.Drawing.Point(1735, 7)
             Me.LabelConductOptions.Name = "LabelConductOptions"
-            Me.LabelConductOptions.Size = New System.Drawing.Size(84, 13)
+            Me.LabelConductOptions.Size = New System.Drawing.Size(84, 12)
             Me.LabelConductOptions.TabIndex = 68
             Me.LabelConductOptions.Text = "Conduct Options:"
             '
@@ -1134,7 +1168,7 @@
             '
             Me.CheckEditExcelVisible.EditValue = True
             Me.CheckEditExcelVisible.Enabled = False
-            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1529, 57)
+            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1735, 48)
             Me.CheckEditExcelVisible.Name = "CheckEditExcelVisible"
             Me.CheckEditExcelVisible.Properties.Caption = "Excel Visible"
             Me.CheckEditExcelVisible.Size = New System.Drawing.Size(84, 20)
@@ -1144,7 +1178,7 @@
             '
             Me.CheckEditDevMode.EditValue = True
             Me.CheckEditDevMode.Enabled = False
-            Me.CheckEditDevMode.Location = New System.Drawing.Point(1529, 31)
+            Me.CheckEditDevMode.Location = New System.Drawing.Point(1735, 22)
             Me.CheckEditDevMode.Name = "CheckEditDevMode"
             Me.CheckEditDevMode.Properties.Caption = "Dev Mode"
             Me.CheckEditDevMode.Size = New System.Drawing.Size(75, 20)
@@ -1155,7 +1189,7 @@
             Me.btnProcess18.Appearance.Options.UseTextOptions = True
             Me.btnProcess18.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess18.Enabled = False
-            Me.btnProcess18.Location = New System.Drawing.Point(1322, 63)
+            Me.btnProcess18.Location = New System.Drawing.Point(1530, 5)
             Me.btnProcess18.Name = "btnProcess18"
             Me.btnProcess18.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess18.TabIndex = 65
@@ -1167,7 +1201,7 @@
             '
             Me.chkWorkLocal.EditValue = True
             Me.chkWorkLocal.Enabled = False
-            Me.chkWorkLocal.Location = New System.Drawing.Point(1821, 21)
+            Me.chkWorkLocal.Location = New System.Drawing.Point(1855, 94)
             Me.chkWorkLocal.Name = "chkWorkLocal"
             Me.chkWorkLocal.Properties.Caption = "CheckEdit1"
             Me.chkWorkLocal.Size = New System.Drawing.Size(75, 20)
@@ -1349,7 +1383,7 @@
             Me.btnProcess8.Name = "btnProcess8"
             Me.btnProcess8.Size = New System.Drawing.Size(186, 23)
             Me.btnProcess8.TabIndex = 39
-            Me.btnProcess8.Tag = "STEP7|Generate and compare the results for all tools. "
+            Me.btnProcess8.Tag = "STEP7|Generate and compare the results. "
             Me.btnProcess8.Text = "7. Create Results"
             Me.btnProcess8.ToolTip = "CREATE RESULTS"
             '
@@ -1618,7 +1652,7 @@
             Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
             Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
             Me.AutoScroll = True
-            Me.ClientSize = New System.Drawing.Size(1789, 768)
+            Me.ClientSize = New System.Drawing.Size(1887, 768)
             Me.Controls.Add(Me.TabControl1)
             Me.IconOptions.Image = CType(resources.GetObject("frmMain.IconOptions.Image"), System.Drawing.Image)
             Me.Name = "frmMain"
@@ -1837,6 +1871,8 @@
         Friend WithEvents LabelControl11 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents btnProcess20 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess19 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess22 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess21 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
