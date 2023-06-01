@@ -510,6 +510,14 @@ ErrorSkip:
 
                 xlWorkBook = xlApp.Workbooks.Open(excelPath)
 
+                'check for pole and plate
+                If toolFileName.ToUpper.Contains("CCIPOLE") And Me.ParentStructure.CCIplates(0).Connections.Count > 0 Then
+                    'insert baseplate grade into pole from plate
+                    WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate")
+
+                    AssignBasePlateGrade(xlWorkBook)
+                End If
+
                 WriteLineLogLine("INFO | Tool: " & toolFileName)
                 WriteLineLogLine("INFO | Running macro: " & bigMac)
 
@@ -570,6 +578,41 @@ ErrorSkip:
 
         Return "Success"
     End Function
+
+    Public Function AssignBasePlateGrade(ByVal xlWorkBook As Excel.Workbook) As Boolean
+
+
+        Try
+            With xlWorkBook
+                Dim pole_flange_fy As Double = 0
+                Dim row As Integer = 74
+                .Worksheets("Macro References").Range("I74:J83").ClearContents
+                For Each conn As Connection In Me.ParentStructure.CCIplates(0).Connections 'Does this need to loop through all potential CCIplate files? - MRR
+                    If Not IsNothing(conn.connection_elevation) Then
+                        For Each plate As PlateDetail In conn.PlateDetails
+                            If plate.plate_type <> "Interior" Then
+                                For Each matl As CCIplateMaterial In plate.CCIplateMaterials
+                                    If matl.ID = plate.plate_material And matl.fy_0 > pole_flange_fy Then
+                                        pole_flange_fy = CType(matl.fy_0, Double)
+                                    End If
+                                Next
+                            End If
+                        Next
+                        .Worksheets("Macro References").Range("I" & row).Value = CType(conn.connection_elevation, Double)
+                        .Worksheets("Macro References").Range("J" & row).Value = pole_flange_fy
+                        row += 1
+                        pole_flange_fy = 0
+                    End If
+                Next
+            End With
+        Catch ex As Exception
+            WriteLineLogLine("WARNING | Could not determine baseplate grade from CCIPlate. Assumed grades may be used.")
+            Return False
+        End Try
+
+        Return True
+    End Function
+
 
     Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
                                       plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
