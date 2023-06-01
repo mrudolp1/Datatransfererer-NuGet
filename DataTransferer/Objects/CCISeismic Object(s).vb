@@ -33,7 +33,7 @@ Partial Public Class CCISeismic
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AC2", "Details (SAPI)")}
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AD2", "Details (SAPI)")}
 
             'note: Excel table names are consistent with EDS table names to limit work required within constructors
 

@@ -557,7 +557,8 @@ Namespace UnitTesting
                     btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click,
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
-                    btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click
+                    btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click,
+                    btnProcess21.Click, btnProcess22.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -660,7 +661,7 @@ Namespace UnitTesting
                     If tags(0).ToLower.Contains("c") And maeCount > 0 Then msg += maeMsg
                     If tags(0).ToLower.Contains("d") And manCount > 0 Then msg += manMsg
 
-                    If ((eriCount > 0 Or pubCount > 0 Or maeCount > 0) And tags(0) = "step3") Or
+                    If ((eriCount > 0 Or pubCount > 0 Or maeCount > 0) And tags(0).ToLower = "step3") Or
                         (pubCount > 0 And tags(0).ToLower = "step3a") Or
                         (eriCount > 0 And tags(0).ToLower = "step3b") Or
                         (maeCount > 0 And tags(0).ToLower = "step3c") Or
@@ -1498,6 +1499,7 @@ StopLookingAtMeSwan:
                 If importingFrom.Extension.ToLower = ".xlsm" Then
                     Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString.Replace("[ITERATION]", "Iteration " & iteration))
                     Dim macroname As String = "Import_Previous_Version"
+                    Dim prefix As String = ""
                     Dim params As Tuple(Of String, String, Boolean) = New Tuple(Of String, String, Boolean)(importingFrom.FullName.ToString, importingFrom.TemplateVersion, True)
 
                     If importingTo.Name.ToLower.Contains("pile") Then
@@ -1506,9 +1508,13 @@ StopLookingAtMeSwan:
                         If FileType = "MaestroPath" Or FileType = "ManualPath" Then
                             macroname += "_Performer"
                         End If
+                    ElseIf importingTo.Name.ToLower.Contains("leg reinforcement") Then
+                        If FileType = "MaestroPath" Or FileType = "ManualPath" Then
+                            prefix = "m_"
+                        End If
                     End If
 
-                    If Import_Previous_Version(myXL.Item1, importingTo, macroname, params, excelVisible) Then
+                    If Import_Previous_Version(myXL.Item1, importingTo, macroname, params, excelVisible, prefix) Then
                         LogActivity("INFO | Import Inputs Completed for: " & importingTo.FullName)
                         'If FileType = "MaestroPath" Then
                         '    Try
@@ -1558,7 +1564,8 @@ StopLookingAtMeSwan:
                                                 ByVal workbookFile As FileInfo,
                                                 ByVal macroName As String,
                                                 ByVal params As Tuple(Of String, String, Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
-                                                Optional ByVal xlVisibility As Boolean = False
+                                                Optional ByVal xlVisibility As Boolean = False,
+                                                Optional ByVal prefix As String = ""
                                                 ) As Boolean
 
             Dim toolFileName As String = Path.GetFileName(workbookFile.Name)
@@ -1582,7 +1589,7 @@ StopLookingAtMeSwan:
 
                     'Check that the strings aren't empty and that ismaesting = true
                     If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
-                        xlapp.Run("Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
+                        xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
                         LogActivity("DEBUG | END MACRO:  " & macroName)
                     Else
                         LogActivity("ERROR | Parameters not specific ")
@@ -2290,9 +2297,9 @@ StopLookingAtMeSwan:
             While IO.File.Exists(filePath)
                 counter += 1
                 If file IsNot Nothing Then
-                    filePath = newFolder & "\" & file.Name.Split(".")(0) & "(" & counter.ToString() & ")" & file.Name.Split(".")(1)
+                    filePath = newFolder & "\" & file.Name.Split(".")(0) & "(" & counter.ToString() & ")." & file.Name.Split(".")(1)
                 Else
-                    filePath = newFolder & "\" & fileName.Split(".")(0) & "(" & counter.ToString() & ")" & fileName.Split(".")(1)
+                    filePath = newFolder & "\" & fileName.Split(".")(0) & "(" & counter.ToString() & ")." & fileName.Split(".")(1)
                 End If
             End While
 
