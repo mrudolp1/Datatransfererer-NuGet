@@ -14,11 +14,14 @@ Partial Public Class tnxTowerOutput
             Next
         End If
 
-        If Me.Guys IsNot Nothing Then
-            For Each section In Me.Guys
-                section.ConverttoEDSResults(tnx)
-            Next
-        End If
+        'Commented out 5/31/2023 during unit testing
+        'Results for guys are not saved as integers in the XML. 
+        'Architectural notation is still being used. 
+        'If Me.Guys IsNot Nothing Then
+        '    For Each section In Me.Guys
+        '        section.ConverttoEDSResults(tnx)
+        '    Next
+        'End If
 
         If Me.BoltDesignData IsNot Nothing Then
             For Each section In Me.BoltDesignData
