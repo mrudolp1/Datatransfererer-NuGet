@@ -41,7 +41,7 @@ Partial Public Class EDSStructure
     <DataMember()> Public Property GuyAnchorBlockTools As New List(Of AnchorBlockFoundation)
     <DataMember()> Public Property ReportOptions As ReportOptions
     <DataMember()> Public Property SiteInfo As SiteInfo
-    <DataMember()> Public Property NotMe As EDSStructure
+    <DataMember()> Public Property EDSMe As EDSStructure
     <DataMember()> Public Property WorkingDirectory As String
     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
@@ -56,7 +56,7 @@ Partial Public Class EDSStructure
         Me.GuyAnchorBlockTools.Clear()
         Me.ReportOptions = Nothing
         Me.SiteInfo = Nothing
-        Me.NotMe = Nothing
+        Me.EDSMe = Nothing
         Me.WorkingDirectory = ""
         Me.LegReinforcements.Clear()
         Me.CCISeismics.Clear()
@@ -344,13 +344,11 @@ Partial Public Class EDSStructure
 
     End Sub
 
+    Public Function SavetoEDSQuery() As String
 
-    Public Sub SavetoEDS(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
-
-        Me.databaseIdentity = LogOnUser
-        Me.activeDatabase = ActiveDatabase
-
-        Dim existingStructure As New EDSStructure(Me.bus_unit, Me.structure_id, Me.work_order_seq_num, Me.databaseIdentity, Me.activeDatabase)
+        If EDSMe Is Nothing Then
+            Throw New Exception("EDS Structure object not set.")
+        End If
 
         Dim structureQuery As String = ""
         For Each level In _SQLQueryVariables
@@ -360,37 +358,33 @@ Partial Public Class EDSStructure
         If Me.Poles.Count > 0 Then
             structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
         End If
-        'Use the declared variables in the sub queries to pass along IDs that are needed as foreign keys.
+
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
-        structureQuery += Me.tnx?.EDSQueryBuilder(existingStructure.tnx)
-        structureQuery += Me.PierandPads.EDSListQueryBuilder(existingStructure.PierandPads)
-        structureQuery += Me.UnitBases.EDSListQueryBuilder(existingStructure.UnitBases)
-        structureQuery += Me.Piles.EDSListQueryBuilder(existingStructure.Piles)
-        'structureQuery += Me.PierandPads.EDSListQuery(existingStructure.PierandPads)
-        'structureQuery += Me.UnitBases.EDSListQuery(existingStructure.UnitBases)
-        'structureQuery += Me.Piles.EDSListQuery(existingStructure.PierandPads)
-        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(existingStructure.DrilledPierTools)
-        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(existingStructure.GuyAnchorBlockTools)
-        structureQuery += Me.CCIplates.EDSListQueryBuilder(existingStructure.CCIplates)
-        structureQuery += Me.Poles.EDSListQueryBuilder(existingStructure.Poles)
-        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(existingStructure.LegReinforcements)
-        structureQuery += Me.CCISeismics.EDSListQueryBuilder(existingStructure.CCISeismics)
+        structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx)
+        structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads)
+        structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases)
+        structureQuery += Me.Piles.EDSListQueryBuilder(EDSMe.Piles)
+        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools)
+        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools)
+        structureQuery += Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates)
+        structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles)
+        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements)
+        structureQuery += Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics)
 
         structureQuery += vbCrLf & "COMMIT"
 
-        Try
-            My.Computer.Clipboard.SetText(structureQuery)
-        Catch ex As Exception
-            Debug.WriteLine("Failed to copy query to clipboard.")
-        End Try
+        Return structureQuery
 
-        If MessageBox.Show("Structure query copied to clipboard. Would you like to send the structure to EDS?", "Save Structure to EDS?", MessageBoxButtons.YesNo) = vbYes Then
-            Try
-                sqlSender(structureQuery, ActiveDatabase, LogOnUser, 0.ToString)
-            Catch ex As Exception
-                Debug.WriteLine("Failed to send sql query.")
-            End Try
-        End If
+    End Function
+
+    Public Sub SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing)
+
+        If databaseID Is Nothing Then databaseID = Me.databaseIdentity
+        If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
+
+        If EDSMe Is Nothing Then EDSMe = New EDSStructure(Me.bus_unit, Me.structure_id, Me.work_order_seq_num, databaseID, ActiveDatabase)
+
+        sqlSender(SavetoEDSQuery, ActiveDatabase, databaseID, 0.ToString)
 
     End Sub
 #End Region

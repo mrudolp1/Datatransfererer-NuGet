@@ -234,6 +234,7 @@ Namespace UnitTesting
         Private Sub btnExportStrcFiles_Click(sender As Object, e As EventArgs) Handles btnExportStrcFiles.Click
             If strcEDS Is Nothing Then Exit Sub
 
+
             strcEDS.SaveTools(txtDirectory.Text)
 
         End Sub
@@ -254,7 +255,23 @@ Namespace UnitTesting
         Private Sub btnSaveStrcToEDS_Click(sender As Object, e As EventArgs) Handles btnSaveFndToEDS.Click
             If strcLocal Is Nothing Or txtFndBU.Text = "" Or txtFndStrc.Text = "" Then Exit Sub
             'Go to the EDSFoundationGroup.SaveAllFoundationsFromEDS() and uncomment your foundation type when it's ready for testing.
-            strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
+
+            strcLocal.EDSMe = New EDSStructure(strcLocal.bus_unit, strcLocal.structure_id, strcLocal.work_order_seq_num, strcLocal.databaseIdentity, strcLocal.activeDatabase)
+
+            Try
+                My.Computer.Clipboard.SetText(strcLocal.SavetoEDSQuery)
+            Catch ex As Exception
+                Debug.WriteLine("Failed to copy query to clipboard.")
+            End Try
+
+            If MessageBox.Show("Structure query copied to clipboard. Would you like to send the structure to EDS?", "Save Structure to EDS?", MessageBoxButtons.YesNo) = vbYes Then
+                Try
+                    strcLocal.SavetoEDS()
+                Catch ex As Exception
+                    Debug.WriteLine("Failed to send sql query.")
+                End Try
+            End If
+
         End Sub
         Private Sub btnCompareFnd_Click(sender As Object, e As EventArgs) Handles btnCompareStrc.Click
             If strcLocal Is Nothing Or strcEDS Is Nothing Then Exit Sub

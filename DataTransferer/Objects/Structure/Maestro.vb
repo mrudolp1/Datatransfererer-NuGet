@@ -270,16 +270,16 @@ Partial Public Class EDSStructure
                 '//compare previous geometry to current geometry
                 '/run leg reinforcement if exists
                 If Me.LegReinforcements.Count > 0 Then
-                    If IsSomething(Me.NotMe) Then
+                    If IsSomething(Me.EDSMe) Then
                         'if we get here, there's a previous EDS structure
                         'check if EDS geometry exists
                         'check if EDS leg reinforcement exists
                         'compare geometry
                         'compare leg reinforcement
-                        If IsNothing(NotMe.tnx.geometry) Or
-                          NotMe.LegReinforcements.Count = 0 Or
-                          Not Me.tnx.geometry.Equals(NotMe.tnx.geometry) Or
-                          Not Me.LegReinforcements.Equals(NotMe.LegReinforcements) Then
+                        If IsNothing(EDSMe.tnx.geometry) Or
+                          EDSMe.LegReinforcements.Count = 0 Or
+                          Not Me.tnx.geometry.Equals(EDSMe.tnx.geometry) Or
+                          Not Me.LegReinforcements.Equals(EDSMe.LegReinforcements) Then
                             WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.")
                         End If
                     End If
