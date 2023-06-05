@@ -403,37 +403,37 @@ Partial Public Class EDSStructure
     End Sub
 
     Public Sub LoadFromFiles(filePaths As String())
+        Me.PierandPads = New List(Of PierAndPad)
+        Me.Piles = New List(Of Pile)
+        Me.UnitBases = New List(Of UnitBase)
+        Me.DrilledPierTools = New List(Of DrilledPierFoundation)
+        Me.GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
+        Me.CCIplates = New List(Of CCIplate)
+        Me.Poles = New List(Of Pole)
+        Me.LegReinforcements = New List(Of LegReinforcement)
+        Me.CCISeismics = New List(Of CCISeismic)
 
         For Each item As String In filePaths
             Dim itemName As String = System.IO.Path.GetFileName(item)
             If itemName.EndsWith(".eri") Then
                 Me.tnx = New tnxModel(item, Me)
             ElseIf itemName.Contains("Pier and Pad Foundation") And itemName.EndsWith(".xlsm") Then
-                Me.PierandPads = New List(Of PierAndPad)
                 Me.PierandPads.Add(New PierAndPad(item, Me))
             ElseIf itemName.Contains("Pile Foundation") And itemName.EndsWith(".xlsm") Then
-                Me.Piles = New List(Of Pile)
                 Me.Piles.Add(New Pile(item, Me))
             ElseIf itemName.Contains("SST Unit Base Foundation") And itemName.EndsWith(".xlsm") Then
-                Me.UnitBases = New List(Of UnitBase)
                 Me.UnitBases.Add(New UnitBase(item, Me))
             ElseIf itemName.Contains("Drilled Pier Foundation") And itemName.EndsWith(".xlsm") Then
-                Me.DrilledPierTools = New List(Of DrilledPierFoundation)
                 Me.DrilledPierTools.Add(New DrilledPierFoundation(item, Me))
             ElseIf itemName.Contains("Guyed Anchor Block Foundation") And itemName.EndsWith(".xlsm") Then
-                GuyAnchorBlockTools = New List(Of AnchorBlockFoundation)
                 Me.GuyAnchorBlockTools.Add(New AnchorBlockFoundation(item, Me))
             ElseIf itemName.Contains("CCIplate") And itemName.EndsWith(".xlsm") Then
-                Me.CCIplates = New List(Of CCIplate)
                 Me.CCIplates.Add(New CCIplate(item, Me))
             ElseIf itemName.Contains("CCIpole") And itemName.EndsWith(".xlsm") Then
-                Me.Poles = New List(Of Pole)
                 Me.Poles.Add(New Pole(item, Me))
             ElseIf itemName.Contains("Leg Reinforcement Tool") And itemName.EndsWith(".xlsm") Then
-                Me.LegReinforcements = New List(Of LegReinforcement)
                 Me.LegReinforcements.Add(New LegReinforcement(item, Me))
             ElseIf itemName.Contains("CCISeismic") And itemName.EndsWith(".xlsm") Then
-                Me.CCISeismics = New List(Of CCISeismic)
                 Me.CCISeismics.Add(New CCISeismic(item, Me))
             End If
         Next
