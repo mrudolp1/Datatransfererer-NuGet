@@ -511,28 +511,29 @@ ErrorSkip:
                 xlWorkBook = xlApp.Workbooks.Open(excelPath)
 
                 'check for pole and plate
-                If toolFileName.ToUpper.Contains("CCIPOLE") And Me.ParentStructure.CCIplates(0).Connections.Count > 0 Then
-                    'insert baseplate grade into pole from plate
-                    WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate")
+                If Me.ParentStructure.CCIplates.Count > 0 Then
+                    If toolFileName.ToUpper.Contains("CCIPOLE") And IsSomething(Me.ParentStructure.CCIplates(0).Connections) Then
+                        'insert baseplate grade into pole from plate
+                        WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate")
 
-                    AssignBasePlateGrade(xlWorkBook)
+                        AssignBasePlateGrade(xlWorkBook)
+                    End If
                 End If
-
                 WriteLineLogLine("INFO | Tool: " & toolFileName)
-                WriteLineLogLine("INFO | Running macro: " & bigMac)
+                    WriteLineLogLine("INFO | Running macro: " & bigMac)
 
-                If Not IsNothing(tnxFilePath) Then
-                    logString = xlApp.Run(bigMac, tnxFilePath)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    If Not IsNothing(tnxFilePath) Then
+                        logString = xlApp.Run(bigMac, tnxFilePath)
+                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    Else
+                        WriteLineLogLine("WARNING | No TNX file path in structure..")
+                        logString = xlApp.Run(bigMac)
+                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    End If
+
+                    xlWorkBook.Save()
                 Else
-                    WriteLineLogLine("WARNING | No TNX file path in structure..")
-                    logString = xlApp.Run(bigMac)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
-                End If
-
-                xlWorkBook.Save()
-            Else
-                errorMessage = $"ERROR | {excelPath} path not found!"
+                    errorMessage = $"ERROR | {excelPath} path not found!"
                 WriteLineLogLine(errorMessage)
                 Return "Fail"
             End If
@@ -759,13 +760,13 @@ ErrorSkip:
             'Need to determine if word is open prior to running TNX
             'If it is open then it shouldn't be killed when closing the RTF
             'If it isn't open before tnx then it should be killed
-            Dim isWordOpen As Boolean
-            Try
-                Dim word As Object = GetObject(, "Word.Application")
-                isWordOpen = True
-            Catch ex As Exception
-                isWordOpen = False
-            End Try
+            'Dim isWordOpen As Boolean
+            'Try
+            '    Dim word As Object = GetObject(, "Word.Application")
+            '    isWordOpen = True
+            'Catch ex As Exception
+            '    isWordOpen = False
+            'End Try
 
             'Make sure ReportPrintReactions=Yes in eri file
             If Not SetEriOutputVariables(tnxFilePath) Then
@@ -791,13 +792,13 @@ ErrorSkip:
                 Catch ex As Exception
                     WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
                 Finally
-                    Try
-                        'For the time being the RTF file still opens 
-                        'This needs to be closed before returning TRUE
-                        CloseRTF(tnxFilePath, isWordOpen)
-                    Catch ex As Exception
-                        WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                    End Try
+                    'Try
+                    '    'For the time being the RTF file still opens 
+                    '    'This needs to be closed before returning TRUE
+                    '    CloseRTF(tnxFilePath, isWordOpen)
+                    'Catch ex As Exception
+                    '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                    'End Try
                 End Try
 
                 '.WaitForInputIdle()
