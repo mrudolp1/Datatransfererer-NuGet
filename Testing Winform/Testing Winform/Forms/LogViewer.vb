@@ -69,7 +69,8 @@ Namespace UnitTesting
             Dim rect As Rectangle = New Rectangle(e.Bounds.Location, New Size(10.0!, 10.0!))
 
             Try
-                type = GridView2.GetRowCellValue(e.RowHandle, GridView2.Columns("Type")).tolower
+                Dim TypeCellValue As Object = GridView2.GetRowCellValue(e.RowHandle, GridView2.Columns("Type"))
+                type = If(TypeCellValue Is Nothing, "", TypeCellValue.ToString.ToLower)
             Catch ex As Exception
                 type = ""
             End Try
