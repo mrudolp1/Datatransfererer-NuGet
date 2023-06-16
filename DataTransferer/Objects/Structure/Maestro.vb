@@ -2,7 +2,7 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 Imports System.Threading
-Imports Microsoft.Office.Interop
+Imports Excel = Microsoft.Office.Interop.Excel
 
 Partial Public Class EDSStructure
 
@@ -385,13 +385,37 @@ ErrorSkip:
 
     End Function
 
-    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility))
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="isDevMode">Determines if the beta version of TNX should be used.</param>
+    ''' <param name="xlVisibility">Determines excel tools appear in the foreground (true) or are hidden (false).</param>
+    ''' <param name="cancelToken">Provide an optional cancellation token source for the conduct task. If blank, the structures own cancellation token source will be used.</param>
+    ''' <returns></returns>
+    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False, Optional cancelTokenSource As CancellationTokenSource = Nothing) As Task(Of Boolean)
+        _Conducting = True
+        Me.ConductCancelTokenSource = If(cancelTokenSource, New CancellationTokenSource())
+        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), Me.ConductCancelTokenSource.Token)
+        _Conducting = False
     End Function
 
-    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), cancelToken)
-    End Function
+    'Async Cancellation
+    Private _Conducting
+    Public ReadOnly Conducting As Boolean
+    Private ConductCancelTokenSource As CancellationTokenSource
+
+
+    Public Sub CancelConduct()
+        If Conducting AndAlso ConductCancelTokenSource IsNot Nothing Then
+            ConductCancelTokenSource.Cancel()
+            _Conducting = False
+        End If
+    End Sub
+
+    'Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
+
+    '    Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), cancelToken)
+    'End Function
 
     ''' <summary>
     ''' checks to see if the Excel macro returned success or not
@@ -492,7 +516,7 @@ ErrorSkip:
             Return "Fail"
         End If
 
-        Dim xlApp As Microsoft.Office.Interop.Excel.Application = Nothing
+        Dim xlApp As Excel.Application = Nothing
         Dim xlWorkBook As Excel.Workbook = Nothing
 
         Dim errorMessage As String = ""
@@ -617,7 +641,7 @@ ErrorSkip:
 
     Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
                                       plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
-        Dim xlApp As Microsoft.Office.Interop.Excel.Application
+        Dim xlApp As Excel.Application
         Dim xlWorkBook As Excel.Workbook
         Dim xlWorkSheet As Excel.Worksheet = Nothing
         Dim xlVisibility As Boolean = False

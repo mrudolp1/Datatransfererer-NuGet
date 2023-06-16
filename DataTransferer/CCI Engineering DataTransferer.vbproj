@@ -19,6 +19,11 @@
     <FileVersion>1.0.19.5</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Queries\**" />
     <Compile Remove="Templates\Archive\**" />
@@ -46,6 +51,8 @@
   <ItemGroup>
     <Reference Include="Microsoft.Office.Interop.Excel">
       <HintPath>..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>true</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Security" />
