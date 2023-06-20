@@ -182,6 +182,7 @@ Partial Public Class CCIplate
     'Private _process_stage As String 'Defined in EDSExcelObject
 
     <DataMember()> Public Property Connections As New List(Of Connection)
+    <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
     '<DataMember()> Public Property ConnectionResults As New List(Of ConnectionResults)
 
     '<Category("Connection"), Description(""), DisplayName("Id")>
@@ -379,6 +380,16 @@ Partial Public Class CCIplate
         Dim plBridgeDetail As New BridgeStiffenerDetail 'Bridge Stiffener Detail
         Dim plConnectionResult As New ConnectionResults 'Connection Results (BARB & Bridge stiffeners)
         'Dim plStiffenerResult As New StiffenerResults 'Stiffener Results (not required, associated with plate details)
+
+        'Storing all default materials to CCIplate object
+        'added this to help determine whether or not materials need to be added to CCIplate when pulling in from CCIpole (When source is EDS)
+        For Each mrow As DataRow In ds.Tables(plCCIplateMaterial.EDSObjectName).Rows
+            plCCIplateMaterial = New CCIplateMaterial(mrow, EDStruefalse, Me)
+            If If(EDStruefalse, plCCIplateMaterial.default_material = True, True) Then
+                'plPlateDetail.plate_material = plConnectionMaterial
+                CCIplateMaterials.Add(plCCIplateMaterial)
+            End If
+        Next
 
 
         For Each crow As DataRow In ds.Tables(plConnection.EDSObjectName).Rows
@@ -684,42 +695,6 @@ Partial Public Class CCIplate
             '    .Worksheets("").Range("").Value = CType(Me.process_stage, String)
             'End If
 
-            'Pole Geometry (when CCIpole exists)
-            'test 2 (dev branch)
-            'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
-            'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
-            If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
-                Dim col, GeoRow As Integer
-                GeoRow = 18
-                .Worksheets("Sub Tables (SAPI)").Range("A4").Value = CType(True, Boolean) 'Flags if geometry was produced by CCIpole. If true, geometry won't pull in from tnx file path.
-                For Each ps As PoleSection In Me.ParentStructure.Poles(0).unreinf_sections
-                    col = 3
-                    If Not IsNothing(ps.length_section) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_section, Double)
-                    col += 1
-                    If Not IsNothing(ps.length_splice) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_splice, Double)
-                    col += 1
-                    If Not IsNothing(ps.num_sides) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.num_sides, Integer)
-                    col += 1
-                    If Not IsNothing(ps.diam_bot) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_bot, Double)
-                    col += 1
-                    If Not IsNothing(ps.diam_top) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_top, Double)
-                    col += 1
-                    If Not IsNothing(ps.wall_thickness) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.wall_thickness, Double)
-                    col += 1
-                    If Not IsNothing(ps.matl_id) Then
-                        For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
-                            If matl.ID = ps.matl_id Then
-                                .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
-                            End If
-                        Next
-                    End If
-                    'If Not IsNothing(ps.local_matl_id) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.local_matl_id, Integer)
-                    'col += 1
-
-                    GeoRow += 1
-                Next
-            End If
-            'test 2 branch (chris)
             If Me.Connections.Count > 0 Then
                 'identify first row to copy data into Excel Sheet
                 'Connection
@@ -864,7 +839,8 @@ Partial Public Class CCIplate
                                         End If
                                     Next
                                     If matflag = False Then
-                                        tempMaterial = New CCIplateMaterial(mrow.ID)
+                                        'tempMaterial = New CCIplateMaterial(mrow.ID)
+                                        tempMaterial = New CCIplateMaterial(mrow.ID, mrow.name, mrow.fy_0, mrow.fu_0)
                                         tempMaterials.Add(tempMaterial)
 
                                         '.Worksheets("Sub Tables (SAPI)").Range("AR").Count
@@ -1278,7 +1254,7 @@ Partial Public Class CCIplate
                                                 End If
                                             Next
                                             If matflag = False Then
-                                                tempMaterial = New CCIplateMaterial(mrow.ID)
+                                                tempMaterial = New CCIplateMaterial(mrow.ID, mrow.name, mrow.fy_0, mrow.fu_0)
                                                 tempMaterials.Add(tempMaterial)
 
                                                 ''.Worksheets("Sub Tables (SAPI)").Range("AR").Count
@@ -1421,7 +1397,7 @@ Partial Public Class CCIplate
                                         End If
                                     Next
                                     If matflag = False Then
-                                        tempMaterial = New CCIplateMaterial(mrow.ID)
+                                        tempMaterial = New CCIplateMaterial(mrow.ID, mrow.name, mrow.fy_0, mrow.fu_0)
                                         tempMaterials.Add(tempMaterial)
 
                                         '.Worksheets("Sub Tables (SAPI)").Range("AR").Count
@@ -1568,10 +1544,98 @@ Partial Public Class CCIplate
 
                 Next
 
+                Dim polmatflag As Boolean = False
+                Dim poltempMaterials As New List(Of CCIplateMaterial)
+                Dim poltempMaterial As New CCIplateMaterial 'Temp material object to determine if already added to Excel
+                'Pole Geometry (when CCIpole exists)
+                'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
+                'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
+                If Me.ParentStructure.Poles().Count > 0 Then
+                    If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
+                        Dim col, GeoRow As Integer
+                        GeoRow = 18
+                        .Worksheets("Sub Tables (SAPI)").Range("A4").Value = CType(True, Boolean) 'Flags if geometry was produced by CCIpole. If true, geometry won't pull in from tnx file path.
+                        For Each ps As PoleSection In Me.ParentStructure.Poles(0).unreinf_sections
+                            col = 3
+                            If Not IsNothing(ps.length_section) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_section, Double)
+                            col += 1
+                            If Not IsNothing(ps.length_splice) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_splice, Double)
+                            col += 1
+                            If Not IsNothing(ps.num_sides) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.num_sides, Integer)
+                            col += 1
+                            If Not IsNothing(ps.diam_top) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_top, Double)
+                            col += 1
+                            If Not IsNothing(ps.diam_bot) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_bot, Double)
+                            col += 1
+                            If Not IsNothing(ps.wall_thickness) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.wall_thickness, Double)
+                            col += 1
+                            If Not IsNothing(ps.matl_id) Then
+                                For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
+                                    If matl.matl_id = ps.matl_id Then
+                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
+                                        'Determine if material needs to be added to CCIplate's material database
+                                        'check and see if material matches default materials in CCIplate.
+                                        For Each mrow As CCIplateMaterial In CCIplateMaterials
+                                            If mrow.name = matl.name And mrow.fy_0 = matl.fy And mrow.fu_0 = matl.fu Then
+                                                polmatflag = True 'don't add to materials database, already exists
+                                                Exit For
+                                            End If
+                                        Next
+                                        If polmatflag = False Then
+                                            'Check and see if material matches temp materials (nondefault associated to site)
+                                            For Each tmrow In tempMaterials
+                                                If tmrow.name = matl.name And tmrow.fy_0 = matl.fy And tmrow.fu_0 = matl.fu Then
+                                                    polmatflag = True 'don't add to materials database, already exists
+                                                    Exit For
+                                                End If
+                                            Next
+                                        End If
+                                        If polmatflag = False Then
+                                            'check and see if ccipole material already added
+                                            For Each ptmrow In poltempMaterials
+                                                If ptmrow.ID = ps.matl_id Then
+                                                    polmatflag = True 'don't add to excel
+                                                    Exit For
+                                                End If
+                                            Next
+                                        End If
+                                        'If false, add to materials database. 
+                                        If polmatflag = False Then
+                                            poltempMaterial = New CCIplateMaterial(matl.matl_id)
+                                            poltempMaterials.Add(poltempMaterial)
+                                            If Not IsNothing(matl.name) Then
+                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String)
+                                            End If
+                                            If Not IsNothing(matl.fy) Then
+                                                .Worksheets("Materials").Range("C" & MatRow).Value = CType(matl.fy, Double)
+                                            Else
+                                                .Worksheets("Materials").Range("C" & MatRow).ClearContents
+                                            End If
+                                            If Not IsNothing(matl.fu) Then
+                                                .Worksheets("Materials").Range("K" & MatRow).Value = CType(matl.fu, Double)
+                                            Else
+                                                .Worksheets("Materials").Range("K" & MatRow).ClearContents
+                                            End If
+                                            MatRow += 1
+                                        End If
+
+                                        Exit For
+                                    End If
+
+                                Next
+                            End If
+
+                            polmatflag = False 'reset flag
+                            GeoRow += 1
+                        Next
+                    End If
+                End If
+
                 'Update named ranges so dropdown seletions work correctly
                 'Materials
-                Dim qty As Integer
+                Dim qty, polqty As Integer
                 qty = tempMaterials.Count
+                polqty = poltempMaterials.Count
                 'Dim definedName As DefinedName = .DefinedNames.Add("Materials", "Materials!$B$5:$D$" & qty + 39)
                 'Dim definedName As DefinedName = .DefinedNames.
                 ''Dim definedName As DefinedName = .DefinedNames.scope()
@@ -1579,7 +1643,7 @@ Partial Public Class CCIplate
                 ''IWorkbook.DefinedNames
 
                 Dim definedName As DefinedName = .DefinedNames.GetDefinedName("Materials")
-                definedName.RefersTo = "Materials!$B$5:$B$" & qty + 39
+                definedName.RefersTo = "Materials!$B$5:$B$" & qty + polqty + 39
 
 
             End If
@@ -3337,9 +3401,12 @@ Partial Public Class CCIplateMaterial
 
     End Sub
 
-    Public Sub New(ByVal ID As Integer?)
+    Public Sub New(ByVal ID As Integer?, Optional ByVal name As String = Nothing, Optional ByVal fy_0 As Double? = Nothing, Optional ByVal fu_0 As Double? = Nothing)
         'This is used to store a temp list of new materials to add to the Excel tool
         Me.ID = ID
+        Me.name = name
+        Me.fy_0 = fy_0
+        Me.fu_0 = fu_0
     End Sub
 
 #End Region

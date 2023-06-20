@@ -360,15 +360,15 @@ Partial Public Class EDSStructure
         End If
 
         structureQuery += "BEGIN TRANSACTION" & vbCrLf
-        structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx)
-        structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads)
-        structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases)
-        structureQuery += Me.Piles.EDSListQueryBuilder(EDSMe.Piles)
-        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools)
-        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools)
-        structureQuery += Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates)
-        structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles)
-        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements)
+        structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx) & vbCrLf
+        structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads) & vbCrLf
+        structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases) & vbCrLf
+        structureQuery += Me.Piles.EDSListQueryBuilder(EDSMe.Piles) & vbCrLf
+        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools) & vbCrLf
+        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools) & vbCrLf
+        structureQuery += Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates) & vbCrLf
+        structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles) & vbCrLf
+        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements) & vbCrLf
         structureQuery += Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics)
 
         structureQuery += vbCrLf & "COMMIT"
