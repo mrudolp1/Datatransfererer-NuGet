@@ -26,7 +26,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.5"
+        Public testingVersion As String = "1.0.0.6"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -950,9 +950,16 @@ StopLookingAtMeSwan:
         End Sub
 
         Private Sub testPull_Click(sender As Object, e As EventArgs) Handles testPull.Click
-            ButtonclickToggle(Me.Cursor)
-            PullIt(False)
-            ButtonclickToggle(Me.Cursor)
+            If testCase Is Nothing Or testCase = 0 Then
+                MsgBox("No test case selected. Please select a test case to continue.", vbCritical + vbOK, "No Test Case")
+            Else
+                ButtonclickToggle(Me.Cursor)
+                PullIt(False)
+
+                SetUpWorkArea(testCase - 1, Not btnProcess1.Enabled)
+                ButtonclickToggle(Me.Cursor)
+            End If
+
         End Sub
 
 #End Region
@@ -1344,7 +1351,7 @@ StopLookingAtMeSwan:
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
             If New FileInfo(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt").Exists Then testPush.Enabled = Not testPush.Enabled
-            testPull.Enabled = Not testPull.Enabled
+            'testPull.Enabled = Not testPull.Enabled
             mainLogViewer.Enabled = Not mainLogViewer.Enabled
             rtfactivityLog.Visible = Not rtfactivityLog.Visible
             CheckEditDevMode.Enabled = Not CheckEditDevMode.Enabled
@@ -1977,6 +1984,7 @@ StopLookingAtMeSwan:
                                     Dim val As Double
                                     Try
                                         val = dr.Item("Rating*").ToString.Replace("%", "") * 100
+                                        If val > 200 Then val = val / 100
                                     Catch ex As Exception
                                         val = 0
                                     End Try
