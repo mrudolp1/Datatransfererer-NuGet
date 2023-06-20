@@ -87,7 +87,8 @@ Public Class ReportOptions
     <DataMember()> Public Property temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
 
     'File management
-    <DataMember()> Public Property RootDir As DirectoryInfo
+    <DataMember()> Public Property WorkingDir As DirectoryInfo
+    <DataMember()> Public Property ReportDir As DirectoryInfo
 
     'Files / Appendixes
     <DataMember()> Public Property Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
@@ -95,7 +96,7 @@ Public Class ReportOptions
 
     'Helper Variables
     <DataMember()> Public Property IsFromDB As Boolean
-     <DataMember()> Public Property IsFromDefault As Boolean
+    <DataMember()> Public Property IsFromDefault As Boolean
 
 #End Region
 
@@ -166,23 +167,30 @@ Public Class ReportOptions
 
     End Sub
 
-    Public Sub New(ReportDir As String, ByVal Parent As EDSObject)
+    Public Sub New(WorkingDir As String, ReportDir As String, ByVal Parent As EDSObject)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        Me.RootDir = New DirectoryInfo(ReportDir)
+        Me.WorkingDir = New DirectoryInfo(WorkingDir)
+        Me.ReportDir = New DirectoryInfo(ReportDir)
 
         Initialize()
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, ReportDir As String)
+    Public Sub New(BU As String, SID As String, WO As String, WorkingDir As String, ReportDir As String)
         bus_unit = BU
         structure_id = SID
         work_order_seq_num = WO
 
-        If ReportDir = Nothing Then
-            Me.RootDir = Nothing
+        If WorkingDir = Nothing Then
+            Me.WorkingDir = Nothing
         Else
-            Me.RootDir = New DirectoryInfo(ReportDir)
+            Me.WorkingDir = New DirectoryInfo(WorkingDir)
+        End If
+
+        If ReportDir = Nothing Then
+            Me.ReportDir = Nothing
+        Else
+            Me.ReportDir = New DirectoryInfo(ReportDir)
         End If
 
         Initialize()
@@ -672,7 +680,7 @@ Public Class ReportOptions
         If Not IsFromDefault Then
 
             'Load list items
-            If (RootDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
+            If (WorkingDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
                 query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
                 Using strDS As New DataSet
@@ -698,7 +706,7 @@ Public Class ReportOptions
 
                         Files(appendix).Add(New FilepathWithPriority(
                     -1,
-                    Me.RootDir.FullName,
+                    Me.WorkingDir.FullName,
                     item.Item("filename").ToString()
                     ))
 
@@ -1366,7 +1374,8 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDate.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
@@ -1424,7 +1433,8 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("report_date")
         SQLInsertFields = SQLInsertFields.AddtoDBString("custom_jurisdiction_wording")
 
-        SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("working_dir")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir") 'report_dir
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngName")
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngQAName")
@@ -1482,9 +1492,8 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("report_date=" & Me.ReportDate.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
-
-
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("working_dir=" & Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
 
@@ -1589,7 +1598,7 @@ Public Class Equipment
      <DataMember()> Public Property antenna_model As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
-     <DataMember()> Public Property num_feed_lines As String
+    <DataMember()> Public Property num_feed_lines As String 'Long
 
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
      <DataMember()> Public Property feed_line_size As String
@@ -1600,7 +1609,7 @@ Public Class Equipment
         num_antennas = 0
         antenna_manufacturer = " - "
         antenna_model = " - "
-        num_feed_lines = ""
+        num_feed_lines = "" 'num_feed_lines = 0 'Needs to be set to Long to be able to pull an actual number if we want to reference the eri data rather than database value which I think it is currently doing - MRR
         feed_line_size = ""
     End Sub
     Public Sub New(equipment As Equipment)
@@ -1622,7 +1631,7 @@ Public Class Equipment
             num_ant As Long,
             antenna_man As String,
             antenna_mod As String,
-            num_feed As String,
+            num_feed As String, 'num_feed As Long
             feed_size As String
         )
 

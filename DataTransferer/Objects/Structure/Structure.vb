@@ -96,7 +96,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromFiles(filePaths)
@@ -111,7 +111,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromFiles(filePaths)
@@ -136,7 +136,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
@@ -156,7 +156,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
@@ -169,7 +169,7 @@ Partial Public Class EDSStructure
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
         Me.WorkingDirectory = workDirectory
-        Me.ReportOptions = New ReportOptions(reportDirectory, Me)
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
