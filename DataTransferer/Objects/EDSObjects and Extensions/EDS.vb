@@ -3,7 +3,7 @@ Imports System.Security.Principal
 Imports DevExpress.Spreadsheet
 Imports System.IO
 Imports System.Runtime.InteropServices
-Imports Microsoft.Office.Interop
+Imports Excel = Microsoft.Office.Interop.Excel
 Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
@@ -334,7 +334,7 @@ Partial Public MustInherit Class EDSExcelObject
                 Return "ERROR | excelPath or bigMac parameter is null or empty"
             End If
 
-            Dim xlApp As Microsoft.Office.Interop.Excel.Application = Nothing
+            Dim xlApp As Excel.Application = Nothing
             Dim xlWorkBook As Excel.Workbook = Nothing
 
             Dim errorMessage As String = String.Empty

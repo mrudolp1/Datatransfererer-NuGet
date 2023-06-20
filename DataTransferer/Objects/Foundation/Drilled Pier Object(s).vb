@@ -1104,7 +1104,7 @@ Partial Public Class DrilledPierProfile
             Me._check_shear_along_depth = Value
         End Set
     End Property
-    <Category("Drilled Pier"), Description(""), DisplayName("Utilize Skin Friction Methodology")>
+    <Category("Drilled Pier"), Description(""), DisplayName("Utilize Shear Friction Methodology")>
     <DataMember()> Public Property utilize_shear_friction_methodology() As Boolean?
         Get
             Return Me._utilize_shear_friction_methodology
@@ -1388,7 +1388,7 @@ Partial Public Class DrilledPierProfile
         Equals = If(Me.extension_above_grade.CheckChange(otherToCompare.extension_above_grade, changes, categoryName, "Extension Above Grade"), Equals, False)
         Equals = If(Me.assume_min_steel.CheckChange(otherToCompare.assume_min_steel, changes, categoryName, "Assume Min Steel"), Equals, False)
         Equals = If(Me.check_shear_along_depth.CheckChange(otherToCompare.check_shear_along_depth, changes, categoryName, "Check Shear Along Depth"), Equals, False)
-        Equals = If(Me.utilize_shear_friction_methodology.CheckChange(otherToCompare.utilize_shear_friction_methodology, changes, categoryName, "Utilize Skin Friction Methodology"), Equals, False)
+        Equals = If(Me.utilize_shear_friction_methodology.CheckChange(otherToCompare.utilize_shear_friction_methodology, changes, categoryName, "Utilize Shear Friction Methodology"), Equals, False)
         Equals = If(Me.embedded_pole.CheckChange(otherToCompare.embedded_pole, changes, categoryName, "Embedded Pole"), Equals, False)
         Equals = If(Me.belled_pier.CheckChange(otherToCompare.belled_pier, changes, categoryName, "Belled Pier"), Equals, False)
         Equals = If(Me.concrete_compressive_strength.CheckChange(otherToCompare.concrete_compressive_strength, changes, categoryName, "Concrete Compressive Strength"), Equals, False)

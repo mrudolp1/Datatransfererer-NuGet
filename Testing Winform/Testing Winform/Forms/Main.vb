@@ -1335,6 +1335,9 @@ StopLookingAtMeSwan:
             btnProcess15.Enabled = Not btnProcess15.Enabled
             btnProcess16.Enabled = Not btnProcess16.Enabled
             btnProcess17.Enabled = Not btnProcess17.Enabled
+            btnProcess18.Enabled = Not btnProcess18.Enabled
+            btnProcess19.Enabled = Not btnProcess19.Enabled
+            btnProcess20.Enabled = Not btnProcess20.Enabled
             btnProcess21.Enabled = Not btnProcess21.Enabled
             btnProcess22.Enabled = Not btnProcess22.Enabled
 

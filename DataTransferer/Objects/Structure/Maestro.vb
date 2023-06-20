@@ -2,7 +2,7 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 Imports System.Threading
-Imports Microsoft.Office.Interop
+Imports Excel = Microsoft.Office.Interop.Excel
 
 Partial Public Class EDSStructure
 
@@ -385,13 +385,37 @@ ErrorSkip:
 
     End Function
 
-    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility))
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="isDevMode">Determines if the beta version of TNX should be used.</param>
+    ''' <param name="xlVisibility">Determines excel tools appear in the foreground (true) or are hidden (false).</param>
+    ''' <param name="cancelToken">Provide an optional cancellation token source for the conduct task. If blank, the structures own cancellation token source will be used.</param>
+    ''' <returns></returns>
+    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False, Optional cancelTokenSource As CancellationTokenSource = Nothing) As Task(Of Boolean)
+        _Conducting = True
+        Me.ConductCancelTokenSource = If(cancelTokenSource, New CancellationTokenSource())
+        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), Me.ConductCancelTokenSource.Token)
+        _Conducting = False
     End Function
 
-    Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
-        Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), cancelToken)
-    End Function
+    'Async Cancellation
+    Private _Conducting
+    Public ReadOnly Conducting As Boolean
+    Private ConductCancelTokenSource As CancellationTokenSource
+
+
+    Public Sub CancelConduct()
+        If Conducting AndAlso ConductCancelTokenSource IsNot Nothing Then
+            ConductCancelTokenSource.Cancel()
+            _Conducting = False
+        End If
+    End Sub
+
+    'Public Async Function ConductAsync(cancelToken As CancellationToken, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False) As Task(Of Boolean)
+
+    '    Return Await Task.Run(Function() Conduct(isDevMode, xlVisibility), cancelToken)
+    'End Function
 
     ''' <summary>
     ''' checks to see if the Excel macro returned success or not
@@ -492,7 +516,7 @@ ErrorSkip:
             Return "Fail"
         End If
 
-        Dim xlApp As Microsoft.Office.Interop.Excel.Application = Nothing
+        Dim xlApp As Excel.Application = Nothing
         Dim xlWorkBook As Excel.Workbook = Nothing
 
         Dim errorMessage As String = ""
@@ -511,28 +535,29 @@ ErrorSkip:
                 xlWorkBook = xlApp.Workbooks.Open(excelPath)
 
                 'check for pole and plate
-                If toolFileName.ToUpper.Contains("CCIPOLE") And Me.ParentStructure.CCIplates(0).Connections.Count > 0 Then
-                    'insert baseplate grade into pole from plate
-                    WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate")
+                If Me.ParentStructure.CCIplates.Count > 0 Then
+                    If toolFileName.ToUpper.Contains("CCIPOLE") And IsSomething(Me.ParentStructure.CCIplates(0).Connections) Then
+                        'insert baseplate grade into pole from plate
+                        WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate")
 
-                    AssignBasePlateGrade(xlWorkBook)
+                        AssignBasePlateGrade(xlWorkBook)
+                    End If
                 End If
-
                 WriteLineLogLine("INFO | Tool: " & toolFileName)
-                WriteLineLogLine("INFO | Running macro: " & bigMac)
+                    WriteLineLogLine("INFO | Running macro: " & bigMac)
 
-                If Not IsNothing(tnxFilePath) Then
-                    logString = xlApp.Run(bigMac, tnxFilePath)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    If Not IsNothing(tnxFilePath) Then
+                        logString = xlApp.Run(bigMac, tnxFilePath)
+                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    Else
+                        WriteLineLogLine("WARNING | No TNX file path in structure..")
+                        logString = xlApp.Run(bigMac)
+                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                    End If
+
+                    xlWorkBook.Save()
                 Else
-                    WriteLineLogLine("WARNING | No TNX file path in structure..")
-                    logString = xlApp.Run(bigMac)
-                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
-                End If
-
-                xlWorkBook.Save()
-            Else
-                errorMessage = $"ERROR | {excelPath} path not found!"
+                    errorMessage = $"ERROR | {excelPath} path not found!"
                 WriteLineLogLine(errorMessage)
                 Return "Fail"
             End If
@@ -616,7 +641,7 @@ ErrorSkip:
 
     Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
                                       plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
-        Dim xlApp As Microsoft.Office.Interop.Excel.Application
+        Dim xlApp As Excel.Application
         Dim xlWorkBook As Excel.Workbook
         Dim xlWorkSheet As Excel.Worksheet = Nothing
         Dim xlVisibility As Boolean = False
@@ -759,13 +784,13 @@ ErrorSkip:
             'Need to determine if word is open prior to running TNX
             'If it is open then it shouldn't be killed when closing the RTF
             'If it isn't open before tnx then it should be killed
-            Dim isWordOpen As Boolean
-            Try
-                Dim word As Object = GetObject(, "Word.Application")
-                isWordOpen = True
-            Catch ex As Exception
-                isWordOpen = False
-            End Try
+            'Dim isWordOpen As Boolean
+            'Try
+            '    Dim word As Object = GetObject(, "Word.Application")
+            '    isWordOpen = True
+            'Catch ex As Exception
+            '    isWordOpen = False
+            'End Try
 
             'Make sure ReportPrintReactions=Yes in eri file
             If Not SetEriOutputVariables(tnxFilePath) Then
@@ -791,13 +816,13 @@ ErrorSkip:
                 Catch ex As Exception
                     WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
                 Finally
-                    Try
-                        'For the time being the RTF file still opens 
-                        'This needs to be closed before returning TRUE
-                        CloseRTF(tnxFilePath, isWordOpen)
-                    Catch ex As Exception
-                        WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                    End Try
+                    'Try
+                    '    'For the time being the RTF file still opens 
+                    '    'This needs to be closed before returning TRUE
+                    '    CloseRTF(tnxFilePath, isWordOpen)
+                    'Catch ex As Exception
+                    '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                    'End Try
                 End Try
 
                 '.WaitForInputIdle()
