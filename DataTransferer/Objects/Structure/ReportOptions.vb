@@ -1598,7 +1598,7 @@ Public Class Equipment
      <DataMember()> Public Property antenna_model As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
-     <DataMember()> Public Property num_feed_lines As String
+    <DataMember()> Public Property num_feed_lines As String 'Long
 
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
      <DataMember()> Public Property feed_line_size As String
@@ -1609,7 +1609,7 @@ Public Class Equipment
         num_antennas = 0
         antenna_manufacturer = " - "
         antenna_model = " - "
-        num_feed_lines = ""
+        num_feed_lines = "" 'num_feed_lines = 0 'Needs to be set to Long to be able to pull an actual number if we want to reference the eri data rather than database value which I think it is currently doing - MRR
         feed_line_size = ""
     End Sub
     Public Sub New(equipment As Equipment)
@@ -1631,7 +1631,7 @@ Public Class Equipment
             num_ant As Long,
             antenna_man As String,
             antenna_mod As String,
-            num_feed As String,
+            num_feed As String, 'num_feed As Long
             feed_size As String
         )
 
