@@ -1284,7 +1284,6 @@
             '
             'testPull
             '
-            Me.testPull.Enabled = False
             Me.testPull.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources.movedown
             Me.testPull.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
             Me.testPull.Location = New System.Drawing.Point(556, 87)
@@ -1580,7 +1579,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "7"
+            Me.testIteration.EditValue = "8"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
