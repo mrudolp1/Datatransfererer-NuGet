@@ -1579,7 +1579,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "7"
+            Me.testIteration.EditValue = "8"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
