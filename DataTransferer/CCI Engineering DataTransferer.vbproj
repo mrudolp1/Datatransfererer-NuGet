@@ -67,9 +67,9 @@
 
   <ItemGroup>
     <PackageReference Include="DeepCloner" Version="0.10.4" />
-    <PackageReference Include="DevExpress.Document.Processor" Version="22.2.4" />
-    <PackageReference Include="DevExpress.Win" Version="22.2.4" />
-    <PackageReference Include="DevExpress.Win.Spreadsheet" Version="22.2.4" />
+    <PackageReference Include="DevExpress.Document.Processor" Version="23.1.3" />
+    <PackageReference Include="DevExpress.Win" Version="23.1.3" />
+    <PackageReference Include="DevExpress.Win.Spreadsheet" Version="23.1.3" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
     <PackageReference Include="Oracle.ManagedDataAccess" Version="19.9.0" />

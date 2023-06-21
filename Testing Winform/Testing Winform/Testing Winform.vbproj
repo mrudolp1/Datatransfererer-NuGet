@@ -51,94 +51,94 @@
     <Reference Include="CciSites.Utils, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CciSites.Utils.1.1.0\lib\net452\CciSites.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.Desktop.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Data.Desktop.22.2.4\lib\net452\DevExpress.Data.Desktop.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.Desktop.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Data.Desktop.23.1.3\lib\net452\DevExpress.Data.Desktop.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Data.22.2.4\lib\net452\DevExpress.Data.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Data.23.1.3\lib\net452\DevExpress.Data.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.DataAccess.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Dialogs.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-    <Reference Include="DevExpress.Drawing.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Drawing.22.2.4\lib\net452\DevExpress.Drawing.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.DataAccess.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Dialogs.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Drawing.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Drawing.23.1.3\lib\net452\DevExpress.Drawing.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Images.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Office.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Office.Core.22.2.4\lib\net452\DevExpress.Office.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Images.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Office.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Office.Core.23.1.3\lib\net452\DevExpress.Office.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Pdf.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Pdf.Core.22.2.4\lib\net452\DevExpress.Pdf.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Pdf.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Pdf.Core.23.1.3\lib\net452\DevExpress.Pdf.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Pdf.v22.2.Drawing, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Pdf.Drawing.22.2.4\lib\net452\DevExpress.Pdf.v22.2.Drawing.dll</HintPath>
+    <Reference Include="DevExpress.Pdf.v23.1.Drawing, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Pdf.Drawing.23.1.3\lib\net452\DevExpress.Pdf.v23.1.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.PivotGrid.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.PivotGrid.Core.22.2.4\lib\net452\DevExpress.PivotGrid.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.PivotGrid.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.PivotGrid.Core.23.1.3\lib\net452\DevExpress.PivotGrid.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Printing.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Printing.Core.22.2.4\lib\net452\DevExpress.Printing.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Printing.Core.23.1.3\lib\net452\DevExpress.Printing.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.RichEdit.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.RichEdit.Core.22.2.4\lib\net452\DevExpress.RichEdit.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.RichEdit.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.RichEdit.Core.23.1.3\lib\net452\DevExpress.RichEdit.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.RichEdit.v22.2.Export, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.RichEdit.Export.22.2.4\lib\net452\DevExpress.RichEdit.v22.2.Export.dll</HintPath>
+    <Reference Include="DevExpress.RichEdit.v23.1.Export, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.RichEdit.Export.23.1.3\lib\net452\DevExpress.RichEdit.v23.1.Export.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Sparkline.v22.2.Core, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Sparkline.Core.22.2.4\lib\net452\DevExpress.Sparkline.v22.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Sparkline.v23.1.Core, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Sparkline.Core.23.1.3\lib\net452\DevExpress.Sparkline.v23.1.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Utils.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Utils.22.2.4\lib\net452\DevExpress.Utils.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.Utils.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Utils.23.1.3\lib\net452\DevExpress.Utils.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraBars.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\DevExpress.XtraBars.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraBars.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\DevExpress.XtraBars.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraBars.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraBars.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraBars.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraBars.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraDialogs.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.XtraEditors.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\DevExpress.XtraEditors.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraDialogs.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\DevExpress.XtraEditors.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraEditors.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraEditors.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraEditors.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraEditors.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraGrid.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Grid.22.2.4\lib\net452\DevExpress.XtraGrid.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraGrid.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Grid.23.1.3\lib\net452\DevExpress.XtraGrid.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraGrid.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Grid.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraGrid.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraGrid.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Grid.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraGrid.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraLayout.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\DevExpress.XtraLayout.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraLayout.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\DevExpress.XtraLayout.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraLayout.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Navigation.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraLayout.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraLayout.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Navigation.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraLayout.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.PivotGrid.22.2.4\lib\net452\DevExpress.XtraPivotGrid.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPivotGrid.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.PivotGrid.23.1.3\lib\net452\DevExpress.XtraPivotGrid.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.PivotGrid.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraPivotGrid.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraPivotGrid.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.PivotGrid.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraPivotGrid.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Printing.22.2.4\lib\net452\DevExpress.XtraPrinting.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPrinting.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Printing.23.1.3\lib\net452\DevExpress.XtraPrinting.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.Printing.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraPrinting.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraPrinting.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.Printing.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraPrinting.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.XtraTreeList.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.TreeList.22.2.4\lib\net452\DevExpress.XtraTreeList.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraRichEdit.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraTreeList.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.TreeList.23.1.3\lib\net452\DevExpress.XtraTreeList.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.TreeList.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraTreeList.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraTreeList.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.TreeList.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraTreeList.v23.1.Design.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v22.2, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.VerticalGrid.22.2.4\lib\net452\DevExpress.XtraVerticalGrid.v22.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraVerticalGrid.v23.1, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.VerticalGrid.23.1.3\lib\net452\DevExpress.XtraVerticalGrid.v23.1.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v22.2.Design, Version=22.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\packages\DevExpress.Win.VerticalGrid.22.2.4\lib\net452\Design\WinForms\Server\DevExpress.XtraVerticalGrid.v22.2.Design.dll</HintPath>
+    <Reference Include="DevExpress.XtraVerticalGrid.v23.1.Design, Version=23.1.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Win.VerticalGrid.23.1.3\lib\net452\Design\WinForms\Server\DevExpress.XtraVerticalGrid.v23.1.Design.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
