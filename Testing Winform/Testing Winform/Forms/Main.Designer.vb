@@ -1284,6 +1284,7 @@
             '
             'testPull
             '
+            Me.testPull.Enabled = False
             Me.testPull.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources.movedown
             Me.testPull.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
             Me.testPull.Location = New System.Drawing.Point(556, 87)

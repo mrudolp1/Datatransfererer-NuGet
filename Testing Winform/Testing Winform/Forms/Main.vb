@@ -26,7 +26,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.5"
+        Public testingVersion As String = "1.0.0.6"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
