@@ -210,7 +210,7 @@ Partial Public Class DrilledPierFoundation
             Dim bump15 As Integer = 15
             Dim bump3 As Integer = 3
 
-            wb.Worksheets("Tool (RETURN_ENTER)").Range("A2").Value = Me.ID.ToString
+            wb.Worksheets("Tool").Range("A2").Value = Me.ID.ToString
 
             With wb.Worksheets("Foundation Input")
                 .Range("D3").Value = Me.bus_unit
@@ -261,8 +261,8 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
                 .Cells(sumRow, 22).Value = CType(Me.ID, Integer)
                 .Cells(sumRow, 23).Value = CType(drilledPier.PierProfile.ID, Integer)
-                .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
-                .Cells(sumRow, 75).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
+                If Not IsNothing(drilledPier.PierProfile.BelledPier.ID) Then .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
+                If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.ID) Then .Cells(sumRow, 75).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
                 .Cells(sumRow, 76).Value = CType(drilledPier.SoilProfile.ID, Integer)
                 For Each sec As DrilledPierSection In drilledPier.PierProfile.Sections
                     Dim secAdj As Integer = 4 * (sec.local_section_id - 1) + 1
@@ -1041,7 +1041,7 @@ Partial Public Class DrilledPierProfile
 
 #Region "Define"
     <DataMember()> Public Property Sections As New List(Of DrilledPierSection)
-    <DataMember()> Public Property EmbeddedPole As EmbeddedPole
+    <DataMember()> Public Property EmbeddedPole As New EmbeddedPole
     <DataMember()> Public Property BelledPier As New BelledPier
 
 
@@ -2633,7 +2633,11 @@ End Class
 <KnownType(GetType(DrilledPierSoilProfile))>
 Public Class DrilledPierSoilProfile
     Inherits SoilProfile
-
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Soil Profiles"
+        End Get
+    End Property
     <DataMember()> Public Property local_soil_profile_id As Integer?
     <DataMember()> Public Property local_drilled_pier_id As Integer?
     <DataMember()> Public Property drilled_pier_id As Integer?
@@ -2692,7 +2696,7 @@ Public Class DrilledPierSoilLayer
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Drilled Pier Soil Layer"
+            Return "Soil Layers"
         End Get
     End Property
 
