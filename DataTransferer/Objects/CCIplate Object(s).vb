@@ -385,7 +385,7 @@ Partial Public Class CCIplate
         'added this to help determine whether or not materials need to be added to CCIplate when pulling in from CCIpole (When source is EDS)
         For Each mrow As DataRow In ds.Tables(plCCIplateMaterial.EDSObjectName).Rows
             plCCIplateMaterial = New CCIplateMaterial(mrow, EDStruefalse, Me)
-            If If(EDStruefalse, plCCIplateMaterial.default_material = True, True) Then
+            If If(EDStruefalse, plCCIplateMaterial.default_material = True, False) Then
                 'plPlateDetail.plate_material = plConnectionMaterial
                 CCIplateMaterials.Add(plCCIplateMaterial)
             End If
