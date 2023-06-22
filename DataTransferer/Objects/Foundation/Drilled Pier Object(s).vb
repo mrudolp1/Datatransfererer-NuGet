@@ -210,7 +210,7 @@ Partial Public Class DrilledPierFoundation
             Dim bump15 As Integer = 15
             Dim bump3 As Integer = 3
 
-            wb.Worksheets("Tool (RETURN_ENTER)").Range("A2").Value = Me.ID.ToString
+            wb.Worksheets("Tool").Range("A2").Value = Me.ID.ToString
 
             With wb.Worksheets("Foundation Input")
                 .Range("D3").Value = Me.bus_unit
@@ -259,20 +259,20 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.local_pier_profile_id) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_pier_profile_id, Integer)
                 If Not IsNothing(drilledPier.reaction_location) Then .Cells(sumRow, 2).Value = CType(drilledPier.reaction_location, String)
                 If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
-                .Cells(sumRow, 22).Value = CType(Me.ID, Integer)
-                .Cells(sumRow, 23).Value = CType(drilledPier.PierProfile.ID, Integer)
-                .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
-                .Cells(sumRow, 75).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
-                .Cells(sumRow, 76).Value = CType(drilledPier.SoilProfile.ID, Integer)
+                .Cells(sumRow, 21).Value = CType(Me.ID, Integer)
+                .Cells(sumRow, 22).Value = CType(drilledPier.PierProfile.ID, Integer)
+                If Not IsNothing(drilledPier.PierProfile.BelledPier.ID) Then .Cells(sumRow, 73).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
+                If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.ID) Then .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
+                .Cells(sumRow, 75).Value = CType(drilledPier.SoilProfile.ID, Integer)
                 For Each sec As DrilledPierSection In drilledPier.PierProfile.Sections
                     Dim secAdj As Integer = 4 * (sec.local_section_id - 1) + 1
-                    .Cells(sumRow, 23 + secAdj).Value = CType(sec.ID, Integer)
+                    .Cells(sumRow, 22 + secAdj).Value = CType(sec.ID, Integer)
                     For Each reb As DrilledPierRebar In sec.Rebar
-                        .Cells(sumRow, secAdj + reb.local_rebar_id).Value = CType(reb.ID, Integer)
+                        .Cells(sumRow, 22 + secAdj + reb.local_rebar_id).Value = CType(reb.ID, Integer)
                     Next
                 Next
-                Dim slRowStart As Integer = 44
-                For Each layer In drilledPier.SoilProfile.SoilLayers
+                Dim slRowStart As Integer = 43
+                For Each layer In drilledPier.SoilProfile.DPSoilLayers
                     .Cells(sumRow, slRowStart).Value = CType(layer.ID, Integer)
                     slRowStart += 1
                 Next
@@ -700,7 +700,7 @@ Partial Public Class DrilledPier
                     For Each sectionrow As DataRow In strDS.Tables(dpSection.EDSObjectName).Rows
                         dpSection = (New DrilledPierSection(sectionrow, dpProfile))
                         If IsSomething(dpSection.local_section_id) Or (IsSomething(dpSection.ID) And IsNothing(dpSection.local_section_id)) Then
-                            If If(isExcel, dpProfile.local_drilled_pier_id = dpSection.local_drilled_pier_id, dpProfile.ID = dpSection.drilled_pier_id) Then
+                            If If(isExcel, dpProfile.local_drilled_pier_id = dpSection.local_drilled_pier_id, dpProfile.ID = dpSection.pier_profile_id) Then
                                 dpProfile.Sections.Add(dpSection)
 
                                 For Each rebarRow As DataRow In strDS.Tables(dpRebar.EDSObjectName).Rows
@@ -843,7 +843,7 @@ Partial Public Class DrilledPier
         SQLInsertFields = SQLInsertFields.AddtoDBString("soil_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_position")
         SQLInsertFields = SQLInsertFields.AddtoDBString("reaction_location")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("local_soil_profile")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_soil_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("local_pier_profile_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_tool_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
@@ -1041,7 +1041,7 @@ Partial Public Class DrilledPierProfile
 
 #Region "Define"
     <DataMember()> Public Property Sections As New List(Of DrilledPierSection)
-    <DataMember()> Public Property EmbeddedPole As EmbeddedPole
+    <DataMember()> Public Property EmbeddedPole As New EmbeddedPole
     <DataMember()> Public Property BelledPier As New BelledPier
 
 
@@ -1322,7 +1322,8 @@ Partial Public Class DrilledPierProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tie_yield_strength.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ultimate_gross_bearing.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.drilled_pier_id.ToString.FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.drilled_pier_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
         Return SQLInsertValues
     End Function
 
@@ -1369,7 +1370,8 @@ Partial Public Class DrilledPierProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tie_yield_strength = " & Me.tie_yield_strength.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ultimate_gross_bearing = " & Me.ultimate_gross_bearing.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & Me.drilled_pier_id.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & Me.drilled_pier_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & "@TopLevelID")
         Return SQLUpdateFieldsandValues
     End Function
 #End Region
@@ -2633,7 +2635,11 @@ End Class
 <KnownType(GetType(DrilledPierSoilProfile))>
 Public Class DrilledPierSoilProfile
     Inherits SoilProfile
-
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Soil Profiles"
+        End Get
+    End Property
     <DataMember()> Public Property local_soil_profile_id As Integer?
     <DataMember()> Public Property local_drilled_pier_id As Integer?
     <DataMember()> Public Property drilled_pier_id As Integer?
@@ -2692,7 +2698,7 @@ Public Class DrilledPierSoilLayer
 
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Drilled Pier Soil Layer"
+            Return "Soil Layers"
         End Get
     End Property
 
