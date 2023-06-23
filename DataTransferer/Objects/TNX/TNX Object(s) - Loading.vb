@@ -6,7 +6,7 @@ Imports System.Runtime.Serialization
 
 <DataContract()>
 Partial Public Class tnxFeedLine
-    Inherits EDSObject
+    Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
 
@@ -410,6 +410,12 @@ Partial Public Class tnxFeedLine
             Me._FeedLineRowClearSpacing = Value
         End Set
     End Property
+
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -472,13 +478,39 @@ Partial Public Class tnxFeedLine
 
         Return Equals
     End Function
+
 #End Region
 
+    Public Sub New(ByVal recRow As DataRow, Optional ByVal Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+    End Sub
+
+    Public Overrides Function SQLInsert() As String
+        SQLInsert = CCI_Engineering_Templates.My.Resources.General__INSERT
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+
+        Return SQLInsert
+    End Function
+
+    Public Overrides Function SQLInsertValues() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 <DataContract()>
 Partial Public Class tnxDiscreteLoad
-    Inherits EDSObject
+    Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String
@@ -841,6 +873,12 @@ Partial Public Class tnxDiscreteLoad
             Me._TowerLoadEndHt = Value
         End Set
     End Property
+
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -901,11 +939,36 @@ Partial Public Class tnxDiscreteLoad
     End Function
 #End Region
 
+    Public Sub New(ByVal recRow As DataRow, Optional ByVal Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+    End Sub
+
+    Public Overrides Function SQLInsert() As String
+        SQLInsert = CCI_Engineering_Templates.My.Resources.General__INSERT
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+
+        Return SQLInsert
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLInsertValues() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 <DataContract()>
 Partial Public Class tnxDish
-    Inherits EDSObject
+    Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String
@@ -1188,6 +1251,12 @@ Partial Public Class tnxDish
         End Set
     End Property
 
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
+
 #End Region
 
 #Region "Constructors"
@@ -1239,11 +1308,37 @@ Partial Public Class tnxDish
         Return Equals
     End Function
 #End Region
+
+    Public Sub New(ByVal recRow As DataRow, Optional ByVal Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+    End Sub
+
+    Public Overrides Function SQLInsert() As String
+        SQLInsert = CCI_Engineering_Templates.My.Resources.General__INSERT
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+
+        Return SQLInsert
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLInsertValues() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        Throw New NotImplementedException()
+    End Function
 End Class
 
 <DataContract()>
 Partial Public Class tnxUserForce
-    Inherits EDSObject
+    Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
     Public Overrides ReadOnly Property EDSObjectName As String
@@ -1505,6 +1600,12 @@ Partial Public Class tnxUserForce
             Me._UserForceEh = Value
         End Set
     End Property
+
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -1555,4 +1656,29 @@ Partial Public Class tnxUserForce
     End Function
 #End Region
 
+    Public Sub New(ByVal recRow As DataRow, Optional ByVal Parent As EDSObject = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then Me.Absorb(Parent)
+    End Sub
+
+    Public Overrides Function SQLInsert() As String
+        SQLInsert = CCI_Engineering_Templates.My.Resources.General__INSERT
+        SQLInsert = SQLInsert.Replace("[TABLE NAME]", Me.EDSTableName)
+        SQLInsert = SQLInsert.Replace("[INSERT FIELDS]", Me.SQLInsertFields)
+        SQLInsert = SQLInsert.Replace("[INSERT VALUES]", Me.SQLInsertValues)
+
+        Return SQLInsert
+    End Function
+
+    Public Overrides Function SQLInsertValues() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLInsertFields() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function SQLUpdateFieldsandValues() As String
+        Throw New NotImplementedException()
+    End Function
 End Class
