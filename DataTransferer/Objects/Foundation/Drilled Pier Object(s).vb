@@ -210,7 +210,7 @@ Partial Public Class DrilledPierFoundation
             Dim bump15 As Integer = 15
             Dim bump3 As Integer = 3
 
-            wb.Worksheets("Tool").Range("A2").Value = Me.ID.ToString
+            wb.Worksheets("Tool").Range("A3").Value = Me.ID.ToString
 
             With wb.Worksheets("Foundation Input")
                 .Range("D3").Value = Me.bus_unit
