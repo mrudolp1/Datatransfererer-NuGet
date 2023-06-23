@@ -230,7 +230,7 @@ Partial Public Class EDSStructure
                             "Guy Anchor Profiles",
                             "Leg Reinforcements",
                             "Leg Reinforcement Details",
-                            "CCISeismics"}
+                            "CCISeismics"} 'Add discrete, dish, userforce, and linear and add the SELECT statements into the resource query
 
 
         Using strDS As New DataSet
