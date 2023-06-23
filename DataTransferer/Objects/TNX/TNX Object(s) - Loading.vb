@@ -496,11 +496,111 @@ Partial Public Class tnxFeedLine
     End Function
 
     Public Overrides Function SQLInsertValues() As String
-        Throw New NotImplementedException()
+        SQLInsertValues = ""
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineRec.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineEnabled.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineDatabase.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineDescription.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineClassificationCategory.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineNote.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineNum.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineUseShielding.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ExcludeFeedLineFromTorque.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineNumPerRow.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineFace.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineComponentType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineGroupTreatmentType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineRoundClusterDia.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWidth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLinePerimeter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FlatAttachmentEffectiveWidthRatio.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AutoCalcFlatAttachmentEffectiveWidthRatio.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineShieldingFactorKaNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineShieldingFactorKaIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineAutoCalcKa.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineCaAaNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineCaAaIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineCaAaIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineCaAaIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineCaAaIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWtNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWtIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWtIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWtIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineWtIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineFaceOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineOffsetFrac.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLinePerimeterOffsetStartFrac.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLinePerimeterOffsetEndFrac.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineStartHt.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineEndHt.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineClearSpacing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineRowClearSpacing.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        Throw New NotImplementedException()
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineRec")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineEnabled")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineDatabase")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineDescription")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineClassificationCategory")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineNote")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineNum")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineUseShielding")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("ExcludeFeedLineFromTorque")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineNumPerRow")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineFace")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineComponentType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineGroupTreatmentType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineRoundClusterDia")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWidth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLinePerimeter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FlatAttachmentEffectiveWidthRatio")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AutoCalcFlatAttachmentEffectiveWidthRatio")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineShieldingFactorKaNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineShieldingFactorKaIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineAutoCalcKa")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineCaAaNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineCaAaIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineCaAaIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineCaAaIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineCaAaIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWtNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWtIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWtIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWtIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineWtIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineFaceOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineOffsetFrac")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLinePerimeterOffsetStartFrac")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLinePerimeterOffsetEndFrac")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineStartHt")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineEndHt")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineClearSpacing")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineRowClearSpacing")
+
+        Return SQLInsertFields
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
@@ -954,11 +1054,103 @@ Partial Public Class tnxDiscreteLoad
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        Throw New NotImplementedException()
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadRec")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadEnabled")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadDatabase")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadDescription")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadClassificationCategory")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadNote")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadNum")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadFace")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerOffsetType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerOffsetDist")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerVertOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLateralOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAzimuthAdjustment")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerAppurtSymbol")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadShieldingFactorKaNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadShieldingFactorKaIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadAutoCalcKa")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaNoIce_Side")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_Side")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_Side_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_Side_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadCaAaIce_Side_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadWtNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadWtIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadWtIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadWtIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadWtIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadStartHt")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadEndHt")
+
+        Return SQLInsertFields
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLInsertValues() As String
-        Throw New NotImplementedException()
+        SQLInsertValues = ""
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadRec.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadEnabled.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadDatabase.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadDescription.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadClassificationCategory.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadNote.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadNum.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadFace.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerOffsetType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerOffsetDist.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerVertOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLateralOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAzimuthAdjustment.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerAppurtSymbol.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadShieldingFactorKaNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadShieldingFactorKaIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadAutoCalcKa.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaNoIce_Side.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_Side.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_Side_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_Side_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadCaAaIce_Side_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadWtNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadWtIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadWtIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadWtIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadWtIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadStartHt.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadEndHt.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
@@ -1324,11 +1516,87 @@ Partial Public Class tnxDish
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        Throw New NotImplementedException()
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishRec")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishEnabled")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishDatabase")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishDescription")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishClassificationCategory")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishNote")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishNum")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishFace")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishOffsetType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishVertOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishLateralOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishOffsetDist")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishArea")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishAreaIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishAreaIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishAreaIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishAreaIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishDiameter")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishWtNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishWtIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishWtIce_1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishWtIce_2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishWtIce_4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishStartHt")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishAzimuthAdjustment")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("DishBeamWidth")
+
+        Return SQLInsertFields
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLInsertValues() As String
-        Throw New NotImplementedException()
+        SQLInsertValues = ""
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishRec.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishEnabled.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishDatabase.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishDescription.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishClassificationCategory.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishNote.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishNum.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishFace.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishOffsetType.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishVertOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishLateralOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishOffsetDist.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishArea.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishAreaIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishAreaIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishAreaIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishAreaIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishDiameter.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishWtNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishWtIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishWtIce_1.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishWtIce_2.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishWtIce_4.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishStartHt.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishAzimuthAdjustment.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishBeamWidth.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
@@ -1671,11 +1939,83 @@ Partial Public Class tnxUserForce
     End Function
 
     Public Overrides Function SQLInsertValues() As String
-        Throw New NotImplementedException()
+        SQLInsertValues = ""
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceRec.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEnabled.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceDescription.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceStartHt.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceOffset.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceAzimuth.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFxNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFzNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceAxialNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceShearNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceCaAcNoIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFxIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFzIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceAxialIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceShearIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceCaAcIce.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFxService.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceFzService.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceAxialService.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceShearService.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceCaAcService.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEhx.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEhz.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEv.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEh.ToString.FormatDBValue)
+
+        Return SQLInsertValues
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLInsertFields() As String
-        Throw New NotImplementedException()
+        SQLInsertFields = ""
+
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceRec")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEnabled")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceDescription")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceStartHt")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceOffset")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceAzimuth")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFxNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFzNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceAxialNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceShearNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceCaAcNoIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFxIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFzIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceAxialIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceShearIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceCaAcIce")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFxService")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceFzService")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceAxialService")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceShearService")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceCaAcService")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEhx")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEhz")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEv")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEh")
+
+        Return SQLInsertFields
+        'Throw New NotImplementedException()
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
