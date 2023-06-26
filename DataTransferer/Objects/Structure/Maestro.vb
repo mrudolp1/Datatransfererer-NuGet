@@ -758,6 +758,7 @@ ErrorSkip:
 
         Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
 
+        Dim tnxProdVersion As String = ""
         Try
             Dim cmdProcess As New Process
 
@@ -765,13 +766,15 @@ ErrorSkip:
             WriteLineLogLine("INFO | Running TNX..")
 
             'determine TNX File path - newest version
-            tnxAppLocation = WhereInTheWorldIsTNXTower(isDevMode)
+            tnxAppLocation = WhereInTheWorldIsTNXTower(tnxProdVersion, isDevMode)
 
             If tnxAppLocation = "" Then
                 'TNX app not found
                 WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.")
                 Return False
             End If
+
+            Me.tnx.settings.projectInfo.VersionUsed = tnxProdVersion
             Try
                 'delete tnx log file if it exist
                 If File.Exists(tnxLogFilePath) Then
@@ -1005,13 +1008,15 @@ ErrorSkip:
         End Try
     End Function
 
-    Public Function WhereInTheWorldIsTNXTower(Optional isDevMode As Boolean = False) As String
+    Public Function WhereInTheWorldIsTNXTower(ByRef tnxVersion As String, Optional isDevMode As Boolean = False) As String
         Dim defaultAppLocationBase As String = "C:\Program Files (x86)\TNX"
         Dim appName As String = "tnxTower"
         Dim newestAppFolderName As String
 
         Dim newestVersion As Version = Nothing
         Dim newestFolder As String = Nothing
+
+        Dim appLoc As String
 
         Try
             If Not Directory.Exists(defaultAppLocationBase) Then
@@ -1045,8 +1050,11 @@ ErrorSkip:
             newestAppFolderName = New DirectoryInfo(newestFolder).Name
 
             WriteLineLogLine("INFO | Newest TNX Version found: " & newestAppFolderName)
-            Return Path.Combine(newestFolder, appName & ".exe")
+            appLoc = Path.Combine(newestFolder, appName & ".exe")
 
+            tnxVersion = FileVersionInfo.GetVersionInfo(appLoc).FileVersion
+
+            Return appLoc
         Catch ex As Exception
             WriteLineLogLine("ERROR | Exception finding TNX App: " & ex.Message)
             Return ""
