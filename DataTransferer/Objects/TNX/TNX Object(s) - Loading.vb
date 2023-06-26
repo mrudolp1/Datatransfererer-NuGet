@@ -16,6 +16,11 @@ Partial Public Class tnxFeedLine
         End Get
     End Property
 
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "load.linear_output"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"
@@ -411,11 +416,6 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
 
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Throw New NotImplementedException()
-        End Get
-    End Property
 #End Region
 
 #Region "Constructors"
@@ -616,6 +616,11 @@ Partial Public Class tnxDiscreteLoad
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
             Return "Discrete Load"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "load.discrete_outpu"
         End Get
     End Property
 #End Region
@@ -974,11 +979,6 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
 
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Throw New NotImplementedException()
-        End Get
-    End Property
 #End Region
 
 #Region "Constructors"
@@ -1166,6 +1166,11 @@ Partial Public Class tnxDish
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
             Return "Dish"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "load.dish_output"
         End Get
     End Property
 #End Region
@@ -1442,13 +1447,6 @@ Partial Public Class tnxDish
             Me._DishBeamWidth = Value
         End Set
     End Property
-
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Throw New NotImplementedException()
-        End Get
-    End Property
-
 #End Region
 
 #Region "Constructors"
@@ -1612,6 +1610,11 @@ Partial Public Class tnxUserForce
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
             Return "User Force"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "load.user_force_output"
         End Get
     End Property
 #End Region
@@ -1867,12 +1870,6 @@ Partial Public Class tnxUserForce
         Set
             Me._UserForceEh = Value
         End Set
-    End Property
-
-    Public Overrides ReadOnly Property EDSTableName As String
-        Get
-            Throw New NotImplementedException()
-        End Get
     End Property
 #End Region
 

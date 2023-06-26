@@ -241,9 +241,41 @@ Partial Public Class tnxModel
 
             If StructureDS.Tables.Contains("Guys") Then
                 For Each guyLevel As DataRow In StructureDS.Tables("Guys").Rows
-                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me.geometry))
+                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me))
                 Next
                 Me.geometry.guyWires.Sort()
+            End If
+
+            'Discrete
+            If StructureDS.Tables.Contains("Discretes") Then
+                For Each disc As DataRow In StructureDS.Tables("Discretes").Rows
+                    Me.discreteLoads.Add(New tnxDiscreteLoad(disc, Me))
+                Next
+                Me.discreteLoads.Sort()
+            End If
+
+            'Dish
+            If StructureDS.Tables.Contains("Dishes") Then
+                For Each dish As DataRow In StructureDS.Tables("Dishes").Rows
+                    Me.dishes.Add(New tnxDish(dish, Me))
+                Next
+                Me.dishes.Sort()
+            End If
+
+            'User Forces
+            If StructureDS.Tables.Contains("User Forces") Then
+                For Each user As DataRow In StructureDS.Tables("User Forces").Rows
+                    Me.userForces.Add(New tnxUserForce(user, Me))
+                Next
+                Me.userForces.Sort()
+            End If
+
+            'Linear
+            If StructureDS.Tables.Contains("Lines") Then
+                For Each line As DataRow In StructureDS.Tables("Lines").Rows
+                    Me.feedLines.Add(New tnxFeedLine(line, Me))
+                Next
+                Me.feedLines.Sort()
             End If
 
             If StructureDS.Tables.Contains("Materials") Then
