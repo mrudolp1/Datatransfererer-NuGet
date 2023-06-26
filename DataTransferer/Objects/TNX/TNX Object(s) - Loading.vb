@@ -1215,6 +1215,9 @@ Partial Public Class tnxDiscreteLoad
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
+        'Dim idStr As String = ""
+        'If Me.Parent.ID IsNot Nothing Then idStr = Me.Parent.ID Else idStr = "@TopLevelID"
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
