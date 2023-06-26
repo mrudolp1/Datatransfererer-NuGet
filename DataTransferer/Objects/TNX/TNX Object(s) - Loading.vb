@@ -1,4 +1,4 @@
-﻿Option Strict On
+﻿
 Option Compare Binary 'Trying to speed up parsing the TNX file by using Binary Text comparison instead of Text Comparison
 
 Imports System.ComponentModel
@@ -24,6 +24,8 @@ Partial Public Class tnxFeedLine
 #End Region
 
 #Region "Define"
+    Public Property parent_id As Integer?
+
     Private _tnx_id As Integer?
     Private _FeedLineRec As Integer?
     Private _FeedLineEnabled As Boolean?
@@ -683,6 +685,8 @@ Partial Public Class tnxDiscreteLoad
 #End Region
 
 #Region "Define"
+    Public Property parent_id As Integer?
+
     Private _tnx_id As Integer?
     Private _TowerLoadRec As Integer?
     Private _TowerLoadEnabled As Boolean?
@@ -694,31 +698,31 @@ Partial Public Class tnxDiscreteLoad
     Private _TowerLoadNum As Integer?
     Private _TowerLoadFace As Integer?
     Private _TowerOffsetType As String
-    Private _TowerOffsetDist As Double?
-    Private _TowerVertOffset As Double?
-    Private _TowerLateralOffset As Double?
-    Private _TowerAzimuthAdjustment As Double?
+    Private _TowerOffsetDist As Decimal?
+    Private _TowerVertOffset As Decimal?
+    Private _TowerLateralOffset As Decimal?
+    Private _TowerAzimuthAdjustment As Decimal?
     Private _TowerAppurtSymbol As String
-    Private _TowerLoadShieldingFactorKaNoIce As Double?
-    Private _TowerLoadShieldingFactorKaIce As Double?
+    Private _TowerLoadShieldingFactorKaNoIce As Decimal?
+    Private _TowerLoadShieldingFactorKaIce As Decimal?
     Private _TowerLoadAutoCalcKa As Boolean?
-    Private _TowerLoadCaAaNoIce As Double?
-    Private _TowerLoadCaAaIce As Double?
-    Private _TowerLoadCaAaIce_1 As Double?
-    Private _TowerLoadCaAaIce_2 As Double?
-    Private _TowerLoadCaAaIce_4 As Double?
-    Private _TowerLoadCaAaNoIce_Side As Double?
-    Private _TowerLoadCaAaIce_Side As Double?
-    Private _TowerLoadCaAaIce_Side_1 As Double?
-    Private _TowerLoadCaAaIce_Side_2 As Double?
-    Private _TowerLoadCaAaIce_Side_4 As Double?
-    Private _TowerLoadWtNoIce As Double?
-    Private _TowerLoadWtIce As Double?
-    Private _TowerLoadWtIce_1 As Double?
-    Private _TowerLoadWtIce_2 As Double?
-    Private _TowerLoadWtIce_4 As Double?
-    Private _TowerLoadStartHt As Double?
-    Private _TowerLoadEndHt As Double?
+    Private _TowerLoadCaAaNoIce As Decimal?
+    Private _TowerLoadCaAaIce As Decimal?
+    Private _TowerLoadCaAaIce_1 As Decimal?
+    Private _TowerLoadCaAaIce_2 As Decimal?
+    Private _TowerLoadCaAaIce_4 As Decimal?
+    Private _TowerLoadCaAaNoIce_Side As Decimal?
+    Private _TowerLoadCaAaIce_Side As Decimal?
+    Private _TowerLoadCaAaIce_Side_1 As Decimal?
+    Private _TowerLoadCaAaIce_Side_2 As Decimal?
+    Private _TowerLoadCaAaIce_Side_4 As Decimal?
+    Private _TowerLoadWtNoIce As Decimal?
+    Private _TowerLoadWtIce As Decimal?
+    Private _TowerLoadWtIce_1 As Decimal?
+    Private _TowerLoadWtIce_2 As Decimal?
+    Private _TowerLoadWtIce_4 As Decimal?
+    Private _TowerLoadStartHt As Decimal?
+    Private _TowerLoadEndHt As Decimal?
 
     <Category("TNX Discrete Load"), Description(""), DisplayName("tnx ID")>
     <DataMember()> Public Property tnx_id() As Integer?
@@ -820,7 +824,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerOffsetDist")>
-    <DataMember()> Public Property TowerOffsetDist() As Double?
+    <DataMember()> Public Property TowerOffsetDist() As Decimal?
         Get
             Return Me._TowerOffsetDist
         End Get
@@ -829,7 +833,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerVertOffset")>
-    <DataMember()> Public Property TowerVertOffset() As Double?
+    <DataMember()> Public Property TowerVertOffset() As Decimal?
         Get
             Return Me._TowerVertOffset
         End Get
@@ -838,7 +842,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLateralOffset")>
-    <DataMember()> Public Property TowerLateralOffset() As Double?
+    <DataMember()> Public Property TowerLateralOffset() As Decimal?
         Get
             Return Me._TowerLateralOffset
         End Get
@@ -847,7 +851,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerAzimuthAdjustment")>
-    <DataMember()> Public Property TowerAzimuthAdjustment() As Double?
+    <DataMember()> Public Property TowerAzimuthAdjustment() As Decimal?
         Get
             Return Me._TowerAzimuthAdjustment
         End Get
@@ -865,7 +869,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaNoIce")>
-    <DataMember()> Public Property TowerLoadShieldingFactorKaNoIce() As Double?
+    <DataMember()> Public Property TowerLoadShieldingFactorKaNoIce() As Decimal?
         Get
             Return Me._TowerLoadShieldingFactorKaNoIce
         End Get
@@ -874,7 +878,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadShieldingFactorKaIce")>
-    <DataMember()> Public Property TowerLoadShieldingFactorKaIce() As Double?
+    <DataMember()> Public Property TowerLoadShieldingFactorKaIce() As Decimal?
         Get
             Return Me._TowerLoadShieldingFactorKaIce
         End Get
@@ -892,7 +896,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce")>
-    <DataMember()> Public Property TowerLoadCaAaNoIce() As Double?
+    <DataMember()> Public Property TowerLoadCaAaNoIce() As Decimal?
         Get
             Return Me._TowerLoadCaAaNoIce
         End Get
@@ -901,7 +905,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce")>
-    <DataMember()> Public Property TowerLoadCaAaIce() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce
         End Get
@@ -910,7 +914,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_1")>
-    <DataMember()> Public Property TowerLoadCaAaIce_1() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_1() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_1
         End Get
@@ -919,7 +923,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_2")>
-    <DataMember()> Public Property TowerLoadCaAaIce_2() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_2() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_2
         End Get
@@ -928,7 +932,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_4")>
-    <DataMember()> Public Property TowerLoadCaAaIce_4() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_4() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_4
         End Get
@@ -937,7 +941,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaNoIce_Side")>
-    <DataMember()> Public Property TowerLoadCaAaNoIce_Side() As Double?
+    <DataMember()> Public Property TowerLoadCaAaNoIce_Side() As Decimal?
         Get
             Return Me._TowerLoadCaAaNoIce_Side
         End Get
@@ -946,7 +950,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side")>
-    <DataMember()> Public Property TowerLoadCaAaIce_Side() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_Side
         End Get
@@ -955,7 +959,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_1")>
-    <DataMember()> Public Property TowerLoadCaAaIce_Side_1() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_1() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_Side_1
         End Get
@@ -964,7 +968,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_2")>
-    <DataMember()> Public Property TowerLoadCaAaIce_Side_2() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_2() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_Side_2
         End Get
@@ -973,7 +977,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadCaAaIce_Side_4")>
-    <DataMember()> Public Property TowerLoadCaAaIce_Side_4() As Double?
+    <DataMember()> Public Property TowerLoadCaAaIce_Side_4() As Decimal?
         Get
             Return Me._TowerLoadCaAaIce_Side_4
         End Get
@@ -982,7 +986,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtNoIce")>
-    <DataMember()> Public Property TowerLoadWtNoIce() As Double?
+    <DataMember()> Public Property TowerLoadWtNoIce() As Decimal?
         Get
             Return Me._TowerLoadWtNoIce
         End Get
@@ -991,7 +995,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce")>
-    <DataMember()> Public Property TowerLoadWtIce() As Double?
+    <DataMember()> Public Property TowerLoadWtIce() As Decimal?
         Get
             Return Me._TowerLoadWtIce
         End Get
@@ -1000,7 +1004,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_1")>
-    <DataMember()> Public Property TowerLoadWtIce_1() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_1() As Decimal?
         Get
             Return Me._TowerLoadWtIce_1
         End Get
@@ -1009,7 +1013,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_2")>
-    <DataMember()> Public Property TowerLoadWtIce_2() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_2() As Decimal?
         Get
             Return Me._TowerLoadWtIce_2
         End Get
@@ -1018,7 +1022,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadWtIce_4")>
-    <DataMember()> Public Property TowerLoadWtIce_4() As Double?
+    <DataMember()> Public Property TowerLoadWtIce_4() As Decimal?
         Get
             Return Me._TowerLoadWtIce_4
         End Get
@@ -1027,7 +1031,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadStartHt")>
-    <DataMember()> Public Property TowerLoadStartHt() As Double?
+    <DataMember()> Public Property TowerLoadStartHt() As Decimal?
         Get
             Return Me._TowerLoadStartHt
         End Get
@@ -1036,7 +1040,7 @@ Partial Public Class tnxDiscreteLoad
         End Set
     End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadEndHt")>
-    <DataMember()> Public Property TowerLoadEndHt() As Double?
+    <DataMember()> Public Property TowerLoadEndHt() As Decimal?
         Get
             Return Me._TowerLoadEndHt
         End Get
@@ -1126,31 +1130,31 @@ Partial Public Class tnxDiscreteLoad
         Me.TowerLoadNum = DBtoNullableInt(recRow.Item("TowerLoadNum"))
         Me.TowerLoadFace = DBtoNullableInt(recRow.Item("TowerLoadFace"))
         Me.TowerOffsetType = DBtoStr(recRow.Item("TowerOffsetType"))
-        Me.TowerOffsetDist = DBtoNullableDbl(recRow.Item("TowerOffsetDist"), 6)
-        Me.TowerVertOffset = DBtoNullableDbl(recRow.Item("TowerVertOffset"), 6)
-        Me.TowerLateralOffset = DBtoNullableDbl(recRow.Item("TowerLateralOffset"), 6)
-        Me.TowerAzimuthAdjustment = DBtoNullableDbl(recRow.Item("TowerAzimuthAdjustment"), 6)
+        Me.TowerOffsetDist = DBtoNullableDec(recRow.Item("TowerOffsetDist"), 6)
+        Me.TowerVertOffset = DBtoNullableDec(recRow.Item("TowerVertOffset"), 6)
+        Me.TowerLateralOffset = DBtoNullableDec(recRow.Item("TowerLateralOffset"), 6)
+        Me.TowerAzimuthAdjustment = DBtoNullableDec(recRow.Item("TowerAzimuthAdjustment"), 6)
         Me.TowerAppurtSymbol = DBtoStr(recRow.Item("TowerAppurtSymbol"))
-        Me.TowerLoadShieldingFactorKaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaNoIce"), 6)
-        Me.TowerLoadShieldingFactorKaIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaIce"), 6)
+        Me.TowerLoadShieldingFactorKaNoIce = DBtoNullableDec(recRow.Item("TowerLoadShieldingFactorKaNoIce"), 6)
+        Me.TowerLoadShieldingFactorKaIce = DBtoNullableDec(recRow.Item("TowerLoadShieldingFactorKaIce"), 6)
         Me.TowerLoadAutoCalcKa = DBtoNullableBool(recRow.Item("TowerLoadAutoCalcKa"))
-        Me.TowerLoadCaAaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce"), 6)
-        Me.TowerLoadCaAaIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce"), 6)
-        Me.TowerLoadCaAaIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_1"), 6)
-        Me.TowerLoadCaAaIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_2"), 6)
-        Me.TowerLoadCaAaIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_4"), 6)
-        Me.TowerLoadCaAaNoIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce_Side"), 6)
-        Me.TowerLoadCaAaIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side"), 6)
-        Me.TowerLoadCaAaIce_Side_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_1"), 6)
-        Me.TowerLoadCaAaIce_Side_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_2"), 6)
-        Me.TowerLoadCaAaIce_Side_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_4"), 6)
-        Me.TowerLoadWtNoIce = DBtoNullableDbl(recRow.Item("TowerLoadWtNoIce"), 6)
-        Me.TowerLoadWtIce = DBtoNullableDbl(recRow.Item("TowerLoadWtIce"), 6)
-        Me.TowerLoadWtIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_1"), 6)
-        Me.TowerLoadWtIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_2"), 6)
-        Me.TowerLoadWtIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_4"), 6)
-        Me.TowerLoadStartHt = DBtoNullableDbl(recRow.Item("TowerLoadStartHt"), 6)
-        Me.TowerLoadEndHt = DBtoNullableDbl(recRow.Item("TowerLoadEndHt"), 6)
+        Me.TowerLoadCaAaNoIce = DBtoNullableDec(recRow.Item("TowerLoadCaAaNoIce"), 6)
+        Me.TowerLoadCaAaIce = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce"), 6)
+        Me.TowerLoadCaAaIce_1 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_1"), 6)
+        Me.TowerLoadCaAaIce_2 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_2"), 6)
+        Me.TowerLoadCaAaIce_4 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_4"), 6)
+        Me.TowerLoadCaAaNoIce_Side = DBtoNullableDec(recRow.Item("TowerLoadCaAaNoIce_Side"), 6)
+        Me.TowerLoadCaAaIce_Side = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_Side"), 6)
+        Me.TowerLoadCaAaIce_Side_1 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_Side_1"), 6)
+        Me.TowerLoadCaAaIce_Side_2 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_Side_2"), 6)
+        Me.TowerLoadCaAaIce_Side_4 = DBtoNullableDec(recRow.Item("TowerLoadCaAaIce_Side_4"), 6)
+        Me.TowerLoadWtNoIce = DBtoNullableDec(recRow.Item("TowerLoadWtNoIce"), 6)
+        Me.TowerLoadWtIce = DBtoNullableDec(recRow.Item("TowerLoadWtIce"), 6)
+        Me.TowerLoadWtIce_1 = DBtoNullableDec(recRow.Item("TowerLoadWtIce_1"), 6)
+        Me.TowerLoadWtIce_2 = DBtoNullableDec(recRow.Item("TowerLoadWtIce_2"), 6)
+        Me.TowerLoadWtIce_4 = DBtoNullableDec(recRow.Item("TowerLoadWtIce_4"), 6)
+        Me.TowerLoadStartHt = DBtoNullableDec(recRow.Item("TowerLoadStartHt"), 6)
+        Me.TowerLoadEndHt = DBtoNullableDec(recRow.Item("TowerLoadEndHt"), 6)
 
     End Sub
 
@@ -1287,6 +1291,8 @@ Partial Public Class tnxDish
 #End Region
 
 #Region "Define"
+    Public Property parent_id As Integer?
+
     Private _tnx_id As Integer?
     Private _DishRec As Integer?
     Private _DishEnabled As Boolean?
@@ -1298,23 +1304,23 @@ Partial Public Class tnxDish
     Private _DishFace As Integer?
     Private _DishType As String
     Private _DishOffsetType As String
-    Private _DishVertOffset As Double?
-    Private _DishLateralOffset As Double?
-    Private _DishOffsetDist As Double?
-    Private _DishArea As Double?
-    Private _DishAreaIce As Double?
-    Private _DishAreaIce_1 As Double?
-    Private _DishAreaIce_2 As Double?
-    Private _DishAreaIce_4 As Double?
-    Private _DishDiameter As Double?
-    Private _DishWtNoIce As Double?
-    Private _DishWtIce As Double?
-    Private _DishWtIce_1 As Double?
-    Private _DishWtIce_2 As Double?
-    Private _DishWtIce_4 As Double?
-    Private _DishStartHt As Double?
-    Private _DishAzimuthAdjustment As Double?
-    Private _DishBeamWidth As Double?
+    Private _DishVertOffset As Decimal?
+    Private _DishLateralOffset As Decimal?
+    Private _DishOffsetDist As Decimal?
+    Private _DishArea As Decimal?
+    Private _DishAreaIce As Decimal?
+    Private _DishAreaIce_1 As Decimal?
+    Private _DishAreaIce_2 As Decimal?
+    Private _DishAreaIce_4 As Decimal?
+    Private _DishDiameter As Decimal?
+    Private _DishWtNoIce As Decimal?
+    Private _DishWtIce As Decimal?
+    Private _DishWtIce_1 As Decimal?
+    Private _DishWtIce_2 As Decimal?
+    Private _DishWtIce_4 As Decimal?
+    Private _DishStartHt As Decimal?
+    Private _DishAzimuthAdjustment As Decimal?
+    Private _DishBeamWidth As Decimal?
 
     <Category("TNX Dish"), Description(""), DisplayName("tnx ID")>
     <DataMember()> Public Property tnx_id() As Integer?
@@ -1416,7 +1422,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishVertOffset")>
-    <DataMember()> Public Property DishVertOffset() As Double?
+    <DataMember()> Public Property DishVertOffset() As Decimal?
         Get
             Return Me._DishVertOffset
         End Get
@@ -1425,7 +1431,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishLateralOffset")>
-    <DataMember()> Public Property DishLateralOffset() As Double?
+    <DataMember()> Public Property DishLateralOffset() As Decimal?
         Get
             Return Me._DishLateralOffset
         End Get
@@ -1434,7 +1440,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishOffsetDist")>
-    <DataMember()> Public Property DishOffsetDist() As Double?
+    <DataMember()> Public Property DishOffsetDist() As Decimal?
         Get
             Return Me._DishOffsetDist
         End Get
@@ -1443,7 +1449,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishArea")>
-    <DataMember()> Public Property DishArea() As Double?
+    <DataMember()> Public Property DishArea() As Decimal?
         Get
             Return Me._DishArea
         End Get
@@ -1452,7 +1458,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce")>
-    <DataMember()> Public Property DishAreaIce() As Double?
+    <DataMember()> Public Property DishAreaIce() As Decimal?
         Get
             Return Me._DishAreaIce
         End Get
@@ -1461,7 +1467,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_1")>
-    <DataMember()> Public Property DishAreaIce_1() As Double?
+    <DataMember()> Public Property DishAreaIce_1() As Decimal?
         Get
             Return Me._DishAreaIce_1
         End Get
@@ -1470,7 +1476,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_2")>
-    <DataMember()> Public Property DishAreaIce_2() As Double?
+    <DataMember()> Public Property DishAreaIce_2() As Decimal?
         Get
             Return Me._DishAreaIce_2
         End Get
@@ -1479,7 +1485,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAreaIce_4")>
-    <DataMember()> Public Property DishAreaIce_4() As Double?
+    <DataMember()> Public Property DishAreaIce_4() As Decimal?
         Get
             Return Me._DishAreaIce_4
         End Get
@@ -1488,7 +1494,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishDiameter")>
-    <DataMember()> Public Property DishDiameter() As Double?
+    <DataMember()> Public Property DishDiameter() As Decimal?
         Get
             Return Me._DishDiameter
         End Get
@@ -1497,7 +1503,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtNoIce")>
-    <DataMember()> Public Property DishWtNoIce() As Double?
+    <DataMember()> Public Property DishWtNoIce() As Decimal?
         Get
             Return Me._DishWtNoIce
         End Get
@@ -1506,7 +1512,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce")>
-    <DataMember()> Public Property DishWtIce() As Double?
+    <DataMember()> Public Property DishWtIce() As Decimal?
         Get
             Return Me._DishWtIce
         End Get
@@ -1515,7 +1521,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_1")>
-    <DataMember()> Public Property DishWtIce_1() As Double?
+    <DataMember()> Public Property DishWtIce_1() As Decimal?
         Get
             Return Me._DishWtIce_1
         End Get
@@ -1524,7 +1530,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_2")>
-    <DataMember()> Public Property DishWtIce_2() As Double?
+    <DataMember()> Public Property DishWtIce_2() As Decimal?
         Get
             Return Me._DishWtIce_2
         End Get
@@ -1533,7 +1539,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishWtIce_4")>
-    <DataMember()> Public Property DishWtIce_4() As Double?
+    <DataMember()> Public Property DishWtIce_4() As Decimal?
         Get
             Return Me._DishWtIce_4
         End Get
@@ -1542,7 +1548,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishStartHt")>
-    <DataMember()> Public Property DishStartHt() As Double?
+    <DataMember()> Public Property DishStartHt() As Decimal?
         Get
             Return Me._DishStartHt
         End Get
@@ -1551,7 +1557,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishAzimuthAdjustment")>
-    <DataMember()> Public Property DishAzimuthAdjustment() As Double?
+    <DataMember()> Public Property DishAzimuthAdjustment() As Decimal?
         Get
             Return Me._DishAzimuthAdjustment
         End Get
@@ -1560,7 +1566,7 @@ Partial Public Class tnxDish
         End Set
     End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishBeamWidth")>
-    <DataMember()> Public Property DishBeamWidth() As Double?
+    <DataMember()> Public Property DishBeamWidth() As Decimal?
         Get
             Return Me._DishBeamWidth
         End Get
@@ -1641,23 +1647,23 @@ Partial Public Class tnxDish
         Me.DishFace = DBtoNullableInt(recRow.Item("DishFace"))
         Me.DishType = DBtoStr(recRow.Item("DishType"))
         Me.DishOffsetType = DBtoStr(recRow.Item("DishOffsetType"))
-        Me.DishVertOffset = DBtoNullableDbl(recRow.Item("DishVertOffset"), 6)
-        Me.DishLateralOffset = DBtoNullableDbl(recRow.Item("DishLateralOffset"), 6)
-        Me.DishOffsetDist = DBtoNullableDbl(recRow.Item("DishOffsetDist"), 6)
-        Me.DishArea = DBtoNullableDbl(recRow.Item("DishArea"), 6)
-        Me.DishAreaIce = DBtoNullableDbl(recRow.Item("DishAreaIce"), 6)
-        Me.DishAreaIce_1 = DBtoNullableDbl(recRow.Item("DishAreaIce_1"), 6)
-        Me.DishAreaIce_2 = DBtoNullableDbl(recRow.Item("DishAreaIce_2"), 6)
-        Me.DishAreaIce_4 = DBtoNullableDbl(recRow.Item("DishAreaIce_4"), 6)
-        Me.DishDiameter = DBtoNullableDbl(recRow.Item("DishDiameter"), 6)
-        Me.DishWtNoIce = DBtoNullableDbl(recRow.Item("DishWtNoIce"), 6)
-        Me.DishWtIce = DBtoNullableDbl(recRow.Item("DishWtIce"), 6)
-        Me.DishWtIce_1 = DBtoNullableDbl(recRow.Item("DishWtIce_1"), 6)
-        Me.DishWtIce_2 = DBtoNullableDbl(recRow.Item("DishWtIce_2"), 6)
-        Me.DishWtIce_4 = DBtoNullableDbl(recRow.Item("DishWtIce_4"), 6)
-        Me.DishStartHt = DBtoNullableDbl(recRow.Item("DishStartHt"), 6)
-        Me.DishAzimuthAdjustment = DBtoNullableDbl(recRow.Item("DishAzimuthAdjustment"), 6)
-        Me.DishBeamWidth = DBtoNullableDbl(recRow.Item("DishBeamWidth"), 6)
+        Me.DishVertOffset = DBtoNullableDec(recRow.Item("DishVertOffset"), 6)
+        Me.DishLateralOffset = DBtoNullableDec(recRow.Item("DishLateralOffset"), 6)
+        Me.DishOffsetDist = DBtoNullableDec(recRow.Item("DishOffsetDist"), 6)
+        Me.DishArea = DBtoNullableDec(recRow.Item("DishArea"), 6)
+        Me.DishAreaIce = DBtoNullableDec(recRow.Item("DishAreaIce"), 6)
+        Me.DishAreaIce_1 = DBtoNullableDec(recRow.Item("DishAreaIce_1"), 6)
+        Me.DishAreaIce_2 = DBtoNullableDec(recRow.Item("DishAreaIce_2"), 6)
+        Me.DishAreaIce_4 = DBtoNullableDec(recRow.Item("DishAreaIce_4"), 6)
+        Me.DishDiameter = DBtoNullableDec(recRow.Item("DishDiameter"), 6)
+        Me.DishWtNoIce = DBtoNullableDec(recRow.Item("DishWtNoIce"), 6)
+        Me.DishWtIce = DBtoNullableDec(recRow.Item("DishWtIce"), 6)
+        Me.DishWtIce_1 = DBtoNullableDec(recRow.Item("DishWtIce_1"), 6)
+        Me.DishWtIce_2 = DBtoNullableDec(recRow.Item("DishWtIce_2"), 6)
+        Me.DishWtIce_4 = DBtoNullableDec(recRow.Item("DishWtIce_4"), 6)
+        Me.DishStartHt = DBtoNullableDec(recRow.Item("DishStartHt"), 6)
+        Me.DishAzimuthAdjustment = DBtoNullableDec(recRow.Item("DishAzimuthAdjustment"), 6)
+        Me.DishBeamWidth = DBtoNullableDec(recRow.Item("DishBeamWidth"), 6)
 
     End Sub
 
@@ -1775,32 +1781,34 @@ Partial Public Class tnxUserForce
 #End Region
 
 #Region "Define"
+    Public Property parent_id As Integer?
+
     Private _tnx_id As Integer?
     Private _UserForceRec As Integer?
     Private _UserForceEnabled As Boolean?
     Private _UserForceDescription As String
-    Private _UserForceStartHt As Double?
-    Private _UserForceOffset As Double?
-    Private _UserForceAzimuth As Double?
-    Private _UserForceFxNoIce As Double?
-    Private _UserForceFzNoIce As Double?
-    Private _UserForceAxialNoIce As Double?
-    Private _UserForceShearNoIce As Double?
-    Private _UserForceCaAcNoIce As Double?
-    Private _UserForceFxIce As Double?
-    Private _UserForceFzIce As Double?
-    Private _UserForceAxialIce As Double?
-    Private _UserForceShearIce As Double?
-    Private _UserForceCaAcIce As Double?
-    Private _UserForceFxService As Double?
-    Private _UserForceFzService As Double?
-    Private _UserForceAxialService As Double?
-    Private _UserForceShearService As Double?
-    Private _UserForceCaAcService As Double?
-    Private _UserForceEhx As Double?
-    Private _UserForceEhz As Double?
-    Private _UserForceEv As Double?
-    Private _UserForceEh As Double?
+    Private _UserForceStartHt As Decimal?
+    Private _UserForceOffset As Decimal?
+    Private _UserForceAzimuth As Decimal?
+    Private _UserForceFxNoIce As Decimal?
+    Private _UserForceFzNoIce As Decimal?
+    Private _UserForceAxialNoIce As Decimal?
+    Private _UserForceShearNoIce As Decimal?
+    Private _UserForceCaAcNoIce As Decimal?
+    Private _UserForceFxIce As Decimal?
+    Private _UserForceFzIce As Decimal?
+    Private _UserForceAxialIce As Decimal?
+    Private _UserForceShearIce As Decimal?
+    Private _UserForceCaAcIce As Decimal?
+    Private _UserForceFxService As Decimal?
+    Private _UserForceFzService As Decimal?
+    Private _UserForceAxialService As Decimal?
+    Private _UserForceShearService As Decimal?
+    Private _UserForceCaAcService As Decimal?
+    Private _UserForceEhx As Decimal?
+    Private _UserForceEhz As Decimal?
+    Private _UserForceEv As Decimal?
+    Private _UserForceEh As Decimal?
 
     <Category("TNX User Force"), Description(""), DisplayName("tnx ID")>
     <DataMember()> Public Property tnx_id() As Integer?
@@ -1839,7 +1847,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceStartHt")>
-    <DataMember()> Public Property UserForceStartHt() As Double?
+    <DataMember()> Public Property UserForceStartHt() As Decimal?
         Get
             Return Me._UserForceStartHt
         End Get
@@ -1848,7 +1856,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceOffset")>
-    <DataMember()> Public Property UserForceOffset() As Double?
+    <DataMember()> Public Property UserForceOffset() As Decimal?
         Get
             Return Me._UserForceOffset
         End Get
@@ -1857,7 +1865,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAzimuth")>
-    <DataMember()> Public Property UserForceAzimuth() As Double?
+    <DataMember()> Public Property UserForceAzimuth() As Decimal?
         Get
             Return Me._UserForceAzimuth
         End Get
@@ -1866,7 +1874,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxNoIce")>
-    <DataMember()> Public Property UserForceFxNoIce() As Double?
+    <DataMember()> Public Property UserForceFxNoIce() As Decimal?
         Get
             Return Me._UserForceFxNoIce
         End Get
@@ -1875,7 +1883,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzNoIce")>
-    <DataMember()> Public Property UserForceFzNoIce() As Double?
+    <DataMember()> Public Property UserForceFzNoIce() As Decimal?
         Get
             Return Me._UserForceFzNoIce
         End Get
@@ -1884,7 +1892,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialNoIce")>
-    <DataMember()> Public Property UserForceAxialNoIce() As Double?
+    <DataMember()> Public Property UserForceAxialNoIce() As Decimal?
         Get
             Return Me._UserForceAxialNoIce
         End Get
@@ -1893,7 +1901,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearNoIce")>
-    <DataMember()> Public Property UserForceShearNoIce() As Double?
+    <DataMember()> Public Property UserForceShearNoIce() As Decimal?
         Get
             Return Me._UserForceShearNoIce
         End Get
@@ -1902,7 +1910,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcNoIce")>
-    <DataMember()> Public Property UserForceCaAcNoIce() As Double?
+    <DataMember()> Public Property UserForceCaAcNoIce() As Decimal?
         Get
             Return Me._UserForceCaAcNoIce
         End Get
@@ -1911,7 +1919,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxIce")>
-    <DataMember()> Public Property UserForceFxIce() As Double?
+    <DataMember()> Public Property UserForceFxIce() As Decimal?
         Get
             Return Me._UserForceFxIce
         End Get
@@ -1920,7 +1928,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzIce")>
-    <DataMember()> Public Property UserForceFzIce() As Double?
+    <DataMember()> Public Property UserForceFzIce() As Decimal?
         Get
             Return Me._UserForceFzIce
         End Get
@@ -1929,7 +1937,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialIce")>
-    <DataMember()> Public Property UserForceAxialIce() As Double?
+    <DataMember()> Public Property UserForceAxialIce() As Decimal?
         Get
             Return Me._UserForceAxialIce
         End Get
@@ -1938,7 +1946,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearIce")>
-    <DataMember()> Public Property UserForceShearIce() As Double?
+    <DataMember()> Public Property UserForceShearIce() As Decimal?
         Get
             Return Me._UserForceShearIce
         End Get
@@ -1947,7 +1955,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcIce")>
-    <DataMember()> Public Property UserForceCaAcIce() As Double?
+    <DataMember()> Public Property UserForceCaAcIce() As Decimal?
         Get
             Return Me._UserForceCaAcIce
         End Get
@@ -1956,7 +1964,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFxService")>
-    <DataMember()> Public Property UserForceFxService() As Double?
+    <DataMember()> Public Property UserForceFxService() As Decimal?
         Get
             Return Me._UserForceFxService
         End Get
@@ -1965,7 +1973,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceFzService")>
-    <DataMember()> Public Property UserForceFzService() As Double?
+    <DataMember()> Public Property UserForceFzService() As Decimal?
         Get
             Return Me._UserForceFzService
         End Get
@@ -1974,7 +1982,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceAxialService")>
-    <DataMember()> Public Property UserForceAxialService() As Double?
+    <DataMember()> Public Property UserForceAxialService() As Decimal?
         Get
             Return Me._UserForceAxialService
         End Get
@@ -1983,7 +1991,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceShearService")>
-    <DataMember()> Public Property UserForceShearService() As Double?
+    <DataMember()> Public Property UserForceShearService() As Decimal?
         Get
             Return Me._UserForceShearService
         End Get
@@ -1992,7 +2000,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceCaAcService")>
-    <DataMember()> Public Property UserForceCaAcService() As Double?
+    <DataMember()> Public Property UserForceCaAcService() As Decimal?
         Get
             Return Me._UserForceCaAcService
         End Get
@@ -2001,7 +2009,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhx")>
-    <DataMember()> Public Property UserForceEhx() As Double?
+    <DataMember()> Public Property UserForceEhx() As Decimal?
         Get
             Return Me._UserForceEhx
         End Get
@@ -2010,7 +2018,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEhz")>
-    <DataMember()> Public Property UserForceEhz() As Double?
+    <DataMember()> Public Property UserForceEhz() As Decimal?
         Get
             Return Me._UserForceEhz
         End Get
@@ -2019,7 +2027,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEv")>
-    <DataMember()> Public Property UserForceEv() As Double?
+    <DataMember()> Public Property UserForceEv() As Decimal?
         Get
             Return Me._UserForceEv
         End Get
@@ -2028,7 +2036,7 @@ Partial Public Class tnxUserForce
         End Set
     End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceEh")>
-    <DataMember()> Public Property UserForceEh() As Double?
+    <DataMember()> Public Property UserForceEh() As Decimal?
         Get
             Return Me._UserForceEh
         End Get
@@ -2100,28 +2108,28 @@ Partial Public Class tnxUserForce
         Me.UserForceRec = DBtoNullableInt(recRow.Item("UserForceRec"))
         Me.UserForceEnabled = DBtoNullableBool(recRow.Item("UserForceEnabled"))
         Me.UserForceDescription = DBtoStr(recRow.Item("UserForceDescription"))
-        Me.UserForceStartHt = DBtoNullableDbl(recRow.Item("UserForceStartHt"), 6)
-        Me.UserForceOffset = DBtoNullableDbl(recRow.Item("UserForceOffset"), 6)
-        Me.UserForceAzimuth = DBtoNullableDbl(recRow.Item("UserForceAzimuth"), 6)
-        Me.UserForceFxNoIce = DBtoNullableDbl(recRow.Item("UserForceFxNoIce"), 6)
-        Me.UserForceFzNoIce = DBtoNullableDbl(recRow.Item("UserForceFzNoIce"), 6)
-        Me.UserForceAxialNoIce = DBtoNullableDbl(recRow.Item("UserForceAxialNoIce"), 6)
-        Me.UserForceShearNoIce = DBtoNullableDbl(recRow.Item("UserForceShearNoIce"), 6)
-        Me.UserForceCaAcNoIce = DBtoNullableDbl(recRow.Item("UserForceCaAcNoIce"), 6)
-        Me.UserForceFxIce = DBtoNullableDbl(recRow.Item("UserForceFxIce"), 6)
-        Me.UserForceFzIce = DBtoNullableDbl(recRow.Item("UserForceFzIce"), 6)
-        Me.UserForceAxialIce = DBtoNullableDbl(recRow.Item("UserForceAxialIce"), 6)
-        Me.UserForceShearIce = DBtoNullableDbl(recRow.Item("UserForceShearIce"), 6)
-        Me.UserForceCaAcIce = DBtoNullableDbl(recRow.Item("UserForceCaAcIce"), 6)
-        Me.UserForceFxService = DBtoNullableDbl(recRow.Item("UserForceFxService"), 6)
-        Me.UserForceFzService = DBtoNullableDbl(recRow.Item("UserForceFzService"), 6)
-        Me.UserForceAxialService = DBtoNullableDbl(recRow.Item("UserForceAxialService"), 6)
-        Me.UserForceShearService = DBtoNullableDbl(recRow.Item("UserForceShearService"), 6)
-        Me.UserForceCaAcService = DBtoNullableDbl(recRow.Item("UserForceCaAcService"), 6)
-        Me.UserForceEhx = DBtoNullableDbl(recRow.Item("UserForceEhx"), 6)
-        Me.UserForceEhz = DBtoNullableDbl(recRow.Item("UserForceEhz"), 6)
-        Me.UserForceEv = DBtoNullableDbl(recRow.Item("UserForceEv"), 6)
-        Me.UserForceEh = DBtoNullableDbl(recRow.Item("UserForceEh"), 6)
+        Me.UserForceStartHt = DBtoNullableDec(recRow.Item("UserForceStartHt"), 6)
+        Me.UserForceOffset = DBtoNullableDec(recRow.Item("UserForceOffset"), 6)
+        Me.UserForceAzimuth = DBtoNullableDec(recRow.Item("UserForceAzimuth"), 6)
+        Me.UserForceFxNoIce = DBtoNullableDec(recRow.Item("UserForceFxNoIce"), 6)
+        Me.UserForceFzNoIce = DBtoNullableDec(recRow.Item("UserForceFzNoIce"), 6)
+        Me.UserForceAxialNoIce = DBtoNullableDec(recRow.Item("UserForceAxialNoIce"), 6)
+        Me.UserForceShearNoIce = DBtoNullableDec(recRow.Item("UserForceShearNoIce"), 6)
+        Me.UserForceCaAcNoIce = DBtoNullableDec(recRow.Item("UserForceCaAcNoIce"), 6)
+        Me.UserForceFxIce = DBtoNullableDec(recRow.Item("UserForceFxIce"), 6)
+        Me.UserForceFzIce = DBtoNullableDec(recRow.Item("UserForceFzIce"), 6)
+        Me.UserForceAxialIce = DBtoNullableDec(recRow.Item("UserForceAxialIce"), 6)
+        Me.UserForceShearIce = DBtoNullableDec(recRow.Item("UserForceShearIce"), 6)
+        Me.UserForceCaAcIce = DBtoNullableDec(recRow.Item("UserForceCaAcIce"), 6)
+        Me.UserForceFxService = DBtoNullableDec(recRow.Item("UserForceFxService"), 6)
+        Me.UserForceFzService = DBtoNullableDec(recRow.Item("UserForceFzService"), 6)
+        Me.UserForceAxialService = DBtoNullableDec(recRow.Item("UserForceAxialService"), 6)
+        Me.UserForceShearService = DBtoNullableDec(recRow.Item("UserForceShearService"), 6)
+        Me.UserForceCaAcService = DBtoNullableDec(recRow.Item("UserForceCaAcService"), 6)
+        Me.UserForceEhx = DBtoNullableDec(recRow.Item("UserForceEhx"), 6)
+        Me.UserForceEhz = DBtoNullableDec(recRow.Item("UserForceEhz"), 6)
+        Me.UserForceEv = DBtoNullableDec(recRow.Item("UserForceEv"), 6)
+        Me.UserForceEh = DBtoNullableDec(recRow.Item("UserForceEh"), 6)
 
     End Sub
 
@@ -2136,6 +2144,8 @@ Partial Public Class tnxUserForce
 
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
+
+
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)

@@ -7455,37 +7455,7 @@ Partial Public Class tnxModel
             End If
         End If
 
-        'DELETE all loads associated with the tnx model and insert all new ones. 
-        'We may need to look into where this query is added. There are a lot of different pieces to the tnx file. 
-        Dim discQuery As String = ""
-        Dim lineQuery As String = ""
-        Dim userQuery As String = ""
-        Dim dishQuery As String = ""
-        Dim loadQuery As String = ""
-
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
-        For Each disc In Me.discreteLoads
-            discQuery += disc.SQLInsert & vbCrLf
-        Next
-        loadQuery += discQuery & vbCrLf
-
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
-        For Each line In Me.feedLines
-            lineQuery += line.SQLInsert & vbCrLf
-        Next
-        loadQuery += lineQuery & vbCrLf
-
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
-        For Each user In Me.userForces
-            userQuery += user.SQLInsert & vbCrLf
-        Next
-        loadQuery += userQuery & vbCrLf
-
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
-        For Each dish In Me.dishes
-            dishQuery += dish.SQLInsert & vbCrLf
-        Next
-        loadQuery += dishQuery & vbCrLf
+        EDSQueryBuilder += InsertMyLoading()
 
         'Database
         EDSQueryBuilder += Me.database.members.TNXMemberListQueryBuilder(TNXToCompare?.database.members)
@@ -7497,7 +7467,6 @@ Partial Public Class tnxModel
         EDSQueryBuilder += Me.geometry.baseStructure.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.baseStructure, AllowUpdate)
         EDSQueryBuilder += Me.geometry.guyWires.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.guyWires, AllowUpdate)
 
-
         'EDSQueryBuilder += loadQuery
         EDSQueryBuilder += "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf
 
@@ -7505,7 +7474,7 @@ Partial Public Class tnxModel
 
     End Function
 
-    Private Function InsertMyLoading(Optional ByVal myId As String = "@TopLevelID")
+    Private Function InsertMyLoading() As String
 
         'DELETE all loads associated with the tnx model and insert all new ones. 
         'We may need to look into where this query is added. There are a lot of different pieces to the tnx file. 
@@ -7515,29 +7484,31 @@ Partial Public Class tnxModel
         Dim dishQuery As String = ""
         Dim loadQuery As String = ""
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = " & myId & vbCrLf
+        loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each disc In Me.discreteLoads
             discQuery += disc.SQLInsert & vbCrLf
         Next
         loadQuery += discQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        loadQuery += "DELETE FROM load.linear_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each line In Me.feedLines
             lineQuery += line.SQLInsert & vbCrLf
         Next
         loadQuery += lineQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        loadQuery += "DELETE FROM load.user_force_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each user In Me.userForces
             userQuery += user.SQLInsert & vbCrLf
         Next
         loadQuery += userQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        loadQuery += "DELETE FROM load.dish_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each dish In Me.dishes
             dishQuery += dish.SQLInsert & vbCrLf
         Next
         loadQuery += dishQuery & vbCrLf
+
+        Return loadQuery
     End Function
 
     'Private _Insert As String
