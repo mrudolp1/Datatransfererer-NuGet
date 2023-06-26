@@ -421,12 +421,24 @@ Public Module myLittleHelpers
         End If
     End Function
 
-    Public Function DBtoNullableDbl(ByVal item As Object) As Double?
+    Public Function DBtoNullableDbl(ByVal item As Object, Optional ByVal precision As Integer = 4) As Double?
         If IsDBNull(item) Then
             Return Nothing
         Else
             Try
                 Return Math.Round(CDbl(item), 4)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Public Function DBtoNullableDec(ByVal item As Object, Optional ByVal precision As Integer = 4) As Decimal?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return Math.Round(CDbl(item), precision)
             Catch ex As Exception
                 Return Nothing
             End Try

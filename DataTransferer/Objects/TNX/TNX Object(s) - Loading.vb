@@ -38,32 +38,32 @@ Partial Public Class tnxFeedLine
     Private _FeedLineFace As Integer?
     Private _FeedLineComponentType As String
     Private _FeedLineGroupTreatmentType As String
-    Private _FeedLineRoundClusterDia As Double?
-    Private _FeedLineWidth As Double?
-    Private _FeedLinePerimeter As Double?
-    Private _FlatAttachmentEffectiveWidthRatio As Double?
+    Private _FeedLineRoundClusterDia As Decimal?
+    Private _FeedLineWidth As Decimal?
+    Private _FeedLinePerimeter As Decimal?
+    Private _FlatAttachmentEffectiveWidthRatio As Decimal?
     Private _AutoCalcFlatAttachmentEffectiveWidthRatio As Boolean?
-    Private _FeedLineShieldingFactorKaNoIce As Double?
-    Private _FeedLineShieldingFactorKaIce As Double?
+    Private _FeedLineShieldingFactorKaNoIce As Decimal?
+    Private _FeedLineShieldingFactorKaIce As Decimal?
     Private _FeedLineAutoCalcKa As Boolean?
-    Private _FeedLineCaAaNoIce As Double?
-    Private _FeedLineCaAaIce As Double?
-    Private _FeedLineCaAaIce_1 As Double?
-    Private _FeedLineCaAaIce_2 As Double?
-    Private _FeedLineCaAaIce_4 As Double?
-    Private _FeedLineWtNoIce As Double?
-    Private _FeedLineWtIce As Double?
-    Private _FeedLineWtIce_1 As Double?
-    Private _FeedLineWtIce_2 As Double?
-    Private _FeedLineWtIce_4 As Double?
-    Private _FeedLineFaceOffset As Double?
-    Private _FeedLineOffsetFrac As Double?
-    Private _FeedLinePerimeterOffsetStartFrac As Double?
-    Private _FeedLinePerimeterOffsetEndFrac As Double?
-    Private _FeedLineStartHt As Double?
-    Private _FeedLineEndHt As Double?
-    Private _FeedLineClearSpacing As Double?
-    Private _FeedLineRowClearSpacing As Double?
+    Private _FeedLineCaAaNoIce As Decimal?
+    Private _FeedLineCaAaIce As Decimal?
+    Private _FeedLineCaAaIce_1 As Decimal?
+    Private _FeedLineCaAaIce_2 As Decimal?
+    Private _FeedLineCaAaIce_4 As Decimal?
+    Private _FeedLineWtNoIce As Decimal?
+    Private _FeedLineWtIce As Decimal?
+    Private _FeedLineWtIce_1 As Decimal?
+    Private _FeedLineWtIce_2 As Decimal?
+    Private _FeedLineWtIce_4 As Decimal?
+    Private _FeedLineFaceOffset As Decimal?
+    Private _FeedLineOffsetFrac As Decimal?
+    Private _FeedLinePerimeterOffsetStartFrac As Decimal?
+    Private _FeedLinePerimeterOffsetEndFrac As Decimal?
+    Private _FeedLineStartHt As Decimal?
+    Private _FeedLineEndHt As Decimal?
+    Private _FeedLineClearSpacing As Decimal?
+    Private _FeedLineRowClearSpacing As Decimal?
 
     <Category("TNX Feed Lines"), Description(""), DisplayName("tnx ID")>
     <DataMember()> Public Property tnx_id() As Integer?
@@ -193,7 +193,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRoundClusterDia")>
-    <DataMember()> Public Property FeedLineRoundClusterDia() As Double?
+    <DataMember()> Public Property FeedLineRoundClusterDia() As Decimal?
         Get
             Return Me._FeedLineRoundClusterDia
         End Get
@@ -202,7 +202,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWidth")>
-    <DataMember()> Public Property FeedLineWidth() As Double?
+    <DataMember()> Public Property FeedLineWidth() As Decimal?
         Get
             Return Me._FeedLineWidth
         End Get
@@ -211,7 +211,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeter")>
-    <DataMember()> Public Property FeedLinePerimeter() As Double?
+    <DataMember()> Public Property FeedLinePerimeter() As Decimal?
         Get
             Return Me._FeedLinePerimeter
         End Get
@@ -220,7 +220,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FlatAttachmentEffectiveWidthRatio")>
-    <DataMember()> Public Property FlatAttachmentEffectiveWidthRatio() As Double?
+    <DataMember()> Public Property FlatAttachmentEffectiveWidthRatio() As Decimal?
         Get
             Return Me._FlatAttachmentEffectiveWidthRatio
         End Get
@@ -238,7 +238,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaNoIce")>
-    <DataMember()> Public Property FeedLineShieldingFactorKaNoIce() As Double?
+    <DataMember()> Public Property FeedLineShieldingFactorKaNoIce() As Decimal?
         Get
             Return Me._FeedLineShieldingFactorKaNoIce
         End Get
@@ -247,7 +247,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineShieldingFactorKaIce")>
-    <DataMember()> Public Property FeedLineShieldingFactorKaIce() As Double?
+    <DataMember()> Public Property FeedLineShieldingFactorKaIce() As Decimal?
         Get
             Return Me._FeedLineShieldingFactorKaIce
         End Get
@@ -265,7 +265,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaNoIce")>
-    <DataMember()> Public Property FeedLineCaAaNoIce() As Double?
+    <DataMember()> Public Property FeedLineCaAaNoIce() As Decimal?
         Get
             Return Me._FeedLineCaAaNoIce
         End Get
@@ -274,7 +274,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce")>
-    <DataMember()> Public Property FeedLineCaAaIce() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce() As Decimal?
         Get
             Return Me._FeedLineCaAaIce
         End Get
@@ -283,7 +283,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_1")>
-    <DataMember()> Public Property FeedLineCaAaIce_1() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_1() As Decimal?
         Get
             Return Me._FeedLineCaAaIce_1
         End Get
@@ -292,7 +292,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_2")>
-    <DataMember()> Public Property FeedLineCaAaIce_2() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_2() As Decimal?
         Get
             Return Me._FeedLineCaAaIce_2
         End Get
@@ -301,7 +301,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineCaAaIce_4")>
-    <DataMember()> Public Property FeedLineCaAaIce_4() As Double?
+    <DataMember()> Public Property FeedLineCaAaIce_4() As Decimal?
         Get
             Return Me._FeedLineCaAaIce_4
         End Get
@@ -310,7 +310,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtNoIce")>
-    <DataMember()> Public Property FeedLineWtNoIce() As Double?
+    <DataMember()> Public Property FeedLineWtNoIce() As Decimal?
         Get
             Return Me._FeedLineWtNoIce
         End Get
@@ -319,7 +319,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce")>
-    <DataMember()> Public Property FeedLineWtIce() As Double?
+    <DataMember()> Public Property FeedLineWtIce() As Decimal?
         Get
             Return Me._FeedLineWtIce
         End Get
@@ -328,7 +328,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_1")>
-    <DataMember()> Public Property FeedLineWtIce_1() As Double?
+    <DataMember()> Public Property FeedLineWtIce_1() As Decimal?
         Get
             Return Me._FeedLineWtIce_1
         End Get
@@ -337,7 +337,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_2")>
-    <DataMember()> Public Property FeedLineWtIce_2() As Double?
+    <DataMember()> Public Property FeedLineWtIce_2() As Decimal?
         Get
             Return Me._FeedLineWtIce_2
         End Get
@@ -346,7 +346,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineWtIce_4")>
-    <DataMember()> Public Property FeedLineWtIce_4() As Double?
+    <DataMember()> Public Property FeedLineWtIce_4() As Decimal?
         Get
             Return Me._FeedLineWtIce_4
         End Get
@@ -355,7 +355,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineFaceOffset")>
-    <DataMember()> Public Property FeedLineFaceOffset() As Double?
+    <DataMember()> Public Property FeedLineFaceOffset() As Decimal?
         Get
             Return Me._FeedLineFaceOffset
         End Get
@@ -364,7 +364,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineOffsetFrac")>
-    <DataMember()> Public Property FeedLineOffsetFrac() As Double?
+    <DataMember()> Public Property FeedLineOffsetFrac() As Decimal?
         Get
             Return Me._FeedLineOffsetFrac
         End Get
@@ -373,7 +373,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetStartFrac")>
-    <DataMember()> Public Property FeedLinePerimeterOffsetStartFrac() As Double?
+    <DataMember()> Public Property FeedLinePerimeterOffsetStartFrac() As Decimal?
         Get
             Return Me._FeedLinePerimeterOffsetStartFrac
         End Get
@@ -382,7 +382,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLinePerimeterOffsetEndFrac")>
-    <DataMember()> Public Property FeedLinePerimeterOffsetEndFrac() As Double?
+    <DataMember()> Public Property FeedLinePerimeterOffsetEndFrac() As Decimal?
         Get
             Return Me._FeedLinePerimeterOffsetEndFrac
         End Get
@@ -391,7 +391,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineStartHt")>
-    <DataMember()> Public Property FeedLineStartHt() As Double?
+    <DataMember()> Public Property FeedLineStartHt() As Decimal?
         Get
             Return Me._FeedLineStartHt
         End Get
@@ -400,7 +400,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineEndHt")>
-    <DataMember()> Public Property FeedLineEndHt() As Double?
+    <DataMember()> Public Property FeedLineEndHt() As Decimal?
         Get
             Return Me._FeedLineEndHt
         End Get
@@ -409,7 +409,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineClearSpacing")>
-    <DataMember()> Public Property FeedLineClearSpacing() As Double?
+    <DataMember()> Public Property FeedLineClearSpacing() As Decimal?
         Get
             Return Me._FeedLineClearSpacing
         End Get
@@ -418,7 +418,7 @@ Partial Public Class tnxFeedLine
         End Set
     End Property
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRowClearSpacing")>
-    <DataMember()> Public Property FeedLineRowClearSpacing() As Double?
+    <DataMember()> Public Property FeedLineRowClearSpacing() As Decimal?
         Get
             Return Me._FeedLineRowClearSpacing
         End Get
@@ -516,32 +516,32 @@ Partial Public Class tnxFeedLine
         Me.FeedLineFace = DBtoNullableInt(recRow.Item("FeedLineFace"))
         Me.FeedLineComponentType = DBtoStr(recRow.Item("FeedLineComponentType"))
         Me.FeedLineGroupTreatmentType = DBtoStr(recRow.Item("FeedLineGroupTreatmentType"))
-        Me.FeedLineRoundClusterDia = DBtoNullableDbl(recRow.Item("FeedLineRoundClusterDia"))
-        Me.FeedLineWidth = DBtoNullableDbl(recRow.Item("FeedLineWidth"))
-        Me.FeedLinePerimeter = DBtoNullableDbl(recRow.Item("FeedLinePerimeter"))
-        Me.FlatAttachmentEffectiveWidthRatio = DBtoNullableDbl(recRow.Item("FlatAttachmentEffectiveWidthRatio"))
+        Me.FeedLineRoundClusterDia = DBtoNullableDec(recRow.Item("FeedLineRoundClusterDia"), 6)
+        Me.FeedLineWidth = DBtoNullableDec(recRow.Item("FeedLineWidth"), 6)
+        Me.FeedLinePerimeter = DBtoNullableDec(recRow.Item("FeedLinePerimeter"), 6)
+        Me.FlatAttachmentEffectiveWidthRatio = DBtoNullableDec(recRow.Item("FlatAttachmentEffectiveWidthRatio"), 6)
         Me.AutoCalcFlatAttachmentEffectiveWidthRatio = DBtoNullableBool(recRow.Item("AutoCalcFlatAttachmentEffectiveWidthRatio"))
-        Me.FeedLineShieldingFactorKaNoIce = DBtoNullableDbl(recRow.Item("FeedLineShieldingFactorKaNoIce"))
-        Me.FeedLineShieldingFactorKaIce = DBtoNullableDbl(recRow.Item("FeedLineShieldingFactorKaIce"))
+        Me.FeedLineShieldingFactorKaNoIce = DBtoNullableDec(recRow.Item("FeedLineShieldingFactorKaNoIce"), 6)
+        Me.FeedLineShieldingFactorKaIce = DBtoNullableDec(recRow.Item("FeedLineShieldingFactorKaIce"), 6)
         Me.FeedLineAutoCalcKa = DBtoNullableBool(recRow.Item("FeedLineAutoCalcKa"))
-        Me.FeedLineCaAaNoIce = DBtoNullableDbl(recRow.Item("FeedLineCaAaNoIce"))
-        Me.FeedLineCaAaIce = DBtoNullableDbl(recRow.Item("FeedLineCaAaIce"))
-        Me.FeedLineCaAaIce_1 = DBtoNullableDbl(recRow.Item("FeedLineCaAaIce_1"))
-        Me.FeedLineCaAaIce_2 = DBtoNullableDbl(recRow.Item("FeedLineCaAaIce_2"))
-        Me.FeedLineCaAaIce_4 = DBtoNullableDbl(recRow.Item("FeedLineCaAaIce_4"))
-        Me.FeedLineWtNoIce = DBtoNullableDbl(recRow.Item("FeedLineWtNoIce"))
-        Me.FeedLineWtIce = DBtoNullableDbl(recRow.Item("FeedLineWtIce"))
-        Me.FeedLineWtIce_1 = DBtoNullableDbl(recRow.Item("FeedLineWtIce_1"))
-        Me.FeedLineWtIce_2 = DBtoNullableDbl(recRow.Item("FeedLineWtIce_2"))
-        Me.FeedLineWtIce_4 = DBtoNullableDbl(recRow.Item("FeedLineWtIce_4"))
-        Me.FeedLineFaceOffset = DBtoNullableDbl(recRow.Item("FeedLineFaceOffset"))
-        Me.FeedLineOffsetFrac = DBtoNullableDbl(recRow.Item("FeedLineOffsetFrac"))
-        Me.FeedLinePerimeterOffsetStartFrac = DBtoNullableDbl(recRow.Item("FeedLinePerimeterOffsetStartFrac"))
-        Me.FeedLinePerimeterOffsetEndFrac = DBtoNullableDbl(recRow.Item("FeedLinePerimeterOffsetEndFrac"))
-        Me.FeedLineStartHt = DBtoNullableDbl(recRow.Item("FeedLineStartHt"))
-        Me.FeedLineEndHt = DBtoNullableDbl(recRow.Item("FeedLineEndHt"))
-        Me.FeedLineClearSpacing = DBtoNullableDbl(recRow.Item("FeedLineClearSpacing"))
-        Me.FeedLineRowClearSpacing = DBtoNullableDbl(recRow.Item("FeedLineRowClearSpacing"))
+        Me.FeedLineCaAaNoIce = DBtoNullableDec(recRow.Item("FeedLineCaAaNoIce"), 6)
+        Me.FeedLineCaAaIce = DBtoNullableDec(recRow.Item("FeedLineCaAaIce"), 6)
+        Me.FeedLineCaAaIce_1 = DBtoNullableDec(recRow.Item("FeedLineCaAaIce_1"), 6)
+        Me.FeedLineCaAaIce_2 = DBtoNullableDec(recRow.Item("FeedLineCaAaIce_2"), 6)
+        Me.FeedLineCaAaIce_4 = DBtoNullableDec(recRow.Item("FeedLineCaAaIce_4"), 6)
+        Me.FeedLineWtNoIce = DBtoNullableDec(recRow.Item("FeedLineWtNoIce"), 6)
+        Me.FeedLineWtIce = DBtoNullableDec(recRow.Item("FeedLineWtIce"), 6)
+        Me.FeedLineWtIce_1 = DBtoNullableDec(recRow.Item("FeedLineWtIce_1"), 6)
+        Me.FeedLineWtIce_2 = DBtoNullableDec(recRow.Item("FeedLineWtIce_2"), 6)
+        Me.FeedLineWtIce_4 = DBtoNullableDec(recRow.Item("FeedLineWtIce_4"), 6)
+        Me.FeedLineFaceOffset = DBtoNullableDec(recRow.Item("FeedLineFaceOffset"), 6)
+        Me.FeedLineOffsetFrac = DBtoNullableDec(recRow.Item("FeedLineOffsetFrac"), 6)
+        Me.FeedLinePerimeterOffsetStartFrac = DBtoNullableDec(recRow.Item("FeedLinePerimeterOffsetStartFrac"), 6)
+        Me.FeedLinePerimeterOffsetEndFrac = DBtoNullableDec(recRow.Item("FeedLinePerimeterOffsetEndFrac"), 6)
+        Me.FeedLineStartHt = DBtoNullableDec(recRow.Item("FeedLineStartHt"), 6)
+        Me.FeedLineEndHt = DBtoNullableDec(recRow.Item("FeedLineEndHt"), 6)
+        Me.FeedLineClearSpacing = DBtoNullableDec(recRow.Item("FeedLineClearSpacing"), 6)
+        Me.FeedLineRowClearSpacing = DBtoNullableDec(recRow.Item("FeedLineRowClearSpacing"), 6)
 
     End Sub
 
@@ -1126,31 +1126,31 @@ Partial Public Class tnxDiscreteLoad
         Me.TowerLoadNum = DBtoNullableInt(recRow.Item("TowerLoadNum"))
         Me.TowerLoadFace = DBtoNullableInt(recRow.Item("TowerLoadFace"))
         Me.TowerOffsetType = DBtoStr(recRow.Item("TowerOffsetType"))
-        Me.TowerOffsetDist = DBtoNullableDbl(recRow.Item("TowerOffsetDist"))
-        Me.TowerVertOffset = DBtoNullableDbl(recRow.Item("TowerVertOffset"))
-        Me.TowerLateralOffset = DBtoNullableDbl(recRow.Item("TowerLateralOffset"))
-        Me.TowerAzimuthAdjustment = DBtoNullableDbl(recRow.Item("TowerAzimuthAdjustment"))
+        Me.TowerOffsetDist = DBtoNullableDbl(recRow.Item("TowerOffsetDist"), 6)
+        Me.TowerVertOffset = DBtoNullableDbl(recRow.Item("TowerVertOffset"), 6)
+        Me.TowerLateralOffset = DBtoNullableDbl(recRow.Item("TowerLateralOffset"), 6)
+        Me.TowerAzimuthAdjustment = DBtoNullableDbl(recRow.Item("TowerAzimuthAdjustment"), 6)
         Me.TowerAppurtSymbol = DBtoStr(recRow.Item("TowerAppurtSymbol"))
-        Me.TowerLoadShieldingFactorKaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaNoIce"))
-        Me.TowerLoadShieldingFactorKaIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaIce"))
+        Me.TowerLoadShieldingFactorKaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaNoIce"), 6)
+        Me.TowerLoadShieldingFactorKaIce = DBtoNullableDbl(recRow.Item("TowerLoadShieldingFactorKaIce"), 6)
         Me.TowerLoadAutoCalcKa = DBtoNullableBool(recRow.Item("TowerLoadAutoCalcKa"))
-        Me.TowerLoadCaAaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce"))
-        Me.TowerLoadCaAaIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce"))
-        Me.TowerLoadCaAaIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_1"))
-        Me.TowerLoadCaAaIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_2"))
-        Me.TowerLoadCaAaIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_4"))
-        Me.TowerLoadCaAaNoIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce_Side"))
-        Me.TowerLoadCaAaIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side"))
-        Me.TowerLoadCaAaIce_Side_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_1"))
-        Me.TowerLoadCaAaIce_Side_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_2"))
-        Me.TowerLoadCaAaIce_Side_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_4"))
-        Me.TowerLoadWtNoIce = DBtoNullableDbl(recRow.Item("TowerLoadWtNoIce"))
-        Me.TowerLoadWtIce = DBtoNullableDbl(recRow.Item("TowerLoadWtIce"))
-        Me.TowerLoadWtIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_1"))
-        Me.TowerLoadWtIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_2"))
-        Me.TowerLoadWtIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_4"))
-        Me.TowerLoadStartHt = DBtoNullableDbl(recRow.Item("TowerLoadStartHt"))
-        Me.TowerLoadEndHt = DBtoNullableDbl(recRow.Item("TowerLoadEndHt"))
+        Me.TowerLoadCaAaNoIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce"), 6)
+        Me.TowerLoadCaAaIce = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce"), 6)
+        Me.TowerLoadCaAaIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_1"), 6)
+        Me.TowerLoadCaAaIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_2"), 6)
+        Me.TowerLoadCaAaIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_4"), 6)
+        Me.TowerLoadCaAaNoIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaNoIce_Side"), 6)
+        Me.TowerLoadCaAaIce_Side = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side"), 6)
+        Me.TowerLoadCaAaIce_Side_1 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_1"), 6)
+        Me.TowerLoadCaAaIce_Side_2 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_2"), 6)
+        Me.TowerLoadCaAaIce_Side_4 = DBtoNullableDbl(recRow.Item("TowerLoadCaAaIce_Side_4"), 6)
+        Me.TowerLoadWtNoIce = DBtoNullableDbl(recRow.Item("TowerLoadWtNoIce"), 6)
+        Me.TowerLoadWtIce = DBtoNullableDbl(recRow.Item("TowerLoadWtIce"), 6)
+        Me.TowerLoadWtIce_1 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_1"), 6)
+        Me.TowerLoadWtIce_2 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_2"), 6)
+        Me.TowerLoadWtIce_4 = DBtoNullableDbl(recRow.Item("TowerLoadWtIce_4"), 6)
+        Me.TowerLoadStartHt = DBtoNullableDbl(recRow.Item("TowerLoadStartHt"), 6)
+        Me.TowerLoadEndHt = DBtoNullableDbl(recRow.Item("TowerLoadEndHt"), 6)
 
     End Sub
 
@@ -1638,23 +1638,23 @@ Partial Public Class tnxDish
         Me.DishFace = DBtoNullableInt(recRow.Item("DishFace"))
         Me.DishType = DBtoStr(recRow.Item("DishType"))
         Me.DishOffsetType = DBtoStr(recRow.Item("DishOffsetType"))
-        Me.DishVertOffset = DBtoNullableDbl(recRow.Item("DishVertOffset"))
-        Me.DishLateralOffset = DBtoNullableDbl(recRow.Item("DishLateralOffset"))
-        Me.DishOffsetDist = DBtoNullableDbl(recRow.Item("DishOffsetDist"))
-        Me.DishArea = DBtoNullableDbl(recRow.Item("DishArea"))
-        Me.DishAreaIce = DBtoNullableDbl(recRow.Item("DishAreaIce"))
-        Me.DishAreaIce_1 = DBtoNullableDbl(recRow.Item("DishAreaIce_1"))
-        Me.DishAreaIce_2 = DBtoNullableDbl(recRow.Item("DishAreaIce_2"))
-        Me.DishAreaIce_4 = DBtoNullableDbl(recRow.Item("DishAreaIce_4"))
-        Me.DishDiameter = DBtoNullableDbl(recRow.Item("DishDiameter"))
-        Me.DishWtNoIce = DBtoNullableDbl(recRow.Item("DishWtNoIce"))
-        Me.DishWtIce = DBtoNullableDbl(recRow.Item("DishWtIce"))
-        Me.DishWtIce_1 = DBtoNullableDbl(recRow.Item("DishWtIce_1"))
-        Me.DishWtIce_2 = DBtoNullableDbl(recRow.Item("DishWtIce_2"))
-        Me.DishWtIce_4 = DBtoNullableDbl(recRow.Item("DishWtIce_4"))
-        Me.DishStartHt = DBtoNullableDbl(recRow.Item("DishStartHt"))
-        Me.DishAzimuthAdjustment = DBtoNullableDbl(recRow.Item("DishAzimuthAdjustment"))
-        Me.DishBeamWidth = DBtoNullableDbl(recRow.Item("DishBeamWidth"))
+        Me.DishVertOffset = DBtoNullableDbl(recRow.Item("DishVertOffset"), 6)
+        Me.DishLateralOffset = DBtoNullableDbl(recRow.Item("DishLateralOffset"), 6)
+        Me.DishOffsetDist = DBtoNullableDbl(recRow.Item("DishOffsetDist"), 6)
+        Me.DishArea = DBtoNullableDbl(recRow.Item("DishArea"), 6)
+        Me.DishAreaIce = DBtoNullableDbl(recRow.Item("DishAreaIce"), 6)
+        Me.DishAreaIce_1 = DBtoNullableDbl(recRow.Item("DishAreaIce_1"), 6)
+        Me.DishAreaIce_2 = DBtoNullableDbl(recRow.Item("DishAreaIce_2"), 6)
+        Me.DishAreaIce_4 = DBtoNullableDbl(recRow.Item("DishAreaIce_4"), 6)
+        Me.DishDiameter = DBtoNullableDbl(recRow.Item("DishDiameter"), 6)
+        Me.DishWtNoIce = DBtoNullableDbl(recRow.Item("DishWtNoIce"), 6)
+        Me.DishWtIce = DBtoNullableDbl(recRow.Item("DishWtIce"), 6)
+        Me.DishWtIce_1 = DBtoNullableDbl(recRow.Item("DishWtIce_1"), 6)
+        Me.DishWtIce_2 = DBtoNullableDbl(recRow.Item("DishWtIce_2"), 6)
+        Me.DishWtIce_4 = DBtoNullableDbl(recRow.Item("DishWtIce_4"), 6)
+        Me.DishStartHt = DBtoNullableDbl(recRow.Item("DishStartHt"), 6)
+        Me.DishAzimuthAdjustment = DBtoNullableDbl(recRow.Item("DishAzimuthAdjustment"), 6)
+        Me.DishBeamWidth = DBtoNullableDbl(recRow.Item("DishBeamWidth"), 6)
 
     End Sub
 
@@ -2097,28 +2097,28 @@ Partial Public Class tnxUserForce
         Me.UserForceRec = DBtoNullableInt(recRow.Item("UserForceRec"))
         Me.UserForceEnabled = DBtoNullableBool(recRow.Item("UserForceEnabled"))
         Me.UserForceDescription = DBtoStr(recRow.Item("UserForceDescription"))
-        Me.UserForceStartHt = DBtoNullableDbl(recRow.Item("UserForceStartHt"))
-        Me.UserForceOffset = DBtoNullableDbl(recRow.Item("UserForceOffset"))
-        Me.UserForceAzimuth = DBtoNullableDbl(recRow.Item("UserForceAzimuth"))
-        Me.UserForceFxNoIce = DBtoNullableDbl(recRow.Item("UserForceFxNoIce"))
-        Me.UserForceFzNoIce = DBtoNullableDbl(recRow.Item("UserForceFzNoIce"))
-        Me.UserForceAxialNoIce = DBtoNullableDbl(recRow.Item("UserForceAxialNoIce"))
-        Me.UserForceShearNoIce = DBtoNullableDbl(recRow.Item("UserForceShearNoIce"))
-        Me.UserForceCaAcNoIce = DBtoNullableDbl(recRow.Item("UserForceCaAcNoIce"))
-        Me.UserForceFxIce = DBtoNullableDbl(recRow.Item("UserForceFxIce"))
-        Me.UserForceFzIce = DBtoNullableDbl(recRow.Item("UserForceFzIce"))
-        Me.UserForceAxialIce = DBtoNullableDbl(recRow.Item("UserForceAxialIce"))
-        Me.UserForceShearIce = DBtoNullableDbl(recRow.Item("UserForceShearIce"))
-        Me.UserForceCaAcIce = DBtoNullableDbl(recRow.Item("UserForceCaAcIce"))
-        Me.UserForceFxService = DBtoNullableDbl(recRow.Item("UserForceFxService"))
-        Me.UserForceFzService = DBtoNullableDbl(recRow.Item("UserForceFzService"))
-        Me.UserForceAxialService = DBtoNullableDbl(recRow.Item("UserForceAxialService"))
-        Me.UserForceShearService = DBtoNullableDbl(recRow.Item("UserForceShearService"))
-        Me.UserForceCaAcService = DBtoNullableDbl(recRow.Item("UserForceCaAcService"))
-        Me.UserForceEhx = DBtoNullableDbl(recRow.Item("UserForceEhx"))
-        Me.UserForceEhz = DBtoNullableDbl(recRow.Item("UserForceEhz"))
-        Me.UserForceEv = DBtoNullableDbl(recRow.Item("UserForceEv"))
-        Me.UserForceEh = DBtoNullableDbl(recRow.Item("UserForceEh"))
+        Me.UserForceStartHt = DBtoNullableDbl(recRow.Item("UserForceStartHt"), 6)
+        Me.UserForceOffset = DBtoNullableDbl(recRow.Item("UserForceOffset"), 6)
+        Me.UserForceAzimuth = DBtoNullableDbl(recRow.Item("UserForceAzimuth"), 6)
+        Me.UserForceFxNoIce = DBtoNullableDbl(recRow.Item("UserForceFxNoIce"), 6)
+        Me.UserForceFzNoIce = DBtoNullableDbl(recRow.Item("UserForceFzNoIce"), 6)
+        Me.UserForceAxialNoIce = DBtoNullableDbl(recRow.Item("UserForceAxialNoIce"), 6)
+        Me.UserForceShearNoIce = DBtoNullableDbl(recRow.Item("UserForceShearNoIce"), 6)
+        Me.UserForceCaAcNoIce = DBtoNullableDbl(recRow.Item("UserForceCaAcNoIce"), 6)
+        Me.UserForceFxIce = DBtoNullableDbl(recRow.Item("UserForceFxIce"), 6)
+        Me.UserForceFzIce = DBtoNullableDbl(recRow.Item("UserForceFzIce"), 6)
+        Me.UserForceAxialIce = DBtoNullableDbl(recRow.Item("UserForceAxialIce"), 6)
+        Me.UserForceShearIce = DBtoNullableDbl(recRow.Item("UserForceShearIce"), 6)
+        Me.UserForceCaAcIce = DBtoNullableDbl(recRow.Item("UserForceCaAcIce"), 6)
+        Me.UserForceFxService = DBtoNullableDbl(recRow.Item("UserForceFxService"), 6)
+        Me.UserForceFzService = DBtoNullableDbl(recRow.Item("UserForceFzService"), 6)
+        Me.UserForceAxialService = DBtoNullableDbl(recRow.Item("UserForceAxialService"), 6)
+        Me.UserForceShearService = DBtoNullableDbl(recRow.Item("UserForceShearService"), 6)
+        Me.UserForceCaAcService = DBtoNullableDbl(recRow.Item("UserForceCaAcService"), 6)
+        Me.UserForceEhx = DBtoNullableDbl(recRow.Item("UserForceEhx"), 6)
+        Me.UserForceEhz = DBtoNullableDbl(recRow.Item("UserForceEhz"), 6)
+        Me.UserForceEv = DBtoNullableDbl(recRow.Item("UserForceEv"), 6)
+        Me.UserForceEh = DBtoNullableDbl(recRow.Item("UserForceEh"), 6)
 
     End Sub
 
