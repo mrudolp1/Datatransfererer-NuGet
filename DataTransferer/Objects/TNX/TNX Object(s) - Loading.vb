@@ -24,6 +24,7 @@ Partial Public Class tnxFeedLine
 #End Region
 
 #Region "Define"
+    Private _tnx_id As Integer?
     Private _FeedLineRec As Integer?
     Private _FeedLineEnabled As Boolean?
     Private _FeedLineDatabase As String
@@ -63,6 +64,16 @@ Partial Public Class tnxFeedLine
     Private _FeedLineEndHt As Double?
     Private _FeedLineClearSpacing As Double?
     Private _FeedLineRowClearSpacing As Double?
+
+    <Category("TNX Feed Lines"), Description(""), DisplayName("tnx ID")>
+    <DataMember()> Public Property tnx_id() As Integer?
+        Get
+            Return Me._tnx_id
+        End Get
+        Set
+            Me._tnx_id = Value
+        End Set
+    End Property
 
     <Category("TNX Feed Lines"), Description(""), DisplayName("FeedLineRec")>
     <DataMember()> Public Property FeedLineRec() As Integer?
@@ -491,7 +502,7 @@ Partial Public Class tnxFeedLine
         'Me.modified_person_id = DBtoNullableInt(recRow.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(recRow.Item("process_stage"))
         'Me.work_order_seq_num = DBtoNullableInt(recRow.Item("work_order_seq_num"))
-        'Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
+        Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
         Me.FeedLineRec = DBtoNullableInt(recRow.Item("FeedLineRec"))
         Me.FeedLineEnabled = DBtoNullableBool(recRow.Item("FeedLineEnabled"))
         Me.FeedLineDatabase = DBtoStr(recRow.Item("FeedLineDatabase"))
@@ -666,12 +677,13 @@ Partial Public Class tnxDiscreteLoad
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
         Get
-            Return "load.discrete_outpu"
+            Return "load.discrete_output"
         End Get
     End Property
 #End Region
 
 #Region "Define"
+    Private _tnx_id As Integer?
     Private _TowerLoadRec As Integer?
     Private _TowerLoadEnabled As Boolean?
     Private _TowerLoadDatabase As String
@@ -708,7 +720,15 @@ Partial Public Class tnxDiscreteLoad
     Private _TowerLoadStartHt As Double?
     Private _TowerLoadEndHt As Double?
 
-
+    <Category("TNX Discrete Load"), Description(""), DisplayName("tnx ID")>
+    <DataMember()> Public Property tnx_id() As Integer?
+        Get
+            Return Me._tnx_id
+        End Get
+        Set
+            Me._tnx_id = Value
+        End Set
+    End Property
     <Category("TNX Discrete Load"), Description(""), DisplayName("TowerLoadRec")>
     <DataMember()> Public Property TowerLoadRec() As Integer?
         Get
@@ -1095,7 +1115,7 @@ Partial Public Class tnxDiscreteLoad
         'Me.modified_person_id = DBtoNullableInt(recRow.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(recRow.Item("process_stage"))
         'Me.work_order_seq_num = DBtoNullableInt(recRow.Item("work_order_seq_num"))
-        'Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
+        Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
         Me.TowerLoadRec = DBtoNullableInt(recRow.Item("TowerLoadRec"))
         Me.TowerLoadEnabled = DBtoNullableBool(recRow.Item("TowerLoadEnabled"))
         Me.TowerLoadDatabase = DBtoStr(recRow.Item("TowerLoadDatabase"))
@@ -1264,6 +1284,7 @@ Partial Public Class tnxDish
 #End Region
 
 #Region "Define"
+    Private _tnx_id As Integer?
     Private _DishRec As Integer?
     Private _DishEnabled As Boolean?
     Private _DishDatabase As String
@@ -1292,6 +1313,15 @@ Partial Public Class tnxDish
     Private _DishAzimuthAdjustment As Double?
     Private _DishBeamWidth As Double?
 
+    <Category("TNX Dish"), Description(""), DisplayName("tnx ID")>
+    <DataMember()> Public Property tnx_id() As Integer?
+        Get
+            Return Me._tnx_id
+        End Get
+        Set
+            Me._tnx_id = Value
+        End Set
+    End Property
     <Category("TNX Dish"), Description(""), DisplayName("DishRec")>
     <DataMember()> Public Property DishRec() As Integer?
         Get
@@ -1597,7 +1627,7 @@ Partial Public Class tnxDish
         'Me.modified_person_id = DBtoNullableInt(recRow.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(recRow.Item("process_stage"))
         'Me.work_order_seq_num = DBtoNullableInt(recRow.Item("work_order_seq_num"))
-        'Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
+        Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
         Me.DishRec = DBtoNullableInt(recRow.Item("DishRec"))
         Me.DishEnabled = DBtoNullableBool(recRow.Item("DishEnabled"))
         Me.DishDatabase = DBtoStr(recRow.Item("DishDatabase"))
@@ -1742,6 +1772,7 @@ Partial Public Class tnxUserForce
 #End Region
 
 #Region "Define"
+    Private _tnx_id As Integer?
     Private _UserForceRec As Integer?
     Private _UserForceEnabled As Boolean?
     Private _UserForceDescription As String
@@ -1768,6 +1799,15 @@ Partial Public Class tnxUserForce
     Private _UserForceEv As Double?
     Private _UserForceEh As Double?
 
+    <Category("TNX User Force"), Description(""), DisplayName("tnx ID")>
+    <DataMember()> Public Property tnx_id() As Integer?
+        Get
+            Return Me._tnx_id
+        End Get
+        Set
+            Me._tnx_id = Value
+        End Set
+    End Property
     <Category("TNX User Force"), Description(""), DisplayName("UserForceRec")>
     <DataMember()> Public Property UserForceRec() As Integer?
         Get
@@ -2053,7 +2093,7 @@ Partial Public Class tnxUserForce
         'Me.modified_person_id = DBtoNullableInt(recRow.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(recRow.Item("process_stage"))
         'Me.work_order_seq_num = DBtoNullableInt(recRow.Item("work_order_seq_num"))
-        'Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
+        Me.tnx_id = DBtoNullableInt(recRow.Item("tnx_id"))
         Me.UserForceRec = DBtoNullableInt(recRow.Item("UserForceRec"))
         Me.UserForceEnabled = DBtoNullableBool(recRow.Item("UserForceEnabled"))
         Me.UserForceDescription = DBtoStr(recRow.Item("UserForceDescription"))
