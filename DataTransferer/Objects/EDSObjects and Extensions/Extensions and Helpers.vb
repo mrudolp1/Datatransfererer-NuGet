@@ -30,6 +30,12 @@ Public Module Extensions
     Public Function FormatDBValue(input As String) As String
         'Handles nullable values and quoatations needed for DB values
 
+        'Single quotes are not permissible in fields in SQL tables
+        'this additional piece will replace single quotes with 2 quotes to allow the fields to be formatted the same when loading back from EDS>
+        If input.Contains("'") Then
+            input = input.Replace("'", "''")
+        End If
+
         If String.IsNullOrEmpty(input) Then
             FormatDBValue = "NULL"
         Else
