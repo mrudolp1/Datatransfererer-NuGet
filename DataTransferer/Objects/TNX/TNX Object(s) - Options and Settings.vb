@@ -3530,8 +3530,8 @@ Partial Public Class tnxUnitProperty
         Set
             If Value < 0 Then
                 Me._precision = 0
-            ElseIf Value > 4 Then
-                Me._precision = 4
+            ElseIf Value > 6 Then
+                Me._precision = 6
             Else
                 Me._precision = Value
             End If
@@ -3562,7 +3562,7 @@ Partial Public Class tnxUnitProperty
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return Math.Round(InputValue.Value / Me.multiplier.Value, 6)
+        Return Math.Round(InputValue.Value * Me.multiplier.Value, 6)
 
     End Function
 
@@ -3578,7 +3578,7 @@ Partial Public Class tnxUnitProperty
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return Math.Round(InputValue / Me.multiplier.Value, 6)
+        Return Math.Round(InputValue * Me.multiplier.Value, 6)
 
     End Function
 
@@ -3594,7 +3594,7 @@ Partial Public Class tnxUnitProperty
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return Math.Round(InputValue.Value * Me.multiplier.Value, 4)
+        Return Math.Round(InputValue.Value / Me.multiplier.Value, 6)
 
     End Function
 
@@ -3611,9 +3611,9 @@ Partial Public Class tnxLengthUnit
             Me._value = Value
 
             If Me._value = "ft" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "in" Then
                 Me._multiplier = 12
+            ElseIf Me._value = "in" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
