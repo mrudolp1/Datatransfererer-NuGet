@@ -92,6 +92,8 @@ Public Module TNXExtensions
                 If currentSortedList(i).Rec = prevSortedList(i).Rec And AllowUpdate Then
                     If Not currentSortedList(i).Equals(prevSortedList(i)) Then
                         'Update existing
+                        'It needs an ID to update the data. Setting the ID for the Updater to work. 
+                        currentSortedList(i).ID = prevSortedList(i).ID
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).SQLUpdate
                     Else
                         'Save Results Only
