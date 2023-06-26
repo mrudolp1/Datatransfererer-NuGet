@@ -7465,8 +7465,6 @@ Partial Public Class tnxModel
         EDSQueryBuilder += Me.geometry.baseStructure.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.baseStructure, AllowUpdate)
         EDSQueryBuilder += Me.geometry.guyWires.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.guyWires, AllowUpdate)
 
-        EDSQueryBuilder += "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf
-
         'DELETE all loads associated with the tnx model and insert all new ones. 
         'We may need to look into where this query is added. There are a lot of different pieces to the tnx file. 
         Dim discQuery As String = ""
@@ -7500,6 +7498,7 @@ Partial Public Class tnxModel
         loadQuery += dishQuery & vbCrLf
 
         EDSQueryBuilder += loadQuery
+        EDSQueryBuilder += "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf
 
         Return EDSQueryBuilder
 
