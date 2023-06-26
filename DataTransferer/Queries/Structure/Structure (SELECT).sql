@@ -413,4 +413,44 @@ Begin
 
 	--CCISeismic
 	Select * From load.seismic WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Discrete
+	Select app.* 
+	From 
+		load.discrete_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--Dishes
+	Select app.* 
+	From 
+		load.dish_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--User Forces
+	Select app.* 
+	From 
+		load.user_force_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--Lines
+	Select app.* 
+	From 
+		load.linear_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
 END
