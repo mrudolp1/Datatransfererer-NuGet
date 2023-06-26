@@ -7475,25 +7475,25 @@ Partial Public Class tnxModel
         Dim dishQuery As String = ""
         Dim loadQuery As String = ""
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = XXXX" & vbCrLf
+        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each disc In Me.discreteLoads
             discQuery += disc.SQLInsert & vbCrLf
         Next
         loadQuery += discQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = XXXX" & vbCrLf
+        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each line In Me.feedLines
             lineQuery += line.SQLInsert & vbCrLf
         Next
         loadQuery += lineQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = XXXX" & vbCrLf
+        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each user In Me.userForces
             userQuery += user.SQLInsert & vbCrLf
         Next
         loadQuery += userQuery & vbCrLf
 
-        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = XXXX" & vbCrLf
+        If Me.ID IsNot Nothing Then loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
         For Each dish In Me.dishes
             dishQuery += dish.SQLInsert & vbCrLf
         Next

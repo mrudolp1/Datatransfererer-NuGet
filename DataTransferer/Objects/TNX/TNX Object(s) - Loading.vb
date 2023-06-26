@@ -498,13 +498,12 @@ Partial Public Class tnxFeedLine
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") 'foreign key reference 'tnx_id
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineRec.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineEnabled.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.FeedLineDatabase.ToString.FormatDBValue)
@@ -552,13 +551,12 @@ Partial Public Class tnxFeedLine
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineRec")
         SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineEnabled")
         SQLInsertFields = SQLInsertFields.AddtoDBString("FeedLineDatabase")
@@ -1056,13 +1054,12 @@ Partial Public Class tnxDiscreteLoad
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadRec")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadEnabled")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLoadDatabase")
@@ -1106,13 +1103,12 @@ Partial Public Class tnxDiscreteLoad
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") 'foreign key reference  'tnx_id
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadRec.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadEnabled.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLoadDatabase.ToString.FormatDBValue)
@@ -1516,13 +1512,12 @@ Partial Public Class tnxDish
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("DishRec")
         SQLInsertFields = SQLInsertFields.AddtoDBString("DishEnabled")
         SQLInsertFields = SQLInsertFields.AddtoDBString("DishDatabase")
@@ -1558,13 +1553,12 @@ Partial Public Class tnxDish
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") 'foreign key reference 'tnx_id
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishRec.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishEnabled.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.DishDatabase.ToString.FormatDBValue)
@@ -1938,13 +1932,12 @@ Partial Public Class tnxUserForce
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tnx_id.ToString.FormatDBValue) 'foreign key reference "@SubLevel1ID"
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID") 'foreign key reference 'tnx_id
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceRec.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceEnabled.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UserForceDescription.ToString.FormatDBValue)
@@ -1978,13 +1971,12 @@ Partial Public Class tnxUserForce
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("tnx_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceRec")
         SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceEnabled")
         SQLInsertFields = SQLInsertFields.AddtoDBString("UserForceDescription")
