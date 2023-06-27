@@ -3628,7 +3628,7 @@ Partial Public Class tnxLengthUnit
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return InputValue / (Me.multiplier * Me.multiplier)
+        Return InputValue * (Me.multiplier * Me.multiplier)
 
     End Function
 
@@ -3640,7 +3640,7 @@ Partial Public Class tnxLengthUnit
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return InputValue * Me.multiplier * Me.multiplier
+        Return InputValue / Me.multiplier * Me.multiplier
 
     End Function
 
@@ -3674,11 +3674,11 @@ Partial Public Class tnxForceUnit
             Me._value = Value
 
             If Me._value = "K" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "lb" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "lb" Then
+                Me._multiplier = 1
             ElseIf Me._value = "T" Then
-                Me._multiplier = 0.5
+                Me._multiplier = 2000
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3703,9 +3703,9 @@ Partial Public Class tnxLoadUnit
             Me._value = Value
 
             If Me._value = "klf" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "plf" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "plf" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3730,13 +3730,13 @@ Partial Public Class tnxMomentUnit
             Me._value = Value
 
             If Me._value = "kip-ft" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "lb-ft" Then
-                Me._multiplier = 1000
-            ElseIf Me._value = "lb-in" Then
                 Me._multiplier = 12000
-            ElseIf Me._value = "kip-in" Then
+            ElseIf Me._value = "lb-ft" Then
                 Me._multiplier = 12
+            ElseIf Me._value = "lb-in" Then
+                Me._multiplier = 1
+            ElseIf Me._value = "kip-in" Then
+                Me._multiplier = 1000
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3771,9 +3771,9 @@ Partial Public Class tnxPressureUnit
             Me._value = Value
 
             If Me._value = "ksf" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "psf" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "psf" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3798,9 +3798,9 @@ Partial Public Class tnxVelocityUnit
             Me._value = Value
 
             If Me._value = "mph" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "fps" Then
                 Me._multiplier = 5280 / 3600
+            ElseIf Me._value = "fps" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3876,9 +3876,9 @@ Partial Public Class tnxAccelerationUnit
             Me._value = Value
 
             If Me._value = "G" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "fpss" Then
                 Me._multiplier = 32.17405
+            ElseIf Me._value = "fpss" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3903,9 +3903,9 @@ Partial Public Class tnxStressUnit
             Me._value = Value
 
             If Me._value = "ksi" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "psi" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3959,7 +3959,7 @@ Partial Public Class tnxUnitWTUnit
             If Me._value = "plf" Then
                 Me._multiplier = 1
             ElseIf Me._value = "klf" Then
-                Me._multiplier = 0.001
+                Me._multiplier = 1000
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -3984,9 +3984,9 @@ Partial Public Class tnxStrengthUnit
             Me._value = Value
 
             If Me._value = "ksi" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "psi" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -4011,9 +4011,9 @@ Partial Public Class tnxModulusUnit
             Me._value = Value
 
             If Me._value = "ksi" Then
-                Me._multiplier = 1
-            ElseIf Me._value = "psi" Then
                 Me._multiplier = 1000
+            ElseIf Me._value = "psi" Then
+                Me._multiplier = 1
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
@@ -4144,11 +4144,12 @@ Partial Public Class tnxRotationUnit
         End Get
         Set
             Me._value = Value
+            Dim myPi As Double = Math.PI
 
             If Me._value = "deg" Then
                 Me._multiplier = 1
             ElseIf Me._value = "rad" Then
-                Me._multiplier = 3.14159 / 180
+                Me._multiplier = 180 / myPi
             Else
                 Throw New System.Exception("Unrecognized Unit: " & Me._value)
             End If
