@@ -426,7 +426,7 @@ Public Module myLittleHelpers
             Return Nothing
         Else
             Try
-                Return Math.Round(CDbl(item), 4)
+                Return Math.Round(CDbl(item), precision)
             Catch ex As Exception
                 Return Nothing
             End Try
