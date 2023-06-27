@@ -3640,7 +3640,7 @@ Partial Public Class tnxLengthUnit
             Throw New System.Exception("Property multiplier not set")
         End If
 
-        Return InputValue / Me.multiplier * Me.multiplier
+        Return InputValue / (Me.multiplier * Me.multiplier)
 
     End Function
 
