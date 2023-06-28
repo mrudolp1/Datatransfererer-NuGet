@@ -1442,18 +1442,9 @@ Partial Public Class Pile
                 .Worksheets("Input").Range("TowerType").Value = CType(structure_type, String)
             End If
             'TIA Revision- Defaulting to Rev. H if not available. 
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    tia_current = "F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    tia_current = "G"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
-                    tia_current = "H"
-                Else
-                    tia_current = "H"
-                End If
-                .Worksheets("Input").Range("TIA").Value = CType(tia_current, String)
-            End If
+            .Worksheets("Input").Range("TIA").Value = MyTIA()
+            'ORder Number
+            .Worksheets("Input").Range("C7").Value = MyOrder()
             'H Section 15.5
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
                 rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5

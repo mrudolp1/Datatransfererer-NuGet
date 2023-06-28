@@ -888,16 +888,9 @@ Partial Public Class PierAndPad
             End If
             .Worksheets("Input").Range("TowerType").Value = structure_type
             'TIA Revision- Defaulting to Rev. H if not available. 
-            Dim tia_current As String = "H"
-            If Me.ParentStructure?.structureCodeCriteria?.tia_current IsNot Nothing Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    tia_current = "F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    tia_current = "G"
-                End If
-            End If
-            .Worksheets("Input").Range("TIA_Input").Value = tia_current
-
+            .Worksheets("Input").Range("TIA_Input").Value = MyTIA()
+            'ORder Number
+            .Worksheets("Input").Range("C5").Value = MyOrder()
             'Load Z Normalization
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
             '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
