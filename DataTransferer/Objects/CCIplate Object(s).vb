@@ -559,14 +559,9 @@ Partial Public Class CCIplate
                 site_name = Me.ParentStructure?.structureCodeCriteria?.site_name
                 .Worksheets("Main").Range("C4").Value = CType(site_name, String)
             End If
-            'Order Number
-            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.order_number) Then
-            '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
-            '    .Worksheets("Input").Range("D7").Value = CType(order_number, String)
-            'End If
+
             'App ID & Revision #
             .Worksheets("Main").Range("C5").Value = MyOrder()
-
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
             '    site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id
             '    'Revision #
@@ -578,6 +573,7 @@ Partial Public Class CCIplate
             '        .Worksheets("Main").Range("C5").Value = CType(site_app, String)
             '    End If
             'End If
+
             'Tower Type - Defaulting to Monopole if not one of the main tower types
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
             If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then
@@ -589,21 +585,9 @@ Partial Public Class CCIplate
             End If
             .Worksheets("Main").Range("tower_type").Value = CType(structure_type, String)
             'End If
+
             'TIA Revision
             .Worksheets("Main").Range("C9").Value = MyTIA()
-
-            'If IsSomething(Me.ParentStructure.tnx.code.design.DesignCode) Then
-            '    If Me.ParentStructure.tnx.code.design.DesignCode = "TIA/EIA-222-F" Then
-            '        tia_current = "F"
-            '    ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-G" Then
-            '        tia_current = "G"
-            '    ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-H" Then
-            '        tia_current = "H"
-            '    Else
-            '        tia_current = "H"
-            '    End If
-            '    .Worksheets("Main").Range("C9").Value = CType(tia_current, String)
-            'End If
 
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
             '    If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
