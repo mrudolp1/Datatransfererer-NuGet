@@ -30,6 +30,12 @@ Public Module Extensions
     Public Function FormatDBValue(input As String) As String
         'Handles nullable values and quoatations needed for DB values
 
+        'Single quotes are not permissible in fields in SQL tables
+        'this additional piece will replace single quotes with 2 quotes to allow the fields to be formatted the same when loading back from EDS>
+        If input.Contains("'") Then
+            input = input.Replace("'", "''")
+        End If
+
         If String.IsNullOrEmpty(input) Then
             FormatDBValue = "NULL"
         Else
@@ -415,12 +421,24 @@ Public Module myLittleHelpers
         End If
     End Function
 
-    Public Function DBtoNullableDbl(ByVal item As Object) As Double?
+    Public Function DBtoNullableDbl(ByVal item As Object, Optional ByVal precision As Integer = 4) As Double?
         If IsDBNull(item) Then
             Return Nothing
         Else
             Try
-                Return Math.Round(CDbl(item), 4)
+                Return Math.Round(CDbl(item), precision)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Public Function DBtoNullableDec(ByVal item As Object, Optional ByVal precision As Integer = 4) As Decimal?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return Math.Round(CDbl(item), precision)
             Catch ex As Exception
                 Return Nothing
             End Try

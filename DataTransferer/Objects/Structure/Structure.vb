@@ -230,7 +230,11 @@ Partial Public Class EDSStructure
                             "Guy Anchor Profiles",
                             "Leg Reinforcements",
                             "Leg Reinforcement Details",
-                            "CCISeismics"}
+                            "CCISeismics",
+                            "Discretes",
+                            "Dishes",
+                            "User Forces",
+                            "Lines"} 'Add discrete, dish, userforce, and linear and add the SELECT statements into the resource query
 
 
         Using strDS As New DataSet
@@ -282,7 +286,12 @@ Partial Public Class EDSStructure
 
                         ", "Site Code Criteria", strDS, 3000, "ords")
             End If
-            Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+
+            If strDS.Tables.Contains("Site Code Criteria") Then
+                If strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                    Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+                End If
+            End If
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then

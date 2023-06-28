@@ -703,18 +703,7 @@ Partial Public Class Pole
 
             'Site Code Critera
             'TIA Revision- Defaulting to Rev. H if not available. 
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    pole_tia_current = "F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    pole_tia_current = "G"
-                Else
-                    pole_tia_current = "H"
-                End If
-            Else
-                pole_tia_current = "H"
-            End If
-            .Worksheets("General (SAPI)").Range("Q3").Value = CType(pole_tia_current, String)
+            .Worksheets("General (SAPI)").Range("Q3").Value = MyTIA()
 
             'Load Z Normalization
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then

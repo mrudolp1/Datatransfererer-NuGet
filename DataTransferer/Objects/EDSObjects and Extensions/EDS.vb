@@ -311,6 +311,40 @@ Partial Public MustInherit Class EDSExcelObject
     <DataMember()>
     Public Property Modified As Boolean?
 
+    Public Function MyTIA(Optional ByVal fullTIA As Boolean = False) As String
+        Dim tia_current As String = ""
+        If IsSomething(Me.ParentStructure.tnx.code.design.DesignCode) Then
+            If Me.ParentStructure.tnx.code.design.DesignCode = "TIA/EIA-222-F" Then
+                tia_current = "F"
+            ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-G" Then
+                tia_current = "G"
+            ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-H" Then
+                tia_current = "H"
+            Else
+                tia_current = "H"
+            End If
+        Else
+            tia_current = "H"
+        End If
+        Dim addlTIA As String = "TIA-222-"
+        If fullTIA Then tia_current = addlTIA + tia_current
+        Return tia_current
+    End Function
+
+    Public Function MyOrder() As String
+        Dim site_app As String = ""
+        Dim site_rev As String = ""
+
+        If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
+            site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id.ToString
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision) Then
+                site_rev = Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision.ToString
+                site_app += " REV. " & site_rev
+            End If
+        End If
+        Return site_app
+    End Function
+
 #Region "Run Excel Macro"
     ''' <summary>
     ''' Adding this in case we want to use it later on.

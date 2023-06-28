@@ -241,9 +241,41 @@ Partial Public Class tnxModel
 
             If StructureDS.Tables.Contains("Guys") Then
                 For Each guyLevel As DataRow In StructureDS.Tables("Guys").Rows
-                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me.geometry))
+                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me))
                 Next
                 Me.geometry.guyWires.Sort()
+            End If
+
+            'Discrete
+            If StructureDS.Tables.Contains("Discretes") Then
+                For Each disc As DataRow In StructureDS.Tables("Discretes").Rows
+                    Me.discreteLoads.Add(New tnxDiscreteLoad(disc, Me))
+                Next
+                Me.discreteLoads.Sort()
+            End If
+
+            'Dish
+            If StructureDS.Tables.Contains("Dishes") Then
+                For Each dish As DataRow In StructureDS.Tables("Dishes").Rows
+                    Me.dishes.Add(New tnxDish(dish, Me))
+                Next
+                Me.dishes.Sort()
+            End If
+
+            'User Forces
+            If StructureDS.Tables.Contains("User Forces") Then
+                For Each user As DataRow In StructureDS.Tables("User Forces").Rows
+                    Me.userForces.Add(New tnxUserForce(user, Me))
+                Next
+                Me.userForces.Sort()
+            End If
+
+            'Linear
+            If StructureDS.Tables.Contains("Lines") Then
+                For Each line As DataRow In StructureDS.Tables("Lines").Rows
+                    Me.feedLines.Add(New tnxFeedLine(line, Me))
+                Next
+                Me.feedLines.Sort()
             End If
 
             If StructureDS.Tables.Contains("Materials") Then
@@ -334,18 +366,18 @@ Partial Public Class tnxModel
         Me.CCIReport.sReportCarrierSiteNumber = DBtoStr(Data.Item("sReportCarrierSiteNumber"))
         Me.CCIReport.sReportCarrierSiteName = DBtoStr(Data.Item("sReportCarrierSiteName"))
         Me.CCIReport.sReportSiteAddress = DBtoStr(Data.Item("sReportSiteAddress"))
-        Me.CCIReport.sReportLatitudeDegree = DBtoNullableDbl(Data.Item("sReportLatitudeDegree"))
-        Me.CCIReport.sReportLatitudeMinute = DBtoNullableDbl(Data.Item("sReportLatitudeMinute"))
-        Me.CCIReport.sReportLatitudeSecond = DBtoNullableDbl(Data.Item("sReportLatitudeSecond"))
-        Me.CCIReport.sReportLongitudeDegree = DBtoNullableDbl(Data.Item("sReportLongitudeDegree"))
-        Me.CCIReport.sReportLongitudeMinute = DBtoNullableDbl(Data.Item("sReportLongitudeMinute"))
-        Me.CCIReport.sReportLongitudeSecond = DBtoNullableDbl(Data.Item("sReportLongitudeSecond"))
+        Me.CCIReport.sReportLatitudeDegree = DBtoNullableDbl(Data.Item("sReportLatitudeDegree"), 6)
+        Me.CCIReport.sReportLatitudeMinute = DBtoNullableDbl(Data.Item("sReportLatitudeMinute"), 6)
+        Me.CCIReport.sReportLatitudeSecond = DBtoNullableDbl(Data.Item("sReportLatitudeSecond"), 6)
+        Me.CCIReport.sReportLongitudeDegree = DBtoNullableDbl(Data.Item("sReportLongitudeDegree"), 6)
+        Me.CCIReport.sReportLongitudeMinute = DBtoNullableDbl(Data.Item("sReportLongitudeMinute"), 6)
+        Me.CCIReport.sReportLongitudeSecond = DBtoNullableDbl(Data.Item("sReportLongitudeSecond"), 6)
         Me.CCIReport.sReportLocalCodeRequirement = DBtoStr(Data.Item("sReportLocalCodeRequirement"))
         Me.CCIReport.sReportSiteHistory = DBtoStr(Data.Item("sReportSiteHistory"))
         Me.CCIReport.sReportTowerManufacturer = DBtoStr(Data.Item("sReportTowerManufacturer"))
         Me.CCIReport.sReportMonthManufactured = DBtoStr(Data.Item("sReportMonthManufactured"))
         Me.CCIReport.sReportYearManufactured = DBtoNullableInt(Data.Item("sReportYearManufactured"))
-        Me.CCIReport.sReportOriginalSpeed = DBtoNullableDbl(Data.Item("sReportOriginalSpeed"))
+        Me.CCIReport.sReportOriginalSpeed = DBtoNullableDbl(Data.Item("sReportOriginalSpeed"), 6)
         Me.CCIReport.sReportOriginalCode = DBtoStr(Data.Item("sReportOriginalCode"))
         Me.CCIReport.sReportTowerType = DBtoStr(Data.Item("sReportTowerType"))
         Me.CCIReport.sReportEngrName = DBtoStr(Data.Item("sReportEngrName"))
@@ -385,38 +417,38 @@ Partial Public Class tnxModel
         Me.code.design.DesignCode = DBtoStr(Data.Item("DesignCode"))
         Me.geometry.TowerType = DBtoStr(Data.Item("TowerType"))
         Me.geometry.AntennaType = DBtoStr(Data.Item("AntennaType"))
-        Me.geometry.OverallHeight = DBtoNullableDbl(Data.Item("OverallHeight"))
-        Me.geometry.BaseElevation = DBtoNullableDbl(Data.Item("BaseElevation"))
-        Me.geometry.Lambda = DBtoNullableDbl(Data.Item("Lambda"))
-        Me.geometry.TowerTopFaceWidth = DBtoNullableDbl(Data.Item("TowerTopFaceWidth"))
-        Me.geometry.TowerBaseFaceWidth = DBtoNullableDbl(Data.Item("TowerBaseFaceWidth"))
-        Me.code.wind.WindSpeed = DBtoNullableDbl(Data.Item("WindSpeed"))
-        Me.code.wind.WindSpeedIce = DBtoNullableDbl(Data.Item("WindSpeedIce"))
-        Me.code.wind.WindSpeedService = DBtoNullableDbl(Data.Item("WindSpeedService"))
-        Me.code.ice.IceThickness = DBtoNullableDbl(Data.Item("IceThickness"))
-        Me.code.wind.CSA_S37_RefVelPress = DBtoNullableDbl(Data.Item("CSA_S37_RefVelPress"))
+        Me.geometry.OverallHeight = DBtoNullableDbl(Data.Item("OverallHeight"), 6)
+        Me.geometry.BaseElevation = DBtoNullableDbl(Data.Item("BaseElevation"), 6)
+        Me.geometry.Lambda = DBtoNullableDbl(Data.Item("Lambda"), 6)
+        Me.geometry.TowerTopFaceWidth = DBtoNullableDbl(Data.Item("TowerTopFaceWidth"), 6)
+        Me.geometry.TowerBaseFaceWidth = DBtoNullableDbl(Data.Item("TowerBaseFaceWidth"), 6)
+        Me.code.wind.WindSpeed = DBtoNullableDbl(Data.Item("WindSpeed"), 6)
+        Me.code.wind.WindSpeedIce = DBtoNullableDbl(Data.Item("WindSpeedIce"), 6)
+        Me.code.wind.WindSpeedService = DBtoNullableDbl(Data.Item("WindSpeedService"), 6)
+        Me.code.ice.IceThickness = DBtoNullableDbl(Data.Item("IceThickness"), 6)
+        Me.code.wind.CSA_S37_RefVelPress = DBtoNullableDbl(Data.Item("CSA_S37_RefVelPress"), 6)
         Me.code.wind.CSA_S37_ReliabilityClass = DBtoNullableInt(Data.Item("CSA_S37_ReliabilityClass"))
-        Me.code.wind.CSA_S37_ServiceabilityFactor = DBtoNullableDbl(Data.Item("CSA_S37_ServiceabilityFactor"))
+        Me.code.wind.CSA_S37_ServiceabilityFactor = DBtoNullableDbl(Data.Item("CSA_S37_ServiceabilityFactor"), 6)
         Me.code.ice.UseModified_TIA_222_IceParameters = DBtoNullableBool(Data.Item("UseModified_TIA_222_IceParameters"))
-        Me.code.ice.TIA_222_IceThicknessMultiplier = DBtoNullableDbl(Data.Item("TIA_222_IceThicknessMultiplier"))
+        Me.code.ice.TIA_222_IceThicknessMultiplier = DBtoNullableDbl(Data.Item("TIA_222_IceThicknessMultiplier"), 6)
         Me.code.ice.DoNotUse_TIA_222_IceEscalation = DBtoNullableBool(Data.Item("DoNotUse_TIA_222_IceEscalation"))
-        Me.code.ice.IceDensity = DBtoNullableDbl(Data.Item("IceDensity"))
+        Me.code.ice.IceDensity = DBtoNullableDbl(Data.Item("IceDensity"), 6)
         Me.code.seismic.SeismicSiteClass = DBtoNullableInt(Data.Item("SeismicSiteClass"))
-        Me.code.seismic.SeismicSs = DBtoNullableDbl(Data.Item("SeismicSs"))
-        Me.code.seismic.SeismicS1 = DBtoNullableDbl(Data.Item("SeismicS1"))
-        Me.code.thermal.TempDrop = DBtoNullableDbl(Data.Item("TempDrop"))
-        Me.code.misclCode.GroutFc = DBtoNullableDbl(Data.Item("GroutFc"))
-        Me.options.defaultGirtOffsets.GirtOffset = DBtoNullableDbl(Data.Item("GirtOffset"))
-        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = DBtoNullableDbl(Data.Item("GirtOffsetLatticedPole"))
-        Me.options.foundationStiffness.MastVert = DBtoNullableDbl(Data.Item("MastVert"))
-        Me.options.foundationStiffness.MastHorz = DBtoNullableDbl(Data.Item("MastHorz"))
-        Me.options.foundationStiffness.GuyVert = DBtoNullableDbl(Data.Item("GuyVert"))
-        Me.options.foundationStiffness.GuyHorz = DBtoNullableDbl(Data.Item("GuyHorz"))
-        Me.options.misclOptions.HogRodTakeup = DBtoNullableDbl(Data.Item("HogRodTakeup"))
+        Me.code.seismic.SeismicSs = DBtoNullableDbl(Data.Item("SeismicSs"), 6)
+        Me.code.seismic.SeismicS1 = DBtoNullableDbl(Data.Item("SeismicS1"), 6)
+        Me.code.thermal.TempDrop = DBtoNullableDbl(Data.Item("TempDrop"), 6)
+        Me.code.misclCode.GroutFc = DBtoNullableDbl(Data.Item("GroutFc"), 6)
+        Me.options.defaultGirtOffsets.GirtOffset = DBtoNullableDbl(Data.Item("GirtOffset"), 6)
+        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = DBtoNullableDbl(Data.Item("GirtOffsetLatticedPole"), 6)
+        Me.options.foundationStiffness.MastVert = DBtoNullableDbl(Data.Item("MastVert"), 6)
+        Me.options.foundationStiffness.MastHorz = DBtoNullableDbl(Data.Item("MastHorz"), 6)
+        Me.options.foundationStiffness.GuyVert = DBtoNullableDbl(Data.Item("GuyVert"), 6)
+        Me.options.foundationStiffness.GuyHorz = DBtoNullableDbl(Data.Item("GuyHorz"), 6)
+        Me.options.misclOptions.HogRodTakeup = DBtoNullableDbl(Data.Item("HogRodTakeup"), 6)
         Me.geometry.TowerTaper = DBtoStr(Data.Item("TowerTaper"))
         Me.geometry.GuyedMonopoleBaseType = DBtoStr(Data.Item("GuyedMonopoleBaseType"))
-        Me.geometry.TaperHeight = DBtoNullableDbl(Data.Item("TaperHeight"))
-        Me.geometry.PivotHeight = DBtoNullableDbl(Data.Item("PivotHeight"))
+        Me.geometry.TaperHeight = DBtoNullableDbl(Data.Item("TaperHeight"), 6)
+        Me.geometry.PivotHeight = DBtoNullableDbl(Data.Item("PivotHeight"), 6)
         Me.geometry.AutoCalcGH = DBtoNullableBool(Data.Item("AutoCalcGH"))
         Me.MTOSettings.IncludeCapacityNote = DBtoNullableBool(Data.Item("IncludeCapacityNote"))
         Me.MTOSettings.IncludeAppurtGraphics = DBtoNullableBool(Data.Item("IncludeAppurtGraphics"))
@@ -428,29 +460,29 @@ Partial Public Class tnxModel
         Me.code.wind.AutoCalc_ASCE_GH = DBtoNullableBool(Data.Item("AutoCalc_ASCE_GH"))
         Me.code.wind.ASCE_ExposureCat = DBtoNullableInt(Data.Item("ASCE_ExposureCat"))
         Me.code.wind.ASCE_Year = DBtoNullableInt(Data.Item("ASCE_Year"))
-        Me.code.wind.ASCEGh = DBtoNullableDbl(Data.Item("ASCEGh"))
-        Me.code.wind.ASCEI = DBtoNullableDbl(Data.Item("ASCEI"))
+        Me.code.wind.ASCEGh = DBtoNullableDbl(Data.Item("ASCEGh"), 6)
+        Me.code.wind.ASCEI = DBtoNullableDbl(Data.Item("ASCEI"), 6)
         Me.code.wind.UseASCEWind = DBtoNullableBool(Data.Item("UseASCEWind"))
-        Me.geometry.UserGHElev = DBtoNullableDbl(Data.Item("UserGHElev"))
+        Me.geometry.UserGHElev = DBtoNullableDbl(Data.Item("UserGHElev"), 6)
         Me.code.design.UseCodeGuySF = DBtoNullableBool(Data.Item("UseCodeGuySF"))
-        Me.code.design.GuySF = DBtoNullableDbl(Data.Item("GuySF"))
+        Me.code.design.GuySF = DBtoNullableDbl(Data.Item("GuySF"), 6)
         Me.code.wind.CalcWindAt = DBtoNullableInt(Data.Item("CalcWindAt"))
         Me.code.misclCode.TowerBoltGrade = DBtoStr(Data.Item("TowerBoltGrade"))
-        Me.code.misclCode.TowerBoltMinEdgeDist = DBtoNullableDbl(Data.Item("TowerBoltMinEdgeDist"))
-        Me.code.design.AllowStressRatio = DBtoNullableDbl(Data.Item("AllowStressRatio"))
-        Me.code.design.AllowAntStressRatio = DBtoNullableDbl(Data.Item("AllowAntStressRatio"))
-        Me.code.wind.WindCalcPoints = DBtoNullableDbl(Data.Item("WindCalcPoints"))
+        Me.code.misclCode.TowerBoltMinEdgeDist = DBtoNullableDbl(Data.Item("TowerBoltMinEdgeDist"), 6)
+        Me.code.design.AllowStressRatio = DBtoNullableDbl(Data.Item("AllowStressRatio"), 6)
+        Me.code.design.AllowAntStressRatio = DBtoNullableDbl(Data.Item("AllowAntStressRatio"), 6)
+        Me.code.wind.WindCalcPoints = DBtoNullableDbl(Data.Item("WindCalcPoints"), 6)
         Me.geometry.UseIndexPlate = DBtoNullableBool(Data.Item("UseIndexPlate"))
         Me.geometry.EnterUserDefinedGhValues = DBtoNullableBool(Data.Item("EnterUserDefinedGhValues"))
-        Me.geometry.BaseTowerGhInput = DBtoNullableDbl(Data.Item("BaseTowerGhInput"))
-        Me.geometry.UpperStructureGhInput = DBtoNullableDbl(Data.Item("UpperStructureGhInput"))
+        Me.geometry.BaseTowerGhInput = DBtoNullableDbl(Data.Item("BaseTowerGhInput"), 6)
+        Me.geometry.UpperStructureGhInput = DBtoNullableDbl(Data.Item("UpperStructureGhInput"), 6)
         Me.geometry.EnterUserDefinedCgValues = DBtoNullableBool(Data.Item("EnterUserDefinedCgValues"))
-        Me.geometry.BaseTowerCgInput = DBtoNullableDbl(Data.Item("BaseTowerCgInput"))
-        Me.geometry.UpperStructureCgInput = DBtoNullableDbl(Data.Item("UpperStructureCgInput"))
+        Me.geometry.BaseTowerCgInput = DBtoNullableDbl(Data.Item("BaseTowerCgInput"), 6)
+        Me.geometry.UpperStructureCgInput = DBtoNullableDbl(Data.Item("UpperStructureCgInput"), 6)
         Me.options.cantileverPoles.CheckVonMises = DBtoNullableBool(Data.Item("CheckVonMises"))
         Me.options.UseClearSpans = DBtoNullableBool(Data.Item("UseClearSpans"))
         Me.options.UseClearSpansKlr = DBtoNullableBool(Data.Item("UseClearSpansKlr"))
-        Me.geometry.AntennaFaceWidth = DBtoNullableDbl(Data.Item("AntennaFaceWidth"))
+        Me.geometry.AntennaFaceWidth = DBtoNullableDbl(Data.Item("AntennaFaceWidth"), 6)
         Me.code.design.DoInteraction = DBtoNullableBool(Data.Item("DoInteraction"))
         Me.code.design.DoHorzInteraction = DBtoNullableBool(Data.Item("DoHorzInteraction"))
         Me.code.design.DoDiagInteraction = DBtoNullableBool(Data.Item("DoDiagInteraction"))
@@ -469,20 +501,20 @@ Partial Public Class tnxModel
         Me.code.wind.RiskCategory = DBtoNullableInt(Data.Item("RiskCategory"))
         Me.code.wind.TopoCategory = DBtoNullableInt(Data.Item("TopoCategory"))
         Me.code.wind.RSMTopographicFeature = DBtoNullableInt(Data.Item("RSMTopographicFeature"))
-        Me.code.wind.RSM_L = DBtoNullableDbl(Data.Item("RSM_L"))
-        Me.code.wind.RSM_X = DBtoNullableDbl(Data.Item("RSM_X"))
-        Me.code.wind.CrestHeight = DBtoNullableDbl(Data.Item("CrestHeight"))
+        Me.code.wind.RSM_L = DBtoNullableDbl(Data.Item("RSM_L"), 6)
+        Me.code.wind.RSM_X = DBtoNullableDbl(Data.Item("RSM_X"), 6)
+        Me.code.wind.CrestHeight = DBtoNullableDbl(Data.Item("CrestHeight"), 6)
         Me.code.wind.TIA_222_H_TopoFeatureDownwind = DBtoNullableBool(Data.Item("TIA_222_H_TopoFeatureDownwind"))
-        Me.code.wind.BaseElevAboveSeaLevel = DBtoNullableDbl(Data.Item("BaseElevAboveSeaLevel"))
+        Me.code.wind.BaseElevAboveSeaLevel = DBtoNullableDbl(Data.Item("BaseElevAboveSeaLevel"), 6)
         Me.code.wind.ConsiderRooftopSpeedUp = DBtoNullableBool(Data.Item("ConsiderRooftopSpeedUp"))
-        Me.code.wind.RooftopWS = DBtoNullableDbl(Data.Item("RooftopWS"))
-        Me.code.wind.RooftopHS = DBtoNullableDbl(Data.Item("RooftopHS"))
-        Me.code.wind.RooftopParapetHt = DBtoNullableDbl(Data.Item("RooftopParapetHt"))
-        Me.code.wind.RooftopXB = DBtoNullableDbl(Data.Item("RooftopXB"))
+        Me.code.wind.RooftopWS = DBtoNullableDbl(Data.Item("RooftopWS"), 6)
+        Me.code.wind.RooftopHS = DBtoNullableDbl(Data.Item("RooftopHS"), 6)
+        Me.code.wind.RooftopParapetHt = DBtoNullableDbl(Data.Item("RooftopParapetHt"), 6)
+        Me.code.wind.RooftopXB = DBtoNullableDbl(Data.Item("RooftopXB"), 6)
         Me.code.design.UseTIA222H_AnnexS = DBtoNullableBool(Data.Item("UseTIA222H_AnnexS"))
-        Me.code.design.TIA_222_H_AnnexS_Ratio = DBtoNullableDbl(Data.Item("TIA_222_H_AnnexS_Ratio"))
-        Me.code.wind.EIACWindMult = DBtoNullableDbl(Data.Item("EIACWindMult"))
-        Me.code.wind.EIACWindMultIce = DBtoNullableDbl(Data.Item("EIACWindMultIce"))
+        Me.code.design.TIA_222_H_AnnexS_Ratio = DBtoNullableDbl(Data.Item("TIA_222_H_AnnexS_Ratio"), 6)
+        Me.code.wind.EIACWindMult = DBtoNullableDbl(Data.Item("EIACWindMult"), 6)
+        Me.code.wind.EIACWindMultIce = DBtoNullableDbl(Data.Item("EIACWindMultIce"), 6)
         Me.code.wind.EIACIgnoreCableDrag = DBtoNullableBool(Data.Item("EIACIgnoreCableDrag"))
         Me.MTOSettings.Notes = DBtoStr(Data.Item("Notes"))
         Me.reportSettings.ReportInputCosts = DBtoNullableBool(Data.Item("ReportInputCosts"))
@@ -546,13 +578,13 @@ Partial Public Class tnxModel
         Me.options.cantileverPoles.AssumePoleWithNoAttachments = DBtoNullableBool(Data.Item("AssumePoleWithNoAttachments"))
         Me.options.cantileverPoles.AssumePoleWithShroud = DBtoNullableBool(Data.Item("AssumePoleWithShroud"))
         Me.options.cantileverPoles.PoleCornerRadiusKnown = DBtoNullableBool(Data.Item("PoleCornerRadiusKnown"))
-        Me.solutionSettings.SolutionMinStiffness = DBtoNullableDbl(Data.Item("SolutionMinStiffness"))
-        Me.solutionSettings.SolutionMaxStiffness = DBtoNullableDbl(Data.Item("SolutionMaxStiffness"))
+        Me.solutionSettings.SolutionMinStiffness = DBtoNullableDbl(Data.Item("SolutionMinStiffness"), 6)
+        Me.solutionSettings.SolutionMaxStiffness = DBtoNullableDbl(Data.Item("SolutionMaxStiffness"), 6)
         Me.solutionSettings.SolutionMaxCycles = DBtoNullableInt(Data.Item("SolutionMaxCycles"))
-        Me.solutionSettings.SolutionPower = DBtoNullableDbl(Data.Item("SolutionPower"))
-        Me.solutionSettings.SolutionTolerance = DBtoNullableDbl(Data.Item("SolutionTolerance"))
-        Me.options.cantileverPoles.CantKFactor = DBtoNullableDbl(Data.Item("CantKFactor"))
-        Me.options.misclOptions.RadiusSampleDist = DBtoNullableDbl(Data.Item("RadiusSampleDist"))
+        Me.solutionSettings.SolutionPower = DBtoNullableDbl(Data.Item("SolutionPower"), 6)
+        Me.solutionSettings.SolutionTolerance = DBtoNullableDbl(Data.Item("SolutionTolerance"), 6)
+        Me.options.cantileverPoles.CantKFactor = DBtoNullableDbl(Data.Item("CantKFactor"), 6)
+        Me.options.misclOptions.RadiusSampleDist = DBtoNullableDbl(Data.Item("RadiusSampleDist"), 6)
         Me.options.BypassStabilityChecks = DBtoNullableBool(Data.Item("BypassStabilityChecks"))
         Me.options.UseWindProjection = DBtoNullableBool(Data.Item("UseWindProjection"))
         Me.code.ice.UseIceEscalation = DBtoNullableBool(Data.Item("UseIceEscalation"))
@@ -7423,6 +7455,8 @@ Partial Public Class tnxModel
             End If
         End If
 
+        EDSQueryBuilder += InsertMyLoading()
+
         'Database
         EDSQueryBuilder += Me.database.members.TNXMemberListQueryBuilder(TNXToCompare?.database.members)
         EDSQueryBuilder += Me.database.materials.TNXMemberListQueryBuilder(TNXToCompare?.database.materials)
@@ -7433,11 +7467,50 @@ Partial Public Class tnxModel
         EDSQueryBuilder += Me.geometry.baseStructure.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.baseStructure, AllowUpdate)
         EDSQueryBuilder += Me.geometry.guyWires.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.guyWires, AllowUpdate)
 
+        'EDSQueryBuilder += loadQuery
         EDSQueryBuilder += "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf
 
         Return EDSQueryBuilder
 
     End Function
+
+    Private Function InsertMyLoading() As String
+
+        'DELETE all loads associated with the tnx model and insert all new ones. 
+        'We may need to look into where this query is added. There are a lot of different pieces to the tnx file. 
+        Dim discQuery As String = ""
+        Dim lineQuery As String = ""
+        Dim userQuery As String = ""
+        Dim dishQuery As String = ""
+        Dim loadQuery As String = ""
+
+        loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each disc In Me.discreteLoads
+            discQuery += disc.SQLInsert & vbCrLf
+        Next
+        loadQuery += discQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.linear_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each line In Me.feedLines
+            lineQuery += line.SQLInsert & vbCrLf
+        Next
+        loadQuery += lineQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.user_force_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each user In Me.userForces
+            userQuery += user.SQLInsert & vbCrLf
+        Next
+        loadQuery += userQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.dish_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each dish In Me.dishes
+            dishQuery += dish.SQLInsert & vbCrLf
+        Next
+        loadQuery += dishQuery & vbCrLf
+
+        Return loadQuery
+    End Function
+
     'Private _Insert As String
     'Private _Update As String
     'Private _Delete As String
