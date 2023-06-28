@@ -933,19 +933,13 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("StructuralCheckBoolean").Value = CType(Me.structural_check, Boolean)
             End If
 
+            .Worksheets("Input").Range("C5").Value = MyOrder()
 
             If Not IsNothing(Me.bus_unit) Then
                 .Worksheets("Input").Range("C3").Value = CType(Me.bus_unit, Integer)
             End If
-            Dim tia_current As String = "H"
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    tia_current = "F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    tia_current = "G"
-                End If
-            End If
-            .Worksheets("Input").Range("TIA_Input").Value = tia_current
+
+            .Worksheets("Input").Range("TIA_Input").Value = MyTIA()
 
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
                 .Worksheets("Input").Range("Section15.5Boolean").Value = CType(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5, Boolean)
