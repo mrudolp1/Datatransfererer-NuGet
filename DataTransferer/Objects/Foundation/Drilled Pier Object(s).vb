@@ -215,22 +215,10 @@ Partial Public Class DrilledPierFoundation
             With wb.Worksheets("Foundation Input")
                 .Range("D3").Value = Me.bus_unit
                 .Range("D4").Value = Me.ParentStructure?.structureCodeCriteria?.site_name
-                .Range("D5").Value = Me.ParentStructure?.structureCodeCriteria?.eng_app_id & " Rev. " & Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision
+                .Range("D5").Value = MyOrder()
                 .Range("EDSLOADED").Value = True
                 .Range("FIRSTEDSOPEN").Value = True
-
-                If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                    If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                        tia_current = "F"
-                    ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                        tia_current = "G"
-                    ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
-                        tia_current = "H"
-                    Else
-                        tia_current = "H"
-                    End If
-                    .Range("D6").Value = CType(tia_current, String)
-                End If
+                .Range("D6").Value = MyTIA()
 
                 If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
                     If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then

@@ -509,18 +509,9 @@ Partial Public Class AnchorBlockFoundation
                 'End If
 
                 'TIA Revision- Defaulting to Rev. H if not available. 
-                If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                    If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                        gab_tia_current = "F"
-                    ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                        gab_tia_current = "G"
-                    Else
-                        gab_tia_current = "H"
-                    End If
-                Else
-                    gab_tia_current = "H"
-                End If
-                .Range("L3").Value = CType(gab_tia_current, String)
+                .Range("L3").Value = MyTIA()
+                'ORder Number
+                .Range("K3").Value = MyOrder()
                 'Load Z Normalization
                 'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.load_z_norm) Then
                 '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.load_z_norm
