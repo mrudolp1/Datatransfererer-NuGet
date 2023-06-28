@@ -340,11 +340,10 @@ Partial Public Class LegReinforcement
                 site_name = Me.ParentStructure?.structureCodeCriteria?.site_name
                 .Worksheets("IMPORT").Range("SiteName_Import").Value = CType(site_name, String)
             End If
-            'Order Number - currently referencing work_order_seq_num below
-            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.order_number) Then
-            '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
-            '    .Worksheets("IMPORT").Range("Order_Import").Value = CType(order_number, String)
-            'End If
+
+            'App ID & Revision #
+            .Worksheets("IMPORT").Range("Order_Import").Value = MyOrder()
+
             'Tower Type - Defaulting to Self-Support if can't determine
             'Tool is set up where importing tnx file determines tower type. Pulling this from the site code criteria might not be necessary since importing geometry is required.
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
@@ -357,19 +356,10 @@ Partial Public Class LegReinforcement
             End If
             .Worksheets("TNX File").Range("A2").Value = "TowerType=" & CType(structure_type, String)
             'End If
+
             'TIA Revision- Defaulting to Rev. H if not available. Currently pulled in from TNX file
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    tia_current = "TIA-222-F"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    tia_current = "TIA-222-G"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
-                    tia_current = "TIA-222-H"
-                Else
-                    tia_current = "TIA-222-H"
-                End If
-                .Worksheets("TNX File").Range("A1").Value = "SteelCode=" & CType(tia_current, String)
-            End If
+            .Worksheets("TNX File").Range("A1").Value = "SteelCode=" & MyTIA(True)
+
             'H Section 15.5 - Not sure if this is a reliable source. Currently just pulling from last SA (Structural_105)
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
             '    rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5

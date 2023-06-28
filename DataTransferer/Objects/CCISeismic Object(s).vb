@@ -488,14 +488,12 @@ Partial Public Class CCISeismic
 
         With wb
             'Site Code Criteria
-            'Order Number
-            'If Not IsNothing(Me.work_order_seq_num) Then
-            '    .Worksheets("Site SDC Data").Range("wo").Value = CType(Me.work_order_seq_num, String)
-            'End If
-            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.order_number) Then
-            '    site_name = Me.ParentStructure?.structureCodeCriteria?.order_number
-            '    .Worksheets("Site SDC Data").Range("wo").Value = CType(order_number, String)
-            'End If
+
+            'Work Order
+            If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
+                work_order_seq_num = Me.ParentStructure?.work_order_seq_num
+                .Worksheets("Site SDC Data").Range("wo").Value = CType(work_order_seq_num, Integer)
+            End If
 
             'App ID
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
@@ -510,18 +508,16 @@ Partial Public Class CCISeismic
             End If
 
             'TIA Revision- Defaulting to Rev. H-1 if not available.
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.tia_current) Then
-                If Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-F" Then
-                    tia_current = "ASCE 7-10"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-G" Then
-                    tia_current = "TIA-222-G"
-                ElseIf Me.ParentStructure?.structureCodeCriteria?.tia_current = "TIA-222-H" Then
-                    tia_current = "TIA-222-H-1"
-                Else
-                    tia_current = "TIA-222-H-1"
-                End If
-                .Worksheets("Site SDC Data").Range("dcode").Value = CType(tia_current, String)
+            If MyTIA() = "F" Then
+                tia_current = "ASCE 7-10"
+            ElseIf MyTIA() = "G" Then
+                tia_current = "TIA-222-G"
+            ElseIf MyTIA() = "H" Then
+                tia_current = "TIA-222-H-1"
+            Else
+                tia_current = "TIA-222-H-1"
             End If
+            .Worksheets("Site SDC Data").Range("dcode").Value = CType(tia_current, String)
 
             'Latitude
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.lat_dec) Then
