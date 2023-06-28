@@ -774,76 +774,81 @@ ErrorSkip:
                 Return False
             End If
 
-            Me.tnx.settings.projectInfo.VersionUsed = tnxProdVersion
             Try
-                'delete tnx log file if it exist
-                If File.Exists(tnxLogFilePath) Then
-                    File.Delete(tnxLogFilePath)
-                End If
+                Me.tnx.settings.projectInfo.VersionUsed = tnxProdVersion
             Catch ex As Exception
-                WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
-                Return False
+                WriteLineLogLine("WARNING | Could not set TNX object version. EDS may show older TNX version number.")
             End Try
-            'Need to determine if word is open prior to running TNX
-            'If it is open then it shouldn't be killed when closing the RTF
-            'If it isn't open before tnx then it should be killed
-            'Dim isWordOpen As Boolean
-            'Try
-            '    Dim word As Object = GetObject(, "Word.Application")
-            '    isWordOpen = True
-            'Catch ex As Exception
-            '    isWordOpen = False
-            'End Try
 
-            'Make sure ReportPrintReactions=Yes in eri file
-            If Not SetEriOutputVariables(tnxFilePath) Then
-                WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables")
-            End If
-
-            With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
-
-                With .StartInfo
-                    .CreateNoWindow = True
-                    .UseShellExecute = False
-                    .RedirectStandardOutput = True
-
-                End With
-                .Start()
-
-                CheckLogFileForFinished(tnxLogFilePath, 300000, True)
-                Try
-                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
-                    .Kill()
-                    WriteLineLogLine("INFO | TNX termination complete..")
+            Try
+                    'delete tnx log file if it exist
+                    If File.Exists(tnxLogFilePath) Then
+                        File.Delete(tnxLogFilePath)
+                    End If
                 Catch ex As Exception
-                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
-                Finally
-                    'Try
-                    '    'For the time being the RTF file still opens 
-                    '    'This needs to be closed before returning TRUE
-                    '    CloseRTF(tnxFilePath, isWordOpen)
-                    'Catch ex As Exception
-                    '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                    'End Try
+                    WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
+                    Return False
                 End Try
+                'Need to determine if word is open prior to running TNX
+                'If it is open then it shouldn't be killed when closing the RTF
+                'If it isn't open before tnx then it should be killed
+                'Dim isWordOpen As Boolean
+                'Try
+                '    Dim word As Object = GetObject(, "Word.Application")
+                '    isWordOpen = True
+                'Catch ex As Exception
+                '    isWordOpen = False
+                'End Try
 
-                '.WaitForInputIdle()
-                '.WaitForExit()
-            End With ' Read output to a string variable.
-            Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
+                'Make sure ReportPrintReactions=Yes in eri file
+                If Not SetEriOutputVariables(tnxFilePath) Then
+                    WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables")
+                End If
+
+                With cmdProcess
+                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
+
+                    With .StartInfo
+                        .CreateNoWindow = True
+                        .UseShellExecute = False
+                        .RedirectStandardOutput = True
+
+                    End With
+                    .Start()
+
+                    CheckLogFileForFinished(tnxLogFilePath, 300000, True)
+                    Try
+                        WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
+                        .Kill()
+                        WriteLineLogLine("INFO | TNX termination complete..")
+                    Catch ex As Exception
+                        WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                    Finally
+                        'Try
+                        '    'For the time being the RTF file still opens 
+                        '    'This needs to be closed before returning TRUE
+                        '    CloseRTF(tnxFilePath, isWordOpen)
+                        'Catch ex As Exception
+                        '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                        'End Try
+                    End Try
+
+                    '.WaitForInputIdle()
+                    '.WaitForExit()
+                End With ' Read output to a string variable.
+                Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
-            'WriteLineLogLine("INFO | " & ipconfigOutput)
-            'For the time being the RTF file still opens 
-            'This needs to be closed before returning TRUE
-            'I put this around a try catch in cases where an ERI is run and files already exist. 
+                'WriteLineLogLine("INFO | " & ipconfigOutput)
+                'For the time being the RTF file still opens 
+                'This needs to be closed before returning TRUE
+                'I put this around a try catch in cases where an ERI is run and files already exist. 
 
 
-            Return True
+                Return True
 
-        Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
+            Catch ex As Exception
+                WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
             Return False
         End Try
     End Function
