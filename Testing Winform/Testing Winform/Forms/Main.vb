@@ -26,7 +26,7 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.6"
+        Public testingVersion As String = "1.0.0.7"
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -666,7 +666,11 @@ Namespace UnitTesting
                         (eriCount > 0 And tags(0).ToLower = "step3b") Or
                         (maeCount > 0 And tags(0).ToLower = "step3c") Or
                         (manCount > 0 And tags(0).ToLower = "step3d") Then
-                        answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
+                        If forceAcrchiving Then
+                            answer = vbYes
+                        Else
+                            answer = MsgBox(msg, vbCritical + vbYesNo, "Archive Files?")
+                        End If
                     End If
 
                     If answer = vbNo Then
@@ -1052,6 +1056,47 @@ StopLookingAtMeSwan:
             My.Settings.Save()
         End Sub
 
+        Public forceAcrchiving As Boolean = False
+        Private Sub btnAuto_Click(sender As Object, e As EventArgs) Handles btnAuto.Click
+            ButtonclickToggle(Me.Cursor)
+            forceAcrchiving = True
+            For i As Integer = 0 To 99
+                'Test cases we removed and guyed towers with LRT
+                If Not (i = 87 Or i = 76 Or i = 52 Or i = 51 Or i = 49 Or i = 91 Or i = 92) Then
+                    'Set up iteration folder
+                    testID.SelectedIndex = i
+                    'Create Iteration folder
+                    If Not Directory.Exists(Me.dirUse & "\Test ID " & Me.testCase & "\Iteration " & Me.iteration) Then
+                        CreateIteration(Me.iteration)
+                    End If
+                    'Create MAE files
+                    TestSteps(btnProcess11, EventArgs.Empty)
+                    'Create Man files just in case compare results needs it
+                    TestSteps(btnProcess13, EventArgs.Empty)
+                    'Import inputs for MAE files
+                    TestSteps(btnProcess5, EventArgs.Empty)
+                    'Conduct MAE files
+                    TestSteps(btnProcess7, EventArgs.Empty)
+                    'Create excel results (MAE v. CUR only, but everything will be created)
+                    TestSteps(btnProcess21, EventArgs.Empty)
+                End If
+            Next
+            forceAcrchiving = False
+            ButtonclickToggle(Me.Cursor)
+        End Sub
+
+        Private Sub btnChecking_Click(sender As Object, e As EventArgs) Handles btnChecking.Click
+            ButtonclickToggle(Me.Cursor)
+            For i As Integer = 0 To 99
+                'Test cases we removed and guyed towers with LRT
+                If Not (i = 87 Or i = 76 Or i = 52 Or i = 51 Or i = 49 Or i = 91 Or i = 92) Then
+                    'Pull all files and check it out if possible.
+                    PullIt(True, True)
+                End If
+            Next
+            SetTestIDLabels()
+            ButtonclickToggle(Me.Cursor)
+        End Sub
 #End Region
 
 #Region "My Largely Little Helpers"
@@ -1150,11 +1195,13 @@ StopLookingAtMeSwan:
 #End Region
 
 #Region "Checkin/Checkout"
-        Public Sub PullIt(ByVal checkout As Boolean)
+        Public Sub PullIt(ByVal checkout As Boolean, Optional ByVal checkingOutEverything As Boolean = False)
             ForceSyncing(SyncDirection.RtoLocal, True)
 
             If Not testPush.Enabled Then
-                File.Delete(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt")
+                If Not checkingOutEverything Then
+                    File.Delete(Me.dirUse & "\Test ID " & Me.testCase & "\Checked Out.txt")
+                End If
             End If
 
             If checkout Then
@@ -2393,9 +2440,6 @@ StopLookingAtMeSwan:
 
             Return returner
         End Function
-
-
-
 
 
 

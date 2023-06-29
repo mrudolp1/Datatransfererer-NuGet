@@ -98,6 +98,8 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnChecking = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnAuto = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess21 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess22 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess20 = New DevExpress.XtraEditors.SimpleButton()
@@ -1023,6 +1025,8 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnChecking)
+            Me.PanelControl1.Controls.Add(Me.btnAuto)
             Me.PanelControl1.Controls.Add(Me.btnProcess21)
             Me.PanelControl1.Controls.Add(Me.btnProcess22)
             Me.PanelControl1.Controls.Add(Me.btnProcess20)
@@ -1081,6 +1085,32 @@
             Me.PanelControl1.Name = "PanelControl1"
             Me.PanelControl1.Size = New System.Drawing.Size(1873, 120)
             Me.PanelControl1.TabIndex = 16
+            '
+            'btnChecking
+            '
+            Me.btnChecking.Appearance.Options.UseTextOptions = True
+            Me.btnChecking.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
+            Me.btnChecking.Enabled = False
+            Me.btnChecking.Location = New System.Drawing.Point(1530, 64)
+            Me.btnChecking.Name = "btnChecking"
+            Me.btnChecking.Size = New System.Drawing.Size(186, 23)
+            Me.btnChecking.TabIndex = 76
+            Me.btnChecking.Tag = "Checking out it all"
+            Me.btnChecking.Text = "Checkout Everything"
+            Me.btnChecking.ToolTip = "CHECKOUT ALL TEST CASES"
+            '
+            'btnAuto
+            '
+            Me.btnAuto.Appearance.Options.UseTextOptions = True
+            Me.btnAuto.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
+            Me.btnAuto.Enabled = False
+            Me.btnAuto.Location = New System.Drawing.Point(1530, 92)
+            Me.btnAuto.Name = "btnAuto"
+            Me.btnAuto.Size = New System.Drawing.Size(186, 23)
+            Me.btnAuto.TabIndex = 75
+            Me.btnAuto.Tag = "Auto Test It"
+            Me.btnAuto.Text = """Automated"" Unit Testing"
+            Me.btnAuto.ToolTip = "AUTO TEST"
             '
             'btnProcess21
             '
@@ -1580,7 +1610,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "12"
+            Me.testIteration.EditValue = "13"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
@@ -1873,6 +1903,8 @@
         Friend WithEvents btnProcess19 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess22 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess21 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnAuto As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnChecking As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
