@@ -64,7 +64,7 @@ Partial Public MustInherit Class EDSObject
     <DataMember()>
     Public Property order As String
 
-    <Category("EDS"), Description(""), DisplayName("Order")>
+    <Category("EDS"), Description(""), DisplayName("Order Revision")>
     <DataMember()>
     Public Property orderRev As String
 
