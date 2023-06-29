@@ -1767,7 +1767,7 @@ Partial Public Class CCIplate
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Structural_105.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -1789,7 +1789,7 @@ Partial Public Class CCIplate
         SQLInsertFields = SQLInsertFields.AddtoDBString("Structural_105")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -1811,7 +1811,7 @@ Partial Public Class CCIplate
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("Structural_105 = " & Me.Structural_105.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdate = SQLUpdate.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function

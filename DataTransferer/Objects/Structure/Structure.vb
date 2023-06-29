@@ -250,6 +250,30 @@ Partial Public Class EDSStructure
             'Still need to find all Topo inputs
             'Just set other parameters as default values 
             If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                Dim sqlWhere As String
+
+                '''UNUSED PORTIONS OF THE QUERY BELOW'''
+                '''WHERE STATEMENTS
+                '''--wo.work_order_seqnum = 'XXXXXXX'
+                '''--str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+                '''--AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO" 
+                '''--AND wo.bus_unit = str.bus_unit
+                '''--AND wo.structure_id = str.structure_id
+                '''--AND pi.eng_app_id = wo.eng_app_id(+)
+                '''FROM STATEMENTS
+                '''--,isit_aim.work_orders                 wo
+                '''--,isit_isite.project_info              pi
+                '''SELECT STATEMENTS
+                '''--,pi.eng_app_id
+                '''--,pi.crrnt_rvsn_num
+                '''
+                If Me.work_order_seq_num IsNot Nothing Then
+                    sqlWhere = "wo.work_order_seqnum = '" & Me.work_order_seq_num.ToString & "'"
+                Else
+                    sqlWhere = "str.bus_unit = '" & bus_unit & "'
+                                And str.structure_id = '" & structure_id & "'"
+                End If
+
                 OracleLoader("
                         SELECT
                                 str.bus_unit
@@ -263,8 +287,7 @@ Partial Public Class EDSStructure
                                 ,sit.site_name
                                 ,'True' rev_h_section_15_5
                                 ,0 tower_point_elev
-                                --,pi.eng_app_id
-                                --,pi.crrnt_rvsn_num
+                                
                                 ,str.structure_type
                                 ,ROUND(str.LAT_DEC, 8)
                                 ,ROUND(str.LONG_DEC, 8)
@@ -272,18 +295,11 @@ Partial Public Class EDSStructure
                                 isit_aim.structure                      str
                                 ,isit_aim.site                          sit
                                 ,rpt_appl.eng_tower_rating_vw           tr
-                                --,isit_aim.work_orders                 wo
-                                --,isit_isite.project_info              pi
-                            WHERE
-                                --wo.work_order_seqnum = 'XXXXXXX'
-                                str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
-                                AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
-                                AND str.bus_unit = sit.bus_unit
-                                AND str.bus_unit = tr.bus_unit
-                                --AND wo.bus_unit = str.bus_unit
-                                --AND wo.structure_id = str.structure_id
-                                --AND pi.eng_app_id = wo.eng_app_id(+)
-
+                                
+                            WHERE " &
+                                sqlWhere &
+                                "AND str.bus_unit = sit.bus_unit
+                                AND str.bus_unit = tr.bus_unit                           
                         ", "Site Code Criteria", strDS, 3000, "ords")
             End If
 
