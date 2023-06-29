@@ -7894,6 +7894,8 @@ Partial Public Class tnxModel
         SQLInsertFields = SQLInsertFields.AddtoDBString("WindDir2_14")
         SQLInsertFields = SQLInsertFields.AddtoDBString("WindDir2_15")
         SQLInsertFields = SQLInsertFields.AddtoDBString("SuppressWindPatternLoading")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -8241,6 +8243,8 @@ Partial Public Class tnxModel
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.WindDir2_14.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.WindDir2_15.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -8589,6 +8593,8 @@ Partial Public Class tnxModel
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("WindDir2_14 = " & Me.options.windDirections.WindDir2_14.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("WindDir2_15 = " & Me.options.windDirections.WindDir2_15.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("SuppressWindPatternLoading = " & Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
