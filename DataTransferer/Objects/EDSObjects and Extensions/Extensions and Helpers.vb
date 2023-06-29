@@ -211,6 +211,14 @@ Public Module Extensions
 
         EDSResultQuery = ""
 
+        ''DHS 6/29/2023
+        ''Prevent Saving Guyed Tower Results because they currently break the query.
+        ''Needs to be removed after Peter updates XMLOutput
+        If alist.FirstOrDefault?.ParentStructure?.tnx?.geometry Is Nothing OrElse
+            alist.FirstOrDefault.ParentStructure.tnx.geometry.TowerType.Contains("Guyed") Then
+            Return EDSResultQuery
+        End If
+
         For Each result In alist
             If result.foreign_key Is Nothing Then
                 EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
