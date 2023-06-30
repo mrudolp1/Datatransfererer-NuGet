@@ -788,11 +788,11 @@ Namespace UnitTesting
                     Next
 
                 Case "step6", "step11"
-                    Dim conductPath As String
+                    Dim conductPath As String = ""
                     Select Case tags(0).ToLower
                         Case "step6"
                             conductPath = MaeFolder
-                        Case "step10"
+                        Case "step11"
                             conductPath = EDSFolder
                     End Select
 
