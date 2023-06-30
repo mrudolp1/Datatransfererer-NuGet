@@ -7,6 +7,10 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Testing Winform", "Testing 
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CCI Engineering DataTransferer", "..\DataTransferer\CCI Engineering DataTransferer.vbproj", "{D295E16D-5783-4C4D-AA84-5B27181F2E3D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAPI Report Generator", "..\..\SAPI Report Generator\SAPI Report Generator\SAPIReportGenerator\SAPI Report Generator.csproj", "{91E17A3E-683D-4E34-BE4C-C1D3E6249BFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAPI Report Generator Editor", "..\..\SAPI Report Generator\SAPI Report Generator Editor\SAPI Report Generator Editor\SAPI Report Generator Editor.csproj", "{C76CE787-8F0F-4F38-AC2A-EAAF18BD36F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,12 @@ Global
 		{D295E16D-5783-4C4D-AA84-5B27181F2E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D295E16D-5783-4C4D-AA84-5B27181F2E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D295E16D-5783-4C4D-AA84-5B27181F2E3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91E17A3E-683D-4E34-BE4C-C1D3E6249BFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91E17A3E-683D-4E34-BE4C-C1D3E6249BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91E17A3E-683D-4E34-BE4C-C1D3E6249BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C76CE787-8F0F-4F38-AC2A-EAAF18BD36F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C76CE787-8F0F-4F38-AC2A-EAAF18BD36F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C76CE787-8F0F-4F38-AC2A-EAAF18BD36F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

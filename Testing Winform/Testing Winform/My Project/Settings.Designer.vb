@@ -241,6 +241,18 @@ Partial Friend NotInheritable Class Settings
             Me("booImportInputsExcelVisible") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property booReportOption() As Boolean
+        Get
+            Return CType(Me("booReportOption"),Boolean)
+        End Get
+        Set
+            Me("booReportOption") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
