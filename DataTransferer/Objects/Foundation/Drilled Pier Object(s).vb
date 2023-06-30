@@ -88,7 +88,7 @@ Partial Public Class DrilledPierFoundation
         SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
         SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
 
-        Return SQLDelete
+        Return SQLDelete & vbCrLf
     End Function
 
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
