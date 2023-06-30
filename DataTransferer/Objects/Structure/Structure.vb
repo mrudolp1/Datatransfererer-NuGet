@@ -99,6 +99,7 @@ Partial Public Class EDSStructure
         Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
+
         LoadFromFiles(filePaths)
     End Sub
 
@@ -246,52 +247,7 @@ Partial Public Class EDSStructure
                 strDS.Tables(i).TableName = tableNames(i)
             Next
 
-            'If no site code criteria exists, fetch data from ORACLE to use for the first analysis. 
-            'Still need to find all Topo inputs
-            'Just set other parameters as default values 
-            If Not strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
-                OracleLoader("
-                        SELECT
-                                str.bus_unit
-                                ,str.structure_id
-                                ,tr.standard_code tia_current
-                                ,tr.bldg_code ibc_current
-                                ,str.ground_elev elev_agl
-                                ,str.hgt_no_appurt
-                                ,str.crest_height
-                                ,str.distance_from_crest
-                                ,sit.site_name
-                                ,'True' rev_h_section_15_5
-                                ,0 tower_point_elev
-                                --,pi.eng_app_id
-                                --,pi.crrnt_rvsn_num
-                                ,str.structure_type
-                                ,ROUND(str.LAT_DEC, 8)
-                                ,ROUND(str.LONG_DEC, 8)
-                            FROM
-                                isit_aim.structure                      str
-                                ,isit_aim.site                          sit
-                                ,rpt_appl.eng_tower_rating_vw           tr
-                                --,isit_aim.work_orders                 wo
-                                --,isit_isite.project_info              pi
-                            WHERE
-                                --wo.work_order_seqnum = 'XXXXXXX'
-                                str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
-                                AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO
-                                AND str.bus_unit = sit.bus_unit
-                                AND str.bus_unit = tr.bus_unit
-                                --AND wo.bus_unit = str.bus_unit
-                                --AND wo.structure_id = str.structure_id
-                                --AND pi.eng_app_id = wo.eng_app_id(+)
-
-                        ", "Site Code Criteria", strDS, 3000, "ords")
-            End If
-
-            If strDS.Tables.Contains("Site Code Criteria") Then
-                If strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
-                    Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
-                End If
-            End If
+            LoadSiteCodeCriteria(strDS)
 
             'Load TNX Model
             If strDS.Tables("TNX").Rows.Count > 0 Then
@@ -353,6 +309,87 @@ Partial Public Class EDSStructure
 
     End Sub
 
+    Public Sub LoadSiteCodeCriteria(Optional ByVal strDS As DataSet = Nothing)
+        If strDS Is Nothing Then strDS = New DataSet
+
+        'If no site code criteria exists, fetch data from ORACLE to use for the first analysis. 
+        'Still need to find all Topo inputs
+        'Just set other parameters as default values 
+        If Not strDS.Tables.Contains("Site Code Criteria") Then
+            Dim sqlWhere As String
+
+            '''UNUSED PORTIONS OF THE QUERY BELOW'''
+            '''WHERE STATEMENTS
+            '''--wo.work_order_seqnum = 'XXXXXXX'
+            '''--str.bus_unit = '" & bus_unit & "' --Comment out when switching to WO
+            '''--AND str.structure_id = '" & structure_id & "' --Comment out when switching to WO" 
+            '''--AND wo.bus_unit = str.bus_unit
+            '''--AND wo.structure_id = str.structure_id
+            '''--AND pi.eng_app_id = wo.eng_app_id(+)
+            '''FROM STATEMENTS
+            '''--,isit_aim.work_orders                 wo
+            '''--,isit_isite.project_info              pi
+            '''SELECT STATEMENTS
+            '''--,pi.eng_app_id
+            '''--,pi.crrnt_rvsn_num
+            '''
+            If Me.work_order_seq_num IsNot Nothing Then
+                sqlWhere = vbCrLf & " ,isit_aim.work_orders wo 
+                            WHERE 
+                            wo.work_order_seq_num = '" & Me.work_order_seq_num.ToString & "'
+                            AND wo.bus_unit = str.bus_unit 
+                            AND wo.structure_id = str.structure_id
+                            AND str.bus_unit = sit.bus_unit
+                            AND str.bus_unit = tr.bus_unit" & vbCrLf
+            Else
+                sqlWhere = vbCrLf & " WHERE 
+                             str.bus_unit = '" & bus_unit & "' 
+                             AND str.structure_id = '" & structure_id & "'
+                             AND str.bus_unit = sit.bus_unit
+                             AND str.bus_unit = tr.bus_unit" & vbCrLf
+            End If
+
+            OracleLoader("
+                        SELECT
+                                str.bus_unit
+                                ,str.structure_id
+                                ,tr.standard_code tia_current
+                                ,tr.bldg_code ibc_current
+                                ,str.ground_elev elev_agl
+                                ,str.hgt_no_appurt
+                                ,str.crest_height
+                                ,str.distance_from_crest
+                                ,sit.site_name
+                                ,'True' rev_h_section_15_5
+                                ,0 tower_point_elev
+                                
+                                ,str.structure_type
+                                ,ROUND(str.LAT_DEC, 8)
+                                ,ROUND(str.LONG_DEC, 8)
+                            FROM
+                                isit_aim.structure                      str
+                                ,isit_aim.site                          sit
+                                ,rpt_appl.eng_tower_rating_vw           tr " &
+                            sqlWhere, "Site Code Criteria", strDS, 3000, "ords")
+        End If
+
+        If strDS.Tables.Contains("Site Code Criteria") Then
+            If strDS.Tables("Site Code Criteria").Rows.Count > 0 Then
+                Me.structureCodeCriteria = New SiteCodeCriteria(strDS.Tables("Site Code Criteria").Rows(0)) 'Need to comment out when using dummy BU numbers - MRR
+            End If
+        End If
+
+        SetStructureSiteInfo()
+    End Sub
+
+    Private Sub SetStructureSiteInfo()
+        If Me.SiteInfo IsNot Nothing Then
+            Me.order = Me.SiteInfo.app_num
+            Me.orderRev = Me.SiteInfo.app_rev
+            Me.work_order_seq_num = Me.SiteInfo.wo
+        End If
+    End Sub
+
     Public Function SavetoEDSQuery() As String
 
         If EDSMe Is Nothing Then
@@ -412,6 +449,8 @@ Partial Public Class EDSStructure
     End Sub
 
     Public Sub LoadFromFiles(filePaths As String())
+        LoadSiteCodeCriteria()
+
         Me.PierandPads = New List(Of PierAndPad)
         Me.Piles = New List(Of Pile)
         Me.UnitBases = New List(Of UnitBase)
@@ -446,6 +485,7 @@ Partial Public Class EDSStructure
                 Me.CCISeismics.Add(New CCISeismic(item, Me))
             End If
         Next
+
     End Sub
 
 
