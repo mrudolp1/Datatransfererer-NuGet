@@ -848,8 +848,8 @@ Namespace UnitTesting
                     LogActivity("INFO | Results for all files compared and created in testing directory.")
                 Case "step8"
                     'report generator
-                    Dim reportTemplate As String = "K:\Installers (Engineering Development)\SA Report Generator\Reference\Template.docx"
-                    Dim reportMapping As String = "K:\Installers (Engineering Development)\SA Report Generator\Reference\mapping.xml"
+                    Dim reportTemplate As String = "\\netapp4\common\Installers (Engineering Development)\SA Report Generator\Reference\Template.docx"
+                    Dim reportMapping As String = "\\netapp4\common\Installers (Engineering Development)\SA Report Generator\Reference\mapping.xml"
 
                     Dim mylocation As String = DetermineFolder("Stop Report Generation")
                     If mylocation = "STOP" Then Exit Select
