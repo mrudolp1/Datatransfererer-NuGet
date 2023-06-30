@@ -10133,12 +10133,12 @@ Partial Public Class tnxModel
             Exit Sub
         End If
 
-        Dim resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
-        Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
+        Using resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
+            Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
+            Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
+            tnxXMLResults.ConverttoEDSResults(geometry)
+        End Using
 
-        Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
-
-        tnxXMLResults.ConverttoEDSResults(geometry)
 
     End Sub
 
