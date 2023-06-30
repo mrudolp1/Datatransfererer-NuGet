@@ -507,7 +507,7 @@ Namespace UnitTesting
         End Sub
         Private Sub testCompareAll_Click(sender As Object, e As EventArgs)
             ButtonclickToggle(Me.Cursor)
-            Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
+            Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet, Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable)) = CompareResults()
             ButtonclickToggle(Me.Cursor)
 
             'Item 1 = Manual Compared to Maestro   
@@ -814,7 +814,7 @@ Namespace UnitTesting
                     strcLocal.AppendLog(Me.TestLogActivityPath, iteration)
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
                 Case "step7", "step7b", "step7a"
-                    Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet) = CompareResults()
+                    Dim checks As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet, Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable)) = CompareResults()
                     ButtonclickToggle(Me.Cursor, Cursors.Default)
 
                     'Item 1 = Manual Compared to Maestro   
@@ -2120,10 +2120,12 @@ StopLookingAtMeSwan:
         End Sub
 
         'Compares the results of all results available
-        Public Function CompareResults() As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet)
+        Public Function CompareResults() As Tuple(Of Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable), DataSet, Tuple(Of Boolean, DataTable), Tuple(Of Boolean, DataTable))
             Dim manToMae As Tuple(Of Boolean, DataTable) 'Item1
             Dim curToMan As Tuple(Of Boolean, DataTable) 'Item2
-            Dim curToMae As Tuple(Of Boolean, DataTable) 'Item2
+            Dim curToMae As Tuple(Of Boolean, DataTable) 'Item3
+            Dim curToEds As Tuple(Of Boolean, DataTable) 'Item5
+            Dim edsToMae As Tuple(Of Boolean, DataTable) 'Item6
             Dim resDs As New DataSet 'Item4
 
             Dim dir As String = IIf(CType(chkWorkLocal.Checked, Boolean) = True, lFolder, rFolder)
@@ -2160,6 +2162,19 @@ StopLookingAtMeSwan:
             resDs.Tables.Add(manDt.Copy)
             resDs.Tables.Add(maeDt.Copy)
 
+            If Directory.Exists(EDSFolder) Then
+                GetAllResults(EDSFolder)
+                Dim edsDt As DataTable = CSVtoDatatable(New FileInfo(EDSFolder & "\Summarized Results.csv"))
+                curToEds = curDt.IsMatching(edsDt)
+                edsToMae = edsDt.IsMatching(maeDt)
+                resDs.Tables.Add(edsDt.Copy)
+                resDs.Tables.Add(curToEds.Item2.Copy)
+                resDs.Tables.Add(edsToMae.Item2.Copy)
+            Else
+                curToEds = Nothing
+                edsToMae = Nothing
+            End If
+
             For Each dt As DataTable In resDs.Tables
                 comDt.Merge(dt)
             Next
@@ -2173,12 +2188,16 @@ StopLookingAtMeSwan:
                         Tuple(Of Boolean, DataTable),
                         Tuple(Of Boolean, DataTable),
                         Tuple(Of Boolean, DataTable),
-                        DataSet
+                        DataSet,
+                        Tuple(Of Boolean, DataTable),
+                        Tuple(Of Boolean, DataTable)
                        )(
                         curToMan,
                         curToMae,
                         manToMae,
-                        resDs
+                        resDs,
+                        curToEds,
+                        edsToMae
                         )
         End Function
 
@@ -2211,10 +2230,12 @@ StopLookingAtMeSwan:
             Dim myDTs As New List(Of DataTable)
             Dim myChecks As New List(Of Tuple(Of Boolean, DataTable))
             Dim tnxDS As New DataSet
+
             myERIs.AddERIs(Me.EriFolder, False)
             myERIs.AddERIs(Me.PubFolder, False)
             myERIs.AddERIs(Me.ManFolder, False)
             myERIs.AddERIs(Me.MaeFolder, False)
+            If Directory.Exists(EDSFolder) Then myERIs.AddERIs(EDSFolder, False)
 
             For Each eri In myERIs
                 If File.Exists(eri & ".XMLOUT.xml") Then
