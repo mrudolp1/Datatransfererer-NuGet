@@ -20,6 +20,8 @@ Imports DevExpress.Utils.Svg
 Imports DevExpress.Utils.Drawing
 Imports System.Xml
 Imports System.Xml.Serialization
+Imports SAPIReportGenerator
+Imports SAPI_Report_Generator_Editor
 
 Namespace UnitTesting
 
@@ -558,7 +560,7 @@ Namespace UnitTesting
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
                     btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click,
-                    btnProcess21.Click, btnProcess22.Click
+                    btnProcess21.Click, btnProcess22.Click, btnProcess23.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -785,7 +787,7 @@ Namespace UnitTesting
                         End If
                     Next
 
-                Case "step6", "step10"
+                Case "step6", "step11"
                     Dim conductPath As String
                     Select Case tags(0).ToLower
                         Case "step6"
@@ -845,9 +847,36 @@ Namespace UnitTesting
 
                     LogActivity("INFO | Results for all files compared and created in testing directory.")
                 Case "step8"
+                    'report generator
+                    Dim reportTemplate As String = "K:\Installers (Engineering Development)\SA Report Generator\Reference\Template.docx"
+                    Dim reportMapping As String = "K:\Installers (Engineering Development)\SA Report Generator\Reference\mapping.xml"
+
+                    Dim mylocation As String = DetermineFolder("Stop Report Generation")
+                    If mylocation = "STOP" Then Exit Select
+
+                    CreateStructure(mylocation, False)
+                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+
+                    Dim testReport As New Report(reportTemplate, reportMapping, strcLocal, My.Settings.booReportOption)
+
+                    Try
+                        Using reportEditor As New ReportEditorForm(testReport)
+                            reportEditor.ShowDialog()
+                        End Using
+                    Catch ex As Exception
+                        MsgBox(ex.Message, vbExclamation, "Failed to load report generator")
+                    End Try
+
+                Case "step9"
+                    Dim mylocation As String = DetermineFolder("Stop EDS Saving")
+                    If mylocation = "STOP" Then Exit Select
+
+                    CreateStructure(mylocation, False)
+
                     strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
                     LogActivity("INFO | EDS results attempted to save.")
-                Case "step9"
+                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+                Case "step10"
                     Dim workingdirectory As String
 
                     'Check if eds folder exists
@@ -864,8 +893,8 @@ Namespace UnitTesting
                         DoArchiving(EDSFolder)
                     End If
 
-                    strcLocal.Clear()
-                    strcLocal = New EDSStructure(txtFndBU.Text, txtFndStrc.Text, txtFndWO.Text, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
+                    'strcLocal.Clear()
+                    strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
                     strcLocal.SaveTools(EDSFolder)
                     LogActivity("INFO | All files have been created in the directory '\Iteration " & iteration & "\EDS'.")
             End Select
@@ -874,6 +903,33 @@ finishMe:
             LogActivity("PROCESS | End " & sender.tooltip.ToString, True)
             ButtonclickToggle(Me.Cursor, Cursors.Default)
         End Sub
+
+        Private Function DetermineFolder(ByVal stopping As String) As String
+            Dim edsExists As Boolean = Directory.Exists(EDSFolder)
+            Dim whichFolder As New DialogResult
+            Dim maeOption As String = "YES = '\Maestro' Folder" & vbCrLf & vbCrLf
+            Dim manOption As String = "NO = '\Manual (SAPI)' Folder" & vbCrLf & vbCrLf
+            Dim cancelOption As String = "CANCEL = " & stopping & vbCrLf
+            Dim edsOption As String = "NO = '\EDS' Folder" & vbCrLf & vbCrLf
+            Dim filesPath As String
+
+            whichFolder = MsgBox("Which folder would you like use to create a report?" & vbCrLf & vbCrLf & IIf(edsExists, maeOption + edsOption + cancelOption, maeOption + manOption + cancelOption), vbYesNoCancel + vbInformation, "Which Folder?")
+
+            If whichFolder = vbCancel Then Return "STOP"
+
+            Select Case whichFolder
+                Case vbYes
+                    filesPath = MaeFolder
+                Case vbNo
+                    If edsExists Then
+                        filesPath = EDSFolder
+                    Else
+                        filesPath = ManFolder
+                    End If
+            End Select
+
+            Return filesPath
+        End Function
 
         Private Sub testBugFile_Click(sender As Object, e As EventArgs) Handles testBugFile.Click
             If Not Directory.Exists(Me.itFolder & "\Bug Reference Files") Then
@@ -1043,6 +1099,10 @@ StopLookingAtMeSwan:
 
         Private Sub CheckEditDevMode_CheckedChanged(sender As Object, e As EventArgs) Handles CheckEditDevMode.CheckedChanged
             My.Settings.booConductDevMode = CheckEditDevMode.Checked
+            My.Settings.Save()
+        End Sub
+        Private Sub CheckEditAutoReport_CheckedChanged(sender As Object, e As EventArgs) Handles CheckEditAutoReport.CheckedChanged
+            My.Settings.booReportOption = CheckEditAutoReport.Checked
             My.Settings.Save()
         End Sub
 
@@ -1387,6 +1447,7 @@ StopLookingAtMeSwan:
             btnProcess20.Enabled = Not btnProcess20.Enabled
             btnProcess21.Enabled = Not btnProcess21.Enabled
             btnProcess22.Enabled = Not btnProcess22.Enabled
+            btnProcess23.Enabled = Not btnProcess23.Enabled
 
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
@@ -1397,6 +1458,7 @@ StopLookingAtMeSwan:
             CheckEditDevMode.Enabled = Not CheckEditDevMode.Enabled
             CheckEditExcelVisible.Enabled = Not CheckEditExcelVisible.Enabled
             CheckEditExcelVisibleII.Enabled = Not CheckEditExcelVisibleII.Enabled
+            CheckEditAutoReport.Enabled = Not CheckEditAutoReport.Enabled
         End Sub
 #End Region
 
@@ -2256,7 +2318,7 @@ StopLookingAtMeSwan:
         End Sub
 
         'Creates a structure object based on the files in the maestro folder for the current iteration
-        Public Sub CreateStructure(ByVal conductPath As String)
+        Public Sub CreateStructure(ByVal filesPath As String, Optional ByVal deleteAdditionalTNXfiles As Boolean = True)
             Dim myFiles As String()
             Dim myFilesLst As New List(Of String)
 
@@ -2264,7 +2326,7 @@ StopLookingAtMeSwan:
             'Dim response As DialogResult = DialogResult.Cancel
 
             'Loop through all files in the maestro folder for the current test case and iteration
-            For Each info As FileInfo In New DirectoryInfo(conductPath).GetFiles
+            For Each info As FileInfo In New DirectoryInfo(filesPath).GetFiles
                 If info.Extension = ".eri" Then
                     'All eris permitted
                     myFilesLst.Add(info.FullName)
@@ -2288,15 +2350,17 @@ StopLookingAtMeSwan:
                     '    End If
                     'End If
                     'If response = DialogResult.Yes Then
-                    info.Delete()
-                    LogActivity("DEBUG | File Deleted: " & info.FullName)
+                    If deleteAdditionalTNXfiles Then
+                        info.Delete()
+                        LogActivity("DEBUG | File Deleted: " & info.FullName)
+                    End If
                     'End If
                 End If
             Next
 
             'Convert the list of valid file names to an array for creating anew structure
             myFiles = myFilesLst.ToArray
-            strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, Me.MaeFolder, Me.MaeFolder, myFiles, EDSnewId, EDSdbActive)
+            strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, filesPath, filesPath, myFiles, EDSnewId, EDSdbActive)
         End Sub
 
         'Loads the CSV with the test cases 

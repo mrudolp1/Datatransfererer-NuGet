@@ -32,8 +32,10 @@ Public Module Extensions
 
         'Single quotes are not permissible in fields in SQL tables
         'this additional piece will replace single quotes with 2 quotes to allow the fields to be formatted the same when loading back from EDS>
-        If input.Contains("'") Then
-            input = input.Replace("'", "''")
+        If input IsNot Nothing Then
+            If input.ToString.Contains("'") Then
+                input = input.Replace("'", "''")
+            End If
         End If
 
         If String.IsNullOrEmpty(input) Then
