@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Testing_Winform</RootNamespace>
     <AssemblyName>Testing Winform</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OptionExplicit>On</OptionExplicit>
     <OptionCompare>Binary</OptionCompare>
@@ -262,6 +262,14 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SAPI Report Generator\SAPI Report Generator Editor\SAPI Report Generator Editor\SAPI Report Generator Editor.csproj">
+      <Project>{c76ce787-8f0f-4f38-ac2a-eaaf18bd36f3}</Project>
+      <Name>SAPI Report Generator Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\SAPI Report Generator\SAPI Report Generator\SAPIReportGenerator\SAPI Report Generator.csproj">
+      <Project>{91e17a3e-683d-4e34-be4c-c1d3e6249bfc}</Project>
+      <Name>SAPI Report Generator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DataTransferer\CCI Engineering DataTransferer.vbproj">
       <Project>{d295e16d-5783-4c4d-aa84-5b27181f2e3d}</Project>
       <Name>CCI Engineering DataTransferer</Name>
