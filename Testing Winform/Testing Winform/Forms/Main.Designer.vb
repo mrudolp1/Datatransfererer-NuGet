@@ -875,7 +875,7 @@
             '
             Me.XtraTabPage2.Controls.Add(Me.seSA)
             Me.XtraTabPage2.Name = "XtraTabPage2"
-            Me.XtraTabPage2.Size = New System.Drawing.Size(433, 375)
+            Me.XtraTabPage2.Size = New System.Drawing.Size(433, 371)
             Me.XtraTabPage2.Text = "SA Reference Folder"
             '
             'seSA
@@ -885,7 +885,7 @@
             Me.seSA.Margin = New System.Windows.Forms.Padding(0)
             Me.seSA.Name = "seSA"
             Me.seSA.SelectedFile = Nothing
-            Me.seSA.Size = New System.Drawing.Size(433, 375)
+            Me.seSA.Size = New System.Drawing.Size(433, 371)
             Me.seSA.TabIndex = 17
             '
             'XtraTabControl2
@@ -1651,7 +1651,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "11"
+            Me.testIteration.EditValue = "13"
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True

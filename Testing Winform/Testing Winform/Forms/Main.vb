@@ -852,7 +852,10 @@ Namespace UnitTesting
                     Dim reportMapping As String = "\\netapp4\common\Installers (Engineering Development)\SA Report Generator\Reference\mapping.xml"
 
                     Dim mylocation As String = DetermineFolder("Stop Report Generation")
-                    If mylocation = "STOP" Then Exit Select
+                    If mylocation = "STOP" Then
+                        LogActivity("INFO | Report generation cancelled")
+                        Exit Select
+                    End If
 
                     CreateStructure(mylocation, False)
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
@@ -869,7 +872,10 @@ Namespace UnitTesting
 
                 Case "step9"
                     Dim mylocation As String = DetermineFolder("Stop EDS Saving")
-                    If mylocation = "STOP" Then Exit Select
+                    If mylocation = "STOP" Then
+                        LogActivity("INFO | EDS Saving cancelled")
+                        Exit Select
+                    End If
 
                     CreateStructure(mylocation, False)
 
@@ -923,10 +929,14 @@ finishMe:
                 Case vbNo
                     If edsExists Then
                         filesPath = EDSFolder
+                        LogActivity("INFO | " & stopping.Replace("Stop ", "") & ": " & filesPath)
                     Else
                         filesPath = ManFolder
+                        LogActivity("INFO | " & stopping & ": " & filesPath)
                     End If
             End Select
+
+
 
             Return filesPath
         End Function
