@@ -364,7 +364,14 @@ Partial Public Class DrilledPierFoundation
                 Next
 
                 'Soil Profile
-                If Not IsNothing(drilledPier.SoilProfile.groundwater_depth) Then .Cells(pierProfileRow + 17, myCol).Value = CType(drilledPier.SoilProfile.groundwater_depth, Double)
+                If Not IsNothing(drilledPier.SoilProfile.groundwater_depth) Then
+                    If drilledPier.SoilProfile.groundwater_depth <= 0 Then
+                        .Cells(pierProfileRow + 17, myCol).Value = "N/A"
+                    Else
+                        .Cells(pierProfileRow + 17, myCol).Value = CType(drilledPier.SoilProfile.groundwater_depth, Double)
+                    End If
+
+                End If
 
                 'Soil Layers
                 Dim layAdj As Integer = 0
@@ -397,7 +404,7 @@ Partial Public Class DrilledPierFoundation
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Now.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+
         Return SQLInsertValues
     End Function
 
@@ -412,7 +419,7 @@ Partial Public Class DrilledPierFoundation
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("upload_date")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString(Me.process_stage?.ToString)
+
         Return SQLInsertFields
 
     End Function
@@ -841,12 +848,12 @@ Partial Public Class DrilledPier
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("pier_profile_id = " & Me.pier_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("soil_profile_id = " & Me.soil_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_position = " & Me.reaction_position.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("reaction_location = " & Me.reaction_location.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_soil_profile = " & Me.local_soil_profile.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_soil_profile_id = " & Me.local_soil_profile.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_pier_profile_id = " & Me.local_pier_profile_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
@@ -967,7 +974,7 @@ Partial Public Class DrilledPierProfile
         SQLUpdate = CCI_Engineering_Templates.My.Resources.General__UPDATE ' QueryBuilderFromFile(queryPath & "Drilled Pier\General (UPDATE).sql")
         SQLUpdate = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID & vbCrLf & "SET @SubLevel2ID = " & Me.ID)
 
         Dim _sectionInsert As String
         Dim _belledInsert As String
@@ -1274,7 +1281,21 @@ Partial Public Class DrilledPierProfile
         Me.shear_override_crit_depth = DBtoNullableBool(dr.Item("shear_override_crit_depth"))
         Me.tie_yield_strength = DBtoNullableDbl(dr.Item("tie_yield_strength"))
         Me.tool_version = DBtoStr(dr.Item("tool_version"))
-        Me.ultimate_gross_bearing = DBtoNullableBool(dr.Item("ultimate_gross_bearing"))
+
+        Dim bearing_option As String = ""
+        Try
+            bearing_option = dr.Item("ultimate_gross_bearing").ToString
+        Catch ex As Exception
+        End Try
+
+        If bearing_option = "Ult. Gross Bearing Capacity (ksf)" Then
+            Me.ultimate_gross_bearing = True
+        ElseIf bearing_option.ToUpper = "TRUE" Or bearing_option.ToUpper = "FALSE" Or bearing_option = "" Then
+            Me.ultimate_gross_bearing = DBtoNullableBool(dr.Item("ultimate_gross_bearing"))
+        ElseIf bearing_option = "Ult. Net Bearing Capacity (ksf)" Then
+            Me.ultimate_gross_bearing = False
+        End If
+
         Try
             Me.local_pier_profile_id = DBtoNullableInt(dr.Item("local_pier_profile_id"))
         Catch
@@ -1339,7 +1360,7 @@ Partial Public Class DrilledPierProfile
     End Function
 
     Public Overrides Function SQLUpdateFieldsandValues() As String
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("foundation_depth = " & Me.foundation_depth.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("extension_above_grade = " & Me.extension_above_grade.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("assume_min_steel = " & Me.assume_min_steel.ToString.FormatDBValue)
@@ -1359,7 +1380,7 @@ Partial Public Class DrilledPierProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ultimate_gross_bearing = " & Me.ultimate_gross_bearing.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & Me.drilled_pier_id.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & "@TopLevelID")
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & "@TopLevelID")
         Return SQLUpdateFieldsandValues
     End Function
 #End Region
@@ -1456,7 +1477,7 @@ Partial Public Class DrilledPierSection
         SQLUpdate = CCI_Engineering_Templates.My.Resources.General__UPDATE ' QueryBuilderFromFile(queryPath & "Drilled Pier\General (UPDATE).sql")
         SQLUpdate = SQLUpdate.Replace("[TABLE NAME]", Me.EDSTableName)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
-        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID)
+        SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID & vbCrLf & "SET @SubLevel3ID = " & Me.ID)
 
         Dim _rebarInsert As String
 
@@ -1628,7 +1649,22 @@ Partial Public Class DrilledPierSection
         Me.ID = DBtoNullableInt(dr.Item("ID"))
         Me.pier_diameter = DBtoNullableDbl(dr.Item("pier_diameter"))
         Me.clear_cover = DBtoNullableDbl(dr.Item("clear_cover"))
-        Me.clear_cover_rebar_cage_option = DBtoNullableBool(dr.Item("clear_cover_rebar_cage_option"))
+
+        Dim clear_cover_option As String
+        Try
+            clear_cover_option = dr.Item("clear_cover_rebar_cage_option").ToString
+        Catch ex As Exception
+            clear_cover_option = ""
+        End Try
+
+        If clear_cover_option = "Clear Cover to Ties" Then
+            Me.clear_cover_rebar_cage_option = True
+        ElseIf clear_cover_option.ToUpper = "TRUE" Or clear_cover_option.ToUpper = "FALSE" Or clear_cover_option = "" Then
+            Me.clear_cover_rebar_cage_option = DBtoNullableBool(dr.Item("clear_cover_rebar_cage_option"))
+        ElseIf clear_cover_option = "Rebar Cage Diameter" Then
+            Me.clear_cover_rebar_cage_option = False
+        End If
+
         Me.tie_size = DBtoNullableInt(dr.Item("tie_size"))
         Me.tie_spacing = DBtoNullableDbl(dr.Item("tie_spacing"))
         Me.bottom_elevation = DBtoNullableDbl(dr.Item("bottom_elevation"))
@@ -2650,7 +2686,8 @@ Public Class DrilledPierSoilProfile
 
     Public Overrides Function SQLUpdate() As String
 
-        SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        'SQLUpdate = QueryBuilderFromFile(queryPath & "Soil Profile\Soil Profile (UPDATE).sql")
+        SQLUpdate = CCI_Engineering_Templates.My.Resources.Soil_Profile_UPDATE
         SQLUpdate = SQLUpdate.Replace("[ID]", Me.ID.ToString.FormatDBValue)
         SQLUpdate = SQLUpdate.Replace("[UPDATE]", Me.SQLUpdateFieldsandValues)
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
