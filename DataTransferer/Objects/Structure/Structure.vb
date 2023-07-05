@@ -217,7 +217,6 @@ Partial Public Class EDSStructure
                             "Pole Custom Matls",
                             "Pole Custom Bolts",
                             "Pole Custom Reinfs",
-                            "Site Code Criteria",
                             "File Upload",
                             "Drilled Pier",
                             "Drilled Pier Profile",
@@ -235,8 +234,11 @@ Partial Public Class EDSStructure
                             "Discretes",
                             "Dishes",
                             "User Forces",
-                            "Lines"} 'Add discrete, dish, userforce, and linear and add the SELECT statements into the resource query
+                            "Lines"}
 
+        'REMOVED site code criteria from EDS query 7/5/2023
+        'It was between 'Pole Custom Reinfs' and 'File Upload'
+        '"Site Code Criteria",
 
         Using strDS As New DataSet
 
@@ -316,7 +318,8 @@ Partial Public Class EDSStructure
         'Still need to find all Topo inputs
         'Just set other parameters as default values 
         If Not strDS.Tables.Contains("Site Code Criteria") Then
-            Dim sqlWhere As String
+            Dim sqlWhere As String = ""
+            Dim sqlOrder As String = ""
 
             '''UNUSED PORTIONS OF THE QUERY BELOW'''
             '''WHERE STATEMENTS
@@ -329,18 +332,20 @@ Partial Public Class EDSStructure
             '''FROM STATEMENTS
             '''--,isit_aim.work_orders                 wo
             '''--,isit_isite.project_info              pi
-            '''SELECT STATEMENTS
-            '''--,pi.eng_app_id
-            '''--,pi.crrnt_rvsn_num
+
             '''
             If Me.work_order_seq_num IsNot Nothing Then
-                sqlWhere = vbCrLf & " ,isit_aim.work_orders wo 
+                sqlWhere = vbCrLf & " ,isit_aim.work_orders wo
+                            ,isit_isite.project_info pi 
                             WHERE 
                             wo.work_order_seq_num = '" & Me.work_order_seq_num.ToString & "'
                             AND wo.bus_unit = str.bus_unit 
                             AND wo.structure_id = str.structure_id
                             AND str.bus_unit = sit.bus_unit
-                            AND str.bus_unit = tr.bus_unit" & vbCrLf
+                            AND str.bus_unit = tr.bus_unit
+                            AND pi.eng_app_id = wo.eng_app_id(+)" & vbCrLf
+                sqlOrder = ",pi.eng_app_id
+                            ,pi.crrnt_rvsn_num eng_app_id_revision"
             Else
                 sqlWhere = vbCrLf & " WHERE 
                              str.bus_unit = '" & bus_unit & "' 
@@ -361,12 +366,12 @@ Partial Public Class EDSStructure
                                 ,str.distance_from_crest
                                 ,sit.site_name
                                 ,'True' rev_h_section_15_5
-                                ,0 tower_point_elev
-                                
+                                ,0 tower_point_elev                                
                                 ,str.structure_type
                                 ,ROUND(str.LAT_DEC, 8)
-                                ,ROUND(str.LONG_DEC, 8)
-                            FROM
+                                ,ROUND(str.LONG_DEC, 8)" & vbCrLf &
+                                sqlOrder & vbCrLf &
+                            "FROM
                                 isit_aim.structure                      str
                                 ,isit_aim.site                          sit
                                 ,rpt_appl.eng_tower_rating_vw           tr " &
