@@ -397,7 +397,7 @@ Partial Public Class DrilledPierFoundation
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Now.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         Return SQLInsertValues
     End Function
 

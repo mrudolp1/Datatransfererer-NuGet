@@ -313,7 +313,7 @@ Partial Public MustInherit Class EDSExcelObject
 
     Public Function MyTIA(Optional ByVal fullTIA As Boolean = False) As String
         Dim tia_current As String = ""
-        If IsSomething(Me.ParentStructure.tnx.code.design.DesignCode) Then
+        If IsSomething(Me.ParentStructure?.tnx?.code?.design?.DesignCode) Then
             If Me.ParentStructure.tnx.code.design.DesignCode = "TIA/EIA-222-F" Then
                 tia_current = "F"
             ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-G" Then
