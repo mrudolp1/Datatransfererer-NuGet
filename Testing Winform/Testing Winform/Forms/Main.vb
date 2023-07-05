@@ -2124,7 +2124,7 @@ StopLookingAtMeSwan:
             Dim manToMae As Tuple(Of Boolean, DataTable) 'Item1
             Dim curToMan As Tuple(Of Boolean, DataTable) 'Item2
             Dim curToMae As Tuple(Of Boolean, DataTable) 'Item3
-            Dim curToEds As Tuple(Of Boolean, DataTable) 'Item5
+            Dim edstoCur As Tuple(Of Boolean, DataTable) 'Item5
             Dim edsToMae As Tuple(Of Boolean, DataTable) 'Item6
             Dim resDs As New DataSet 'Item4
 
@@ -2165,13 +2165,14 @@ StopLookingAtMeSwan:
             If Directory.Exists(EDSFolder) Then
                 GetAllResults(EDSFolder)
                 Dim edsDt As DataTable = CSVtoDatatable(New FileInfo(EDSFolder & "\Summarized Results.csv"))
-                curToEds = curDt.IsMatching(edsDt)
+                edsDt.ResultsSorting("EDS")
+                edstoCur = edsDt.IsMatching(curDt)
                 edsToMae = edsDt.IsMatching(maeDt)
                 resDs.Tables.Add(edsDt.Copy)
-                resDs.Tables.Add(curToEds.Item2.Copy)
+                resDs.Tables.Add(edstoCur.Item2.Copy)
                 resDs.Tables.Add(edsToMae.Item2.Copy)
             Else
-                curToEds = Nothing
+                edstoCur = Nothing
                 edsToMae = Nothing
             End If
 
@@ -2196,7 +2197,7 @@ StopLookingAtMeSwan:
                         curToMae,
                         manToMae,
                         resDs,
-                        curToEds,
+                        edstoCur,
                         edsToMae
                         )
         End Function
@@ -2841,9 +2842,13 @@ RetryFileOpenCheck:
 
                 If dtRow IsNot Nothing Then
                     For Each dr As DataRow In comparer.Rows
-                        If dr.Item("Type").ToString = dtRow.Item("Type").ToString And dr.Item("Tool").ToString = dtRow.Item("Tool").ToString Then
-                            comparerRow = dr
-                            Exit For
+                        If dr.Item("Type").ToString = dtRow.Item("Type").ToString Then
+                            If dr.Item("Tool").ToString.Contains(dtRow.Item("Tool").ToString) Or dtRow.Item("Tool").ToString.Contains(dr.Item("Tool").ToString) Then
+                                comparerRow = dr
+                                Exit For
+                            Else
+                                comparerRow = Nothing
+                            End If
                         Else
                             comparerRow = Nothing
                         End If
