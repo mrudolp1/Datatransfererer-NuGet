@@ -333,9 +333,9 @@ Begin
 	Drop Table #TempSection
 	Drop Table #TempRSection
 
-
-	--Site code criteria
-	SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU
+	----REMOVED 7/5/2023
+	--------Site code criteria
+	------SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU
 
 	--File Upload
 	SELECT * FROM gen.file_upload fu, (SELECT MAX(work_order_seq_num) work_order_seq_num FROM gen.work_orders WHERE bus_unit = @BU AND structure_id = @strID) wo WHERE fu.work_order_seq_num = wo.work_order_seq_num

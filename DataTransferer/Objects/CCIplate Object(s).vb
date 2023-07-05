@@ -3657,11 +3657,11 @@ Partial Public Class PlateResults
 
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
 
 
@@ -3672,11 +3672,11 @@ Partial Public Class PlateResults
         SQLInsertFields = ""
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("plate_details_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
 
 
@@ -3686,11 +3686,11 @@ Partial Public Class PlateResults
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_details_id = " & Me.plate_details_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
@@ -3872,11 +3872,11 @@ Partial Public Class BoltResults
 
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
 
 
@@ -3887,11 +3887,11 @@ Partial Public Class BoltResults
         SQLInsertFields = ""
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("bolt_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
 
 
@@ -3901,11 +3901,11 @@ Partial Public Class BoltResults
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_id = " & Me.bolt_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
@@ -4710,11 +4710,11 @@ Partial Public Class StiffenerResults
 
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel3ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
 
 
@@ -4725,11 +4725,11 @@ Partial Public Class StiffenerResults
         SQLInsertFields = ""
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("stiffener_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
 
 
@@ -4739,11 +4739,11 @@ Partial Public Class StiffenerResults
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_id = " & Me.stiffener_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
@@ -5515,11 +5515,11 @@ Partial Public Class ConnectionResults
 
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
 
 
@@ -5530,11 +5530,11 @@ Partial Public Class ConnectionResults
         SQLInsertFields = ""
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("plate_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("work_order_seq_num")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
 
 
@@ -5544,11 +5544,11 @@ Partial Public Class ConnectionResults
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_id = " & Me.plate_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
