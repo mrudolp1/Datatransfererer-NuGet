@@ -1,4 +1,5 @@
-﻿BEGIN
+﻿
+BEGIN
 
 INSERT INTO conn.connections ([CCIPLATE FIELDS]) 
 	OUTPUT INSERTED.ID INTO @TopLevel
