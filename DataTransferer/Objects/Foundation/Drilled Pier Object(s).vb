@@ -734,7 +734,7 @@ Partial Public Class DrilledPier
 
                 For Each layerRow As DataRow In strDS.Tables(dpLayer.EDSObjectName).Rows
                     dpLayer = (New DrilledPierSoilLayer(layerRow, dpSProfile))
-                    If If(isExcel, dpSProfile.local_drilled_pier_id = dpLayer.local_drilled_pier_id And dpLayer.local_drilled_pier_id = dpSProfile.local_drilled_pier_id, Me.soil_profile_id = dpLayer.soil_profile_id) Then
+                    If If(isExcel, dpSProfile.local_drilled_pier_id = dpLayer.local_drilled_pier_id Or Me.soil_profile_id = dpLayer.soil_profile_id, Me.soil_profile_id = dpLayer.soil_profile_id) Then
                         dpSProfile.DPSoilLayers.Add(dpLayer)
                     End If
                 Next
