@@ -194,6 +194,9 @@
     <Compile Include="Forms\Main.Designer.vb">
       <DependentUpon>Main.vb</DependentUpon>
     </Compile>
+    <Compile Include="Modules\DoDaConnections.vb" />
+    <Compile Include="Modules\DoDaThings.vb" />
+    <Compile Include="Modules\IDoDeclare.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
@@ -281,6 +284,7 @@
     <None Include="Resources\moveup.svg" />
     <None Include="Resources\movedown.svg" />
     <None Include="Resources\shopping_shoppingcart.svg" />
+    <None Include="Resources\next.svg" />
     <Content Include="Resources\warning.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

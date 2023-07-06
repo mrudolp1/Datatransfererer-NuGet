@@ -98,6 +98,8 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnProcess24 = New DevExpress.XtraEditors.SimpleButton()
+            Me.testGetWOs = New DevExpress.XtraEditors.SimpleButton()
             Me.CheckEditAutoReport = New DevExpress.XtraEditors.CheckEdit()
             Me.LabelControl12 = New DevExpress.XtraEditors.LabelControl()
             Me.btnProcess23 = New DevExpress.XtraEditors.SimpleButton()
@@ -783,7 +785,7 @@
             '
             Me.sccMain.Dock = System.Windows.Forms.DockStyle.Fill
             Me.sccMain.FixedPanel = DevExpress.XtraEditors.SplitFixedPanel.Panel2
-            Me.sccMain.Location = New System.Drawing.Point(3, 127)
+            Me.sccMain.Location = New System.Drawing.Point(3, 129)
             Me.sccMain.Name = "sccMain"
             '
             'sccMain.Panel1
@@ -797,7 +799,7 @@
             Me.sccMain.Panel2.Controls.Add(Me.SplitterControl1)
             Me.sccMain.Panel2.Controls.Add(Me.pgcUnitTesting)
             Me.sccMain.Panel2.Text = "Panel2"
-            Me.sccMain.Size = New System.Drawing.Size(1953, 612)
+            Me.sccMain.Size = New System.Drawing.Size(1953, 610)
             Me.sccMain.SplitterPosition = 459
             Me.sccMain.TabIndex = 21
             '
@@ -818,7 +820,7 @@
             '
             Me.sccTesting.Panel2.Controls.Add(Me.SplitContainerControl2)
             Me.sccTesting.Panel2.Text = "Panel2"
-            Me.sccTesting.Size = New System.Drawing.Size(1484, 612)
+            Me.sccTesting.Size = New System.Drawing.Size(1484, 610)
             Me.sccTesting.SplitterPosition = 206
             Me.sccTesting.TabIndex = 18
             '
@@ -837,7 +839,7 @@
             '
             Me.SplitContainerControl1.Panel2.Controls.Add(Me.XtraTabControl2)
             Me.SplitContainerControl1.Panel2.Text = "Panel2"
-            Me.SplitContainerControl1.Size = New System.Drawing.Size(1484, 396)
+            Me.SplitContainerControl1.Size = New System.Drawing.Size(1484, 394)
             Me.SplitContainerControl1.SplitterPosition = 435
             Me.SplitContainerControl1.TabIndex = 15
             '
@@ -850,7 +852,7 @@
             Me.XtraTabControl1.Name = "XtraTabControl1"
             Me.XtraTabControl1.SelectedTabPage = Me.XtraTabPage1
             Me.XtraTabControl1.ShowTabHeader = DevExpress.Utils.DefaultBoolean.[True]
-            Me.XtraTabControl1.Size = New System.Drawing.Size(435, 396)
+            Me.XtraTabControl1.Size = New System.Drawing.Size(435, 394)
             Me.XtraTabControl1.TabIndex = 16
             Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage1, Me.XtraTabPage2})
             '
@@ -858,7 +860,7 @@
             '
             Me.XtraTabPage1.Controls.Add(Me.seNetwork)
             Me.XtraTabPage1.Name = "XtraTabPage1"
-            Me.XtraTabPage1.Size = New System.Drawing.Size(433, 371)
+            Me.XtraTabPage1.Size = New System.Drawing.Size(433, 369)
             Me.XtraTabPage1.Text = "Network Test Folder"
             '
             'seNetwork
@@ -868,14 +870,14 @@
             Me.seNetwork.Margin = New System.Windows.Forms.Padding(0)
             Me.seNetwork.Name = "seNetwork"
             Me.seNetwork.SelectedFile = Nothing
-            Me.seNetwork.Size = New System.Drawing.Size(433, 371)
+            Me.seNetwork.Size = New System.Drawing.Size(433, 369)
             Me.seNetwork.TabIndex = 16
             '
             'XtraTabPage2
             '
             Me.XtraTabPage2.Controls.Add(Me.seSA)
             Me.XtraTabPage2.Name = "XtraTabPage2"
-            Me.XtraTabPage2.Size = New System.Drawing.Size(433, 371)
+            Me.XtraTabPage2.Size = New System.Drawing.Size(433, 369)
             Me.XtraTabPage2.Text = "SA Reference Folder"
             '
             'seSA
@@ -885,7 +887,7 @@
             Me.seSA.Margin = New System.Windows.Forms.Padding(0)
             Me.seSA.Name = "seSA"
             Me.seSA.SelectedFile = Nothing
-            Me.seSA.Size = New System.Drawing.Size(433, 371)
+            Me.seSA.Size = New System.Drawing.Size(433, 369)
             Me.seSA.TabIndex = 17
             '
             'XtraTabControl2
@@ -894,7 +896,7 @@
             Me.XtraTabControl2.Location = New System.Drawing.Point(0, 0)
             Me.XtraTabControl2.Name = "XtraTabControl2"
             Me.XtraTabControl2.SelectedTabPage = Me.XtraTabPage3
-            Me.XtraTabControl2.Size = New System.Drawing.Size(1039, 396)
+            Me.XtraTabControl2.Size = New System.Drawing.Size(1039, 394)
             Me.XtraTabControl2.TabIndex = 17
             Me.XtraTabControl2.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XtraTabPage3})
             '
@@ -902,7 +904,7 @@
             '
             Me.XtraTabPage3.Controls.Add(Me.seLocal)
             Me.XtraTabPage3.Name = "XtraTabPage3"
-            Me.XtraTabPage3.Size = New System.Drawing.Size(1037, 371)
+            Me.XtraTabPage3.Size = New System.Drawing.Size(1037, 369)
             Me.XtraTabPage3.Text = "Local Testing Folder"
             '
             'seLocal
@@ -912,7 +914,7 @@
             Me.seLocal.Margin = New System.Windows.Forms.Padding(0)
             Me.seLocal.Name = "seLocal"
             Me.seLocal.SelectedFile = Nothing
-            Me.seLocal.Size = New System.Drawing.Size(1037, 371)
+            Me.seLocal.Size = New System.Drawing.Size(1037, 369)
             Me.seLocal.TabIndex = 16
             '
             'SplitContainerControl2
@@ -988,7 +990,7 @@
             Me.gcViewer.Location = New System.Drawing.Point(0, 452)
             Me.gcViewer.MainView = Me.GridView1
             Me.gcViewer.Name = "gcViewer"
-            Me.gcViewer.Size = New System.Drawing.Size(459, 160)
+            Me.gcViewer.Size = New System.Drawing.Size(459, 158)
             Me.gcViewer.TabIndex = 20
             Me.gcViewer.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GridView1})
             '
@@ -1029,6 +1031,8 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnProcess24)
+            Me.PanelControl1.Controls.Add(Me.testGetWOs)
             Me.PanelControl1.Controls.Add(Me.CheckEditAutoReport)
             Me.PanelControl1.Controls.Add(Me.LabelControl12)
             Me.PanelControl1.Controls.Add(Me.btnProcess23)
@@ -1090,13 +1094,38 @@
             Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Top
             Me.PanelControl1.Location = New System.Drawing.Point(3, 3)
             Me.PanelControl1.Name = "PanelControl1"
-            Me.PanelControl1.Size = New System.Drawing.Size(1953, 124)
+            Me.PanelControl1.Size = New System.Drawing.Size(1953, 126)
             Me.PanelControl1.TabIndex = 16
+            '
+            'btnProcess24
+            '
+            Me.btnProcess24.Appearance.Options.UseTextOptions = True
+            Me.btnProcess24.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess24.Enabled = False
+            Me.btnProcess24.Location = New System.Drawing.Point(977, 33)
+            Me.btnProcess24.Name = "btnProcess24"
+            Me.btnProcess24.Size = New System.Drawing.Size(116, 23)
+            Me.btnProcess24.TabIndex = 81
+            Me.btnProcess24.Tag = "STEP2B|Create a new iteration folder for the next iteration (Maestro & Manual (SA" &
+    "PI)) folders"
+            Me.btnProcess24.Text = "2b. Create Next Itty"
+            Me.btnProcess24.ToolTip = "CREATE NEXT ITERATION"
+            '
+            'testGetWOs
+            '
+            Me.testGetWOs.Enabled = False
+            Me.testGetWOs.ImageOptions.SvgImage = Global.Testing_Winform.My.Resources.Resources._next
+            Me.testGetWOs.ImageOptions.SvgImageSize = New System.Drawing.Size(15, 15)
+            Me.testGetWOs.Location = New System.Drawing.Point(756, 92)
+            Me.testGetWOs.Name = "testGetWOs"
+            Me.testGetWOs.Size = New System.Drawing.Size(74, 23)
+            Me.testGetWOs.TabIndex = 80
+            Me.testGetWOs.Text = "Get WOs"
             '
             'CheckEditAutoReport
             '
             Me.CheckEditAutoReport.Enabled = False
-            Me.CheckEditAutoReport.Location = New System.Drawing.Point(1625, 97)
+            Me.CheckEditAutoReport.Location = New System.Drawing.Point(1538, 102)
             Me.CheckEditAutoReport.Name = "CheckEditAutoReport"
             Me.CheckEditAutoReport.Properties.Caption = "Auto Mode"
             Me.CheckEditAutoReport.Size = New System.Drawing.Size(75, 20)
@@ -1106,7 +1135,7 @@
             '
             Me.LabelControl12.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
             Me.LabelControl12.Appearance.Options.UseFont = True
-            Me.LabelControl12.Location = New System.Drawing.Point(1625, 82)
+            Me.LabelControl12.Location = New System.Drawing.Point(1538, 90)
             Me.LabelControl12.Name = "LabelControl12"
             Me.LabelControl12.Size = New System.Drawing.Size(78, 12)
             Me.LabelControl12.TabIndex = 78
@@ -1117,7 +1146,7 @@
             Me.btnProcess23.Appearance.Options.UseTextOptions = True
             Me.btnProcess23.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess23.Enabled = False
-            Me.btnProcess23.Location = New System.Drawing.Point(1322, 92)
+            Me.btnProcess23.Location = New System.Drawing.Point(1321, 63)
             Me.btnProcess23.Name = "btnProcess23"
             Me.btnProcess23.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess23.TabIndex = 77
@@ -1130,35 +1159,33 @@
             Me.btnChecking.Appearance.Options.UseTextOptions = True
             Me.btnChecking.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.btnChecking.Enabled = False
-            Me.btnChecking.Location = New System.Drawing.Point(1771, 12)
+            Me.btnChecking.Location = New System.Drawing.Point(1664, 5)
             Me.btnChecking.Name = "btnChecking"
             Me.btnChecking.Size = New System.Drawing.Size(145, 23)
             Me.btnChecking.TabIndex = 76
             Me.btnChecking.Tag = "Checking out it all"
             Me.btnChecking.Text = "Checkout Everything"
             Me.btnChecking.ToolTip = "CHECKOUT ALL TEST CASES"
-            Me.btnChecking.Visible = False
             '
             'btnAuto
             '
             Me.btnAuto.Appearance.Options.UseTextOptions = True
             Me.btnAuto.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.btnAuto.Enabled = False
-            Me.btnAuto.Location = New System.Drawing.Point(1771, 40)
+            Me.btnAuto.Location = New System.Drawing.Point(1664, 33)
             Me.btnAuto.Name = "btnAuto"
             Me.btnAuto.Size = New System.Drawing.Size(145, 23)
             Me.btnAuto.TabIndex = 75
             Me.btnAuto.Tag = "Auto Test It"
             Me.btnAuto.Text = """Automated"" Unit Testing"
             Me.btnAuto.ToolTip = "AUTO TEST"
-            Me.btnAuto.Visible = False
             '
             'btnProcess21
             '
             Me.btnProcess21.Appearance.Options.UseTextOptions = True
             Me.btnProcess21.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess21.Enabled = False
-            Me.btnProcess21.Location = New System.Drawing.Point(1322, 64)
+            Me.btnProcess21.Location = New System.Drawing.Point(1323, 34)
             Me.btnProcess21.Name = "btnProcess21"
             Me.btnProcess21.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess21.TabIndex = 74
@@ -1171,7 +1198,7 @@
             Me.btnProcess22.Appearance.Options.UseTextOptions = True
             Me.btnProcess22.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess22.Enabled = False
-            Me.btnProcess22.Location = New System.Drawing.Point(1418, 64)
+            Me.btnProcess22.Location = New System.Drawing.Point(1430, 34)
             Me.btnProcess22.Name = "btnProcess22"
             Me.btnProcess22.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess22.TabIndex = 73
@@ -1184,7 +1211,7 @@
             Me.btnProcess20.Appearance.Options.UseTextOptions = True
             Me.btnProcess20.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess20.Enabled = False
-            Me.btnProcess20.Location = New System.Drawing.Point(1625, 7)
+            Me.btnProcess20.Location = New System.Drawing.Point(1429, 92)
             Me.btnProcess20.Name = "btnProcess20"
             Me.btnProcess20.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess20.TabIndex = 72
@@ -1197,7 +1224,7 @@
             Me.btnProcess19.Appearance.Options.UseTextOptions = True
             Me.btnProcess19.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess19.Enabled = False
-            Me.btnProcess19.Location = New System.Drawing.Point(1528, 7)
+            Me.btnProcess19.Location = New System.Drawing.Point(1321, 92)
             Me.btnProcess19.Name = "btnProcess19"
             Me.btnProcess19.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess19.TabIndex = 71
@@ -1209,7 +1236,7 @@
             '
             Me.CheckEditExcelVisibleII.EditValue = True
             Me.CheckEditExcelVisibleII.Enabled = False
-            Me.CheckEditExcelVisibleII.Location = New System.Drawing.Point(1625, 56)
+            Me.CheckEditExcelVisibleII.Location = New System.Drawing.Point(1538, 69)
             Me.CheckEditExcelVisibleII.Name = "CheckEditExcelVisibleII"
             Me.CheckEditExcelVisibleII.Properties.Caption = "Excel Visible"
             Me.CheckEditExcelVisibleII.Size = New System.Drawing.Size(84, 20)
@@ -1219,7 +1246,7 @@
             '
             Me.LabelControl11.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
             Me.LabelControl11.Appearance.Options.UseFont = True
-            Me.LabelControl11.Location = New System.Drawing.Point(1625, 40)
+            Me.LabelControl11.Location = New System.Drawing.Point(1538, 57)
             Me.LabelControl11.Name = "LabelControl11"
             Me.LabelControl11.Size = New System.Drawing.Size(114, 12)
             Me.LabelControl11.TabIndex = 69
@@ -1229,7 +1256,7 @@
             '
             Me.LabelConductOptions.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
             Me.LabelConductOptions.Appearance.Options.UseFont = True
-            Me.LabelConductOptions.Location = New System.Drawing.Point(1528, 38)
+            Me.LabelConductOptions.Location = New System.Drawing.Point(1527, 5)
             Me.LabelConductOptions.Name = "LabelConductOptions"
             Me.LabelConductOptions.Size = New System.Drawing.Size(84, 12)
             Me.LabelConductOptions.TabIndex = 68
@@ -1239,7 +1266,7 @@
             '
             Me.CheckEditExcelVisible.EditValue = True
             Me.CheckEditExcelVisible.Enabled = False
-            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1528, 79)
+            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1538, 37)
             Me.CheckEditExcelVisible.Name = "CheckEditExcelVisible"
             Me.CheckEditExcelVisible.Properties.Caption = "Excel Visible"
             Me.CheckEditExcelVisible.Size = New System.Drawing.Size(84, 20)
@@ -1249,7 +1276,7 @@
             '
             Me.CheckEditDevMode.EditValue = True
             Me.CheckEditDevMode.Enabled = False
-            Me.CheckEditDevMode.Location = New System.Drawing.Point(1528, 53)
+            Me.CheckEditDevMode.Location = New System.Drawing.Point(1538, 17)
             Me.CheckEditDevMode.Name = "CheckEditDevMode"
             Me.CheckEditDevMode.Properties.Caption = "Dev Mode"
             Me.CheckEditDevMode.Size = New System.Drawing.Size(75, 20)
@@ -1260,7 +1287,7 @@
             Me.btnProcess18.Appearance.Options.UseTextOptions = True
             Me.btnProcess18.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess18.Enabled = False
-            Me.btnProcess18.Location = New System.Drawing.Point(1418, 91)
+            Me.btnProcess18.Location = New System.Drawing.Point(1430, 63)
             Me.btnProcess18.Name = "btnProcess18"
             Me.btnProcess18.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess18.TabIndex = 65
@@ -1450,9 +1477,9 @@
             Me.btnProcess8.Appearance.Options.UseTextOptions = True
             Me.btnProcess8.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess8.Enabled = False
-            Me.btnProcess8.Location = New System.Drawing.Point(1322, 34)
+            Me.btnProcess8.Location = New System.Drawing.Point(1430, 5)
             Me.btnProcess8.Name = "btnProcess8"
-            Me.btnProcess8.Size = New System.Drawing.Size(186, 23)
+            Me.btnProcess8.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess8.TabIndex = 39
             Me.btnProcess8.Tag = "STEP7|Generate and compare the results. "
             Me.btnProcess8.Text = "7. Create Results"
@@ -1465,10 +1492,10 @@
             Me.btnProcess7.Enabled = False
             Me.btnProcess7.Location = New System.Drawing.Point(1322, 5)
             Me.btnProcess7.Name = "btnProcess7"
-            Me.btnProcess7.Size = New System.Drawing.Size(186, 23)
+            Me.btnProcess7.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess7.TabIndex = 38
             Me.btnProcess7.Tag = "STEP6|Conduct the files in the Maestro folder. "
-            Me.btnProcess7.Text = "6. Conduct Maestro Files"
+            Me.btnProcess7.Text = "6. Conduct Mae"
             Me.btnProcess7.ToolTip = "CONDUCT"
             '
             'btnProcess6
@@ -1530,11 +1557,12 @@
             Me.btnProcess2.Enabled = False
             Me.btnProcess2.Location = New System.Drawing.Point(855, 34)
             Me.btnProcess2.Name = "btnProcess2"
-            Me.btnProcess2.Size = New System.Drawing.Size(238, 23)
+            Me.btnProcess2.Size = New System.Drawing.Size(116, 23)
             Me.btnProcess2.TabIndex = 33
-            Me.btnProcess2.Tag = "STEP2|Create a new iteration (Maestro & Manual (SAPI)) folders"
-            Me.btnProcess2.Text = "2. Create New Iteration"
-            Me.btnProcess2.ToolTip = "CREATE ITERATION"
+            Me.btnProcess2.Tag = "STEP2A|Create a new iteration folder for the current iteration (Maestro & Manual " &
+    "(SAPI)) folders"
+            Me.btnProcess2.Text = "2a. Create Cur Itty"
+            Me.btnProcess2.ToolTip = "CREATE CURRENT ITERATION"
             '
             'btnProcess1
             '
@@ -1584,10 +1612,11 @@
             '
             Me.testNextIteration.Location = New System.Drawing.Point(780, 5)
             Me.testNextIteration.Name = "testNextIteration"
+            Me.testNextIteration.Properties.Appearance.Options.UseTextOptions = True
+            Me.testNextIteration.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.testNextIteration.Properties.ReadOnly = True
             Me.testNextIteration.Size = New System.Drawing.Size(50, 20)
             Me.testNextIteration.TabIndex = 17
-            Me.testNextIteration.Visible = False
             '
             'LabelControl8
             '
@@ -1596,7 +1625,6 @@
             Me.LabelControl8.Size = New System.Drawing.Size(68, 13)
             Me.LabelControl8.TabIndex = 16
             Me.LabelControl8.Text = "Next Iteration"
-            Me.LabelControl8.Visible = False
             '
             'testID
             '
@@ -1618,7 +1646,7 @@
             '
             'LabelControl1
             '
-            Me.LabelControl1.Location = New System.Drawing.Point(631, 64)
+            Me.LabelControl1.Location = New System.Drawing.Point(631, 68)
             Me.LabelControl1.Name = "LabelControl1"
             Me.LabelControl1.Size = New System.Drawing.Size(13, 13)
             Me.LabelControl1.TabIndex = 3
@@ -1643,7 +1671,7 @@
             '
             'testBu
             '
-            Me.testBu.Location = New System.Drawing.Point(650, 61)
+            Me.testBu.Location = New System.Drawing.Point(650, 65)
             Me.testBu.Name = "testBu"
             Me.testBu.Properties.ReadOnly = True
             Me.testBu.Size = New System.Drawing.Size(100, 20)
@@ -1651,7 +1679,7 @@
             '
             'testIteration
             '
-            Me.testIteration.EditValue = "13"
+            Me.testIteration.EditValue = ""
             Me.testIteration.Location = New System.Drawing.Point(650, 5)
             Me.testIteration.Name = "testIteration"
             Me.testIteration.Properties.Appearance.Options.UseTextOptions = True
@@ -1662,7 +1690,7 @@
             '
             'LabelControl2
             '
-            Me.LabelControl2.Location = New System.Drawing.Point(753, 65)
+            Me.LabelControl2.Location = New System.Drawing.Point(756, 69)
             Me.LabelControl2.Name = "LabelControl2"
             Me.LabelControl2.Size = New System.Drawing.Size(37, 13)
             Me.LabelControl2.TabIndex = 4
@@ -1678,7 +1706,7 @@
             '
             'testSid
             '
-            Me.testSid.Location = New System.Drawing.Point(794, 62)
+            Me.testSid.Location = New System.Drawing.Point(794, 66)
             Me.testSid.Name = "testSid"
             Me.testSid.Properties.ReadOnly = True
             Me.testSid.Size = New System.Drawing.Size(36, 20)
@@ -1694,7 +1722,7 @@
             '
             'testWo
             '
-            Me.testWo.Location = New System.Drawing.Point(650, 87)
+            Me.testWo.Location = New System.Drawing.Point(650, 94)
             Me.testWo.Name = "testWo"
             Me.testWo.Properties.ReadOnly = True
             Me.testWo.Size = New System.Drawing.Size(100, 20)
@@ -1710,7 +1738,7 @@
             '
             'LabelControl3
             '
-            Me.LabelControl3.Location = New System.Drawing.Point(626, 90)
+            Me.LabelControl3.Location = New System.Drawing.Point(626, 97)
             Me.LabelControl3.Name = "LabelControl3"
             Me.LabelControl3.Size = New System.Drawing.Size(18, 13)
             Me.LabelControl3.TabIndex = 7
@@ -1950,6 +1978,8 @@
         Friend WithEvents btnProcess23 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents CheckEditAutoReport As DevExpress.XtraEditors.CheckEdit
         Friend WithEvents LabelControl12 As DevExpress.XtraEditors.LabelControl
+        Friend WithEvents testGetWOs As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess24 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class
