@@ -343,7 +343,7 @@ Partial Public Class EDSStructure
                             AND wo.structure_id = str.structure_id
                             AND str.bus_unit = sit.bus_unit
                             AND str.bus_unit = tr.bus_unit
-                            AND pi.eng_app_id = wo.eng_app_id(+)" & vbCrLf
+                            AND pi.eng_app_id(+) = wo.eng_app_id" & vbCrLf
                 sqlOrder = ",pi.eng_app_id
                             ,pi.crrnt_rvsn_num eng_app_id_revision"
             Else
