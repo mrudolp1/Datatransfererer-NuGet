@@ -253,6 +253,90 @@ Partial Friend NotInheritable Class Settings
             Me("booReportOption") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property devSql() As String
+        Get
+            Return CType(Me("devSql"),String)
+        End Get
+        Set
+            Me("devSql") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ntokendev() As String
+        Get
+            Return CType(Me("ntokendev"),String)
+        End Get
+        Set
+            Me("ntokendev") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property wtokendev() As String
+        Get
+            Return CType(Me("wtokendev"),String)
+        End Get
+        Set
+            Me("wtokendev") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ccisiteshttpurl() As String
+        Get
+            Return CType(Me("ccisiteshttpurl"),String)
+        End Get
+        Set
+            Me("ccisiteshttpurl") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property prodsql() As String
+        Get
+            Return CType(Me("prodsql"),String)
+        End Get
+        Set
+            Me("prodsql") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ntoken() As String
+        Get
+            Return CType(Me("ntoken"),String)
+        End Get
+        Set
+            Me("ntoken") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property wtoken() As String
+        Get
+            Return CType(Me("wtoken"),String)
+        End Get
+        Set
+            Me("wtoken") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
