@@ -1,4 +1,5 @@
-﻿BEGIN
+﻿
+BEGIN
 
 	UPDATE conn.connections
 	SET [UPDATE] 
