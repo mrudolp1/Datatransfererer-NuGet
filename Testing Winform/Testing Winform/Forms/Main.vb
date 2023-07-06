@@ -28,7 +28,8 @@ Namespace UnitTesting
     Partial Public Class frmMain
         Public strcLocal As EDSStructure
         Public strcEDS As EDSStructure
-        Public testingVersion As String = "1.0.0.7"
+        Public testingVersion As String = "1.0.0.8"
+        Public currentTestingIteration As Integer = 13
 
 #Region "Object Declarations"
         'Public myUnitBases As New DataTransfererUnitBase
@@ -91,12 +92,6 @@ Namespace UnitTesting
         Public EDSimpersonatedUser As WindowsImpersonationContext
         Public EDSnewId As WindowsIdentity
 
-        Public sqlCon As New SqlConnection
-        Public ds As New DataSet
-        Public da As SqlDataAdapter
-        Public dt As New DataTable
-        Public sql As String
-
         Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
         Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
         Public tokenHandle As New IntPtr(0)
@@ -137,6 +132,7 @@ Namespace UnitTesting
                 CheckEditDevMode.Checked = My.Settings.booConductDevMode
                 CheckEditExcelVisible.Checked = My.Settings.booConductExcelVis
                 CheckEditExcelVisibleII.Checked = My.Settings.booImportInputsExcelVisible
+                CheckEditAutoReport.Checked = My.Settings.booReportOption
                 'force local work area it to be true
                 chkWorkLocal.Checked = True
                 My.Settings.workLocal = True
@@ -160,6 +156,7 @@ Namespace UnitTesting
 
             If My.Settings.MyTestCase > 0 Then
                 If Directory.Exists(lFolder & "\Test ID " & My.Settings.MyTestCase) Then
+                    testIteration.Text = currentTestingIteration
                     testID.SelectedIndex = My.Settings.MyTestCase - 1
                     SetUpWorkArea(My.Settings.MyTestCase - 1)
 
@@ -560,7 +557,7 @@ Namespace UnitTesting
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
                     btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click,
-                    btnProcess21.Click, btnProcess22.Click, btnProcess23.Click
+                    btnProcess21.Click, btnProcess22.Click, btnProcess23.Click, btnProcess24.Click
             If isopening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
@@ -624,14 +621,22 @@ Namespace UnitTesting
                         LogActivity("INFO | SA Reference Files have been copied into the test directory.")
                     End If
 
-                Case "step2"
+                Case "step2a", "step2b"
                     '''Create new iteration
-                    If Not Directory.Exists(Me.itFolder) Then
-                        CreateIteration(testNextIteration.Text)
-                        LogActivity("INFO | Iteration " & Me.iteration & " has been created.")
+
+                    Dim curItty As Integer = testIteration.Text
+                    Dim nextItty As Integer = testNextIteration.Text
+                    Dim ittyToCreate As Integer
+
+                    If tags(0).ToLower = "step2a" Then
+                        ittyToCreate = curItty
                     Else
-                        LogActivity("WARNING | Iteration " & Me.iteration.ToString & " folders already exist")
+                        ittyToCreate = nextItty
                     End If
+
+                    CreateIteration(ittyToCreate)
+
+
 
                 Case "step3", "step3a", "step3b", "step3c", "step3d"
                     'Make sure all necessary files exist in the required folders
@@ -740,6 +745,18 @@ Namespace UnitTesting
 
                         ImportInputs("MaestroPath", My.Settings.booImportInputsExcelVisible)
                         LogActivity("INFO | Import inputs complete for Maestro SAPI versions.")
+
+                        If tags(0).ToLower = "step4a" Then
+                            Dim answer As DialogResult
+                            answer = MsgBox("Would you like to copy the Maestro files into the '\Manual (SAPI)' folder?", vbYesNo + vbQuestion, "Copy Files?")
+                            If answer = vbYes Then
+                                DoArchiving(ManFolder)
+                                For Each file As FileInfo In New DirectoryInfo(MaeFolder).GetFiles
+                                    file.CopyTo(ManFolder & "\" & file.Name & "." & file.Extension)
+                                    LogActivity("DEBUG | File Copied: '" & file.Name & "' From MAE to MAN")
+                                Next
+                            End If
+                        End If
                     End If
 
                     If tags(0).ToLower = "step4" Or tags(0).ToLower = "step4c" Then
@@ -900,7 +917,7 @@ Namespace UnitTesting
                     End If
 
                     'strcLocal.Clear()
-                    strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
+                    strcLocal = New EDSStructure(bus_unit, structure_id, work_order_seq_num, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
                     strcLocal.SaveTools(EDSFolder)
                     LogActivity("INFO | All files have been created in the directory '\Iteration " & iteration & "\EDS'.")
             End Select
@@ -1167,6 +1184,20 @@ StopLookingAtMeSwan:
             SetTestIDLabels()
             ButtonclickToggle(Me.Cursor)
         End Sub
+
+        Private Sub testGetWOs_click(sender As Object, e As EventArgs) Handles testGetWOs.Click
+            OracleLoader("SELECT wo_seqnum, eng_app_id, crrnt_rvsn_num, bus_unit, structure_id
+                            FROM work_order_reporting_mv@ISITPRD.CROWNCASTLE.COM
+                            WHERE bus_unit = '" & bus_unit.ToString & "' AND structure_id = '" & structure_id & "'
+                            AND item_type IN ('SA - Structural Analysis','SA - Structural Analysis w/o App','SDD - Structural Design Drawings') 
+                            ORDER BY wo_seqnum DESC",
+                         "MyWOs", 5000, "ords")
+            GridView1.Columns.Clear()
+            gcViewer.DataSource = Nothing
+            gcViewer.DataSource = ds.Tables("MyWOs")
+            gcViewer.RefreshDataSource()
+            GridView1.BestFitColumns(True)
+        End Sub
 #End Region
 
 #Region "My Largely Little Helpers"
@@ -1187,6 +1218,23 @@ StopLookingAtMeSwan:
                 End If
             End Get
         End Property
+
+        Public ReadOnly Property bus_unit As Integer
+            Get
+                Return If(IsNumeric(testBu.Text), testBu.Text, Nothing)
+            End Get
+        End Property
+        Public ReadOnly Property work_order_seq_num As Integer
+            Get
+                Return If(IsNumeric(testWo.Text), testWo.Text, Nothing)
+            End Get
+        End Property
+        Public ReadOnly Property structure_id As String
+            Get
+                Return testSid.Text
+            End Get
+        End Property
+
         Public ReadOnly Property TestLogActivityPath As String
             Get
                 Return dirUse & "\Test ID " & testCase & "\Test Activity.txt"
@@ -1379,12 +1427,20 @@ StopLookingAtMeSwan:
             'Iteration count is determined
             '''A count of folders containing the word 'iteration' are counted
             Dim itCount As Integer = 0
+            Dim newIt As Integer
+            Dim maxIt As Integer = 0
             For Each subDir In New DirectoryInfo(Me.dirUse & "\Test ID " & Me.testCase).GetDirectories
-                If subDir.Name.Contains("Iteration ") Then itCount += 1
+                If subDir.Name.Contains("Iteration ") Then
+                    itCount += 1
+                    newIt = CType(subDir.Name.Replace("Iteration ", ""), Integer)
+                    If newIt > maxIt Then maxIt = newIt
+                End If
             Next
 
-            'testIteration.Text = itCount
-            'testNextIteration.Text = itCount + 1
+            itCount = Math.Max(Math.Max(itCount, currentTestingIteration), maxIt)
+
+            testIteration.Text = itCount
+            testNextIteration.Text = itCount + 1
 
             'Update the local directory to the local test case. 
             Try
@@ -1436,7 +1492,7 @@ StopLookingAtMeSwan:
         'Reset form to disable or enable controls required for testing. 
         Public Sub ResetControls(Optional ByVal reset As Boolean = True)
             btnProcess1.Enabled = Not btnProcess1.Enabled
-            'btnProcess2.Enabled = Not btnProcess2.Enabled
+            btnProcess2.Enabled = Not btnProcess2.Enabled
             btnProcess3.Enabled = Not btnProcess3.Enabled
             btnProcess4.Enabled = Not btnProcess4.Enabled
             btnProcess5.Enabled = Not btnProcess5.Enabled
@@ -1458,6 +1514,10 @@ StopLookingAtMeSwan:
             btnProcess21.Enabled = Not btnProcess21.Enabled
             btnProcess22.Enabled = Not btnProcess22.Enabled
             btnProcess23.Enabled = Not btnProcess23.Enabled
+            btnProcess24.Enabled = Not btnProcess24.Enabled
+            testGetWOs.Enabled = Not testGetWOs.Enabled
+
+            testWo.ReadOnly = Not testWo.ReadOnly
 
             XtraTabControl1.Enabled = Not XtraTabControl1.Enabled
             testBugFile.Enabled = Not testBugFile.Enabled
@@ -1750,22 +1810,34 @@ StopLookingAtMeSwan:
         '''Manual folder 
         '''Users will have the option to replace the files in the folder. 
         Public Sub CreateIteration(ByVal nextIteration As Integer, ByVal Optional isFirstTime As Boolean = False)
-            'testIteration.Text = nextIteration
-            'testNextIteration.Text = nextIteration + 1
-            'testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
 
+            Dim dirtocreate As String = dirUse & "\Test ID " & testCase & "\Iteration " & nextIteration
+
+            If Not Directory.Exists(dirtocreate) Then
+                Directory.CreateDirectory(Me.itFolder)
+                LogActivity("DEBUG | Directory created: " & Me.itFolder)
+                Directory.CreateDirectory(Me.MaeFolder)
+                LogActivity("DEBUG | Directory created: " & Me.MaeFolder)
+                Directory.CreateDirectory(Me.ManFolder)
+                LogActivity("DEBUG | Directory created: " & Me.ManFolder)
+                LogActivity("INFO | Iteration " & Me.iteration & " has been created.")
+                testIteration.Text = nextIteration
+                testNextIteration.Text = nextIteration + 1
+            Else
+                LogActivity("WARNING | Iteration " & Me.iteration.ToString & " folders already exist")
+                If nextIteration = testNextIteration.Text Then
+                    testIteration.Text = nextIteration
+                    testNextIteration.Text = nextIteration + 1
+                End If
+            End If
+
+            'testFolder.Text = "R:\Development\SAPI Testing\Unit Testing\Test ID " & testCase
             'If GetReferenceFileCount() = 0 Then
             '    FirstTimeWarning(isFirstTime, nextIteration)
             'Else
             '''Create the directories
             '''Increase the iteration (Should be at 0 if this is the first time)
             '''get all required files for testing
-            Directory.CreateDirectory(Me.itFolder)
-            LogActivity("DEBUG | Directory created: " & Me.itFolder)
-            Directory.CreateDirectory(Me.MaeFolder)
-            LogActivity("DEBUG | Directory created: " & Me.MaeFolder)
-            Directory.CreateDirectory(Me.ManFolder)
-            LogActivity("DEBUG | Directory created: " & Me.ManFolder)
             'CreateTemplateFiles(isFirstTime, False)
             'End If
 
@@ -2392,7 +2464,7 @@ StopLookingAtMeSwan:
 
             'Convert the list of valid file names to an array for creating anew structure
             myFiles = myFilesLst.ToArray
-            strcLocal = New EDSStructure(testBu.Text, testSid.Text, testWo.Text, filesPath, filesPath, myFiles, EDSnewId, EDSdbActive)
+            strcLocal = New EDSStructure(bus_unit, structure_id, work_order_seq_num, filesPath, filesPath, myFiles, EDSnewId, EDSdbActive)
         End Sub
 
         'Loads the CSV with the test cases 
