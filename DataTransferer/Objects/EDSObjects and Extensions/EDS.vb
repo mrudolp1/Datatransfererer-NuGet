@@ -539,7 +539,7 @@ Partial Public Class EDSResult
 #Region "Define"
     Private _foreign_key As Integer?
     Private _result_lkup As String
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _EDSTableName As String
     Private _ForeignKeyName As String
 
@@ -565,7 +565,7 @@ Partial Public Class EDSResult
     End Property
     <Category("Results"), Description(""), DisplayName("Rating (%)")>
     <DataMember()>
-    Public Overridable Property rating() As Double?
+    Public Overridable Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -682,7 +682,7 @@ Partial Public Class EDSResult
     ''' <param name="result_lkup"></param>
     ''' <param name="rating"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)

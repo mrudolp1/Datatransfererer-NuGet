@@ -897,7 +897,7 @@ Public Class tnxResult
     ' <DataMember()> Public Property UseSFInsteadofRatio As Boolean = False
 
     <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
-    Public Overrides Property Rating As Double?
+    Public Overrides Property Rating As Decimal?
         Get
             Dim designCode As String
             Dim useAnnexS As Boolean
@@ -916,7 +916,7 @@ Public Class tnxResult
                 Return Me.Ratio
             End If
         End Get
-        Set(value As Double?)
+        Set(value As Decimal?)
             'Do Nothing
         End Set
     End Property
@@ -933,7 +933,7 @@ Public Class tnxResult
     ''' <param name="designLoad"></param>
     ''' <param name="appliedLoad"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
@@ -951,9 +951,9 @@ Public Class tnxResult
     ''' Ratio of the applied load to the design load.
     ''' </summary>
     ''' <returns></returns>
-    Public Function Ratio() As Double
+    Public Function Ratio() As Decimal
         If DesignLoad.HasValue And AppliedLoad.HasValue Then
-            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value)
+            Return CType(Math.Abs(AppliedLoad.Value / DesignLoad.Value), Decimal)
         End If
         Return 0
     End Function
@@ -962,9 +962,9 @@ Public Class tnxResult
     ''' Ratio of the applied load to the design load and normalized with the load ratio limit (i.e. 105%).
     ''' </summary>
     ''' <returns></returns>
-    Public Function NormalizedRatio() As Double
+    Public Function NormalizedRatio() As Decimal
         If DesignLoad.HasValue And AppliedLoad.HasValue And LoadRatioLimit.HasValue Then
-            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value
+            Return CType(Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value, Decimal)
         End If
         Return 0
     End Function

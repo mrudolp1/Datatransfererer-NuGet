@@ -1500,7 +1500,7 @@ Partial Public Class lattice_custom_capacity
     Private prop_cc_ten As Double
     Private prop_cc_conn_comp As Double
     Private prop_cc_conn_ten As Double
-    Private prop_cc_pass_rating As Double
+    Private prop_cc_pass_rating As Decimal
 
     <Category("Lattice Custom Capacity"), Description(""), DisplayName("Member_Detail_Id")>
     Public Property member_detail_id() As Integer
@@ -1575,7 +1575,7 @@ Partial Public Class lattice_custom_capacity
         End Set
     End Property
     <Category("Lattice Custom Capacity"), Description(""), DisplayName("Cc_Pass_Rating")>
-    Public Property cc_pass_rating() As Double
+    Public Property cc_pass_rating() As Decimal
         Get
             Return Me.prop_cc_pass_rating
         End Get
@@ -3750,7 +3750,7 @@ Partial Public Class guy_attachment_bracing_cust_cap
     Private prop_bracing_cc_ten As Double
     Private prop_bracing_cc_conn_comp As Double
     Private prop_bracing_cc_conn_ten As Double
-    Private prop_bracing_cc_pass_rating As Double
+    Private prop_bracing_cc_pass_rating As Decimal
 
     <Category("Guy Attachment Bracing Custom Capacity"), Description(""), DisplayName("Guy_Attachment_Id")>
     Public Property guy_attachment_id() As Integer
@@ -3834,7 +3834,7 @@ Partial Public Class guy_attachment_bracing_cust_cap
         End Set
     End Property
     <Category("Guy Attachment Bracing Custom Capacity"), Description(""), DisplayName("Bracing_Cc_Pass_Rating")>
-    Public Property bracing_cc_pass_rating() As Double
+    Public Property bracing_cc_pass_rating() As Decimal
         Get
             Return Me.prop_bracing_cc_pass_rating
         End Get
