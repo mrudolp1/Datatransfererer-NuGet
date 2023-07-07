@@ -1146,7 +1146,7 @@
             Me.btnProcess23.Appearance.Options.UseTextOptions = True
             Me.btnProcess23.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess23.Enabled = False
-            Me.btnProcess23.Location = New System.Drawing.Point(1321, 63)
+            Me.btnProcess23.Location = New System.Drawing.Point(1323, 62)
             Me.btnProcess23.Name = "btnProcess23"
             Me.btnProcess23.Size = New System.Drawing.Size(90, 23)
             Me.btnProcess23.TabIndex = 77
@@ -1224,7 +1224,7 @@
             Me.btnProcess19.Appearance.Options.UseTextOptions = True
             Me.btnProcess19.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess19.Enabled = False
-            Me.btnProcess19.Location = New System.Drawing.Point(1321, 92)
+            Me.btnProcess19.Location = New System.Drawing.Point(1323, 92)
             Me.btnProcess19.Name = "btnProcess19"
             Me.btnProcess19.Size = New System.Drawing.Size(91, 23)
             Me.btnProcess19.TabIndex = 71
@@ -1256,7 +1256,7 @@
             '
             Me.LabelConductOptions.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
             Me.LabelConductOptions.Appearance.Options.UseFont = True
-            Me.LabelConductOptions.Location = New System.Drawing.Point(1527, 5)
+            Me.LabelConductOptions.Location = New System.Drawing.Point(1538, 5)
             Me.LabelConductOptions.Name = "LabelConductOptions"
             Me.LabelConductOptions.Size = New System.Drawing.Size(84, 12)
             Me.LabelConductOptions.TabIndex = 68
