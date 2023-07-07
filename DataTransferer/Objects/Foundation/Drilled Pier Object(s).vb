@@ -1332,7 +1332,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ultimate_gross_bearing.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.drilled_pier_id.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
+        'SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
         Return SQLInsertValues
     End Function
 
@@ -1355,7 +1355,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertFields = SQLInsertFields.AddtoDBString("tie_yield_strength")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("ultimate_gross_bearing")
-        SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_id")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_id")
         Return SQLInsertFields
     End Function
 
@@ -1413,7 +1413,7 @@ Partial Public Class DrilledPierProfile
         Equals = If(Me.tie_yield_strength.CheckChange(otherToCompare.tie_yield_strength, changes, categoryName, "Tie Yield Strength"), Equals, False)
         Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
         Equals = If(Me.ultimate_gross_bearing.CheckChange(otherToCompare.ultimate_gross_bearing, changes, categoryName, "Ultimate Bearing"), Equals, False)
-        Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier Foreign Key"), Equals, False)
+        'Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier Foreign Key"), Equals, False)
 
         'Sections
         Equals = If(Me.Sections.CheckChange(otherToCompare.Sections, changes, categoryName, "Drilled Pier Sections"), Equals, False)
