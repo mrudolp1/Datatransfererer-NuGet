@@ -1,4 +1,107 @@
-﻿Imports MoreLinq
+﻿Imports System.ComponentModel
+Imports System.Runtime.Serialization
+Imports MoreLinq
+
+<DataContract()>
+Public Class tnxResult
+    Inherits EDSResult
+
+    <Category("Loads"), Description(""), DisplayName("Design Load")>
+    <DataMember()> Public Property DesignLoad As Double?
+    <Category("Loads"), Description(""), DisplayName("Applied Load")>
+    <DataMember()> Public Property AppliedLoad As Double?
+    <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
+    <DataMember()> Public Property LoadRatioLimit As Double?
+    '<Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
+    ' <DataMember()> Public Property RequiredSafteyFactor As Double?
+    '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
+    ' <DataMember()> Public Property UseSFInsteadofRatio As Boolean = False
+
+    <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
+    Public Overrides Property Rating As Double?
+        Get
+            Dim designCode As String
+            Dim useAnnexS As Boolean
+            Try
+                designCode = Me.ParentStructure.tnx.code.design.DesignCode
+                useAnnexS = Me.ParentStructure.tnx.code.design.UseTIA222H_AnnexS.Value
+            Catch ex As Exception
+                designCode = ""
+                useAnnexS = False
+                Debug.Print("Design code unknown. Using nonnormailzed TNX results.")
+            End Try
+
+            If designCode = "TIA-222-H" And useAnnexS Then
+                Return Me.NormalizedRatio
+            Else
+                Return Me.Ratio
+            End If
+        End Get
+        Set(value As Double?)
+            'Do Nothing
+        End Set
+    End Property
+
+    Public Sub New()
+        'Leave Blank
+    End Sub
+
+    ''' <summary>
+    ''' Create result object with result_lkup and rating
+    ''' </summary>
+    ''' <param name="result_lkup"></param>
+    ''' <param name="rating"></param>
+    ''' <param name="designLoad"></param>
+    ''' <param name="appliedLoad"></param>
+    ''' <param name="Parent"></param>
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
+        If Parent IsNot Nothing Then
+            Me.Absorb(Parent)
+        End If
+
+        Me.result_lkup = result_lkup
+        Me.Rating = rating
+        Me.DesignLoad = designLoad
+        Me.AppliedLoad = appliedLoad
+        Me.LoadRatioLimit = RatioLimit
+
+    End Sub
+
+    ''' <summary>
+    ''' Ratio of the applied load to the design load.
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function Ratio() As Double?
+        If ValidResult(False) Then
+            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value)
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Ratio of the applied load to the design load and normalized with the load ratio limit (i.e. 105%).
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function NormalizedRatio() As Double?
+        If ValidResult() Then
+            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Public Function ValidResult(Optional Normalize As Boolean = True) As Boolean
+        Return DesignLoad.HasValue AndAlso
+                Me.DesignLoad.HasValue AndAlso
+                Me.DesignLoad.Value <> 0 AndAlso
+                (Not Normalize OrElse
+                Me.LoadRatioLimit.HasValue AndAlso
+                Me.LoadRatioLimit.Value > 0)
+    End Function
+
+End Class
 
 Partial Public Class tnxTowerOutput
     Public Sub ConverttoEDSResults(tnx As tnxGeometry)
@@ -14,14 +117,11 @@ Partial Public Class tnxTowerOutput
             Next
         End If
 
-        'Commented out 5/31/2023 during unit testing
-        'Results for guys are not saved as integers in the XML. 
-        'Architectural notation is still being used. 
-        'If Me.Guys IsNot Nothing Then
-        '    For Each section In Me.Guys
-        '        section.ConverttoEDSResults(tnx)
-        '    Next
-        'End If
+        If Me.Guys IsNot Nothing Then
+            For Each section In Me.Guys
+                section.ConverttoEDSResults(tnx)
+            Next
+        End If
 
         If Me.BoltDesignData IsNot Nothing Then
             For Each section In Me.BoltDesignData
@@ -50,6 +150,11 @@ Partial Public Class tnxTowerOutputMemberCompressionComponentType
 
     Public Sub AddMaxComponentResultstoSection(tnxSection As tnxGeometryRec)
         Dim controllingMember As tnxTowerOutputMemberCompressionMember = Me.MaxMember()
+
+        If Me.Name.ToLower = "top guy pull-off" Then
+            Debug.WriteLine("top guy pull-off")
+        End If
+
         'Compression
         tnxSection.TNXResults.Add(New tnxResult(String.Format("comp_{0}_p", Me.Name.ToLower),
                                              controllingMember.Compression.PDCRatio,
@@ -119,6 +224,11 @@ Partial Public Class tnxTowerOutputMemberTensionComponentType
     End Function
 
     Public Sub AddMaxComponentResultstoSection(tnxSection As tnxGeometryRec)
+
+        ''Ignore guy results in the Tension Tower Section Results
+        ''These are not displayed in the TNX report and there are more accurate guy results in the Guys Tower Section
+        If Me.Name.StartsWith("Guy") Then Return
+
         Dim controllingMember As tnxTowerOutputMemberTensionMember = Me.MaxMember()
         'Compression
         tnxSection.TNXResults.Add(New tnxResult(String.Format("ten_{0}_p", Me.Name.ToLower),
@@ -191,12 +301,12 @@ Partial Public Class tnxTowerOutputGuyMember
         End Get
     End Property
 
-    Public ReadOnly Property GuyHeight() As Double
-        Get
-            'Guy result stores elevation and leg in one string called "LocationID" Example: <LocationID>88.00 (C) (622)</LocationID>
-            Return CDbl(Me.LocationID.Split(" "c)(0))
-        End Get
-    End Property
+    'Public ReadOnly Property GuyHeight() As Double
+    '    Get
+    '        'Guy result stores elevation and leg in one string called "LocationID" Example: <LocationID>88.00 (C) (622)</LocationID>
+    '        Return CDbl(Me.LocationID.Split(" "c)(0))
+    '    End Get
+    'End Property
 
     Public Sub AddGuyResultstoGuyRec(guyRec As tnxGuyRecord)
         If guyRec Is Nothing Then Exit Sub
@@ -209,29 +319,35 @@ Partial Public Class tnxTowerOutputGuyMember
                                              guyRec))
 
     End Sub
+    'Public Function tnxGuySelector(tnx As tnxGeometry) As tnxGuyRecord
+    '    'Select the guy record where results should be stored
+    '    'You could have multiple guy recs with the same elevation and guy size so this is not gauranteed to work but it should atleast put the loads on a guy level at the same elevation
+    '    Dim selectedGuy As List(Of tnxGuyRecord) = tnx.guyWires.Where(Function(x)
+    '                                                                      Dim GuySize As String = ""
+    '                                                                      Select Case Me.GuyLeg
+    '                                                                          Case "A"
+    '                                                                              GuySize = x.GuySize
+    '                                                                          Case "B"
+    '                                                                              GuySize = x.Guy120Size
+    '                                                                          Case "C"
+    '                                                                              GuySize = x.Guy240Size
+    '                                                                          Case "D"
+    '                                                                              GuySize = x.Guy360Size
+    '                                                                      End Select
+
+    '                                                                      Return x.GuyHeight = Me.GuyHeight AndAlso
+    '                                                                String.Format("{0} {1}", GuySize, x.GuyGrade) = Me.SizeDesignation
+    '                                                                  End Function).ToList
+    '    If selectedGuy.Count <> 1 Then
+    '        Debug.Print(String.Format("Guy result not matched to guy record at Height: {0} Leg: {1}", Me.GuyHeight, Me.GuyLeg))
+    '    End If
+    '    Return selectedGuy.FirstOrDefault
+    'End Function
     Public Function tnxGuySelector(tnx As tnxGeometry) As tnxGuyRecord
         'Select the guy record where results should be stored
-        'You could have multiple guy recs with the same elevation and guy size so this is not gauranteed to work but it should atleast put the loads on a guy level at the same elevation
-        Dim selectedGuy As List(Of tnxGuyRecord) = tnx.guyWires.Where(Function(x)
-                                                                          Dim GuySize As String = ""
-                                                                          Select Case Me.GuyLeg
-                                                                              Case "A"
-                                                                                  GuySize = x.GuySize
-                                                                              Case "B"
-                                                                                  GuySize = x.Guy120Size
-                                                                              Case "C"
-                                                                                  GuySize = x.Guy240Size
-                                                                              Case "D"
-                                                                                  GuySize = x.Guy360Size
-                                                                          End Select
+        'Based on the guyInputRecord
+        Return tnx.guyWires.Where(Function(x) x.Rec.Value = Me.GuyInputRecord).FirstOrDefault()
 
-                                                                          Return x.GuyHeight = Me.GuyHeight AndAlso
-                                                                    String.Format("{0} {1}", GuySize, x.GuyGrade) = Me.SizeDesignation
-                                                                      End Function).ToList
-        If selectedGuy.Count <> 1 Then
-            Debug.Print(String.Format("Guy result not matched to guy record at Height: {0} Leg: {1}", Me.GuyHeight, Me.GuyLeg))
-        End If
-        Return selectedGuy.FirstOrDefault
     End Function
 End Class
 #End Region

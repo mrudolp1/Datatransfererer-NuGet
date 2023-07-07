@@ -7039,6 +7039,8 @@ End Class
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputGuyMember
 
+    Private guyInputRecordField As Integer
+
     Private locationIDField As String
 
     Private sizeDesignationField As String
@@ -7062,7 +7064,17 @@ Partial Public Class tnxTowerOutputGuyMember
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property LocationID() As String
+    <DataMember()> Public Property GuyInputRecord() As Integer
+        Get
+            Return Me.guyInputRecordField
+        End Get
+        Set
+            Me.guyInputRecordField = Value
+        End Set
+    End Property
+
+    '''<remarks/>
+    <DataMember()> Public Property LocationID() As String
         Get
             Return Me.locationIDField
         End Get
