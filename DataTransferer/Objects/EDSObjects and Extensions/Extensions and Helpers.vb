@@ -216,17 +216,23 @@ Public Module Extensions
         ''DHS 6/29/2023
         ''Prevent Saving Guyed Tower Results because they currently break the query.
         ''Needs to be removed after Peter updates XMLOutput
-        If alist.FirstOrDefault?.ParentStructure?.tnx?.geometry Is Nothing OrElse
-            alist.FirstOrDefault.ParentStructure.tnx.geometry.TowerType.Contains("Guyed") Then
-            Return EDSResultQuery
-        End If
+        'If alist.FirstOrDefault?.ParentStructure?.tnx?.geometry Is Nothing OrElse
+        '    alist.FirstOrDefault.ParentStructure.tnx.geometry.TowerType.Contains("Guyed") Then
+        '    Return EDSResultQuery
+        'End If
 
         For Each result In alist
-            If result.foreign_key Is Nothing Then
-                EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
-            Else
-                EDSResultQuery += result.Insert(result.foreign_key) & vbCrLf
-            End If
+            'debugging top guy pull-off NaN values 7/6/23 - DHS
+            'If result.result_lkup.Contains("top guy pull-off") Then
+            '    Debug.WriteLine("top guy pull-off")
+            'End If
+
+            If result.rating Is Nothing Then Continue For
+
+            If Not result.foreign_key.HasValue Then result.foreign_key = ResultsParentID
+
+            EDSResultQuery += result.Insert(result.foreign_key) & vbCrLf
+
         Next
 
         Return EDSResultQuery
