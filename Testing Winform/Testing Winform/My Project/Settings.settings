@@ -74,5 +74,8 @@
     <Setting Name="wtoken" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="dbSelection" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DEV</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

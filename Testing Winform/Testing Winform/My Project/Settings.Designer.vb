@@ -337,6 +337,18 @@ Partial Friend NotInheritable Class Settings
             Me("wtoken") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("DEV")>  _
+    Public Property dbSelection() As String
+        Get
+            Return CType(Me("dbSelection"),String)
+        End Get
+        Set
+            Me("dbSelection") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
