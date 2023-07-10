@@ -1155,7 +1155,7 @@ StopLookingAtMeSwan:
 
 #Region "My Largely Little Helpers"
 
-#Region "Checkin/Checkout"
+#Region "Properties"
         Public Sub PullIt(ByVal checkout As Boolean, Optional ByVal checkingOutEverything As Boolean = False)
             ForceSyncing(SyncDirection.RtoLocal, True)
 
@@ -1815,7 +1815,7 @@ StopLookingAtMeSwan:
                 If Not IIResults.Item1 Then
                     success = False
                 End If
-                Logactivity(IIResults.Item2)
+                LogActivity(IIResults.Item2)
             Next
 
             Return success
