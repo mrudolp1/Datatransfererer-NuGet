@@ -3544,7 +3544,7 @@ Partial Public Class PlateResults
     Private _plate_details_id As Integer?
     Private _local_plate_id As Integer?
     'Private _work_order_seq_num As Double? 'not provided in Excel
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _result_lkup As String
     'Private _modified_person_id As Integer? 'not provided in Excel
     'Private _process_stage As String 'not provided in Excel
@@ -3578,7 +3578,7 @@ Partial Public Class PlateResults
     '    End Set
     'End Property
     <Category("Plate Results"), Description(""), DisplayName("Rating")>
-    <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -3641,7 +3641,7 @@ Partial Public Class PlateResults
             Me.local_plate_id = DBtoNullableInt(dr.Item("local_plate_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDbl(dr.Item("rating"))
+        Me.rating = DBtoNullableDec(dr.Item("rating"))
         Me.result_lkup = DBtoStr(dr.Item("result_lkup"))
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -3749,7 +3749,7 @@ Partial Public Class BoltResults
     Private _local_connection_id As Integer?
     Private _local_bolt_group_id As Integer?
     'Private _work_order_seq_num As Double? 'not provided in Excel
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _result_lkup As String
     'Private _modified_person_id As Integer? 'not provided in Excel
     'Private _process_stage As String 'not provided in Excel
@@ -3792,7 +3792,7 @@ Partial Public Class BoltResults
     '    End Set
     'End Property
     <Category("Bolt Results"), Description(""), DisplayName("Rating")>
-    <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -3856,7 +3856,7 @@ Partial Public Class BoltResults
             Me.local_bolt_group_id = DBtoNullableInt(dr.Item("local_bolt_group_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDbl(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -4587,7 +4587,7 @@ Partial Public Class StiffenerResults
     Private _local_id As Integer?
     Private _local_stiffener_group_id As Integer?
     'Private _work_order_seq_num As Double? 'not provided in Excel
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _result_lkup As String
     'Private _modified_person_id As Integer? 'not provided in Excel
     'Private _process_stage As String 'not provided in Excel
@@ -4630,7 +4630,7 @@ Partial Public Class StiffenerResults
     '    End Set
     'End Property
     <Category("Stiffener Results"), Description(""), DisplayName("Rating")>
-    <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -4694,7 +4694,7 @@ Partial Public Class StiffenerResults
             Me.local_stiffener_group_id = DBtoNullableInt(dr.Item("local_bolt_group_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDbl(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -5393,7 +5393,7 @@ Partial Public Class ConnectionResults
     Private _local_connection_id As Integer?
     'Private _local_bolt_group_id As Integer?
     'Private _work_order_seq_num As Double? 'not provided in Excel
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _result_lkup As String
     'Private _modified_person_id As Integer? 'not provided in Excel
     'Private _process_stage As String 'not provided in Excel
@@ -5436,7 +5436,7 @@ Partial Public Class ConnectionResults
     '    End Set
     'End Property
     <Category("Connection Results"), Description(""), DisplayName("Rating")>
-    <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -5499,7 +5499,7 @@ Partial Public Class ConnectionResults
             Me.local_connection_id = DBtoNullableInt(dr.Item("local_connection_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDbl(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))

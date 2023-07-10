@@ -3638,7 +3638,7 @@ Partial Public Class PoleReinfResults
     Private _group_id As Integer?
     Private _local_group_id As Integer?
     Private _result_lkup As String
-    Private _rating As Double?
+    Private _rating As Decimal?
     'Private _modified_person_id As Integer?
     'Private _process_stage As String
     'Private _modified_date As DateTime?
@@ -3717,7 +3717,7 @@ Partial Public Class PoleReinfResults
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Rating")>
-    <DataMember()> Public Property rating() As Double?
+    <DataMember()> Public Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -3775,7 +3775,7 @@ Partial Public Class PoleReinfResults
         Me.group_id = DBtoNullableInt(dr.Item("group_id"))
         Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         Me.result_lkup = DBtoStr(dr.Item("result_lkup"))
-        Me.rating = DBtoNullableDbl(dr.Item("rating"))
+        Me.rating = DBtoNullableDec(dr.Item("rating"))
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
         'Me.modified_date = DBtoStr(dr.Item("modified_date"))
