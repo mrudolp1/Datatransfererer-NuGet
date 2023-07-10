@@ -410,7 +410,9 @@ Partial Public Class EDSStructure
             structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
         End If
 
-        structureQuery += "BEGIN TRANSACTION" & vbCrLf
+        Dim transactionName As String = Me.bus_unit.NullableToString & "_" & Me.structure_id & "_" & Me.work_order_seq_num.NullableToString & "_" & Me.process_stage
+        structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
+        structureQuery.NewLine("BEGIN TRY")
         structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx) & vbCrLf
         structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads) & vbCrLf
         structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases) & vbCrLf
@@ -421,23 +423,39 @@ Partial Public Class EDSStructure
         structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles) & vbCrLf
         structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements) & vbCrLf
         structureQuery += Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics)
-
-        structureQuery += vbCrLf & "COMMIT"
+        structureQuery.NewLine("COMMIT TRANSACTION " & transactionName)
+        structureQuery.NewLine("SELECT '" & Me.bus_unit.NullableToString & "' bus_unit, '" & Me.structure_id & "' structure_id, '" & Me.work_order_seq_num.NullableToString & "' work_order_seq_num, '" & "Success" & "' result")
+        structureQuery.NewLine("END TRY")
+        structureQuery.NewLine("BEGIN CATCH")
+        structureQuery.NewLine("ROLLBACK TRANSACTION " & transactionName)
+        structureQuery.NewLine("EXECUTE dbo.usp_GetErrorInfo '" & Me.bus_unit.NullableToString & "', '" & Me.structure_id & "', '" & Me.work_order_seq_num.NullableToString & "'")
+        structureQuery.NewLine("END CATCH")
 
         Return structureQuery
 
     End Function
 
-    Public Sub SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing)
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As DataTable
 
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
         If EDSMe Is Nothing Then EDSMe = New EDSStructure(Me.bus_unit, Me.structure_id, Me.work_order_seq_num, databaseID, ActiveDatabase)
 
-        sqlSender(SavetoEDSQuery, ActiveDatabase, databaseID, 0.ToString)
+        Dim resDS As New DataSet
+        Dim myQuery As String = SavetoEDSQuery()
 
-    End Sub
+        If copyQueryToClipboard Then
+            My.Computer.Clipboard.SetText(myQuery)
+        End If
+
+        sqlLoader(myQuery, resDS, ActiveDatabase, databaseID, 4051.ToString)
+
+        If resDS.Tables.Count > 0 Then
+            'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
+            Return resDS.Tables(0)
+        End If
+    End Function
 #End Region
 
 #Region "Files"

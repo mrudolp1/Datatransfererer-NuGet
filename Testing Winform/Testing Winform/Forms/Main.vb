@@ -492,6 +492,7 @@ Namespace UnitTesting
         Private Sub SetStructureToPropertyGrid(ByVal str As EDSStructure, ByVal pgrid As PropertyGrid)
             'Allow the user to view the opbjects created in the strlocal object
             pgrid.SelectedObject = str
+            LogActivity("DEBUG | " & str.EDSObjectFullName & " Set to " & pgrid.Name)
         End Sub
 
         'Create and compare CSV Results files
@@ -918,8 +919,40 @@ Namespace UnitTesting
 
                     CreateStructure(mylocation, False)
 
-                    strcLocal.SavetoEDS(EDSnewId, dbToSend)
-                    LogActivity("INFO | EDS results attempted to save.")
+                    Dim resDT As New DataTable
+                    Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
+                    resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True)
+                    resDT.ToCSV(mylocation & "\EDS Result" & nowString & ".csv")
+                    LogActivity("INFO | EDS Response Saved: " & mylocation & "\EDS Result" & nowString & ".csv")
+
+                    If resDT.Rows(0).Item("Result").ToString = "Error" Then
+                        Dim errNum As String
+                        Dim errLine As String
+                        Dim errMessage As String
+                        Dim errSev As String
+                        Dim errState As String
+                        Dim dr As DataRow = resDT.Rows(0)
+
+                        errNum = dr.Item("ErrorNumber").ToString
+                        errLine = dr.Item("ErrorLine").ToString
+                        errMessage = dr.Item("ErrorMessage").ToString
+                        errSev = dr.Item("ErrorSeverity").ToString
+                        errState = dr.Item("ErrorState").ToString
+
+                        LogActivity("ERROR | Saving EDS Query failed")
+                        LogActivity("DEBUG | Error Number: " & errNum)
+                        LogActivity("DEBUG | Error Line: " & errLine)
+                        LogActivity("DEBUG | Error Message: " & errMessage)
+                        LogActivity("DEBUG | Error Severity: " & errSev)
+                        LogActivity("DEBUG | Error State: " & errState)
+                    Else
+                        LogActivity("INFO | EDS data saved successfully")
+                    End If
+
+                    Dim myQuery As String = My.Computer.Clipboard.GetText()
+                    Dim queryName As String = "\EDS Query " & nowString
+                    LogActivity("INFO | Query saved to " & mylocation & queryName)
+
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
                 Case "step10"
                     LogActivity("INFO | Loading from selected database: " & My.Settings.dbSelection)
@@ -1353,7 +1386,7 @@ StopLookingAtMeSwan:
         End Property
 
         Public unitTestCases As New List(Of TestCase)
-        Public rFolder As String = "R:\Development\SAPI Testing\Unit Testing"
+        Public rFolder As String = "\\netapp4\cad\Development\SAPI Testing\Unit Testing"
         Public lFolder As String
         Public thr1 As Thread
         Public DirectorySync As RoboCommand
@@ -2525,7 +2558,7 @@ StopLookingAtMeSwan:
         'CSV is saved here: R:\Development\SAPI Testing
         Public Sub LoadTestCases(ByRef lst As List(Of TestCase))
             'Read csv saved in R drive location
-            Using csvReader As New Microsoft.VisualBasic.FileIO.TextFieldParser("R:\Development\SAPI Testing\Unit Test Cases.csv")
+            Using csvReader As New Microsoft.VisualBasic.FileIO.TextFieldParser("\\netapp4\cad\Development\SAPI Testing\Unit Test Cases.csv")
                 csvReader.TextFieldType = FileIO.FieldType.Delimited
                 csvReader.SetDelimiters(",")
                 Dim csvValue As String()
