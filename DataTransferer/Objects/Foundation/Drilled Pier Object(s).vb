@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
+
 <DataContractAttribute()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 <KnownType(GetType(DrilledPierFoundation))>
