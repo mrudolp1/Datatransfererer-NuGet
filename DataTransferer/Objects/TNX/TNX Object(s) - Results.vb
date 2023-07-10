@@ -7,18 +7,18 @@ Public Class tnxResult
     Inherits EDSResult
 
     <Category("Loads"), Description(""), DisplayName("Design Load")>
-    <DataMember()> Public Property DesignLoad As Double?
+    <DataMember()> Public Property DesignLoad As Decimal?
     <Category("Loads"), Description(""), DisplayName("Applied Load")>
-    <DataMember()> Public Property AppliedLoad As Double?
+    <DataMember()> Public Property AppliedLoad As Decimal?
     <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
-    <DataMember()> Public Property LoadRatioLimit As Double?
+    <DataMember()> Public Property LoadRatioLimit As Decimal?
     '<Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
     ' <DataMember()> Public Property RequiredSafteyFactor As Double?
     '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
     ' <DataMember()> Public Property UseSFInsteadofRatio As Boolean = False
 
     <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
-    Public Overrides Property Rating As Double?
+    Public Overrides Property Rating As Decimal?
         Get
             Dim designCode As String
             Dim useAnnexS As Boolean
@@ -37,7 +37,7 @@ Public Class tnxResult
                 Return Me.Ratio
             End If
         End Get
-        Set(value As Double?)
+        Set(value As Decimal?)
             'Do Nothing
         End Set
     End Property
