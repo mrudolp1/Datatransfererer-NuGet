@@ -98,6 +98,7 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.toggleDevUat = New DevExpress.XtraEditors.ToggleSwitch()
             Me.btnProcess24 = New DevExpress.XtraEditors.SimpleButton()
             Me.testGetWOs = New DevExpress.XtraEditors.SimpleButton()
             Me.CheckEditAutoReport = New DevExpress.XtraEditors.CheckEdit()
@@ -224,6 +225,7 @@
             CType(Me.GridView1, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.PanelControl1.SuspendLayout()
+            CType(Me.toggleDevUat.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.CheckEditAutoReport.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.CheckEditExcelVisibleII.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
             CType(Me.CheckEditExcelVisible.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1031,6 +1033,7 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.toggleDevUat)
             Me.PanelControl1.Controls.Add(Me.btnProcess24)
             Me.PanelControl1.Controls.Add(Me.testGetWOs)
             Me.PanelControl1.Controls.Add(Me.CheckEditAutoReport)
@@ -1096,6 +1099,16 @@
             Me.PanelControl1.Name = "PanelControl1"
             Me.PanelControl1.Size = New System.Drawing.Size(1953, 126)
             Me.PanelControl1.TabIndex = 16
+            '
+            'toggleDevUat
+            '
+            Me.toggleDevUat.Enabled = False
+            Me.toggleDevUat.Location = New System.Drawing.Point(1664, 71)
+            Me.toggleDevUat.Name = "toggleDevUat"
+            Me.toggleDevUat.Properties.OffText = "DEV"
+            Me.toggleDevUat.Properties.OnText = "UAT"
+            Me.toggleDevUat.Size = New System.Drawing.Size(95, 18)
+            Me.toggleDevUat.TabIndex = 82
             '
             'btnProcess24
             '
@@ -1829,6 +1842,7 @@
             CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).EndInit()
             Me.PanelControl1.ResumeLayout(False)
             Me.PanelControl1.PerformLayout()
+            CType(Me.toggleDevUat.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.CheckEditAutoReport.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.CheckEditExcelVisibleII.Properties, System.ComponentModel.ISupportInitialize).EndInit()
             CType(Me.CheckEditExcelVisible.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1980,6 +1994,7 @@
         Friend WithEvents LabelControl12 As DevExpress.XtraEditors.LabelControl
         Friend WithEvents testGetWOs As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess24 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents toggleDevUat As DevExpress.XtraEditors.ToggleSwitch
 #End Region
 
     End Class

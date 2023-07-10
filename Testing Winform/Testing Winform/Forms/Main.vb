@@ -85,6 +85,8 @@ Namespace UnitTesting
         Public EDSuserProduction As String = "366:207:330:309:207:204:249"
         Public EDSuserPwProduction As String = "147:267:297:216:168:297:270:357:234:282:225:156:114:216:147:321:111:144:168:156:168:333:222:258:366:171:126:342:252:147"
 
+        Public EDSdbUserAcceptance As String = "Server=DEVCCICSQL3.US.CROWNCASTLE.COM,58061;Database=EngEDSUat;Integrated Security=SSPI"
+
         Public EDSdbActive As String
         Public EDSuserActive As String
         Public EDSuserPwActive As String
@@ -137,11 +139,18 @@ Namespace UnitTesting
                 chkWorkLocal.Checked = True
                 My.Settings.workLocal = True
                 My.Settings.Save()
+
+                If My.Settings.dbSelection = "DEV" Then
+                    toggleDevUat.IsOn = False
+                Else
+                    toggleDevUat.IsOn = True
+                End If
             Else
                 txtFndBU.Text = "800000"
                 txtFndStrc.Text = "A"
                 txtFndWO.Text = "1234567"
                 txtDirectory.Text = "C:\SAPI Work Area\Test"
+                toggleDevUat.IsOn = True
             End If
 
             If unitTestCases.Count = 0 Then
@@ -894,13 +903,39 @@ Namespace UnitTesting
                         Exit Select
                     End If
 
+                    LogActivity("INFO | Saving to selected database: " & My.Settings.dbSelection)
+                    Dim dbToSend As String
+
+                    If My.Settings.serverActive = "dbDevelopment" Then
+                        If My.Settings.dbSelection = "UAT" Then
+                            dbToSend = EDSdbUserAcceptance
+                        Else
+                            dbToSend = EDSdbDevelopment
+                        End If
+                    Else
+                        dbToSend = EDSdbProduction
+                    End If
+
                     CreateStructure(mylocation, False)
 
-                    strcLocal.SavetoEDS(EDSnewId, EDSdbActive)
+                    strcLocal.SavetoEDS(EDSnewId, dbToSend)
                     LogActivity("INFO | EDS results attempted to save.")
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
                 Case "step10"
+                    LogActivity("INFO | Loading from selected database: " & My.Settings.dbSelection)
                     Dim workingdirectory As String
+                    Dim dbToSend As String
+
+                    If My.Settings.serverActive = "dbDevelopment" Then
+                        If My.Settings.dbSelection = "UAT" Then
+                            dbToSend = EDSdbUserAcceptance
+                        Else
+                            dbToSend = EDSdbDevelopment
+                        End If
+                    Else
+                        dbToSend = EDSdbProduction
+                    End If
+
 
                     'Check if eds folder exists
                     Dim edsExists As Boolean = Directory.Exists(EDSFolder)
@@ -1197,6 +1232,18 @@ StopLookingAtMeSwan:
             gcViewer.DataSource = ds.Tables("MyWOs")
             gcViewer.RefreshDataSource()
             GridView1.BestFitColumns(True)
+        End Sub
+
+        Private Sub toggleDevUat_Toggled(sender As Object, e As EventArgs) Handles toggleDevUat.Toggled
+            If isopening Then Exit Sub
+
+            If toggleDevUat.IsOn Then
+                My.Settings.dbSelection = "UAT"
+            Else
+                My.Settings.dbSelection = "DEV"
+            End If
+
+            My.Settings.Save()
         End Sub
 #End Region
 
@@ -1529,6 +1576,13 @@ StopLookingAtMeSwan:
             CheckEditExcelVisible.Enabled = Not CheckEditExcelVisible.Enabled
             CheckEditExcelVisibleII.Enabled = Not CheckEditExcelVisibleII.Enabled
             CheckEditAutoReport.Enabled = Not CheckEditAutoReport.Enabled
+            If Environment.UserName.ToLower = "imiller" Or
+               Environment.UserName.ToLower = "stanley" Or
+               Environment.UserName.ToLower = "dsmilowitz" Or
+               Environment.UserName.ToLower = "chall" Or
+               Environment.UserName.ToLower = "mrudolph" Then
+                toggleDevUat.Enabled = Not toggleDevUat.Enabled
+            End If
         End Sub
 #End Region
 
@@ -2608,6 +2662,8 @@ StopLookingAtMeSwan:
 
             Return returner
         End Function
+
+
 
 
 
