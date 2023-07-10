@@ -7,11 +7,11 @@ Public Class tnxResult
     Inherits EDSResult
 
     <Category("Loads"), Description(""), DisplayName("Design Load")>
-    <DataMember()> Public Property DesignLoad As Decimal?
+    <DataMember()> Public Property DesignLoad As Double?
     <Category("Loads"), Description(""), DisplayName("Applied Load")>
-    <DataMember()> Public Property AppliedLoad As Decimal?
+    <DataMember()> Public Property AppliedLoad As Double?
     <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
-    <DataMember()> Public Property LoadRatioLimit As Decimal?
+    <DataMember()> Public Property LoadRatioLimit As Double?
     '<Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
     ' <DataMember()> Public Property RequiredSafteyFactor As Double?
     '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
@@ -54,7 +54,7 @@ Public Class tnxResult
     ''' <param name="designLoad"></param>
     ''' <param name="appliedLoad"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, ByVal designLoad As Decimal?, ByVal appliedLoad As Decimal?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
@@ -72,7 +72,7 @@ Public Class tnxResult
     ''' Ratio of the applied load to the design load.
     ''' </summary>
     ''' <returns></returns>
-    Public Function Ratio() As Double?
+    Public Function Ratio() As Decimal?
         If ValidResult(False) Then
             Return Math.Abs(AppliedLoad.Value / DesignLoad.Value)
         Else
@@ -84,7 +84,7 @@ Public Class tnxResult
     ''' Ratio of the applied load to the design load and normalized with the load ratio limit (i.e. 105%).
     ''' </summary>
     ''' <returns></returns>
-    Public Function NormalizedRatio() As Double?
+    Public Function NormalizedRatio() As Decimal?
         If ValidResult() Then
             Return Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value
         Else
