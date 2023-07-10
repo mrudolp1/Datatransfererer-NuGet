@@ -54,7 +54,7 @@ Public Class tnxResult
     ''' <param name="designLoad"></param>
     ''' <param name="appliedLoad"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, ByVal designLoad As Decimal?, ByVal appliedLoad As Decimal?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)
