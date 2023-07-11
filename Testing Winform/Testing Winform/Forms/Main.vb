@@ -2,6 +2,11 @@
 Imports System.IO
 Imports RoboSharp
 Imports System.Threading
+<<<<<<< HEAD
+=======
+Imports Microsoft.Office.Interop
+Imports System.Runtime.InteropServices
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 Imports DevExpress.XtraEditors
 Imports SAPIReportGenerator
 Imports SAPI_Report_Generator_Editor
@@ -24,6 +29,7 @@ Namespace UnitTesting
 
         'Import to EDS
         Public ListOfExcelFiles As New List(Of String) From {"C:\Users\" & Environment.UserName & "\Desktop\C Drive Testing\Drilled Pier\EDS\Test Sites\809534 - MP\Drilled Pier Foundation (5.1.0.3)_2.xlsm"}
+<<<<<<< HEAD
 
         'Unit Testing
         Public unitTestCases As New List(Of TestCase)
@@ -111,14 +117,20 @@ Namespace UnitTesting
                 Return If(IsNumeric(testIteration.Text), testIteration.Text, Nothing)
             End Get
         End Property
-#End Region
 
+#End Region
+=======
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 #Region "Form Handlers"
         Public Sub New()
             InitializeComponent()
         End Sub
         Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+<<<<<<< HEAD
             isOpening = True
+=======
+            isopening = True
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 
             StartEverything()
 
@@ -147,6 +159,7 @@ Namespace UnitTesting
             txtFndStrc.Text = My.Settings.myStrID
             txtFndWO.Text = My.Settings.myWO
             txtDirectory.Text = My.Settings.myWorkArea
+<<<<<<< HEAD
             mainLogViewer.viewDebug = My.Settings.booDebug
             mainLogViewer.viewInfo = My.Settings.booDebug
             mainLogViewer.viewWarning = My.Settings.booDebug
@@ -154,6 +167,8 @@ Namespace UnitTesting
             mainLogViewer.viewEvent = My.Settings.booDebug
             mainLogViewer.AdditionalColumnName = "Iteration"
             mainLogViewer.AdditionalColumnDefault = "1"
+=======
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 
             If My.Settings.localWorkArea = String.Empty Then
                 My.Settings.localWorkArea = "C:\Users\" & Environment.UserName & "\source"
@@ -170,7 +185,11 @@ Namespace UnitTesting
 
             'Kill all the robocopies active (This can't be used along side the dashboard)
             KillRoboCops()
+<<<<<<< HEAD
             isOpening = False
+=======
+            isopening = False
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 
             'Isopening is set to false here because All controls should do all actions based on the next if statement
             SetTestIDLabels()
@@ -203,6 +222,7 @@ Namespace UnitTesting
             Catch ex As Exception
             End Try
 
+<<<<<<< HEAD
             My.Settings.booDebug = mainLogViewer.viewDebug
             My.Settings.booDebug = mainLogViewer.viewInfo
             My.Settings.booDebug = mainLogViewer.viewWarning
@@ -210,6 +230,8 @@ Namespace UnitTesting
             My.Settings.booDebug = mainLogViewer.viewEvent
         End Sub
 
+=======
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 #End Region
 
 #Region "Old"
@@ -317,6 +339,11 @@ Namespace UnitTesting
                 Next
             Next
         End Sub
+
+
+<<<<<<< HEAD
+=======
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 #Region "Structure Tab Textbox Changes"
 
         Private Sub txtFndBU_TextChanged(sender As Object, e As EventArgs) Handles txtFndBU.TextChanged
@@ -396,6 +423,8 @@ Namespace UnitTesting
 
 #End Region
 #End Region
+
+#Region "Unit Testing - Control handlers only"
 
 #Region "Unit Testing - Control handlers only"
 
@@ -1106,7 +1135,11 @@ StopLookingAtMeSwan:
             LoadMyWOS(MySite, gcViewer, GridView1)
         End Sub
 
+
+<<<<<<< HEAD
 #Region "Automated Testing"
+=======
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
         Private Sub btnAuto_Click(sender As Object, e As EventArgs) Handles btnAuto.Click
             ButtonclickToggle(Me.Cursor)
             forceAcrchiving = True
@@ -1147,10 +1180,40 @@ StopLookingAtMeSwan:
             SetTestIDLabels()
             ButtonclickToggle(Me.Cursor)
         End Sub
-#End Region
 
 #End Region
 
+<<<<<<< HEAD
+#End Region
+=======
+        Private Sub testGetWOs_click(sender As Object, e As EventArgs) Handles testGetWOs.Click
+            OracleLoader("SELECT wo_seqnum, eng_app_id, crrnt_rvsn_num, bus_unit, structure_id
+                            FROM work_order_reporting_mv@ISITPRD.CROWNCASTLE.COM
+                            WHERE bus_unit = '" & bus_unit.ToString & "' AND structure_id = '" & structure_id & "'
+                            AND item_type IN ('SA - Structural Analysis','SA - Structural Analysis w/o App','SDD - Structural Design Drawings') 
+                            ORDER BY wo_seqnum DESC",
+                         "MyWOs", 5000, "ords")
+            GridView1.Columns.Clear()
+            gcViewer.DataSource = Nothing
+            gcViewer.DataSource = ds.Tables("MyWOs")
+            gcViewer.RefreshDataSource()
+            GridView1.BestFitColumns(True)
+        End Sub
+
+        Private Sub toggleDevUat_Toggled(sender As Object, e As EventArgs) Handles toggleDevUat.Toggled
+            If isopening Then Exit Sub
+
+            If My.Settings.serverActive = "dbDevelopment" Then
+                If toggleDevUat.IsOn Then
+                    My.Settings.dbSelection = "UAT"
+                    EDSdbActive = EDSdbUserAcceptance
+                Else
+                    My.Settings.dbSelection = "DEV"
+                    EDSdbActive = EDSdbDevelopment
+                End If
+            Else
+            End If
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 #End Region
 
 #Region "My Largely Little Helpers"
@@ -1798,7 +1861,18 @@ StopLookingAtMeSwan:
 #End Region
 
 #Region "Other Methods"
+<<<<<<< HEAD
         Public Function ImportInputs(ByVal FileType As String, Optional ByVal excelvisible As Boolean = True) As Boolean
+=======
+        Private Sub SetStructureToPropertyGrid(ByVal str As EDSStructure, ByVal pgrid As PropertyGrid)
+            'Allow the user to view the opbjects created in the strlocal object
+            pgrid.SelectedObject = str
+            LogActivity("DEBUG | " & str.EDSObjectFullName & " Set to " & pgrid.Name)
+        End Sub
+
+        'A datatable of the reference files in the Reference SA Files folder. 
+        Public Function RefernceSADT() As DataTable
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
             Dim SAFiles As New DataTable
             Dim success As Boolean = True
 
@@ -1977,8 +2051,126 @@ StopLookingAtMeSwan:
                 Next
             End If
         End Sub
+<<<<<<< HEAD
 #End Region
 #End Region
 
     End Class
+=======
+
+        'Determines the file name for the new templates being saved.
+        'Increments file names if they arleady exist in the new directory.
+        Public Function GetNewFileName(ByVal newFolder As String, ByVal Optional file As FileInfo = Nothing, ByVal Optional fileName As String = Nothing) As String
+            Dim counter As Integer = 0
+            Dim filePath As String
+
+            If Not file Is Nothing Then
+                filePath = newFolder & "\" & file.Name
+            Else
+                filePath = newFolder & "\" & fileName
+            End If
+
+            While IO.File.Exists(filePath)
+                counter += 1
+                If file IsNot Nothing Then
+                    filePath = newFolder & "\" & file.Name.Split(".")(0) & "(" & counter.ToString() & ")." & file.Name.Split(".")(1)
+                Else
+                    filePath = newFolder & "\" & fileName.Split(".")(0) & "(" & counter.ToString() & ")." & fileName.Split(".")(1)
+                End If
+            End While
+
+            Return filePath
+        End Function
+
+        'Used to determine which template is being used
+        'This could have been set up as a class but ended up going too far and now we have tuples. Enjoy! :)
+        Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of Byte(), Byte(), String, String, String)
+            Dim returner As Tuple(Of Byte(), Byte(), String, String, String)
+            'Item 1 = current published versions
+            'Item 2 = new versions created for SAPI
+            'Item 3 = File name to be used with the bytes
+            'Item 4 = Worksheet with results
+            'Item 5 = Range for results 
+
+            If file.Name.ToLower.Contains("cciplate") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCIplate__4_1_2_,
+                CCI_Engineering_Templates.My.Resources.CCIplate,
+                "CCIplate.xlsm",
+                "Results Database",
+                "B1:BO64")
+            ElseIf file.Name.ToLower.Contains("ccipole") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCIpole__4_5_8_,
+                CCI_Engineering_Templates.My.Resources.CCIpole,
+                "CCIpole.xlsm",
+                "Results",
+                "AZ4:BT108")
+            ElseIf file.Name.ToLower.Contains("cciseismic") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.CCISeismic__3_3_9_,
+                CCI_Engineering_Templates.My.Resources.CCISeismic,
+                "CCISeismic.xlsm",
+                Nothing,
+                Nothing)
+            ElseIf file.Name.ToLower.Contains("drilled pier") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Drilled_Pier_Foundation__5_0_5_,
+                CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation,
+                "Drilled Pier Foundation.xlsm",
+                "Foundation Input",
+                "BD8:CF59|H10:L31")
+            ElseIf file.Name.ToLower.Contains("guyed anchor") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Guyed_Anchor_Block_Foundation__4_0_0_,
+                CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation,
+                "Guyed Anchor Block Foundation.xlsm",
+                "Input",
+                "M20:X70")
+            ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
+                CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool,
+                "Leg Reinforcement Tool.xlsm",
+                Nothing,
+                Nothing)
+            ElseIf file.Name.ToLower.Contains("pier and pad") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Pier_and_Pad_Foundation__4_1_1_,
+                CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation,
+                "Pier and Pad Foundation.xlsm",
+                "Input",
+                "F12:K25")
+            ElseIf file.Name.ToLower.Contains("pile") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.Pile_Foundation__2_2_1_,
+                CCI_Engineering_Templates.My.Resources.Pile_Foundation,
+                "Pile Foundation.xlsm",
+                "Input",
+                "G13:M31")
+            ElseIf file.Name.ToLower.Contains("unit base") Then
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Testing_Winform.My.Resources.SST_Unit_Base_Foundation__4_0_3_,
+                CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation,
+                "SST Unit Base Foundation.xlsm",
+                "Input",
+                "F12:K24")
+            Else
+                returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+                Nothing,
+                Nothing,
+                Nothing,
+                Nothing,
+                Nothing)
+            End If
+
+            Return returner
+        End Function
+
+#End Region
+
+#End Region
+    End Class
+
+>>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
 End Namespace

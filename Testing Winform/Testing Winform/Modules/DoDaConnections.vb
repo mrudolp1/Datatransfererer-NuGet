@@ -3,116 +3,116 @@ Imports System.Security.Principal
 Imports Oracle.ManagedDataAccess.Client
 
 Module DoDaSQL
-        Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
-        Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
-        Public tokenHandle As New IntPtr(0)
-        Public impersonatedUser As WindowsImpersonationContext
-        Public newId As WindowsIdentity
+    Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
+    Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
+    Public tokenHandle As New IntPtr(0)
+    Public impersonatedUser As WindowsImpersonationContext
+    Public newId As WindowsIdentity
 
-        '<DebuggerStepThrough()>
-        Public Function sqlLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer) As Boolean
-            dtClearer(sqlSrc)
-            'Dim newId As New WindowsIdentity(tokenHandle)
-            Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
-                sqlCon = New SqlConnection(EDSdbActive)
-                sqlCon.Open()
+    '<DebuggerStepThrough()>
+    Public Function sqlLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer) As Boolean
+        dtClearer(sqlSrc)
+        'Dim newId As New WindowsIdentity(tokenHandle)
+        Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
+            sqlCon = New SqlConnection(EDSdbActive)
+            sqlCon.Open()
 
-                Try
-                    da = New SqlDataAdapter(sqlStr, sqlCon)
-                    da.Fill(ds, sqlSrc)
-                    dt = ds.Tables(sqlSrc)
-                Catch ex As Exception
-                    sqlCon.Close()
-                    Console.WriteLine(sqlStr)
-                    sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
-                    Return False
-                End Try
-
+            Try
+                da = New SqlDataAdapter(sqlStr, sqlCon)
+                da.Fill(ds, sqlSrc)
+                dt = ds.Tables(sqlSrc)
+            Catch ex As Exception
                 sqlCon.Close()
-            End Using
+                Console.WriteLine(sqlStr)
+                sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
+                Return False
+            End Try
 
-            Return True
-        End Function
+            sqlCon.Close()
+        End Using
 
-        '<DebuggerStepThrough()>
-        Public Function sqlSender(ByVal cmd As String, ByVal erNo As Integer) As Boolean
-            Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
-                sqlCon = New SqlConnection(EDSdbActive)
-                Dim sqlCmd = New SqlCommand(cmd, sqlCon)
-                sqlCon.Open()
+        Return True
+    End Function
 
-                Try
-                    sqlCmd.ExecuteNonQuery()
-                Catch ex As Exception
-                    sqlCon.Close()
-                    Console.WriteLine(cmd)
-                    sendToast("Error saving data:" & vbCrLf & ex.Message, "Error " & erNo)
-                    Return False
-                End Try
+    '<DebuggerStepThrough()>
+    Public Function sqlSender(ByVal cmd As String, ByVal erNo As Integer) As Boolean
+        Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
+            sqlCon = New SqlConnection(EDSdbActive)
+            Dim sqlCmd = New SqlCommand(cmd, sqlCon)
+            sqlCon.Open()
 
+            Try
+                sqlCmd.ExecuteNonQuery()
+            Catch ex As Exception
                 sqlCon.Close()
-            End Using
+                Console.WriteLine(cmd)
+                sendToast("Error saving data:" & vbCrLf & ex.Message, "Error " & erNo)
+                Return False
+            End Try
 
-            Return True
-        End Function
+            sqlCon.Close()
+        End Using
 
-    End Module
+        Return True
+    End Function
 
-    Module DoDaORACLE
+End Module
 
-        Private Const ordsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = ordsprd_batch.crowncastle.com)    )  )"
-        Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isitprd_utl.crowncastle.com)      (SERVER = DEDICATED)    )  )"
-        Private Const odsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = odsprd_app.crowncastle.com)      (SERVER = DEDICATED)    )  )"
-        'Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = uat-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isituat_batch.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+Module DoDaORACLE
 
-        Private Const ntoken = "270:207:234:213:204:207:258"
-        Private Const wtoken = "366:264:339:216:357:159:192:297:171:216"
+    Private Const ordsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = ordsprd_batch.crowncastle.com)    )  )"
+    Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isitprd_utl.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    Private Const odsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = odsprd_app.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    'Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = uat-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isituat_batch.crowncastle.com)      (SERVER = DEDICATED)    )  )"
 
-        Public Function OracleLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer, ByVal db As String) As Boolean
+    Private Const ntoken = "270:207:234:213:204:207:258"
+    Private Const wtoken = "366:264:339:216:357:159:192:297:171:216"
 
-            Dim oraDatasource As String
+    Public Function OracleLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer, ByVal db As String) As Boolean
 
-            Select Case db
-                Case "isit"
-                    oraDatasource = isitDataSource
-                Case "ods"
-                    oraDatasource = odsDataSource
-                Case Else
-                    'ORDS is the catch-all because it has links to the other DBs
-                    oraDatasource = ordsDataSource
-            End Select
+        Dim oraDatasource As String
 
-            dtClearer(sqlSrc)
+        Select Case db
+            Case "isit"
+                oraDatasource = isitDataSource
+            Case "ods"
+                oraDatasource = odsDataSource
+            Case Else
+                'ORDS is the catch-all because it has links to the other DBs
+                oraDatasource = ordsDataSource
+        End Select
 
-            Dim sb As OracleConnectionStringBuilder = New OracleConnectionStringBuilder()
+        dtClearer(sqlSrc)
 
-            sb.DataSource = oraDatasource
-            sb.UserID = token(ntoken)
-            sb.Password = token(wtoken)
-            'By default pooling = true which means that oracle moves connections to an inactive pool when they are closed by the program.
-            'This makes reconnecting faster but was causing issues with the connection idle_time being exceeded.
-            sb.Pooling = False
+        Dim sb As OracleConnectionStringBuilder = New OracleConnectionStringBuilder()
 
-            Dim bOraSuccess As Boolean = True
+        sb.DataSource = oraDatasource
+        sb.UserID = token(ntoken)
+        sb.Password = token(wtoken)
+        'By default pooling = true which means that oracle moves connections to an inactive pool when they are closed by the program.
+        'This makes reconnecting faster but was causing issues with the connection idle_time being exceeded.
+        sb.Pooling = False
 
-            Using oraCon As New OracleConnection(sb.ToString())
-                Try
-                    Dim oDa = New OracleDataAdapter(sqlStr, oraCon)
-                    oDa.Fill(ds, sqlSrc)
-                    dt = ds.Tables(sqlSrc)
-                Catch ex As Exception
-                    bOraSuccess = False
-                    Console.WriteLine(sqlStr)
-                    sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
-                End Try
-                oraCon.Close()
-            End Using
+        Dim bOraSuccess As Boolean = True
 
-            Return bOraSuccess
+        Using oraCon As New OracleConnection(sb.ToString())
+            Try
+                Dim oDa = New OracleDataAdapter(sqlStr, oraCon)
+                oDa.Fill(ds, sqlSrc)
+                dt = ds.Tables(sqlSrc)
+            Catch ex As Exception
+                bOraSuccess = False
+                Console.WriteLine(sqlStr)
+                sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
+            End Try
+            oraCon.Close()
+        End Using
 
-        End Function
+        Return bOraSuccess
 
-    End Module
+    End Function
+
+End Module
 
 'Module DoDaHTTPs
 '    Dim cciConnection As Connection
@@ -175,3 +175,4 @@ Module DoDaSQL
 '        End Using
 '    End Function
 'End Module
+End Namespace
