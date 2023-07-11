@@ -1,5 +1,5 @@
 ﻿Imports System.Data.SqlClient
-Imports Krypton.Navigator
+Imports System.Security.Principal
 
 '------------------------------------------
 '------------------------------------------
@@ -20,21 +20,23 @@ Module IDoDeclare
     'Current Highest Custom Error codes (Starts with 4000)
     ''''''Custom --> 4011
 
-    Public betaVersion As String = "BETA 1.0.0.1"
+    Public testingVersion As String = "1.0.0.8"
+    Public betaVersion As String = "BETA " & testingVersion & "b"
+    Public currentTestingIteration As Integer = 13
 
     'Public Objects
     Public xlApp As Object
 
     'SQL Connection Data
     Public dbDevelopment As String = My.Settings.devSql
-    Public userDevelopment As String = My.Settings.ntokenDev
-    Public userPwDevelopment As String = My.Settings.wTokenDev
-    Public httpBaseLinkUAT As String = My.Settings.ccisitesHttpUrl.Replace("[ENVIRONMENT]", ".uat")
+    Public userDevelopment As String = My.Settings.ntokendev
+    Public userPwDevelopment As String = My.Settings.wtokendev
+    Public httpBaseLinkUAT As String = My.Settings.ccisiteshttpurl.Replace("[ENVIRONMENT]", ".uat")
 
-    Public dbProduction As String = My.Settings.prodSql
-    Public userProduction As String = My.Settings.nToken
-    Public userPwProduction As String = My.Settings.wToken
-    Public httpBaseLinkProduction As String = My.Settings.ccisitesHttpUrl.Replace("[ENVIRONMENT]", "")
+    Public dbProduction As String = My.Settings.prodsql
+    Public userProduction As String = My.Settings.ntoken
+    Public userPwProduction As String = My.Settings.wtoken
+    Public httpBaseLinkProduction As String = My.Settings.ccisiteshttpurl.Replace("[ENVIRONMENT]", "")
 
     Public dbActive As String
     Public userActive As String
@@ -77,6 +79,21 @@ Module IDoDeclare
     Public userPermission As Integer = 0
     Public userVer As String
 
+    'EDS Specific connection information
+    Public EDSdbDevelopment As String = "Server=DEVCCICSQL3.US.CROWNCASTLE.COM,58061;Database=EngEDSDev;Integrated Security=SSPI"
+    Public EDSuserDevelopment As String = "366:204:303:354:207:330:309:207:204:249"
+    Public EDSuserPwDevelopment As String = "210:264:258:99:297:303:213:258:246:318:354:111:345:168:300:318:261:219:303:267:246:300:108:165:144:192:324:153:246:300"
 
+    Public EDSdbProduction As String = "Server=CCICSQLCLST2.US.CROWNCASTLE.COM,64540;Database=EDSProd;Integrated Security=SSPI"
+    Public EDSuserProduction As String = "366:207:330:309:207:204:249"
+    Public EDSuserPwProduction As String = "147:267:297:216:168:297:270:357:234:282:225:156:114:216:147:321:111:144:168:156:168:333:222:258:366:171:126:342:252:147"
 
+    Public EDSdbUserAcceptance As String = "Server=DEVCCICSQL3.US.CROWNCASTLE.COM,58061;Database=EngEDSUat;Integrated Security=SSPI"
+
+    Public EDSdbActive As String
+    Public EDSuserActive As String
+    Public EDSuserPwActive As String
+    Public EDStokenHandle As New IntPtr(0)
+    Public EDSimpersonatedUser As WindowsImpersonationContext
+    Public EDSnewId As WindowsIdentity
 End Module

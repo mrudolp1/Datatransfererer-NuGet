@@ -8,7 +8,7 @@
     <ProjectGuid>{5C5EB194-61CA-4E96-BF71-DDCD9FF4886E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Testing_Winform</RootNamespace>
-    <AssemblyName>Testing Winform</AssemblyName>
+    <AssemblyName>SAPI Testing Winform %28EDS &amp; Excel%29</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OptionExplicit>On</OptionExplicit>
@@ -31,9 +31,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\netapp4\cad\Development\SAPI Testing\Deployment\Testing Winform\</InstallUrl>
     <UpdateUrl>\\netapp4\cad\Development\SAPI Testing\Deployment\Testing Winform\</UpdateUrl>
-    <MinimumRequiredVersion>1.0.0.0</MinimumRequiredVersion>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.1</MinimumRequiredVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -212,6 +212,7 @@
     <Compile Include="Modules\DoDaConnections.vb" />
     <Compile Include="Modules\DoDaThings.vb" />
     <Compile Include="Modules\IDoDeclare.vb" />
+    <Compile Include="Modules\StartUp.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
