@@ -719,7 +719,11 @@ Namespace UnitTesting
 
                     Dim myQuery As String = My.Computer.Clipboard.GetText()
                     Dim queryName As String = "\EDS Query " & nowString
-                    LogActivity("INFO | Query saved to " & mylocation & queryName)
+                    If myQuery.WriteAllToFile(myQuery) Then
+                        LogActivity("INFO | Query saved to " & mylocation & queryName)
+                    Else
+                        LogActivity("ERROR | Query could not be saved to folder.")
+                    End If
 
                     SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
                 Case "step10"
