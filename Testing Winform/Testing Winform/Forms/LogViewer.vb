@@ -1,8 +1,5 @@
 Imports System
 Imports DevExpress.XtraEditors
-Imports DevExpress.XtraDialogs.FileExplorerExtensions
-Imports DevExpress.Data
-Imports CCI_Engineering_Templates
 Imports DevExpress.Utils.Svg
 Imports DevExpress.Utils.Drawing
 Imports System.IO
