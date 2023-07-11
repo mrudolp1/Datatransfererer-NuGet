@@ -619,6 +619,43 @@ RetryFileOpenCheck:
     End Module
 
     Public Module UnitTestingExtensions
+
+        <Extension()>
+        Public Function WriteAllToFile(ByVal writer As String, ByVal filepath As String, Optional ByVal append As Boolean = False) As Boolean
+            Try
+                ' Use a StreamWriter to write to the file
+                ' The 'True' argument appends to the file if it already exists
+                Using sw As New StreamWriter(filepath, append)
+                    ' Write the log message to the file
+                    sw.Write(writer)
+                End Using
+
+                Return True
+            Catch ex As Exception
+                ' Handle the exception
+                Console.WriteLine("Error writing to log file: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
+        <Extension()>
+        Public Function WriteLineToFile(ByVal writer As String, ByVal filepath As String, Optional ByVal append As Boolean = False) As Boolean
+            Try
+                ' Use a StreamWriter to write to the file
+                ' The 'True' argument appends to the file if it already exists
+                Using sw As New StreamWriter(filepath, append)
+                    ' Write the log message to the file
+                    sw.WriteLine(writer)
+                End Using
+
+                Return True
+            Catch ex As Exception
+                ' Handle the exception
+                Console.WriteLine("Error writing to log file: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
         'Archive files in a directory to another directory.
         <Extension()>
         Public Sub ArchiveFiles(ByVal dirTo As DirectoryInfo, ByVal dirFrom As String)
