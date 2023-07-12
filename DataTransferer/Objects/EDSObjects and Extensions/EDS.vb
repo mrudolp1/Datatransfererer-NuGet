@@ -530,7 +530,7 @@ Partial Public MustInherit Class EDSExcelObject
 
 End Class
 
-<DataContract()>
+<DataContract(), KnownTypeAttribute(GetType(EDSResult))>
 Partial Public Class EDSResult
     Inherits EDSObject
 

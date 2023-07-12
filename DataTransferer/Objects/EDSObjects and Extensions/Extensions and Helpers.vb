@@ -27,9 +27,9 @@ Public Module Extensions
     End Function
 
     <Extension()>
-    Public Function NewLine(input As String, nextLine As String) As String
-        Return input & vbCrLf & nextLine
-    End Function
+    Public Sub NewLine(ByRef input As String, nextLine As String)
+        input = input & vbCrLf & nextLine
+    End Sub
 
     <Extension()>
     Public Function FormatDBValue(input As String) As String

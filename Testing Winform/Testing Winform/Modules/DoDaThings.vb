@@ -413,19 +413,24 @@ Namespace UnitTesting
         'serialize any object to a json
         '''Object being passed in
         '''location to save the file path
-        Public Function ObjectToJson(Of T)(ByVal obj As Object, ByVal jsonPath As String) As Boolean
+        Public Function ObjectToJson(Of T)(ByVal obj As Object, ByVal jsonPath As String) As Tuple(Of Boolean, String)
             Dim objJson As String
 
             Try
                 objJson = ToJsonString(Of T)(CType(obj, T))
+                If objJson.Contains("ERROR SERIALIZING") Then
+                    Return New Tuple(Of Boolean, String)(False, objJson)
+                    Exit Function
+                End If
+
                 Using sw As New StreamWriter(jsonPath)
                     sw.Write(objJson)
                     sw.Close()
                 End Using
-                Return True
+                Return New Tuple(Of Boolean, String)(True, "")
             Catch ex As Exception
                 objJson = Nothing
-                Return False
+                Return New Tuple(Of Boolean, String)(False, ex.Message)
             End Try
         End Function
 
@@ -951,10 +956,18 @@ RetryFileOpenCheck:
 
     'JSON Serializer
     Public Module JsonUtil
-        Public Function FromJsonString(Of T)(ByVal jsonString As String) As T
+        Public Function FromJsonString(Of T)(ByVal jsonString As String) As Tuple(Of T, String)
             Using aMemoryStream As MemoryStream = New MemoryStream(Encoding.UTF8.GetBytes(jsonString))
-                Dim ser = New DataContractJsonSerializer(GetType(T))
-                Return CType(ser.ReadObject(aMemoryStream), T)
+                Dim ser As DataContractJsonSerializer = New DataContractJsonSerializer(GetType(T))
+                Dim myObj As T
+                Dim resultTxt As String = "Success"
+                Try
+                    myObj = CType(ser.ReadObject(aMemoryStream), T)
+                Catch ex As Exception
+                    resultTxt = "ERROR DESERIALIZING " & ex.Message
+                End Try
+
+                Return New Tuple(Of T, String)(myObj, resultTxt)
             End Using
         End Function
 
@@ -975,7 +988,12 @@ RetryFileOpenCheck:
         Public Function ToJsonString(Of T)(ByVal valueObject As T) As String
             Using aMemoryStream As MemoryStream = New MemoryStream()
                 Dim serializer As DataContractJsonSerializer = New DataContractJsonSerializer(GetType(T))
-                serializer.WriteObject(aMemoryStream, valueObject)
+                Try
+                    serializer.WriteObject(aMemoryStream, valueObject)
+                Catch ex As Exception
+                    Return "ERROR SERIALIZING: " & ex.Message
+                End Try
+
                 Return Encoding.[Default].GetString(aMemoryStream.ToArray())
             End Using
         End Function

@@ -335,8 +335,10 @@ Namespace UnitTesting
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
                     btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click,
-                    btnProcess21.Click, btnProcess22.Click, btnProcess23.Click, btnProcess24.Click
-            If isopening Then Exit Sub
+                    btnProcess21.Click, btnProcess22.Click, btnProcess23.Click, btnProcess24.Click,
+                    btnProcess25.Click, btnProcess26.Click
+
+            If isOpening Then Exit Sub
 
             ButtonclickToggle(Me.Cursor, Cursors.WaitCursor)
             LogActivity("PROCESS | Start " & sender.tooltip.ToString)
@@ -601,7 +603,12 @@ Namespace UnitTesting
                     '''Uncommented 4-27-2023
                     strcLocal.Conduct(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
                     If DidConductProperly(strcLocal.LogPath) Then
-                        ObjectToJson(Of EDSStructure)(strcLocal, conductPath & "\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")
+                        Dim serialResult As Tuple(Of Boolean, String)
+                        serialResult = ObjectToJson(Of EDSStructure)(strcLocal, conductPath & "\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")
+                        If Not serialResult.Item1 Then
+                            LogActivity("ERROR | Structure not serialized.")
+                            LogActivity("DEBUG | " & serialResult.Item2.ToString)
+                        End If
                         LogActivity("INFO | Structure conducted successfully.")
                     Else
                         LogActivity("ERROR | Structure NOT conducted successfully.")
@@ -690,8 +697,12 @@ Namespace UnitTesting
                     Dim resDT As New DataTable
                     Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
                     resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True)
-                    resDT.ToCSV(mylocation & "\EDS Result" & nowString & ".csv")
-                    LogActivity("INFO | EDS Response Saved: " & mylocation & "\EDS Result" & nowString & ".csv")
+
+                    Dim SaveToDirectory As String = mylocation & "\EDS Save " & nowString
+                    Directory.CreateDirectory(SaveToDirectory)
+
+                    resDT.ToCSV(SaveToDirectory & "\EDS Result.csv")
+                    LogActivity("INFO | EDS Response Saved: " & SaveToDirectory & "\EDS Result.csv")
 
                     If resDT.Rows(0).Item("Result").ToString = "Error" Then
                         Dim errNum As String
@@ -718,9 +729,17 @@ Namespace UnitTesting
                     End If
 
                     Dim myQuery As String = My.Computer.Clipboard.GetText()
-                    Dim queryName As String = "\EDS Query " & nowString
-                    If myQuery.WriteAllToFile(myQuery) Then
-                        LogActivity("INFO | Query saved to " & mylocation & queryName)
+                    Dim queryName As String = SaveToDirectory & "\EDS Query.sql"
+                    Dim serialResult As Tuple(Of Boolean, String)
+
+                    serialResult = ObjectToJson(Of EDSStructure)(strcLocal, SaveToDirectory & "\" & "EDSStructure.ccistr")
+                    If Not serialResult.Item1 Then
+                        LogActivity("ERROR | Structure not serialized.")
+                        LogActivity("DEBUG | " & serialResult.Item2.ToString)
+                    End If
+
+                    If myQuery.WriteAllToFile(queryName) Then
+                        LogActivity("INFO | Query saved to " & queryName)
                     Else
                         LogActivity("ERROR | Query could not be saved to folder.")
                     End If
@@ -760,6 +779,34 @@ Namespace UnitTesting
                     strcLocal = New EDSStructure(bus_unit, structure_id, work_order_seq_num, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
                     strcLocal.SaveTools(EDSFolder)
                     LogActivity("INFO | All files have been created in the directory '\Iteration " & iteration & "\EDS'.")
+                Case "step12"
+                    Dim mylocation As String = DetermineFolder("Stop Serializing")
+                    If mylocation = "STOP" Then
+                        LogActivity("INFO | Serializing cancelled")
+                        Exit Select
+                    End If
+
+                    CreateStructure(mylocation, False)
+
+                    LogActivity("INFO | Serializing to: " & mylocation)
+                    Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
+
+                    Dim serialResult As Tuple(Of Boolean, String)
+
+                    serialResult = ObjectToJson(Of EDSStructure)(strcLocal, mylocation & "\" & "EDSStructure" & nowString & ".ccistr")
+                    If Not serialResult.Item1 Then
+                        LogActivity("ERROR | Structure not serialized.")
+                        LogActivity("DEBUG | " & serialResult.Item2.ToString)
+                    End If
+                Case "step13"
+                    Dim mylocation As String = DetermineFolder("Stop Creating Structure")
+                    If mylocation = "STOP" Then
+                        LogActivity("INFO | Structure creation cancelled")
+                        Exit Select
+                    End If
+
+                    CreateStructure(mylocation, False)
+                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
             End Select
 
 finishMe:
@@ -1052,6 +1099,9 @@ StopLookingAtMeSwan:
                 End If
             Else
             End If
+
+            CollectUserInfo()
+            SetVersion()
 
             My.Settings.Save()
         End Sub
@@ -1372,6 +1422,9 @@ StopLookingAtMeSwan:
             btnProcess22.Enabled = Not btnProcess22.Enabled
             btnProcess23.Enabled = Not btnProcess23.Enabled
             btnProcess24.Enabled = Not btnProcess24.Enabled
+            btnProcess25.Enabled = Not btnProcess25.Enabled
+            btnProcess26.Enabled = Not btnProcess26.Enabled
+
             testGetWOs.Enabled = Not testGetWOs.Enabled
 
             testWo.ReadOnly = Not testWo.ReadOnly
