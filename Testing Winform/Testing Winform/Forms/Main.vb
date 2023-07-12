@@ -1030,38 +1030,99 @@ Namespace UnitTesting
                     If mylocation = "STOP" Then
                         LogActivity("INFO | Serializing cancelled")
                         Exit Select
-                    End If
+                        Case "step12"
+                        Dim mylocation As String = DetermineFolder("Stop Serializing")
+                        If mylocation = "STOP" Then
+                            LogActivity("INFO | Serializing cancelled")
+                            Exit Select
+                        End If
 
-                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+                        CreateStructure(mylocation, False)
 
-                    LogActivity("INFO | Serializing to: " & mylocation)
-                    Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
+                        LogActivity("INFO | Serializing to: " & mylocation)
+                        Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
 
-                    Dim serialResult As Tuple(Of Boolean, String)
+                        Dim serialResult As Tuple(Of Boolean, String)
 
-                    serialResult = ObjectToJson(Of EDSStructure)(strcLocal, mylocation & "\" & "EDSStructure" & nowString & ".ccistr")
-                    If Not serialResult.Item1 Then
-                        LogActivity("ERROR | Structure not serialized.")
-                        LogActivity("DEBUG | " & serialResult.Item2.ToString)
-                    End If
+                        serialResult = ObjectToJson(Of EDSStructure)(strcLocal, mylocation & "\" & "EDSStructure" & nowString & ".ccistr")
+                        If Not serialResult.Item1 Then
+                            LogActivity("ERROR | Structure not serialized.")
+                            LogActivity("DEBUG | " & serialResult.Item2.ToString)
+                        End If
 #End Region
-#Region "Step 13 - Load Structure from Files"
-                Case "step13"
-                    Dim mylocation As String = DetermineFolder("Stop Creating Structure")
-                    If mylocation = "STOP" Then
-                        LogActivity("INFO | Structure creation cancelled")
-                        Exit Select
-                    End If
+#Region "Step Create Structure from files"
+                        Case "step13"
+                        Dim mylocation As String = DetermineFolder("Stop Creating Structure")
+                        If mylocation = "STOP" Then
+                            LogActivity("INFO | Structure creation cancelled")
+                            Exit Select
+                        End If
 
-                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
-                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
-#End Region
+                        CreateStructure(mylocation, False)
+                        SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+                        #End Region
             End Select
 
 finishMe:
             LogActivity("PROCESS | End " & sender.tooltip.ToString, True)
             ButtonclickToggle(Me.Cursor, Cursors.Default)
         End Sub
+
+        Private Function DetermineFolder(ByVal stopping As String) As String
+            Dim edsExists As Boolean = Directory.Exists(EDSFolder)
+            Dim whichFolder As New DialogResult
+            Dim maeOption As String = "YES = '\Maestro' Folder" & vbCrLf & vbCrLf
+            Dim manOption As String = "NO = '\Manual (SAPI)' Folder" & vbCrLf & vbCrLf
+            Dim cancelOption As String = "CANCEL = " & stopping & vbCrLf
+            Dim edsOption As String = "NO = '\EDS' Folder" & vbCrLf & vbCrLf
+            Dim filesPath As String
+
+            whichFolder = MsgBox("Which folder would you like use to create a report?" & vbCrLf & vbCrLf & IIf(edsExists, maeOption + edsOption + cancelOption, maeOption + manOption + cancelOption), vbYesNoCancel + vbInformation, "Which Folder?")
+
+            If whichFolder = vbCancel Then Return "STOP"
+
+            Select Case whichFolder
+                Case vbYes
+                    filesPath = MaeFolder
+                Case vbNo
+                    If edsExists Then
+                        filesPath = EDSFolder
+                        LogActivity("INFO | " & stopping.Replace("Stop ", "") & ": " & filesPath)
+                    Else
+                        filesPath = ManFolder
+                        LogActivity("INFO | " & stopping & ": " & filesPath)
+        Private Function DetermineFolder(ByVal stopping As String) As String
+            Dim edsExists As Boolean = Directory.Exists(EDSFolder)
+            Dim whichFolder As New DialogResult
+            Dim maeOption As String = "YES = '\Maestro' Folder" & vbCrLf & vbCrLf
+            Dim manOption As String = "NO = '\Manual (SAPI)' Folder" & vbCrLf & vbCrLf
+            Dim cancelOption As String = "CANCEL = " & stopping & vbCrLf
+            Dim edsOption As String = "NO = '\EDS' Folder" & vbCrLf & vbCrLf
+            Dim filesPath As String
+
+            whichFolder = MsgBox("Which folder would you like use to create a report?" & vbCrLf & vbCrLf & IIf(edsExists, maeOption + edsOption + cancelOption, maeOption + manOption + cancelOption), vbYesNoCancel + vbInformation, "Which Folder?")
+
+            If whichFolder = vbCancel Then Return "STOP"
+
+            Select Case whichFolder
+                Case vbYes
+                    filesPath = MaeFolder
+                Case vbNo
+                    If edsExists Then
+                        filesPath = EDSFolder
+                        LogActivity("INFO | " & stopping.Replace("Stop ", "") & ": " & filesPath)
+                    Else
+                        filesPath = ManFolder
+                        LogActivity("INFO | " & stopping & ": " & filesPath)
+                        LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+                        SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+#End Region
+            End Select
+
+finishMe:
+            LogActivity("PROCESS | End " & sender.tooltip.ToString, True)
+            ButtonclickToggle(Me.Cursor, Cursors.Default)
+            End Sub
 
         Private Sub testBugFile_Click(sender As Object, e As EventArgs) Handles testBugFile.Click
             AddBugFile()
@@ -1213,7 +1274,12 @@ StopLookingAtMeSwan:
                 End If
             Else
             End If
->>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
+
+            CollectUserInfo()
+            SetVersion()
+
+            My.Settings.Save()
+        End Sub
 #End Region
 
 #Region "My Largely Little Helpers"
@@ -1873,18 +1939,18 @@ StopLookingAtMeSwan:
         'A datatable of the reference files in the Reference SA Files folder. 
         Public Function RefernceSADT() As DataTable
 >>>>>>> Updated to include startup functionality and finally load a userid for saving data to eds. Removed unused references from vb files. Remove unused code from frmmain module. Added in IDoDeclare module.
-            Dim SAFiles As New DataTable
-            Dim success As Boolean = True
+        Dim SAFiles As New DataTable
+        Dim success As Boolean = True
 
             SAFiles = CSVtoDatatable(New FileInfo(Me.RefFolder & "\File List.csv"))
             For Each dr As DataRow In SAFiles.Rows()
-                Dim importingFrom As New FileInfo(dirUse & dr.Item("FilePath").ToString)
-                Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString.Replace("[ITERATION]", "Iteration " & iteration))
-                Dim SAPICompatible As Boolean = False
-                If FileType = "MaestroPath" Or FileType = "ManualPath" Then
+        Dim importingFrom As New FileInfo(dirUse & dr.Item("FilePath").ToString)
+        Dim importingTo As New FileInfo(dirUse & dr.Item(FileType).ToString.Replace("[ITERATION]", "Iteration " & iteration))
+        Dim SAPICompatible As Boolean = False
+        If FileType = "MaestroPath" Or FileType = "ManualPath" Then
                     SAPICompatible = True
                 End If
-                Dim IIResults As Tuple(Of Boolean, String)
+        Dim IIResults As Tuple(Of Boolean, String)
                 IIResults = ImportingInputs(importingFrom, importingTo, SAPICompatible, excelvisible)
                 If Not IIResults.Item1 Then
                     success = False
@@ -1892,7 +1958,7 @@ StopLookingAtMeSwan:
                 LogActivity(IIResults.Item2)
             Next
 
-            Return success
+        Return success
         End Function
 
         Friend Sub LogActivity(ByVal msg As String, Optional ByVal reloadLog As Boolean = False)

@@ -2060,10 +2060,8 @@
         Friend WithEvents verLabel As ToolStripStatusLabel
         Friend WithEvents btnProcess25 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess26 As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents StatusStrip1 As StatusStrip
-        Friend WithEvents verLabel As ToolStripStatusLabel
-        Friend WithEvents btnProcess25 As DevExpress.XtraEditors.SimpleButton
-        Friend WithEvents btnProcess26 As DevExpress.XtraEditors.SimpleButton
+
+
 #End Region
 
     End Class
