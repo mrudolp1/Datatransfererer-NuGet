@@ -402,27 +402,30 @@ Partial Public Class EDSStructure
         End If
 
         Dim structureQuery As String = ""
+
+
         For Each level In _SQLQueryVariables
-            structureQuery += "DECLARE " & level & " TABLE(ID INT)" & vbCrLf
-            structureQuery += "DECLARE " & level & "ID INT" & vbCrLf
+            structureQuery.NewLine("DECLARE " & level & " TABLE(ID INT)")
+            structureQuery.NewLine("DECLARE " & level & "ID INT")
         Next
         If Me.Poles.Count > 0 Then
-            structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
+            structureQuery.NewLine("DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT")
         End If
 
-        Dim transactionName As String = Me.bus_unit.NullableToString & "_" & Me.structure_id & "_" & Me.work_order_seq_num.NullableToString & "_" & Me.process_stage
-        structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
+
+        Dim transactionName As String = Me.process_stage & Me.structure_id & Me.bus_unit.NullableToString & Me.work_order_seq_num.NullableToString
         structureQuery.NewLine("BEGIN TRY")
-        structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx) & vbCrLf
-        structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads) & vbCrLf
-        structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases) & vbCrLf
-        structureQuery += Me.Piles.EDSListQueryBuilder(EDSMe.Piles) & vbCrLf
-        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools) & vbCrLf
-        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools) & vbCrLf
-        structureQuery += Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates) & vbCrLf
-        structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles) & vbCrLf
-        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements) & vbCrLf
-        structureQuery += Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics)
+        structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
+        structureQuery.NewLine(Me.tnx?.EDSQueryBuilder(EDSMe.tnx))
+        structureQuery.NewLine(Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads))
+        structureQuery.NewLine(Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases))
+        structureQuery.NewLine(Me.Piles.EDSListQueryBuilder(EDSMe.Piles))
+        structureQuery.NewLine(Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools))
+        structureQuery.NewLine(Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools))
+        structureQuery.NewLine(Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates))
+        structureQuery.NewLine(Me.Poles.EDSListQueryBuilder(EDSMe.Poles))
+        structureQuery.NewLine(Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements))
+        structureQuery.NewLine(Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics))
         structureQuery.NewLine("COMMIT TRANSACTION " & transactionName)
         structureQuery.NewLine("SELECT '" & Me.bus_unit.NullableToString & "' bus_unit, '" & Me.structure_id & "' structure_id, '" & Me.work_order_seq_num.NullableToString & "' work_order_seq_num, '" & "Success" & "' result")
         structureQuery.NewLine("END TRY")

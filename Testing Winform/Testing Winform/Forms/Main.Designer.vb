@@ -98,6 +98,8 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnProcess26 = New DevExpress.XtraEditors.SimpleButton()
+            Me.btnProcess25 = New DevExpress.XtraEditors.SimpleButton()
             Me.toggleDevUat = New DevExpress.XtraEditors.ToggleSwitch()
             Me.btnProcess24 = New DevExpress.XtraEditors.SimpleButton()
             Me.testGetWOs = New DevExpress.XtraEditors.SimpleButton()
@@ -1036,6 +1038,8 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnProcess26)
+            Me.PanelControl1.Controls.Add(Me.btnProcess25)
             Me.PanelControl1.Controls.Add(Me.toggleDevUat)
             Me.PanelControl1.Controls.Add(Me.btnProcess24)
             Me.PanelControl1.Controls.Add(Me.testGetWOs)
@@ -1103,10 +1107,36 @@
             Me.PanelControl1.Size = New System.Drawing.Size(1924, 126)
             Me.PanelControl1.TabIndex = 16
             '
+            'btnProcess26
+            '
+            Me.btnProcess26.Appearance.Options.UseTextOptions = True
+            Me.btnProcess26.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess26.Enabled = False
+            Me.btnProcess26.Location = New System.Drawing.Point(1663, 6)
+            Me.btnProcess26.Name = "btnProcess26"
+            Me.btnProcess26.Size = New System.Drawing.Size(114, 23)
+            Me.btnProcess26.TabIndex = 84
+            Me.btnProcess26.Tag = "STEP13|Create the selected structure and show it in the property grid"
+            Me.btnProcess26.Text = "13. Create Structure"
+            Me.btnProcess26.ToolTip = "CREATE STRUCTURE"
+            '
+            'btnProcess25
+            '
+            Me.btnProcess25.Appearance.Options.UseTextOptions = True
+            Me.btnProcess25.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess25.Enabled = False
+            Me.btnProcess25.Location = New System.Drawing.Point(1538, 6)
+            Me.btnProcess25.Name = "btnProcess25"
+            Me.btnProcess25.Size = New System.Drawing.Size(114, 23)
+            Me.btnProcess25.TabIndex = 83
+            Me.btnProcess25.Tag = "STEP12|Serialize the selected structure"
+            Me.btnProcess25.Text = "12. Serialize Structure"
+            Me.btnProcess25.ToolTip = "SERLALIZE"
+            '
             'toggleDevUat
             '
             Me.toggleDevUat.Enabled = False
-            Me.toggleDevUat.Location = New System.Drawing.Point(1664, 71)
+            Me.toggleDevUat.Location = New System.Drawing.Point(1538, 36)
             Me.toggleDevUat.Name = "toggleDevUat"
             Me.toggleDevUat.Properties.OffText = "DEV"
             Me.toggleDevUat.Properties.OnText = "UAT"
@@ -1175,9 +1205,9 @@
             Me.btnChecking.Appearance.Options.UseTextOptions = True
             Me.btnChecking.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.btnChecking.Enabled = False
-            Me.btnChecking.Location = New System.Drawing.Point(1664, 5)
+            Me.btnChecking.Location = New System.Drawing.Point(1773, 51)
             Me.btnChecking.Name = "btnChecking"
-            Me.btnChecking.Size = New System.Drawing.Size(145, 23)
+            Me.btnChecking.Size = New System.Drawing.Size(120, 23)
             Me.btnChecking.TabIndex = 76
             Me.btnChecking.Tag = "Checking out it all"
             Me.btnChecking.Text = "Checkout Everything"
@@ -1188,9 +1218,9 @@
             Me.btnAuto.Appearance.Options.UseTextOptions = True
             Me.btnAuto.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
             Me.btnAuto.Enabled = False
-            Me.btnAuto.Location = New System.Drawing.Point(1664, 33)
+            Me.btnAuto.Location = New System.Drawing.Point(1773, 79)
             Me.btnAuto.Name = "btnAuto"
-            Me.btnAuto.Size = New System.Drawing.Size(145, 23)
+            Me.btnAuto.Size = New System.Drawing.Size(120, 23)
             Me.btnAuto.TabIndex = 75
             Me.btnAuto.Tag = "Auto Test It"
             Me.btnAuto.Text = """Automated"" Unit Testing"
@@ -1272,7 +1302,7 @@
             '
             Me.LabelConductOptions.Appearance.Font = New System.Drawing.Font("Tahoma", 7.5!, System.Drawing.FontStyle.Bold)
             Me.LabelConductOptions.Appearance.Options.UseFont = True
-            Me.LabelConductOptions.Location = New System.Drawing.Point(1538, 5)
+            Me.LabelConductOptions.Location = New System.Drawing.Point(1663, 57)
             Me.LabelConductOptions.Name = "LabelConductOptions"
             Me.LabelConductOptions.Size = New System.Drawing.Size(84, 12)
             Me.LabelConductOptions.TabIndex = 68
@@ -1282,7 +1312,7 @@
             '
             Me.CheckEditExcelVisible.EditValue = True
             Me.CheckEditExcelVisible.Enabled = False
-            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1538, 37)
+            Me.CheckEditExcelVisible.Location = New System.Drawing.Point(1663, 89)
             Me.CheckEditExcelVisible.Name = "CheckEditExcelVisible"
             Me.CheckEditExcelVisible.Properties.Caption = "Excel Visible"
             Me.CheckEditExcelVisible.Size = New System.Drawing.Size(84, 20)
@@ -1292,7 +1322,7 @@
             '
             Me.CheckEditDevMode.EditValue = True
             Me.CheckEditDevMode.Enabled = False
-            Me.CheckEditDevMode.Location = New System.Drawing.Point(1538, 17)
+            Me.CheckEditDevMode.Location = New System.Drawing.Point(1663, 69)
             Me.CheckEditDevMode.Name = "CheckEditDevMode"
             Me.CheckEditDevMode.Properties.Caption = "Dev Mode"
             Me.CheckEditDevMode.Size = New System.Drawing.Size(75, 20)
@@ -2020,6 +2050,8 @@
         Friend WithEvents toggleDevUat As DevExpress.XtraEditors.ToggleSwitch
         Friend WithEvents StatusStrip1 As StatusStrip
         Friend WithEvents verLabel As ToolStripStatusLabel
+        Friend WithEvents btnProcess25 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess26 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class

@@ -532,7 +532,7 @@ End Class
 #End Region
 
 #Region "Geometry"
-<DataContract()>
+<DataContract(), KnownType(GetType(tnxGeometry))>
 Partial Public Class tnxGeometry
     Inherits EDSObject
 
@@ -881,24 +881,36 @@ Partial Public Class tnxGeometry
 
 End Class
 
-<DataContract()>
+<DataContract(), KnownType(GetType(tnxGeometryRec))>
 Partial Public MustInherit Class tnxGeometryRec
     Inherits EDSObjectWithQueries
     Implements IComparable(Of tnxGeometryRec)
+
     'Use this type to allow sorting by Record instead of ID and provide a custom version of EDSListQueryBuilder for tnx geometry records
-    <DataMember()> Public Property Rec As Integer?
+    <DataMember()>
+    Public Property Rec As Integer?
     Public Overrides ReadOnly Property EDSTableDepth As Integer
         Get
             Return 1
         End Get
     End Property
     'This cannot override the Results list from the EDSObjectWithQueries because it is a different type, instead we can shadow
-    <DataMember()> Public Property TNXResults As New List(Of tnxResult)
+    <DataMember()>
+    Public Property TNXResults As New List(Of tnxResult)
 
-    Private _Results As List(Of EDSResult)
+    Private _Results As New List(Of EDSResult)
+    <DataMember()>
     Public Overrides Property Results As List(Of EDSResult)
         Get
-            Return Me.TNXResults.ConvertAll(Function(x) CType(x, EDSResult))
+            Dim myList As New List(Of EDSResult)
+            For Each res In Me.TNXResults
+                myList.Add(New EDSResult(res.result_lkup, res.Rating, Me))
+            Next
+
+            'IEM 
+            'This needed to change to recreate a list of EDS result
+            'The ConvertAll was keeping then as TNXResult and failing the serializer.
+            Return myList 'Me.TNXResults.ConvertAll(Function(x) CType(x, EDSResult))
         End Get
         Set(value As List(Of EDSResult))
             Me._Results = value
@@ -5036,8 +5048,7 @@ Partial Public Class tnxAntennaRecord
 
 End Class
 
-<DataContractAttribute()>
-<KnownType(GetType(tnxTowerRecord))>
+<DataContract(), KnownType(GetType(tnxTowerRecord))>
 Partial Public Class tnxTowerRecord
     Inherits tnxGeometryRec
     'base structure
@@ -10056,8 +10067,7 @@ Partial Public Class tnxTowerRecord
 
 End Class
 
-<DataContractAttribute()>
-<KnownType(GetType(tnxGuyRecord))>
+<DataContract(), KnownType(GetType(tnxGuyRecord))>
 Partial Public Class tnxGuyRecord
     Inherits tnxGeometryRec
 
