@@ -149,23 +149,29 @@ Namespace UnitTesting
                         Dim myPg As New PropertyGrid
 
 
-                        Dim tempStr As New EDSStructure
+                        Dim tempStr As Tuple(Of EDSStructure, String)
                         Using sr As New StreamReader(info.FullName)
                             tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
                             sr.Close()
                         End Using
 
-                        myPg.SelectedObject = tempStr
-                        myPg.Dock = DockStyle.Fill
+                        If tempStr.Item2.Contains("ERROR DESERIALIZING") Then
+                            frmMain.LogActivity("ERROR | Structure not deserialized.")
+                            frmMain.LogActivity("DEBUG | " & tempStr.Item2.ToString, True)
+                        Else
+                            myPg.SelectedObject = tempStr.Item1
+                            myPg.Dock = DockStyle.Fill
 
-                        With myfrm
-                            .FormBorderStyle = FormBorderStyle.SizableToolWindow
-                            .Height = 600.0!
-                            .Width = 500.0!
-                            .Controls.Add(myPg)
-                            .Text = info.Name
-                            .Show()
-                        End With
+                            With myfrm
+                                .FormBorderStyle = FormBorderStyle.SizableToolWindow
+                                .Height = 600.0!
+                                .Width = 500.0!
+                                .Controls.Add(myPg)
+                                .Text = info.Name
+                                .Show()
+                            End With
+                        End If
+
 
                     ElseIf info.Extension.ToLower = ".txt" Or info.Extension.ToLower = ".eri" Or
                            info.Extension.ToLower = ".log" Or info.Extension.ToLower = ".xml" Or
