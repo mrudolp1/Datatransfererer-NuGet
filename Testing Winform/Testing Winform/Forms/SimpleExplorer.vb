@@ -128,100 +128,23 @@ Namespace UnitTesting
                 Dim info As IO.FileInfo
                 Dim fName As String
                 Dim path As String
-                Dim loadDt As DataTable
-
+                Dim loadDt As Tuple(Of DataTable, String)
                 'Get the filename from the sepcified row click
                 fName = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "Name")
                 'Get the path from the bread crumb path (could change as the user navigates)
                 path = breadCrumb.CurrentPath
                 'Create a new fileinfo based on the path and file name
                 info = New System.IO.FileInfo(path & "\" & fName)
-
-                'If the info is something (i.e. not a file folder) then attempt to load results or csv data
+                SelectedFile = info
                 If info IsNot Nothing Then
-                    If info.Extension.ToLower = ".xlsm" Then
-                        SelectedFile = info
-                        loadDt = frmMain.SummarizedResults(info)
-                    ElseIf info.Extension.ToLower = ".csv" Then
-                        loadDt = CSVtoDatatable(info)
-                    ElseIf info.Extension.ToLower = ".ccistr" Then
-                        Dim myfrm As New Form
-                        Dim myPg As New PropertyGrid
+                    loadDt = LoadFileForViewing(info)
+                    If Not loadDt.Item2 = "" Then frmMain.LogActivity(loadDt.Item2, True)
 
-
-                        Dim tempStr As Tuple(Of EDSStructure, String)
-                        Using sr As New StreamReader(info.FullName)
-                            tempStr = FromJsonString(Of EDSStructure)(sr.ReadToEnd)
-                            sr.Close()
-                        End Using
-
-                        If tempStr.Item2.Contains("ERROR DESERIALIZING") Then
-                            frmMain.LogActivity("ERROR | Structure not deserialized.")
-                            frmMain.LogActivity("DEBUG | " & tempStr.Item2.ToString, True)
-                        Else
-                            myPg.SelectedObject = tempStr.Item1
-                            myPg.Dock = DockStyle.Fill
-
-                            With myfrm
-                                .FormBorderStyle = FormBorderStyle.SizableToolWindow
-                                .Height = 600.0!
-                                .Width = 500.0!
-                                .Controls.Add(myPg)
-                                .Text = info.Name
-                                .Show()
-                            End With
-                        End If
-
-
-                    ElseIf info.Extension.ToLower = ".txt" Or info.Extension.ToLower = ".eri" Or
-                           info.Extension.ToLower = ".log" Or info.Extension.ToLower = ".xml" Or
-                           info.Extension.ToLower = ".sql" Or info.Extension.ToLower = ".ccimod" Or
-                           info.Extension.ToLower = ".json" Or info.Extension.ToLower = ".svi" Then
-
-                        Using sr As New StreamReader(info.FullName)
-                            Dim tempDt As New DataTable
-                            tempDt.Columns.Add("Text")
-                            Dim newRow As String()
-
-                            While Not sr.EndOfStream
-                                'newRow = sr.ReadLine.Split("|")
-                                'If newRow.Count > 0 Then
-                                '    If tempDt.Columns.Count = 0 Then
-                                '        tempDt.Columns.Add("Time", GetType(System.String))
-                                '        tempDt.Columns.Add("Message", GetType(System.String))
-                                '    End If
-                                '    Dim combined As String
-
-                                '    Try
-                                '        combined = newRow(1) & "|" & newRow(2)
-                                '    Catch ex As Exception
-                                '        Try
-                                '            combined = newRow(1)
-                                '        Catch ex1 As Exception
-                                '            combined = ""
-                                '        End Try
-                                '    End Try
-
-                                '    tempDt.Rows.Add(newRow(0), combined)
-                                'Else
-                                '    If tempDt.Columns.Count = 0 Then
-                                '        tempDt.Columns.Add("Text", GetType(System.String))
-                                '    End If
-                                '    tempDt.Rows.Add(sr.ReadLine)
-                                'End If
-                                tempDt.Rows.Add(sr.ReadLine)
-                            End While
-
-                            loadDt = tempDt
-                            sr.Close()
-                        End Using
-                    End If
-
-                    If loadDt IsNot Nothing Then
+                    If loadDt.Item1 IsNot Nothing Then
                         'Set the reference grid on the main form to the returned datatable
                         frmMain.GridView1.Columns.Clear()
                         frmMain.gcViewer.DataSource = Nothing
-                        frmMain.gcViewer.DataSource = loadDt
+                        frmMain.gcViewer.DataSource = loadDt.Item1
                         frmMain.gcViewer.RefreshDataSource()
                         frmMain.GridView1.BestFitColumns(True)
 
@@ -230,12 +153,11 @@ Namespace UnitTesting
                         Catch ex As Exception
                         End Try
                     End If
-                End If
 
+                End If
                 ButtonclickToggle(Me.Cursor, Cursors.Default)
             Else
             End If
-
             HideDateAndSize()
 
         End Sub
@@ -254,7 +176,5 @@ Namespace UnitTesting
             Catch
             End Try
         End Sub
-
-
     End Class
 End Namespace
