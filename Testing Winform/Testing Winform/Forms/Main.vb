@@ -1016,29 +1016,29 @@ Namespace UnitTesting
                             Exit Select
                         End If
 
-                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+                        LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
 
                         LogActivity("INFO | Serializing to: " & mylocation)
                         Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
 
                         Dim serialResult As Tuple(Of Boolean, String)
 
-                    serialResult = ObjectToJson(Of EDSStructure)(strcLocal, mylocation & "\" & "EDSStructure" & nowString & ".ccistr")
-                    If Not serialResult.Item1 Then
-                        LogActivity("ERROR | Structure not serialized.")
-                        LogActivity("DEBUG | " & serialResult.Item2.ToString)
-                    End If
+                        serialResult = ObjectToJson(Of EDSStructure)(strcLocal, mylocation & "\" & "EDSStructure" & nowString & ".ccistr")
+                        If Not serialResult.Item1 Then
+                            LogActivity("ERROR | Structure not serialized.")
+                            LogActivity("DEBUG | " & serialResult.Item2.ToString)
+                        End If
 #End Region
 #Region "Step 13 - Load Structure from Files"
-                Case "step13"
-                    Dim mylocation As String = DetermineFolder("Stop Creating Structure")
-                    If mylocation = "STOP" Then
-                        LogActivity("INFO | Structure creation cancelled")
-                        Exit Select
-                    End If
+                        Case "step13"
+                        Dim mylocation As String = DetermineFolder("Stop Creating Structure")
+                        If mylocation = "STOP" Then
+                            LogActivity("INFO | Structure creation cancelled")
+                            Exit Select
+                        End If
 
-                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
-                    SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
+                        LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+                        SetStructureToPropertyGrid(strcLocal, pgcUnitTesting)
 #End Region
             End Select
 
@@ -1198,18 +1198,18 @@ StopLookingAtMeSwan:
 #Region "Checkin/Checkout"
                         Catch ex As Exception
                         End Try
-            Try
-                seSA.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
-                'seSA.Dispose()
-            Catch ex As Exception
-            End Try
-            Try
-                seLocal.SetCurrentDirectory(Me.dirUse)
-            Catch ex As Exception
-            End Try
+                        Try
+                            seSA.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
+                            'seSA.Dispose()
+                        Catch ex As Exception
+                        End Try
+                        Try
+                            seLocal.SetCurrentDirectory(Me.dirUse)
+                        Catch ex As Exception
+                        End Try
 
-            mainLogViewer.Clear()
-        End Sub
+                        mainLogViewer.Clear()
+                        End Sub
 
         'Reset form to disable or enable controls required for testing. 
         Public Sub ResetControls(Optional ByVal reset As Boolean = True)
@@ -1361,18 +1361,12 @@ StopLookingAtMeSwan:
 
 #End Region
 
-#Region "Import Input"
-        'Import inputs for all files in a directory
-        Public Function ImportInputs(ByVal FileType As String, Optional ByVal excelVisible As Boolean = True) As Boolean
-            Dim SAFiles As New DataTable
-            SAFiles = CSVtoDatatable(New FileInfo(Me.RefFolder & "\File List.csv"))
-            'If SAFiles.Columns.Count > 2 Then
-            '    CreateTemplateFiles(frmMain.testIteration.Text)
-            'End If
-
-            Dim myXL As Tuple(Of Excel.Application, Boolean) = GetXlApp()
-            'Item 1 = Excel application
-            'Item 2 = Boolean (If true that means excel was previously open
+#Region "Creating Iteration & Files"
+        'Create folders required for unit testing to be conducted
+        '''Maestro folder 
+        '''Manual folder 
+        '''Users will have the option to replace the files in the folder. 
+        Public Sub CreateIteration(ByVal nextIteration As Integer, ByVal Optional isFirstTime As Boolean = False)
 
             For Each dr As DataRow In SAFiles.Rows()
                 Dim importingFrom As New FileInfo(dirUse & dr.Item("FilePath").ToString)
@@ -1411,7 +1405,7 @@ StopLookingAtMeSwan:
             Next
 
             DisposeXlApp(myXL.Item1, myXL.Item2)
-        End Function
+            End Function
 
         'Create or get the excel application to use.
         Public Function GetXlApp() As Tuple(Of Excel.Application, Boolean)
@@ -1531,144 +1525,144 @@ StopLookingAtMeSwan:
                                              "Selected Results " & myTemplate.Item3 & "_" & str)) 'Datatable name
                 Next
 
-                'If it is a drilled pier determine which range is the correct range
-                '''For monopoles and self supports, the range to select is just the summary from the 'Foundation Input' Tab
-                If myTemplate.Item3.Contains("Drilled Pier") Then
-                    Try
-                        If tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "BD8:CF59").Rows(0).Item("Guyed Tower Reactions").ToString = String.Empty Then
-                            resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "H10:L31")
-                        Else
-                            resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "BD8:CF59")
-                        End If
-                    Catch
+            'If it is a drilled pier determine which range is the correct range
+            '''For monopoles and self supports, the range to select is just the summary from the 'Foundation Input' Tab
+            If myTemplate.Item3.Contains("Drilled Pier") Then
+                Try
+                    If tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "BD8:CF59").Rows(0).Item("Guyed Tower Reactions").ToString = String.Empty Then
                         resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "H10:L31")
-                    End Try
-                ElseIf myTemplate.Item3.ToLower.Contains("cciplate") Then
-                    resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
-                Else
-                    resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
-                End If
+                    Else
+                        resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "BD8:CF59")
+                    End If
+                Catch
+                    resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & "H10:L31")
+                End Try
+            ElseIf myTemplate.Item3.ToLower.Contains("cciplate") Then
+                resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
+            Else
+                resultsDt = tempds.Tables("Selected Results " & myTemplate.Item3 & "_" & range)
+            End If
 
-                'Add columns to the final DT that shows the summary of the component, type and rating.
-                finalDt.Columns.Add("Type", Type.GetType("System.String"))
-                finalDt.Columns.Add("Rating", Type.GetType("System.String"))
-                finalDt.Columns.Add("Tool", Type.GetType("System.String"))
+            'Add columns to the final DT that shows the summary of the component, type and rating.
+            finalDt.Columns.Add("Type", Type.GetType("System.String"))
+            finalDt.Columns.Add("Rating", Type.GetType("System.String"))
+            finalDt.Columns.Add("Tool", Type.GetType("System.String"))
 
-                With resultsDt
-                    'Select case based on 'Filename_Range'
-                    Select Case .TableName
-                        Case "Selected Results " & "CCIplate.xlsm" & "_" & "B1:BO64"
-                            For i = 0 To .Rows.Count - 1
-                                Dim dr As DataRow = .Rows(i)
-                                Dim addl As String = ""
-                                Dim val As String
-                                If i > 31 Then addl = "_Seismic"
+            With resultsDt
+                'Select case based on 'Filename_Range'
+                Select Case .TableName
+                    Case "Selected Results " & "CCIplate.xlsm" & "_" & "B1:BO64"
+                        For i = 0 To .Rows.Count - 1
+                            Dim dr As DataRow = .Rows(i)
+                            Dim addl As String = ""
+                            Dim val As String
+                            If i > 31 Then addl = "_Seismic"
 
-                                'Plate stress
-                                If Not dr.Item("Plate Summary").ToString = "" And Not dr.Item("Plate Summary").ToString = "Max Stress" Then
-                                    val = dr.Item("Plate").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & dr.Item("Column63").ToString & addl, val, info.Name.Replace(".xlsm", ""))
+                            'Plate stress
+                            If Not dr.Item("Plate Summary").ToString = "" And Not dr.Item("Plate Summary").ToString = "Max Stress" Then
+                                val = dr.Item("Plate").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & dr.Item("Column63").ToString & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column5").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Tension Side Ratio" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column5").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Tension Side Ratio" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column6").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Horizontal Weld" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column6").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Horizontal Weld" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column7").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Vertical Weld" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column7").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Vertical Weld" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column8").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Flexure+Shear" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column8").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Flexure+Shear" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column9").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Tension+Shear" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column9").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Tension+Shear" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column10").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Compression" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column10").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Compression" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                    val = dr.Item("Column11").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Punching Shear" & addl, val, info.Name.Replace(".xlsm", ""))
+                                val = dr.Item("Column11").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Punching Shear" & addl, val, info.Name.Replace(".xlsm", ""))
 
-                                End If
+                            End If
 
-                                'bolt group 1
-                                If Not dr.Item("Bolt GR. 1").ToString = "" And Not dr.Item("Column21").ToString = "%" Then
-                                    val = dr.Item("Column21").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 1" & addl, val, info.Name.Replace(".xlsm", ""))
-                                End If
+                            'bolt group 1
+                            If Not dr.Item("Bolt GR. 1").ToString = "" And Not dr.Item("Column21").ToString = "%" Then
+                                val = dr.Item("Column21").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 1" & addl, val, info.Name.Replace(".xlsm", ""))
+                            End If
 
-                                'bolt group 2
-                                If Not dr.Item("Bolt GR. 2").ToString = "" And Not dr.Item("Column31").ToString = "%" Then
-                                    val = dr.Item("Column31").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 2" & addl, val, info.Name.Replace(".xlsm", ""))
-                                End If
+                            'bolt group 2
+                            If Not dr.Item("Bolt GR. 2").ToString = "" And Not dr.Item("Column31").ToString = "%" Then
+                                val = dr.Item("Column31").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 2" & addl, val, info.Name.Replace(".xlsm", ""))
+                            End If
 
-                                'bolt group 3
-                                If Not dr.Item("Bolt GR. 3").ToString = "" And Not dr.Item("Column41").ToString = "%" Then
-                                    val = dr.Item("Column41").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 3" & addl, val, info.Name.Replace(".xlsm", ""))
-                                End If
+                            'bolt group 3
+                            If Not dr.Item("Bolt GR. 3").ToString = "" And Not dr.Item("Column41").ToString = "%" Then
+                                val = dr.Item("Column41").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 3" & addl, val, info.Name.Replace(".xlsm", ""))
+                            End If
 
-                                'bolt group 4
-                                If Not dr.Item("Bolt GR. 4").ToString = "" And Not dr.Item("Column51").ToString = "%" Then
-                                    val = dr.Item("Column51").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 4" & addl, val, info.Name.Replace(".xlsm", ""))
-                                End If
+                            'bolt group 4
+                            If Not dr.Item("Bolt GR. 4").ToString = "" And Not dr.Item("Column51").ToString = "%" Then
+                                val = dr.Item("Column51").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 4" & addl, val, info.Name.Replace(".xlsm", ""))
+                            End If
 
-                                'bolt group 5
-                                If Not dr.Item("Bolt GR. 5").ToString = "" And Not dr.Item("Column61").ToString = "%" Then
-                                    val = dr.Item("Column61").ToString.Replace("%", "")
-                                    If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 5" & addl, val, info.Name.Replace(".xlsm", ""))
-                                End If
+                            'bolt group 5
+                            If Not dr.Item("Bolt GR. 5").ToString = "" And Not dr.Item("Column61").ToString = "%" Then
+                                val = dr.Item("Column61").ToString.Replace("%", "")
+                                If val <> "N/A" And val <> "" Then finalDt.Rows.Add("Plate " & dr.Item("Flange ID").ToString & "_" & "Bolt Group 5" & addl, val, info.Name.Replace(".xlsm", ""))
+                            End If
 
 
-                            Next
-                        Case "Selected Results " & "CCIpole.xlsm" & "_" & "AZ4:BT108"
-                            For Each dr As DataRow In .Rows()
-                                If Not dr.Item("Elevation (ft)").ToString = String.Empty Then
-                                    Dim val As Double
-                                    Try
-                                        val = dr.Item("% Capacity") * 100
-                                    Catch ex As Exception
-                                        val = 0
-                                    End Try
-                                    finalDt.Rows.Add(dr.Item("Elevation (ft)").ToString & "_" & dr.Item("Critical Element").ToString, val, info.Name.Replace(".xlsm", ""))
-                                End If
-                            Next
-                        Case "Selected Results " & "Drilled Pier Foundation.xlsm" & "_" & "BD8:CF59"
-                            For Each dr As DataRow In .Rows()
-                                If Not dr.Item("Guyed Tower Reactions").ToString = String.Empty Then
-                                    Dim soilVal As Double
-                                    Dim strVal
-                                    Try
-                                        soilVal = dr.Item("Soil Rating")
-                                    Catch ex As Exception
-                                        soilVal = 0
-                                    End Try
-                                    Try
-                                        strVal = dr.Item("Structural Rating")
-                                    Catch ex As Exception
-                                        strVal = 0
-                                    End Try
-                                    finalDt.Rows.Add(dr.Item("Column1").ToString & "_" & dr.Item("Guyed Tower Reactions").ToString & "_Soil", soilVal, info.Name.Replace(".xlsm", ""))
-                                    finalDt.Rows.Add(dr.Item("Column1").ToString & "_" & dr.Item("Guyed Tower Reactions").ToString & "_Structural", strVal, info.Name.Replace(".xlsm", ""))
-                                End If
-                            Next
-                        Case "Selected Results " & "Drilled Pier Foundation.xlsm" & "_" & "H10:L31"
-                            NewFoundationRow(finalDt, .Rows(3), "Soil Lateral Check", "Compression", info)
-                            NewFoundationRow(finalDt, .Rows(3), "Soil Lateral Check", "Uplift", info)
-                            NewFoundationRow(finalDt, .Rows(10), "Soil Vertical Check", "Compression", info)
-                            NewFoundationRow(finalDt, .Rows(10), "Soil Vertical Check", "Uplift", info)
-                            NewFoundationRow(finalDt, .Rows(15), "Reinforced Concrete Flexure", "Compression", info)
-                            NewFoundationRow(finalDt, .Rows(15), "Reinforced Concrete Flexure", "Uplift", info)
-                            NewFoundationRow(finalDt, .Rows(20), "Reinforced Concrete Shear", "Compression", info)
-                            NewFoundationRow(finalDt, .Rows(20), "Reinforced Concrete Shear", "Uplift", info)
+                        Next
+                    Case "Selected Results " & "CCIpole.xlsm" & "_" & "AZ4:BT108"
+                        For Each dr As DataRow In .Rows()
+                            If Not dr.Item("Elevation (ft)").ToString = String.Empty Then
+                                Dim val As Double
+                                Try
+                                    val = dr.Item("% Capacity") * 100
+                                Catch ex As Exception
+                                    val = 0
+                                End Try
+                                finalDt.Rows.Add(dr.Item("Elevation (ft)").ToString & "_" & dr.Item("Critical Element").ToString, val, info.Name.Replace(".xlsm", ""))
+                            End If
+                        Next
+                    Case "Selected Results " & "Drilled Pier Foundation.xlsm" & "_" & "BD8:CF59"
+                        For Each dr As DataRow In .Rows()
+                            If Not dr.Item("Guyed Tower Reactions").ToString = String.Empty Then
+                                Dim soilVal As Double
+                                Dim strVal
+                                Try
+                                    soilVal = dr.Item("Soil Rating")
+                                Catch ex As Exception
+                                    soilVal = 0
+                                End Try
+                                Try
+                                    strVal = dr.Item("Structural Rating")
+                                Catch ex As Exception
+                                    strVal = 0
+                                End Try
+                                finalDt.Rows.Add(dr.Item("Column1").ToString & "_" & dr.Item("Guyed Tower Reactions").ToString & "_Soil", soilVal, info.Name.Replace(".xlsm", ""))
+                                finalDt.Rows.Add(dr.Item("Column1").ToString & "_" & dr.Item("Guyed Tower Reactions").ToString & "_Structural", strVal, info.Name.Replace(".xlsm", ""))
+                            End If
+                        Next
+                    Case "Selected Results " & "Drilled Pier Foundation.xlsm" & "_" & "H10:L31"
+                        NewFoundationRow(finalDt, .Rows(3), "Soil Lateral Check", "Compression", info)
+                        NewFoundationRow(finalDt, .Rows(3), "Soil Lateral Check", "Uplift", info)
+                        NewFoundationRow(finalDt, .Rows(10), "Soil Vertical Check", "Compression", info)
+                        NewFoundationRow(finalDt, .Rows(10), "Soil Vertical Check", "Uplift", info)
+                        NewFoundationRow(finalDt, .Rows(15), "Reinforced Concrete Flexure", "Compression", info)
+                        NewFoundationRow(finalDt, .Rows(15), "Reinforced Concrete Flexure", "Uplift", info)
+                        NewFoundationRow(finalDt, .Rows(20), "Reinforced Concrete Shear", "Compression", info)
+                        NewFoundationRow(finalDt, .Rows(20), "Reinforced Concrete Shear", "Uplift", info)
 
                         newSum.myDs = tnxDS
                         newSum.ToolStripSplitButton1.Enabled = False
-                newSum.Show()
-            End If
+                        newSum.Show()
+                        End If
 
         End Sub
 
