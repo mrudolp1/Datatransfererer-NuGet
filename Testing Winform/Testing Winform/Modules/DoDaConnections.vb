@@ -2,8 +2,7 @@
 Imports System.Security.Principal
 Imports Oracle.ManagedDataAccess.Client
 
-Namespace UnitTesting
-    Module DoDaSQL
+Module DoDaSQL
         Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
         Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
         Public tokenHandle As New IntPtr(0)
@@ -115,65 +114,64 @@ Namespace UnitTesting
 
     End Module
 
-    'Module DoDaHTTPs
-    '    Dim cciConnection As Connection
+'Module DoDaHTTPs
+'    Dim cciConnection As Connection
 
-    '    Public Function httpPostIt(ByVal payload As String)
-    '        If (cciConnection Is Nothing) Then
-    '            cciConnection = New Connection(httpBaseLink)
-    '        End If
+'    Public Function httpPostIt(ByVal payload As String)
+'        If (cciConnection Is Nothing) Then
+'            cciConnection = New Connection(httpBaseLink)
+'        End If
 
-    '        Dim myWebRequestResponse As HttpWebResponse
-    '        Try
-    '            myWebRequestResponse = cciConnection.ExecuteHttpPostRestApi(httpWOapi, payload)
-    '            DisplayWebResponse(myWebRequestResponse)
-    '            Return True
-    '        Catch ex As System.Net.WebException
-    '            sendToast(DisplayWebException(ex), "Error:  " & 5001)
-    '            Return False
-    '        Finally
-    '            CloseWebResponse(myWebRequestResponse)
-    '        End Try
-    '    End Function
+'        Dim myWebRequestResponse As HttpWebResponse
+'        Try
+'            myWebRequestResponse = cciConnection.ExecuteHttpPostRestApi(httpWOapi, payload)
+'            DisplayWebResponse(myWebRequestResponse)
+'            Return True
+'        Catch ex As System.Net.WebException
+'            sendToast(DisplayWebException(ex), "Error:  " & 5001)
+'            Return False
+'        Finally
+'            CloseWebResponse(myWebRequestResponse)
+'        End Try
+'    End Function
 
-    '    Public Function httpGetIt(ByVal fullAPIlink As String)
-    '        If (cciConnection Is Nothing) Then
-    '            cciConnection = New Connection(httpBaseLink)
-    '        End If
+'    Public Function httpGetIt(ByVal fullAPIlink As String)
+'        If (cciConnection Is Nothing) Then
+'            cciConnection = New Connection(httpBaseLink)
+'        End If
 
-    '        Dim myWebRequestResponse As HttpWebResponse
-    '        Try
-    '            myWebRequestResponse = cciConnection.ExecuteHttpGetRestAPI(fullAPIlink)
-    '            DisplayWebResponse(myWebRequestResponse)
-    '            Return True
-    '        Catch ex As System.Net.WebException
-    '            DisplayWebException(ex)
-    '            Return False
-    '        Finally
-    '            CloseWebResponse(myWebRequestResponse)
-    '        End Try
-    '    End Function
+'        Dim myWebRequestResponse As HttpWebResponse
+'        Try
+'            myWebRequestResponse = cciConnection.ExecuteHttpGetRestAPI(fullAPIlink)
+'            DisplayWebResponse(myWebRequestResponse)
+'            Return True
+'        Catch ex As System.Net.WebException
+'            DisplayWebException(ex)
+'            Return False
+'        Finally
+'            CloseWebResponse(myWebRequestResponse)
+'        End Try
+'    End Function
 
 
-    '    Private Sub CloseWebResponse(myWebRequestResponse As HttpWebResponse)
-    '        If myWebRequestResponse IsNot Nothing Then
-    '            myWebRequestResponse.Close()
-    '        End If
-    '    End Sub
+'    Private Sub CloseWebResponse(myWebRequestResponse As HttpWebResponse)
+'        If myWebRequestResponse IsNot Nothing Then
+'            myWebRequestResponse.Close()
+'        End If
+'    End Sub
 
-    '    Private Function DisplayWebException(ex As WebException)
-    '        If ex.Status = WebExceptionStatus.ProtocolError Then
-    '            Dim errorResponseReader As New StreamReader(ex.Response.GetResponseStream())
-    '            Dim errorResponseContent As String = errorResponseReader.ReadToEnd
-    '            Return "STATUS: " + DirectCast(ex.Response, HttpWebResponse).StatusCode.ToString & vbCrLf & ex.Message & ": " & errorResponseContent
-    '        End If
-    '    End Function
+'    Private Function DisplayWebException(ex As WebException)
+'        If ex.Status = WebExceptionStatus.ProtocolError Then
+'            Dim errorResponseReader As New StreamReader(ex.Response.GetResponseStream())
+'            Dim errorResponseContent As String = errorResponseReader.ReadToEnd
+'            Return "STATUS: " + DirectCast(ex.Response, HttpWebResponse).StatusCode.ToString & vbCrLf & ex.Message & ": " & errorResponseContent
+'        End If
+'    End Function
 
-    '    Private Function DisplayWebResponse(myWebRequestResponse As HttpWebResponse)
-    '        Using myWebRequestResponseReader As New StreamReader(myWebRequestResponse.GetResponseStream())
-    '            Dim myWebRequestResponseContent = myWebRequestResponseReader.ReadToEnd
-    '            Return "STATUS: " + myWebRequestResponse.StatusCode.ToString & vbCrLf & myWebRequestResponseContent
-    '        End Using
-    '    End Function
-    'End Module
-End Namespace
+'    Private Function DisplayWebResponse(myWebRequestResponse As HttpWebResponse)
+'        Using myWebRequestResponseReader As New StreamReader(myWebRequestResponse.GetResponseStream())
+'            Dim myWebRequestResponseContent = myWebRequestResponseReader.ReadToEnd
+'            Return "STATUS: " + myWebRequestResponse.StatusCode.ToString & vbCrLf & myWebRequestResponseContent
+'        End Using
+'    End Function
+'End Module
