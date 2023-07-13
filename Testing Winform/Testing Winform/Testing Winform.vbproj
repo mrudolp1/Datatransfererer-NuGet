@@ -209,8 +209,13 @@
     <Compile Include="Forms\Main.Designer.vb">
       <DependentUpon>Main.vb</DependentUpon>
     </Compile>
+    <Compile Include="Modules\DoDaThings %28Testing%29.vb" />
     <Compile Include="Modules\DoDaConnections.vb" />
-    <Compile Include="Modules\DoDaThings.vb" />
+    <Compile Include="Modules\DoDaThings %28General%29.vb" />
+    <Compile Include="Modules\Json Utils.vb" />
+    <Compile Include="Modules\Extensions %28Testing%29.vb" />
+    <Compile Include="Modules\Extensions %28General%29.vb" />
+    <Compile Include="Modules\Data Classes.vb" />
     <Compile Include="Modules\IDoDeclare.vb" />
     <Compile Include="Modules\StartUp.vb" />
     <Compile Include="My Project\Application.Designer.vb">

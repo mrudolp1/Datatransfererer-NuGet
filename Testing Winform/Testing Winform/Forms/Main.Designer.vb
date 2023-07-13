@@ -91,7 +91,7 @@
             Me.SplitContainerControl2 = New DevExpress.XtraEditors.SplitContainerControl()
             Me.rtbNotes = New System.Windows.Forms.RichTextBox()
             Me.LabelControl14 = New DevExpress.XtraEditors.LabelControl()
-            Me.mainLogViewer = New Testing_Winform.UnitTesting.LogViewer()
+            Me.mainLogViewer = New Testing_Winform.LogViewer()
             Me.rtfactivityLog = New System.Windows.Forms.RichTextBox()
             Me.gcViewer = New DevExpress.XtraGrid.GridControl()
             Me.GridView1 = New DevExpress.XtraGrid.Views.Grid.GridView()
@@ -971,13 +971,21 @@
             '
             'mainLogViewer
             '
+            Me.mainLogViewer.AdditionalColumnDefault = Nothing
+            Me.mainLogViewer.AdditionalColumnName = Nothing
             Me.mainLogViewer.Dock = System.Windows.Forms.DockStyle.Fill
             Me.mainLogViewer.Enabled = False
             Me.mainLogViewer.Location = New System.Drawing.Point(0, 0)
+            Me.mainLogViewer.LogPath = Nothing
             Me.mainLogViewer.Margin = New System.Windows.Forms.Padding(0)
             Me.mainLogViewer.Name = "mainLogViewer"
             Me.mainLogViewer.Size = New System.Drawing.Size(764, 206)
             Me.mainLogViewer.TabIndex = 23
+            Me.mainLogViewer.viewDebug = False
+            Me.mainLogViewer.viewError = False
+            Me.mainLogViewer.viewEvent = False
+            Me.mainLogViewer.viewInfo = False
+            Me.mainLogViewer.viewWarning = False
             '
             'rtfactivityLog
             '

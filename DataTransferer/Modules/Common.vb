@@ -483,6 +483,7 @@ Public Class Comparison
 
     End Function
 End Class
+
 Public Class AnalysisChange
     Property PreviousValue As String
     Property NewValue As String
@@ -502,6 +503,7 @@ Public Class AnalysisChange
         Me.PreviousIdentity = previousIdentity
     End Sub
 End Class
+
 <Description("Use this class to time parts of the code and record it to the console.")>
 Public Class Benchmark
     Implements IDisposable
