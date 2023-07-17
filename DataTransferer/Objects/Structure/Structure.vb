@@ -448,7 +448,7 @@ Partial Public Class EDSStructure
     ''' <param name="databaseID"></param>
     ''' <param name="ActiveDatabase"></param>
     ''' <param name="copyQueryToClipboard"></param>
-    ''' <returns></returns>
+    ''' <returns>Item1 = saveCheck, Item2 = Datatable of information</returns>
     Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As Tuple(Of Boolean, DataTable)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
