@@ -402,42 +402,79 @@ Partial Public Class EDSStructure
         End If
 
         Dim structureQuery As String = ""
+
+
         For Each level In _SQLQueryVariables
-            structureQuery += "DECLARE " & level & " TABLE(ID INT)" & vbCrLf
-            structureQuery += "DECLARE " & level & "ID INT" & vbCrLf
+            structureQuery.NewLine("DECLARE " & level & " TABLE(ID INT)")
+            structureQuery.NewLine("DECLARE " & level & "ID INT")
         Next
         If Me.Poles.Count > 0 Then
-            structureQuery += "DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT" & vbCrLf
+            structureQuery.NewLine("DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT")
         End If
 
-        structureQuery += "BEGIN TRANSACTION" & vbCrLf
-        structureQuery += Me.tnx?.EDSQueryBuilder(EDSMe.tnx) & vbCrLf
-        structureQuery += Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads) & vbCrLf
-        structureQuery += Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases) & vbCrLf
-        structureQuery += Me.Piles.EDSListQueryBuilder(EDSMe.Piles) & vbCrLf
-        structureQuery += Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools) & vbCrLf
-        structureQuery += Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools) & vbCrLf
-        structureQuery += Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates) & vbCrLf
-        structureQuery += Me.Poles.EDSListQueryBuilder(EDSMe.Poles) & vbCrLf
-        structureQuery += Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements) & vbCrLf
-        structureQuery += Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics)
 
-        structureQuery += vbCrLf & "COMMIT"
+        Dim transactionName As String = Me.process_stage & Me.structure_id & Me.bus_unit.NullableToString & Me.work_order_seq_num.NullableToString
+        structureQuery.NewLine("BEGIN TRY")
+        structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
+        structureQuery.NewLine(Me.tnx?.EDSQueryBuilder(EDSMe.tnx))
+        structureQuery.NewLine(Me.PierandPads.EDSListQueryBuilder(EDSMe.PierandPads))
+        structureQuery.NewLine(Me.UnitBases.EDSListQueryBuilder(EDSMe.UnitBases))
+        structureQuery.NewLine(Me.Piles.EDSListQueryBuilder(EDSMe.Piles))
+        structureQuery.NewLine(Me.DrilledPierTools.EDSListQueryBuilder(EDSMe.DrilledPierTools))
+        structureQuery.NewLine(Me.GuyAnchorBlockTools.EDSListQueryBuilder(EDSMe.GuyAnchorBlockTools))
+        structureQuery.NewLine(Me.CCIplates.EDSListQueryBuilder(EDSMe.CCIplates))
+        structureQuery.NewLine(Me.Poles.EDSListQueryBuilder(EDSMe.Poles))
+        structureQuery.NewLine(Me.LegReinforcements.EDSListQueryBuilder(EDSMe.LegReinforcements))
+        structureQuery.NewLine(Me.CCISeismics.EDSListQueryBuilder(EDSMe.CCISeismics))
+        structureQuery.NewLine("COMMIT TRANSACTION " & transactionName)
+        structureQuery.NewLine("SELECT '" & Me.bus_unit.NullableToString & "' bus_unit, '" & Me.structure_id & "' structure_id, '" & Me.work_order_seq_num.NullableToString & "' work_order_seq_num, '" & "Success" & "' result")
+        structureQuery.NewLine("END TRY")
+        structureQuery.NewLine("BEGIN CATCH")
+        structureQuery.NewLine("ROLLBACK TRANSACTION " & transactionName)
+        structureQuery.NewLine("EXECUTE dbo.usp_GetErrorInfo '" & Me.bus_unit.NullableToString & "', '" & Me.structure_id & "', '" & Me.work_order_seq_num.NullableToString & "'")
+        structureQuery.NewLine("END CATCH")
 
         Return structureQuery
 
+
     End Function
 
-    Public Sub SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing)
-
+    ''' <summary>
+    ''' Save to EDS functionality to save the whole structure to EDS.
+    ''' Returns a tuple of Boolean and Datatable
+    ''' The datatable will contain the error or success information 
+    ''' Boolean = true was a successful save --> Boolean = false was a failure.
+    ''' </summary>
+    ''' <param name="databaseID"></param>
+    ''' <param name="ActiveDatabase"></param>
+    ''' <param name="copyQueryToClipboard"></param>
+    ''' <returns>Item1 = saveCheck, Item2 = Datatable of information</returns>
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As Tuple(Of Boolean, DataTable)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
         If EDSMe Is Nothing Then EDSMe = New EDSStructure(Me.bus_unit, Me.structure_id, Me.work_order_seq_num, databaseID, ActiveDatabase)
 
-        sqlSender(SavetoEDSQuery, ActiveDatabase, databaseID, 0.ToString)
+        Dim resDS As New DataSet
+        Dim myQuery As String = SavetoEDSQuery()
 
-    End Sub
+        If copyQueryToClipboard Then
+            My.Computer.Clipboard.SetText(myQuery)
+        End If
+
+        sqlLoader(myQuery, resDS, ActiveDatabase, databaseID, 4051.ToString)
+
+        If resDS.Tables.Count > 0 Then
+            'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
+            Dim saveCheck As Boolean = True
+            If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
+                saveCheck = False
+            End If
+            Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+        Else
+            Return Nothing
+        End If
+    End Function
 #End Region
 
 #Region "Files"

@@ -1515,11 +1515,12 @@ Public Class ReportOptions
 End Class
 
 #Region "Helper Classes"
+<DataContract()>
 Public Class FilepathWithPriority
-    Public priority As Integer
-    Public rootDir As String
-    Public filename As String
-    Public enabled As Boolean = True
+    <DataMember()> Public Property priority As Integer
+    <DataMember()> Public Property rootDir As String
+    <DataMember()> Public Property filename As String
+    <DataMember()> Public Property enabled As Boolean = True
 
     Public Sub New(ByVal priority As Integer, ByVal rootDir As String, ByVal filename As String)
         Me.priority = priority

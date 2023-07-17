@@ -27,6 +27,11 @@ Public Module Extensions
     End Function
 
     <Extension()>
+    Public Sub NewLine(ByRef input As String, nextLine As String)
+        input = input & vbCrLf & nextLine
+    End Sub
+
+    <Extension()>
     Public Function FormatDBValue(input As String) As String
         'Handles nullable values and quoatations needed for DB values
 

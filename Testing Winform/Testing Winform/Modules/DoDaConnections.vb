@@ -1,9 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Security.Principal
 Imports Oracle.ManagedDataAccess.Client
-Imports System.IO
-Imports System.Net
-Imports CciSites.Utils
 
 Module DoDaSQL
     Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
@@ -12,12 +9,12 @@ Module DoDaSQL
     Public impersonatedUser As WindowsImpersonationContext
     Public newId As WindowsIdentity
 
-    <DebuggerStepThrough()>
+    '<DebuggerStepThrough()>
     Public Function sqlLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer) As Boolean
         dtClearer(sqlSrc)
         'Dim newId As New WindowsIdentity(tokenHandle)
-        Using impersonatedUser As WindowsImpersonationContext = newId.Impersonate()
-            sqlCon = New SqlConnection(dbActive)
+        Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
+            sqlCon = New SqlConnection(EDSdbActive)
             sqlCon.Open()
 
             Try
@@ -39,8 +36,8 @@ Module DoDaSQL
 
     '<DebuggerStepThrough()>
     Public Function sqlSender(ByVal cmd As String, ByVal erNo As Integer) As Boolean
-        Using impersonatedUser As WindowsImpersonationContext = newId.Impersonate()
-            sqlCon = New SqlConnection(dbActive)
+        Using edsimpersonatedUser As WindowsImpersonationContext = EDSnewId.Impersonate()
+            sqlCon = New SqlConnection(EDSdbActive)
             Dim sqlCmd = New SqlCommand(cmd, sqlCon)
             sqlCon.Open()
 

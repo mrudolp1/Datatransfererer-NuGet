@@ -1,20 +1,11 @@
-﻿
-Imports Krypton.Toolkit
-Imports System.IO
-Imports System.Net
-Imports System.Threading
-Imports System.Drawing.Printing
-Imports System.Math
-Imports Microsoft.VisualBasic
-Imports System.Windows.Forms
-Imports System.Data.SqlClient
-Imports System.Security.Principal
-Imports System.ComponentModel
-Imports System.Runtime.InteropServices
+﻿Imports System.IO
 Imports DevExpress.XtraBars.ToastNotifications
 Imports System.Xml
-Imports DevExpress.DataAccess.Excel
-
+Imports System.Text
+Imports CCI_Engineering_Templates
+Imports System.Runtime.CompilerServices
+Imports System.Runtime.Serialization.Json
+Imports System.Text.RegularExpressions
 
 '------------------------------------------
 '------------------------------------------
@@ -58,6 +49,16 @@ Module DoDaThings
 
         Return UserData
     End Function
+
+    Public Sub KillRoboCops()
+        Dim proc = Process.GetProcessesByName("RoboCopy")
+        For i As Integer = 0 To proc.Count - 1
+            Try
+                proc(i).Kill()
+            Catch
+            End Try
+        Next i
+    End Sub
 
 #Region "Toaster"
     Public Sub Toaster_Activated(sender As Object, e As DevExpress.XtraBars.ToastNotifications.ToastNotificationEventArgs)
@@ -323,7 +324,7 @@ Module DoDaThings
     'This was taken from logic used in the CCI SQL Manager but has been adjusted to use a datatable instead of a datagrid. 
     'If you are trying to output something that a user is editing. The data will need to be converted to a datatable to utilize this
     'This could probably be updated to work similar to the thing Ken Linck wrote that accepts any type of object. Instead of ouputting HTML calls we could output CSV.
-    Public Sub DatatableToCSV(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
+    Public Sub DatatableToCSVOld(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
         Dim sw As StreamWriter = New StreamWriter(strFilePath, False)
 
         For i As Integer = 0 To dtDataTable.Columns.Count - 1
@@ -401,5 +402,223 @@ Module DoDaThings
         'Unsure if it is actually happening. Just haven't had time to actually review. 
         Return tempsql.Replace(",)", ",NULL)")
     End Function
+End Module
+
+Public Module GeneralHelpers 'salute
+
+    'serialize any object to a json
+    '''Object being passed in
+    '''location to save the file path
+    Public Function ObjectToJson(Of T)(ByVal obj As Object, ByVal jsonPath As String) As Tuple(Of Boolean, String)
+        Dim objJson As String
+
+        Try
+            objJson = ToJsonString(Of T)(CType(obj, T))
+            If objJson.Contains("ERROR SERIALIZING") Then
+                Return New Tuple(Of Boolean, String)(False, objJson)
+                Exit Function
+            End If
+
+            Using sw As New StreamWriter(jsonPath)
+                sw.Write(objJson)
+                sw.Close()
+            End Using
+            Return New Tuple(Of Boolean, String)(True, "")
+        Catch ex As Exception
+            objJson = Nothing
+            Return New Tuple(Of Boolean, String)(False, ex.Message)
+        End Try
+    End Function
+
+    'Determine if the maestro conductor ran successfully
+    Public Function DidConductProperly(ByVal logpath As String) As Boolean
+        Dim isFailure As Boolean = True
+        Using maeSr As New StreamReader(logpath)
+            'if an error exists then it did not conduct properly.
+            If maeSr.ReadToEnd.Contains("ERROR") Then
+                isFailure = False
+            End If
+            maeSr.Close()
+        End Using
+
+        Return isFailure
+    End Function
+
+    'Archive a directory
+    Public Function DoArchiving(ByVal folder As String) As String
+        Dim arch As DirectoryInfo = Directory.CreateDirectory(folder & "\Archive " & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString)
+        Dim archiveLog As String = ""
+        archiveLog = arch.ArchiveFiles(folder)
+
+        archiveLog.NewLine("DEBUG | Folder archived: " & folder)
+
+        Return archiveLog
+    End Function
+
+    'Determine if a file is open
+    Public Function FileIsOpen(ByVal file As FileInfo) As Boolean
+        Dim stream As FileStream = Nothing
+        Try
+            stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)
+            stream.Close()
+            Return False
+        Catch ex As Exception
+            Return True
+        End Try
+    End Function
+
+    'This was taken from logic used in the CCI SQL Manager but has been adjusted to use a datatable instead of a datagrid. 
+    'If you are trying to output something that a user is editing. The data will need to be converted to a datatable to utilize this
+    'This could probably be updated to work similar to the thing Ken Linck wrote that accepts any type of object. Instead of ouputting HTML calls we could output CSV.
+    Public Sub DatatableToCSV(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
+        Dim counter As Integer = 1
+RetryFileOpenCheck:
+        If IO.File.Exists(strFilePath) Then
+            If FileIsOpen(New FileInfo(strFilePath)) Then
+                MsgBox(strFilePath & " Is currently open. " & vbCrLf & vbCrLf & "Please close the file To Continue.", MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "File Is In use")
+
+                counter += 1
+                If counter > 2 Then
+                    MsgBox("It seems the file Is still open." & vbCrLf & vbCrLf & "Data was Not saved To CSV.", vbInformation)
+                    Exit Sub
+                End If
+                GoTo RetryFileOpenCheck
+            End If
+        End If
+
+        Using sw As StreamWriter = New StreamWriter(strFilePath, False)
+            For i As Integer = 0 To dtDataTable.Columns.Count - 1
+                sw.Write(dtDataTable.Columns(i))
+
+                If i < dtDataTable.Columns.Count - 1 Then
+                    sw.Write(",")
+                End If
+            Next
+
+            sw.Write(sw.NewLine)
+
+            For Each dr As DataRow In dtDataTable.Rows
+
+                For i As Integer = 0 To dtDataTable.Columns.Count - 1
+
+                    If Not Convert.IsDBNull(dr(i)) Then
+                        Dim value As String = dr(i).ToString()
+
+                        If value.Contains(","c) Then
+                            value = String.Format("""{0}""", value)
+                            sw.Write(value)
+                        Else
+                            sw.Write(dr(i).ToString())
+                        End If
+                    End If
+
+                    If i < dtDataTable.Columns.Count - 1 Then
+                        sw.Write(",")
+                    End If
+                Next
+
+                sw.Write(sw.NewLine)
+            Next
+
+            sw.Close()
+        End Using
+    End Sub
+
+    'Convert a CSV file to a databale
+    'Uses an OLEDBAdpater to SELECT * FROM csv file
+    'None string columns load in with incorrect column headers
+    'This is extremely similar to how we use the SQL adapter for the SQL loader and Sender
+    'Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasHeaders As Boolean = True) As DataTable
+    '    Dim dssample As New DataSet
+    '    Dim folder = info.FullName.Replace(info.Name, "")
+    '    Dim CnStr = "Provider= Microsoft.Jet.OLEDB.4.0;Data Source=" & folder & ";Extended Properties=""text;HDR=No;FMT=Delimited"";"
+
+    '    Using Adp As New OleDbDataAdapter("Select * from [" & info.Name & "]", CnStr)
+
+    '        Try
+    '            Adp.Fill(dssample)
+    '        Catch
+    '        End Try
+    '    End Using
+
+    '    If hasHeaders Then
+    '        For Each dc As DataColumn In dssample.Tables(0).Columns
+    '            'If the data is not saved as a string then it will not recognize the header column as it doesn't not assume headers in the SQL query
+    '            'I didn't have time to create custom queries. 
+    '            'This just works for any selected csv file
+    '            Try
+    '                dc.ColumnName = dssample.Tables(0).Rows(0).Item(dc)
+    '            Catch
+    '            End Try
+    '        Next
+
+    '        dssample.Tables(0).Rows.Remove(dssample.Tables(0).Rows(0))
+    '    End If
+
+    '    If dssample.Tables.Count > 0 Then
+    '        'Only 1 table should have been output but it returns that table
+    '        Return dssample.Tables(0)
+    '    End If
+    'End Function
+
+    Public Function CSVtoDatatable(ByVal info As FileInfo, Optional ByVal hasheaders As Boolean = True) As DataTable
+
+        Dim dt As DataTable = New DataTable()
+        Dim row As DataRow
+        Dim headersAdded As Boolean = False
+
+        Using SR As StreamReader = New StreamReader(info.FullName)
+            If hasheaders Then
+                Dim line As String = SR.ReadLine()
+                Dim strArray As String() = line.Split(","c)
+                For Each s As String In strArray
+                    dt.Columns.Add(s)
+                    headersAdded = True
+                Next
+            End If
+
+            Do
+                Dim line As String
+                line = SR.ReadLine
+                If Not line = String.Empty Then
+                    If Not headersAdded Then
+                        Dim strArray As String() = line.Split(","c)
+                        Dim counter As Integer = 1
+                        For Each s As String In strArray
+                            dt.Columns.Add("F" & counter)
+                            headersAdded = True
+                        Next
+                    End If
+
+                    row = dt.NewRow()
+                    row.ItemArray = line.Split(","c)
+                    dt.Rows.Add(row)
+                Else
+                    Exit Do
+                End If
+            Loop
+            SR.Close()
+        End Using
+
+        Return dt
+    End Function
+
+
+    'Toggles the cursor between default and waiting
+    '''Placed at the beginning and end of form events like button clicks or checkbox changes
+    '''Should also be placed anywhere you exit sub 
+    Public Sub ButtonclickToggle(ByRef cur As Cursor, Optional ByVal type As Cursor = Nothing)
+        If type IsNot Nothing Then
+            cur = type
+            Exit Sub
+        End If
+
+
+        If cur = Cursors.WaitCursor Then
+            cur = Cursors.Default
+        Else
+            cur = Cursors.WaitCursor
+        End If
+    End Sub
 End Module
 

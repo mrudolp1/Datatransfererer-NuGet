@@ -48,7 +48,6 @@ Module DoDaSQL
         Catch ex As Exception
             'Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
             errors = True
-            Throw
         End Try
 
         Return Not errors

@@ -2,7 +2,8 @@
 Imports System.Runtime.Serialization
 Imports MoreLinq
 
-<DataContract()>
+
+<DataContract(), KnownTypeAttribute(GetType(tnxResult))>
 Public Class tnxResult
     Inherits EDSResult
 
@@ -17,7 +18,9 @@ Public Class tnxResult
     '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
     ' <DataMember()> Public Property UseSFInsteadofRatio As Boolean = False
 
+    Private _rating As Decimal?
     <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
+     <DataMember()>
     Public Overrides Property Rating As Decimal?
         Get
             Dim designCode As String
@@ -38,7 +41,7 @@ Public Class tnxResult
             End If
         End Get
         Set(value As Decimal?)
-            'Do Nothing
+            Me._rating = value
         End Set
     End Property
 

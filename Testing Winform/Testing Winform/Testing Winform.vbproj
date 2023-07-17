@@ -8,7 +8,7 @@
     <ProjectGuid>{5C5EB194-61CA-4E96-BF71-DDCD9FF4886E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Testing_Winform</RootNamespace>
-    <AssemblyName>Testing Winform</AssemblyName>
+    <AssemblyName>SAPI Testing Winform %28EDS &amp; Excel%29</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OptionExplicit>On</OptionExplicit>
@@ -18,6 +18,25 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\netapp4\cad\Development\SAPI Testing\Deployment\Testing Winform\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>\\netapp4\cad\Development\SAPI Testing\Deployment\Testing Winform\</InstallUrl>
+    <UpdateUrl>\\netapp4\cad\Development\SAPI Testing\Deployment\Testing Winform\</UpdateUrl>
+    <MinimumRequiredVersion>1.0.0.1</MinimumRequiredVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +65,24 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\wanda_LjA_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>C8E855A6CEFBCE9D05785D621A3D385C5901839A</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Testing Winform_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CciSites.Utils, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -172,9 +209,15 @@
     <Compile Include="Forms\Main.Designer.vb">
       <DependentUpon>Main.vb</DependentUpon>
     </Compile>
+    <Compile Include="Modules\DoDaThings %28Testing%29.vb" />
     <Compile Include="Modules\DoDaConnections.vb" />
-    <Compile Include="Modules\DoDaThings.vb" />
+    <Compile Include="Modules\DoDaThings %28General%29.vb" />
+    <Compile Include="Modules\Json Utils.vb" />
+    <Compile Include="Modules\Extensions %28Testing%29.vb" />
+    <Compile Include="Modules\Extensions %28General%29.vb" />
+    <Compile Include="Modules\Data Classes.vb" />
     <Compile Include="Modules\IDoDeclare.vb" />
+    <Compile Include="Modules\StartUp.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
@@ -212,6 +255,7 @@
     <EmbeddedResource Include="Forms\SimpleExplorer.resx">
       <DependentUpon>SimpleExplorer.vb</DependentUpon>
     </EmbeddedResource>
+    <None Include="My Project\app.manifest" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
@@ -232,6 +276,7 @@
     <None Include="Templates\Pier and Pad Foundation %284.1.1%29.xlsm" />
     <None Include="Templates\Pile Foundation %282.2.1%29.xlsm" />
     <None Include="Templates\SST Unit Base Foundation %284.0.3%29.xlsm" />
+    <None Include="Testing Winform_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="My Project\Application.myapp">
@@ -316,6 +361,18 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
