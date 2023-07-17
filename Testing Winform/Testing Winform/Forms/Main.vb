@@ -1315,7 +1315,10 @@ StopLookingAtMeSwan:
             GridView1.Columns.Clear()
             gcViewer.DataSource = Nothing
             pgcUnitTesting.SelectedObject = Nothing
-            MySite.Clear()
+            Try
+                MySite.Clear()
+            Catch
+            End Try
 
             Try
                 seNetwork.SetCurrentDirectory(Environment.SpecialFolder.MyDocuments.ToString)
