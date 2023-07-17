@@ -909,7 +909,7 @@ Namespace UnitTesting
 
                     Dim resDT As New DataTable
                     Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
-                    resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True)
+                    resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True).Item2
 
                     Dim SaveToDirectory As String = mylocation & "\EDS Save " & nowString
                     Directory.CreateDirectory(SaveToDirectory)

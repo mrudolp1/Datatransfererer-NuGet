@@ -436,10 +436,20 @@ Partial Public Class EDSStructure
 
         Return structureQuery
 
+
     End Function
 
-    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As DataTable
-
+    ''' <summary>
+    ''' Save to EDS functionality to save the whole structure to EDS.
+    ''' Returns a tuple of Boolean and Datatable
+    ''' The datatable will contain the error or success information 
+    ''' Boolean = true was a successful save --> Boolean = false was a failure.
+    ''' </summary>
+    ''' <param name="databaseID"></param>
+    ''' <param name="ActiveDatabase"></param>
+    ''' <param name="copyQueryToClipboard"></param>
+    ''' <returns></returns>
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As Tuple(Of Boolean, DataTable)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
@@ -456,7 +466,13 @@ Partial Public Class EDSStructure
 
         If resDS.Tables.Count > 0 Then
             'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
-            Return resDS.Tables(0)
+            Dim saveCheck As Boolean = True
+            If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
+                saveCheck = False
+            End If
+            Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+        Else
+            Return Nothing
         End If
     End Function
 #End Region
