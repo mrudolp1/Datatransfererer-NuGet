@@ -124,10 +124,10 @@ Namespace UnitTesting
 
         Public Sub SetVersion()
             Try
-                frmMain.Text = My.Application.Info.AssemblyName & " - " & FetchUserData("FullName") & " - User ID " & userID
-                frmMain.verLabel.Text = System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
+                UnitTesting.frmMain.Text = My.Application.Info.AssemblyName & " - " & FetchUserData("FullName")
+                UnitTesting.frmMain.verLabel.Text = "" 'System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
             Catch ex As Exception
-                frmMain.verLabel.Text = betaVersion
+                UnitTesting.frmMain.verLabel.Text = betaVersion
             End Try
         End Sub
 
