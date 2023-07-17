@@ -158,7 +158,7 @@ Namespace UnitTesting
                 ButtonclickToggle(Me.Cursor, Cursors.Default)
             Else
             End If
-                HideDateAndSize()
+            HideDateAndSize()
 
         End Sub
 

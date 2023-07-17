@@ -60,59 +60,59 @@ End Module
 
 Module DoDaORACLE
 
-        Private Const ordsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = ordsprd_batch.crowncastle.com)    )  )"
-        Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isitprd_utl.crowncastle.com)      (SERVER = DEDICATED)    )  )"
-        Private Const odsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = odsprd_app.crowncastle.com)      (SERVER = DEDICATED)    )  )"
-        'Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = uat-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isituat_batch.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    Private Const ordsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = ordsprd_batch.crowncastle.com)    )  )"
+    Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isitprd_utl.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    Private Const odsDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = prd-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = odsprd_app.crowncastle.com)      (SERVER = DEDICATED)    )  )"
+    'Private Const isitDataSource = "(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = uat-scan)(PORT = 1521))    (CONNECT_DATA =      (SERVICE_NAME = isituat_batch.crowncastle.com)      (SERVER = DEDICATED)    )  )"
 
-        Private Const ntoken = "270:207:234:213:204:207:258"
-        Private Const wtoken = "366:264:339:216:357:159:192:297:171:216"
+    Private Const ntoken = "270:207:234:213:204:207:258"
+    Private Const wtoken = "366:264:339:216:357:159:192:297:171:216"
 
-        Public Function OracleLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer, ByVal db As String) As Boolean
+    Public Function OracleLoader(ByVal sqlStr As String, ByVal sqlSrc As String, ByVal erNo As Integer, ByVal db As String) As Boolean
 
-            Dim oraDatasource As String
+        Dim oraDatasource As String
 
-            Select Case db
-                Case "isit"
-                    oraDatasource = isitDataSource
-                Case "ods"
-                    oraDatasource = odsDataSource
-                Case Else
-                    'ORDS is the catch-all because it has links to the other DBs
-                    oraDatasource = ordsDataSource
-            End Select
+        Select Case db
+            Case "isit"
+                oraDatasource = isitDataSource
+            Case "ods"
+                oraDatasource = odsDataSource
+            Case Else
+                'ORDS is the catch-all because it has links to the other DBs
+                oraDatasource = ordsDataSource
+        End Select
 
-            dtClearer(sqlSrc)
+        dtClearer(sqlSrc)
 
-            Dim sb As OracleConnectionStringBuilder = New OracleConnectionStringBuilder()
+        Dim sb As OracleConnectionStringBuilder = New OracleConnectionStringBuilder()
 
-            sb.DataSource = oraDatasource
-            sb.UserID = token(ntoken)
-            sb.Password = token(wtoken)
-            'By default pooling = true which means that oracle moves connections to an inactive pool when they are closed by the program.
-            'This makes reconnecting faster but was causing issues with the connection idle_time being exceeded.
-            sb.Pooling = False
+        sb.DataSource = oraDatasource
+        sb.UserID = token(ntoken)
+        sb.Password = token(wtoken)
+        'By default pooling = true which means that oracle moves connections to an inactive pool when they are closed by the program.
+        'This makes reconnecting faster but was causing issues with the connection idle_time being exceeded.
+        sb.Pooling = False
 
-            Dim bOraSuccess As Boolean = True
+        Dim bOraSuccess As Boolean = True
 
-            Using oraCon As New OracleConnection(sb.ToString())
-                Try
-                    Dim oDa = New OracleDataAdapter(sqlStr, oraCon)
-                    oDa.Fill(ds, sqlSrc)
-                    dt = ds.Tables(sqlSrc)
-                Catch ex As Exception
-                    bOraSuccess = False
-                    Console.WriteLine(sqlStr)
-                    sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
-                End Try
-                oraCon.Close()
-            End Using
+        Using oraCon As New OracleConnection(sb.ToString())
+            Try
+                Dim oDa = New OracleDataAdapter(sqlStr, oraCon)
+                oDa.Fill(ds, sqlSrc)
+                dt = ds.Tables(sqlSrc)
+            Catch ex As Exception
+                bOraSuccess = False
+                Console.WriteLine(sqlStr)
+                sendToast("Failure loading data:" & vbCrLf & ex.Message, "Error " & erNo)
+            End Try
+            oraCon.Close()
+        End Using
 
-            Return bOraSuccess
+        Return bOraSuccess
 
-        End Function
+    End Function
 
-    End Module
+End Module
 
 'Module DoDaHTTPs
 '    Dim cciConnection As Connection
