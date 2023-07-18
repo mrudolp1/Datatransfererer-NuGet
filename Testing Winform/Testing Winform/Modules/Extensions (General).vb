@@ -48,7 +48,10 @@ Public Module UnitTestingExtensions
 
         For Each fold As DirectoryInfo In New DirectoryInfo(dirFrom).GetDirectories
             If Not fold.Name.ToLower.Contains("archive") Then
-                fold.MoveTo(dirTo.FullName & "\" & fold.Name)
+                Try
+                    fold.MoveTo(dirTo.FullName & "\" & fold.Name)
+                Catch
+                End Try
                 archiveLog.NewLine("DEBUG | " & fold.Name & " moved to " & dirTo.FullName.Replace(dirFrom, ""))
             End If
         Next
