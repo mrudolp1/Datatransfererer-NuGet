@@ -806,9 +806,8 @@ ErrorSkip:
                 End If
 
                 With cmdProcess
-                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'RunAnalysis 'SilentAnalysisRun
-
-                    With .StartInfo
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateCCIReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                With .StartInfo
                         .CreateNoWindow = True
                         .UseShellExecute = False
                         .RedirectStandardOutput = True
@@ -953,7 +952,7 @@ ErrorSkip:
         Dim logReader As StreamReader
 
         If generateReport Then
-            finishedPhrase = "ANALYSIS AND DESIGN REPORT END"
+            finishedPhrase = "CROWN CASTLE REPORT END"  '"ANALYSIS AND DESIGN REPORT END"
         Else
             finishedPhrase = "DESIGN END"
         End If
