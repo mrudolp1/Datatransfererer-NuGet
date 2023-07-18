@@ -38,8 +38,8 @@ Partial Public Class SiteCodeCriteria
     Private _structure_type As String
     Private _eng_app_id As Integer?
     Private _eng_app_id_revision As Integer?
-    Private _lat_dec As Double?
-    Private _long_dec As Double?
+    Private _lat_dec As Decimal?
+    Private _long_dec As Decimal?
 
     <Category(""), Description(""), DisplayName("ibc_current")>
      <DataMember()> Public Property ibc_current() As String
@@ -267,7 +267,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("lat_dec")>
-     <DataMember()> Public Property lat_dec() As Double?
+    <DataMember()> Public Property lat_dec() As Decimal?
         Get
             Return Me._lat_dec
         End Get
@@ -276,7 +276,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("long_dec")>
-     <DataMember()> Public Property long_dec() As Double?
+    <DataMember()> Public Property long_dec() As Decimal?
         Get
             Return Me._long_dec
         End Get
@@ -570,8 +570,8 @@ Partial Public Class SiteCodeCriteria
             Me.eng_app_id_revision = Nothing
         End Try
         Try
-            If Not IsDBNull(CType(SiteCodeDataRow.Item("lat_dec"), Double)) Then
-                Me.lat_dec = CType(SiteCodeDataRow.Item("lat_dec"), Double)
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("lat_dec"), Decimal)) Then
+                Me.lat_dec = CType(SiteCodeDataRow.Item("lat_dec"), Decimal)
             Else
                 Me.lat_dec = Nothing
             End If
@@ -579,8 +579,8 @@ Partial Public Class SiteCodeCriteria
             Me.lat_dec = Nothing
         End Try
         Try
-            If Not IsDBNull(CType(SiteCodeDataRow.Item("long_dec"), Double)) Then
-                Me.long_dec = CType(SiteCodeDataRow.Item("long_dec"), Double)
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("long_dec"), Decimal)) Then
+                Me.long_dec = CType(SiteCodeDataRow.Item("long_dec"), Decimal)
             Else
                 Me.long_dec = Nothing
             End If
