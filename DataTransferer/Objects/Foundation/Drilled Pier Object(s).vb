@@ -328,6 +328,7 @@ Partial Public Class DrilledPierFoundation
                 End If
 
                 'Sections
+                Dim rebCountAdj As Integer = 0
                 For Each section In drilledPier.PierProfile.Sections
                     Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_pier_profile_id - 1) - 1
 
@@ -362,6 +363,14 @@ Partial Public Class DrilledPierFoundation
                                 If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 33 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
                         End Select
                     Next
+
+                    If Not structure_type?.Contains("Guyed") Then
+                        'Row R of the foundation input tab. 
+                        'This only works for Monopoles and SSTs
+                        'Guyed towers with a drilled pier with sections with multiple rebar is a known issue with the tool.
+                        wb.Worksheets("Foundation Input").Range("R" & 109 + rebCountAdj).Value = CType(section.Rebar.Count.ToString, Integer)
+                    End If
+                    rebCountAdj += 1
                 Next
 
                 'Soil Profile

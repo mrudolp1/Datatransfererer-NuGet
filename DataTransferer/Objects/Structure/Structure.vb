@@ -368,8 +368,8 @@ Partial Public Class EDSStructure
                                 ,'True' rev_h_section_15_5
                                 ,0 tower_point_elev                                
                                 ,str.structure_type
-                                ,ROUND(str.LAT_DEC, 8)
-                                ,ROUND(str.LONG_DEC, 8)" & vbCrLf &
+                                ,str.LAT_DEC
+                                ,str.LONG_DEC" & vbCrLf &
                                 sqlOrder & vbCrLf &
                             "FROM
                                 isit_aim.structure                      str
