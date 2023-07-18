@@ -43,6 +43,7 @@ Namespace UnitTesting
             End Get
         End Property
         Public Property MySite As SiteData
+
         Public ReadOnly Property TestLogActivityPath As String
             Get
                 Return dirUse & "\Test ID " & testCase & "\Test Activity.txt"
@@ -544,6 +545,8 @@ Namespace UnitTesting
             LogActivity("PROCESS | Start " & sender.tooltip.ToString)
             Dim tags As String() = sender.tag.ToString.Split("|")
             LogActivity("INFO | " & tags(1))
+
+            MySite = New SiteData(testBu.Text, testSid.Text, testWo.Text)
 
             Select Case tags(0).ToLower
 #Region "Step 1 - Get Reference SA Files"
