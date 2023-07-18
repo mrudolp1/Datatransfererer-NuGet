@@ -536,7 +536,7 @@ Namespace UnitTesting
                     btnProcess13.Click, btnProcess14.Click, btnProcess15.Click, btnProcess16.Click,
                     btnProcess17.Click, btnProcess18.Click, btnProcess19.Click, btnProcess20.Click,
                     btnProcess21.Click, btnProcess22.Click, btnProcess23.Click, btnProcess24.Click,
-                    btnProcess25.Click, btnProcess26.Click
+                    btnProcess25.Click, btnProcess26.Click, btnProcess27.Click
 
             If isOpening Then Exit Sub
 
@@ -884,15 +884,26 @@ Namespace UnitTesting
                         MsgBox(ex.Message, vbExclamation, "Failed to load report generator")
                     End Try
 #End Region
-#Region "Step 9 - Save to EDS"
-                Case "step9"
+#Region "Step 9 - Save to EDS | Step 14 - Just create the save to EDS files"
+                Case "step9", "step14"
                     Dim mylocation As String = DetermineFolder("Stop EDS Saving")
                     If mylocation = "STOP" Then
                         LogActivity("INFO | EDS Saving cancelled")
                         Exit Select
                     End If
 
-                    LogActivity("INFO | Saving to selected database: " & My.Settings.dbSelection)
+                    If tags(0).ToLower = "step14" Then
+                        LogActivity("INFO | Creating Saving files for: " & My.Settings.dbSelection)
+                    Else
+                        LogActivity("INFO | Saving to selected database: " & My.Settings.dbSelection)
+                    End If
+
+                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+
+                    Dim resDT As New DataTable
+                    Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
+                    Dim SaveToDirectory As String
+
                     Dim dbToSend As String
 
                     If My.Settings.serverActive = "dbDevelopment" Then
@@ -905,40 +916,44 @@ Namespace UnitTesting
                         dbToSend = EDSdbProduction
                     End If
 
-                    LogActivity(CreateStructure(mylocation, strcLocal, MySite, False))
+                    'Call save to eds but don't commit the query if you don't want it sent.
+                    If tags(0).ToLower = "step14" Then
+                        strcLocal.SavetoEDS(EDSnewId, dbToSend, True, False)
+                        SaveToDirectory = mylocation & "\EDS Query " & nowString
+                    Else
+                        resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True).Item2
+                        SaveToDirectory = mylocation & "\EDS Save " & nowString
+                    End If
 
-                    Dim resDT As New DataTable
-                    Dim nowString As String = Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString
-                    resDT = strcLocal.SavetoEDS(EDSnewId, dbToSend, True).Item2
-
-                    Dim SaveToDirectory As String = mylocation & "\EDS Save " & nowString
                     Directory.CreateDirectory(SaveToDirectory)
 
-                    resDT.ToCSV(SaveToDirectory & "\EDS Result.csv")
-                    LogActivity("INFO | EDS Response Saved: " & SaveToDirectory & "\EDS Result.csv")
+                    If tags(0).ToLower = "step9" Then
+                        resDT.ToCSV(SaveToDirectory & "\EDS Result.csv")
+                        LogActivity("INFO | EDS Response Saved: " & SaveToDirectory & "\EDS Result.csv")
 
-                    If resDT.Rows(0).Item("Result").ToString = "Error" Then
-                        Dim errNum As String
-                        Dim errLine As String
-                        Dim errMessage As String
-                        Dim errSev As String
-                        Dim errState As String
-                        Dim dr As DataRow = resDT.Rows(0)
+                        If resDT.Rows(0).Item("Result").ToString = "Error" Then
+                            Dim errNum As String
+                            Dim errLine As String
+                            Dim errMessage As String
+                            Dim errSev As String
+                            Dim errState As String
+                            Dim dr As DataRow = resDT.Rows(0)
 
-                        errNum = dr.Item("ErrorNumber").ToString
-                        errLine = dr.Item("ErrorLine").ToString
-                        errMessage = dr.Item("ErrorMessage").ToString
-                        errSev = dr.Item("ErrorSeverity").ToString
-                        errState = dr.Item("ErrorState").ToString
+                            errNum = dr.Item("ErrorNumber").ToString
+                            errLine = dr.Item("ErrorLine").ToString
+                            errMessage = dr.Item("ErrorMessage").ToString
+                            errSev = dr.Item("ErrorSeverity").ToString
+                            errState = dr.Item("ErrorState").ToString
 
-                        LogActivity("ERROR | Saving EDS Query failed")
-                        LogActivity("DEBUG | Error Number: " & errNum)
-                        LogActivity("DEBUG | Error Line: " & errLine)
-                        LogActivity("DEBUG | Error Message: " & errMessage)
-                        LogActivity("DEBUG | Error Severity: " & errSev)
-                        LogActivity("DEBUG | Error State: " & errState)
-                    Else
-                        LogActivity("INFO | EDS data saved successfully")
+                            LogActivity("ERROR | Saving EDS Query failed")
+                            LogActivity("DEBUG | Error Number: " & errNum)
+                            LogActivity("DEBUG | Error Line: " & errLine)
+                            LogActivity("DEBUG | Error Message: " & errMessage)
+                            LogActivity("DEBUG | Error Severity: " & errSev)
+                            LogActivity("DEBUG | Error State: " & errState)
+                        Else
+                            LogActivity("INFO | EDS data saved successfully")
+                        End If
                     End If
 
                     Dim myQuery As String = My.Computer.Clipboard.GetText()
@@ -946,6 +961,7 @@ Namespace UnitTesting
                     Dim serialResult As Tuple(Of Boolean, String)
 
                     serialResult = ObjectToJson(Of EDSStructure)(strcLocal, SaveToDirectory & "\" & "EDSStructure.ccistr")
+
                     If Not serialResult.Item1 Then
                         LogActivity("ERROR | Structure not serialized.")
                         LogActivity("DEBUG | " & serialResult.Item2.ToString)
@@ -1366,6 +1382,7 @@ StopLookingAtMeSwan:
             btnProcess24.Enabled = Not btnProcess24.Enabled
             btnProcess25.Enabled = Not btnProcess25.Enabled
             btnProcess26.Enabled = Not btnProcess26.Enabled
+            btnProcess27.Enabled = Not btnProcess27.Enabled
 
             testGetWOs.Enabled = Not testGetWOs.Enabled
 

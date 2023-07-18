@@ -1354,7 +1354,7 @@ Partial Public Class CCIplate
                             End If
                             If Not IsNothing(bsdrow.connection_id) Then
                                 '.Worksheets("MP Connection Summary").Range("B" & BridgeDRow + 164).Value = CType(bsdrow.plate_id, Integer)
-                                .Worksheets("MP Connection Summary").Range("B" & BridgeDRow + 164).Value = CType(row.connection_elevation, Integer)
+                                .Worksheets("MP Connection Summary").Range("B" & BridgeDRow + 164).Value = CType(row.connection_elevation, Double)
                             Else
                                 .Worksheets("MP Connection Summary").Range("B" & BridgeDRow + 164).ClearContents
                             End If

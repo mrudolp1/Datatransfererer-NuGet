@@ -936,39 +936,39 @@ Partial Public Class DrilledPierProfile
         Dim _embedInsert As String
 
         For Each sec In Me.Sections
-            If sec.ID IsNot Nothing And sec?.ID > 0 Then
-                If sec.local_section_id IsNot Nothing Then
-                    _sectionInsert += sec.SQLUpdate + vbCrLf
-                Else
-                    _sectionInsert += sec.SQLDelete + vbCrLf
-                End If
-            Else
-                _sectionInsert += sec.SQLInsert + vbCrLf
-            End If
+            'If sec.ID IsNot Nothing And sec?.ID > 0 Then
+            '    If sec.local_section_id IsNot Nothing Then
+            '        _sectionInsert += sec.SQLUpdate + vbCrLf
+            '    Else
+            '        _sectionInsert += sec.SQLDelete + vbCrLf
+            '    End If
+            'Else
+            _sectionInsert += sec.SQLInsert + vbCrLf
+            'End If
         Next
 
         If Me.belled_pier Then
-            If Me.BelledPier?.ID IsNot Nothing And Me.BelledPier?.ID > 0 Then
-                If Me.belled_pier = False Then
-                    _belledInsert = Me.BelledPier.SQLDelete + vbCrLf
-                Else
-                    _belledInsert = Me.BelledPier.SQLUpdate + vbCrLf
-                End If
-            Else
-                _belledInsert = Me.BelledPier.SQLInsert + vbCrLf
-            End If
+            'If Me.BelledPier?.ID IsNot Nothing And Me.BelledPier?.ID > 0 Then
+            '    If Me.belled_pier = False Then
+            '        _belledInsert = Me.BelledPier.SQLDelete + vbCrLf
+            '    Else
+            '        _belledInsert = Me.BelledPier.SQLUpdate + vbCrLf
+            '    End If
+            'Else
+            _belledInsert = Me.BelledPier.SQLInsert + vbCrLf
+            'End If
         End If
 
         If Me.embedded_pole Then
-            If Me.EmbeddedPole?.ID IsNot Nothing And Me.EmbeddedPole?.ID > 0 Then
-                If Me.embedded_pole = False Then
-                    _embedInsert = Me.EmbeddedPole.SQLDelete + vbCrLf
-                Else
-                    _embedInsert = Me.EmbeddedPole.SQLUpdate + vbCrLf
-                End If
-            Else
-                _embedInsert = Me.EmbeddedPole.SQLInsert + vbCrLf
-            End If
+            'If Me.EmbeddedPole?.ID IsNot Nothing And Me.EmbeddedPole?.ID > 0 Then
+            '    If Me.embedded_pole = False Then
+            '        _embedInsert = Me.EmbeddedPole.SQLDelete + vbCrLf
+            '    Else
+            '        _embedInsert = Me.EmbeddedPole.SQLUpdate + vbCrLf
+            '    End If
+            'Else
+            _embedInsert = Me.EmbeddedPole.SQLInsert + vbCrLf
+            'End If
         End If
 
         SQLInsert = SQLInsert.Replace("--[SECTION INSERT]", _sectionInsert + vbCrLf)
@@ -1465,15 +1465,15 @@ Partial Public Class DrilledPierSection
         Dim _rebarInsert As String
 
         For Each bar In Me.Rebar
-            If bar.ID IsNot Nothing And bar.ID > 0 Then
-                If bar.local_rebar_id IsNot Nothing Then
-                    _rebarInsert += bar.SQLUpdate + vbCrLf
-                Else
-                    _rebarInsert += bar.SQLDelete + vbCrLf
-                End If
-            Else
-                _rebarInsert += bar.SQLInsert + vbCrLf
-            End If
+            'If bar.ID IsNot Nothing And bar.ID > 0 Then
+            '    If bar.local_rebar_id IsNot Nothing Then
+            '        _rebarInsert += bar.SQLUpdate + vbCrLf
+            '    Else
+            '        _rebarInsert += bar.SQLDelete + vbCrLf
+            '    End If
+            'Else
+            _rebarInsert += bar.SQLInsert + vbCrLf
+            'End If
         Next
 
         SQLInsert = SQLInsert.Replace("--[REBAR INSERT]", _rebarInsert)
