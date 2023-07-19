@@ -248,7 +248,7 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.local_pier_profile_id) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_pier_profile_id, Integer)
                 If Not IsNothing(drilledPier.reaction_location) Then .Cells(sumRow, 2).Value = CType(drilledPier.reaction_location, String)
                 If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
-                .Cells(sumRow, 21).Value = CType(Me.ID, Integer)
+                .Cells(sumRow, 21).Value = CType(drilledPier.ID, Integer)
                 .Cells(sumRow, 22).Value = CType(drilledPier.PierProfile.ID, Integer)
                 If Not IsNothing(drilledPier.PierProfile.BelledPier.ID) Then .Cells(sumRow, 73).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
                 If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.ID) Then .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)

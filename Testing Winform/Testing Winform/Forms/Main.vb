@@ -1010,7 +1010,7 @@ Namespace UnitTesting
                     End If
 
                     'strcLocal.Clear()
-                    strcLocal = New EDSStructure(MySite.bus_unit, MySite.structure_id, MySite.work_order_seq_num, EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
+                    strcLocal = New EDSStructure(MySite.bus_unit, MySite.structure_id, MySite.work_order_seq_num, Nothing, Nothing, userID, "Testing", EDSFolder, EDSFolder, EDSnewId, EDSdbActive)
                     strcLocal.SaveTools(EDSFolder)
                     LogActivity("INFO | All files have been created in the directory '\Iteration " & iteration & "\EDS'.")
 #End Region

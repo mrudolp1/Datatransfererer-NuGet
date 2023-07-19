@@ -118,6 +118,27 @@ Partial Public Class EDSStructure
         LoadFromFiles(filePaths)
     End Sub
 
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String,
+                   ByVal Order As String, ByVal OrderRev As String,
+                   ByVal EDSPersonID As Integer, ByVal stage As String,
+                   ByVal workDirectory As String, ByVal reportDirectory As String,
+                   ByVal filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        Me.bus_unit = BU
+        Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
+        Me.order = Order
+        Me.orderRev = OrderRev
+        Me.modified_person_id = EDSPersonID
+        Me.process_stage = stage
+        Me.databaseIdentity = LogOnUser
+        Me.activeDatabase = ActiveDatabase
+        Me.WorkingDirectory = workDirectory
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
+        Me.SiteInfo = New SiteInfo(WorkOrder)
+
+        LoadFromFiles(filePaths)
+    End Sub
+
     Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID

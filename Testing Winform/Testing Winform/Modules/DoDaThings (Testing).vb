@@ -555,7 +555,7 @@ Public Module TestingHelpers
 
         'Convert the list of valid file names to an array for creating anew structure
         myFiles = myFilesLst.ToArray
-        strctr = New EDSStructure(site.bus_unit, site.structure_id, site.work_order_seq_num, filesPath, filesPath, myFiles, EDSnewId, EDSdbActive)
+        strctr = New EDSStructure(site.bus_unit, site.structure_id, site.work_order_seq_num, Nothing, Nothing, userID, "Testing", filesPath, filesPath, myFiles, EDSnewId, EDSdbActive)
 
         Return logString
     End Function
