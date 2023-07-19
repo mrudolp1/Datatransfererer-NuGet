@@ -8,7 +8,6 @@ Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
 
 <DataContractAttribute()>
-<KnownType(GetType(SoilLayer))>
 Partial Public Class SoilLayer
     Inherits EDSObjectWithQueries
     'Inherits EDSObject
@@ -164,6 +163,20 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
 
     Public Sub New(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing)
         ConstructMe(Row, Parent)
+    End Sub
+
+    Public Sub New(ByVal absl As AnchorBlockSoilLayer, Optional ByVal parent As EDSObject = Nothing)
+        If parent IsNot Nothing Then Me.Absorb(parent)
+
+        Me.Soil_Profile_id = absl.Soil_Profile_id
+        Me.bottom_depth = absl.bottom_depth
+        Me.effective_soil_density = absl.effective_soil_density
+        Me.cohesion = absl.cohesion
+        Me.friction_angle = absl.friction_angle
+        Me.skin_friction_override_comp = absl.skin_friction_override_comp
+        Me.skin_friction_override_uplift = absl.skin_friction_override_uplift
+        Me.nominal_bearing_capacity = absl.nominal_bearing_capacity
+        Me.spt_blow_count = absl.spt_blow_count
     End Sub
 
     Public Sub ConstructMe(ByVal Row As DataRow, Optional ByVal Parent As EDSObject = Nothing)

@@ -97,6 +97,8 @@ Public Module TNXExtensions
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).SQLUpdate
                     Else
                         'Save Results Only
+                        currentSortedList(i).ID = prevSortedList(i).ID
+                        TNXGeometryRecListQueryBuilder += "SET @SubLevel1ID = " & currentSortedList(i).ID & vbCrLf
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).TNXResults.EDSResultQuery
                     End If
                 ElseIf currentSortedList(i).Rec < prevSortedList(i).Rec Then
@@ -904,7 +906,10 @@ Partial Public MustInherit Class tnxGeometryRec
         Get
             Dim myList As New List(Of EDSResult)
             For Each res In Me.TNXResults
-                myList.Add(New EDSResult(res.result_lkup, res.Rating, Me))
+                Dim myNewRes As EDSResult
+                myNewRes = New EDSResult(res.result_lkup, res.Rating, Me)
+                myNewRes.Absorb(Me)
+                myList.Add(myNewRes)
             Next
 
             'IEM 

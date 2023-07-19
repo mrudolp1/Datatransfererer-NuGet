@@ -225,6 +225,8 @@ Partial Public Class tnxModel
         If StructureDS.Tables.Contains("TNX") And StructureDS.Tables("TNX").Rows.Count > 0 Then
             setIndInputs(StructureDS.Tables("TNX").Rows(0))
 
+            Me.geometry.Absorb(Me)
+
             If StructureDS.Tables.Contains("Base Structure") Then
                 For Each baseSection As DataRow In StructureDS.Tables("Base Structure").Rows
                     Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection, Me.geometry))
@@ -662,7 +664,7 @@ Partial Public Class tnxModel
 
     <Description("Build TNX object from TNX file.")>
     Public Sub BuildFromFile(ByVal tnxPath As String)
-
+        Me.geometry.Absorb(Me)
         Me.filePath = tnxPath
 
         Dim tnxVar As String
