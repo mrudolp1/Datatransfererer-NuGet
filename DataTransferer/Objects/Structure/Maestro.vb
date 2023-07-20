@@ -864,6 +864,16 @@ ErrorSkip:
         Try
 
             Using fs As FileStream = New FileStream(tnxFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                Dim replaceArray() As String = {"ReportPrintReactions=No|ReportPrintReactions=Yes",
+                "ReportMaxForces=No|ReportMaxForces=Yes",
+                "ReportPrintReactions=No|ReportPrintReactions=Yes",
+                "ReportPrintDeflection=No|ReportPrintDeflection=Yes",
+                "ReportPrintBoltChecks=No|ReportPrintBoltChecks=Yes",
+                "ReportPrintStressChecks=No|ReportPrintStressChecks=Yes",
+                "ReportInputOptions=No|ReportInputOptions=Yes",
+                "CapacityReportOutputType=No Capacity Output|CapacityReportOutputType=Capacity Summary",
+                "CapacityReportOutputType=Capacity Details|CapacityReportOutputType=Capacity Summary",
+                "PrintInputGeometry=No|PrintInputGeometry=Yes"}
 
                 Using r As StreamReader = New StreamReader(fs)
                     'make sure we're at the beginning
@@ -871,7 +881,11 @@ ErrorSkip:
                     r.BaseStream.Seek(0, SeekOrigin.Begin)
                     eriAllText = r.ReadToEnd
 
-                    eriAllText = eriAllText.Replace("ReportPrintReactions=No", "ReportPrintReactions=Yes")
+                    For Each setting As String In replaceArray
+                        Dim settingSplt() As String = setting.Split("|")
+                        eriAllText = eriAllText.Replace(settingSplt(0), settingSplt(1))
+                    Next
+
 
                     Using w As StreamWriter = New StreamWriter(tnxFilePath, False)
                         w.Write(eriAllText)
