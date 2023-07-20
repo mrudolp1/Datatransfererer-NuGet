@@ -9250,22 +9250,54 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(.AntennaSectionLength))
                             newERIList.Add("AntennaLegType=" & .AntennaLegType)
                             newERIList.Add("AntennaLegSize=" & .AntennaLegSize)
-                            newERIList.Add("AntennaLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLegGrade))
-                            newERIList.Add("AntennaLegMatlGrade=" & .AntennaLegMatlGrade)
-                            newERIList.Add("AntennaDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaDiagonalGrade))
-                            newERIList.Add("AntennaDiagonalMatlGrade=" & .AntennaDiagonalMatlGrade)
-                            newERIList.Add("AntennaInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerBracingGrade))
-                            newERIList.Add("AntennaInnerBracingMatlGrade=" & .AntennaInnerBracingMatlGrade)
-                            newERIList.Add("AntennaTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTopGirtGrade))
-                            newERIList.Add("AntennaTopGirtMatlGrade=" & .AntennaTopGirtMatlGrade)
-                            newERIList.Add("AntennaBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaBotGirtGrade))
-                            newERIList.Add("AntennaBotGirtMatlGrade=" & .AntennaBotGirtMatlGrade)
-                            newERIList.Add("AntennaInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerGirtGrade))
-                            newERIList.Add("AntennaInnerGirtMatlGrade=" & .AntennaInnerGirtMatlGrade)
-                            newERIList.Add("AntennaLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLongHorizontalGrade))
-                            newERIList.Add("AntennaLongHorizontalMatlGrade=" & .AntennaLongHorizontalMatlGrade)
-                            newERIList.Add("AntennaShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaShortHorizontalGrade))
-                            newERIList.Add("AntennaShortHorizontalMatlGrade=" & .AntennaShortHorizontalMatlGrade)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLegGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLegGrade))
+                            End If
+                            If IsSomethingString(.AntennaLegMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLegMatlGrade=" & .AntennaLegMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaDiagonalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaDiagonalGrade))
+                            End If
+                            If IsSomethingString(.AntennaDiagonalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaDiagonalMatlGrade=" & .AntennaDiagonalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerBracingGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerBracingGrade))
+                            End If
+                            If IsSomethingString(.AntennaInnerBracingMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerBracingMatlGrade=" & .AntennaInnerBracingMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTopGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTopGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaTopGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTopGirtMatlGrade=" & .AntennaTopGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaBotGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaBotGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaBotGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaBotGirtMatlGrade=" & .AntennaBotGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaInnerGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerGirtMatlGrade=" & .AntennaInnerGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLongHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLongHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaLongHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLongHorizontalMatlGrade=" & .AntennaLongHorizontalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaShortHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaShortHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaShortHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaShortHorizontalMatlGrade=" & .AntennaShortHorizontalMatlGrade)
+                            End If
                             newERIList.Add("AntennaDiagonalType=" & .AntennaDiagonalType)
                             newERIList.Add("AntennaDiagonalSize=" & .AntennaDiagonalSize)
                             newERIList.Add("AntennaInnerBracingType=" & .AntennaInnerBracingType)
@@ -9282,8 +9314,12 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaLongHorizontalSize=" & .AntennaLongHorizontalSize)
                             newERIList.Add("AntennaShortHorizontalType=" & .AntennaShortHorizontalType)
                             newERIList.Add("AntennaShortHorizontalSize=" & .AntennaShortHorizontalSize)
-                            newERIList.Add("AntennaRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantGrade))
-                            newERIList.Add("AntennaRedundantMatlGrade=" & .AntennaRedundantMatlGrade)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantMatlGrade=" & .AntennaRedundantMatlGrade)
+                            End If
                             newERIList.Add("AntennaRedundantType=" & .AntennaRedundantType)
                             newERIList.Add("AntennaRedundantDiagType=" & .AntennaRedundantDiagType)
                             newERIList.Add("AntennaRedundantSubDiagonalType=" & .AntennaRedundantSubDiagonalType)
@@ -9316,27 +9352,45 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaInnerGirtSize=" & .AntennaInnerGirtSize)
                             newERIList.Add("AntennaPoleShapeType=" & .AntennaPoleShapeType)
                             newERIList.Add("AntennaPoleSize=" & .AntennaPoleSize)
-                            newERIList.Add("AntennaPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaPoleGrade))
-                            newERIList.Add("AntennaPoleMatlGrade=" & .AntennaPoleMatlGrade)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaPoleGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaPoleGrade))
+                            End If
+                            If IsSomethingString(.AntennaPoleMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaPoleMatlGrade=" & .AntennaPoleMatlGrade)
+                            End If
                             newERIList.Add("AntennaPoleSpliceLength=" & .AntennaPoleSpliceLength)
                             newERIList.Add("AntennaTaperPoleNumSides=" & .AntennaTaperPoleNumSides)
                             newERIList.Add("AntennaTaperPoleTopDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleTopDiameter))
                             newERIList.Add("AntennaTaperPoleBotDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleBotDiameter))
                             newERIList.Add("AntennaTaperPoleWallThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleWallThickness))
                             newERIList.Add("AntennaTaperPoleBendRadius=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleBendRadius))
-                            newERIList.Add("AntennaTaperPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTaperPoleGrade))
-                            newERIList.Add("AntennaTaperPoleMatlGrade=" & .AntennaTaperPoleMatlGrade)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTaperPoleGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTaperPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTaperPoleGrade))
+                            End If
+                            If IsSomethingString(.AntennaTaperPoleMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTaperPoleMatlGrade=" & .AntennaTaperPoleMatlGrade)
+                            End If
                             newERIList.Add("AntennaSWMult=" & .AntennaSWMult)
-                            newERIList.Add("AntennaWPMult=" & .AntennaWPMult)
+                            If Not IsNothing(.AntennaWPMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaWPMult=" & .AntennaWPMult)
+                            End If
                             newERIList.Add("AntennaAutoCalcKSingleAngle=" & .AntennaAutoCalcKSingleAngle)
                             newERIList.Add("AntennaAutoCalcKSolidRound=" & .AntennaAutoCalcKSolidRound)
                             newERIList.Add("AntennaAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(.AntennaAfGusset))
                             newERIList.Add("AntennaTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTfGusset))
                             newERIList.Add("AntennaGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaGussetBoltEdgeDistance))
-                            newERIList.Add("AntennaGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaGussetGrade))
-                            newERIList.Add("AntennaGussetMatlGrade=" & .AntennaGussetMatlGrade)
-                            newERIList.Add("AntennaAfMult=" & .AntennaAfMult)
-                            newERIList.Add("AntennaArMult=" & .AntennaArMult)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaGussetGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaGussetGrade))
+                            End If
+                            If IsSomethingString(.AntennaGussetMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaGussetMatlGrade=" & .AntennaGussetMatlGrade)
+                            End If
+                            If Not IsNothing(.AntennaAfMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaAfMult=" & .AntennaAfMult)
+                            End If
+                            If Not IsNothing(.AntennaArMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaArMult=" & .AntennaArMult)
+                            End If
                             newERIList.Add("AntennaFlatIPAPole=" & .AntennaFlatIPAPole)
                             newERIList.Add("AntennaRoundIPAPole=" & .AntennaRoundIPAPole)
                             newERIList.Add("AntennaFlatIPALeg=" & .AntennaFlatIPALeg)
@@ -9402,19 +9456,33 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaInnerGirtNumBolts=" & .AntennaInnerGirtNumBolts)
                             newERIList.Add("AntennaHorizontalNumBolts=" & .AntennaHorizontalNumBolts)
                             newERIList.Add("AntennaShortHorizontalNumBolts=" & .AntennaShortHorizontalNumBolts)
-                            newERIList.Add("AntennaLegBoltGrade=" & .AntennaLegBoltGrade)
+                            If IsSomethingString(.AntennaLegBoltGrade) Then 'This field does not get saved when generated from CCIpole.
+                                newERIList.Add("AntennaLegBoltGrade=" & .AntennaLegBoltGrade)
+                            End If
                             newERIList.Add("AntennaLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaLegBoltSize))
-                            newERIList.Add("AntennaDiagonalBoltGrade=" & .AntennaDiagonalBoltGrade)
+                            If IsSomethingString(.AntennaDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaDiagonalBoltGrade=" & .AntennaDiagonalBoltGrade)
+                            End If
                             newERIList.Add("AntennaDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalBoltSize))
-                            newERIList.Add("AntennaTopGirtBoltGrade=" & .AntennaTopGirtBoltGrade)
+                            If IsSomethingString(.AntennaTopGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaTopGirtBoltGrade=" & .AntennaTopGirtBoltGrade)
+                            End If
                             newERIList.Add("AntennaTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTopGirtBoltSize))
-                            newERIList.Add("AntennaBotGirtBoltGrade=" & .AntennaBotGirtBoltGrade)
+                            If IsSomethingString(.AntennaBotGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaBotGirtBoltGrade=" & .AntennaBotGirtBoltGrade)
+                            End If
                             newERIList.Add("AntennaBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaBotGirtBoltSize))
-                            newERIList.Add("AntennaInnerGirtBoltGrade=" & .AntennaInnerGirtBoltGrade)
+                            If IsSomethingString(.AntennaInnerGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaInnerGirtBoltGrade=" & .AntennaInnerGirtBoltGrade)
+                            End If
                             newERIList.Add("AntennaInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtBoltSize))
-                            newERIList.Add("AntennaHorizontalBoltGrade=" & .AntennaHorizontalBoltGrade)
+                            If IsSomethingString(.AntennaHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaHorizontalBoltGrade=" & .AntennaHorizontalBoltGrade)
+                            End If
                             newERIList.Add("AntennaHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalBoltSize))
-                            newERIList.Add("AntennaShortHorizontalBoltGrade=" & .AntennaShortHorizontalBoltGrade)
+                            If IsSomethingString(.AntennaShortHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaShortHorizontalBoltGrade=" & .AntennaShortHorizontalBoltGrade)
+                            End If
                             newERIList.Add("AntennaShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalBoltSize))
                             newERIList.Add("AntennaLegBoltEdgeDistance=" & .AntennaLegBoltEdgeDistance)
                             newERIList.Add("AntennaDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalBoltEdgeDistance))
@@ -9429,49 +9497,63 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtGageG1Distance))
                             newERIList.Add("AntennaHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalGageG1Distance))
                             newERIList.Add("AntennaShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalGageG1Distance))
-                            newERIList.Add("AntennaRedundantHorizontalBoltGrade=" & .AntennaRedundantHorizontalBoltGrade)
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade=" & .AntennaRedundantHorizontalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize))
                             newERIList.Add("AntennaRedundantHorizontalNumBolts=" & .AntennaRedundantHorizontalNumBolts)
                             newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance))
                             newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct))
                             newERIList.Add("AntennaRedundantHorizontalUFactor=" & .AntennaRedundantHorizontalUFactor)
-                            newERIList.Add("AntennaRedundantDiagonalBoltGrade=" & .AntennaRedundantDiagonalBoltGrade)
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade=" & .AntennaRedundantDiagonalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize))
                             newERIList.Add("AntennaRedundantDiagonalNumBolts=" & .AntennaRedundantDiagonalNumBolts)
                             newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance))
                             newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct))
                             newERIList.Add("AntennaRedundantDiagonalUFactor=" & .AntennaRedundantDiagonalUFactor)
-                            newERIList.Add("AntennaRedundantSubDiagonalBoltGrade=" & .AntennaRedundantSubDiagonalBoltGrade)
+                            If IsSomethingString(.AntennaRedundantSubDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantSubDiagonalBoltGrade=" & .AntennaRedundantSubDiagonalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalBoltSize))
                             newERIList.Add("AntennaRedundantSubDiagonalNumBolts=" & .AntennaRedundantSubDiagonalNumBolts)
                             newERIList.Add("AntennaRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalGageG1Distance))
                             newERIList.Add("AntennaRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalNetWidthDeduct))
                             newERIList.Add("AntennaRedundantSubDiagonalUFactor=" & .AntennaRedundantSubDiagonalUFactor)
-                            newERIList.Add("AntennaRedundantSubHorizontalBoltGrade=" & .AntennaRedundantSubHorizontalBoltGrade)
+                            If IsSomethingString(.AntennaRedundantSubHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantSubHorizontalBoltGrade=" & .AntennaRedundantSubHorizontalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalBoltSize))
                             newERIList.Add("AntennaRedundantSubHorizontalNumBolts=" & .AntennaRedundantSubHorizontalNumBolts)
                             newERIList.Add("AntennaRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalGageG1Distance))
                             newERIList.Add("AntennaRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalNetWidthDeduct))
                             newERIList.Add("AntennaRedundantSubHorizontalUFactor=" & .AntennaRedundantSubHorizontalUFactor)
-                            newERIList.Add("AntennaRedundantVerticalBoltGrade=" & .AntennaRedundantVerticalBoltGrade)
+                            If IsSomethingString(.AntennaRedundantVerticalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantVerticalBoltGrade=" & .AntennaRedundantVerticalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalBoltSize))
                             newERIList.Add("AntennaRedundantVerticalNumBolts=" & .AntennaRedundantVerticalNumBolts)
                             newERIList.Add("AntennaRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalGageG1Distance))
                             newERIList.Add("AntennaRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalNetWidthDeduct))
                             newERIList.Add("AntennaRedundantVerticalUFactor=" & .AntennaRedundantVerticalUFactor)
-                            newERIList.Add("AntennaRedundantHipBoltGrade=" & .AntennaRedundantHipBoltGrade)
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHipBoltGrade=" & .AntennaRedundantHipBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize))
                             newERIList.Add("AntennaRedundantHipNumBolts=" & .AntennaRedundantHipNumBolts)
                             newERIList.Add("AntennaRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance))
                             newERIList.Add("AntennaRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance))
                             newERIList.Add("AntennaRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct))
                             newERIList.Add("AntennaRedundantHipUFactor=" & .AntennaRedundantHipUFactor)
-                            newERIList.Add("AntennaRedundantHipDiagonalBoltGrade=" & .AntennaRedundantHipDiagonalBoltGrade)
+                            If IsSomethingString(.AntennaShortHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade=" & .AntennaRedundantHipDiagonalBoltGrade)
+                            End If
                             newERIList.Add("AntennaRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize))
                             newERIList.Add("AntennaRedundantHipDiagonalNumBolts=" & .AntennaRedundantHipDiagonalNumBolts)
                             newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance))
