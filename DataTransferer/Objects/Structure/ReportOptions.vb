@@ -793,7 +793,8 @@ Public Class ReportOptions
                     --Dual is an empty dummy table. Use this CTE to pull in variables.
                     --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
                     --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
-                    (SELECT " + work_order_seq_num + " AS work_order_seq_num FROM DUAL), 
+                    --(SELECT 2038745 AS wo FROM DUAL), 
+                    (SELECT " + work_order_seq_num + " AS wo FROM DUAL), 
 
                 work_order_seq_num AS (
                     SELECT  wos.work_order_seq_num 
@@ -810,7 +811,7 @@ Public Class ReportOptions
                             ,aim.structure str 
                             ,isite.eng_application ord
                     WHERE 
-                        wos.work_order_seq_num = vars.work_order_seq_num
+                        wos.work_order_seq_num = vars.wo
                         AND wos.bus_unit = str.bus_unit (+)
                         AND wos.structure_id = str.structure_id (+)
                         AND wos.eng_app_id = ord.eng_app_id (+)
@@ -830,7 +831,7 @@ Public Class ReportOptions
                             ,NULL eng_app_id
                             ,c.quantity_installed_per_antenna quantity
                         FROM aim.installed_component c
-                            ,wo
+                            ,work_order_seq_num wo
                         WHERE c.bus_unit = wo.bus_unit
                         AND c.structure_id = wo.structure_id
                     ),
@@ -849,7 +850,7 @@ Public Class ReportOptions
                             ,pc.eng_app_id
                             ,pc.quantity_installed_per_antenna quantity
                         FROM aim.proposed_component pc
-                            ,wo
+                            ,work_order_seq_num wo
                         WHERE pc.bus_unit = wo.bus_unit
                         AND pc.structure_id = wo.structure_id
                         AND pc.merged_ind = 'N'
@@ -909,7 +910,7 @@ Public Class ReportOptions
                             ,es.size_text
                         FROM
                             lmp
-                            ,wo
+                            ,work_order_seq_num wo
                             ,equipment.equipment_catalog            ec
                             ,equipment.equipment_specification      es
                             ,aim.org                                mfg
