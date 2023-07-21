@@ -118,6 +118,27 @@ Partial Public Class EDSStructure
         LoadFromFiles(filePaths)
     End Sub
 
+    Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String,
+                   ByVal Order As String, ByVal OrderRev As String,
+                   ByVal EDSPersonID As Integer, ByVal stage As String,
+                   ByVal workDirectory As String, ByVal reportDirectory As String,
+                   ByVal filePaths As String(), ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+        Me.bus_unit = BU
+        Me.structure_id = structureID
+        Me.work_order_seq_num = WorkOrder
+        Me.order = Order
+        Me.orderRev = OrderRev
+        Me.modified_person_id = EDSPersonID
+        Me.process_stage = stage
+        Me.databaseIdentity = LogOnUser
+        Me.activeDatabase = ActiveDatabase
+        Me.WorkingDirectory = workDirectory
+        Me.ReportOptions = New ReportOptions(workDirectory, reportDirectory, Me)
+        Me.SiteInfo = New SiteInfo(WorkOrder)
+
+        LoadFromFiles(filePaths)
+    End Sub
+
     Public Sub New(ByVal BU As String, ByVal structureID As String, ByVal WorkOrder As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
         Me.bus_unit = BU
         Me.structure_id = structureID
@@ -368,8 +389,8 @@ Partial Public Class EDSStructure
                                 ,'True' rev_h_section_15_5
                                 ,0 tower_point_elev                                
                                 ,str.structure_type
-                                ,ROUND(str.LAT_DEC, 8)
-                                ,ROUND(str.LONG_DEC, 8)" & vbCrLf &
+                                ,str.LAT_DEC
+                                ,str.LONG_DEC" & vbCrLf &
                                 sqlOrder & vbCrLf &
                             "FROM
                                 isit_aim.structure                      str
@@ -449,7 +470,7 @@ Partial Public Class EDSStructure
     ''' <param name="ActiveDatabase"></param>
     ''' <param name="copyQueryToClipboard"></param>
     ''' <returns>Item1 = saveCheck, Item2 = Datatable of information</returns>
-    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False) As Tuple(Of Boolean, DataTable)
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As Tuple(Of Boolean, DataTable)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
@@ -462,17 +483,21 @@ Partial Public Class EDSStructure
             My.Computer.Clipboard.SetText(myQuery)
         End If
 
-        sqlLoader(myQuery, resDS, ActiveDatabase, databaseID, 4051.ToString)
+        If commitQuery Then
+            sqlLoader(myQuery, resDS, ActiveDatabase, databaseID, 4051.ToString)
 
-        If resDS.Tables.Count > 0 Then
-            'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
-            Dim saveCheck As Boolean = True
-            If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
-                saveCheck = False
+            If resDS.Tables.Count > 0 Then
+                'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
+                Dim saveCheck As Boolean = True
+                If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
+                    saveCheck = False
+                End If
+                Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+            Else
+                Return Nothing
             End If
-            Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
         Else
-            Return Nothing
+            Return New Tuple(Of Boolean, DataTable)(Nothing, Nothing)
         End If
     End Function
 #End Region

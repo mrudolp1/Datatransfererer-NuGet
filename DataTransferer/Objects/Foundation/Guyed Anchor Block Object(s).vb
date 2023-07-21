@@ -890,10 +890,10 @@ Partial Public Class AnchorBlock
                     abLayer = (New AnchorBlockSoilLayer(layerRow, abSProfile))
                     If isExcel And IsNothing(Me.soil_profile_id) And IsNothing(abLayer.Soil_Profile_id) And abSProfile.local_soil_profile_id = abLayer.local_soil_profile_id Then 'First time SA with no EDS IDs in Excel tool
                         abSProfile.ABSoilLayers.Add(abLayer)
-                        abSProfile.SoilLayers.Add(abLayer)
+                        abSProfile.SoilLayers.Add(New SoilLayer(abLayer, abSProfile))
                     ElseIf Me.soil_profile_id = abLayer.Soil_Profile_id Then 'From EDS, or second SA where tool has EDS IDs populated
                         abSProfile.ABSoilLayers.Add(abLayer)
-                        abSProfile.SoilLayers.Add(abLayer)
+                        abSProfile.SoilLayers.Add(New SoilLayer(abLayer, abSProfile))
                     End If
                 Next
             End If
@@ -1478,7 +1478,7 @@ Partial Public Class AnchorBlockProfile
 
 End Class
 
-'<DataContractAttribute()>
+<DataContractAttribute()> <KnownTypeAttribute(GetType(AnchorBlockSoilProfile))>
 Partial Public Class AnchorBlockSoilProfile
     Inherits SoilProfile
 
@@ -1545,7 +1545,7 @@ Partial Public Class AnchorBlockSoilProfile
 
 End Class
 
-<DataContractAttribute()>
+<DataContract()> <KnownTypeAttribute(GetType(AnchorBlockSoilLayer))>
 Partial Public Class AnchorBlockSoilLayer
     Inherits SoilLayer
 
@@ -1575,7 +1575,7 @@ Partial Public Class AnchorBlockSoilLayer
 
 End Class
 
-<DataContractAttribute()>
+<DataContract()> <KnownTypeAttribute(GetType(AnchorBlockResult))>
 Partial Public Class AnchorBlockResult
     Inherits EDSResult
 

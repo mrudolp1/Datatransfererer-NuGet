@@ -8,7 +8,6 @@ Imports Microsoft.Office.Interop
 Imports System.Runtime.Serialization
 
 <DataContractAttribute()>
-<KnownType(GetType(SoilProfile))>
 Partial Public Class SoilProfile
     Inherits EDSObjectWithQueries
 

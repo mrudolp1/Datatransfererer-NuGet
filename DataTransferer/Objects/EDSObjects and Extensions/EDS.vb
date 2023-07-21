@@ -72,11 +72,11 @@ Partial Public MustInherit Class EDSObject
     <DataMember()>
     Public Property activeDatabase As String
 
-    <Category("EDS"), Description(""), Browsable(False)>
+    <Category("EDS"), Description("Modified By"), Browsable(True)>
     <DataMember()>
     Public Property modified_person_id As Integer?
 
-    <Category("EDS"), Description(""), Browsable(False)>
+    <Category("EDS"), Description(""), Browsable(True)>
     <DataMember()>
     Public Property process_stage As String = "test" 'added "test" since error occured during testing
 
@@ -645,7 +645,17 @@ Partial Public Class EDSResult
     End Function
 
     Public Overloads Sub Absorb(ByRef Host As EDSObjectWithQueries)
-        MyBase.Absorb(Host)
+        Me.Parent = Host
+        'Me.ParentStructure = Host.ParentStructure 'If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
+        Me.bus_unit = Host.bus_unit
+        Me.structure_id = Host.structure_id
+        Me.work_order_seq_num = Host.work_order_seq_num
+        Me.order = Host.order
+        Me.orderRev = Host.orderRev
+        Me.activeDatabase = Host.activeDatabase
+        Me.databaseIdentity = Host.databaseIdentity
+        Me.modified_person_id = Host.modified_person_id
+        Me.process_stage = Host.process_stage
         'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableDepth = Host.EDSTableDepth + 1
         'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)

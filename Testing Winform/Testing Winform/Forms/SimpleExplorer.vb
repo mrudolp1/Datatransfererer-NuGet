@@ -136,7 +136,7 @@ Namespace UnitTesting
                 'Create a new fileinfo based on the path and file name
                 info = New System.IO.FileInfo(path & "\" & fName)
                 SelectedFile = info
-                If info IsNot Nothing Then
+                If info.Name.Contains(".") Then
                     loadDt = LoadFileForViewing(info)
                     If Not loadDt.Item2 = "" Then frmMain.LogActivity(loadDt.Item2, True)
 

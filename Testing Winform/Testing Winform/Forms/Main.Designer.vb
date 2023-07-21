@@ -163,6 +163,7 @@
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
             Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
             Me.verLabel = New System.Windows.Forms.ToolStripStatusLabel()
+            Me.btnProcess27 = New DevExpress.XtraEditors.SimpleButton()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -1046,6 +1047,7 @@
             '
             'PanelControl1
             '
+            Me.PanelControl1.Controls.Add(Me.btnProcess27)
             Me.PanelControl1.Controls.Add(Me.btnProcess26)
             Me.PanelControl1.Controls.Add(Me.btnProcess25)
             Me.PanelControl1.Controls.Add(Me.toggleDevUat)
@@ -1120,7 +1122,7 @@
             Me.btnProcess26.Appearance.Options.UseTextOptions = True
             Me.btnProcess26.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess26.Enabled = False
-            Me.btnProcess26.Location = New System.Drawing.Point(1663, 6)
+            Me.btnProcess26.Location = New System.Drawing.Point(1663, 5)
             Me.btnProcess26.Name = "btnProcess26"
             Me.btnProcess26.Size = New System.Drawing.Size(114, 23)
             Me.btnProcess26.TabIndex = 84
@@ -1133,7 +1135,7 @@
             Me.btnProcess25.Appearance.Options.UseTextOptions = True
             Me.btnProcess25.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
             Me.btnProcess25.Enabled = False
-            Me.btnProcess25.Location = New System.Drawing.Point(1538, 6)
+            Me.btnProcess25.Location = New System.Drawing.Point(1538, 5)
             Me.btnProcess25.Name = "btnProcess25"
             Me.btnProcess25.Size = New System.Drawing.Size(114, 23)
             Me.btnProcess25.TabIndex = 83
@@ -1144,7 +1146,7 @@
             'toggleDevUat
             '
             Me.toggleDevUat.Enabled = False
-            Me.toggleDevUat.Location = New System.Drawing.Point(1538, 36)
+            Me.toggleDevUat.Location = New System.Drawing.Point(1663, 33)
             Me.toggleDevUat.Name = "toggleDevUat"
             Me.toggleDevUat.Properties.OffText = "DEV"
             Me.toggleDevUat.Properties.OnText = "UAT"
@@ -1814,6 +1816,19 @@
             Me.verLabel.Spring = True
             Me.verLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
             '
+            'btnProcess27
+            '
+            Me.btnProcess27.Appearance.Options.UseTextOptions = True
+            Me.btnProcess27.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess27.Enabled = False
+            Me.btnProcess27.Location = New System.Drawing.Point(1538, 34)
+            Me.btnProcess27.Name = "btnProcess27"
+            Me.btnProcess27.Size = New System.Drawing.Size(114, 23)
+            Me.btnProcess27.TabIndex = 85
+            Me.btnProcess27.Tag = "STEP14|Create the EDS Query"
+            Me.btnProcess27.Text = "14. Create Query"
+            Me.btnProcess27.ToolTip = "CREATE QUERY"
+            '
             'frmMain
             '
             Me.Appearance.BackColor = System.Drawing.Color.White
@@ -2060,6 +2075,7 @@
         Friend WithEvents verLabel As ToolStripStatusLabel
         Friend WithEvents btnProcess25 As DevExpress.XtraEditors.SimpleButton
         Friend WithEvents btnProcess26 As DevExpress.XtraEditors.SimpleButton
+        Friend WithEvents btnProcess27 As DevExpress.XtraEditors.SimpleButton
 #End Region
 
     End Class

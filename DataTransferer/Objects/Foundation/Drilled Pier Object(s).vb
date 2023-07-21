@@ -248,7 +248,7 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.local_pier_profile_id) Then .Cells(sumRow, 3).Value = CType(drilledPier.local_pier_profile_id, Integer)
                 If Not IsNothing(drilledPier.reaction_location) Then .Cells(sumRow, 2).Value = CType(drilledPier.reaction_location, String)
                 If Not IsNothing(drilledPier.local_soil_profile) Then .Cells(sumRow, 4).Value = CType(drilledPier.local_soil_profile, Integer)
-                .Cells(sumRow, 21).Value = CType(Me.ID, Integer)
+                .Cells(sumRow, 21).Value = CType(drilledPier.ID, Integer)
                 .Cells(sumRow, 22).Value = CType(drilledPier.PierProfile.ID, Integer)
                 If Not IsNothing(drilledPier.PierProfile.BelledPier.ID) Then .Cells(sumRow, 73).Value = CType(drilledPier.PierProfile.BelledPier.ID, Integer)
                 If Not IsNothing(drilledPier.PierProfile.EmbeddedPole.ID) Then .Cells(sumRow, 74).Value = CType(drilledPier.PierProfile.EmbeddedPole.ID, Integer)
@@ -328,6 +328,7 @@ Partial Public Class DrilledPierFoundation
                 End If
 
                 'Sections
+                Dim rebCountAdj As Integer = 0
                 For Each section In drilledPier.PierProfile.Sections
                     Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_pier_profile_id - 1) - 1
 
@@ -362,6 +363,14 @@ Partial Public Class DrilledPierFoundation
                                 If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 33 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
                         End Select
                     Next
+
+                    If Not structure_type?.Contains("Guyed") Then
+                        'Row R of the foundation input tab. 
+                        'This only works for Monopoles and SSTs
+                        'Guyed towers with a drilled pier with sections with multiple rebar is a known issue with the tool.
+                        wb.Worksheets("Foundation Input").Range("R" & 109 + rebCountAdj).Value = CType(section.Rebar.Count.ToString, Integer)
+                    End If
+                    rebCountAdj += 1
                 Next
 
                 'Soil Profile
@@ -927,39 +936,39 @@ Partial Public Class DrilledPierProfile
         Dim _embedInsert As String
 
         For Each sec In Me.Sections
-            If sec.ID IsNot Nothing And sec?.ID > 0 Then
-                If sec.local_section_id IsNot Nothing Then
-                    _sectionInsert += sec.SQLUpdate + vbCrLf
-                Else
-                    _sectionInsert += sec.SQLDelete + vbCrLf
-                End If
-            Else
-                _sectionInsert += sec.SQLInsert + vbCrLf
-            End If
+            'If sec.ID IsNot Nothing And sec?.ID > 0 Then
+            '    If sec.local_section_id IsNot Nothing Then
+            '        _sectionInsert += sec.SQLUpdate + vbCrLf
+            '    Else
+            '        _sectionInsert += sec.SQLDelete + vbCrLf
+            '    End If
+            'Else
+            _sectionInsert += sec.SQLInsert + vbCrLf
+            'End If
         Next
 
         If Me.belled_pier Then
-            If Me.BelledPier?.ID IsNot Nothing And Me.BelledPier?.ID > 0 Then
-                If Me.belled_pier = False Then
-                    _belledInsert = Me.BelledPier.SQLDelete + vbCrLf
-                Else
-                    _belledInsert = Me.BelledPier.SQLUpdate + vbCrLf
-                End If
-            Else
-                _belledInsert = Me.BelledPier.SQLInsert + vbCrLf
-            End If
+            'If Me.BelledPier?.ID IsNot Nothing And Me.BelledPier?.ID > 0 Then
+            '    If Me.belled_pier = False Then
+            '        _belledInsert = Me.BelledPier.SQLDelete + vbCrLf
+            '    Else
+            '        _belledInsert = Me.BelledPier.SQLUpdate + vbCrLf
+            '    End If
+            'Else
+            _belledInsert = Me.BelledPier.SQLInsert + vbCrLf
+            'End If
         End If
 
         If Me.embedded_pole Then
-            If Me.EmbeddedPole?.ID IsNot Nothing And Me.EmbeddedPole?.ID > 0 Then
-                If Me.embedded_pole = False Then
-                    _embedInsert = Me.EmbeddedPole.SQLDelete + vbCrLf
-                Else
-                    _embedInsert = Me.EmbeddedPole.SQLUpdate + vbCrLf
-                End If
-            Else
-                _embedInsert = Me.EmbeddedPole.SQLInsert + vbCrLf
-            End If
+            'If Me.EmbeddedPole?.ID IsNot Nothing And Me.EmbeddedPole?.ID > 0 Then
+            '    If Me.embedded_pole = False Then
+            '        _embedInsert = Me.EmbeddedPole.SQLDelete + vbCrLf
+            '    Else
+            '        _embedInsert = Me.EmbeddedPole.SQLUpdate + vbCrLf
+            '    End If
+            'Else
+            _embedInsert = Me.EmbeddedPole.SQLInsert + vbCrLf
+            'End If
         End If
 
         SQLInsert = SQLInsert.Replace("--[SECTION INSERT]", _sectionInsert + vbCrLf)
@@ -1456,15 +1465,15 @@ Partial Public Class DrilledPierSection
         Dim _rebarInsert As String
 
         For Each bar In Me.Rebar
-            If bar.ID IsNot Nothing And bar.ID > 0 Then
-                If bar.local_rebar_id IsNot Nothing Then
-                    _rebarInsert += bar.SQLUpdate + vbCrLf
-                Else
-                    _rebarInsert += bar.SQLDelete + vbCrLf
-                End If
-            Else
-                _rebarInsert += bar.SQLInsert + vbCrLf
-            End If
+            'If bar.ID IsNot Nothing And bar.ID > 0 Then
+            '    If bar.local_rebar_id IsNot Nothing Then
+            '        _rebarInsert += bar.SQLUpdate + vbCrLf
+            '    Else
+            '        _rebarInsert += bar.SQLDelete + vbCrLf
+            '    End If
+            'Else
+            _rebarInsert += bar.SQLInsert + vbCrLf
+            'End If
         Next
 
         SQLInsert = SQLInsert.Replace("--[REBAR INSERT]", _rebarInsert)
