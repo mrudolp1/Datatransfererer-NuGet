@@ -6,6 +6,7 @@ Imports System.Reflection
 Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports Microsoft.Office.Interop
 
 Public Module Extensions
 
@@ -26,8 +27,21 @@ Public Module Extensions
     End Function
 
     <Extension()>
+    Public Sub NewLine(ByRef input As String, nextLine As String)
+        input = input & vbCrLf & nextLine
+    End Sub
+
+    <Extension()>
     Public Function FormatDBValue(input As String) As String
         'Handles nullable values and quoatations needed for DB values
+
+        'Single quotes are not permissible in fields in SQL tables
+        'this additional piece will replace single quotes with 2 quotes to allow the fields to be formatted the same when loading back from EDS>
+        If input IsNot Nothing Then
+            If input.ToString.Contains("'") Then
+                input = input.Replace("'", "''")
+            End If
+        End If
 
         If String.IsNullOrEmpty(input) Then
             FormatDBValue = "NULL"
@@ -204,12 +218,26 @@ Public Module Extensions
 
         EDSResultQuery = ""
 
+        ''DHS 6/29/2023
+        ''Prevent Saving Guyed Tower Results because they currently break the query.
+        ''Needs to be removed after Peter updates XMLOutput
+        'If alist.FirstOrDefault?.ParentStructure?.tnx?.geometry Is Nothing OrElse
+        '    alist.FirstOrDefault.ParentStructure.tnx.geometry.TowerType.Contains("Guyed") Then
+        '    Return EDSResultQuery
+        'End If
+
         For Each result In alist
-            If result.foreign_key Is Nothing Then
-                EDSResultQuery += result.Insert(ResultsParentID) & vbCrLf
-            Else
-                EDSResultQuery += result.Insert(result.foreign_key) & vbCrLf
-            End If
+            'debugging top guy pull-off NaN values 7/6/23 - DHS
+            'If result.result_lkup.Contains("top guy pull-off") Then
+            '    Debug.WriteLine("top guy pull-off")
+            'End If
+
+            If result.rating Is Nothing Then Continue For
+
+            If Not result.foreign_key.HasValue Then result.foreign_key = ResultsParentID
+
+            EDSResultQuery += result.Insert(result.foreign_key) & vbCrLf
+
         Next
 
         Return EDSResultQuery
@@ -293,15 +321,75 @@ Public Module Extensions
 
     End Function
 
+    <Extension()>
+    Public Function GetExtension(docFormat As DocumentFormat) As String
+
+        Select Case docFormat
+            Case DocumentFormat.Xlsx, DocumentFormat.OpenXml
+                Return ".xlsx"
+            Case DocumentFormat.Xls
+                Return ".xls"
+            Case DocumentFormat.Xlsm
+                Return ".xlsm"
+            Case DocumentFormat.Xlsb
+                Return ".xlsb"
+            Case DocumentFormat.Xlt
+                Return ".xlt"
+            Case DocumentFormat.Xltm
+                Return ".xltm"
+            Case DocumentFormat.Xltx
+                Return ".xltx"
+            Case DocumentFormat.XmlSpreadsheet2003
+                Return ".xml"
+            Case DocumentFormat.Text
+                Return ".txt"
+            Case DocumentFormat.Csv
+                Return ".csv"
+            Case Else
+                Return ""
+        End Select
+
+    End Function
+
 End Module
 
 Public Module myLittleHelpers
 
+    ''' <summary>
+    ''' Increments the name following the same pattern that file explorer uses (- Copy, - Copy (2), - Copy (3)...)
+    ''' </summary>
+    ''' <paramname="destFileName"></param>
+    ''' <returns></returns>
+    Public Function IncrementFileName(ByVal destFileName As String) As String
+        If File.Exists(destFileName) Then
+            Dim fileName = Path.GetFileNameWithoutExtension(destFileName)
+            Dim ext = Path.GetExtension(destFileName)
+            Dim fileNameEndPosition = fileName.IndexOf(" - Copy")
+            Dim newFileName = fileName & " - Copy"
+            If fileNameEndPosition > 0 Then
+                Dim baseFileName = fileName.Substring(0, fileNameEndPosition)
+                Dim fileNameEnd = fileName.Substring(fileNameEndPosition)
+                Dim copyNum = 0
+                'Split the string on parenthesis, get the first value in between (odd index), and try to convert it to integer
+                Integer.TryParse(fileNameEnd.Split("("c, ")"c).Where(Function(item, index) index Mod 2 <> 0).FirstOrDefault(), copyNum)
+                copyNum += 1
+
+                newFileName = baseFileName & " - Copy (" & copyNum.ToString() & ")"
+            End If
+            Return IncrementFileName(Path.Combine(Path.GetDirectoryName(destFileName), newFileName & ext))
+        Else
+            Return destFileName
+        End If
+    End Function
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="resourceName"></param>
+    ''' <returns></returns>
     Public Function LoadResourceFileStream(resourceName As String) As String
         Dim assembly As Assembly = Assembly.GetExecutingAssembly()
         Dim output As String = ""
-
-        ''CCI_Engineering_Templates.My.Resources.Pile_DELETE
 
         Using stream As Stream = assembly.GetManifestResourceStream(resourceName)
             If Not stream Is Nothing Then
@@ -354,12 +442,24 @@ Public Module myLittleHelpers
         End If
     End Function
 
-    Public Function DBtoNullableDbl(ByVal item As Object) As Double?
+    Public Function DBtoNullableDbl(ByVal item As Object, Optional ByVal precision As Integer = 4) As Double?
         If IsDBNull(item) Then
             Return Nothing
         Else
             Try
-                Return Math.Round(CDbl(item), 4)
+                Return Math.Round(CDbl(item), precision)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+        End If
+    End Function
+
+    Public Function DBtoNullableDec(ByVal item As Object, Optional ByVal precision As Integer = 4) As Decimal?
+        If IsDBNull(item) Then
+            Return Nothing
+        Else
+            Try
+                Return Math.Round(CDbl(item), precision)
             Catch ex As Exception
                 Return Nothing
             End Try
@@ -401,6 +501,79 @@ Public Module myLittleHelpers
         End If
     End Function
 
+#Region "Maestro Helpers"
+    'pass in Work Order [string]
+    'Public Function MessageLog(ByVal wo As String, ByVal dbError As String, ByVal logPath As String, Optional ByVal successLog As Boolean = False) As Boolean
+    '    'our log format will be: WO, Success, Error
+    '    Dim dt As DateTime = DateTime.Now
+
+
+    '    Dim catString As String
+
+    '    catString = wo & ", " & successLog & "," & dbError & "," & dt
+
+    '    If Not File.Exists(logPath) Then
+    '        File.Create(logPath).Close()
+
+    '        FileOpen(1, logPath, OpenMode.Append)
+    '        PrintLine(1, "WO, Success, Error, Time")
+    '        PrintLine(1, catString)
+
+    '        'PrintLine(1, "***************")
+    '        FileClose(1)
+    '    Else
+    '        FileOpen(1, logPath, OpenMode.Append)
+    '        PrintLine(1, catString)
+
+    '        'PrintLine(1, "***************")
+    '        FileClose(1)
+    '    End If
+    '    Return True
+    'End Function
+
+    Public Function MessageLog(ByVal wo As String, ByVal dbError As String, ByVal logPath As String, Optional ByVal successLog As Boolean = False) As Boolean
+        Dim dt As DateTime = DateTime.Now
+        Dim catString As String = wo & ", " & successLog & "," & dbError & "," & dt.ToString("yyyy-MM-dd HH:mm:ss")
+        Try
+            Using sw As New StreamWriter(logPath, True)
+                If Not File.Exists(logPath) Then
+                    sw.WriteLine("WO, Success, Error, Time")
+                End If
+                sw.WriteLine(catString)
+            End Using
+        Catch ex As Exception
+            Return False
+        End Try
+        Return True
+    End Function
+
+
+    Public Function CheckIfNull(ByRef input As Object, Optional ByRef intBool As Boolean = False) As Object
+        ' Check if the input is an integer, double, decimal or if intBool is set to True
+        If TypeOf input Is Integer Or TypeOf input Is Double Or TypeOf input Is Decimal Or intBool Then
+            ' If the input is DBNull, return 0
+            If IsDBNull(input) Then
+                Return 0
+            End If
+            ' Otherwise, return the input
+            Return input
+        Else
+            ' If the input is DBNull, return an empty string
+            If IsDBNull(input) Then
+                Return ""
+            End If
+            ' Otherwise, return the input with any double single quotes replaced with single quotes
+            Try
+                Return input.Replace("''", "'")
+            Catch ex As Exception
+                ' If there is an exception, return the input without modification
+                Return input
+            End Try
+        End If
+    End Function
+
+
+#End Region
 End Module
 
 

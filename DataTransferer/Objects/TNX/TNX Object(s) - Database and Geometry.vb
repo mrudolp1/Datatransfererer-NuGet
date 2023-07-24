@@ -7,6 +7,7 @@ Imports System.IO
 Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
 Public Module TNXExtensions
     <Extension()>
@@ -91,9 +92,13 @@ Public Module TNXExtensions
                 If currentSortedList(i).Rec = prevSortedList(i).Rec And AllowUpdate Then
                     If Not currentSortedList(i).Equals(prevSortedList(i)) Then
                         'Update existing
+                        'It needs an ID to update the data. Setting the ID for the Updater to work. 
+                        currentSortedList(i).ID = prevSortedList(i).ID
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).SQLUpdate
                     Else
                         'Save Results Only
+                        currentSortedList(i).ID = prevSortedList(i).ID
+                        TNXGeometryRecListQueryBuilder += "SET @SubLevel1ID = " & currentSortedList(i).ID & vbCrLf
                         TNXGeometryRecListQueryBuilder += currentSortedList(i).TNXResults.EDSResultQuery
                     End If
                 ElseIf currentSortedList(i).Rec < prevSortedList(i).Rec Then
@@ -116,11 +121,16 @@ Public Module TNXExtensions
 End Module
 
 #Region "Database"
+<DataContract()>
 Partial Public Class tnxDatabase
     Inherits EDSObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database"
+        End Get
+    End Property
 #End Region
 
 #Region "Define"
@@ -129,7 +139,7 @@ Partial Public Class tnxDatabase
     Private _bolts As New List(Of tnxMaterial)
 
     <Category("TNX Geometry"), Description("Upper Structure Type"), DisplayName("AntennaType")>
-    Public Property members() As List(Of tnxMember)
+    <DataMember()> Public Property members() As List(Of tnxMember)
         Get
             Return Me._members
         End Get
@@ -138,7 +148,7 @@ Partial Public Class tnxDatabase
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
-    Public Property materials() As List(Of tnxMaterial)
+    <DataMember()> Public Property materials() As List(Of tnxMaterial)
         Get
             Return Me._materials
         End Get
@@ -147,7 +157,7 @@ Partial Public Class tnxDatabase
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
-    Public Property bolts() As List(Of tnxMaterial)
+    <DataMember()> Public Property bolts() As List(Of tnxMaterial)
         Get
             Return Me._bolts
         End Get
@@ -185,7 +195,7 @@ Partial Public Class tnxDatabase
 #End Region
 
 End Class
-
+<DataContract()>
 Partial Public MustInherit Class tnxDatabaseObject
     Inherits EDSObject
 
@@ -209,14 +219,26 @@ Partial Public MustInherit Class tnxDatabaseObject
 
 
 End Class
-
+<DataContract()>
 Partial Public Class tnxMember
     Inherits tnxDatabaseObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Member"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.members"
-    Public Overrides ReadOnly Property EDSXrefTableName As String = "tnx.members_xref"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database Member"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.members"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSXrefTableName As String
+        Get
+            Return "tnx.members_xref"
+        End Get
+    End Property
 
     Private _Insert As String
     Private _Delete As String
@@ -278,7 +300,7 @@ Partial Public Class tnxMember
     Private _Values As String
 
     <Category("TNX Member Properties"), Description(""), DisplayName("File")>
-    Public Property File() As String
+    <DataMember()> Public Property File() As String
         Get
             Return Me._File
         End Get
@@ -287,7 +309,7 @@ Partial Public Class tnxMember
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("USName")>
-    Public Property USName() As String
+    <DataMember()> Public Property USName() As String
         Get
             Return Me._USName
         End Get
@@ -296,7 +318,7 @@ Partial Public Class tnxMember
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("SIName")>
-    Public Property SIName() As String
+    <DataMember()> Public Property SIName() As String
         Get
             Return Me._SIName
         End Get
@@ -305,7 +327,7 @@ Partial Public Class tnxMember
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("Values")>
-    Public Property Values() As String
+    <DataMember()> Public Property Values() As String
         Get
             Return Me._Values
         End Get
@@ -350,14 +372,26 @@ Partial Public Class tnxMember
         Return Equals
     End Function
 End Class
-
+<DataContract()>
 Partial Public Class tnxMaterial
     Inherits tnxDatabaseObject
 
 #Region "Inherits"
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Database Material"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.materials"
-    Public Overrides ReadOnly Property EDSXrefTableName As String = "tnx.materials_xref"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Database Material"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.materials"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSXrefTableName As String
+        Get
+            Return "tnx.materials_xref"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsert() As String
         Return Me.SQLInsert(Nothing)
@@ -423,7 +457,7 @@ Partial Public Class tnxMaterial
     Private _IsBolt As Boolean?
 
     <Category("TNX Material Properties"), Description(""), DisplayName("Material Type")>
-    Public Property MemberMatFile() As String
+    <DataMember()> Public Property MemberMatFile() As String
         Get
             Return Me._MemberMatFile
         End Get
@@ -432,7 +466,7 @@ Partial Public Class tnxMaterial
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("Material Name")>
-    Public Property MatName() As String
+    <DataMember()> Public Property MatName() As String
         Get
             Return Me._MatName
         End Get
@@ -441,7 +475,7 @@ Partial Public Class tnxMaterial
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("Material Values")>
-    Public Property MatValues() As String
+    <DataMember()> Public Property MatValues() As String
         Get
             Return Me._MatValues
         End Get
@@ -450,7 +484,7 @@ Partial Public Class tnxMaterial
         End Set
     End Property
     <Category("TNX Material Properties"), Description(""), DisplayName("Is Bolt Material?")>
-    Public Property IsBolt() As Boolean?
+    <DataMember()> Public Property IsBolt() As Boolean?
         Get
             Return Me._IsBolt
         End Get
@@ -500,10 +534,15 @@ End Class
 #End Region
 
 #Region "Geometry"
+<DataContract(), KnownType(GetType(tnxGeometry))>
 Partial Public Class tnxGeometry
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Geometry"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Geometry"
+        End Get
+    End Property
 
 #Region "Define"
     Private _TowerType As String
@@ -533,9 +572,8 @@ Partial Public Class tnxGeometry
     Private _baseStructure As New List(Of tnxTowerRecord)
     Private _guyWires As New List(Of tnxGuyRecord)
 
-
     <Category("TNX Geometry"), Description("Base Tower Type"), DisplayName("TowerType")>
-    Public Property TowerType() As String
+    <DataMember()> Public Property TowerType() As String
         Get
             Return Me._TowerType
         End Get
@@ -544,7 +582,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Upper Structure Type"), DisplayName("AntennaType")>
-    Public Property AntennaType() As String
+    <DataMember()> Public Property AntennaType() As String
         Get
             Return Me._AntennaType
         End Get
@@ -553,7 +591,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("OverallHeight")>
-    Public Property OverallHeight() As Double?
+    <DataMember()> Public Property OverallHeight() As Double?
         Get
             Return Me._OverallHeight
         End Get
@@ -562,7 +600,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("BaseElevation")>
-    Public Property BaseElevation() As Double?
+    <DataMember()> Public Property BaseElevation() As Double?
         Get
             Return Me._BaseElevation
         End Get
@@ -571,7 +609,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Lambda")>
-    Public Property Lambda() As Double?
+    <DataMember()> Public Property Lambda() As Double?
         Get
             Return Me._Lambda
         End Get
@@ -580,7 +618,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("TowerTopFaceWidth")>
-    Public Property TowerTopFaceWidth() As Double?
+    <DataMember()> Public Property TowerTopFaceWidth() As Double?
         Get
             Return Me._TowerTopFaceWidth
         End Get
@@ -589,7 +627,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("TowerBaseFaceWidth")>
-    Public Property TowerBaseFaceWidth() As Double?
+    <DataMember()> Public Property TowerBaseFaceWidth() As Double?
         Get
             Return Me._TowerBaseFaceWidth
         End Get
@@ -598,7 +636,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Type - None, I - Beam, I - Beam Free, Taper, Taper - Free"), DisplayName("TowerTaper")>
-    Public Property TowerTaper() As String
+    <DataMember()> Public Property TowerTaper() As String
         Get
             Return Me._TowerTaper
         End Get
@@ -607,7 +645,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Type - Fixed Base, Pinned Base (Only active When base tower type Is guyed And there are no base tower section In the model)"), DisplayName("GuyedMonopoleBaseType")>
-    Public Property GuyedMonopoleBaseType() As String
+    <DataMember()> Public Property GuyedMonopoleBaseType() As String
         Get
             Return Me._GuyedMonopoleBaseType
         End Get
@@ -616,7 +654,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Taper Height"), DisplayName("TaperHeight")>
-    Public Property TaperHeight() As Double?
+    <DataMember()> Public Property TaperHeight() As Double?
         Get
             Return Me._TaperHeight
         End Get
@@ -625,7 +663,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("I-Beam Pivot Dist (replaces base taper height When base type Is I-Beam Or I-Beam Free)"), DisplayName("PivotHeight")>
-    Public Property PivotHeight() As Double?
+    <DataMember()> Public Property PivotHeight() As Double?
         Get
             Return Me._PivotHeight
         End Get
@@ -634,7 +672,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("AutoCalcGH")>
-    Public Property AutoCalcGH() As Boolean?
+    <DataMember()> Public Property AutoCalcGH() As Boolean?
         Get
             Return Me._AutoCalcGH
         End Get
@@ -643,7 +681,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("UserGHElev")>
-    Public Property UserGHElev() As Double?
+    <DataMember()> Public Property UserGHElev() As Double?
         Get
             Return Me._UserGHElev
         End Get
@@ -652,7 +690,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Has Index Plate"), DisplayName("UseIndexPlate")>
-    Public Property UseIndexPlate() As Boolean?
+    <DataMember()> Public Property UseIndexPlate() As Boolean?
         Get
             Return Me._UseIndexPlate
         End Get
@@ -661,7 +699,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Enter Pre-defined Gh values"), DisplayName("EnterUserDefinedGhValues")>
-    Public Property EnterUserDefinedGhValues() As Boolean?
+    <DataMember()> Public Property EnterUserDefinedGhValues() As Boolean?
         Get
             Return Me._EnterUserDefinedGhValues
         End Get
@@ -670,7 +708,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Base Tower - Active When EnterUserDefinedGhValues = Yes"), DisplayName("BaseTowerGhInput")>
-    Public Property BaseTowerGhInput() As Double?
+    <DataMember()> Public Property BaseTowerGhInput() As Double?
         Get
             Return Me._BaseTowerGhInput
         End Get
@@ -679,7 +717,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Upper Structure - Active When EnterUserDefinedGhValues = Yes"), DisplayName("UpperStructureGhInput")>
-    Public Property UpperStructureGhInput() As Double?
+    <DataMember()> Public Property UpperStructureGhInput() As Double?
         Get
             Return Me._UpperStructureGhInput
         End Get
@@ -688,7 +726,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("CSA code only (This controls two inputs In the UI 'Use Default Cg Values' and 'Enter pre-defined Cg Values'. The checked status of the two inputs are always opposite and 'Use Default Cg Values' is opposite of the ERI value."), DisplayName("EnterUserDefinedCgValues")>
-    Public Property EnterUserDefinedCgValues() As Boolean?
+    <DataMember()> Public Property EnterUserDefinedCgValues() As Boolean?
         Get
             Return Me._EnterUserDefinedCgValues
         End Get
@@ -697,7 +735,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("CSA code only"), DisplayName("BaseTowerCgInput")>
-    Public Property BaseTowerCgInput() As Double?
+    <DataMember()> Public Property BaseTowerCgInput() As Double?
         Get
             Return Me._BaseTowerCgInput
         End Get
@@ -706,7 +744,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("CSA code only"), DisplayName("UpperStructureCgInput")>
-    Public Property UpperStructureCgInput() As Double?
+    <DataMember()> Public Property UpperStructureCgInput() As Double?
         Get
             Return Me._UpperStructureCgInput
         End Get
@@ -715,7 +753,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Lattice Pole Width - Only applies to lattice upper structures"), DisplayName("AntennaFaceWidth")>
-    Public Property AntennaFaceWidth() As Double?
+    <DataMember()> Public Property AntennaFaceWidth() As Double?
         Get
             Return Me._AntennaFaceWidth
         End Get
@@ -724,7 +762,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Top takeup on lambda"), DisplayName("UseTopTakeup")>
-    Public Property UseTopTakeup() As Boolean?
+    <DataMember()> Public Property UseTopTakeup() As Boolean?
         Get
             Return Me._UseTopTakeup
         End Get
@@ -733,7 +771,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description("Constant Slope"), DisplayName("ConstantSlope")>
-    Public Property ConstantSlope() As Boolean?
+    <DataMember()> Public Property ConstantSlope() As Boolean?
         Get
             Return Me._ConstantSlope
         End Get
@@ -742,7 +780,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Upper Structure")>
-    Public Property upperStructure() As List(Of tnxAntennaRecord)
+    <DataMember()> Public Property upperStructure() As List(Of tnxAntennaRecord)
         Get
             Return Me._upperStructure
         End Get
@@ -751,7 +789,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Base Structure")>
-    Public Property baseStructure() As List(Of tnxTowerRecord)
+    <DataMember()> Public Property baseStructure() As List(Of tnxTowerRecord)
         Get
             Return Me._baseStructure
         End Get
@@ -760,7 +798,7 @@ Partial Public Class tnxGeometry
         End Set
     End Property
     <Category("TNX Geometry"), Description(""), DisplayName("Guy Wires")>
-    Public Property guyWires() As List(Of tnxGuyRecord)
+    <DataMember()> Public Property guyWires() As List(Of tnxGuyRecord)
         Get
             Return Me._guyWires
         End Get
@@ -770,7 +808,7 @@ Partial Public Class tnxGeometry
     End Property
 
     <Category("Settings"), Description("Consider tower sections in the equality comparison."), DisplayName("Consider Geometry Equality")>
-    Public Property ConsiderSectionEquality() As Boolean = True
+    <DataMember()> Public Property ConsiderSectionEquality() As Boolean = True
 
 #End Region
 
@@ -837,110 +875,47 @@ Partial Public Class tnxGeometry
         End If
     End Function
 
-End Class
-
-Public Class tnxResult
-    Inherits EDSResult
-
-    <Category("Loads"), Description(""), DisplayName("Design Load")>
-    Public Property DesignLoad As Double?
-    <Category("Loads"), Description(""), DisplayName("Applied Load")>
-    Public Property AppliedLoad As Double?
-    <Category("Ratio"), Description(""), DisplayName("Load Ratio Limit")>
-    Public Property LoadRatioLimit As Double?
-    '<Category("Ratio"), Description(""), DisplayName("Required Safety Factor")>
-    'Public Property RequiredSafteyFactor As Double?
-    '<Category("Ratio"), Description(""), DisplayName("Use Safety Factor Instead of Ratio")>
-    'Public Property UseSFInsteadofRatio As Boolean = False
-
-    <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
-    Public Overrides Property Rating As Double?
-        Get
-            Dim designCode As String
-            Dim useAnnexS As Boolean
-            Try
-                designCode = Me.ParentStructure.tnx.code.design.DesignCode
-                useAnnexS = Me.ParentStructure.tnx.code.design.UseTIA222H_AnnexS.Value
-            Catch ex As Exception
-                designCode = ""
-                useAnnexS = False
-                Debug.Print("Design code unknown. Using nonnormailzed TNX results.")
-            End Try
-
-            If designCode = "TIA-222-H" And useAnnexS Then
-                Return Me.NormalizedRatio
-            Else
-                Return Me.Ratio
-            End If
-        End Get
-        Set(value As Double?)
-            'Do Nothing
-        End Set
-    End Property
-
-    Public Sub New()
-        'Leave Blank
+    Public Overrides Sub Clear()
+        Me.upperStructure.Clear()
+        Me.baseStructure.Clear()
+        Me.guyWires.Clear()
     End Sub
-
-    ''' <summary>
-    ''' Create result object with result_lkup and rating
-    ''' </summary>
-    ''' <param name="result_lkup"></param>
-    ''' <param name="rating"></param>
-    ''' <param name="designLoad"></param>
-    ''' <param name="appliedLoad"></param>
-    ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, ByVal designLoad As Double?, ByVal appliedLoad As Double?, ByVal RatioLimit As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
-        'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
-        If Parent IsNot Nothing Then
-            Me.Absorb(Parent)
-        End If
-
-        Me.result_lkup = result_lkup
-        Me.Rating = rating
-        Me.DesignLoad = designLoad
-        Me.AppliedLoad = appliedLoad
-        Me.LoadRatioLimit = RatioLimit
-
-    End Sub
-
-    ''' <summary>
-    ''' Ratio of the applied load to the design load.
-    ''' </summary>
-    ''' <returns></returns>
-    Public Function Ratio() As Double
-        If DesignLoad.HasValue And AppliedLoad.HasValue Then
-            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value)
-        End If
-        Return 0
-    End Function
-
-    ''' <summary>
-    ''' Ratio of the applied load to the design load and normalized with the load ratio limit (i.e. 105%).
-    ''' </summary>
-    ''' <returns></returns>
-    Public Function NormalizedRatio() As Double
-        If DesignLoad.HasValue And AppliedLoad.HasValue And LoadRatioLimit.HasValue Then
-            Return Math.Abs(AppliedLoad.Value / DesignLoad.Value) / LoadRatioLimit.Value
-        End If
-        Return 0
-    End Function
 
 End Class
 
+<DataContract(), KnownType(GetType(tnxGeometryRec))>
 Partial Public MustInherit Class tnxGeometryRec
     Inherits EDSObjectWithQueries
     Implements IComparable(Of tnxGeometryRec)
+
     'Use this type to allow sorting by Record instead of ID and provide a custom version of EDSListQueryBuilder for tnx geometry records
+    <DataMember()>
     Public Property Rec As Integer?
-    Public Overrides ReadOnly Property EDSTableDepth As Integer = 1
+    Public Overrides ReadOnly Property EDSTableDepth As Integer
+        Get
+            Return 1
+        End Get
+    End Property
     'This cannot override the Results list from the EDSObjectWithQueries because it is a different type, instead we can shadow
+    <DataMember()>
     Public Property TNXResults As New List(Of tnxResult)
 
-    Private _Results As List(Of EDSResult)
+    Private _Results As New List(Of EDSResult)
+    <DataMember()>
     Public Overrides Property Results As List(Of EDSResult)
         Get
-            Return Me.TNXResults.ConvertAll(Function(x) CType(x, EDSResult))
+            Dim myList As New List(Of EDSResult)
+            For Each res In Me.TNXResults
+                Dim myNewRes As EDSResult
+                myNewRes = New EDSResult(res.result_lkup, res.Rating, Me)
+                myNewRes.Absorb(Me)
+                myList.Add(myNewRes)
+            Next
+
+            'IEM 
+            'This needed to change to recreate a list of EDS result
+            'The ConvertAll was keeping then as TNXResult and failing the serializer.
+            Return myList 'Me.TNXResults.ConvertAll(Function(x) CType(x, EDSResult))
         End Get
         Set(value As List(Of EDSResult))
             Me._Results = value
@@ -958,13 +933,23 @@ Partial Public MustInherit Class tnxGeometryRec
 
 End Class
 
+<DataContractAttribute()>
+<KnownType(GetType(tnxAntennaRecord))>
 Partial Public Class tnxAntennaRecord
     Inherits tnxGeometryRec
     'upper structure
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Upper Structure Section " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.upper_structure_sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Upper Structure Section " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.upper_structure_sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
@@ -2006,7 +1991,7 @@ Partial Public Class tnxAntennaRecord
     Private _AntennaKbraceOffsetPEX As Double?
 
     '<Category("TNX Antenna Record"), Description(""), DisplayName("Antennarec")>
-    'Public Property Rec() As Integer?
+    ' <DataMember()> Public Property Rec() As Integer?
     '    Get
     '        Return Me._AntennaRec
     '    End Get
@@ -2015,7 +2000,7 @@ Partial Public Class tnxAntennaRecord
     '    End Set
     'End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabracetype")>
-    Public Property AntennaBraceType() As String
+    <DataMember()> Public Property AntennaBraceType() As String
         Get
             Return Me._AntennaBraceType
         End Get
@@ -2024,7 +2009,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaheight")>
-    Public Property AntennaHeight() As Double?
+    <DataMember()> Public Property AntennaHeight() As Double?
         Get
             Return Me._AntennaHeight
         End Get
@@ -2033,7 +2018,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalspacing")>
-    Public Property AntennaDiagonalSpacing() As Double?
+    <DataMember()> Public Property AntennaDiagonalSpacing() As Double?
         Get
             Return Me._AntennaDiagonalSpacing
         End Get
@@ -2042,7 +2027,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalspacingex")>
-    Public Property AntennaDiagonalSpacingEx() As Double?
+    <DataMember()> Public Property AntennaDiagonalSpacingEx() As Double?
         Get
             Return Me._AntennaDiagonalSpacingEx
         End Get
@@ -2051,7 +2036,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanumsections")>
-    Public Property AntennaNumSections() As Integer?
+    <DataMember()> Public Property AntennaNumSections() As Integer?
         Get
             Return Me._AntennaNumSections
         End Get
@@ -2060,7 +2045,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanumsesctions")>
-    Public Property AntennaNumSesctions() As Integer?
+    <DataMember()> Public Property AntennaNumSesctions() As Integer?
         Get
             Return Me._AntennaNumSesctions
         End Get
@@ -2069,7 +2054,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasectionlength")>
-    Public Property AntennaSectionLength() As Double?
+    <DataMember()> Public Property AntennaSectionLength() As Double?
         Get
             Return Me._AntennaSectionLength
         End Get
@@ -2078,7 +2063,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegtype")>
-    Public Property AntennaLegType() As String
+    <DataMember()> Public Property AntennaLegType() As String
         Get
             Return Me._AntennaLegType
         End Get
@@ -2087,7 +2072,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegsize")>
-    Public Property AntennaLegSize() As String
+    <DataMember()> Public Property AntennaLegSize() As String
         Get
             Return Me._AntennaLegSize
         End Get
@@ -2096,7 +2081,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaleggrade")>
-    Public Property AntennaLegGrade() As Double?
+    <DataMember()> Public Property AntennaLegGrade() As Double?
         Get
             Return Me._AntennaLegGrade
         End Get
@@ -2105,7 +2090,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegmatlgrade")>
-    Public Property AntennaLegMatlGrade() As String
+    <DataMember()> Public Property AntennaLegMatlGrade() As String
         Get
             Return Me._AntennaLegMatlGrade
         End Get
@@ -2114,7 +2099,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalgrade")>
-    Public Property AntennaDiagonalGrade() As Double?
+    <DataMember()> Public Property AntennaDiagonalGrade() As Double?
         Get
             Return Me._AntennaDiagonalGrade
         End Get
@@ -2123,7 +2108,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalmatlgrade")>
-    Public Property AntennaDiagonalMatlGrade() As String
+    <DataMember()> Public Property AntennaDiagonalMatlGrade() As String
         Get
             Return Me._AntennaDiagonalMatlGrade
         End Get
@@ -2132,7 +2117,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracinggrade")>
-    Public Property AntennaInnerBracingGrade() As Double?
+    <DataMember()> Public Property AntennaInnerBracingGrade() As Double?
         Get
             Return Me._AntennaInnerBracingGrade
         End Get
@@ -2141,7 +2126,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingmatlgrade")>
-    Public Property AntennaInnerBracingMatlGrade() As String
+    <DataMember()> Public Property AntennaInnerBracingMatlGrade() As String
         Get
             Return Me._AntennaInnerBracingMatlGrade
         End Get
@@ -2150,7 +2135,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtgrade")>
-    Public Property AntennaTopGirtGrade() As Double?
+    <DataMember()> Public Property AntennaTopGirtGrade() As Double?
         Get
             Return Me._AntennaTopGirtGrade
         End Get
@@ -2159,7 +2144,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtmatlgrade")>
-    Public Property AntennaTopGirtMatlGrade() As String
+    <DataMember()> Public Property AntennaTopGirtMatlGrade() As String
         Get
             Return Me._AntennaTopGirtMatlGrade
         End Get
@@ -2168,7 +2153,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtgrade")>
-    Public Property AntennaBotGirtGrade() As Double?
+    <DataMember()> Public Property AntennaBotGirtGrade() As Double?
         Get
             Return Me._AntennaBotGirtGrade
         End Get
@@ -2177,7 +2162,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtmatlgrade")>
-    Public Property AntennaBotGirtMatlGrade() As String
+    <DataMember()> Public Property AntennaBotGirtMatlGrade() As String
         Get
             Return Me._AntennaBotGirtMatlGrade
         End Get
@@ -2186,7 +2171,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtgrade")>
-    Public Property AntennaInnerGirtGrade() As Double?
+    <DataMember()> Public Property AntennaInnerGirtGrade() As Double?
         Get
             Return Me._AntennaInnerGirtGrade
         End Get
@@ -2195,7 +2180,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtmatlgrade")>
-    Public Property AntennaInnerGirtMatlGrade() As String
+    <DataMember()> Public Property AntennaInnerGirtMatlGrade() As String
         Get
             Return Me._AntennaInnerGirtMatlGrade
         End Get
@@ -2204,7 +2189,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalgrade")>
-    Public Property AntennaLongHorizontalGrade() As Double?
+    <DataMember()> Public Property AntennaLongHorizontalGrade() As Double?
         Get
             Return Me._AntennaLongHorizontalGrade
         End Get
@@ -2213,7 +2198,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalmatlgrade")>
-    Public Property AntennaLongHorizontalMatlGrade() As String
+    <DataMember()> Public Property AntennaLongHorizontalMatlGrade() As String
         Get
             Return Me._AntennaLongHorizontalMatlGrade
         End Get
@@ -2222,7 +2207,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalgrade")>
-    Public Property AntennaShortHorizontalGrade() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalGrade() As Double?
         Get
             Return Me._AntennaShortHorizontalGrade
         End Get
@@ -2231,7 +2216,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalmatlgrade")>
-    Public Property AntennaShortHorizontalMatlGrade() As String
+    <DataMember()> Public Property AntennaShortHorizontalMatlGrade() As String
         Get
             Return Me._AntennaShortHorizontalMatlGrade
         End Get
@@ -2240,7 +2225,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonaltype")>
-    Public Property AntennaDiagonalType() As String
+    <DataMember()> Public Property AntennaDiagonalType() As String
         Get
             Return Me._AntennaDiagonalType
         End Get
@@ -2249,7 +2234,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalsize")>
-    Public Property AntennaDiagonalSize() As String
+    <DataMember()> Public Property AntennaDiagonalSize() As String
         Get
             Return Me._AntennaDiagonalSize
         End Get
@@ -2258,7 +2243,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingtype")>
-    Public Property AntennaInnerBracingType() As String
+    <DataMember()> Public Property AntennaInnerBracingType() As String
         Get
             Return Me._AntennaInnerBracingType
         End Get
@@ -2267,7 +2252,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerbracingsize")>
-    Public Property AntennaInnerBracingSize() As String
+    <DataMember()> Public Property AntennaInnerBracingSize() As String
         Get
             Return Me._AntennaInnerBracingSize
         End Get
@@ -2276,7 +2261,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirttype")>
-    Public Property AntennaTopGirtType() As String
+    <DataMember()> Public Property AntennaTopGirtType() As String
         Get
             Return Me._AntennaTopGirtType
         End Get
@@ -2285,7 +2270,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtsize")>
-    Public Property AntennaTopGirtSize() As String
+    <DataMember()> Public Property AntennaTopGirtSize() As String
         Get
             Return Me._AntennaTopGirtSize
         End Get
@@ -2294,7 +2279,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirttype")>
-    Public Property AntennaBotGirtType() As String
+    <DataMember()> Public Property AntennaBotGirtType() As String
         Get
             Return Me._AntennaBotGirtType
         End Get
@@ -2303,7 +2288,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtsize")>
-    Public Property AntennaBotGirtSize() As String
+    <DataMember()> Public Property AntennaBotGirtSize() As String
         Get
             Return Me._AntennaBotGirtSize
         End Get
@@ -2312,7 +2297,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtoffset")>
-    Public Property AntennaTopGirtOffset() As Double?
+    <DataMember()> Public Property AntennaTopGirtOffset() As Double?
         Get
             Return Me._AntennaTopGirtOffset
         End Get
@@ -2321,7 +2306,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtoffset")>
-    Public Property AntennaBotGirtOffset() As Double?
+    <DataMember()> Public Property AntennaBotGirtOffset() As Double?
         Get
             Return Me._AntennaBotGirtOffset
         End Get
@@ -2330,7 +2315,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahaskbraceendpanels")>
-    Public Property AntennaHasKBraceEndPanels() As Boolean?
+    <DataMember()> Public Property AntennaHasKBraceEndPanels() As Boolean?
         Get
             Return Me._AntennaHasKBraceEndPanels
         End Get
@@ -2339,7 +2324,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahashorizontals")>
-    Public Property AntennaHasHorizontals() As Boolean?
+    <DataMember()> Public Property AntennaHasHorizontals() As Boolean?
         Get
             Return Me._AntennaHasHorizontals
         End Get
@@ -2348,7 +2333,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontaltype")>
-    Public Property AntennaLongHorizontalType() As String
+    <DataMember()> Public Property AntennaLongHorizontalType() As String
         Get
             Return Me._AntennaLongHorizontalType
         End Get
@@ -2357,7 +2342,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalonghorizontalsize")>
-    Public Property AntennaLongHorizontalSize() As String
+    <DataMember()> Public Property AntennaLongHorizontalSize() As String
         Get
             Return Me._AntennaLongHorizontalSize
         End Get
@@ -2366,7 +2351,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontaltype")>
-    Public Property AntennaShortHorizontalType() As String
+    <DataMember()> Public Property AntennaShortHorizontalType() As String
         Get
             Return Me._AntennaShortHorizontalType
         End Get
@@ -2375,7 +2360,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalsize")>
-    Public Property AntennaShortHorizontalSize() As String
+    <DataMember()> Public Property AntennaShortHorizontalSize() As String
         Get
             Return Me._AntennaShortHorizontalSize
         End Get
@@ -2384,7 +2369,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantgrade")>
-    Public Property AntennaRedundantGrade() As Double?
+    <DataMember()> Public Property AntennaRedundantGrade() As Double?
         Get
             Return Me._AntennaRedundantGrade
         End Get
@@ -2393,7 +2378,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantmatlgrade")>
-    Public Property AntennaRedundantMatlGrade() As String
+    <DataMember()> Public Property AntennaRedundantMatlGrade() As String
         Get
             Return Me._AntennaRedundantMatlGrade
         End Get
@@ -2402,7 +2387,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanttype")>
-    Public Property AntennaRedundantType() As String
+    <DataMember()> Public Property AntennaRedundantType() As String
         Get
             Return Me._AntennaRedundantType
         End Get
@@ -2411,7 +2396,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagtype")>
-    Public Property AntennaRedundantDiagType() As String
+    <DataMember()> Public Property AntennaRedundantDiagType() As String
         Get
             Return Me._AntennaRedundantDiagType
         End Get
@@ -2420,7 +2405,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonaltype")>
-    Public Property AntennaRedundantSubDiagonalType() As String
+    <DataMember()> Public Property AntennaRedundantSubDiagonalType() As String
         Get
             Return Me._AntennaRedundantSubDiagonalType
         End Get
@@ -2429,7 +2414,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontaltype")>
-    Public Property AntennaRedundantSubHorizontalType() As String
+    <DataMember()> Public Property AntennaRedundantSubHorizontalType() As String
         Get
             Return Me._AntennaRedundantSubHorizontalType
         End Get
@@ -2438,7 +2423,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticaltype")>
-    Public Property AntennaRedundantVerticalType() As String
+    <DataMember()> Public Property AntennaRedundantVerticalType() As String
         Get
             Return Me._AntennaRedundantVerticalType
         End Get
@@ -2447,7 +2432,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthiptype")>
-    Public Property AntennaRedundantHipType() As String
+    <DataMember()> Public Property AntennaRedundantHipType() As String
         Get
             Return Me._AntennaRedundantHipType
         End Get
@@ -2456,7 +2441,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonaltype")>
-    Public Property AntennaRedundantHipDiagonalType() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalType() As String
         Get
             Return Me._AntennaRedundantHipDiagonalType
         End Get
@@ -2465,7 +2450,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize")>
-    Public Property AntennaRedundantHorizontalSize() As String
+    <DataMember()> Public Property AntennaRedundantHorizontalSize() As String
         Get
             Return Me._AntennaRedundantHorizontalSize
         End Get
@@ -2474,7 +2459,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize2")>
-    Public Property AntennaRedundantHorizontalSize2() As String
+    <DataMember()> Public Property AntennaRedundantHorizontalSize2() As String
         Get
             Return Me._AntennaRedundantHorizontalSize2
         End Get
@@ -2483,7 +2468,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize3")>
-    Public Property AntennaRedundantHorizontalSize3() As String
+    <DataMember()> Public Property AntennaRedundantHorizontalSize3() As String
         Get
             Return Me._AntennaRedundantHorizontalSize3
         End Get
@@ -2492,7 +2477,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalsize4")>
-    Public Property AntennaRedundantHorizontalSize4() As String
+    <DataMember()> Public Property AntennaRedundantHorizontalSize4() As String
         Get
             Return Me._AntennaRedundantHorizontalSize4
         End Get
@@ -2501,7 +2486,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize")>
-    Public Property AntennaRedundantDiagonalSize() As String
+    <DataMember()> Public Property AntennaRedundantDiagonalSize() As String
         Get
             Return Me._AntennaRedundantDiagonalSize
         End Get
@@ -2510,7 +2495,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize2")>
-    Public Property AntennaRedundantDiagonalSize2() As String
+    <DataMember()> Public Property AntennaRedundantDiagonalSize2() As String
         Get
             Return Me._AntennaRedundantDiagonalSize2
         End Get
@@ -2519,7 +2504,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize3")>
-    Public Property AntennaRedundantDiagonalSize3() As String
+    <DataMember()> Public Property AntennaRedundantDiagonalSize3() As String
         Get
             Return Me._AntennaRedundantDiagonalSize3
         End Get
@@ -2528,7 +2513,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalsize4")>
-    Public Property AntennaRedundantDiagonalSize4() As String
+    <DataMember()> Public Property AntennaRedundantDiagonalSize4() As String
         Get
             Return Me._AntennaRedundantDiagonalSize4
         End Get
@@ -2537,7 +2522,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalsize")>
-    Public Property AntennaRedundantSubHorizontalSize() As String
+    <DataMember()> Public Property AntennaRedundantSubHorizontalSize() As String
         Get
             Return Me._AntennaRedundantSubHorizontalSize
         End Get
@@ -2546,7 +2531,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalsize")>
-    Public Property AntennaRedundantSubDiagonalSize() As String
+    <DataMember()> Public Property AntennaRedundantSubDiagonalSize() As String
         Get
             Return Me._AntennaRedundantSubDiagonalSize
         End Get
@@ -2555,7 +2540,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasubdiaglocation")>
-    Public Property AntennaSubDiagLocation() As Double?
+    <DataMember()> Public Property AntennaSubDiagLocation() As Double?
         Get
             Return Me._AntennaSubDiagLocation
         End Get
@@ -2564,7 +2549,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalsize")>
-    Public Property AntennaRedundantVerticalSize() As String
+    <DataMember()> Public Property AntennaRedundantVerticalSize() As String
         Get
             Return Me._AntennaRedundantVerticalSize
         End Get
@@ -2573,7 +2558,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize")>
-    Public Property AntennaRedundantHipDiagonalSize() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalSize() As String
         Get
             Return Me._AntennaRedundantHipDiagonalSize
         End Get
@@ -2582,7 +2567,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize2")>
-    Public Property AntennaRedundantHipDiagonalSize2() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalSize2() As String
         Get
             Return Me._AntennaRedundantHipDiagonalSize2
         End Get
@@ -2591,7 +2576,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize3")>
-    Public Property AntennaRedundantHipDiagonalSize3() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalSize3() As String
         Get
             Return Me._AntennaRedundantHipDiagonalSize3
         End Get
@@ -2600,7 +2585,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalsize4")>
-    Public Property AntennaRedundantHipDiagonalSize4() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalSize4() As String
         Get
             Return Me._AntennaRedundantHipDiagonalSize4
         End Get
@@ -2609,7 +2594,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize")>
-    Public Property AntennaRedundantHipSize() As String
+    <DataMember()> Public Property AntennaRedundantHipSize() As String
         Get
             Return Me._AntennaRedundantHipSize
         End Get
@@ -2618,7 +2603,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize2")>
-    Public Property AntennaRedundantHipSize2() As String
+    <DataMember()> Public Property AntennaRedundantHipSize2() As String
         Get
             Return Me._AntennaRedundantHipSize2
         End Get
@@ -2627,7 +2612,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize3")>
-    Public Property AntennaRedundantHipSize3() As String
+    <DataMember()> Public Property AntennaRedundantHipSize3() As String
         Get
             Return Me._AntennaRedundantHipSize3
         End Get
@@ -2636,7 +2621,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipsize4")>
-    Public Property AntennaRedundantHipSize4() As String
+    <DataMember()> Public Property AntennaRedundantHipSize4() As String
         Get
             Return Me._AntennaRedundantHipSize4
         End Get
@@ -2645,7 +2630,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennanuminnergirts")>
-    Public Property AntennaNumInnerGirts() As Integer?
+    <DataMember()> Public Property AntennaNumInnerGirts() As Integer?
         Get
             Return Me._AntennaNumInnerGirts
         End Get
@@ -2654,7 +2639,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirttype")>
-    Public Property AntennaInnerGirtType() As String
+    <DataMember()> Public Property AntennaInnerGirtType() As String
         Get
             Return Me._AntennaInnerGirtType
         End Get
@@ -2663,7 +2648,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtsize")>
-    Public Property AntennaInnerGirtSize() As String
+    <DataMember()> Public Property AntennaInnerGirtSize() As String
         Get
             Return Me._AntennaInnerGirtSize
         End Get
@@ -2672,7 +2657,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapoleshapetype")>
-    Public Property AntennaPoleShapeType() As String
+    <DataMember()> Public Property AntennaPoleShapeType() As String
         Get
             Return Me._AntennaPoleShapeType
         End Get
@@ -2681,7 +2666,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolesize")>
-    Public Property AntennaPoleSize() As String
+    <DataMember()> Public Property AntennaPoleSize() As String
         Get
             Return Me._AntennaPoleSize
         End Get
@@ -2690,7 +2675,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolegrade")>
-    Public Property AntennaPoleGrade() As Double?
+    <DataMember()> Public Property AntennaPoleGrade() As Double?
         Get
             Return Me._AntennaPoleGrade
         End Get
@@ -2699,7 +2684,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolematlgrade")>
-    Public Property AntennaPoleMatlGrade() As String
+    <DataMember()> Public Property AntennaPoleMatlGrade() As String
         Get
             Return Me._AntennaPoleMatlGrade
         End Get
@@ -2708,7 +2693,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennapolesplicelength")>
-    Public Property AntennaPoleSpliceLength() As Double?
+    <DataMember()> Public Property AntennaPoleSpliceLength() As Double?
         Get
             Return Me._AntennaPoleSpliceLength
         End Get
@@ -2717,7 +2702,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolenumsides")>
-    Public Property AntennaTaperPoleNumSides() As Integer?
+    <DataMember()> Public Property AntennaTaperPoleNumSides() As Integer?
         Get
             Return Me._AntennaTaperPoleNumSides
         End Get
@@ -2726,7 +2711,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpoletopdiameter")>
-    Public Property AntennaTaperPoleTopDiameter() As Double?
+    <DataMember()> Public Property AntennaTaperPoleTopDiameter() As Double?
         Get
             Return Me._AntennaTaperPoleTopDiameter
         End Get
@@ -2735,7 +2720,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolebotdiameter")>
-    Public Property AntennaTaperPoleBotDiameter() As Double?
+    <DataMember()> Public Property AntennaTaperPoleBotDiameter() As Double?
         Get
             Return Me._AntennaTaperPoleBotDiameter
         End Get
@@ -2744,7 +2729,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolewallthickness")>
-    Public Property AntennaTaperPoleWallThickness() As Double?
+    <DataMember()> Public Property AntennaTaperPoleWallThickness() As Double?
         Get
             Return Me._AntennaTaperPoleWallThickness
         End Get
@@ -2753,7 +2738,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolebendradius")>
-    Public Property AntennaTaperPoleBendRadius() As Double?
+    <DataMember()> Public Property AntennaTaperPoleBendRadius() As Double?
         Get
             Return Me._AntennaTaperPoleBendRadius
         End Get
@@ -2762,7 +2747,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolegrade")>
-    Public Property AntennaTaperPoleGrade() As Double?
+    <DataMember()> Public Property AntennaTaperPoleGrade() As Double?
         Get
             Return Me._AntennaTaperPoleGrade
         End Get
@@ -2771,7 +2756,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennataperpolematlgrade")>
-    Public Property AntennaTaperPoleMatlGrade() As String
+    <DataMember()> Public Property AntennaTaperPoleMatlGrade() As String
         Get
             Return Me._AntennaTaperPoleMatlGrade
         End Get
@@ -2780,7 +2765,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaswmult")>
-    Public Property AntennaSWMult() As Double?
+    <DataMember()> Public Property AntennaSWMult() As Double?
         Get
             Return Me._AntennaSWMult
         End Get
@@ -2789,7 +2774,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennawpmult")>
-    Public Property AntennaWPMult() As Double?
+    <DataMember()> Public Property AntennaWPMult() As Double?
         Get
             Return Me._AntennaWPMult
         End Get
@@ -2798,7 +2783,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaautocalcksingleangle")>
-    Public Property AntennaAutoCalcKSingleAngle() As Double?
+    <DataMember()> Public Property AntennaAutoCalcKSingleAngle() As Double?
         Get
             Return Me._AntennaAutoCalcKSingleAngle
         End Get
@@ -2807,7 +2792,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaautocalcksolidround")>
-    Public Property AntennaAutoCalcKSolidRound() As Double?
+    <DataMember()> Public Property AntennaAutoCalcKSolidRound() As Double?
         Get
             Return Me._AntennaAutoCalcKSolidRound
         End Get
@@ -2816,7 +2801,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaafgusset")>
-    Public Property AntennaAfGusset() As Double?
+    <DataMember()> Public Property AntennaAfGusset() As Double?
         Get
             Return Me._AntennaAfGusset
         End Get
@@ -2825,7 +2810,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatfgusset")>
-    Public Property AntennaTfGusset() As Double?
+    <DataMember()> Public Property AntennaTfGusset() As Double?
         Get
             Return Me._AntennaTfGusset
         End Get
@@ -2834,7 +2819,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetboltedgedistance")>
-    Public Property AntennaGussetBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaGussetBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaGussetBoltEdgeDistance
         End Get
@@ -2843,7 +2828,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetgrade")>
-    Public Property AntennaGussetGrade() As Double?
+    <DataMember()> Public Property AntennaGussetGrade() As Double?
         Get
             Return Me._AntennaGussetGrade
         End Get
@@ -2852,7 +2837,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennagussetmatlgrade")>
-    Public Property AntennaGussetMatlGrade() As String
+    <DataMember()> Public Property AntennaGussetMatlGrade() As String
         Get
             Return Me._AntennaGussetMatlGrade
         End Get
@@ -2861,7 +2846,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaafmult")>
-    Public Property AntennaAfMult() As Double?
+    <DataMember()> Public Property AntennaAfMult() As Double?
         Get
             Return Me._AntennaAfMult
         End Get
@@ -2870,7 +2855,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaarmult")>
-    Public Property AntennaArMult() As Double?
+    <DataMember()> Public Property AntennaArMult() As Double?
         Get
             Return Me._AntennaArMult
         End Get
@@ -2879,7 +2864,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipapole")>
-    Public Property AntennaFlatIPAPole() As Double?
+    <DataMember()> Public Property AntennaFlatIPAPole() As Double?
         Get
             Return Me._AntennaFlatIPAPole
         End Get
@@ -2888,7 +2873,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipapole")>
-    Public Property AntennaRoundIPAPole() As Double?
+    <DataMember()> Public Property AntennaRoundIPAPole() As Double?
         Get
             Return Me._AntennaRoundIPAPole
         End Get
@@ -2897,7 +2882,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipaleg")>
-    Public Property AntennaFlatIPALeg() As Double?
+    <DataMember()> Public Property AntennaFlatIPALeg() As Double?
         Get
             Return Me._AntennaFlatIPALeg
         End Get
@@ -2906,7 +2891,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipaleg")>
-    Public Property AntennaRoundIPALeg() As Double?
+    <DataMember()> Public Property AntennaRoundIPALeg() As Double?
         Get
             Return Me._AntennaRoundIPALeg
         End Get
@@ -2915,7 +2900,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipahorizontal")>
-    Public Property AntennaFlatIPAHorizontal() As Double?
+    <DataMember()> Public Property AntennaFlatIPAHorizontal() As Double?
         Get
             Return Me._AntennaFlatIPAHorizontal
         End Get
@@ -2924,7 +2909,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipahorizontal")>
-    Public Property AntennaRoundIPAHorizontal() As Double?
+    <DataMember()> Public Property AntennaRoundIPAHorizontal() As Double?
         Get
             Return Me._AntennaRoundIPAHorizontal
         End Get
@@ -2933,7 +2918,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaflatipadiagonal")>
-    Public Property AntennaFlatIPADiagonal() As Double?
+    <DataMember()> Public Property AntennaFlatIPADiagonal() As Double?
         Get
             Return Me._AntennaFlatIPADiagonal
         End Get
@@ -2942,7 +2927,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaroundipadiagonal")>
-    Public Property AntennaRoundIPADiagonal() As Double?
+    <DataMember()> Public Property AntennaRoundIPADiagonal() As Double?
         Get
             Return Me._AntennaRoundIPADiagonal
         End Get
@@ -2951,7 +2936,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennacsa_S37_Speedupfactor")>
-    Public Property AntennaCSA_S37_SpeedUpFactor() As Double?
+    <DataMember()> Public Property AntennaCSA_S37_SpeedUpFactor() As Double?
         Get
             Return Me._AntennaCSA_S37_SpeedUpFactor
         End Get
@@ -2960,7 +2945,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaklegs")>
-    Public Property AntennaKLegs() As Double?
+    <DataMember()> Public Property AntennaKLegs() As Double?
         Get
             Return Me._AntennaKLegs
         End Get
@@ -2969,7 +2954,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakxbraceddiags")>
-    Public Property AntennaKXBracedDiags() As Double?
+    <DataMember()> Public Property AntennaKXBracedDiags() As Double?
         Get
             Return Me._AntennaKXBracedDiags
         End Get
@@ -2978,7 +2963,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakkbraceddiags")>
-    Public Property AntennaKKBracedDiags() As Double?
+    <DataMember()> Public Property AntennaKKBracedDiags() As Double?
         Get
             Return Me._AntennaKKBracedDiags
         End Get
@@ -2987,7 +2972,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakzbraceddiags")>
-    Public Property AntennaKZBracedDiags() As Double?
+    <DataMember()> Public Property AntennaKZBracedDiags() As Double?
         Get
             Return Me._AntennaKZBracedDiags
         End Get
@@ -2996,7 +2981,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakhorzs")>
-    Public Property AntennaKHorzs() As Double?
+    <DataMember()> Public Property AntennaKHorzs() As Double?
         Get
             Return Me._AntennaKHorzs
         End Get
@@ -3005,7 +2990,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaksechorzs")>
-    Public Property AntennaKSecHorzs() As Double?
+    <DataMember()> Public Property AntennaKSecHorzs() As Double?
         Get
             Return Me._AntennaKSecHorzs
         End Get
@@ -3014,7 +2999,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakgirts")>
-    Public Property AntennaKGirts() As Double?
+    <DataMember()> Public Property AntennaKGirts() As Double?
         Get
             Return Me._AntennaKGirts
         End Get
@@ -3023,7 +3008,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakinners")>
-    Public Property AntennaKInners() As Double?
+    <DataMember()> Public Property AntennaKInners() As Double?
         Get
             Return Me._AntennaKInners
         End Get
@@ -3032,7 +3017,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakxbraceddiagsy")>
-    Public Property AntennaKXBracedDiagsY() As Double?
+    <DataMember()> Public Property AntennaKXBracedDiagsY() As Double?
         Get
             Return Me._AntennaKXBracedDiagsY
         End Get
@@ -3041,7 +3026,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakkbraceddiagsy")>
-    Public Property AntennaKKBracedDiagsY() As Double?
+    <DataMember()> Public Property AntennaKKBracedDiagsY() As Double?
         Get
             Return Me._AntennaKKBracedDiagsY
         End Get
@@ -3050,7 +3035,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakzbraceddiagsy")>
-    Public Property AntennaKZBracedDiagsY() As Double?
+    <DataMember()> Public Property AntennaKZBracedDiagsY() As Double?
         Get
             Return Me._AntennaKZBracedDiagsY
         End Get
@@ -3059,7 +3044,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakhorzsy")>
-    Public Property AntennaKHorzsY() As Double?
+    <DataMember()> Public Property AntennaKHorzsY() As Double?
         Get
             Return Me._AntennaKHorzsY
         End Get
@@ -3068,7 +3053,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaksechorzsy")>
-    Public Property AntennaKSecHorzsY() As Double?
+    <DataMember()> Public Property AntennaKSecHorzsY() As Double?
         Get
             Return Me._AntennaKSecHorzsY
         End Get
@@ -3077,7 +3062,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakgirtsy")>
-    Public Property AntennaKGirtsY() As Double?
+    <DataMember()> Public Property AntennaKGirtsY() As Double?
         Get
             Return Me._AntennaKGirtsY
         End Get
@@ -3086,7 +3071,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakinnersy")>
-    Public Property AntennaKInnersY() As Double?
+    <DataMember()> Public Property AntennaKInnersY() As Double?
         Get
             Return Me._AntennaKInnersY
         End Get
@@ -3095,7 +3080,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhorz")>
-    Public Property AntennaKRedHorz() As Double?
+    <DataMember()> Public Property AntennaKRedHorz() As Double?
         Get
             Return Me._AntennaKRedHorz
         End Get
@@ -3104,7 +3089,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakreddiag")>
-    Public Property AntennaKRedDiag() As Double?
+    <DataMember()> Public Property AntennaKRedDiag() As Double?
         Get
             Return Me._AntennaKRedDiag
         End Get
@@ -3113,7 +3098,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredsubdiag")>
-    Public Property AntennaKRedSubDiag() As Double?
+    <DataMember()> Public Property AntennaKRedSubDiag() As Double?
         Get
             Return Me._AntennaKRedSubDiag
         End Get
@@ -3122,7 +3107,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredsubhorz")>
-    Public Property AntennaKRedSubHorz() As Double?
+    <DataMember()> Public Property AntennaKRedSubHorz() As Double?
         Get
             Return Me._AntennaKRedSubHorz
         End Get
@@ -3131,7 +3116,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredvert")>
-    Public Property AntennaKRedVert() As Double?
+    <DataMember()> Public Property AntennaKRedVert() As Double?
         Get
             Return Me._AntennaKRedVert
         End Get
@@ -3140,7 +3125,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhip")>
-    Public Property AntennaKRedHip() As Double?
+    <DataMember()> Public Property AntennaKRedHip() As Double?
         Get
             Return Me._AntennaKRedHip
         End Get
@@ -3149,7 +3134,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakredhipdiag")>
-    Public Property AntennaKRedHipDiag() As Double?
+    <DataMember()> Public Property AntennaKRedHipDiag() As Double?
         Get
             Return Me._AntennaKRedHipDiag
         End Get
@@ -3158,7 +3143,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlx")>
-    Public Property AntennaKTLX() As Double?
+    <DataMember()> Public Property AntennaKTLX() As Double?
         Get
             Return Me._AntennaKTLX
         End Get
@@ -3167,7 +3152,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlz")>
-    Public Property AntennaKTLZ() As Double?
+    <DataMember()> Public Property AntennaKTLZ() As Double?
         Get
             Return Me._AntennaKTLZ
         End Get
@@ -3176,7 +3161,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaktlleg")>
-    Public Property AntennaKTLLeg() As Double?
+    <DataMember()> Public Property AntennaKTLLeg() As Double?
         Get
             Return Me._AntennaKTLLeg
         End Get
@@ -3185,7 +3170,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlx")>
-    Public Property AntennaInnerKTLX() As Double?
+    <DataMember()> Public Property AntennaInnerKTLX() As Double?
         Get
             Return Me._AntennaInnerKTLX
         End Get
@@ -3194,7 +3179,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlz")>
-    Public Property AntennaInnerKTLZ() As Double?
+    <DataMember()> Public Property AntennaInnerKTLZ() As Double?
         Get
             Return Me._AntennaInnerKTLZ
         End Get
@@ -3203,7 +3188,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnerktlleg")>
-    Public Property AntennaInnerKTLLeg() As Double?
+    <DataMember()> Public Property AntennaInnerKTLLeg() As Double?
         Get
             Return Me._AntennaInnerKTLLeg
         End Get
@@ -3212,7 +3197,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchboltlocationhoriz")>
-    Public Property AntennaStitchBoltLocationHoriz() As String
+    <DataMember()> Public Property AntennaStitchBoltLocationHoriz() As String
         Get
             Return Me._AntennaStitchBoltLocationHoriz
         End Get
@@ -3221,7 +3206,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchboltlocationdiag")>
-    Public Property AntennaStitchBoltLocationDiag() As String
+    <DataMember()> Public Property AntennaStitchBoltLocationDiag() As String
         Get
             Return Me._AntennaStitchBoltLocationDiag
         End Get
@@ -3230,7 +3215,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacing")>
-    Public Property AntennaStitchSpacing() As Double?
+    <DataMember()> Public Property AntennaStitchSpacing() As Double?
         Get
             Return Me._AntennaStitchSpacing
         End Get
@@ -3239,7 +3224,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacinghorz")>
-    Public Property AntennaStitchSpacingHorz() As Double?
+    <DataMember()> Public Property AntennaStitchSpacingHorz() As Double?
         Get
             Return Me._AntennaStitchSpacingHorz
         End Get
@@ -3248,7 +3233,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacingdiag")>
-    Public Property AntennaStitchSpacingDiag() As Double?
+    <DataMember()> Public Property AntennaStitchSpacingDiag() As Double?
         Get
             Return Me._AntennaStitchSpacingDiag
         End Get
@@ -3257,7 +3242,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennastitchspacingred")>
-    Public Property AntennaStitchSpacingRed() As Double?
+    <DataMember()> Public Property AntennaStitchSpacingRed() As Double?
         Get
             Return Me._AntennaStitchSpacingRed
         End Get
@@ -3266,7 +3251,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegnetwidthdeduct")>
-    Public Property AntennaLegNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaLegNetWidthDeduct() As Double?
         Get
             Return Me._AntennaLegNetWidthDeduct
         End Get
@@ -3275,7 +3260,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegufactor")>
-    Public Property AntennaLegUFactor() As Double?
+    <DataMember()> Public Property AntennaLegUFactor() As Double?
         Get
             Return Me._AntennaLegUFactor
         End Get
@@ -3284,7 +3269,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalnetwidthdeduct")>
-    Public Property AntennaDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaDiagonalNetWidthDeduct
         End Get
@@ -3293,7 +3278,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtnetwidthdeduct")>
-    Public Property AntennaTopGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaTopGirtNetWidthDeduct() As Double?
         Get
             Return Me._AntennaTopGirtNetWidthDeduct
         End Get
@@ -3302,7 +3287,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtnetwidthdeduct")>
-    Public Property AntennaBotGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaBotGirtNetWidthDeduct() As Double?
         Get
             Return Me._AntennaBotGirtNetWidthDeduct
         End Get
@@ -3311,7 +3296,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtnetwidthdeduct")>
-    Public Property AntennaInnerGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaInnerGirtNetWidthDeduct() As Double?
         Get
             Return Me._AntennaInnerGirtNetWidthDeduct
         End Get
@@ -3320,7 +3305,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalnetwidthdeduct")>
-    Public Property AntennaHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaHorizontalNetWidthDeduct
         End Get
@@ -3329,7 +3314,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalnetwidthdeduct")>
-    Public Property AntennaShortHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaShortHorizontalNetWidthDeduct
         End Get
@@ -3338,7 +3323,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalufactor")>
-    Public Property AntennaDiagonalUFactor() As Double?
+    <DataMember()> Public Property AntennaDiagonalUFactor() As Double?
         Get
             Return Me._AntennaDiagonalUFactor
         End Get
@@ -3347,7 +3332,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtufactor")>
-    Public Property AntennaTopGirtUFactor() As Double?
+    <DataMember()> Public Property AntennaTopGirtUFactor() As Double?
         Get
             Return Me._AntennaTopGirtUFactor
         End Get
@@ -3356,7 +3341,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtufactor")>
-    Public Property AntennaBotGirtUFactor() As Double?
+    <DataMember()> Public Property AntennaBotGirtUFactor() As Double?
         Get
             Return Me._AntennaBotGirtUFactor
         End Get
@@ -3365,7 +3350,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtufactor")>
-    Public Property AntennaInnerGirtUFactor() As Double?
+    <DataMember()> Public Property AntennaInnerGirtUFactor() As Double?
         Get
             Return Me._AntennaInnerGirtUFactor
         End Get
@@ -3374,7 +3359,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalufactor")>
-    Public Property AntennaHorizontalUFactor() As Double?
+    <DataMember()> Public Property AntennaHorizontalUFactor() As Double?
         Get
             Return Me._AntennaHorizontalUFactor
         End Get
@@ -3383,7 +3368,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalufactor")>
-    Public Property AntennaShortHorizontalUFactor() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalUFactor() As Double?
         Get
             Return Me._AntennaShortHorizontalUFactor
         End Get
@@ -3392,7 +3377,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegconntype")>
-    Public Property AntennaLegConnType() As String
+    <DataMember()> Public Property AntennaLegConnType() As String
         Get
             Return Me._AntennaLegConnType
         End Get
@@ -3401,7 +3386,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegnumbolts")>
-    Public Property AntennaLegNumBolts() As Integer?
+    <DataMember()> Public Property AntennaLegNumBolts() As Integer?
         Get
             Return Me._AntennaLegNumBolts
         End Get
@@ -3410,7 +3395,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalnumbolts")>
-    Public Property AntennaDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaDiagonalNumBolts() As Integer?
         Get
             Return Me._AntennaDiagonalNumBolts
         End Get
@@ -3419,7 +3404,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtnumbolts")>
-    Public Property AntennaTopGirtNumBolts() As Integer?
+    <DataMember()> Public Property AntennaTopGirtNumBolts() As Integer?
         Get
             Return Me._AntennaTopGirtNumBolts
         End Get
@@ -3428,7 +3413,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtnumbolts")>
-    Public Property AntennaBotGirtNumBolts() As Integer?
+    <DataMember()> Public Property AntennaBotGirtNumBolts() As Integer?
         Get
             Return Me._AntennaBotGirtNumBolts
         End Get
@@ -3437,7 +3422,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtnumbolts")>
-    Public Property AntennaInnerGirtNumBolts() As Integer?
+    <DataMember()> Public Property AntennaInnerGirtNumBolts() As Integer?
         Get
             Return Me._AntennaInnerGirtNumBolts
         End Get
@@ -3446,7 +3431,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalnumbolts")>
-    Public Property AntennaHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaHorizontalNumBolts() As Integer?
         Get
             Return Me._AntennaHorizontalNumBolts
         End Get
@@ -3455,7 +3440,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalnumbolts")>
-    Public Property AntennaShortHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaShortHorizontalNumBolts() As Integer?
         Get
             Return Me._AntennaShortHorizontalNumBolts
         End Get
@@ -3464,7 +3449,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltgrade")>
-    Public Property AntennaLegBoltGrade() As String
+    <DataMember()> Public Property AntennaLegBoltGrade() As String
         Get
             Return Me._AntennaLegBoltGrade
         End Get
@@ -3473,7 +3458,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltsize")>
-    Public Property AntennaLegBoltSize() As Double?
+    <DataMember()> Public Property AntennaLegBoltSize() As Double?
         Get
             Return Me._AntennaLegBoltSize
         End Get
@@ -3482,7 +3467,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltgrade")>
-    Public Property AntennaDiagonalBoltGrade() As String
+    <DataMember()> Public Property AntennaDiagonalBoltGrade() As String
         Get
             Return Me._AntennaDiagonalBoltGrade
         End Get
@@ -3491,7 +3476,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltsize")>
-    Public Property AntennaDiagonalBoltSize() As Double?
+    <DataMember()> Public Property AntennaDiagonalBoltSize() As Double?
         Get
             Return Me._AntennaDiagonalBoltSize
         End Get
@@ -3500,7 +3485,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltgrade")>
-    Public Property AntennaTopGirtBoltGrade() As String
+    <DataMember()> Public Property AntennaTopGirtBoltGrade() As String
         Get
             Return Me._AntennaTopGirtBoltGrade
         End Get
@@ -3509,7 +3494,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltsize")>
-    Public Property AntennaTopGirtBoltSize() As Double?
+    <DataMember()> Public Property AntennaTopGirtBoltSize() As Double?
         Get
             Return Me._AntennaTopGirtBoltSize
         End Get
@@ -3518,7 +3503,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltgrade")>
-    Public Property AntennaBotGirtBoltGrade() As String
+    <DataMember()> Public Property AntennaBotGirtBoltGrade() As String
         Get
             Return Me._AntennaBotGirtBoltGrade
         End Get
@@ -3527,7 +3512,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltsize")>
-    Public Property AntennaBotGirtBoltSize() As Double?
+    <DataMember()> Public Property AntennaBotGirtBoltSize() As Double?
         Get
             Return Me._AntennaBotGirtBoltSize
         End Get
@@ -3536,7 +3521,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltgrade")>
-    Public Property AntennaInnerGirtBoltGrade() As String
+    <DataMember()> Public Property AntennaInnerGirtBoltGrade() As String
         Get
             Return Me._AntennaInnerGirtBoltGrade
         End Get
@@ -3545,7 +3530,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltsize")>
-    Public Property AntennaInnerGirtBoltSize() As Double?
+    <DataMember()> Public Property AntennaInnerGirtBoltSize() As Double?
         Get
             Return Me._AntennaInnerGirtBoltSize
         End Get
@@ -3554,7 +3539,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltgrade")>
-    Public Property AntennaHorizontalBoltGrade() As String
+    <DataMember()> Public Property AntennaHorizontalBoltGrade() As String
         Get
             Return Me._AntennaHorizontalBoltGrade
         End Get
@@ -3563,7 +3548,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltsize")>
-    Public Property AntennaHorizontalBoltSize() As Double?
+    <DataMember()> Public Property AntennaHorizontalBoltSize() As Double?
         Get
             Return Me._AntennaHorizontalBoltSize
         End Get
@@ -3572,7 +3557,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltgrade")>
-    Public Property AntennaShortHorizontalBoltGrade() As String
+    <DataMember()> Public Property AntennaShortHorizontalBoltGrade() As String
         Get
             Return Me._AntennaShortHorizontalBoltGrade
         End Get
@@ -3581,7 +3566,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltsize")>
-    Public Property AntennaShortHorizontalBoltSize() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalBoltSize() As Double?
         Get
             Return Me._AntennaShortHorizontalBoltSize
         End Get
@@ -3590,7 +3575,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennalegboltedgedistance")>
-    Public Property AntennaLegBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaLegBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaLegBoltEdgeDistance
         End Get
@@ -3599,7 +3584,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalboltedgedistance")>
-    Public Property AntennaDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaDiagonalBoltEdgeDistance
         End Get
@@ -3608,7 +3593,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtboltedgedistance")>
-    Public Property AntennaTopGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaTopGirtBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaTopGirtBoltEdgeDistance
         End Get
@@ -3617,7 +3602,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtboltedgedistance")>
-    Public Property AntennaBotGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaBotGirtBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaBotGirtBoltEdgeDistance
         End Get
@@ -3626,7 +3611,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtboltedgedistance")>
-    Public Property AntennaInnerGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaInnerGirtBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaInnerGirtBoltEdgeDistance
         End Get
@@ -3635,7 +3620,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalboltedgedistance")>
-    Public Property AntennaHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaHorizontalBoltEdgeDistance
         End Get
@@ -3644,7 +3629,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalboltedgedistance")>
-    Public Property AntennaShortHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaShortHorizontalBoltEdgeDistance
         End Get
@@ -3653,7 +3638,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonalgageg1Distance")>
-    Public Property AntennaDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaDiagonalGageG1Distance() As Double?
         Get
             Return Me._AntennaDiagonalGageG1Distance
         End Get
@@ -3662,7 +3647,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtgageg1Distance")>
-    Public Property AntennaTopGirtGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaTopGirtGageG1Distance() As Double?
         Get
             Return Me._AntennaTopGirtGageG1Distance
         End Get
@@ -3671,7 +3656,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabotgirtgageg1Distance")>
-    Public Property AntennaBotGirtGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaBotGirtGageG1Distance() As Double?
         Get
             Return Me._AntennaBotGirtGageG1Distance
         End Get
@@ -3680,7 +3665,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennainnergirtgageg1Distance")>
-    Public Property AntennaInnerGirtGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaInnerGirtGageG1Distance() As Double?
         Get
             Return Me._AntennaInnerGirtGageG1Distance
         End Get
@@ -3689,7 +3674,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontalgageg1Distance")>
-    Public Property AntennaHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaHorizontalGageG1Distance() As Double?
         Get
             Return Me._AntennaHorizontalGageG1Distance
         End Get
@@ -3698,7 +3683,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennashorthorizontalgageg1Distance")>
-    Public Property AntennaShortHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaShortHorizontalGageG1Distance() As Double?
         Get
             Return Me._AntennaShortHorizontalGageG1Distance
         End Get
@@ -3707,7 +3692,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltgrade")>
-    Public Property AntennaRedundantHorizontalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltGrade() As String
         Get
             Return Me._AntennaRedundantHorizontalBoltGrade
         End Get
@@ -3716,7 +3701,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltsize")>
-    Public Property AntennaRedundantHorizontalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantHorizontalBoltSize
         End Get
@@ -3725,7 +3710,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalnumbolts")>
-    Public Property AntennaRedundantHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantHorizontalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantHorizontalNumBolts
         End Get
@@ -3734,7 +3719,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalboltedgedistance")>
-    Public Property AntennaRedundantHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantHorizontalBoltEdgeDistance
         End Get
@@ -3743,7 +3728,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalgageg1Distance")>
-    Public Property AntennaRedundantHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantHorizontalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantHorizontalGageG1Distance
         End Get
@@ -3752,7 +3737,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalnetwidthdeduct")>
-    Public Property AntennaRedundantHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantHorizontalNetWidthDeduct
         End Get
@@ -3761,7 +3746,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthorizontalufactor")>
-    Public Property AntennaRedundantHorizontalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantHorizontalUFactor() As Double?
         Get
             Return Me._AntennaRedundantHorizontalUFactor
         End Get
@@ -3770,7 +3755,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltgrade")>
-    Public Property AntennaRedundantDiagonalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltGrade() As String
         Get
             Return Me._AntennaRedundantDiagonalBoltGrade
         End Get
@@ -3779,7 +3764,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltsize")>
-    Public Property AntennaRedundantDiagonalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantDiagonalBoltSize
         End Get
@@ -3788,7 +3773,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalnumbolts")>
-    Public Property AntennaRedundantDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantDiagonalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantDiagonalNumBolts
         End Get
@@ -3797,7 +3782,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalboltedgedistance")>
-    Public Property AntennaRedundantDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantDiagonalBoltEdgeDistance
         End Get
@@ -3806,7 +3791,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalgageg1Distance")>
-    Public Property AntennaRedundantDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantDiagonalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantDiagonalGageG1Distance
         End Get
@@ -3815,7 +3800,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantDiagonalNetWidthDeduct
         End Get
@@ -3824,7 +3809,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantdiagonalufactor")>
-    Public Property AntennaRedundantDiagonalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantDiagonalUFactor() As Double?
         Get
             Return Me._AntennaRedundantDiagonalUFactor
         End Get
@@ -3833,7 +3818,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltgrade")>
-    Public Property AntennaRedundantSubDiagonalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantSubDiagonalBoltGrade() As String
         Get
             Return Me._AntennaRedundantSubDiagonalBoltGrade
         End Get
@@ -3842,7 +3827,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltsize")>
-    Public Property AntennaRedundantSubDiagonalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantSubDiagonalBoltSize
         End Get
@@ -3851,7 +3836,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalnumbolts")>
-    Public Property AntennaRedundantSubDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantSubDiagonalNumBolts
         End Get
@@ -3860,7 +3845,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalboltedgedistance")>
-    Public Property AntennaRedundantSubDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantSubDiagonalBoltEdgeDistance
         End Get
@@ -3869,7 +3854,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalgageg1Distance")>
-    Public Property AntennaRedundantSubDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantSubDiagonalGageG1Distance
         End Get
@@ -3878,7 +3863,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantSubDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantSubDiagonalNetWidthDeduct
         End Get
@@ -3887,7 +3872,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubdiagonalufactor")>
-    Public Property AntennaRedundantSubDiagonalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantSubDiagonalUFactor() As Double?
         Get
             Return Me._AntennaRedundantSubDiagonalUFactor
         End Get
@@ -3896,7 +3881,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltgrade")>
-    Public Property AntennaRedundantSubHorizontalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantSubHorizontalBoltGrade() As String
         Get
             Return Me._AntennaRedundantSubHorizontalBoltGrade
         End Get
@@ -3905,7 +3890,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltsize")>
-    Public Property AntennaRedundantSubHorizontalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantSubHorizontalBoltSize
         End Get
@@ -3914,7 +3899,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalnumbolts")>
-    Public Property AntennaRedundantSubHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantSubHorizontalNumBolts
         End Get
@@ -3923,7 +3908,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalboltedgedistance")>
-    Public Property AntennaRedundantSubHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantSubHorizontalBoltEdgeDistance
         End Get
@@ -3932,7 +3917,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalgageg1Distance")>
-    Public Property AntennaRedundantSubHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantSubHorizontalGageG1Distance
         End Get
@@ -3941,7 +3926,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalnetwidthdeduct")>
-    Public Property AntennaRedundantSubHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantSubHorizontalNetWidthDeduct
         End Get
@@ -3950,7 +3935,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantsubhorizontalufactor")>
-    Public Property AntennaRedundantSubHorizontalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantSubHorizontalUFactor() As Double?
         Get
             Return Me._AntennaRedundantSubHorizontalUFactor
         End Get
@@ -3959,7 +3944,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltgrade")>
-    Public Property AntennaRedundantVerticalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantVerticalBoltGrade() As String
         Get
             Return Me._AntennaRedundantVerticalBoltGrade
         End Get
@@ -3968,7 +3953,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltsize")>
-    Public Property AntennaRedundantVerticalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantVerticalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantVerticalBoltSize
         End Get
@@ -3977,7 +3962,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalnumbolts")>
-    Public Property AntennaRedundantVerticalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantVerticalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantVerticalNumBolts
         End Get
@@ -3986,7 +3971,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalboltedgedistance")>
-    Public Property AntennaRedundantVerticalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantVerticalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantVerticalBoltEdgeDistance
         End Get
@@ -3995,7 +3980,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalgageg1Distance")>
-    Public Property AntennaRedundantVerticalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantVerticalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantVerticalGageG1Distance
         End Get
@@ -4004,7 +3989,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalnetwidthdeduct")>
-    Public Property AntennaRedundantVerticalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantVerticalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantVerticalNetWidthDeduct
         End Get
@@ -4013,7 +3998,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundantverticalufactor")>
-    Public Property AntennaRedundantVerticalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantVerticalUFactor() As Double?
         Get
             Return Me._AntennaRedundantVerticalUFactor
         End Get
@@ -4022,7 +4007,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltgrade")>
-    Public Property AntennaRedundantHipBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantHipBoltGrade() As String
         Get
             Return Me._AntennaRedundantHipBoltGrade
         End Get
@@ -4031,7 +4016,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltsize")>
-    Public Property AntennaRedundantHipBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantHipBoltSize() As Double?
         Get
             Return Me._AntennaRedundantHipBoltSize
         End Get
@@ -4040,7 +4025,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipnumbolts")>
-    Public Property AntennaRedundantHipNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantHipNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantHipNumBolts
         End Get
@@ -4049,7 +4034,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipboltedgedistance")>
-    Public Property AntennaRedundantHipBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantHipBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantHipBoltEdgeDistance
         End Get
@@ -4058,7 +4043,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipgageg1Distance")>
-    Public Property AntennaRedundantHipGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantHipGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantHipGageG1Distance
         End Get
@@ -4067,7 +4052,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipnetwidthdeduct")>
-    Public Property AntennaRedundantHipNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantHipNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantHipNetWidthDeduct
         End Get
@@ -4076,7 +4061,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipufactor")>
-    Public Property AntennaRedundantHipUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantHipUFactor() As Double?
         Get
             Return Me._AntennaRedundantHipUFactor
         End Get
@@ -4085,7 +4070,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltgrade")>
-    Public Property AntennaRedundantHipDiagonalBoltGrade() As String
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltGrade() As String
         Get
             Return Me._AntennaRedundantHipDiagonalBoltGrade
         End Get
@@ -4094,7 +4079,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltsize")>
-    Public Property AntennaRedundantHipDiagonalBoltSize() As Double?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltSize() As Double?
         Get
             Return Me._AntennaRedundantHipDiagonalBoltSize
         End Get
@@ -4103,7 +4088,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalnumbolts")>
-    Public Property AntennaRedundantHipDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNumBolts() As Integer?
         Get
             Return Me._AntennaRedundantHipDiagonalNumBolts
         End Get
@@ -4112,7 +4097,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalboltedgedistance")>
-    Public Property AntennaRedundantHipDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance
         End Get
@@ -4121,7 +4106,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalgageg1Distance")>
-    Public Property AntennaRedundantHipDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGageG1Distance() As Double?
         Get
             Return Me._AntennaRedundantHipDiagonalGageG1Distance
         End Get
@@ -4130,7 +4115,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalnetwidthdeduct")>
-    Public Property AntennaRedundantHipDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._AntennaRedundantHipDiagonalNetWidthDeduct
         End Get
@@ -4139,7 +4124,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennaredundanthipdiagonalufactor")>
-    Public Property AntennaRedundantHipDiagonalUFactor() As Double?
+    <DataMember()> Public Property AntennaRedundantHipDiagonalUFactor() As Double?
         Get
             Return Me._AntennaRedundantHipDiagonalUFactor
         End Get
@@ -4148,7 +4133,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagonaloutofplanerestraint")>
-    Public Property AntennaDiagonalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaDiagonalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaDiagonalOutOfPlaneRestraint
         End Get
@@ -4157,7 +4142,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennatopgirtoutofplanerestraint")>
-    Public Property AntennaTopGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaTopGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaTopGirtOutOfPlaneRestraint
         End Get
@@ -4166,7 +4151,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennabottomgirtoutofplanerestraint")>
-    Public Property AntennaBottomGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaBottomGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaBottomGirtOutOfPlaneRestraint
         End Get
@@ -4175,7 +4160,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennamidgirtoutofplanerestraint")>
-    Public Property AntennaMidGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaMidGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaMidGirtOutOfPlaneRestraint
         End Get
@@ -4184,7 +4169,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennahorizontaloutofplanerestraint")>
-    Public Property AntennaHorizontalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaHorizontalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaHorizontalOutOfPlaneRestraint
         End Get
@@ -4193,7 +4178,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennasecondaryhorizontaloutofplanerestraint")>
-    Public Property AntennaSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property AntennaSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._AntennaSecondaryHorizontalOutOfPlaneRestraint
         End Get
@@ -4202,7 +4187,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetney")>
-    Public Property AntennaDiagOffsetNEY() As Double?
+    <DataMember()> Public Property AntennaDiagOffsetNEY() As Double?
         Get
             Return Me._AntennaDiagOffsetNEY
         End Get
@@ -4211,7 +4196,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetnex")>
-    Public Property AntennaDiagOffsetNEX() As Double?
+    <DataMember()> Public Property AntennaDiagOffsetNEX() As Double?
         Get
             Return Me._AntennaDiagOffsetNEX
         End Get
@@ -4220,7 +4205,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetpey")>
-    Public Property AntennaDiagOffsetPEY() As Double?
+    <DataMember()> Public Property AntennaDiagOffsetPEY() As Double?
         Get
             Return Me._AntennaDiagOffsetPEY
         End Get
@@ -4229,7 +4214,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennadiagoffsetpex")>
-    Public Property AntennaDiagOffsetPEX() As Double?
+    <DataMember()> Public Property AntennaDiagOffsetPEX() As Double?
         Get
             Return Me._AntennaDiagOffsetPEX
         End Get
@@ -4238,7 +4223,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetney")>
-    Public Property AntennaKbraceOffsetNEY() As Double?
+    <DataMember()> Public Property AntennaKbraceOffsetNEY() As Double?
         Get
             Return Me._AntennaKbraceOffsetNEY
         End Get
@@ -4247,7 +4232,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetnex")>
-    Public Property AntennaKbraceOffsetNEX() As Double?
+    <DataMember()> Public Property AntennaKbraceOffsetNEX() As Double?
         Get
             Return Me._AntennaKbraceOffsetNEX
         End Get
@@ -4256,7 +4241,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetpey")>
-    Public Property AntennaKbraceOffsetPEY() As Double?
+    <DataMember()> Public Property AntennaKbraceOffsetPEY() As Double?
         Get
             Return Me._AntennaKbraceOffsetPEY
         End Get
@@ -4265,7 +4250,7 @@ Partial Public Class tnxAntennaRecord
         End Set
     End Property
     <Category("TNX Antenna Record"), Description(""), DisplayName("Antennakbraceoffsetpex")>
-    Public Property AntennaKbraceOffsetPEX() As Double?
+    <DataMember()> Public Property AntennaKbraceOffsetPEX() As Double?
         Get
             Return Me._AntennaKbraceOffsetPEX
         End Get
@@ -4287,29 +4272,29 @@ Partial Public Class tnxAntennaRecord
         Me.ID = DBtoNullableInt(data.Item("ID"))
         Me.Rec = DBtoNullableInt(data.Item("AntennaRec"))
         Me.AntennaBraceType = DBtoStr(data.Item("AntennaBraceType"))
-        Me.AntennaHeight = DBtoNullableDbl(data.Item("AntennaHeight"))
-        Me.AntennaDiagonalSpacing = DBtoNullableDbl(data.Item("AntennaDiagonalSpacing"))
-        Me.AntennaDiagonalSpacingEx = DBtoNullableDbl(data.Item("AntennaDiagonalSpacingEx"))
+        Me.AntennaHeight = DBtoNullableDbl(data.Item("AntennaHeight"), 6)
+        Me.AntennaDiagonalSpacing = DBtoNullableDbl(data.Item("AntennaDiagonalSpacing"), 6)
+        Me.AntennaDiagonalSpacingEx = DBtoNullableDbl(data.Item("AntennaDiagonalSpacingEx"), 6)
         Me.AntennaNumSections = DBtoNullableInt(data.Item("AntennaNumSections"))
         Me.AntennaNumSesctions = DBtoNullableInt(data.Item("AntennaNumSesctions"))
-        Me.AntennaSectionLength = DBtoNullableDbl(data.Item("AntennaSectionLength"))
+        Me.AntennaSectionLength = DBtoNullableDbl(data.Item("AntennaSectionLength"), 6)
         Me.AntennaLegType = DBtoStr(data.Item("AntennaLegType"))
         Me.AntennaLegSize = DBtoStr(data.Item("AntennaLegSize"))
-        Me.AntennaLegGrade = DBtoNullableDbl(data.Item("AntennaLegGrade"))
+        Me.AntennaLegGrade = DBtoNullableDbl(data.Item("AntennaLegGrade"), 6)
         Me.AntennaLegMatlGrade = DBtoStr(data.Item("AntennaLegMatlGrade"))
-        Me.AntennaDiagonalGrade = DBtoNullableDbl(data.Item("AntennaDiagonalGrade"))
+        Me.AntennaDiagonalGrade = DBtoNullableDbl(data.Item("AntennaDiagonalGrade"), 6)
         Me.AntennaDiagonalMatlGrade = DBtoStr(data.Item("AntennaDiagonalMatlGrade"))
-        Me.AntennaInnerBracingGrade = DBtoNullableDbl(data.Item("AntennaInnerBracingGrade"))
+        Me.AntennaInnerBracingGrade = DBtoNullableDbl(data.Item("AntennaInnerBracingGrade"), 6)
         Me.AntennaInnerBracingMatlGrade = DBtoStr(data.Item("AntennaInnerBracingMatlGrade"))
-        Me.AntennaTopGirtGrade = DBtoNullableDbl(data.Item("AntennaTopGirtGrade"))
+        Me.AntennaTopGirtGrade = DBtoNullableDbl(data.Item("AntennaTopGirtGrade"), 6)
         Me.AntennaTopGirtMatlGrade = DBtoStr(data.Item("AntennaTopGirtMatlGrade"))
-        Me.AntennaBotGirtGrade = DBtoNullableDbl(data.Item("AntennaBotGirtGrade"))
+        Me.AntennaBotGirtGrade = DBtoNullableDbl(data.Item("AntennaBotGirtGrade"), 6)
         Me.AntennaBotGirtMatlGrade = DBtoStr(data.Item("AntennaBotGirtMatlGrade"))
-        Me.AntennaInnerGirtGrade = DBtoNullableDbl(data.Item("AntennaInnerGirtGrade"))
+        Me.AntennaInnerGirtGrade = DBtoNullableDbl(data.Item("AntennaInnerGirtGrade"), 6)
         Me.AntennaInnerGirtMatlGrade = DBtoStr(data.Item("AntennaInnerGirtMatlGrade"))
-        Me.AntennaLongHorizontalGrade = DBtoNullableDbl(data.Item("AntennaLongHorizontalGrade"))
+        Me.AntennaLongHorizontalGrade = DBtoNullableDbl(data.Item("AntennaLongHorizontalGrade"), 6)
         Me.AntennaLongHorizontalMatlGrade = DBtoStr(data.Item("AntennaLongHorizontalMatlGrade"))
-        Me.AntennaShortHorizontalGrade = DBtoNullableDbl(data.Item("AntennaShortHorizontalGrade"))
+        Me.AntennaShortHorizontalGrade = DBtoNullableDbl(data.Item("AntennaShortHorizontalGrade"), 6)
         Me.AntennaShortHorizontalMatlGrade = DBtoStr(data.Item("AntennaShortHorizontalMatlGrade"))
         Me.AntennaDiagonalType = DBtoStr(data.Item("AntennaDiagonalType"))
         Me.AntennaDiagonalSize = DBtoStr(data.Item("AntennaDiagonalSize"))
@@ -4319,15 +4304,15 @@ Partial Public Class tnxAntennaRecord
         Me.AntennaTopGirtSize = DBtoStr(data.Item("AntennaTopGirtSize"))
         Me.AntennaBotGirtType = DBtoStr(data.Item("AntennaBotGirtType"))
         Me.AntennaBotGirtSize = DBtoStr(data.Item("AntennaBotGirtSize"))
-        Me.AntennaTopGirtOffset = DBtoNullableDbl(data.Item("AntennaTopGirtOffset"))
-        Me.AntennaBotGirtOffset = DBtoNullableDbl(data.Item("AntennaBotGirtOffset"))
+        Me.AntennaTopGirtOffset = DBtoNullableDbl(data.Item("AntennaTopGirtOffset"), 6)
+        Me.AntennaBotGirtOffset = DBtoNullableDbl(data.Item("AntennaBotGirtOffset"), 6)
         Me.AntennaHasKBraceEndPanels = DBtoNullableBool(data.Item("AntennaHasKBraceEndPanels"))
         Me.AntennaHasHorizontals = DBtoNullableBool(data.Item("AntennaHasHorizontals"))
         Me.AntennaLongHorizontalType = DBtoStr(data.Item("AntennaLongHorizontalType"))
         Me.AntennaLongHorizontalSize = DBtoStr(data.Item("AntennaLongHorizontalSize"))
         Me.AntennaShortHorizontalType = DBtoStr(data.Item("AntennaShortHorizontalType"))
         Me.AntennaShortHorizontalSize = DBtoStr(data.Item("AntennaShortHorizontalSize"))
-        Me.AntennaRedundantGrade = DBtoNullableDbl(data.Item("AntennaRedundantGrade"))
+        Me.AntennaRedundantGrade = DBtoNullableDbl(data.Item("AntennaRedundantGrade"), 6)
         Me.AntennaRedundantMatlGrade = DBtoStr(data.Item("AntennaRedundantMatlGrade"))
         Me.AntennaRedundantType = DBtoStr(data.Item("AntennaRedundantType"))
         Me.AntennaRedundantDiagType = DBtoStr(data.Item("AntennaRedundantDiagType"))
@@ -4346,7 +4331,7 @@ Partial Public Class tnxAntennaRecord
         Me.AntennaRedundantDiagonalSize4 = DBtoStr(data.Item("AntennaRedundantDiagonalSize4"))
         Me.AntennaRedundantSubHorizontalSize = DBtoStr(data.Item("AntennaRedundantSubHorizontalSize"))
         Me.AntennaRedundantSubDiagonalSize = DBtoStr(data.Item("AntennaRedundantSubDiagonalSize"))
-        Me.AntennaSubDiagLocation = DBtoNullableDbl(data.Item("AntennaSubDiagLocation"))
+        Me.AntennaSubDiagLocation = DBtoNullableDbl(data.Item("AntennaSubDiagLocation"), 6)
         Me.AntennaRedundantVerticalSize = DBtoStr(data.Item("AntennaRedundantVerticalSize"))
         Me.AntennaRedundantHipDiagonalSize = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize"))
         Me.AntennaRedundantHipDiagonalSize2 = DBtoStr(data.Item("AntennaRedundantHipDiagonalSize2"))
@@ -4361,84 +4346,84 @@ Partial Public Class tnxAntennaRecord
         Me.AntennaInnerGirtSize = DBtoStr(data.Item("AntennaInnerGirtSize"))
         Me.AntennaPoleShapeType = DBtoStr(data.Item("AntennaPoleShapeType"))
         Me.AntennaPoleSize = DBtoStr(data.Item("AntennaPoleSize"))
-        Me.AntennaPoleGrade = DBtoNullableDbl(data.Item("AntennaPoleGrade"))
+        Me.AntennaPoleGrade = DBtoNullableDbl(data.Item("AntennaPoleGrade"), 6)
         Me.AntennaPoleMatlGrade = DBtoStr(data.Item("AntennaPoleMatlGrade"))
-        Me.AntennaPoleSpliceLength = DBtoNullableDbl(data.Item("AntennaPoleSpliceLength"))
+        Me.AntennaPoleSpliceLength = DBtoNullableDbl(data.Item("AntennaPoleSpliceLength"), 6)
         Me.AntennaTaperPoleNumSides = DBtoNullableInt(data.Item("AntennaTaperPoleNumSides"))
-        Me.AntennaTaperPoleTopDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleTopDiameter"))
-        Me.AntennaTaperPoleBotDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleBotDiameter"))
-        Me.AntennaTaperPoleWallThickness = DBtoNullableDbl(data.Item("AntennaTaperPoleWallThickness"))
-        Me.AntennaTaperPoleBendRadius = DBtoNullableDbl(data.Item("AntennaTaperPoleBendRadius"))
-        Me.AntennaTaperPoleGrade = DBtoNullableDbl(data.Item("AntennaTaperPoleGrade"))
+        Me.AntennaTaperPoleTopDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleTopDiameter"), 6)
+        Me.AntennaTaperPoleBotDiameter = DBtoNullableDbl(data.Item("AntennaTaperPoleBotDiameter"), 6)
+        Me.AntennaTaperPoleWallThickness = DBtoNullableDbl(data.Item("AntennaTaperPoleWallThickness"), 6)
+        Me.AntennaTaperPoleBendRadius = DBtoNullableDbl(data.Item("AntennaTaperPoleBendRadius"), 6)
+        Me.AntennaTaperPoleGrade = DBtoNullableDbl(data.Item("AntennaTaperPoleGrade"), 6)
         Me.AntennaTaperPoleMatlGrade = DBtoStr(data.Item("AntennaTaperPoleMatlGrade"))
-        Me.AntennaSWMult = DBtoNullableDbl(data.Item("AntennaSWMult"))
-        Me.AntennaWPMult = DBtoNullableDbl(data.Item("AntennaWPMult"))
-        Me.AntennaAutoCalcKSingleAngle = DBtoNullableDbl(data.Item("AntennaAutoCalcKSingleAngle"))
-        Me.AntennaAutoCalcKSolidRound = DBtoNullableDbl(data.Item("AntennaAutoCalcKSolidRound"))
-        Me.AntennaAfGusset = DBtoNullableDbl(data.Item("AntennaAfGusset"))
-        Me.AntennaTfGusset = DBtoNullableDbl(data.Item("AntennaTfGusset"))
-        Me.AntennaGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaGussetBoltEdgeDistance"))
-        Me.AntennaGussetGrade = DBtoNullableDbl(data.Item("AntennaGussetGrade"))
+        Me.AntennaSWMult = DBtoNullableDbl(data.Item("AntennaSWMult"), 6)
+        Me.AntennaWPMult = DBtoNullableDbl(data.Item("AntennaWPMult"), 6)
+        Me.AntennaAutoCalcKSingleAngle = DBtoNullableDbl(data.Item("AntennaAutoCalcKSingleAngle"), 6)
+        Me.AntennaAutoCalcKSolidRound = DBtoNullableDbl(data.Item("AntennaAutoCalcKSolidRound"), 6)
+        Me.AntennaAfGusset = DBtoNullableDbl(data.Item("AntennaAfGusset"), 6)
+        Me.AntennaTfGusset = DBtoNullableDbl(data.Item("AntennaTfGusset"), 6)
+        Me.AntennaGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaGussetBoltEdgeDistance"), 6)
+        Me.AntennaGussetGrade = DBtoNullableDbl(data.Item("AntennaGussetGrade"), 6)
         Me.AntennaGussetMatlGrade = DBtoStr(data.Item("AntennaGussetMatlGrade"))
-        Me.AntennaAfMult = DBtoNullableDbl(data.Item("AntennaAfMult"))
-        Me.AntennaArMult = DBtoNullableDbl(data.Item("AntennaArMult"))
-        Me.AntennaFlatIPAPole = DBtoNullableDbl(data.Item("AntennaFlatIPAPole"))
-        Me.AntennaRoundIPAPole = DBtoNullableDbl(data.Item("AntennaRoundIPAPole"))
-        Me.AntennaFlatIPALeg = DBtoNullableDbl(data.Item("AntennaFlatIPALeg"))
-        Me.AntennaRoundIPALeg = DBtoNullableDbl(data.Item("AntennaRoundIPALeg"))
-        Me.AntennaFlatIPAHorizontal = DBtoNullableDbl(data.Item("AntennaFlatIPAHorizontal"))
-        Me.AntennaRoundIPAHorizontal = DBtoNullableDbl(data.Item("AntennaRoundIPAHorizontal"))
-        Me.AntennaFlatIPADiagonal = DBtoNullableDbl(data.Item("AntennaFlatIPADiagonal"))
-        Me.AntennaRoundIPADiagonal = DBtoNullableDbl(data.Item("AntennaRoundIPADiagonal"))
-        Me.AntennaCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("AntennaCSA_S37_SpeedUpFactor"))
-        Me.AntennaKLegs = DBtoNullableDbl(data.Item("AntennaKLegs"))
-        Me.AntennaKXBracedDiags = DBtoNullableDbl(data.Item("AntennaKXBracedDiags"))
-        Me.AntennaKKBracedDiags = DBtoNullableDbl(data.Item("AntennaKKBracedDiags"))
-        Me.AntennaKZBracedDiags = DBtoNullableDbl(data.Item("AntennaKZBracedDiags"))
-        Me.AntennaKHorzs = DBtoNullableDbl(data.Item("AntennaKHorzs"))
-        Me.AntennaKSecHorzs = DBtoNullableDbl(data.Item("AntennaKSecHorzs"))
-        Me.AntennaKGirts = DBtoNullableDbl(data.Item("AntennaKGirts"))
-        Me.AntennaKInners = DBtoNullableDbl(data.Item("AntennaKInners"))
-        Me.AntennaKXBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKXBracedDiagsY"))
-        Me.AntennaKKBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKKBracedDiagsY"))
-        Me.AntennaKZBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKZBracedDiagsY"))
-        Me.AntennaKHorzsY = DBtoNullableDbl(data.Item("AntennaKHorzsY"))
-        Me.AntennaKSecHorzsY = DBtoNullableDbl(data.Item("AntennaKSecHorzsY"))
-        Me.AntennaKGirtsY = DBtoNullableDbl(data.Item("AntennaKGirtsY"))
-        Me.AntennaKInnersY = DBtoNullableDbl(data.Item("AntennaKInnersY"))
-        Me.AntennaKRedHorz = DBtoNullableDbl(data.Item("AntennaKRedHorz"))
-        Me.AntennaKRedDiag = DBtoNullableDbl(data.Item("AntennaKRedDiag"))
-        Me.AntennaKRedSubDiag = DBtoNullableDbl(data.Item("AntennaKRedSubDiag"))
-        Me.AntennaKRedSubHorz = DBtoNullableDbl(data.Item("AntennaKRedSubHorz"))
-        Me.AntennaKRedVert = DBtoNullableDbl(data.Item("AntennaKRedVert"))
-        Me.AntennaKRedHip = DBtoNullableDbl(data.Item("AntennaKRedHip"))
-        Me.AntennaKRedHipDiag = DBtoNullableDbl(data.Item("AntennaKRedHipDiag"))
-        Me.AntennaKTLX = DBtoNullableDbl(data.Item("AntennaKTLX"))
-        Me.AntennaKTLZ = DBtoNullableDbl(data.Item("AntennaKTLZ"))
-        Me.AntennaKTLLeg = DBtoNullableDbl(data.Item("AntennaKTLLeg"))
-        Me.AntennaInnerKTLX = DBtoNullableDbl(data.Item("AntennaInnerKTLX"))
-        Me.AntennaInnerKTLZ = DBtoNullableDbl(data.Item("AntennaInnerKTLZ"))
-        Me.AntennaInnerKTLLeg = DBtoNullableDbl(data.Item("AntennaInnerKTLLeg"))
+        Me.AntennaAfMult = DBtoNullableDbl(data.Item("AntennaAfMult"), 6)
+        Me.AntennaArMult = DBtoNullableDbl(data.Item("AntennaArMult"), 6)
+        Me.AntennaFlatIPAPole = DBtoNullableDbl(data.Item("AntennaFlatIPAPole"), 6)
+        Me.AntennaRoundIPAPole = DBtoNullableDbl(data.Item("AntennaRoundIPAPole"), 6)
+        Me.AntennaFlatIPALeg = DBtoNullableDbl(data.Item("AntennaFlatIPALeg"), 6)
+        Me.AntennaRoundIPALeg = DBtoNullableDbl(data.Item("AntennaRoundIPALeg"), 6)
+        Me.AntennaFlatIPAHorizontal = DBtoNullableDbl(data.Item("AntennaFlatIPAHorizontal"), 6)
+        Me.AntennaRoundIPAHorizontal = DBtoNullableDbl(data.Item("AntennaRoundIPAHorizontal"), 6)
+        Me.AntennaFlatIPADiagonal = DBtoNullableDbl(data.Item("AntennaFlatIPADiagonal"), 6)
+        Me.AntennaRoundIPADiagonal = DBtoNullableDbl(data.Item("AntennaRoundIPADiagonal"), 6)
+        Me.AntennaCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("AntennaCSA_S37_SpeedUpFactor"), 6)
+        Me.AntennaKLegs = DBtoNullableDbl(data.Item("AntennaKLegs"), 6)
+        Me.AntennaKXBracedDiags = DBtoNullableDbl(data.Item("AntennaKXBracedDiags"), 6)
+        Me.AntennaKKBracedDiags = DBtoNullableDbl(data.Item("AntennaKKBracedDiags"), 6)
+        Me.AntennaKZBracedDiags = DBtoNullableDbl(data.Item("AntennaKZBracedDiags"), 6)
+        Me.AntennaKHorzs = DBtoNullableDbl(data.Item("AntennaKHorzs"), 6)
+        Me.AntennaKSecHorzs = DBtoNullableDbl(data.Item("AntennaKSecHorzs"), 6)
+        Me.AntennaKGirts = DBtoNullableDbl(data.Item("AntennaKGirts"), 6)
+        Me.AntennaKInners = DBtoNullableDbl(data.Item("AntennaKInners"), 6)
+        Me.AntennaKXBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKXBracedDiagsY"), 6)
+        Me.AntennaKKBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKKBracedDiagsY"), 6)
+        Me.AntennaKZBracedDiagsY = DBtoNullableDbl(data.Item("AntennaKZBracedDiagsY"), 6)
+        Me.AntennaKHorzsY = DBtoNullableDbl(data.Item("AntennaKHorzsY"), 6)
+        Me.AntennaKSecHorzsY = DBtoNullableDbl(data.Item("AntennaKSecHorzsY"), 6)
+        Me.AntennaKGirtsY = DBtoNullableDbl(data.Item("AntennaKGirtsY"), 6)
+        Me.AntennaKInnersY = DBtoNullableDbl(data.Item("AntennaKInnersY"), 6)
+        Me.AntennaKRedHorz = DBtoNullableDbl(data.Item("AntennaKRedHorz"), 6)
+        Me.AntennaKRedDiag = DBtoNullableDbl(data.Item("AntennaKRedDiag"), 6)
+        Me.AntennaKRedSubDiag = DBtoNullableDbl(data.Item("AntennaKRedSubDiag"), 6)
+        Me.AntennaKRedSubHorz = DBtoNullableDbl(data.Item("AntennaKRedSubHorz"), 6)
+        Me.AntennaKRedVert = DBtoNullableDbl(data.Item("AntennaKRedVert"), 6)
+        Me.AntennaKRedHip = DBtoNullableDbl(data.Item("AntennaKRedHip"), 6)
+        Me.AntennaKRedHipDiag = DBtoNullableDbl(data.Item("AntennaKRedHipDiag"), 6)
+        Me.AntennaKTLX = DBtoNullableDbl(data.Item("AntennaKTLX"), 6)
+        Me.AntennaKTLZ = DBtoNullableDbl(data.Item("AntennaKTLZ"), 6)
+        Me.AntennaKTLLeg = DBtoNullableDbl(data.Item("AntennaKTLLeg"), 6)
+        Me.AntennaInnerKTLX = DBtoNullableDbl(data.Item("AntennaInnerKTLX"), 6)
+        Me.AntennaInnerKTLZ = DBtoNullableDbl(data.Item("AntennaInnerKTLZ"), 6)
+        Me.AntennaInnerKTLLeg = DBtoNullableDbl(data.Item("AntennaInnerKTLLeg"), 6)
         Me.AntennaStitchBoltLocationHoriz = DBtoStr(data.Item("AntennaStitchBoltLocationHoriz"))
         Me.AntennaStitchBoltLocationDiag = DBtoStr(data.Item("AntennaStitchBoltLocationDiag"))
-        Me.AntennaStitchSpacing = DBtoNullableDbl(data.Item("AntennaStitchSpacing"))
-        Me.AntennaStitchSpacingHorz = DBtoNullableDbl(data.Item("AntennaStitchSpacingHorz"))
-        Me.AntennaStitchSpacingDiag = DBtoNullableDbl(data.Item("AntennaStitchSpacingDiag"))
-        Me.AntennaStitchSpacingRed = DBtoNullableDbl(data.Item("AntennaStitchSpacingRed"))
-        Me.AntennaLegNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaLegNetWidthDeduct"))
-        Me.AntennaLegUFactor = DBtoNullableDbl(data.Item("AntennaLegUFactor"))
-        Me.AntennaDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaDiagonalNetWidthDeduct"))
-        Me.AntennaTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaTopGirtNetWidthDeduct"))
-        Me.AntennaBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaBotGirtNetWidthDeduct"))
-        Me.AntennaInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaInnerGirtNetWidthDeduct"))
-        Me.AntennaHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaHorizontalNetWidthDeduct"))
-        Me.AntennaShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaShortHorizontalNetWidthDeduct"))
-        Me.AntennaDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaDiagonalUFactor"))
-        Me.AntennaTopGirtUFactor = DBtoNullableDbl(data.Item("AntennaTopGirtUFactor"))
-        Me.AntennaBotGirtUFactor = DBtoNullableDbl(data.Item("AntennaBotGirtUFactor"))
-        Me.AntennaInnerGirtUFactor = DBtoNullableDbl(data.Item("AntennaInnerGirtUFactor"))
-        Me.AntennaHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaHorizontalUFactor"))
-        Me.AntennaShortHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaShortHorizontalUFactor"))
+        Me.AntennaStitchSpacing = DBtoNullableDbl(data.Item("AntennaStitchSpacing"), 6)
+        Me.AntennaStitchSpacingHorz = DBtoNullableDbl(data.Item("AntennaStitchSpacingHorz"), 6)
+        Me.AntennaStitchSpacingDiag = DBtoNullableDbl(data.Item("AntennaStitchSpacingDiag"), 6)
+        Me.AntennaStitchSpacingRed = DBtoNullableDbl(data.Item("AntennaStitchSpacingRed"), 6)
+        Me.AntennaLegNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaLegNetWidthDeduct"), 6)
+        Me.AntennaLegUFactor = DBtoNullableDbl(data.Item("AntennaLegUFactor"), 6)
+        Me.AntennaDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaDiagonalNetWidthDeduct"), 6)
+        Me.AntennaTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaTopGirtNetWidthDeduct"), 6)
+        Me.AntennaBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaBotGirtNetWidthDeduct"), 6)
+        Me.AntennaInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaInnerGirtNetWidthDeduct"), 6)
+        Me.AntennaHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaHorizontalNetWidthDeduct"), 6)
+        Me.AntennaShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaShortHorizontalNetWidthDeduct"), 6)
+        Me.AntennaDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaDiagonalUFactor"), 6)
+        Me.AntennaTopGirtUFactor = DBtoNullableDbl(data.Item("AntennaTopGirtUFactor"), 6)
+        Me.AntennaBotGirtUFactor = DBtoNullableDbl(data.Item("AntennaBotGirtUFactor"), 6)
+        Me.AntennaInnerGirtUFactor = DBtoNullableDbl(data.Item("AntennaInnerGirtUFactor"), 6)
+        Me.AntennaHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaHorizontalUFactor"), 6)
+        Me.AntennaShortHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaShortHorizontalUFactor"), 6)
         Me.AntennaLegConnType = DBtoStr(data.Item("AntennaLegConnType"))
         Me.AntennaLegNumBolts = DBtoNullableInt(data.Item("AntennaLegNumBolts"))
         Me.AntennaDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaDiagonalNumBolts"))
@@ -4448,95 +4433,95 @@ Partial Public Class tnxAntennaRecord
         Me.AntennaHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaHorizontalNumBolts"))
         Me.AntennaShortHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaShortHorizontalNumBolts"))
         Me.AntennaLegBoltGrade = DBtoStr(data.Item("AntennaLegBoltGrade"))
-        Me.AntennaLegBoltSize = DBtoNullableDbl(data.Item("AntennaLegBoltSize"))
+        Me.AntennaLegBoltSize = DBtoNullableDbl(data.Item("AntennaLegBoltSize"), 6)
         Me.AntennaDiagonalBoltGrade = DBtoStr(data.Item("AntennaDiagonalBoltGrade"))
-        Me.AntennaDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaDiagonalBoltSize"))
+        Me.AntennaDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaDiagonalBoltSize"), 6)
         Me.AntennaTopGirtBoltGrade = DBtoStr(data.Item("AntennaTopGirtBoltGrade"))
-        Me.AntennaTopGirtBoltSize = DBtoNullableDbl(data.Item("AntennaTopGirtBoltSize"))
+        Me.AntennaTopGirtBoltSize = DBtoNullableDbl(data.Item("AntennaTopGirtBoltSize"), 6)
         Me.AntennaBotGirtBoltGrade = DBtoStr(data.Item("AntennaBotGirtBoltGrade"))
-        Me.AntennaBotGirtBoltSize = DBtoNullableDbl(data.Item("AntennaBotGirtBoltSize"))
+        Me.AntennaBotGirtBoltSize = DBtoNullableDbl(data.Item("AntennaBotGirtBoltSize"), 6)
         Me.AntennaInnerGirtBoltGrade = DBtoStr(data.Item("AntennaInnerGirtBoltGrade"))
-        Me.AntennaInnerGirtBoltSize = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltSize"))
+        Me.AntennaInnerGirtBoltSize = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltSize"), 6)
         Me.AntennaHorizontalBoltGrade = DBtoStr(data.Item("AntennaHorizontalBoltGrade"))
-        Me.AntennaHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaHorizontalBoltSize"))
+        Me.AntennaHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaHorizontalBoltSize"), 6)
         Me.AntennaShortHorizontalBoltGrade = DBtoStr(data.Item("AntennaShortHorizontalBoltGrade"))
-        Me.AntennaShortHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltSize"))
-        Me.AntennaLegBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaLegBoltEdgeDistance"))
-        Me.AntennaDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaDiagonalBoltEdgeDistance"))
-        Me.AntennaTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaTopGirtBoltEdgeDistance"))
-        Me.AntennaBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaBotGirtBoltEdgeDistance"))
-        Me.AntennaInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltEdgeDistance"))
-        Me.AntennaHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaHorizontalBoltEdgeDistance"))
-        Me.AntennaShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltEdgeDistance"))
-        Me.AntennaDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaDiagonalGageG1Distance"))
-        Me.AntennaTopGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaTopGirtGageG1Distance"))
-        Me.AntennaBotGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaBotGirtGageG1Distance"))
-        Me.AntennaInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaInnerGirtGageG1Distance"))
-        Me.AntennaHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaHorizontalGageG1Distance"))
-        Me.AntennaShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaShortHorizontalGageG1Distance"))
+        Me.AntennaShortHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltSize"), 6)
+        Me.AntennaLegBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaLegBoltEdgeDistance"), 6)
+        Me.AntennaDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaDiagonalBoltEdgeDistance"), 6)
+        Me.AntennaTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaTopGirtBoltEdgeDistance"), 6)
+        Me.AntennaBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaBotGirtBoltEdgeDistance"), 6)
+        Me.AntennaInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaInnerGirtBoltEdgeDistance"), 6)
+        Me.AntennaHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaHorizontalBoltEdgeDistance"), 6)
+        Me.AntennaShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaShortHorizontalBoltEdgeDistance"), 6)
+        Me.AntennaDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaDiagonalGageG1Distance"), 6)
+        Me.AntennaTopGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaTopGirtGageG1Distance"), 6)
+        Me.AntennaBotGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaBotGirtGageG1Distance"), 6)
+        Me.AntennaInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("AntennaInnerGirtGageG1Distance"), 6)
+        Me.AntennaHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaHorizontalGageG1Distance"), 6)
+        Me.AntennaShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaShortHorizontalGageG1Distance"), 6)
         Me.AntennaRedundantHorizontalBoltGrade = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade"))
-        Me.AntennaRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize"))
+        Me.AntennaRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize"), 6)
         Me.AntennaRedundantHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts"))
-        Me.AntennaRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance"))
-        Me.AntennaRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance"))
-        Me.AntennaRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct"))
-        Me.AntennaRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance"), 6)
+        Me.AntennaRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct"), 6)
+        Me.AntennaRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor"), 6)
         Me.AntennaRedundantDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade"))
-        Me.AntennaRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize"))
+        Me.AntennaRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize"), 6)
         Me.AntennaRedundantDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts"))
-        Me.AntennaRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance"))
-        Me.AntennaRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance"), 6)
+        Me.AntennaRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct"), 6)
+        Me.AntennaRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor"), 6)
         Me.AntennaRedundantSubDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantSubDiagonalBoltGrade"))
-        Me.AntennaRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltSize"))
+        Me.AntennaRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltSize"), 6)
         Me.AntennaRedundantSubDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantSubDiagonalNumBolts"))
-        Me.AntennaRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalGageG1Distance"))
-        Me.AntennaRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalUFactor"))
+        Me.AntennaRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalGageG1Distance"), 6)
+        Me.AntennaRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalNetWidthDeduct"), 6)
+        Me.AntennaRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalUFactor"), 6)
         Me.AntennaRedundantSubHorizontalBoltGrade = DBtoStr(data.Item("AntennaRedundantSubHorizontalBoltGrade"))
-        Me.AntennaRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltSize"))
+        Me.AntennaRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltSize"), 6)
         Me.AntennaRedundantSubHorizontalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantSubHorizontalNumBolts"))
-        Me.AntennaRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltEdgeDistance"))
-        Me.AntennaRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalGageG1Distance"))
-        Me.AntennaRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalNetWidthDeduct"))
-        Me.AntennaRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalUFactor"))
+        Me.AntennaRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalGageG1Distance"), 6)
+        Me.AntennaRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalNetWidthDeduct"), 6)
+        Me.AntennaRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalUFactor"), 6)
         Me.AntennaRedundantVerticalBoltGrade = DBtoStr(data.Item("AntennaRedundantVerticalBoltGrade"))
-        Me.AntennaRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltSize"))
+        Me.AntennaRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltSize"), 6)
         Me.AntennaRedundantVerticalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantVerticalNumBolts"))
-        Me.AntennaRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltEdgeDistance"))
-        Me.AntennaRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalGageG1Distance"))
-        Me.AntennaRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantVerticalNetWidthDeduct"))
-        Me.AntennaRedundantVerticalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantVerticalUFactor"))
+        Me.AntennaRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantVerticalGageG1Distance"), 6)
+        Me.AntennaRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantVerticalNetWidthDeduct"), 6)
+        Me.AntennaRedundantVerticalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantVerticalUFactor"), 6)
         Me.AntennaRedundantHipBoltGrade = DBtoStr(data.Item("AntennaRedundantHipBoltGrade"))
-        Me.AntennaRedundantHipBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize"))
+        Me.AntennaRedundantHipBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize"), 6)
         Me.AntennaRedundantHipNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts"))
-        Me.AntennaRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance"))
-        Me.AntennaRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance"))
-        Me.AntennaRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct"))
-        Me.AntennaRedundantHipUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor"))
+        Me.AntennaRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance"), 6)
+        Me.AntennaRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance"), 6)
+        Me.AntennaRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct"), 6)
+        Me.AntennaRedundantHipUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor"), 6)
         Me.AntennaRedundantHipDiagonalBoltGrade = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade"))
-        Me.AntennaRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize"))
+        Me.AntennaRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize"), 6)
         Me.AntennaRedundantHipDiagonalNumBolts = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts"))
-        Me.AntennaRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance"))
-        Me.AntennaRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance"))
-        Me.AntennaRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct"))
-        Me.AntennaRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance"), 6)
+        Me.AntennaRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance"), 6)
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct"), 6)
+        Me.AntennaRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor"), 6)
         Me.AntennaDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaDiagonalOutOfPlaneRestraint"))
         Me.AntennaTopGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaTopGirtOutOfPlaneRestraint"))
         Me.AntennaBottomGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaBottomGirtOutOfPlaneRestraint"))
         Me.AntennaMidGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaMidGirtOutOfPlaneRestraint"))
         Me.AntennaHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaHorizontalOutOfPlaneRestraint"))
         Me.AntennaSecondaryHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("AntennaSecondaryHorizontalOutOfPlaneRestraint"))
-        Me.AntennaDiagOffsetNEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEY"))
-        Me.AntennaDiagOffsetNEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEX"))
-        Me.AntennaDiagOffsetPEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEY"))
-        Me.AntennaDiagOffsetPEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEX"))
-        Me.AntennaKbraceOffsetNEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEY"))
-        Me.AntennaKbraceOffsetNEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEX"))
-        Me.AntennaKbraceOffsetPEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEY"))
-        Me.AntennaKbraceOffsetPEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEX"))
+        Me.AntennaDiagOffsetNEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEY"), 6)
+        Me.AntennaDiagOffsetNEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetNEX"), 6)
+        Me.AntennaDiagOffsetPEY = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEY"), 6)
+        Me.AntennaDiagOffsetPEX = DBtoNullableDbl(data.Item("AntennaDiagOffsetPEX"), 6)
+        Me.AntennaKbraceOffsetNEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEY"), 6)
+        Me.AntennaKbraceOffsetNEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEX"), 6)
+        Me.AntennaKbraceOffsetPEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEY"), 6)
+        Me.AntennaKbraceOffsetPEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEX"), 6)
 
     End Sub
 #End Region
@@ -5068,14 +5053,23 @@ Partial Public Class tnxAntennaRecord
 
 End Class
 
+<DataContract(), KnownType(GetType(tnxTowerRecord))>
 Partial Public Class tnxTowerRecord
     Inherits tnxGeometryRec
     'base structure
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Base Structure Section " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.base_structure_sections"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Base Structure Section " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.base_structure_sections"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
@@ -6090,7 +6084,7 @@ Partial Public Class tnxTowerRecord
     Private _TowerKbraceOffsetPEX As Double?
 
     '<Category("TNX Tower Record"), Description(""), DisplayName("Towerrec")>
-    'Public Property Rec() As Integer?
+    ' <DataMember()> Public Property Rec() As Integer?
     '    Get
     '        Return Me._TowerRec
     '    End Get
@@ -6099,7 +6093,7 @@ Partial Public Class tnxTowerRecord
     '    End Set
     'End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdatabase")>
-    Public Property TowerDatabase() As String
+    <DataMember()> Public Property TowerDatabase() As String
         Get
             Return Me._TowerDatabase
         End Get
@@ -6108,7 +6102,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towername")>
-    Public Property TowerName() As String
+    <DataMember()> Public Property TowerName() As String
         Get
             Return Me._TowerName
         End Get
@@ -6117,7 +6111,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerheight")>
-    Public Property TowerHeight() As Double?
+    <DataMember()> Public Property TowerHeight() As Double?
         Get
             Return Me._TowerHeight
         End Get
@@ -6126,7 +6120,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerfacewidth")>
-    Public Property TowerFaceWidth() As Double?
+    <DataMember()> Public Property TowerFaceWidth() As Double?
         Get
             Return Me._TowerFaceWidth
         End Get
@@ -6135,7 +6129,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towernumsections")>
-    Public Property TowerNumSections() As Integer?
+    <DataMember()> Public Property TowerNumSections() As Integer?
         Get
             Return Me._TowerNumSections
         End Get
@@ -6144,7 +6138,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersectionlength")>
-    Public Property TowerSectionLength() As Double?
+    <DataMember()> Public Property TowerSectionLength() As Double?
         Get
             Return Me._TowerSectionLength
         End Get
@@ -6153,7 +6147,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalspacing")>
-    Public Property TowerDiagonalSpacing() As Double?
+    <DataMember()> Public Property TowerDiagonalSpacing() As Double?
         Get
             Return Me._TowerDiagonalSpacing
         End Get
@@ -6162,7 +6156,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalspacingex")>
-    Public Property TowerDiagonalSpacingEx() As Double?
+    <DataMember()> Public Property TowerDiagonalSpacingEx() As Double?
         Get
             Return Me._TowerDiagonalSpacingEx
         End Get
@@ -6171,7 +6165,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbracetype")>
-    Public Property TowerBraceType() As String
+    <DataMember()> Public Property TowerBraceType() As String
         Get
             Return Me._TowerBraceType
         End Get
@@ -6180,7 +6174,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerfacebevel")>
-    Public Property TowerFaceBevel() As Double?
+    <DataMember()> Public Property TowerFaceBevel() As Double?
         Get
             Return Me._TowerFaceBevel
         End Get
@@ -6189,7 +6183,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtoffset")>
-    Public Property TowerTopGirtOffset() As Double?
+    <DataMember()> Public Property TowerTopGirtOffset() As Double?
         Get
             Return Me._TowerTopGirtOffset
         End Get
@@ -6198,7 +6192,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtoffset")>
-    Public Property TowerBotGirtOffset() As Double?
+    <DataMember()> Public Property TowerBotGirtOffset() As Double?
         Get
             Return Me._TowerBotGirtOffset
         End Get
@@ -6207,7 +6201,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhaskbraceendpanels")>
-    Public Property TowerHasKBraceEndPanels() As Boolean?
+    <DataMember()> Public Property TowerHasKBraceEndPanels() As Boolean?
         Get
             Return Me._TowerHasKBraceEndPanels
         End Get
@@ -6216,7 +6210,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhashorizontals")>
-    Public Property TowerHasHorizontals() As Boolean?
+    <DataMember()> Public Property TowerHasHorizontals() As Boolean?
         Get
             Return Me._TowerHasHorizontals
         End Get
@@ -6225,7 +6219,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegtype")>
-    Public Property TowerLegType() As String
+    <DataMember()> Public Property TowerLegType() As String
         Get
             Return Me._TowerLegType
         End Get
@@ -6234,7 +6228,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegsize")>
-    Public Property TowerLegSize() As String
+    <DataMember()> Public Property TowerLegSize() As String
         Get
             Return Me._TowerLegSize
         End Get
@@ -6243,7 +6237,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerleggrade")>
-    Public Property TowerLegGrade() As Double?
+    <DataMember()> Public Property TowerLegGrade() As Double?
         Get
             Return Me._TowerLegGrade
         End Get
@@ -6252,7 +6246,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegmatlgrade")>
-    Public Property TowerLegMatlGrade() As String
+    <DataMember()> Public Property TowerLegMatlGrade() As String
         Get
             Return Me._TowerLegMatlGrade
         End Get
@@ -6261,7 +6255,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalgrade")>
-    Public Property TowerDiagonalGrade() As Double?
+    <DataMember()> Public Property TowerDiagonalGrade() As Double?
         Get
             Return Me._TowerDiagonalGrade
         End Get
@@ -6270,7 +6264,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalmatlgrade")>
-    Public Property TowerDiagonalMatlGrade() As String
+    <DataMember()> Public Property TowerDiagonalMatlGrade() As String
         Get
             Return Me._TowerDiagonalMatlGrade
         End Get
@@ -6279,7 +6273,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracinggrade")>
-    Public Property TowerInnerBracingGrade() As Double?
+    <DataMember()> Public Property TowerInnerBracingGrade() As Double?
         Get
             Return Me._TowerInnerBracingGrade
         End Get
@@ -6288,7 +6282,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingmatlgrade")>
-    Public Property TowerInnerBracingMatlGrade() As String
+    <DataMember()> Public Property TowerInnerBracingMatlGrade() As String
         Get
             Return Me._TowerInnerBracingMatlGrade
         End Get
@@ -6297,7 +6291,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtgrade")>
-    Public Property TowerTopGirtGrade() As Double?
+    <DataMember()> Public Property TowerTopGirtGrade() As Double?
         Get
             Return Me._TowerTopGirtGrade
         End Get
@@ -6306,7 +6300,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtmatlgrade")>
-    Public Property TowerTopGirtMatlGrade() As String
+    <DataMember()> Public Property TowerTopGirtMatlGrade() As String
         Get
             Return Me._TowerTopGirtMatlGrade
         End Get
@@ -6315,7 +6309,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtgrade")>
-    Public Property TowerBotGirtGrade() As Double?
+    <DataMember()> Public Property TowerBotGirtGrade() As Double?
         Get
             Return Me._TowerBotGirtGrade
         End Get
@@ -6324,7 +6318,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtmatlgrade")>
-    Public Property TowerBotGirtMatlGrade() As String
+    <DataMember()> Public Property TowerBotGirtMatlGrade() As String
         Get
             Return Me._TowerBotGirtMatlGrade
         End Get
@@ -6333,7 +6327,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtgrade")>
-    Public Property TowerInnerGirtGrade() As Double?
+    <DataMember()> Public Property TowerInnerGirtGrade() As Double?
         Get
             Return Me._TowerInnerGirtGrade
         End Get
@@ -6342,7 +6336,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtmatlgrade")>
-    Public Property TowerInnerGirtMatlGrade() As String
+    <DataMember()> Public Property TowerInnerGirtMatlGrade() As String
         Get
             Return Me._TowerInnerGirtMatlGrade
         End Get
@@ -6351,7 +6345,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalgrade")>
-    Public Property TowerLongHorizontalGrade() As Double?
+    <DataMember()> Public Property TowerLongHorizontalGrade() As Double?
         Get
             Return Me._TowerLongHorizontalGrade
         End Get
@@ -6360,7 +6354,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalmatlgrade")>
-    Public Property TowerLongHorizontalMatlGrade() As String
+    <DataMember()> Public Property TowerLongHorizontalMatlGrade() As String
         Get
             Return Me._TowerLongHorizontalMatlGrade
         End Get
@@ -6369,7 +6363,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalgrade")>
-    Public Property TowerShortHorizontalGrade() As Double?
+    <DataMember()> Public Property TowerShortHorizontalGrade() As Double?
         Get
             Return Me._TowerShortHorizontalGrade
         End Get
@@ -6378,7 +6372,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalmatlgrade")>
-    Public Property TowerShortHorizontalMatlGrade() As String
+    <DataMember()> Public Property TowerShortHorizontalMatlGrade() As String
         Get
             Return Me._TowerShortHorizontalMatlGrade
         End Get
@@ -6387,7 +6381,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonaltype")>
-    Public Property TowerDiagonalType() As String
+    <DataMember()> Public Property TowerDiagonalType() As String
         Get
             Return Me._TowerDiagonalType
         End Get
@@ -6396,7 +6390,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalsize")>
-    Public Property TowerDiagonalSize() As String
+    <DataMember()> Public Property TowerDiagonalSize() As String
         Get
             Return Me._TowerDiagonalSize
         End Get
@@ -6405,7 +6399,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingtype")>
-    Public Property TowerInnerBracingType() As String
+    <DataMember()> Public Property TowerInnerBracingType() As String
         Get
             Return Me._TowerInnerBracingType
         End Get
@@ -6414,7 +6408,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerbracingsize")>
-    Public Property TowerInnerBracingSize() As String
+    <DataMember()> Public Property TowerInnerBracingSize() As String
         Get
             Return Me._TowerInnerBracingSize
         End Get
@@ -6423,7 +6417,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirttype")>
-    Public Property TowerTopGirtType() As String
+    <DataMember()> Public Property TowerTopGirtType() As String
         Get
             Return Me._TowerTopGirtType
         End Get
@@ -6432,7 +6426,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtsize")>
-    Public Property TowerTopGirtSize() As String
+    <DataMember()> Public Property TowerTopGirtSize() As String
         Get
             Return Me._TowerTopGirtSize
         End Get
@@ -6441,7 +6435,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirttype")>
-    Public Property TowerBotGirtType() As String
+    <DataMember()> Public Property TowerBotGirtType() As String
         Get
             Return Me._TowerBotGirtType
         End Get
@@ -6450,7 +6444,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtsize")>
-    Public Property TowerBotGirtSize() As String
+    <DataMember()> Public Property TowerBotGirtSize() As String
         Get
             Return Me._TowerBotGirtSize
         End Get
@@ -6459,7 +6453,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towernuminnergirts")>
-    Public Property TowerNumInnerGirts() As Integer?
+    <DataMember()> Public Property TowerNumInnerGirts() As Integer?
         Get
             Return Me._TowerNumInnerGirts
         End Get
@@ -6468,7 +6462,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirttype")>
-    Public Property TowerInnerGirtType() As String
+    <DataMember()> Public Property TowerInnerGirtType() As String
         Get
             Return Me._TowerInnerGirtType
         End Get
@@ -6477,7 +6471,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtsize")>
-    Public Property TowerInnerGirtSize() As String
+    <DataMember()> Public Property TowerInnerGirtSize() As String
         Get
             Return Me._TowerInnerGirtSize
         End Get
@@ -6486,7 +6480,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontaltype")>
-    Public Property TowerLongHorizontalType() As String
+    <DataMember()> Public Property TowerLongHorizontalType() As String
         Get
             Return Me._TowerLongHorizontalType
         End Get
@@ -6495,7 +6489,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlonghorizontalsize")>
-    Public Property TowerLongHorizontalSize() As String
+    <DataMember()> Public Property TowerLongHorizontalSize() As String
         Get
             Return Me._TowerLongHorizontalSize
         End Get
@@ -6504,7 +6498,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontaltype")>
-    Public Property TowerShortHorizontalType() As String
+    <DataMember()> Public Property TowerShortHorizontalType() As String
         Get
             Return Me._TowerShortHorizontalType
         End Get
@@ -6513,7 +6507,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalsize")>
-    Public Property TowerShortHorizontalSize() As String
+    <DataMember()> Public Property TowerShortHorizontalSize() As String
         Get
             Return Me._TowerShortHorizontalSize
         End Get
@@ -6522,7 +6516,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantgrade")>
-    Public Property TowerRedundantGrade() As Double?
+    <DataMember()> Public Property TowerRedundantGrade() As Double?
         Get
             Return Me._TowerRedundantGrade
         End Get
@@ -6531,7 +6525,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantmatlgrade")>
-    Public Property TowerRedundantMatlGrade() As String
+    <DataMember()> Public Property TowerRedundantMatlGrade() As String
         Get
             Return Me._TowerRedundantMatlGrade
         End Get
@@ -6540,7 +6534,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanttype")>
-    Public Property TowerRedundantType() As String
+    <DataMember()> Public Property TowerRedundantType() As String
         Get
             Return Me._TowerRedundantType
         End Get
@@ -6549,7 +6543,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagtype")>
-    Public Property TowerRedundantDiagType() As String
+    <DataMember()> Public Property TowerRedundantDiagType() As String
         Get
             Return Me._TowerRedundantDiagType
         End Get
@@ -6558,7 +6552,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonaltype")>
-    Public Property TowerRedundantSubDiagonalType() As String
+    <DataMember()> Public Property TowerRedundantSubDiagonalType() As String
         Get
             Return Me._TowerRedundantSubDiagonalType
         End Get
@@ -6567,7 +6561,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontaltype")>
-    Public Property TowerRedundantSubHorizontalType() As String
+    <DataMember()> Public Property TowerRedundantSubHorizontalType() As String
         Get
             Return Me._TowerRedundantSubHorizontalType
         End Get
@@ -6576,7 +6570,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticaltype")>
-    Public Property TowerRedundantVerticalType() As String
+    <DataMember()> Public Property TowerRedundantVerticalType() As String
         Get
             Return Me._TowerRedundantVerticalType
         End Get
@@ -6585,7 +6579,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthiptype")>
-    Public Property TowerRedundantHipType() As String
+    <DataMember()> Public Property TowerRedundantHipType() As String
         Get
             Return Me._TowerRedundantHipType
         End Get
@@ -6594,7 +6588,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonaltype")>
-    Public Property TowerRedundantHipDiagonalType() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalType() As String
         Get
             Return Me._TowerRedundantHipDiagonalType
         End Get
@@ -6603,7 +6597,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize")>
-    Public Property TowerRedundantHorizontalSize() As String
+    <DataMember()> Public Property TowerRedundantHorizontalSize() As String
         Get
             Return Me._TowerRedundantHorizontalSize
         End Get
@@ -6612,7 +6606,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize2")>
-    Public Property TowerRedundantHorizontalSize2() As String
+    <DataMember()> Public Property TowerRedundantHorizontalSize2() As String
         Get
             Return Me._TowerRedundantHorizontalSize2
         End Get
@@ -6621,7 +6615,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize3")>
-    Public Property TowerRedundantHorizontalSize3() As String
+    <DataMember()> Public Property TowerRedundantHorizontalSize3() As String
         Get
             Return Me._TowerRedundantHorizontalSize3
         End Get
@@ -6630,7 +6624,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalsize4")>
-    Public Property TowerRedundantHorizontalSize4() As String
+    <DataMember()> Public Property TowerRedundantHorizontalSize4() As String
         Get
             Return Me._TowerRedundantHorizontalSize4
         End Get
@@ -6639,7 +6633,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize")>
-    Public Property TowerRedundantDiagonalSize() As String
+    <DataMember()> Public Property TowerRedundantDiagonalSize() As String
         Get
             Return Me._TowerRedundantDiagonalSize
         End Get
@@ -6648,7 +6642,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize2")>
-    Public Property TowerRedundantDiagonalSize2() As String
+    <DataMember()> Public Property TowerRedundantDiagonalSize2() As String
         Get
             Return Me._TowerRedundantDiagonalSize2
         End Get
@@ -6657,7 +6651,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize3")>
-    Public Property TowerRedundantDiagonalSize3() As String
+    <DataMember()> Public Property TowerRedundantDiagonalSize3() As String
         Get
             Return Me._TowerRedundantDiagonalSize3
         End Get
@@ -6666,7 +6660,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalsize4")>
-    Public Property TowerRedundantDiagonalSize4() As String
+    <DataMember()> Public Property TowerRedundantDiagonalSize4() As String
         Get
             Return Me._TowerRedundantDiagonalSize4
         End Get
@@ -6675,7 +6669,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalsize")>
-    Public Property TowerRedundantSubHorizontalSize() As String
+    <DataMember()> Public Property TowerRedundantSubHorizontalSize() As String
         Get
             Return Me._TowerRedundantSubHorizontalSize
         End Get
@@ -6684,7 +6678,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalsize")>
-    Public Property TowerRedundantSubDiagonalSize() As String
+    <DataMember()> Public Property TowerRedundantSubDiagonalSize() As String
         Get
             Return Me._TowerRedundantSubDiagonalSize
         End Get
@@ -6693,7 +6687,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersubdiaglocation")>
-    Public Property TowerSubDiagLocation() As Double?
+    <DataMember()> Public Property TowerSubDiagLocation() As Double?
         Get
             Return Me._TowerSubDiagLocation
         End Get
@@ -6702,7 +6696,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalsize")>
-    Public Property TowerRedundantVerticalSize() As String
+    <DataMember()> Public Property TowerRedundantVerticalSize() As String
         Get
             Return Me._TowerRedundantVerticalSize
         End Get
@@ -6711,7 +6705,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize")>
-    Public Property TowerRedundantHipSize() As String
+    <DataMember()> Public Property TowerRedundantHipSize() As String
         Get
             Return Me._TowerRedundantHipSize
         End Get
@@ -6720,7 +6714,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize2")>
-    Public Property TowerRedundantHipSize2() As String
+    <DataMember()> Public Property TowerRedundantHipSize2() As String
         Get
             Return Me._TowerRedundantHipSize2
         End Get
@@ -6729,7 +6723,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize3")>
-    Public Property TowerRedundantHipSize3() As String
+    <DataMember()> Public Property TowerRedundantHipSize3() As String
         Get
             Return Me._TowerRedundantHipSize3
         End Get
@@ -6738,7 +6732,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipsize4")>
-    Public Property TowerRedundantHipSize4() As String
+    <DataMember()> Public Property TowerRedundantHipSize4() As String
         Get
             Return Me._TowerRedundantHipSize4
         End Get
@@ -6747,7 +6741,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize")>
-    Public Property TowerRedundantHipDiagonalSize() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalSize() As String
         Get
             Return Me._TowerRedundantHipDiagonalSize
         End Get
@@ -6756,7 +6750,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize2")>
-    Public Property TowerRedundantHipDiagonalSize2() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalSize2() As String
         Get
             Return Me._TowerRedundantHipDiagonalSize2
         End Get
@@ -6765,7 +6759,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize3")>
-    Public Property TowerRedundantHipDiagonalSize3() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalSize3() As String
         Get
             Return Me._TowerRedundantHipDiagonalSize3
         End Get
@@ -6774,7 +6768,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalsize4")>
-    Public Property TowerRedundantHipDiagonalSize4() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalSize4() As String
         Get
             Return Me._TowerRedundantHipDiagonalSize4
         End Get
@@ -6783,7 +6777,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerswmult")>
-    Public Property TowerSWMult() As Double?
+    <DataMember()> Public Property TowerSWMult() As Double?
         Get
             Return Me._TowerSWMult
         End Get
@@ -6792,7 +6786,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerwpmult")>
-    Public Property TowerWPMult() As Double?
+    <DataMember()> Public Property TowerWPMult() As Double?
         Get
             Return Me._TowerWPMult
         End Get
@@ -6801,7 +6795,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerautocalcksingleangle")>
-    Public Property TowerAutoCalcKSingleAngle() As Boolean?
+    <DataMember()> Public Property TowerAutoCalcKSingleAngle() As Boolean?
         Get
             Return Me._TowerAutoCalcKSingleAngle
         End Get
@@ -6810,7 +6804,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerautocalcksolidround")>
-    Public Property TowerAutoCalcKSolidRound() As Boolean?
+    <DataMember()> Public Property TowerAutoCalcKSolidRound() As Boolean?
         Get
             Return Me._TowerAutoCalcKSolidRound
         End Get
@@ -6819,7 +6813,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerafgusset")>
-    Public Property TowerAfGusset() As Double?
+    <DataMember()> Public Property TowerAfGusset() As Double?
         Get
             Return Me._TowerAfGusset
         End Get
@@ -6828,7 +6822,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertfgusset")>
-    Public Property TowerTfGusset() As Double?
+    <DataMember()> Public Property TowerTfGusset() As Double?
         Get
             Return Me._TowerTfGusset
         End Get
@@ -6837,7 +6831,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetboltedgedistance")>
-    Public Property TowerGussetBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerGussetBoltEdgeDistance() As Double?
         Get
             Return Me._TowerGussetBoltEdgeDistance
         End Get
@@ -6846,7 +6840,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetgrade")>
-    Public Property TowerGussetGrade() As Double?
+    <DataMember()> Public Property TowerGussetGrade() As Double?
         Get
             Return Me._TowerGussetGrade
         End Get
@@ -6855,7 +6849,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towergussetmatlgrade")>
-    Public Property TowerGussetMatlGrade() As String
+    <DataMember()> Public Property TowerGussetMatlGrade() As String
         Get
             Return Me._TowerGussetMatlGrade
         End Get
@@ -6864,7 +6858,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerafmult")>
-    Public Property TowerAfMult() As Double?
+    <DataMember()> Public Property TowerAfMult() As Double?
         Get
             Return Me._TowerAfMult
         End Get
@@ -6873,7 +6867,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerarmult")>
-    Public Property TowerArMult() As Double?
+    <DataMember()> Public Property TowerArMult() As Double?
         Get
             Return Me._TowerArMult
         End Get
@@ -6882,7 +6876,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipapole")>
-    Public Property TowerFlatIPAPole() As Double?
+    <DataMember()> Public Property TowerFlatIPAPole() As Double?
         Get
             Return Me._TowerFlatIPAPole
         End Get
@@ -6891,7 +6885,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipapole")>
-    Public Property TowerRoundIPAPole() As Double?
+    <DataMember()> Public Property TowerRoundIPAPole() As Double?
         Get
             Return Me._TowerRoundIPAPole
         End Get
@@ -6900,7 +6894,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipaleg")>
-    Public Property TowerFlatIPALeg() As Double?
+    <DataMember()> Public Property TowerFlatIPALeg() As Double?
         Get
             Return Me._TowerFlatIPALeg
         End Get
@@ -6909,7 +6903,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipaleg")>
-    Public Property TowerRoundIPALeg() As Double?
+    <DataMember()> Public Property TowerRoundIPALeg() As Double?
         Get
             Return Me._TowerRoundIPALeg
         End Get
@@ -6918,7 +6912,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipahorizontal")>
-    Public Property TowerFlatIPAHorizontal() As Double?
+    <DataMember()> Public Property TowerFlatIPAHorizontal() As Double?
         Get
             Return Me._TowerFlatIPAHorizontal
         End Get
@@ -6927,7 +6921,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipahorizontal")>
-    Public Property TowerRoundIPAHorizontal() As Double?
+    <DataMember()> Public Property TowerRoundIPAHorizontal() As Double?
         Get
             Return Me._TowerRoundIPAHorizontal
         End Get
@@ -6936,7 +6930,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerflatipadiagonal")>
-    Public Property TowerFlatIPADiagonal() As Double?
+    <DataMember()> Public Property TowerFlatIPADiagonal() As Double?
         Get
             Return Me._TowerFlatIPADiagonal
         End Get
@@ -6945,7 +6939,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerroundipadiagonal")>
-    Public Property TowerRoundIPADiagonal() As Double?
+    <DataMember()> Public Property TowerRoundIPADiagonal() As Double?
         Get
             Return Me._TowerRoundIPADiagonal
         End Get
@@ -6954,7 +6948,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towercsa_S37_Speedupfactor")>
-    Public Property TowerCSA_S37_SpeedUpFactor() As Double?
+    <DataMember()> Public Property TowerCSA_S37_SpeedUpFactor() As Double?
         Get
             Return Me._TowerCSA_S37_SpeedUpFactor
         End Get
@@ -6963,7 +6957,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerklegs")>
-    Public Property TowerKLegs() As Double?
+    <DataMember()> Public Property TowerKLegs() As Double?
         Get
             Return Me._TowerKLegs
         End Get
@@ -6972,7 +6966,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkxbraceddiags")>
-    Public Property TowerKXBracedDiags() As Double?
+    <DataMember()> Public Property TowerKXBracedDiags() As Double?
         Get
             Return Me._TowerKXBracedDiags
         End Get
@@ -6981,7 +6975,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkkbraceddiags")>
-    Public Property TowerKKBracedDiags() As Double?
+    <DataMember()> Public Property TowerKKBracedDiags() As Double?
         Get
             Return Me._TowerKKBracedDiags
         End Get
@@ -6990,7 +6984,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkzbraceddiags")>
-    Public Property TowerKZBracedDiags() As Double?
+    <DataMember()> Public Property TowerKZBracedDiags() As Double?
         Get
             Return Me._TowerKZBracedDiags
         End Get
@@ -6999,7 +6993,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkhorzs")>
-    Public Property TowerKHorzs() As Double?
+    <DataMember()> Public Property TowerKHorzs() As Double?
         Get
             Return Me._TowerKHorzs
         End Get
@@ -7008,7 +7002,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerksechorzs")>
-    Public Property TowerKSecHorzs() As Double?
+    <DataMember()> Public Property TowerKSecHorzs() As Double?
         Get
             Return Me._TowerKSecHorzs
         End Get
@@ -7017,7 +7011,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkgirts")>
-    Public Property TowerKGirts() As Double?
+    <DataMember()> Public Property TowerKGirts() As Double?
         Get
             Return Me._TowerKGirts
         End Get
@@ -7026,7 +7020,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkinners")>
-    Public Property TowerKInners() As Double?
+    <DataMember()> Public Property TowerKInners() As Double?
         Get
             Return Me._TowerKInners
         End Get
@@ -7035,7 +7029,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkxbraceddiagsy")>
-    Public Property TowerKXBracedDiagsY() As Double?
+    <DataMember()> Public Property TowerKXBracedDiagsY() As Double?
         Get
             Return Me._TowerKXBracedDiagsY
         End Get
@@ -7044,7 +7038,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkkbraceddiagsy")>
-    Public Property TowerKKBracedDiagsY() As Double?
+    <DataMember()> Public Property TowerKKBracedDiagsY() As Double?
         Get
             Return Me._TowerKKBracedDiagsY
         End Get
@@ -7053,7 +7047,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkzbraceddiagsy")>
-    Public Property TowerKZBracedDiagsY() As Double?
+    <DataMember()> Public Property TowerKZBracedDiagsY() As Double?
         Get
             Return Me._TowerKZBracedDiagsY
         End Get
@@ -7062,7 +7056,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkhorzsy")>
-    Public Property TowerKHorzsY() As Double?
+    <DataMember()> Public Property TowerKHorzsY() As Double?
         Get
             Return Me._TowerKHorzsY
         End Get
@@ -7071,7 +7065,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerksechorzsy")>
-    Public Property TowerKSecHorzsY() As Double?
+    <DataMember()> Public Property TowerKSecHorzsY() As Double?
         Get
             Return Me._TowerKSecHorzsY
         End Get
@@ -7080,7 +7074,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkgirtsy")>
-    Public Property TowerKGirtsY() As Double?
+    <DataMember()> Public Property TowerKGirtsY() As Double?
         Get
             Return Me._TowerKGirtsY
         End Get
@@ -7089,7 +7083,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkinnersy")>
-    Public Property TowerKInnersY() As Double?
+    <DataMember()> Public Property TowerKInnersY() As Double?
         Get
             Return Me._TowerKInnersY
         End Get
@@ -7098,7 +7092,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhorz")>
-    Public Property TowerKRedHorz() As Double?
+    <DataMember()> Public Property TowerKRedHorz() As Double?
         Get
             Return Me._TowerKRedHorz
         End Get
@@ -7107,7 +7101,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkreddiag")>
-    Public Property TowerKRedDiag() As Double?
+    <DataMember()> Public Property TowerKRedDiag() As Double?
         Get
             Return Me._TowerKRedDiag
         End Get
@@ -7116,7 +7110,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredsubdiag")>
-    Public Property TowerKRedSubDiag() As Double?
+    <DataMember()> Public Property TowerKRedSubDiag() As Double?
         Get
             Return Me._TowerKRedSubDiag
         End Get
@@ -7125,7 +7119,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredsubhorz")>
-    Public Property TowerKRedSubHorz() As Double?
+    <DataMember()> Public Property TowerKRedSubHorz() As Double?
         Get
             Return Me._TowerKRedSubHorz
         End Get
@@ -7134,7 +7128,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredvert")>
-    Public Property TowerKRedVert() As Double?
+    <DataMember()> Public Property TowerKRedVert() As Double?
         Get
             Return Me._TowerKRedVert
         End Get
@@ -7143,7 +7137,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhip")>
-    Public Property TowerKRedHip() As Double?
+    <DataMember()> Public Property TowerKRedHip() As Double?
         Get
             Return Me._TowerKRedHip
         End Get
@@ -7152,7 +7146,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkredhipdiag")>
-    Public Property TowerKRedHipDiag() As Double?
+    <DataMember()> Public Property TowerKRedHipDiag() As Double?
         Get
             Return Me._TowerKRedHipDiag
         End Get
@@ -7161,7 +7155,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlx")>
-    Public Property TowerKTLX() As Double?
+    <DataMember()> Public Property TowerKTLX() As Double?
         Get
             Return Me._TowerKTLX
         End Get
@@ -7170,7 +7164,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlz")>
-    Public Property TowerKTLZ() As Double?
+    <DataMember()> Public Property TowerKTLZ() As Double?
         Get
             Return Me._TowerKTLZ
         End Get
@@ -7179,7 +7173,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerktlleg")>
-    Public Property TowerKTLLeg() As Double?
+    <DataMember()> Public Property TowerKTLLeg() As Double?
         Get
             Return Me._TowerKTLLeg
         End Get
@@ -7188,7 +7182,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlx")>
-    Public Property TowerInnerKTLX() As Double?
+    <DataMember()> Public Property TowerInnerKTLX() As Double?
         Get
             Return Me._TowerInnerKTLX
         End Get
@@ -7197,7 +7191,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlz")>
-    Public Property TowerInnerKTLZ() As Double?
+    <DataMember()> Public Property TowerInnerKTLZ() As Double?
         Get
             Return Me._TowerInnerKTLZ
         End Get
@@ -7206,7 +7200,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnerktlleg")>
-    Public Property TowerInnerKTLLeg() As Double?
+    <DataMember()> Public Property TowerInnerKTLLeg() As Double?
         Get
             Return Me._TowerInnerKTLLeg
         End Get
@@ -7215,7 +7209,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationhoriz")>
-    Public Property TowerStitchBoltLocationHoriz() As String
+    <DataMember()> Public Property TowerStitchBoltLocationHoriz() As String
         Get
             Return Me._TowerStitchBoltLocationHoriz
         End Get
@@ -7224,7 +7218,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationdiag")>
-    Public Property TowerStitchBoltLocationDiag() As String
+    <DataMember()> Public Property TowerStitchBoltLocationDiag() As String
         Get
             Return Me._TowerStitchBoltLocationDiag
         End Get
@@ -7233,7 +7227,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchboltlocationred")>
-    Public Property TowerStitchBoltLocationRed() As String
+    <DataMember()> Public Property TowerStitchBoltLocationRed() As String
         Get
             Return Me._TowerStitchBoltLocationRed
         End Get
@@ -7242,7 +7236,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacing")>
-    Public Property TowerStitchSpacing() As Double?
+    <DataMember()> Public Property TowerStitchSpacing() As Double?
         Get
             Return Me._TowerStitchSpacing
         End Get
@@ -7251,7 +7245,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacingdiag")>
-    Public Property TowerStitchSpacingDiag() As Double?
+    <DataMember()> Public Property TowerStitchSpacingDiag() As Double?
         Get
             Return Me._TowerStitchSpacingDiag
         End Get
@@ -7260,7 +7254,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacinghorz")>
-    Public Property TowerStitchSpacingHorz() As Double?
+    <DataMember()> Public Property TowerStitchSpacingHorz() As Double?
         Get
             Return Me._TowerStitchSpacingHorz
         End Get
@@ -7269,7 +7263,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerstitchspacingred")>
-    Public Property TowerStitchSpacingRed() As Double?
+    <DataMember()> Public Property TowerStitchSpacingRed() As Double?
         Get
             Return Me._TowerStitchSpacingRed
         End Get
@@ -7278,7 +7272,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegnetwidthdeduct")>
-    Public Property TowerLegNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerLegNetWidthDeduct() As Double?
         Get
             Return Me._TowerLegNetWidthDeduct
         End Get
@@ -7287,7 +7281,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegufactor")>
-    Public Property TowerLegUFactor() As Double?
+    <DataMember()> Public Property TowerLegUFactor() As Double?
         Get
             Return Me._TowerLegUFactor
         End Get
@@ -7296,7 +7290,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalnetwidthdeduct")>
-    Public Property TowerDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._TowerDiagonalNetWidthDeduct
         End Get
@@ -7305,7 +7299,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtnetwidthdeduct")>
-    Public Property TowerTopGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerTopGirtNetWidthDeduct() As Double?
         Get
             Return Me._TowerTopGirtNetWidthDeduct
         End Get
@@ -7314,7 +7308,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtnetwidthdeduct")>
-    Public Property TowerBotGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerBotGirtNetWidthDeduct() As Double?
         Get
             Return Me._TowerBotGirtNetWidthDeduct
         End Get
@@ -7323,7 +7317,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtnetwidthdeduct")>
-    Public Property TowerInnerGirtNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerInnerGirtNetWidthDeduct() As Double?
         Get
             Return Me._TowerInnerGirtNetWidthDeduct
         End Get
@@ -7332,7 +7326,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalnetwidthdeduct")>
-    Public Property TowerHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._TowerHorizontalNetWidthDeduct
         End Get
@@ -7341,7 +7335,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalnetwidthdeduct")>
-    Public Property TowerShortHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerShortHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._TowerShortHorizontalNetWidthDeduct
         End Get
@@ -7350,7 +7344,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalufactor")>
-    Public Property TowerDiagonalUFactor() As Double?
+    <DataMember()> Public Property TowerDiagonalUFactor() As Double?
         Get
             Return Me._TowerDiagonalUFactor
         End Get
@@ -7359,7 +7353,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtufactor")>
-    Public Property TowerTopGirtUFactor() As Double?
+    <DataMember()> Public Property TowerTopGirtUFactor() As Double?
         Get
             Return Me._TowerTopGirtUFactor
         End Get
@@ -7368,7 +7362,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtufactor")>
-    Public Property TowerBotGirtUFactor() As Double?
+    <DataMember()> Public Property TowerBotGirtUFactor() As Double?
         Get
             Return Me._TowerBotGirtUFactor
         End Get
@@ -7377,7 +7371,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtufactor")>
-    Public Property TowerInnerGirtUFactor() As Double?
+    <DataMember()> Public Property TowerInnerGirtUFactor() As Double?
         Get
             Return Me._TowerInnerGirtUFactor
         End Get
@@ -7386,7 +7380,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalufactor")>
-    Public Property TowerHorizontalUFactor() As Double?
+    <DataMember()> Public Property TowerHorizontalUFactor() As Double?
         Get
             Return Me._TowerHorizontalUFactor
         End Get
@@ -7395,7 +7389,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalufactor")>
-    Public Property TowerShortHorizontalUFactor() As Double?
+    <DataMember()> Public Property TowerShortHorizontalUFactor() As Double?
         Get
             Return Me._TowerShortHorizontalUFactor
         End Get
@@ -7404,7 +7398,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegconntype")>
-    Public Property TowerLegConnType() As String
+    <DataMember()> Public Property TowerLegConnType() As String
         Get
             Return Me._TowerLegConnType
         End Get
@@ -7413,7 +7407,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegnumbolts")>
-    Public Property TowerLegNumBolts() As Integer?
+    <DataMember()> Public Property TowerLegNumBolts() As Integer?
         Get
             Return Me._TowerLegNumBolts
         End Get
@@ -7422,7 +7416,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalnumbolts")>
-    Public Property TowerDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property TowerDiagonalNumBolts() As Integer?
         Get
             Return Me._TowerDiagonalNumBolts
         End Get
@@ -7431,7 +7425,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtnumbolts")>
-    Public Property TowerTopGirtNumBolts() As Integer?
+    <DataMember()> Public Property TowerTopGirtNumBolts() As Integer?
         Get
             Return Me._TowerTopGirtNumBolts
         End Get
@@ -7440,7 +7434,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtnumbolts")>
-    Public Property TowerBotGirtNumBolts() As Integer?
+    <DataMember()> Public Property TowerBotGirtNumBolts() As Integer?
         Get
             Return Me._TowerBotGirtNumBolts
         End Get
@@ -7449,7 +7443,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtnumbolts")>
-    Public Property TowerInnerGirtNumBolts() As Integer?
+    <DataMember()> Public Property TowerInnerGirtNumBolts() As Integer?
         Get
             Return Me._TowerInnerGirtNumBolts
         End Get
@@ -7458,7 +7452,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalnumbolts")>
-    Public Property TowerHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property TowerHorizontalNumBolts() As Integer?
         Get
             Return Me._TowerHorizontalNumBolts
         End Get
@@ -7467,7 +7461,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalnumbolts")>
-    Public Property TowerShortHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property TowerShortHorizontalNumBolts() As Integer?
         Get
             Return Me._TowerShortHorizontalNumBolts
         End Get
@@ -7476,7 +7470,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltgrade")>
-    Public Property TowerLegBoltGrade() As String
+    <DataMember()> Public Property TowerLegBoltGrade() As String
         Get
             Return Me._TowerLegBoltGrade
         End Get
@@ -7485,7 +7479,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltsize")>
-    Public Property TowerLegBoltSize() As Double?
+    <DataMember()> Public Property TowerLegBoltSize() As Double?
         Get
             Return Me._TowerLegBoltSize
         End Get
@@ -7494,7 +7488,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltgrade")>
-    Public Property TowerDiagonalBoltGrade() As String
+    <DataMember()> Public Property TowerDiagonalBoltGrade() As String
         Get
             Return Me._TowerDiagonalBoltGrade
         End Get
@@ -7503,7 +7497,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltsize")>
-    Public Property TowerDiagonalBoltSize() As Double?
+    <DataMember()> Public Property TowerDiagonalBoltSize() As Double?
         Get
             Return Me._TowerDiagonalBoltSize
         End Get
@@ -7512,7 +7506,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltgrade")>
-    Public Property TowerTopGirtBoltGrade() As String
+    <DataMember()> Public Property TowerTopGirtBoltGrade() As String
         Get
             Return Me._TowerTopGirtBoltGrade
         End Get
@@ -7521,7 +7515,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltsize")>
-    Public Property TowerTopGirtBoltSize() As Double?
+    <DataMember()> Public Property TowerTopGirtBoltSize() As Double?
         Get
             Return Me._TowerTopGirtBoltSize
         End Get
@@ -7530,7 +7524,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltgrade")>
-    Public Property TowerBotGirtBoltGrade() As String
+    <DataMember()> Public Property TowerBotGirtBoltGrade() As String
         Get
             Return Me._TowerBotGirtBoltGrade
         End Get
@@ -7539,7 +7533,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltsize")>
-    Public Property TowerBotGirtBoltSize() As Double?
+    <DataMember()> Public Property TowerBotGirtBoltSize() As Double?
         Get
             Return Me._TowerBotGirtBoltSize
         End Get
@@ -7548,7 +7542,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltgrade")>
-    Public Property TowerInnerGirtBoltGrade() As String
+    <DataMember()> Public Property TowerInnerGirtBoltGrade() As String
         Get
             Return Me._TowerInnerGirtBoltGrade
         End Get
@@ -7557,7 +7551,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltsize")>
-    Public Property TowerInnerGirtBoltSize() As Double?
+    <DataMember()> Public Property TowerInnerGirtBoltSize() As Double?
         Get
             Return Me._TowerInnerGirtBoltSize
         End Get
@@ -7566,7 +7560,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltgrade")>
-    Public Property TowerHorizontalBoltGrade() As String
+    <DataMember()> Public Property TowerHorizontalBoltGrade() As String
         Get
             Return Me._TowerHorizontalBoltGrade
         End Get
@@ -7575,7 +7569,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltsize")>
-    Public Property TowerHorizontalBoltSize() As Double?
+    <DataMember()> Public Property TowerHorizontalBoltSize() As Double?
         Get
             Return Me._TowerHorizontalBoltSize
         End Get
@@ -7584,7 +7578,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltgrade")>
-    Public Property TowerShortHorizontalBoltGrade() As String
+    <DataMember()> Public Property TowerShortHorizontalBoltGrade() As String
         Get
             Return Me._TowerShortHorizontalBoltGrade
         End Get
@@ -7593,7 +7587,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltsize")>
-    Public Property TowerShortHorizontalBoltSize() As Double?
+    <DataMember()> Public Property TowerShortHorizontalBoltSize() As Double?
         Get
             Return Me._TowerShortHorizontalBoltSize
         End Get
@@ -7602,7 +7596,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegboltedgedistance")>
-    Public Property TowerLegBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerLegBoltEdgeDistance() As Double?
         Get
             Return Me._TowerLegBoltEdgeDistance
         End Get
@@ -7611,7 +7605,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalboltedgedistance")>
-    Public Property TowerDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerDiagonalBoltEdgeDistance
         End Get
@@ -7620,7 +7614,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtboltedgedistance")>
-    Public Property TowerTopGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerTopGirtBoltEdgeDistance() As Double?
         Get
             Return Me._TowerTopGirtBoltEdgeDistance
         End Get
@@ -7629,7 +7623,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtboltedgedistance")>
-    Public Property TowerBotGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerBotGirtBoltEdgeDistance() As Double?
         Get
             Return Me._TowerBotGirtBoltEdgeDistance
         End Get
@@ -7638,7 +7632,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtboltedgedistance")>
-    Public Property TowerInnerGirtBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerInnerGirtBoltEdgeDistance() As Double?
         Get
             Return Me._TowerInnerGirtBoltEdgeDistance
         End Get
@@ -7647,7 +7641,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalboltedgedistance")>
-    Public Property TowerHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerHorizontalBoltEdgeDistance
         End Get
@@ -7656,7 +7650,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalboltedgedistance")>
-    Public Property TowerShortHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerShortHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerShortHorizontalBoltEdgeDistance
         End Get
@@ -7665,7 +7659,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonalgageg1Distance")>
-    Public Property TowerDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerDiagonalGageG1Distance() As Double?
         Get
             Return Me._TowerDiagonalGageG1Distance
         End Get
@@ -7674,7 +7668,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtgageg1Distance")>
-    Public Property TowerTopGirtGageG1Distance() As Double?
+    <DataMember()> Public Property TowerTopGirtGageG1Distance() As Double?
         Get
             Return Me._TowerTopGirtGageG1Distance
         End Get
@@ -7683,7 +7677,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbotgirtgageg1Distance")>
-    Public Property TowerBotGirtGageG1Distance() As Double?
+    <DataMember()> Public Property TowerBotGirtGageG1Distance() As Double?
         Get
             Return Me._TowerBotGirtGageG1Distance
         End Get
@@ -7692,7 +7686,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerinnergirtgageg1Distance")>
-    Public Property TowerInnerGirtGageG1Distance() As Double?
+    <DataMember()> Public Property TowerInnerGirtGageG1Distance() As Double?
         Get
             Return Me._TowerInnerGirtGageG1Distance
         End Get
@@ -7701,7 +7695,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontalgageg1Distance")>
-    Public Property TowerHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerHorizontalGageG1Distance() As Double?
         Get
             Return Me._TowerHorizontalGageG1Distance
         End Get
@@ -7710,7 +7704,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towershorthorizontalgageg1Distance")>
-    Public Property TowerShortHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerShortHorizontalGageG1Distance() As Double?
         Get
             Return Me._TowerShortHorizontalGageG1Distance
         End Get
@@ -7719,7 +7713,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltgrade")>
-    Public Property TowerRedundantHorizontalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantHorizontalBoltGrade() As String
         Get
             Return Me._TowerRedundantHorizontalBoltGrade
         End Get
@@ -7728,7 +7722,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltsize")>
-    Public Property TowerRedundantHorizontalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantHorizontalBoltSize() As Double?
         Get
             Return Me._TowerRedundantHorizontalBoltSize
         End Get
@@ -7737,7 +7731,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalnumbolts")>
-    Public Property TowerRedundantHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantHorizontalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantHorizontalNumBolts
         End Get
@@ -7746,7 +7740,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalboltedgedistance")>
-    Public Property TowerRedundantHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantHorizontalBoltEdgeDistance
         End Get
@@ -7755,7 +7749,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalgageg1Distance")>
-    Public Property TowerRedundantHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantHorizontalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantHorizontalGageG1Distance
         End Get
@@ -7764,7 +7758,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalnetwidthdeduct")>
-    Public Property TowerRedundantHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantHorizontalNetWidthDeduct
         End Get
@@ -7773,7 +7767,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthorizontalufactor")>
-    Public Property TowerRedundantHorizontalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantHorizontalUFactor() As Double?
         Get
             Return Me._TowerRedundantHorizontalUFactor
         End Get
@@ -7782,7 +7776,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltgrade")>
-    Public Property TowerRedundantDiagonalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantDiagonalBoltGrade() As String
         Get
             Return Me._TowerRedundantDiagonalBoltGrade
         End Get
@@ -7791,7 +7785,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltsize")>
-    Public Property TowerRedundantDiagonalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantDiagonalBoltSize() As Double?
         Get
             Return Me._TowerRedundantDiagonalBoltSize
         End Get
@@ -7800,7 +7794,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalnumbolts")>
-    Public Property TowerRedundantDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantDiagonalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantDiagonalNumBolts
         End Get
@@ -7809,7 +7803,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalboltedgedistance")>
-    Public Property TowerRedundantDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantDiagonalBoltEdgeDistance
         End Get
@@ -7818,7 +7812,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalgageg1Distance")>
-    Public Property TowerRedundantDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantDiagonalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantDiagonalGageG1Distance
         End Get
@@ -7827,7 +7821,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantDiagonalNetWidthDeduct
         End Get
@@ -7836,7 +7830,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantdiagonalufactor")>
-    Public Property TowerRedundantDiagonalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantDiagonalUFactor() As Double?
         Get
             Return Me._TowerRedundantDiagonalUFactor
         End Get
@@ -7845,7 +7839,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltgrade")>
-    Public Property TowerRedundantSubDiagonalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantSubDiagonalBoltGrade() As String
         Get
             Return Me._TowerRedundantSubDiagonalBoltGrade
         End Get
@@ -7854,7 +7848,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltsize")>
-    Public Property TowerRedundantSubDiagonalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantSubDiagonalBoltSize() As Double?
         Get
             Return Me._TowerRedundantSubDiagonalBoltSize
         End Get
@@ -7863,7 +7857,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalnumbolts")>
-    Public Property TowerRedundantSubDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantSubDiagonalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantSubDiagonalNumBolts
         End Get
@@ -7872,7 +7866,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalboltedgedistance")>
-    Public Property TowerRedundantSubDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantSubDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantSubDiagonalBoltEdgeDistance
         End Get
@@ -7881,7 +7875,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalgageg1Distance")>
-    Public Property TowerRedundantSubDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantSubDiagonalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantSubDiagonalGageG1Distance
         End Get
@@ -7890,7 +7884,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantSubDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantSubDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantSubDiagonalNetWidthDeduct
         End Get
@@ -7899,7 +7893,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubdiagonalufactor")>
-    Public Property TowerRedundantSubDiagonalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantSubDiagonalUFactor() As Double?
         Get
             Return Me._TowerRedundantSubDiagonalUFactor
         End Get
@@ -7908,7 +7902,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltgrade")>
-    Public Property TowerRedundantSubHorizontalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantSubHorizontalBoltGrade() As String
         Get
             Return Me._TowerRedundantSubHorizontalBoltGrade
         End Get
@@ -7917,7 +7911,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltsize")>
-    Public Property TowerRedundantSubHorizontalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantSubHorizontalBoltSize() As Double?
         Get
             Return Me._TowerRedundantSubHorizontalBoltSize
         End Get
@@ -7926,7 +7920,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalnumbolts")>
-    Public Property TowerRedundantSubHorizontalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantSubHorizontalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantSubHorizontalNumBolts
         End Get
@@ -7935,7 +7929,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalboltedgedistance")>
-    Public Property TowerRedundantSubHorizontalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantSubHorizontalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantSubHorizontalBoltEdgeDistance
         End Get
@@ -7944,7 +7938,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalgageg1Distance")>
-    Public Property TowerRedundantSubHorizontalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantSubHorizontalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantSubHorizontalGageG1Distance
         End Get
@@ -7953,7 +7947,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalnetwidthdeduct")>
-    Public Property TowerRedundantSubHorizontalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantSubHorizontalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantSubHorizontalNetWidthDeduct
         End Get
@@ -7962,7 +7956,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantsubhorizontalufactor")>
-    Public Property TowerRedundantSubHorizontalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantSubHorizontalUFactor() As Double?
         Get
             Return Me._TowerRedundantSubHorizontalUFactor
         End Get
@@ -7971,7 +7965,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltgrade")>
-    Public Property TowerRedundantVerticalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantVerticalBoltGrade() As String
         Get
             Return Me._TowerRedundantVerticalBoltGrade
         End Get
@@ -7980,7 +7974,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltsize")>
-    Public Property TowerRedundantVerticalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantVerticalBoltSize() As Double?
         Get
             Return Me._TowerRedundantVerticalBoltSize
         End Get
@@ -7989,7 +7983,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalnumbolts")>
-    Public Property TowerRedundantVerticalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantVerticalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantVerticalNumBolts
         End Get
@@ -7998,7 +7992,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalboltedgedistance")>
-    Public Property TowerRedundantVerticalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantVerticalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantVerticalBoltEdgeDistance
         End Get
@@ -8007,7 +8001,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalgageg1Distance")>
-    Public Property TowerRedundantVerticalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantVerticalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantVerticalGageG1Distance
         End Get
@@ -8016,7 +8010,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalnetwidthdeduct")>
-    Public Property TowerRedundantVerticalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantVerticalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantVerticalNetWidthDeduct
         End Get
@@ -8025,7 +8019,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundantverticalufactor")>
-    Public Property TowerRedundantVerticalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantVerticalUFactor() As Double?
         Get
             Return Me._TowerRedundantVerticalUFactor
         End Get
@@ -8034,7 +8028,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltgrade")>
-    Public Property TowerRedundantHipBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantHipBoltGrade() As String
         Get
             Return Me._TowerRedundantHipBoltGrade
         End Get
@@ -8043,7 +8037,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltsize")>
-    Public Property TowerRedundantHipBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantHipBoltSize() As Double?
         Get
             Return Me._TowerRedundantHipBoltSize
         End Get
@@ -8052,7 +8046,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipnumbolts")>
-    Public Property TowerRedundantHipNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantHipNumBolts() As Integer?
         Get
             Return Me._TowerRedundantHipNumBolts
         End Get
@@ -8061,7 +8055,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipboltedgedistance")>
-    Public Property TowerRedundantHipBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantHipBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantHipBoltEdgeDistance
         End Get
@@ -8070,7 +8064,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipgageg1Distance")>
-    Public Property TowerRedundantHipGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantHipGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantHipGageG1Distance
         End Get
@@ -8079,7 +8073,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipnetwidthdeduct")>
-    Public Property TowerRedundantHipNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantHipNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantHipNetWidthDeduct
         End Get
@@ -8088,7 +8082,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipufactor")>
-    Public Property TowerRedundantHipUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantHipUFactor() As Double?
         Get
             Return Me._TowerRedundantHipUFactor
         End Get
@@ -8097,7 +8091,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltgrade")>
-    Public Property TowerRedundantHipDiagonalBoltGrade() As String
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltGrade() As String
         Get
             Return Me._TowerRedundantHipDiagonalBoltGrade
         End Get
@@ -8106,7 +8100,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltsize")>
-    Public Property TowerRedundantHipDiagonalBoltSize() As Double?
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltSize() As Double?
         Get
             Return Me._TowerRedundantHipDiagonalBoltSize
         End Get
@@ -8115,7 +8109,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalnumbolts")>
-    Public Property TowerRedundantHipDiagonalNumBolts() As Integer?
+    <DataMember()> Public Property TowerRedundantHipDiagonalNumBolts() As Integer?
         Get
             Return Me._TowerRedundantHipDiagonalNumBolts
         End Get
@@ -8124,7 +8118,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalboltedgedistance")>
-    Public Property TowerRedundantHipDiagonalBoltEdgeDistance() As Double?
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance() As Double?
         Get
             Return Me._TowerRedundantHipDiagonalBoltEdgeDistance
         End Get
@@ -8133,7 +8127,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalgageg1Distance")>
-    Public Property TowerRedundantHipDiagonalGageG1Distance() As Double?
+    <DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance() As Double?
         Get
             Return Me._TowerRedundantHipDiagonalGageG1Distance
         End Get
@@ -8142,7 +8136,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalnetwidthdeduct")>
-    Public Property TowerRedundantHipDiagonalNetWidthDeduct() As Double?
+    <DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct() As Double?
         Get
             Return Me._TowerRedundantHipDiagonalNetWidthDeduct
         End Get
@@ -8151,7 +8145,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerredundanthipdiagonalufactor")>
-    Public Property TowerRedundantHipDiagonalUFactor() As Double?
+    <DataMember()> Public Property TowerRedundantHipDiagonalUFactor() As Double?
         Get
             Return Me._TowerRedundantHipDiagonalUFactor
         End Get
@@ -8160,7 +8154,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagonaloutofplanerestraint")>
-    Public Property TowerDiagonalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerDiagonalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerDiagonalOutOfPlaneRestraint
         End Get
@@ -8169,7 +8163,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towertopgirtoutofplanerestraint")>
-    Public Property TowerTopGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerTopGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerTopGirtOutOfPlaneRestraint
         End Get
@@ -8178,7 +8172,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerbottomgirtoutofplanerestraint")>
-    Public Property TowerBottomGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerBottomGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerBottomGirtOutOfPlaneRestraint
         End Get
@@ -8187,7 +8181,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towermidgirtoutofplanerestraint")>
-    Public Property TowerMidGirtOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerMidGirtOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerMidGirtOutOfPlaneRestraint
         End Get
@@ -8196,7 +8190,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerhorizontaloutofplanerestraint")>
-    Public Property TowerHorizontalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerHorizontalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerHorizontalOutOfPlaneRestraint
         End Get
@@ -8205,7 +8199,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towersecondaryhorizontaloutofplanerestraint")>
-    Public Property TowerSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property TowerSecondaryHorizontalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._TowerSecondaryHorizontalOutOfPlaneRestraint
         End Get
@@ -8214,7 +8208,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Toweruniqueflag")>
-    Public Property TowerUniqueFlag() As Integer?
+    <DataMember()> Public Property TowerUniqueFlag() As Integer?
         Get
             Return Me._TowerUniqueFlag
         End Get
@@ -8223,7 +8217,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetney")>
-    Public Property TowerDiagOffsetNEY() As Double?
+    <DataMember()> Public Property TowerDiagOffsetNEY() As Double?
         Get
             Return Me._TowerDiagOffsetNEY
         End Get
@@ -8232,7 +8226,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetnex")>
-    Public Property TowerDiagOffsetNEX() As Double?
+    <DataMember()> Public Property TowerDiagOffsetNEX() As Double?
         Get
             Return Me._TowerDiagOffsetNEX
         End Get
@@ -8241,7 +8235,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetpey")>
-    Public Property TowerDiagOffsetPEY() As Double?
+    <DataMember()> Public Property TowerDiagOffsetPEY() As Double?
         Get
             Return Me._TowerDiagOffsetPEY
         End Get
@@ -8250,7 +8244,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerdiagoffsetpex")>
-    Public Property TowerDiagOffsetPEX() As Double?
+    <DataMember()> Public Property TowerDiagOffsetPEX() As Double?
         Get
             Return Me._TowerDiagOffsetPEX
         End Get
@@ -8259,7 +8253,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetney")>
-    Public Property TowerKbraceOffsetNEY() As Double?
+    <DataMember()> Public Property TowerKbraceOffsetNEY() As Double?
         Get
             Return Me._TowerKbraceOffsetNEY
         End Get
@@ -8268,7 +8262,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetnex")>
-    Public Property TowerKbraceOffsetNEX() As Double?
+    <DataMember()> Public Property TowerKbraceOffsetNEX() As Double?
         Get
             Return Me._TowerKbraceOffsetNEX
         End Get
@@ -8277,7 +8271,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetpey")>
-    Public Property TowerKbraceOffsetPEY() As Double?
+    <DataMember()> Public Property TowerKbraceOffsetPEY() As Double?
         Get
             Return Me._TowerKbraceOffsetPEY
         End Get
@@ -8286,7 +8280,7 @@ Partial Public Class tnxTowerRecord
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerkbraceoffsetpex")>
-    Public Property TowerKbraceOffsetPEX() As Double?
+    <DataMember()> Public Property TowerKbraceOffsetPEX() As Double?
         Get
             Return Me._TowerKbraceOffsetPEX
         End Get
@@ -8309,35 +8303,35 @@ Partial Public Class tnxTowerRecord
         Me.Rec = DBtoNullableInt(data.Item("TowerRec"))
         Me.TowerDatabase = DBtoStr(data.Item("TowerDatabase"))
         Me.TowerName = DBtoStr(data.Item("TowerName"))
-        Me.TowerHeight = DBtoNullableDbl(data.Item("TowerHeight"))
-        Me.TowerFaceWidth = DBtoNullableDbl(data.Item("TowerFaceWidth"))
+        Me.TowerHeight = DBtoNullableDbl(data.Item("TowerHeight"), 6)
+        Me.TowerFaceWidth = DBtoNullableDbl(data.Item("TowerFaceWidth"), 6)
         Me.TowerNumSections = DBtoNullableInt(data.Item("TowerNumSections"))
-        Me.TowerSectionLength = DBtoNullableDbl(data.Item("TowerSectionLength"))
-        Me.TowerDiagonalSpacing = DBtoNullableDbl(data.Item("TowerDiagonalSpacing"))
-        Me.TowerDiagonalSpacingEx = DBtoNullableDbl(data.Item("TowerDiagonalSpacingEx"))
+        Me.TowerSectionLength = DBtoNullableDbl(data.Item("TowerSectionLength"), 6)
+        Me.TowerDiagonalSpacing = DBtoNullableDbl(data.Item("TowerDiagonalSpacing"), 6)
+        Me.TowerDiagonalSpacingEx = DBtoNullableDbl(data.Item("TowerDiagonalSpacingEx"), 6)
         Me.TowerBraceType = DBtoStr(data.Item("TowerBraceType"))
-        Me.TowerFaceBevel = DBtoNullableDbl(data.Item("TowerFaceBevel"))
-        Me.TowerTopGirtOffset = DBtoNullableDbl(data.Item("TowerTopGirtOffset"))
-        Me.TowerBotGirtOffset = DBtoNullableDbl(data.Item("TowerBotGirtOffset"))
+        Me.TowerFaceBevel = DBtoNullableDbl(data.Item("TowerFaceBevel"), 6)
+        Me.TowerTopGirtOffset = DBtoNullableDbl(data.Item("TowerTopGirtOffset"), 6)
+        Me.TowerBotGirtOffset = DBtoNullableDbl(data.Item("TowerBotGirtOffset"), 6)
         Me.TowerHasKBraceEndPanels = DBtoNullableBool(data.Item("TowerHasKBraceEndPanels"))
         Me.TowerHasHorizontals = DBtoNullableBool(data.Item("TowerHasHorizontals"))
         Me.TowerLegType = DBtoStr(data.Item("TowerLegType"))
         Me.TowerLegSize = DBtoStr(data.Item("TowerLegSize"))
-        Me.TowerLegGrade = DBtoNullableDbl(data.Item("TowerLegGrade"))
+        Me.TowerLegGrade = DBtoNullableDbl(data.Item("TowerLegGrade"), 6)
         Me.TowerLegMatlGrade = DBtoStr(data.Item("TowerLegMatlGrade"))
-        Me.TowerDiagonalGrade = DBtoNullableDbl(data.Item("TowerDiagonalGrade"))
+        Me.TowerDiagonalGrade = DBtoNullableDbl(data.Item("TowerDiagonalGrade"), 6)
         Me.TowerDiagonalMatlGrade = DBtoStr(data.Item("TowerDiagonalMatlGrade"))
-        Me.TowerInnerBracingGrade = DBtoNullableDbl(data.Item("TowerInnerBracingGrade"))
+        Me.TowerInnerBracingGrade = DBtoNullableDbl(data.Item("TowerInnerBracingGrade"), 6)
         Me.TowerInnerBracingMatlGrade = DBtoStr(data.Item("TowerInnerBracingMatlGrade"))
-        Me.TowerTopGirtGrade = DBtoNullableDbl(data.Item("TowerTopGirtGrade"))
+        Me.TowerTopGirtGrade = DBtoNullableDbl(data.Item("TowerTopGirtGrade"), 6)
         Me.TowerTopGirtMatlGrade = DBtoStr(data.Item("TowerTopGirtMatlGrade"))
-        Me.TowerBotGirtGrade = DBtoNullableDbl(data.Item("TowerBotGirtGrade"))
+        Me.TowerBotGirtGrade = DBtoNullableDbl(data.Item("TowerBotGirtGrade"), 6)
         Me.TowerBotGirtMatlGrade = DBtoStr(data.Item("TowerBotGirtMatlGrade"))
-        Me.TowerInnerGirtGrade = DBtoNullableDbl(data.Item("TowerInnerGirtGrade"))
+        Me.TowerInnerGirtGrade = DBtoNullableDbl(data.Item("TowerInnerGirtGrade"), 6)
         Me.TowerInnerGirtMatlGrade = DBtoStr(data.Item("TowerInnerGirtMatlGrade"))
-        Me.TowerLongHorizontalGrade = DBtoNullableDbl(data.Item("TowerLongHorizontalGrade"))
+        Me.TowerLongHorizontalGrade = DBtoNullableDbl(data.Item("TowerLongHorizontalGrade"), 6)
         Me.TowerLongHorizontalMatlGrade = DBtoStr(data.Item("TowerLongHorizontalMatlGrade"))
-        Me.TowerShortHorizontalGrade = DBtoNullableDbl(data.Item("TowerShortHorizontalGrade"))
+        Me.TowerShortHorizontalGrade = DBtoNullableDbl(data.Item("TowerShortHorizontalGrade"), 6)
         Me.TowerShortHorizontalMatlGrade = DBtoStr(data.Item("TowerShortHorizontalMatlGrade"))
         Me.TowerDiagonalType = DBtoStr(data.Item("TowerDiagonalType"))
         Me.TowerDiagonalSize = DBtoStr(data.Item("TowerDiagonalSize"))
@@ -8354,7 +8348,7 @@ Partial Public Class tnxTowerRecord
         Me.TowerLongHorizontalSize = DBtoStr(data.Item("TowerLongHorizontalSize"))
         Me.TowerShortHorizontalType = DBtoStr(data.Item("TowerShortHorizontalType"))
         Me.TowerShortHorizontalSize = DBtoStr(data.Item("TowerShortHorizontalSize"))
-        Me.TowerRedundantGrade = DBtoNullableDbl(data.Item("TowerRedundantGrade"))
+        Me.TowerRedundantGrade = DBtoNullableDbl(data.Item("TowerRedundantGrade"), 6)
         Me.TowerRedundantMatlGrade = DBtoStr(data.Item("TowerRedundantMatlGrade"))
         Me.TowerRedundantType = DBtoStr(data.Item("TowerRedundantType"))
         Me.TowerRedundantDiagType = DBtoStr(data.Item("TowerRedundantDiagType"))
@@ -8373,7 +8367,7 @@ Partial Public Class tnxTowerRecord
         Me.TowerRedundantDiagonalSize4 = DBtoStr(data.Item("TowerRedundantDiagonalSize4"))
         Me.TowerRedundantSubHorizontalSize = DBtoStr(data.Item("TowerRedundantSubHorizontalSize"))
         Me.TowerRedundantSubDiagonalSize = DBtoStr(data.Item("TowerRedundantSubDiagonalSize"))
-        Me.TowerSubDiagLocation = DBtoNullableDbl(data.Item("TowerSubDiagLocation"))
+        Me.TowerSubDiagLocation = DBtoNullableDbl(data.Item("TowerSubDiagLocation"), 6)
         Me.TowerRedundantVerticalSize = DBtoStr(data.Item("TowerRedundantVerticalSize"))
         Me.TowerRedundantHipSize = DBtoStr(data.Item("TowerRedundantHipSize"))
         Me.TowerRedundantHipSize2 = DBtoStr(data.Item("TowerRedundantHipSize2"))
@@ -8383,75 +8377,75 @@ Partial Public Class tnxTowerRecord
         Me.TowerRedundantHipDiagonalSize2 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize2"))
         Me.TowerRedundantHipDiagonalSize3 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize3"))
         Me.TowerRedundantHipDiagonalSize4 = DBtoStr(data.Item("TowerRedundantHipDiagonalSize4"))
-        Me.TowerSWMult = DBtoNullableDbl(data.Item("TowerSWMult"))
-        Me.TowerWPMult = DBtoNullableDbl(data.Item("TowerWPMult"))
+        Me.TowerSWMult = DBtoNullableDbl(data.Item("TowerSWMult"), 6)
+        Me.TowerWPMult = DBtoNullableDbl(data.Item("TowerWPMult"), 6)
         Me.TowerAutoCalcKSingleAngle = DBtoNullableBool(data.Item("TowerAutoCalcKSingleAngle"))
         Me.TowerAutoCalcKSolidRound = DBtoNullableBool(data.Item("TowerAutoCalcKSolidRound"))
-        Me.TowerAfGusset = DBtoNullableDbl(data.Item("TowerAfGusset"))
-        Me.TowerTfGusset = DBtoNullableDbl(data.Item("TowerTfGusset"))
-        Me.TowerGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerGussetBoltEdgeDistance"))
-        Me.TowerGussetGrade = DBtoNullableDbl(data.Item("TowerGussetGrade"))
+        Me.TowerAfGusset = DBtoNullableDbl(data.Item("TowerAfGusset"), 6)
+        Me.TowerTfGusset = DBtoNullableDbl(data.Item("TowerTfGusset"), 6)
+        Me.TowerGussetBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerGussetBoltEdgeDistance"), 6)
+        Me.TowerGussetGrade = DBtoNullableDbl(data.Item("TowerGussetGrade"), 6)
         Me.TowerGussetMatlGrade = DBtoStr(data.Item("TowerGussetMatlGrade"))
-        Me.TowerAfMult = DBtoNullableDbl(data.Item("TowerAfMult"))
-        Me.TowerArMult = DBtoNullableDbl(data.Item("TowerArMult"))
-        Me.TowerFlatIPAPole = DBtoNullableDbl(data.Item("TowerFlatIPAPole"))
-        Me.TowerRoundIPAPole = DBtoNullableDbl(data.Item("TowerRoundIPAPole"))
-        Me.TowerFlatIPALeg = DBtoNullableDbl(data.Item("TowerFlatIPALeg"))
-        Me.TowerRoundIPALeg = DBtoNullableDbl(data.Item("TowerRoundIPALeg"))
-        Me.TowerFlatIPAHorizontal = DBtoNullableDbl(data.Item("TowerFlatIPAHorizontal"))
-        Me.TowerRoundIPAHorizontal = DBtoNullableDbl(data.Item("TowerRoundIPAHorizontal"))
-        Me.TowerFlatIPADiagonal = DBtoNullableDbl(data.Item("TowerFlatIPADiagonal"))
-        Me.TowerRoundIPADiagonal = DBtoNullableDbl(data.Item("TowerRoundIPADiagonal"))
-        Me.TowerCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("TowerCSA_S37_SpeedUpFactor"))
-        Me.TowerKLegs = DBtoNullableDbl(data.Item("TowerKLegs"))
-        Me.TowerKXBracedDiags = DBtoNullableDbl(data.Item("TowerKXBracedDiags"))
-        Me.TowerKKBracedDiags = DBtoNullableDbl(data.Item("TowerKKBracedDiags"))
-        Me.TowerKZBracedDiags = DBtoNullableDbl(data.Item("TowerKZBracedDiags"))
-        Me.TowerKHorzs = DBtoNullableDbl(data.Item("TowerKHorzs"))
-        Me.TowerKSecHorzs = DBtoNullableDbl(data.Item("TowerKSecHorzs"))
-        Me.TowerKGirts = DBtoNullableDbl(data.Item("TowerKGirts"))
-        Me.TowerKInners = DBtoNullableDbl(data.Item("TowerKInners"))
-        Me.TowerKXBracedDiagsY = DBtoNullableDbl(data.Item("TowerKXBracedDiagsY"))
-        Me.TowerKKBracedDiagsY = DBtoNullableDbl(data.Item("TowerKKBracedDiagsY"))
-        Me.TowerKZBracedDiagsY = DBtoNullableDbl(data.Item("TowerKZBracedDiagsY"))
-        Me.TowerKHorzsY = DBtoNullableDbl(data.Item("TowerKHorzsY"))
-        Me.TowerKSecHorzsY = DBtoNullableDbl(data.Item("TowerKSecHorzsY"))
-        Me.TowerKGirtsY = DBtoNullableDbl(data.Item("TowerKGirtsY"))
-        Me.TowerKInnersY = DBtoNullableDbl(data.Item("TowerKInnersY"))
-        Me.TowerKRedHorz = DBtoNullableDbl(data.Item("TowerKRedHorz"))
-        Me.TowerKRedDiag = DBtoNullableDbl(data.Item("TowerKRedDiag"))
-        Me.TowerKRedSubDiag = DBtoNullableDbl(data.Item("TowerKRedSubDiag"))
-        Me.TowerKRedSubHorz = DBtoNullableDbl(data.Item("TowerKRedSubHorz"))
-        Me.TowerKRedVert = DBtoNullableDbl(data.Item("TowerKRedVert"))
-        Me.TowerKRedHip = DBtoNullableDbl(data.Item("TowerKRedHip"))
-        Me.TowerKRedHipDiag = DBtoNullableDbl(data.Item("TowerKRedHipDiag"))
-        Me.TowerKTLX = DBtoNullableDbl(data.Item("TowerKTLX"))
-        Me.TowerKTLZ = DBtoNullableDbl(data.Item("TowerKTLZ"))
-        Me.TowerKTLLeg = DBtoNullableDbl(data.Item("TowerKTLLeg"))
-        Me.TowerInnerKTLX = DBtoNullableDbl(data.Item("TowerInnerKTLX"))
-        Me.TowerInnerKTLZ = DBtoNullableDbl(data.Item("TowerInnerKTLZ"))
-        Me.TowerInnerKTLLeg = DBtoNullableDbl(data.Item("TowerInnerKTLLeg"))
+        Me.TowerAfMult = DBtoNullableDbl(data.Item("TowerAfMult"), 6)
+        Me.TowerArMult = DBtoNullableDbl(data.Item("TowerArMult"), 6)
+        Me.TowerFlatIPAPole = DBtoNullableDbl(data.Item("TowerFlatIPAPole"), 6)
+        Me.TowerRoundIPAPole = DBtoNullableDbl(data.Item("TowerRoundIPAPole"), 6)
+        Me.TowerFlatIPALeg = DBtoNullableDbl(data.Item("TowerFlatIPALeg"), 6)
+        Me.TowerRoundIPALeg = DBtoNullableDbl(data.Item("TowerRoundIPALeg"), 6)
+        Me.TowerFlatIPAHorizontal = DBtoNullableDbl(data.Item("TowerFlatIPAHorizontal"), 6)
+        Me.TowerRoundIPAHorizontal = DBtoNullableDbl(data.Item("TowerRoundIPAHorizontal"), 6)
+        Me.TowerFlatIPADiagonal = DBtoNullableDbl(data.Item("TowerFlatIPADiagonal"), 6)
+        Me.TowerRoundIPADiagonal = DBtoNullableDbl(data.Item("TowerRoundIPADiagonal"), 6)
+        Me.TowerCSA_S37_SpeedUpFactor = DBtoNullableDbl(data.Item("TowerCSA_S37_SpeedUpFactor"), 6)
+        Me.TowerKLegs = DBtoNullableDbl(data.Item("TowerKLegs"), 6)
+        Me.TowerKXBracedDiags = DBtoNullableDbl(data.Item("TowerKXBracedDiags"), 6)
+        Me.TowerKKBracedDiags = DBtoNullableDbl(data.Item("TowerKKBracedDiags"), 6)
+        Me.TowerKZBracedDiags = DBtoNullableDbl(data.Item("TowerKZBracedDiags"), 6)
+        Me.TowerKHorzs = DBtoNullableDbl(data.Item("TowerKHorzs"), 6)
+        Me.TowerKSecHorzs = DBtoNullableDbl(data.Item("TowerKSecHorzs"), 6)
+        Me.TowerKGirts = DBtoNullableDbl(data.Item("TowerKGirts"), 6)
+        Me.TowerKInners = DBtoNullableDbl(data.Item("TowerKInners"), 6)
+        Me.TowerKXBracedDiagsY = DBtoNullableDbl(data.Item("TowerKXBracedDiagsY"), 6)
+        Me.TowerKKBracedDiagsY = DBtoNullableDbl(data.Item("TowerKKBracedDiagsY"), 6)
+        Me.TowerKZBracedDiagsY = DBtoNullableDbl(data.Item("TowerKZBracedDiagsY"), 6)
+        Me.TowerKHorzsY = DBtoNullableDbl(data.Item("TowerKHorzsY"), 6)
+        Me.TowerKSecHorzsY = DBtoNullableDbl(data.Item("TowerKSecHorzsY"), 6)
+        Me.TowerKGirtsY = DBtoNullableDbl(data.Item("TowerKGirtsY"), 6)
+        Me.TowerKInnersY = DBtoNullableDbl(data.Item("TowerKInnersY"), 6)
+        Me.TowerKRedHorz = DBtoNullableDbl(data.Item("TowerKRedHorz"), 6)
+        Me.TowerKRedDiag = DBtoNullableDbl(data.Item("TowerKRedDiag"), 6)
+        Me.TowerKRedSubDiag = DBtoNullableDbl(data.Item("TowerKRedSubDiag"), 6)
+        Me.TowerKRedSubHorz = DBtoNullableDbl(data.Item("TowerKRedSubHorz"), 6)
+        Me.TowerKRedVert = DBtoNullableDbl(data.Item("TowerKRedVert"), 6)
+        Me.TowerKRedHip = DBtoNullableDbl(data.Item("TowerKRedHip"), 6)
+        Me.TowerKRedHipDiag = DBtoNullableDbl(data.Item("TowerKRedHipDiag"), 6)
+        Me.TowerKTLX = DBtoNullableDbl(data.Item("TowerKTLX"), 6)
+        Me.TowerKTLZ = DBtoNullableDbl(data.Item("TowerKTLZ"), 6)
+        Me.TowerKTLLeg = DBtoNullableDbl(data.Item("TowerKTLLeg"), 6)
+        Me.TowerInnerKTLX = DBtoNullableDbl(data.Item("TowerInnerKTLX"), 6)
+        Me.TowerInnerKTLZ = DBtoNullableDbl(data.Item("TowerInnerKTLZ"), 6)
+        Me.TowerInnerKTLLeg = DBtoNullableDbl(data.Item("TowerInnerKTLLeg"), 6)
         Me.TowerStitchBoltLocationHoriz = DBtoStr(data.Item("TowerStitchBoltLocationHoriz"))
         Me.TowerStitchBoltLocationDiag = DBtoStr(data.Item("TowerStitchBoltLocationDiag"))
         Me.TowerStitchBoltLocationRed = DBtoStr(data.Item("TowerStitchBoltLocationRed"))
-        Me.TowerStitchSpacing = DBtoNullableDbl(data.Item("TowerStitchSpacing"))
-        Me.TowerStitchSpacingDiag = DBtoNullableDbl(data.Item("TowerStitchSpacingDiag"))
-        Me.TowerStitchSpacingHorz = DBtoNullableDbl(data.Item("TowerStitchSpacingHorz"))
-        Me.TowerStitchSpacingRed = DBtoNullableDbl(data.Item("TowerStitchSpacingRed"))
-        Me.TowerLegNetWidthDeduct = DBtoNullableDbl(data.Item("TowerLegNetWidthDeduct"))
-        Me.TowerLegUFactor = DBtoNullableDbl(data.Item("TowerLegUFactor"))
-        Me.TowerDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerDiagonalNetWidthDeduct"))
-        Me.TowerTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerTopGirtNetWidthDeduct"))
-        Me.TowerBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerBotGirtNetWidthDeduct"))
-        Me.TowerInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerInnerGirtNetWidthDeduct"))
-        Me.TowerHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerHorizontalNetWidthDeduct"))
-        Me.TowerShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerShortHorizontalNetWidthDeduct"))
-        Me.TowerDiagonalUFactor = DBtoNullableDbl(data.Item("TowerDiagonalUFactor"))
-        Me.TowerTopGirtUFactor = DBtoNullableDbl(data.Item("TowerTopGirtUFactor"))
-        Me.TowerBotGirtUFactor = DBtoNullableDbl(data.Item("TowerBotGirtUFactor"))
-        Me.TowerInnerGirtUFactor = DBtoNullableDbl(data.Item("TowerInnerGirtUFactor"))
-        Me.TowerHorizontalUFactor = DBtoNullableDbl(data.Item("TowerHorizontalUFactor"))
-        Me.TowerShortHorizontalUFactor = DBtoNullableDbl(data.Item("TowerShortHorizontalUFactor"))
+        Me.TowerStitchSpacing = DBtoNullableDbl(data.Item("TowerStitchSpacing"), 6)
+        Me.TowerStitchSpacingDiag = DBtoNullableDbl(data.Item("TowerStitchSpacingDiag"), 6)
+        Me.TowerStitchSpacingHorz = DBtoNullableDbl(data.Item("TowerStitchSpacingHorz"), 6)
+        Me.TowerStitchSpacingRed = DBtoNullableDbl(data.Item("TowerStitchSpacingRed"), 6)
+        Me.TowerLegNetWidthDeduct = DBtoNullableDbl(data.Item("TowerLegNetWidthDeduct"), 6)
+        Me.TowerLegUFactor = DBtoNullableDbl(data.Item("TowerLegUFactor"), 6)
+        Me.TowerDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerDiagonalNetWidthDeduct"), 6)
+        Me.TowerTopGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerTopGirtNetWidthDeduct"), 6)
+        Me.TowerBotGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerBotGirtNetWidthDeduct"), 6)
+        Me.TowerInnerGirtNetWidthDeduct = DBtoNullableDbl(data.Item("TowerInnerGirtNetWidthDeduct"), 6)
+        Me.TowerHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerHorizontalNetWidthDeduct"), 6)
+        Me.TowerShortHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerShortHorizontalNetWidthDeduct"), 6)
+        Me.TowerDiagonalUFactor = DBtoNullableDbl(data.Item("TowerDiagonalUFactor"), 6)
+        Me.TowerTopGirtUFactor = DBtoNullableDbl(data.Item("TowerTopGirtUFactor"), 6)
+        Me.TowerBotGirtUFactor = DBtoNullableDbl(data.Item("TowerBotGirtUFactor"), 6)
+        Me.TowerInnerGirtUFactor = DBtoNullableDbl(data.Item("TowerInnerGirtUFactor"), 6)
+        Me.TowerHorizontalUFactor = DBtoNullableDbl(data.Item("TowerHorizontalUFactor"), 6)
+        Me.TowerShortHorizontalUFactor = DBtoNullableDbl(data.Item("TowerShortHorizontalUFactor"), 6)
         Me.TowerLegConnType = DBtoStr(data.Item("TowerLegConnType"))
         Me.TowerLegNumBolts = DBtoNullableInt(data.Item("TowerLegNumBolts"))
         Me.TowerDiagonalNumBolts = DBtoNullableInt(data.Item("TowerDiagonalNumBolts"))
@@ -8461,81 +8455,81 @@ Partial Public Class tnxTowerRecord
         Me.TowerHorizontalNumBolts = DBtoNullableInt(data.Item("TowerHorizontalNumBolts"))
         Me.TowerShortHorizontalNumBolts = DBtoNullableInt(data.Item("TowerShortHorizontalNumBolts"))
         Me.TowerLegBoltGrade = DBtoStr(data.Item("TowerLegBoltGrade"))
-        Me.TowerLegBoltSize = DBtoNullableDbl(data.Item("TowerLegBoltSize"))
+        Me.TowerLegBoltSize = DBtoNullableDbl(data.Item("TowerLegBoltSize"), 6)
         Me.TowerDiagonalBoltGrade = DBtoStr(data.Item("TowerDiagonalBoltGrade"))
-        Me.TowerDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerDiagonalBoltSize"))
+        Me.TowerDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerDiagonalBoltSize"), 6)
         Me.TowerTopGirtBoltGrade = DBtoStr(data.Item("TowerTopGirtBoltGrade"))
-        Me.TowerTopGirtBoltSize = DBtoNullableDbl(data.Item("TowerTopGirtBoltSize"))
+        Me.TowerTopGirtBoltSize = DBtoNullableDbl(data.Item("TowerTopGirtBoltSize"), 6)
         Me.TowerBotGirtBoltGrade = DBtoStr(data.Item("TowerBotGirtBoltGrade"))
-        Me.TowerBotGirtBoltSize = DBtoNullableDbl(data.Item("TowerBotGirtBoltSize"))
+        Me.TowerBotGirtBoltSize = DBtoNullableDbl(data.Item("TowerBotGirtBoltSize"), 6)
         Me.TowerInnerGirtBoltGrade = DBtoStr(data.Item("TowerInnerGirtBoltGrade"))
-        Me.TowerInnerGirtBoltSize = DBtoNullableDbl(data.Item("TowerInnerGirtBoltSize"))
+        Me.TowerInnerGirtBoltSize = DBtoNullableDbl(data.Item("TowerInnerGirtBoltSize"), 6)
         Me.TowerHorizontalBoltGrade = DBtoStr(data.Item("TowerHorizontalBoltGrade"))
-        Me.TowerHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerHorizontalBoltSize"))
+        Me.TowerHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerHorizontalBoltSize"), 6)
         Me.TowerShortHorizontalBoltGrade = DBtoStr(data.Item("TowerShortHorizontalBoltGrade"))
-        Me.TowerShortHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltSize"))
-        Me.TowerLegBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerLegBoltEdgeDistance"))
-        Me.TowerDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerDiagonalBoltEdgeDistance"))
-        Me.TowerTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerTopGirtBoltEdgeDistance"))
-        Me.TowerBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerBotGirtBoltEdgeDistance"))
-        Me.TowerInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerInnerGirtBoltEdgeDistance"))
-        Me.TowerHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerHorizontalBoltEdgeDistance"))
-        Me.TowerShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltEdgeDistance"))
-        Me.TowerDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerDiagonalGageG1Distance"))
-        Me.TowerTopGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerTopGirtGageG1Distance"))
-        Me.TowerBotGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerBotGirtGageG1Distance"))
-        Me.TowerInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerInnerGirtGageG1Distance"))
-        Me.TowerHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerHorizontalGageG1Distance"))
-        Me.TowerShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerShortHorizontalGageG1Distance"))
+        Me.TowerShortHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltSize"), 6)
+        Me.TowerLegBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerLegBoltEdgeDistance"), 6)
+        Me.TowerDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerDiagonalBoltEdgeDistance"), 6)
+        Me.TowerTopGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerTopGirtBoltEdgeDistance"), 6)
+        Me.TowerBotGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerBotGirtBoltEdgeDistance"), 6)
+        Me.TowerInnerGirtBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerInnerGirtBoltEdgeDistance"), 6)
+        Me.TowerHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerHorizontalBoltEdgeDistance"), 6)
+        Me.TowerShortHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerShortHorizontalBoltEdgeDistance"), 6)
+        Me.TowerDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerDiagonalGageG1Distance"), 6)
+        Me.TowerTopGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerTopGirtGageG1Distance"), 6)
+        Me.TowerBotGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerBotGirtGageG1Distance"), 6)
+        Me.TowerInnerGirtGageG1Distance = DBtoNullableDbl(data.Item("TowerInnerGirtGageG1Distance"), 6)
+        Me.TowerHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerHorizontalGageG1Distance"), 6)
+        Me.TowerShortHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerShortHorizontalGageG1Distance"), 6)
         Me.TowerRedundantHorizontalBoltGrade = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade"))
-        Me.TowerRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize"))
+        Me.TowerRedundantHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize"), 6)
         Me.TowerRedundantHorizontalNumBolts = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts"))
-        Me.TowerRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance"))
-        Me.TowerRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance"))
-        Me.TowerRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct"))
-        Me.TowerRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance"), 6)
+        Me.TowerRedundantHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance"), 6)
+        Me.TowerRedundantHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct"), 6)
+        Me.TowerRedundantHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor"), 6)
         Me.TowerRedundantDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade"))
-        Me.TowerRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize"))
+        Me.TowerRedundantDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize"), 6)
         Me.TowerRedundantDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts"))
-        Me.TowerRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance"))
-        Me.TowerRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct"))
-        Me.TowerRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance"), 6)
+        Me.TowerRedundantDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance"), 6)
+        Me.TowerRedundantDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct"), 6)
+        Me.TowerRedundantDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor"), 6)
         Me.TowerRedundantSubDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantSubDiagonalBoltGrade"))
-        Me.TowerRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltSize"))
+        Me.TowerRedundantSubDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltSize"), 6)
         Me.TowerRedundantSubDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantSubDiagonalNumBolts"))
-        Me.TowerRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalGageG1Distance"))
-        Me.TowerRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalNetWidthDeduct"))
-        Me.TowerRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalUFactor"))
+        Me.TowerRedundantSubDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalBoltEdgeDistance"), 6)
+        Me.TowerRedundantSubDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalGageG1Distance"), 6)
+        Me.TowerRedundantSubDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalNetWidthDeduct"), 6)
+        Me.TowerRedundantSubDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalUFactor"), 6)
         Me.TowerRedundantSubHorizontalBoltGrade = DBtoStr(data.Item("TowerRedundantSubHorizontalBoltGrade"))
-        Me.TowerRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltSize"))
+        Me.TowerRedundantSubHorizontalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltSize"), 6)
         Me.TowerRedundantSubHorizontalNumBolts = DBtoNullableInt(data.Item("TowerRedundantSubHorizontalNumBolts"))
-        Me.TowerRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltEdgeDistance"))
-        Me.TowerRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalGageG1Distance"))
-        Me.TowerRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalNetWidthDeduct"))
-        Me.TowerRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalUFactor"))
+        Me.TowerRedundantSubHorizontalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalBoltEdgeDistance"), 6)
+        Me.TowerRedundantSubHorizontalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalGageG1Distance"), 6)
+        Me.TowerRedundantSubHorizontalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalNetWidthDeduct"), 6)
+        Me.TowerRedundantSubHorizontalUFactor = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalUFactor"), 6)
         Me.TowerRedundantVerticalBoltGrade = DBtoStr(data.Item("TowerRedundantVerticalBoltGrade"))
-        Me.TowerRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltSize"))
+        Me.TowerRedundantVerticalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltSize"), 6)
         Me.TowerRedundantVerticalNumBolts = DBtoNullableInt(data.Item("TowerRedundantVerticalNumBolts"))
-        Me.TowerRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltEdgeDistance"))
-        Me.TowerRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantVerticalGageG1Distance"))
-        Me.TowerRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantVerticalNetWidthDeduct"))
-        Me.TowerRedundantVerticalUFactor = DBtoNullableDbl(data.Item("TowerRedundantVerticalUFactor"))
+        Me.TowerRedundantVerticalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantVerticalBoltEdgeDistance"), 6)
+        Me.TowerRedundantVerticalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantVerticalGageG1Distance"), 6)
+        Me.TowerRedundantVerticalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantVerticalNetWidthDeduct"), 6)
+        Me.TowerRedundantVerticalUFactor = DBtoNullableDbl(data.Item("TowerRedundantVerticalUFactor"), 6)
         Me.TowerRedundantHipBoltGrade = DBtoStr(data.Item("TowerRedundantHipBoltGrade"))
-        Me.TowerRedundantHipBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize"))
+        Me.TowerRedundantHipBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize"), 6)
         Me.TowerRedundantHipNumBolts = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts"))
-        Me.TowerRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance"))
-        Me.TowerRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance"))
-        Me.TowerRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct"))
-        Me.TowerRedundantHipUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor"))
+        Me.TowerRedundantHipBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance"), 6)
+        Me.TowerRedundantHipGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance"), 6)
+        Me.TowerRedundantHipNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct"), 6)
+        Me.TowerRedundantHipUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor"), 6)
         Me.TowerRedundantHipDiagonalBoltGrade = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade"))
-        Me.TowerRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize"))
+        Me.TowerRedundantHipDiagonalBoltSize = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize"), 6)
         Me.TowerRedundantHipDiagonalNumBolts = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts"))
-        Me.TowerRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance"))
-        Me.TowerRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance"))
-        Me.TowerRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct"))
-        Me.TowerRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance"), 6)
+        Me.TowerRedundantHipDiagonalGageG1Distance = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance"), 6)
+        Me.TowerRedundantHipDiagonalNetWidthDeduct = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct"), 6)
+        Me.TowerRedundantHipDiagonalUFactor = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor"), 6)
         Me.TowerDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerDiagonalOutOfPlaneRestraint"))
         Me.TowerTopGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerTopGirtOutOfPlaneRestraint"))
         Me.TowerBottomGirtOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerBottomGirtOutOfPlaneRestraint"))
@@ -8543,14 +8537,14 @@ Partial Public Class tnxTowerRecord
         Me.TowerHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerHorizontalOutOfPlaneRestraint"))
         Me.TowerSecondaryHorizontalOutOfPlaneRestraint = DBtoNullableBool(data.Item("TowerSecondaryHorizontalOutOfPlaneRestraint"))
         Me.TowerUniqueFlag = DBtoNullableInt(data.Item("TowerUniqueFlag"))
-        Me.TowerDiagOffsetNEY = DBtoNullableDbl(data.Item("TowerDiagOffsetNEY"))
-        Me.TowerDiagOffsetNEX = DBtoNullableDbl(data.Item("TowerDiagOffsetNEX"))
-        Me.TowerDiagOffsetPEY = DBtoNullableDbl(data.Item("TowerDiagOffsetPEY"))
-        Me.TowerDiagOffsetPEX = DBtoNullableDbl(data.Item("TowerDiagOffsetPEX"))
-        Me.TowerKbraceOffsetNEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEY"))
-        Me.TowerKbraceOffsetNEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEX"))
-        Me.TowerKbraceOffsetPEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEY"))
-        Me.TowerKbraceOffsetPEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEX"))
+        Me.TowerDiagOffsetNEY = DBtoNullableDbl(data.Item("TowerDiagOffsetNEY"), 6)
+        Me.TowerDiagOffsetNEX = DBtoNullableDbl(data.Item("TowerDiagOffsetNEX"), 6)
+        Me.TowerDiagOffsetPEY = DBtoNullableDbl(data.Item("TowerDiagOffsetPEY"), 6)
+        Me.TowerDiagOffsetPEX = DBtoNullableDbl(data.Item("TowerDiagOffsetPEX"), 6)
+        Me.TowerKbraceOffsetNEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEY"), 6)
+        Me.TowerKbraceOffsetNEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEX"), 6)
+        Me.TowerKbraceOffsetPEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEY"), 6)
+        Me.TowerKbraceOffsetPEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEX"), 6)
 
     End Sub
 #End Region
@@ -10078,13 +10072,22 @@ Partial Public Class tnxTowerRecord
 
 End Class
 
+<DataContract(), KnownType(GetType(tnxGuyRecord))>
 Partial Public Class tnxGuyRecord
     Inherits tnxGeometryRec
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Guy Level " & Me.Rec.ToString
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.guys"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Guy Level " & Me.Rec.ToString
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.guys"
+        End Get
+    End Property
 
     Public Overrides Function SQLInsertValues() As String
         Return SQLInsertValues(Nothing)
@@ -10462,7 +10465,7 @@ Partial Public Class tnxGuyRecord
     Private _GuyInsulatorWt As Double?
 
     '<Category("TNX Guy Record"), Description(""), DisplayName("Guyrec")>
-    'Public Property Rec() As Integer?
+    ' <DataMember()> Public Property Rec() As Integer?
     '    Get
     '        Return Me._GuyRec
     '    End Get
@@ -10471,7 +10474,7 @@ Partial Public Class tnxGuyRecord
     '    End Set
     'End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyheight")>
-    Public Property GuyHeight() As Double?
+    <DataMember()> Public Property GuyHeight() As Double?
         Get
             Return Me._GuyHeight
         End Get
@@ -10480,7 +10483,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalcksingleangle")>
-    Public Property GuyAutoCalcKSingleAngle() As Boolean?
+    <DataMember()> Public Property GuyAutoCalcKSingleAngle() As Boolean?
         Get
             Return Me._GuyAutoCalcKSingleAngle
         End Get
@@ -10489,7 +10492,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalcksolidround")>
-    Public Property GuyAutoCalcKSolidRound() As Boolean?
+    <DataMember()> Public Property GuyAutoCalcKSolidRound() As Boolean?
         Get
             Return Me._GuyAutoCalcKSolidRound
         End Get
@@ -10498,7 +10501,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guymount")>
-    Public Property GuyMount() As String
+    <DataMember()> Public Property GuyMount() As String
         Get
             Return Me._GuyMount
         End Get
@@ -10507,7 +10510,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmstyle")>
-    Public Property TorqueArmStyle() As String
+    <DataMember()> Public Property TorqueArmStyle() As String
         Get
             Return Me._TorqueArmStyle
         End Get
@@ -10516,7 +10519,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius")>
-    Public Property GuyRadius() As Double?
+    <DataMember()> Public Property GuyRadius() As Double?
         Get
             Return Me._GuyRadius
         End Get
@@ -10525,7 +10528,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius120")>
-    Public Property GuyRadius120() As Double?
+    <DataMember()> Public Property GuyRadius120() As Double?
         Get
             Return Me._GuyRadius120
         End Get
@@ -10534,7 +10537,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius240")>
-    Public Property GuyRadius240() As Double?
+    <DataMember()> Public Property GuyRadius240() As Double?
         Get
             Return Me._GuyRadius240
         End Get
@@ -10543,7 +10546,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyradius360")>
-    Public Property GuyRadius360() As Double?
+    <DataMember()> Public Property GuyRadius360() As Double?
         Get
             Return Me._GuyRadius360
         End Get
@@ -10552,7 +10555,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmradius")>
-    Public Property TorqueArmRadius() As Double?
+    <DataMember()> Public Property TorqueArmRadius() As Double?
         Get
             Return Me._TorqueArmRadius
         End Get
@@ -10561,7 +10564,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmlegangle")>
-    Public Property TorqueArmLegAngle() As Double?
+    <DataMember()> Public Property TorqueArmLegAngle() As Double?
         Get
             Return Me._TorqueArmLegAngle
         End Get
@@ -10570,7 +10573,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth0Adjustment")>
-    Public Property Azimuth0Adjustment() As Double?
+    <DataMember()> Public Property Azimuth0Adjustment() As Double?
         Get
             Return Me._Azimuth0Adjustment
         End Get
@@ -10579,7 +10582,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth120Adjustment")>
-    Public Property Azimuth120Adjustment() As Double?
+    <DataMember()> Public Property Azimuth120Adjustment() As Double?
         Get
             Return Me._Azimuth120Adjustment
         End Get
@@ -10588,7 +10591,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth240Adjustment")>
-    Public Property Azimuth240Adjustment() As Double?
+    <DataMember()> Public Property Azimuth240Adjustment() As Double?
         Get
             Return Me._Azimuth240Adjustment
         End Get
@@ -10597,7 +10600,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Azimuth360Adjustment")>
-    Public Property Azimuth360Adjustment() As Double?
+    <DataMember()> Public Property Azimuth360Adjustment() As Double?
         Get
             Return Me._Azimuth360Adjustment
         End Get
@@ -10606,7 +10609,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor0Elevation")>
-    Public Property Anchor0Elevation() As Double?
+    <DataMember()> Public Property Anchor0Elevation() As Double?
         Get
             Return Me._Anchor0Elevation
         End Get
@@ -10615,7 +10618,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor120Elevation")>
-    Public Property Anchor120Elevation() As Double?
+    <DataMember()> Public Property Anchor120Elevation() As Double?
         Get
             Return Me._Anchor120Elevation
         End Get
@@ -10624,7 +10627,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor240Elevation")>
-    Public Property Anchor240Elevation() As Double?
+    <DataMember()> Public Property Anchor240Elevation() As Double?
         Get
             Return Me._Anchor240Elevation
         End Get
@@ -10633,7 +10636,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Anchor360Elevation")>
-    Public Property Anchor360Elevation() As Double?
+    <DataMember()> Public Property Anchor360Elevation() As Double?
         Get
             Return Me._Anchor360Elevation
         End Get
@@ -10642,7 +10645,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guysize")>
-    Public Property GuySize() As String
+    <DataMember()> Public Property GuySize() As String
         Get
             Return Me._GuySize
         End Get
@@ -10651,7 +10654,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy120Size")>
-    Public Property Guy120Size() As String
+    <DataMember()> Public Property Guy120Size() As String
         Get
             Return Me._Guy120Size
         End Get
@@ -10660,7 +10663,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy240Size")>
-    Public Property Guy240Size() As String
+    <DataMember()> Public Property Guy240Size() As String
         Get
             Return Me._Guy240Size
         End Get
@@ -10669,7 +10672,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guy360Size")>
-    Public Property Guy360Size() As String
+    <DataMember()> Public Property Guy360Size() As String
         Get
             Return Me._Guy360Size
         End Get
@@ -10678,7 +10681,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guygrade")>
-    Public Property GuyGrade() As String
+    <DataMember()> Public Property GuyGrade() As String
         Get
             Return Me._GuyGrade
         End Get
@@ -10687,7 +10690,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmsize")>
-    Public Property TorqueArmSize() As String
+    <DataMember()> Public Property TorqueArmSize() As String
         Get
             Return Me._TorqueArmSize
         End Get
@@ -10696,7 +10699,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmsizebot")>
-    Public Property TorqueArmSizeBot() As String
+    <DataMember()> Public Property TorqueArmSizeBot() As String
         Get
             Return Me._TorqueArmSizeBot
         End Get
@@ -10705,7 +10708,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmtype")>
-    Public Property TorqueArmType() As String
+    <DataMember()> Public Property TorqueArmType() As String
         Get
             Return Me._TorqueArmType
         End Get
@@ -10714,7 +10717,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmgrade")>
-    Public Property TorqueArmGrade() As Double?
+    <DataMember()> Public Property TorqueArmGrade() As Double?
         Get
             Return Me._TorqueArmGrade
         End Get
@@ -10723,7 +10726,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmmatlgrade")>
-    Public Property TorqueArmMatlGrade() As String
+    <DataMember()> Public Property TorqueArmMatlGrade() As String
         Get
             Return Me._TorqueArmMatlGrade
         End Get
@@ -10732,7 +10735,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmkfactor")>
-    Public Property TorqueArmKFactor() As Double?
+    <DataMember()> Public Property TorqueArmKFactor() As Double?
         Get
             Return Me._TorqueArmKFactor
         End Get
@@ -10741,7 +10744,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Torquearmkfactory")>
-    Public Property TorqueArmKFactorY() As Double?
+    <DataMember()> Public Property TorqueArmKFactorY() As Double?
         Get
             Return Me._TorqueArmKFactorY
         End Get
@@ -10750,7 +10753,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffkfactorx")>
-    Public Property GuyPullOffKFactorX() As Double?
+    <DataMember()> Public Property GuyPullOffKFactorX() As Double?
         Get
             Return Me._GuyPullOffKFactorX
         End Get
@@ -10759,7 +10762,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffkfactory")>
-    Public Property GuyPullOffKFactorY() As Double?
+    <DataMember()> Public Property GuyPullOffKFactorY() As Double?
         Get
             Return Me._GuyPullOffKFactorY
         End Get
@@ -10768,7 +10771,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagkfactorx")>
-    Public Property GuyDiagKFactorX() As Double?
+    <DataMember()> Public Property GuyDiagKFactorX() As Double?
         Get
             Return Me._GuyDiagKFactorX
         End Get
@@ -10777,7 +10780,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagkfactory")>
-    Public Property GuyDiagKFactorY() As Double?
+    <DataMember()> Public Property GuyDiagKFactorY() As Double?
         Get
             Return Me._GuyDiagKFactorY
         End Get
@@ -10786,7 +10789,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyautocalc")>
-    Public Property GuyAutoCalc() As Boolean?
+    <DataMember()> Public Property GuyAutoCalc() As Boolean?
         Get
             Return Me._GuyAutoCalc
         End Get
@@ -10795,7 +10798,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyallguyssame")>
-    Public Property GuyAllGuysSame() As Boolean?
+    <DataMember()> Public Property GuyAllGuysSame() As Boolean?
         Get
             Return Me._GuyAllGuysSame
         End Get
@@ -10804,7 +10807,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyallguysanchorsame")>
-    Public Property GuyAllGuysAnchorSame() As Boolean?
+    <DataMember()> Public Property GuyAllGuysAnchorSame() As Boolean?
         Get
             Return Me._GuyAllGuysAnchorSame
         End Get
@@ -10813,7 +10816,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyisstrapping")>
-    Public Property GuyIsStrapping() As Boolean?
+    <DataMember()> Public Property GuyIsStrapping() As Boolean?
         Get
             Return Me._GuyIsStrapping
         End Get
@@ -10822,7 +10825,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffsize")>
-    Public Property GuyPullOffSize() As String
+    <DataMember()> Public Property GuyPullOffSize() As String
         Get
             Return Me._GuyPullOffSize
         End Get
@@ -10831,7 +10834,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffsizebot")>
-    Public Property GuyPullOffSizeBot() As String
+    <DataMember()> Public Property GuyPullOffSizeBot() As String
         Get
             Return Me._GuyPullOffSizeBot
         End Get
@@ -10840,7 +10843,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypullofftype")>
-    Public Property GuyPullOffType() As String
+    <DataMember()> Public Property GuyPullOffType() As String
         Get
             Return Me._GuyPullOffType
         End Get
@@ -10849,7 +10852,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffgrade")>
-    Public Property GuyPullOffGrade() As Double?
+    <DataMember()> Public Property GuyPullOffGrade() As Double?
         Get
             Return Me._GuyPullOffGrade
         End Get
@@ -10858,7 +10861,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffmatlgrade")>
-    Public Property GuyPullOffMatlGrade() As String
+    <DataMember()> Public Property GuyPullOffMatlGrade() As String
         Get
             Return Me._GuyPullOffMatlGrade
         End Get
@@ -10867,7 +10870,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyupperdiagsize")>
-    Public Property GuyUpperDiagSize() As String
+    <DataMember()> Public Property GuyUpperDiagSize() As String
         Get
             Return Me._GuyUpperDiagSize
         End Get
@@ -10876,7 +10879,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guylowerdiagsize")>
-    Public Property GuyLowerDiagSize() As String
+    <DataMember()> Public Property GuyLowerDiagSize() As String
         Get
             Return Me._GuyLowerDiagSize
         End Get
@@ -10885,7 +10888,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagtype")>
-    Public Property GuyDiagType() As String
+    <DataMember()> Public Property GuyDiagType() As String
         Get
             Return Me._GuyDiagType
         End Get
@@ -10894,7 +10897,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiaggrade")>
-    Public Property GuyDiagGrade() As Double?
+    <DataMember()> Public Property GuyDiagGrade() As Double?
         Get
             Return Me._GuyDiagGrade
         End Get
@@ -10903,7 +10906,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagmatlgrade")>
-    Public Property GuyDiagMatlGrade() As String
+    <DataMember()> Public Property GuyDiagMatlGrade() As String
         Get
             Return Me._GuyDiagMatlGrade
         End Get
@@ -10912,7 +10915,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagnetwidthdeduct")>
-    Public Property GuyDiagNetWidthDeduct() As Double?
+    <DataMember()> Public Property GuyDiagNetWidthDeduct() As Double?
         Get
             Return Me._GuyDiagNetWidthDeduct
         End Get
@@ -10921,7 +10924,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagufactor")>
-    Public Property GuyDiagUFactor() As Double?
+    <DataMember()> Public Property GuyDiagUFactor() As Double?
         Get
             Return Me._GuyDiagUFactor
         End Get
@@ -10930,7 +10933,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagnumbolts")>
-    Public Property GuyDiagNumBolts() As Integer?
+    <DataMember()> Public Property GuyDiagNumBolts() As Integer?
         Get
             Return Me._GuyDiagNumBolts
         End Get
@@ -10939,7 +10942,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagonaloutofplanerestraint")>
-    Public Property GuyDiagonalOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property GuyDiagonalOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._GuyDiagonalOutOfPlaneRestraint
         End Get
@@ -10948,7 +10951,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltgrade")>
-    Public Property GuyDiagBoltGrade() As String
+    <DataMember()> Public Property GuyDiagBoltGrade() As String
         Get
             Return Me._GuyDiagBoltGrade
         End Get
@@ -10957,7 +10960,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltsize")>
-    Public Property GuyDiagBoltSize() As Double?
+    <DataMember()> Public Property GuyDiagBoltSize() As Double?
         Get
             Return Me._GuyDiagBoltSize
         End Get
@@ -10966,7 +10969,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltedgedistance")>
-    Public Property GuyDiagBoltEdgeDistance() As Double?
+    <DataMember()> Public Property GuyDiagBoltEdgeDistance() As Double?
         Get
             Return Me._GuyDiagBoltEdgeDistance
         End Get
@@ -10975,7 +10978,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guydiagboltgagedistance")>
-    Public Property GuyDiagBoltGageDistance() As Double?
+    <DataMember()> Public Property GuyDiagBoltGageDistance() As Double?
         Get
             Return Me._GuyDiagBoltGageDistance
         End Get
@@ -10984,7 +10987,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffnetwidthdeduct")>
-    Public Property GuyPullOffNetWidthDeduct() As Double?
+    <DataMember()> Public Property GuyPullOffNetWidthDeduct() As Double?
         Get
             Return Me._GuyPullOffNetWidthDeduct
         End Get
@@ -10993,7 +10996,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffufactor")>
-    Public Property GuyPullOffUFactor() As Double?
+    <DataMember()> Public Property GuyPullOffUFactor() As Double?
         Get
             Return Me._GuyPullOffUFactor
         End Get
@@ -11002,7 +11005,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffnumbolts")>
-    Public Property GuyPullOffNumBolts() As Integer?
+    <DataMember()> Public Property GuyPullOffNumBolts() As Integer?
         Get
             Return Me._GuyPullOffNumBolts
         End Get
@@ -11011,7 +11014,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffoutofplanerestraint")>
-    Public Property GuyPullOffOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property GuyPullOffOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._GuyPullOffOutOfPlaneRestraint
         End Get
@@ -11020,7 +11023,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltgrade")>
-    Public Property GuyPullOffBoltGrade() As String
+    <DataMember()> Public Property GuyPullOffBoltGrade() As String
         Get
             Return Me._GuyPullOffBoltGrade
         End Get
@@ -11029,7 +11032,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltsize")>
-    Public Property GuyPullOffBoltSize() As Double?
+    <DataMember()> Public Property GuyPullOffBoltSize() As Double?
         Get
             Return Me._GuyPullOffBoltSize
         End Get
@@ -11038,7 +11041,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltedgedistance")>
-    Public Property GuyPullOffBoltEdgeDistance() As Double?
+    <DataMember()> Public Property GuyPullOffBoltEdgeDistance() As Double?
         Get
             Return Me._GuyPullOffBoltEdgeDistance
         End Get
@@ -11047,7 +11050,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypulloffboltgagedistance")>
-    Public Property GuyPullOffBoltGageDistance() As Double?
+    <DataMember()> Public Property GuyPullOffBoltGageDistance() As Double?
         Get
             Return Me._GuyPullOffBoltGageDistance
         End Get
@@ -11056,7 +11059,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmnetwidthdeduct")>
-    Public Property GuyTorqueArmNetWidthDeduct() As Double?
+    <DataMember()> Public Property GuyTorqueArmNetWidthDeduct() As Double?
         Get
             Return Me._GuyTorqueArmNetWidthDeduct
         End Get
@@ -11065,7 +11068,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmufactor")>
-    Public Property GuyTorqueArmUFactor() As Double?
+    <DataMember()> Public Property GuyTorqueArmUFactor() As Double?
         Get
             Return Me._GuyTorqueArmUFactor
         End Get
@@ -11074,7 +11077,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmnumbolts")>
-    Public Property GuyTorqueArmNumBolts() As Integer?
+    <DataMember()> Public Property GuyTorqueArmNumBolts() As Integer?
         Get
             Return Me._GuyTorqueArmNumBolts
         End Get
@@ -11083,7 +11086,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmoutofplanerestraint")>
-    Public Property GuyTorqueArmOutOfPlaneRestraint() As Boolean?
+    <DataMember()> Public Property GuyTorqueArmOutOfPlaneRestraint() As Boolean?
         Get
             Return Me._GuyTorqueArmOutOfPlaneRestraint
         End Get
@@ -11092,7 +11095,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltgrade")>
-    Public Property GuyTorqueArmBoltGrade() As String
+    <DataMember()> Public Property GuyTorqueArmBoltGrade() As String
         Get
             Return Me._GuyTorqueArmBoltGrade
         End Get
@@ -11101,7 +11104,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltsize")>
-    Public Property GuyTorqueArmBoltSize() As Double?
+    <DataMember()> Public Property GuyTorqueArmBoltSize() As Double?
         Get
             Return Me._GuyTorqueArmBoltSize
         End Get
@@ -11110,7 +11113,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltedgedistance")>
-    Public Property GuyTorqueArmBoltEdgeDistance() As Double?
+    <DataMember()> Public Property GuyTorqueArmBoltEdgeDistance() As Double?
         Get
             Return Me._GuyTorqueArmBoltEdgeDistance
         End Get
@@ -11119,7 +11122,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guytorquearmboltgagedistance")>
-    Public Property GuyTorqueArmBoltGageDistance() As Double?
+    <DataMember()> Public Property GuyTorqueArmBoltGageDistance() As Double?
         Get
             Return Me._GuyTorqueArmBoltGageDistance
         End Get
@@ -11128,7 +11131,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension")>
-    Public Property GuyPerCentTension() As Double?
+    <DataMember()> Public Property GuyPerCentTension() As Double?
         Get
             Return Me._GuyPerCentTension
         End Get
@@ -11137,7 +11140,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension120")>
-    Public Property GuyPerCentTension120() As Double?
+    <DataMember()> Public Property GuyPerCentTension120() As Double?
         Get
             Return Me._GuyPerCentTension120
         End Get
@@ -11146,7 +11149,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension240")>
-    Public Property GuyPerCentTension240() As Double?
+    <DataMember()> Public Property GuyPerCentTension240() As Double?
         Get
             Return Me._GuyPerCentTension240
         End Get
@@ -11155,7 +11158,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guypercenttension360")>
-    Public Property GuyPerCentTension360() As Double?
+    <DataMember()> Public Property GuyPerCentTension360() As Double?
         Get
             Return Me._GuyPerCentTension360
         End Get
@@ -11164,7 +11167,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor")>
-    Public Property GuyEffFactor() As Double?
+    <DataMember()> Public Property GuyEffFactor() As Double?
         Get
             Return Me._GuyEffFactor
         End Get
@@ -11173,7 +11176,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor120")>
-    Public Property GuyEffFactor120() As Double?
+    <DataMember()> Public Property GuyEffFactor120() As Double?
         Get
             Return Me._GuyEffFactor120
         End Get
@@ -11182,7 +11185,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor240")>
-    Public Property GuyEffFactor240() As Double?
+    <DataMember()> Public Property GuyEffFactor240() As Double?
         Get
             Return Me._GuyEffFactor240
         End Get
@@ -11191,7 +11194,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyefffactor360")>
-    Public Property GuyEffFactor360() As Double?
+    <DataMember()> Public Property GuyEffFactor360() As Double?
         Get
             Return Me._GuyEffFactor360
         End Get
@@ -11200,7 +11203,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guynuminsulators")>
-    Public Property GuyNumInsulators() As Integer?
+    <DataMember()> Public Property GuyNumInsulators() As Integer?
         Get
             Return Me._GuyNumInsulators
         End Get
@@ -11209,7 +11212,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatorlength")>
-    Public Property GuyInsulatorLength() As Double?
+    <DataMember()> Public Property GuyInsulatorLength() As Double?
         Get
             Return Me._GuyInsulatorLength
         End Get
@@ -11218,7 +11221,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatordia")>
-    Public Property GuyInsulatorDia() As Double?
+    <DataMember()> Public Property GuyInsulatorDia() As Double?
         Get
             Return Me._GuyInsulatorDia
         End Get
@@ -11227,7 +11230,7 @@ Partial Public Class tnxGuyRecord
         End Set
     End Property
     <Category("TNX Guy Record"), Description(""), DisplayName("Guyinsulatorwt")>
-    Public Property GuyInsulatorWt() As Double?
+    <DataMember()> Public Property GuyInsulatorWt() As Double?
         Get
             Return Me._GuyInsulatorWt
         End Get
@@ -11248,25 +11251,25 @@ Partial Public Class tnxGuyRecord
 
         Me.ID = DBtoNullableInt(data.Item("ID"))
         Me.Rec = DBtoNullableInt(data.Item("GuyRec"))
-        Me.GuyHeight = DBtoNullableDbl(data.Item("GuyHeight"))
+        Me.GuyHeight = DBtoNullableDbl(data.Item("GuyHeight"), 6)
         Me.GuyAutoCalcKSingleAngle = DBtoNullableBool(data.Item("GuyAutoCalcKSingleAngle"))
         Me.GuyAutoCalcKSolidRound = DBtoNullableBool(data.Item("GuyAutoCalcKSolidRound"))
         Me.GuyMount = DBtoStr(data.Item("GuyMount"))
         Me.TorqueArmStyle = DBtoStr(data.Item("TorqueArmStyle"))
-        Me.GuyRadius = DBtoNullableDbl(data.Item("GuyRadius"))
-        Me.GuyRadius120 = DBtoNullableDbl(data.Item("GuyRadius120"))
-        Me.GuyRadius240 = DBtoNullableDbl(data.Item("GuyRadius240"))
-        Me.GuyRadius360 = DBtoNullableDbl(data.Item("GuyRadius360"))
-        Me.TorqueArmRadius = DBtoNullableDbl(data.Item("TorqueArmRadius"))
-        Me.TorqueArmLegAngle = DBtoNullableDbl(data.Item("TorqueArmLegAngle"))
-        Me.Azimuth0Adjustment = DBtoNullableDbl(data.Item("Azimuth0Adjustment"))
-        Me.Azimuth120Adjustment = DBtoNullableDbl(data.Item("Azimuth120Adjustment"))
-        Me.Azimuth240Adjustment = DBtoNullableDbl(data.Item("Azimuth240Adjustment"))
-        Me.Azimuth360Adjustment = DBtoNullableDbl(data.Item("Azimuth360Adjustment"))
-        Me.Anchor0Elevation = DBtoNullableDbl(data.Item("Anchor0Elevation"))
-        Me.Anchor120Elevation = DBtoNullableDbl(data.Item("Anchor120Elevation"))
-        Me.Anchor240Elevation = DBtoNullableDbl(data.Item("Anchor240Elevation"))
-        Me.Anchor360Elevation = DBtoNullableDbl(data.Item("Anchor360Elevation"))
+        Me.GuyRadius = DBtoNullableDbl(data.Item("GuyRadius"), 6)
+        Me.GuyRadius120 = DBtoNullableDbl(data.Item("GuyRadius120"), 6)
+        Me.GuyRadius240 = DBtoNullableDbl(data.Item("GuyRadius240"), 6)
+        Me.GuyRadius360 = DBtoNullableDbl(data.Item("GuyRadius360"), 6)
+        Me.TorqueArmRadius = DBtoNullableDbl(data.Item("TorqueArmRadius"), 6)
+        Me.TorqueArmLegAngle = DBtoNullableDbl(data.Item("TorqueArmLegAngle"), 6)
+        Me.Azimuth0Adjustment = DBtoNullableDbl(data.Item("Azimuth0Adjustment"), 6)
+        Me.Azimuth120Adjustment = DBtoNullableDbl(data.Item("Azimuth120Adjustment"), 6)
+        Me.Azimuth240Adjustment = DBtoNullableDbl(data.Item("Azimuth240Adjustment"), 6)
+        Me.Azimuth360Adjustment = DBtoNullableDbl(data.Item("Azimuth360Adjustment"), 6)
+        Me.Anchor0Elevation = DBtoNullableDbl(data.Item("Anchor0Elevation"), 6)
+        Me.Anchor120Elevation = DBtoNullableDbl(data.Item("Anchor120Elevation"), 6)
+        Me.Anchor240Elevation = DBtoNullableDbl(data.Item("Anchor240Elevation"), 6)
+        Me.Anchor360Elevation = DBtoNullableDbl(data.Item("Anchor360Elevation"), 6)
         Me.GuySize = DBtoStr(data.Item("GuySize"))
         Me.Guy120Size = DBtoStr(data.Item("Guy120Size"))
         Me.Guy240Size = DBtoStr(data.Item("Guy240Size"))
@@ -11275,14 +11278,14 @@ Partial Public Class tnxGuyRecord
         Me.TorqueArmSize = DBtoStr(data.Item("TorqueArmSize"))
         Me.TorqueArmSizeBot = DBtoStr(data.Item("TorqueArmSizeBot"))
         Me.TorqueArmType = DBtoStr(data.Item("TorqueArmType"))
-        Me.TorqueArmGrade = DBtoNullableDbl(data.Item("TorqueArmGrade"))
+        Me.TorqueArmGrade = DBtoNullableDbl(data.Item("TorqueArmGrade"), 6)
         Me.TorqueArmMatlGrade = DBtoStr(data.Item("TorqueArmMatlGrade"))
-        Me.TorqueArmKFactor = DBtoNullableDbl(data.Item("TorqueArmKFactor"))
-        Me.TorqueArmKFactorY = DBtoNullableDbl(data.Item("TorqueArmKFactorY"))
-        Me.GuyPullOffKFactorX = DBtoNullableDbl(data.Item("GuyPullOffKFactorX"))
-        Me.GuyPullOffKFactorY = DBtoNullableDbl(data.Item("GuyPullOffKFactorY"))
-        Me.GuyDiagKFactorX = DBtoNullableDbl(data.Item("GuyDiagKFactorX"))
-        Me.GuyDiagKFactorY = DBtoNullableDbl(data.Item("GuyDiagKFactorY"))
+        Me.TorqueArmKFactor = DBtoNullableDbl(data.Item("TorqueArmKFactor"), 6)
+        Me.TorqueArmKFactorY = DBtoNullableDbl(data.Item("TorqueArmKFactorY"), 6)
+        Me.GuyPullOffKFactorX = DBtoNullableDbl(data.Item("GuyPullOffKFactorX"), 6)
+        Me.GuyPullOffKFactorY = DBtoNullableDbl(data.Item("GuyPullOffKFactorY"), 6)
+        Me.GuyDiagKFactorX = DBtoNullableDbl(data.Item("GuyDiagKFactorX"), 6)
+        Me.GuyDiagKFactorY = DBtoNullableDbl(data.Item("GuyDiagKFactorY"), 6)
         Me.GuyAutoCalc = DBtoNullableBool(data.Item("GuyAutoCalc"))
         Me.GuyAllGuysSame = DBtoNullableBool(data.Item("GuyAllGuysSame"))
         Me.GuyAllGuysAnchorSame = DBtoNullableBool(data.Item("GuyAllGuysAnchorSame"))
@@ -11290,49 +11293,49 @@ Partial Public Class tnxGuyRecord
         Me.GuyPullOffSize = DBtoStr(data.Item("GuyPullOffSize"))
         Me.GuyPullOffSizeBot = DBtoStr(data.Item("GuyPullOffSizeBot"))
         Me.GuyPullOffType = DBtoStr(data.Item("GuyPullOffType"))
-        Me.GuyPullOffGrade = DBtoNullableDbl(data.Item("GuyPullOffGrade"))
+        Me.GuyPullOffGrade = DBtoNullableDbl(data.Item("GuyPullOffGrade"), 6)
         Me.GuyPullOffMatlGrade = DBtoStr(data.Item("GuyPullOffMatlGrade"))
         Me.GuyUpperDiagSize = DBtoStr(data.Item("GuyUpperDiagSize"))
         Me.GuyLowerDiagSize = DBtoStr(data.Item("GuyLowerDiagSize"))
         Me.GuyDiagType = DBtoStr(data.Item("GuyDiagType"))
-        Me.GuyDiagGrade = DBtoNullableDbl(data.Item("GuyDiagGrade"))
+        Me.GuyDiagGrade = DBtoNullableDbl(data.Item("GuyDiagGrade"), 6)
         Me.GuyDiagMatlGrade = DBtoStr(data.Item("GuyDiagMatlGrade"))
-        Me.GuyDiagNetWidthDeduct = DBtoNullableDbl(data.Item("GuyDiagNetWidthDeduct"))
-        Me.GuyDiagUFactor = DBtoNullableDbl(data.Item("GuyDiagUFactor"))
+        Me.GuyDiagNetWidthDeduct = DBtoNullableDbl(data.Item("GuyDiagNetWidthDeduct"), 6)
+        Me.GuyDiagUFactor = DBtoNullableDbl(data.Item("GuyDiagUFactor"), 6)
         Me.GuyDiagNumBolts = DBtoNullableInt(data.Item("GuyDiagNumBolts"))
         Me.GuyDiagonalOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyDiagonalOutOfPlaneRestraint"))
         Me.GuyDiagBoltGrade = DBtoStr(data.Item("GuyDiagBoltGrade"))
         Me.GuyDiagBoltSize = DBtoNullableDbl(data.Item("GuyDiagBoltSize"))
-        Me.GuyDiagBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyDiagBoltEdgeDistance"))
-        Me.GuyDiagBoltGageDistance = DBtoNullableDbl(data.Item("GuyDiagBoltGageDistance"))
-        Me.GuyPullOffNetWidthDeduct = DBtoNullableDbl(data.Item("GuyPullOffNetWidthDeduct"))
-        Me.GuyPullOffUFactor = DBtoNullableDbl(data.Item("GuyPullOffUFactor"))
+        Me.GuyDiagBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyDiagBoltEdgeDistance"), 6)
+        Me.GuyDiagBoltGageDistance = DBtoNullableDbl(data.Item("GuyDiagBoltGageDistance"), 6)
+        Me.GuyPullOffNetWidthDeduct = DBtoNullableDbl(data.Item("GuyPullOffNetWidthDeduct"), 6)
+        Me.GuyPullOffUFactor = DBtoNullableDbl(data.Item("GuyPullOffUFactor"), 6)
         Me.GuyPullOffNumBolts = DBtoNullableInt(data.Item("GuyPullOffNumBolts"))
         Me.GuyPullOffOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyPullOffOutOfPlaneRestraint"))
         Me.GuyPullOffBoltGrade = DBtoStr(data.Item("GuyPullOffBoltGrade"))
-        Me.GuyPullOffBoltSize = DBtoNullableDbl(data.Item("GuyPullOffBoltSize"))
-        Me.GuyPullOffBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltEdgeDistance"))
-        Me.GuyPullOffBoltGageDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltGageDistance"))
-        Me.GuyTorqueArmNetWidthDeduct = DBtoNullableDbl(data.Item("GuyTorqueArmNetWidthDeduct"))
-        Me.GuyTorqueArmUFactor = DBtoNullableDbl(data.Item("GuyTorqueArmUFactor"))
+        Me.GuyPullOffBoltSize = DBtoNullableDbl(data.Item("GuyPullOffBoltSize"), 6)
+        Me.GuyPullOffBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltEdgeDistance"), 6)
+        Me.GuyPullOffBoltGageDistance = DBtoNullableDbl(data.Item("GuyPullOffBoltGageDistance"), 6)
+        Me.GuyTorqueArmNetWidthDeduct = DBtoNullableDbl(data.Item("GuyTorqueArmNetWidthDeduct"), 6)
+        Me.GuyTorqueArmUFactor = DBtoNullableDbl(data.Item("GuyTorqueArmUFactor"), 6)
         Me.GuyTorqueArmNumBolts = DBtoNullableInt(data.Item("GuyTorqueArmNumBolts"))
         Me.GuyTorqueArmOutOfPlaneRestraint = DBtoNullableBool(data.Item("GuyTorqueArmOutOfPlaneRestraint"))
         Me.GuyTorqueArmBoltGrade = DBtoStr(data.Item("GuyTorqueArmBoltGrade"))
-        Me.GuyTorqueArmBoltSize = DBtoNullableDbl(data.Item("GuyTorqueArmBoltSize"))
-        Me.GuyTorqueArmBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltEdgeDistance"))
-        Me.GuyTorqueArmBoltGageDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltGageDistance"))
-        Me.GuyPerCentTension = DBtoNullableDbl(data.Item("GuyPerCentTension"))
-        Me.GuyPerCentTension120 = DBtoNullableDbl(data.Item("GuyPerCentTension120"))
-        Me.GuyPerCentTension240 = DBtoNullableDbl(data.Item("GuyPerCentTension240"))
-        Me.GuyPerCentTension360 = DBtoNullableDbl(data.Item("GuyPerCentTension360"))
-        Me.GuyEffFactor = DBtoNullableDbl(data.Item("GuyEffFactor"))
-        Me.GuyEffFactor120 = DBtoNullableDbl(data.Item("GuyEffFactor120"))
-        Me.GuyEffFactor240 = DBtoNullableDbl(data.Item("GuyEffFactor240"))
-        Me.GuyEffFactor360 = DBtoNullableDbl(data.Item("GuyEffFactor360"))
+        Me.GuyTorqueArmBoltSize = DBtoNullableDbl(data.Item("GuyTorqueArmBoltSize"), 6)
+        Me.GuyTorqueArmBoltEdgeDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltEdgeDistance"), 6)
+        Me.GuyTorqueArmBoltGageDistance = DBtoNullableDbl(data.Item("GuyTorqueArmBoltGageDistance"), 6)
+        Me.GuyPerCentTension = DBtoNullableDbl(data.Item("GuyPerCentTension"), 6)
+        Me.GuyPerCentTension120 = DBtoNullableDbl(data.Item("GuyPerCentTension120"), 6)
+        Me.GuyPerCentTension240 = DBtoNullableDbl(data.Item("GuyPerCentTension240"), 6)
+        Me.GuyPerCentTension360 = DBtoNullableDbl(data.Item("GuyPerCentTension360"), 6)
+        Me.GuyEffFactor = DBtoNullableDbl(data.Item("GuyEffFactor"), 6)
+        Me.GuyEffFactor120 = DBtoNullableDbl(data.Item("GuyEffFactor120"), 6)
+        Me.GuyEffFactor240 = DBtoNullableDbl(data.Item("GuyEffFactor240"), 6)
+        Me.GuyEffFactor360 = DBtoNullableDbl(data.Item("GuyEffFactor360"), 6)
         Me.GuyNumInsulators = DBtoNullableInt(data.Item("GuyNumInsulators"))
-        Me.GuyInsulatorLength = DBtoNullableDbl(data.Item("GuyInsulatorLength"))
-        Me.GuyInsulatorDia = DBtoNullableDbl(data.Item("GuyInsulatorDia"))
-        Me.GuyInsulatorWt = DBtoNullableDbl(data.Item("GuyInsulatorWt"))
+        Me.GuyInsulatorLength = DBtoNullableDbl(data.Item("GuyInsulatorLength"), 6)
+        Me.GuyInsulatorDia = DBtoNullableDbl(data.Item("GuyInsulatorDia"), 6)
+        Me.GuyInsulatorWt = DBtoNullableDbl(data.Item("GuyInsulatorWt"), 6)
 
     End Sub
 #End Region

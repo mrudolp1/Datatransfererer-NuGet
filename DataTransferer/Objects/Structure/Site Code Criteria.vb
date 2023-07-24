@@ -1,15 +1,15 @@
 ﻿Imports System.ComponentModel
-Imports System.Security.Principal
-Imports DevExpress.Spreadsheet
-Imports System.IO
-Imports DevExpress.DataAccess.Excel
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
+Imports System.Runtime.Serialization
 
+<DataContractAttribute()>
 Partial Public Class SiteCodeCriteria
     Inherits EDSObject
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "Site Code Criteria"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Site Code Criteria"
+        End Get
+    End Property
 
 #Region "Define"
 
@@ -38,9 +38,11 @@ Partial Public Class SiteCodeCriteria
     Private _structure_type As String
     Private _eng_app_id As Integer?
     Private _eng_app_id_revision As Integer?
+    Private _lat_dec As Decimal?
+    Private _long_dec As Decimal?
 
     <Category(""), Description(""), DisplayName("ibc_current")>
-    Public Property ibc_current() As String
+     <DataMember()> Public Property ibc_current() As String
         Get
             Return Me._ibc_current
         End Get
@@ -49,7 +51,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("asce_current")>
-    Public Property asce_current() As String
+     <DataMember()> Public Property asce_current() As String
         Get
             Return Me._asce_current
         End Get
@@ -58,7 +60,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("tia_current")>
-    Public Property tia_current() As String
+     <DataMember()> Public Property tia_current() As String
         Get
             Return Me._tia_current
         End Get
@@ -67,7 +69,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("rev_h_accepted")>
-    Public Property rev_h_accepted() As Boolean?
+     <DataMember()> Public Property rev_h_accepted() As Boolean?
         Get
             Return Me._rev_h_accepted
         End Get
@@ -76,7 +78,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("rev_h_section_15_5")>
-    Public Property rev_h_section_15_5() As Boolean?
+     <DataMember()> Public Property rev_h_section_15_5() As Boolean?
         Get
             Return Me._rev_h_section_15_5
         End Get
@@ -85,7 +87,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("seismic_design_category")>
-    Public Property seismic_design_category() As String
+     <DataMember()> Public Property seismic_design_category() As String
         Get
             Return Me._seismic_design_category
         End Get
@@ -94,7 +96,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("frost_depth_tia_g")>
-    Public Property frost_depth_tia_g() As Double?
+     <DataMember()> Public Property frost_depth_tia_g() As Double?
         Get
             Return Me._frost_depth_tia_g
         End Get
@@ -103,7 +105,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("elev_agl")>
-    Public Property elev_agl() As Double?
+     <DataMember()> Public Property elev_agl() As Double?
         Get
             Return Me._elev_agl
         End Get
@@ -112,7 +114,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("topo_category")>
-    Public Property topo_category() As Integer?
+     <DataMember()> Public Property topo_category() As Integer?
         Get
             Return Me._topo_category
         End Get
@@ -121,7 +123,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("expo_category")>
-    Public Property expo_category() As String
+     <DataMember()> Public Property expo_category() As String
         Get
             Return Me._expo_category
         End Get
@@ -130,7 +132,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("crest_height")>
-    Public Property crest_height() As Double?
+     <DataMember()> Public Property crest_height() As Double?
         Get
             Return Me._crest_height
         End Get
@@ -139,7 +141,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("slope_distance")>
-    Public Property slope_distance() As Double?
+     <DataMember()> Public Property slope_distance() As Double?
         Get
             Return Me._slope_distance
         End Get
@@ -148,7 +150,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("distance_from_crest")>
-    Public Property distance_from_crest() As Double?
+     <DataMember()> Public Property distance_from_crest() As Double?
         Get
             Return Me._distance_from_crest
         End Get
@@ -157,7 +159,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("downwind")>
-    Public Property downwind() As Boolean?
+     <DataMember()> Public Property downwind() As Boolean?
         Get
             Return Me._downwind
         End Get
@@ -166,7 +168,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("topo_feature")>
-    Public Property topo_feature() As String
+     <DataMember()> Public Property topo_feature() As String
         Get
             Return Me._topo_feature
         End Get
@@ -175,7 +177,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("crest_point_elev")>
-    Public Property crest_point_elev() As Double?
+     <DataMember()> Public Property crest_point_elev() As Double?
         Get
             Return Me._crest_point_elev
         End Get
@@ -184,7 +186,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("base_point_elev")>
-    Public Property base_point_elev() As Double?
+     <DataMember()> Public Property base_point_elev() As Double?
         Get
             Return Me._base_point_elev
         End Get
@@ -193,7 +195,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("mid_height_elev")>
-    Public Property mid_height_elev() As Double?
+     <DataMember()> Public Property mid_height_elev() As Double?
         Get
             Return Me._mid_height_elev
         End Get
@@ -202,7 +204,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("crest_to_mid_height_distance")>
-    Public Property crest_to_mid_height_distance() As Double?
+     <DataMember()> Public Property crest_to_mid_height_distance() As Double?
         Get
             Return Me._crest_to_mid_height_distance
         End Get
@@ -211,7 +213,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("tower_point_elev")>
-    Public Property tower_point_elev() As Double?
+     <DataMember()> Public Property tower_point_elev() As Double?
         Get
             Return Me._tower_point_elev
         End Get
@@ -220,7 +222,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("base_kzt")>
-    Public Property base_kzt() As Double?
+     <DataMember()> Public Property base_kzt() As Double?
         Get
             Return Me._base_kzt
         End Get
@@ -229,7 +231,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("site_name")>
-    Public Property site_name() As String
+     <DataMember()> Public Property site_name() As String
         Get
             Return Me._site_name
         End Get
@@ -238,7 +240,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("structure_type")>
-    Public Property structure_type() As String
+     <DataMember()> Public Property structure_type() As String
         Get
             Return Me._structure_type
         End Get
@@ -247,7 +249,7 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("eng_app_id")>
-    Public Property eng_app_id() As Integer?
+     <DataMember()> Public Property eng_app_id() As Integer?
         Get
             Return Me._eng_app_id
         End Get
@@ -256,12 +258,30 @@ Partial Public Class SiteCodeCriteria
         End Set
     End Property
     <Category(""), Description(""), DisplayName("eng_app_id_revision")>
-    Public Property eng_app_id_revision() As Integer?
+     <DataMember()> Public Property eng_app_id_revision() As Integer?
         Get
             Return Me._eng_app_id_revision
         End Get
         Set
             Me._eng_app_id_revision = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("lat_dec")>
+    <DataMember()> Public Property lat_dec() As Decimal?
+        Get
+            Return Me._lat_dec
+        End Get
+        Set
+            Me._lat_dec = Value
+        End Set
+    End Property
+    <Category(""), Description(""), DisplayName("long_dec")>
+    <DataMember()> Public Property long_dec() As Decimal?
+        Get
+            Return Me._long_dec
+        End Get
+        Set
+            Me._long_dec = Value
         End Set
     End Property
 
@@ -302,6 +322,8 @@ Partial Public Class SiteCodeCriteria
         Equals = If(Me.structure_type.CheckChange(otherToCompare.structure_type, changes, categoryName, "Structure Type"), Equals, False)
         Equals = If(Me.eng_app_id.CheckChange(otherToCompare.structure_type, changes, categoryName, "App ID"), Equals, False)
         Equals = If(Me.eng_app_id_revision.CheckChange(otherToCompare.structure_type, changes, categoryName, "App Revision"), Equals, False)
+        Equals = If(Me.lat_dec.CheckChange(otherToCompare.lat_dec, changes, categoryName, "Lat Dec"), Equals, False)
+        Equals = If(Me.long_dec.CheckChange(otherToCompare.long_dec, changes, categoryName, "Long Dec"), Equals, False)
 
         Return Equals
     End Function
@@ -546,6 +568,24 @@ Partial Public Class SiteCodeCriteria
             End If
         Catch ex As Exception
             Me.eng_app_id_revision = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("lat_dec"), Decimal)) Then
+                Me.lat_dec = CType(SiteCodeDataRow.Item("lat_dec"), Decimal)
+            Else
+                Me.lat_dec = Nothing
+            End If
+        Catch ex As Exception
+            Me.lat_dec = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("long_dec"), Decimal)) Then
+                Me.long_dec = CType(SiteCodeDataRow.Item("long_dec"), Decimal)
+            Else
+                Me.long_dec = Nothing
+            End If
+        Catch ex As Exception
+            Me.long_dec = Nothing
         End Try
     End Sub
 #End Region

@@ -61,6 +61,294 @@ Partial Friend NotInheritable Class Settings
             Return CType(Me("serverActive"),String)
         End Get
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myBU() As String
+        Get
+            Return CType(Me("myBU"),String)
+        End Get
+        Set
+            Me("myBU") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myWO() As String
+        Get
+            Return CType(Me("myWO"),String)
+        End Get
+        Set
+            Me("myWO") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myWorkArea() As String
+        Get
+            Return CType(Me("myWorkArea"),String)
+        End Get
+        Set
+            Me("myWorkArea") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property myStrID() As String
+        Get
+            Return CType(Me("myStrID"),String)
+        End Get
+        Set
+            Me("myStrID") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property localWorkArea() As String
+        Get
+            Return CType(Me("localWorkArea"),String)
+        End Get
+        Set
+            Me("localWorkArea") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property workLocal() As Boolean
+        Get
+            Return CType(Me("workLocal"),Boolean)
+        End Get
+        Set
+            Me("workLocal") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booInfo() As Boolean
+        Get
+            Return CType(Me("booInfo"),Boolean)
+        End Get
+        Set
+            Me("booInfo") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booEvent() As Boolean
+        Get
+            Return CType(Me("booEvent"),Boolean)
+        End Get
+        Set
+            Me("booEvent") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booWarning() As Boolean
+        Get
+            Return CType(Me("booWarning"),Boolean)
+        End Get
+        Set
+            Me("booWarning") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booDebug() As Boolean
+        Get
+            Return CType(Me("booDebug"),Boolean)
+        End Get
+        Set
+            Me("booDebug") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booError() As Boolean
+        Get
+            Return CType(Me("booError"),Boolean)
+        End Get
+        Set
+            Me("booError") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property MyTestCase() As Integer
+        Get
+            Return CType(Me("MyTestCase"),Integer)
+        End Get
+        Set
+            Me("MyTestCase") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booConductDevMode() As Boolean
+        Get
+            Return CType(Me("booConductDevMode"),Boolean)
+        End Get
+        Set
+            Me("booConductDevMode") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booConductExcelVis() As Boolean
+        Get
+            Return CType(Me("booConductExcelVis"),Boolean)
+        End Get
+        Set
+            Me("booConductExcelVis") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+    Public Property booImportInputsExcelVisible() As Boolean
+        Get
+            Return CType(Me("booImportInputsExcelVisible"),Boolean)
+        End Get
+        Set
+            Me("booImportInputsExcelVisible") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property booReportOption() As Boolean
+        Get
+            Return CType(Me("booReportOption"),Boolean)
+        End Get
+        Set
+            Me("booReportOption") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property devSql() As String
+        Get
+            Return CType(Me("devSql"),String)
+        End Get
+        Set
+            Me("devSql") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ntokendev() As String
+        Get
+            Return CType(Me("ntokendev"),String)
+        End Get
+        Set
+            Me("ntokendev") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property wtokendev() As String
+        Get
+            Return CType(Me("wtokendev"),String)
+        End Get
+        Set
+            Me("wtokendev") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ccisiteshttpurl() As String
+        Get
+            Return CType(Me("ccisiteshttpurl"),String)
+        End Get
+        Set
+            Me("ccisiteshttpurl") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property prodsql() As String
+        Get
+            Return CType(Me("prodsql"),String)
+        End Get
+        Set
+            Me("prodsql") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property ntoken() As String
+        Get
+            Return CType(Me("ntoken"),String)
+        End Get
+        Set
+            Me("ntoken") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+    Public Property wtoken() As String
+        Get
+            Return CType(Me("wtoken"),String)
+        End Get
+        Set
+            Me("wtoken") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("DEV")>  _
+    Public Property dbSelection() As String
+        Get
+            Return CType(Me("dbSelection"),String)
+        End Get
+        Set
+            Me("dbSelection") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

@@ -125,9 +125,10 @@ Public Class SQLTemplates
 End Class
 
 Public Module Common
-
-
-
+    Public Function myVersion() As String
+        'Return CCI_Engineering_Templates.My.Application.Info..Version.ToString
+        Return "1.2.0.2"
+    End Function
 
     'IEM 11/4/2021 Sometimes you need a little something
     Public Function IsSomething(ByVal sender As Object) As Boolean
@@ -212,7 +213,7 @@ Public Module Common
     Public Function GetExcelDataSource(ByVal path As String, ByVal ws As String, ByVal rng As String) As ExcelDataSource
         'DevExpress specific process to fill an excel data source with information from a range in excel
         Dim importSettings As New ExcelWorksheetSettings() With {.WorksheetName = ws, .CellRange = rng}
-        Dim options As New ExcelSourceOptions() With {.ImportSettings = importSettings}
+        Dim options As New ExcelSourceOptions() With {.importSettings = importSettings, .SkipHiddenColumns = False, .SkipHiddenRows = False}
         GetExcelDataSource = New ExcelDataSource() With {.FileName = path, .SourceOptions = options}
         GetExcelDataSource.Fill()
 
@@ -482,6 +483,7 @@ Public Class Comparison
 
     End Function
 End Class
+
 Public Class AnalysisChange
     Property PreviousValue As String
     Property NewValue As String
@@ -501,6 +503,7 @@ Public Class AnalysisChange
         Me.PreviousIdentity = previousIdentity
     End Sub
 End Class
+
 <Description("Use this class to time parts of the code and record it to the console.")>
 Public Class Benchmark
     Implements IDisposable

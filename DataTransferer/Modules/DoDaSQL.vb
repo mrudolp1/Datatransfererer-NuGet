@@ -35,22 +35,22 @@ Module DoDaSQL
 
         Dim errors As Boolean = False
 
-        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
-            Using sqlCon As New SqlConnection(ActiveDatabase)
+        Try
+            Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate(),
+                sqlCon As New SqlConnection(ActiveDatabase),
+                SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
+
                 sqlCon.Open()
-
-                Try
-                    If ClearSaveToDataSet Then SaveToDataSet.Reset()
-                    SQLAdapter = New SqlDataAdapter(SQLCommand, sqlCon)
-                    SQLAdapter.Fill(SaveToDataSet)
-                Catch ex As Exception
-                    Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
-                    errors = True
-                End Try
+                If ClearSaveToDataSet Then SaveToDataSet.Reset()
+                SQLAdapter.Fill(SaveToDataSet)
+                sqlCon.Close()
             End Using
-        End Using
+        Catch ex As Exception
+            'Console.WriteLine("Error: " & erNo.ToString & vbNewLine & ex.Message, "Error: " & erNo.ToString)
+            errors = True
+        End Try
 
-        Return True
+        Return Not errors
     End Function
 
     Public Function sqlLoader(ByVal SQLCommands As List(Of String), ByVal SaveToDataTables As List(Of String), ByRef SaveToDataSet As DataSet, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, Optional ByVal erNo As Integer = 0, Optional ByVal ClearSaveToDataTable As Boolean = True) As Boolean
@@ -113,24 +113,22 @@ Module DoDaSQL
 
     <DebuggerStepThrough()>
     Public Function sqlSender(ByVal SQLCommand As String, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean
-        Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate()
-            sqlCon = New SqlConnection(ActiveDatabase)
-            Dim sqlCmd = New SqlCommand(SQLCommand, sqlCon)
-            sqlCon.Open()
+        Dim errors As Boolean = False
 
-            Try
+        Try
+            Using impersonatedUser As WindowsImpersonationContext = Impersonator.Impersonate(),
+                    sqlCon = New SqlConnection(ActiveDatabase),
+                    sqlCmd = New SqlCommand(SQLCommand, sqlCon)
+                sqlCon.Open()
                 sqlCmd.ExecuteNonQuery()
-            Catch ex As Exception
                 sqlCon.Close()
-                Console.WriteLine("Error: " & erNo & vbNewLine & ex.Message, "Error: " & erNo)
-                erNo = "Error: " & erNo & vbNewLine & ex.Message
-                Return False
-            End Try
+            End Using
+        Catch ex As Exception
+            errors = True
+            Throw
+        End Try
 
-            sqlCon.Close()
-        End Using
-
-        Return True
+        Return Not errors
     End Function
 
     Public Function safeSqlSender(ByVal SQLCommand As SQLCommand, ByVal ActiveDatabase As String, ByVal Impersonator As WindowsIdentity, ByRef erNo As String) As Boolean

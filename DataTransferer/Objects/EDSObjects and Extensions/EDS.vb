@@ -2,17 +2,24 @@
 Imports System.Security.Principal
 Imports DevExpress.Spreadsheet
 Imports System.IO
-Imports DevExpress.DataAccess.Excel
-Imports System.Runtime.CompilerServices
-Imports System.Data.SqlClient
+Imports System.Runtime.InteropServices
+Imports Excel = Microsoft.Office.Interop.Excel
+Imports System.Runtime.Serialization
 'Imports Microsoft.Office.Interop 'added for testing running macros
+
+Public Delegate Function OverwriteFile(ByVal FileName As String) As Boolean
+
+'To expand collections in the main property grid, this process may help but doesn't need to be implemented right now
+'https://www.codeproject.com/Articles/4448/Customized-display-of-collection-data-in-a-Propert?fid=16073&df=90&mpp=25&sort=Position&view=Normal&spc=Relaxed&prof=True&fr=176
 
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
+<DataContract()>
+<RefreshProperties(RefreshProperties.Repaint)>
 Partial Public MustInherit Class EDSObject
     Implements IComparable(Of EDSObject), IEquatable(Of EDSObject)
-    <Category("EDS"), Description(""), DisplayName("ID")>
-    Public Property ID As Integer?
+
+#Region "ReadOnly Properties"
     <Category("EDS"), Description(""), DisplayName("Name")>
     Public MustOverride ReadOnly Property EDSObjectName As String
     <Category("EDS"), Description(""), DisplayName("Full Name")>
@@ -20,31 +27,60 @@ Partial Public MustInherit Class EDSObject
         Get
             Return If(Me.Parent Is Nothing, Me.EDSObjectName, Me.Parent.EDSObjectFullName & " - " & Me.EDSObjectName)
         End Get
+        'Set(value As String)
+        '    Throw New NotSupportedException("Setting the EDSObjectFullName is not supported")
+        'End Set
     End Property
-    <Category("EDS"), Description(""), Browsable(False)>
-    Public Overridable Property Parent As EDSObject
     <Category("EDS"), Description(""), Browsable(False)>
     Public Overridable ReadOnly Property ParentStructure As EDSStructure
         Get
             Return Me.Parent?.ParentStructure
         End Get
     End Property
-    <Category("EDS"), Description(""), DisplayName("BU")>
-    Public Property bus_unit As String
-    <Category("EDS"), Description(""), DisplayName("Structure ID")>
-    Public Property structure_id As String
-    <Category("EDS"), Description(""), DisplayName("Work Order")>
-    Public Property work_order_seq_num As String
+#End Region
     <Category("EDS"), Description(""), Browsable(False)>
-    Public Property activeDatabase As String
+    Public Overridable Property Parent As EDSObject
+
     <Category("EDS"), Description(""), Browsable(False)>
     Public Property databaseIdentity As WindowsIdentity
-    <Category("EDS"), Description(""), Browsable(False)>
-    Public Property modified_person_id As Integer?
-    <Category("EDS"), Description(""), Browsable(False)>
-    Public Property process_stage As String
 
-    'Public Property differences As List(Of ObjectsComparer.Difference)
+
+    <Category("EDS"), Description(""), DisplayName("ID")>
+    <DataMember()>
+    Public Property ID As Integer?
+
+    <Category("EDS"), Description(""), DisplayName("BU")>
+    <DataMember()>
+    Public Property bus_unit As String
+    <Category("EDS"), Description(""), DisplayName("Structure ID")>
+    <DataMember()>
+    Public Property structure_id As String
+
+    <Category("EDS"), Description(""), DisplayName("Work Order")>
+    <DataMember()>
+    Public Property work_order_seq_num As String
+
+    <Category("EDS"), Description(""), DisplayName("Order")>
+    <DataMember()>
+    Public Property order As String
+
+    <Category("EDS"), Description(""), DisplayName("Order Revision")>
+    <DataMember()>
+    Public Property orderRev As String
+
+    <Category("EDS"), Description(""), Browsable(False)>
+    <DataMember()>
+    Public Property activeDatabase As String
+
+    <Category("EDS"), Description("Modified By"), Browsable(True)>
+    <DataMember()>
+    Public Property modified_person_id As Integer?
+
+    <Category("EDS"), Description(""), Browsable(True)>
+    <DataMember()>
+    Public Property process_stage As String = "test" 'added "test" since error occured during testing
+
+    ' <DataMember()> Public Property differences As List(Of ObjectsComparer.Difference)
 
     Public Overridable Sub Absorb(ByRef Host As EDSObject)
         Me.Parent = Host
@@ -52,6 +88,8 @@ Partial Public MustInherit Class EDSObject
         Me.bus_unit = Host.bus_unit
         Me.structure_id = Host.structure_id
         Me.work_order_seq_num = Host.work_order_seq_num
+        Me.order = Host.order
+        Me.orderRev = Host.orderRev
         Me.activeDatabase = Host.activeDatabase
         Me.databaseIdentity = Host.databaseIdentity
         Me.modified_person_id = Host.modified_person_id
@@ -83,6 +121,7 @@ Partial Public MustInherit Class EDSObject
         End If
 
     End Function
+
     Public Overloads Overrides Function Equals(other As Object) As Boolean
         'This will be called if an object other than an EDS object is passed in
         Dim EDSOther As EDSObject = TryCast(other, EDSObject)
@@ -95,6 +134,7 @@ Partial Public MustInherit Class EDSObject
         End If
 
     End Function
+
     Public Overrides Function GetHashCode() As Integer
         'Fun Story about hash codes: https://stackoverflow.com/questions/7425142/what-is-hashcode-used-for-is-it-unique
         'Creating hash codes: https://thomaslevesque.com/2020/05/15/things-every-csharp-developer-should-know-1-hash-codes/
@@ -105,18 +145,31 @@ Partial Public MustInherit Class EDSObject
     Public MustOverride Overloads Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
 
 
+    'Used to just clear properties specific to each individual object and lists associated with the object
+    Public Overridable Sub Clear()
+
+    End Sub
+
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSObjectWithQueries
     Inherits EDSObject
     <Category("EDS Queries"), Description("EDS Table Name with schema."), DisplayName("Table Name")>
     Public MustOverride ReadOnly Property EDSTableName As String
+
     <Category("EDS Queries"), Description("Local path to query templates."), DisplayName("Query Path")>
-    Public Overridable ReadOnly Property EDSQueryPath As String = IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+    Public Overridable ReadOnly Property EDSQueryPath As String
+        Get
+            Return IO.Path.Combine(My.Application.Info.DirectoryPath, "Templates")
+        End Get
+    End Property
+
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
     Public Overridable ReadOnly Property EDSTableDepth As Integer = 0
-    Public Overridable Property Results As New List(Of EDSResult)
 
+    <DataMember()>
+    Public Overridable Property Results As New List(Of EDSResult)
 
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable Function SQLInsert() As String
@@ -134,13 +187,15 @@ Partial Public MustInherit Class EDSObjectWithQueries
         SQLInsert = SQLInsert.Replace("[RESULTS]", Me.Results.EDSResultQuery)
         Return SQLInsert
     End Function
+
     Public Overridable Function SQLSetID(Optional ID As Integer? = Nothing) As String
         Return "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = " & If(ID Is Nothing, Me.ID.ToString.FormatDBValue, ID.ToString.FormatDBValue) & vbCrLf
     End Function
+
     <Category("EDS Queries"), Description("Update existing EDS object and insert results. For use in whole structure query."), DisplayName("SQL Update Query")>
     Public Overridable Function SQLUpdate() As String
         SQLUpdate = "BEGIN" & vbCrLf &
-                  "  Update [Table]" &
+                  "  Update [TABLE]" &
                   "  SET [UPDATE]" & vbCrLf &
                   "  WHERE ID = [ID]" & vbCrLf &
                   "  [RESULTS]" & vbCrLf &
@@ -216,36 +271,198 @@ Partial Public MustInherit Class EDSObjectWithQueries
 
 End Class
 
+<DataContract()>
 Partial Public MustInherit Class EDSExcelObject
     'This should be inherited by the main tool class. Subclasses such as soil layers can probably inherit the EDSObjectWithQueries
-    Inherits FileUpload
+    Inherits EDSObjectWithQueries
 
-    <Category("Tool"), Description("Local path to query templates."), DisplayName("Tool Path")>
-    Public Property workBookPath As String
+#Region "ReadOnly Properties"
     <Category("Tool"), Description("Local path to query templates."), Browsable(False)>
-    Public MustOverride ReadOnly Property templatePath As String
-    <Category("Tool"), Description("Local path to query templates."), DisplayName("File Type")>
-    Public Property fileType As DocumentFormat = DocumentFormat.Xlsm
+    Public MustOverride ReadOnly Property TemplatePath As String
+    <Category("Tool"), Description("Template resource."), Browsable(False)>
+    Public MustOverride ReadOnly Property Template As Byte()
     <Category("Tool"), Description("Data transfer parameters, a list of ranges to import from excel."), DisplayName("Import Ranges")>
-    Public MustOverride ReadOnly Property excelDTParams As List(Of EXCELDTParameter)
-    <Category("Tool"), Description("Version number of tool."), DisplayName("Tool Version")>
-    Public Property tool_version As String
+    Public MustOverride ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
+#End Region
+
+    <Category("Tool"), Description("Workbook Path."), DisplayName("Tool Path")>
+    <DataMember()>
+    Public Property WorkBookPath As String
+
+    Private _FileType As DocumentFormat
+    <Category("Tool"), Description("Workbook Type."), DisplayName("File Type")>
+    <DataMember()>
+    Public Property FileType As DocumentFormat
+        Get
+            Return DocumentFormat.Xlsm
+        End Get
+        Set(value As DocumentFormat)
+            Me._FileType = DocumentFormat.Xlsm
+        End Set
+    End Property
+
+    <Category("Tool"), Description("Version number of tool."), DisplayName("Version")>
+    <DataMember()>
+    Public Property Version As String
+
+    '<Category("Tool"), Description("Title of tool."), DisplayName("Title")>
+    'Public Overridable ReadOnly Property Title As String
     <Category("Tool"), Description("Have the calculation been modified?"), DisplayName("Modified")>
-    Public Property modified As Boolean?
+    <DataMember()>
+    Public Property Modified As Boolean?
+
+    Public Function MyTIA(Optional ByVal fullTIA As Boolean = False) As String
+        Dim tia_current As String = ""
+        If IsSomething(Me.ParentStructure?.tnx?.code?.design?.DesignCode) Then
+            If Me.ParentStructure.tnx.code.design.DesignCode = "TIA/EIA-222-F" Then
+                tia_current = "F"
+            ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-G" Then
+                tia_current = "G"
+            ElseIf Me.ParentStructure.tnx.code.design.DesignCode = "TIA-222-H" Then
+                tia_current = "H"
+            Else
+                tia_current = "H"
+            End If
+        Else
+            tia_current = "H"
+        End If
+        Dim addlTIA As String = "TIA-222-"
+        If fullTIA Then tia_current = addlTIA + tia_current
+        Return tia_current
+    End Function
+
+    Public Function MyOrder() As String
+        Dim site_app As String = ""
+        Dim site_rev As String = ""
+
+        If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
+            site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id.ToString
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision) Then
+                site_rev = Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision.ToString
+                site_app += " REV. " & site_rev
+            End If
+        End If
+        Return site_app
+    End Function
+
+#Region "Run Excel Macro"
+    ''' <summary>
+    ''' Adding this in case we want to use it later on.
+    ''' Allows individual objects to have an excel macro ran
+    ''' </summary>
+    ''' <param name="bigMac"></param> --> Macro name from excel VBA
+    ''' <param name="isDevEnv"></param> --> Boolean to specify if it is in development mod
+    ''' <param name="isSeismic"></param> --> Boolean to specify if seismic is required
+    ''' <returns></returns>
+    Public Function OpenExcelRunMacro(bigMac As String, Optional ByVal isDevEnv As Boolean = False, Optional ByVal isSeismic As Boolean = False) As String
+        'Built this using a with to just add a '.' where something from the structure is needed. 
+        '''WriteLineLogLine
+        '''tnxFilePath
+
+        With Me.ParentStructure
+            Dim tnxFilePath As String = Me.ParentStructure.tnx.filePath
+            Dim toolFileName As String = Path.GetFileName(Me.WorkBookPath)
+            Dim excelPath As String = Me.WorkBookPath
+            Dim logString As String = ""
+            If String.IsNullOrEmpty(excelPath) Or String.IsNullOrEmpty(bigMac) Then
+                Return "ERROR | excelPath or bigMac parameter is null or empty"
+            End If
+
+            Dim xlApp As Excel.Application = Nothing
+            Dim xlWorkBook As Excel.Workbook = Nothing
+
+            Dim errorMessage As String = String.Empty
+
+            Dim xlVisibility As Boolean = False
+            If isDevEnv Then
+                xlVisibility = True
+            End If
+
+            Try
+                If File.Exists(excelPath) Then
+
+                    xlApp = CreateObject("Excel.Application")
+                    xlApp.Visible = xlVisibility
+
+                    xlWorkBook = xlApp.Workbooks.Open(excelPath)
+
+                    .WriteLineLogLine("INFO | Tool: " & toolFileName)
+                    .WriteLineLogLine("INFO | Running macro: " & bigMac)
+
+                    If Not IsNothing(tnxFilePath) Then
+                        logString = xlApp.Run(bigMac, tnxFilePath)
+                        .WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    Else
+                        .WriteLineLogLine("WARNING | No TNX file path in structure..")
+                        logString = xlApp.Run(bigMac)
+                        .WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString)
+                    End If
+
+                    xlWorkBook.Save()
+                Else
+                    errorMessage = $"ERROR | {excelPath} path not found!"
+                    .WriteLineLogLine(errorMessage)
+                    Return errorMessage
+                End If
+            Catch ex As Exception
+                errorMessage = ex.Message
+                .WriteLineLogLine(errorMessage)
+                Return errorMessage
+            Finally
+                If xlWorkBook IsNot Nothing Then
+                    xlWorkBook.Close()
+                    Marshal.ReleaseComObject(xlWorkBook)
+                    xlWorkBook = Nothing
+                End If
+                If xlApp IsNot Nothing Then
+                    xlApp.Quit()
+                    Marshal.ReleaseComObject(xlApp)
+                    xlApp = Nothing
+                End If
+            End Try
+
+            'New method to just laod data and set properties
+            Me.LoadFromExcel()
+
+            'check for seismic
+            If isSeismic And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
+                Return "SEISMIC ANALYSIS REQUIRED"
+            End If
+        End With
+
+        Return "Success"
+    End Function
+#End Region
+
+#Region "Load From Excel"
+    Public Overridable Sub LoadFromExcel()
+
+    End Sub
+#End Region
 
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
 
-    Public Sub SavetoExcel()
+    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True)
         Dim wb As New Workbook
 
-        If workBookPath = "" Then
-            Debug.Print("No workbook path specified.")
-            Exit Sub
+
+        If String.IsNullOrEmpty(workBookPath) Then
+            If Me.ParentStructure?.WorkingDirectory Is Nothing Then
+                Debug.Print("No workbook path specified.")
+                Exit Sub
+            End If
+
+            'Build Path
+            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+
         End If
 
-        'Try
-        wb.LoadDocument(templatePath, fileType)
+        Me.WorkBookPath = workBookPath
+
+        If File.Exists(workBookPath) AndAlso Not replaceFiles Then Exit Sub
+
+        wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()
 
         'Put the jelly in the donut
@@ -253,55 +470,67 @@ Partial Public MustInherit Class EDSExcelObject
 
         wb.Calculate()
         wb.EndUpdate()
-        wb.SaveDocument(workBookPath, fileType)
+        wb.SaveDocument(workBookPath, FileType)
 
-        'Catch ex As Exception
-        '    Debug.Print("Error Saving Workbook: " & ex.Message)
-        'End Try
+    End Sub
 
-        'Seb's Macro test (uncomment bellow)
-        'Dim xlApp As Microsoft.Office.Interop.Excel.Application
-        'Dim xlWorkBook As Excel.Workbook
-        'Dim xlVis As Boolean = False
-
-        '''set xl visibility to true if dev environment
-        ''If My.Settings.serverActive = "dbDevelopment" Then
-        ''    xlVis = True
-        ''End If
-
-        ''Try
-        'If File.Exists(workBookPath) Then
-        '    xlApp = CreateObject("Excel.Application")
-        '    xlApp.Visible = xlVis
-        '    xlApp.DisplayAlerts = xlVis
-
-        '    xlWorkBook = xlApp.Workbooks.Open(workBookPath)
-
-        '    System.Threading.Thread.Sleep(5000) 'required to allow enough time for file to open
-
-        '    'xlApp.Run("Update_Main_Screen")
-
-        '    xlWorkBook.Save()
-
-        '    xlWorkBook.Close()
-        '    xlApp.Quit()
-        'Else
-        '    'WriteLineLogLine(excelPath & " path not found!")
-        '    'Return False
-        'End If
-        ''Catch ex As Exception
-        ''    'WriteLineLogLine(ex.Message)
-        ''    'Return False
-        ''End Try
+    Public Sub SavetoExcel(overwriteFile As OverwriteFile, Optional workBookPath As String = Nothing, Optional index As Integer = 0)
+        Dim wb As New Workbook
 
 
+        If String.IsNullOrEmpty(workBookPath) Then
+            If Me.ParentStructure?.WorkingDirectory Is Nothing Then
+                Debug.Print("No workbook path specified.")
+                Exit Sub
+            End If
 
+            'Build Path
+            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+
+        End If
+
+        Me.WorkBookPath = workBookPath
+
+        If File.Exists(workBookPath) AndAlso
+            Not overwriteFile(Path.GetFileName(workBookPath)) Then Exit Sub
+
+        wb.LoadDocument(Template, FileType)
+        wb.BeginUpdate()
+
+        'Put the jelly in the donut
+        workBookFiller(wb)
+
+        wb.Calculate()
+        wb.EndUpdate()
+        wb.SaveDocument(workBookPath, FileType)
+
+    End Sub
+
+    Public Sub SavetoExcel()
+        Dim wb As New Workbook
+
+        If WorkBookPath = "" Then
+            Debug.Print("No workbook path specified.")
+            Exit Sub
+        End If
+
+        'Try
+        wb.LoadDocument(TemplatePath, FileType)
+        wb.BeginUpdate()
+
+        'Put the jelly in the donut
+        workBookFiller(wb)
+
+        wb.Calculate()
+        wb.EndUpdate()
+        wb.SaveDocument(WorkBookPath, FileType)
 
     End Sub
 #End Region
 
 End Class
 
+<DataContract(), KnownTypeAttribute(GetType(EDSResult))>
 Partial Public Class EDSResult
     Inherits EDSObject
 
@@ -310,15 +539,12 @@ Partial Public Class EDSResult
 #Region "Define"
     Private _foreign_key As Integer?
     Private _result_lkup As String
-    Private _rating As Double?
+    Private _rating As Decimal?
     Private _EDSTableName As String
     Private _ForeignKeyName As String
-    'modified_person_id
-    'process_stag
-
-    'Public Shadows Property Parent As EDSObjectWithQueries
 
     <Category("Results"), Description("The ID of the parent object that this result is associated with. (i.e. Drilled Pier, Tower Leg, Plate)"), DisplayName("Result ID")>
+    <DataMember()>
     Public Property foreign_key() As Integer?
         Get
             Return Me._foreign_key
@@ -328,6 +554,7 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Result Type")>
+    <DataMember()>
     Public Property result_lkup() As String
         Get
             Return Me._result_lkup
@@ -337,7 +564,8 @@ Partial Public Class EDSResult
         End Set
     End Property
     <Category("Results"), Description(""), DisplayName("Rating (%)")>
-    Public Overridable Property rating() As Double?
+    <DataMember()>
+    Public Overridable Property rating() As Decimal?
         Get
             Return Me._rating
         End Get
@@ -347,6 +575,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result Table Name")>
+    <DataMember()>
     Public Property EDSTableName() As String
         Get
             Return Me._EDSTableName
@@ -357,6 +586,7 @@ Partial Public Class EDSResult
     End Property
 
     <Category("Results"), Description(""), DisplayName("Result ID Name")>
+    <DataMember()>
     Public Property ForeignKeyName() As String
         Get
             Return Me._ForeignKeyName
@@ -365,7 +595,9 @@ Partial Public Class EDSResult
             Me._ForeignKeyName = Value
         End Set
     End Property
+
     <Category("EDS Queries"), Description("Depth of table in EDS query. This determines where the ID is stored in the query and which parent ID is referenced if needed. 0 = Top Level"), Browsable(False)>
+    <DataMember()>
     Public Overridable Property EDSTableDepth As Integer = 1
 
 #End Region
@@ -413,20 +645,35 @@ Partial Public Class EDSResult
     End Function
 
     Public Overloads Sub Absorb(ByRef Host As EDSObjectWithQueries)
-        MyBase.Absorb(Host)
+        Me.Parent = Host
+        'Me.ParentStructure = Host.ParentStructure 'If(Host.ParentStructure, Nothing) 'The parent of an EDSObject should be the top level structure.
+        Me.bus_unit = Host.bus_unit
+        Me.structure_id = Host.structure_id
+        Me.work_order_seq_num = Host.work_order_seq_num
+        Me.order = Host.order
+        Me.orderRev = Host.orderRev
+        Me.activeDatabase = Host.activeDatabase
+        Me.databaseIdentity = Host.databaseIdentity
+        Me.modified_person_id = Host.modified_person_id
+        Me.process_stage = Host.process_stage
         'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableDepth = Host.EDSTableDepth + 1
         'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
-        Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
-                             Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
-                             Host.EDSTableName) & "_results"
+        'Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
+        '                     Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
+        '                     Host.EDSTableName) & "_results"
+        Me.EDSTableName = RemovePlural(Host.EDSTableName) & "_results"
         'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
         'Seperate the table name from the schema then add _id
-        Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
-                                Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
-                                Host.EDSTableName & "_id")
+        'Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
+        '                        Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
+        '                        Host.EDSTableName & "_id")
+        Me.ForeignKeyName = RemovePlural(Host.EDSTableName.Split(".").Last) & "_id"
     End Sub
 
+    Private Function RemovePlural(possiblyPlural As String) As String
+        Return If(possiblyPlural.ToLower.Last = "s", possiblyPlural.Remove(possiblyPlural.Length - 1), possiblyPlural)
+    End Function
 
     ''' <summary>
     ''' 
@@ -445,7 +692,7 @@ Partial Public Class EDSResult
     ''' <param name="result_lkup"></param>
     ''' <param name="rating"></param>
     ''' <param name="Parent"></param>
-    Public Sub New(ByVal result_lkup As String, ByVal rating As Double?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
+    Public Sub New(ByVal result_lkup As String, ByVal rating As Decimal?, Optional ByVal Parent As EDSObjectWithQueries = Nothing)
         'If this is being created by another EDSObject (i.e. the Structure) this will pass along the most important identifying data
         If Parent IsNot Nothing Then
             Me.Absorb(Parent)

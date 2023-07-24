@@ -10,15 +10,24 @@ Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 Imports MoreLinq
+Imports System.Runtime.Serialization
 
-
+<DataContract()>
 Partial Public Class tnxModel
     Inherits EDSObjectWithQueries
 
 #Region "Inheritted"
 
-    Public Overrides ReadOnly Property EDSObjectName As String = "TNX Model"
-    Public Overrides ReadOnly Property EDSTableName As String = "tnx.tnx"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "TNX Model"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "tnx.tnx"
+        End Get
+    End Property
 
 #End Region
 
@@ -42,7 +51,7 @@ Partial Public Class tnxModel
     Private _ConsiderGeometryEquality As Boolean = True
 
     <Category("TNX"), Description(""), DisplayName("filePath")>
-    Public Property filePath() As String
+    <DataMember()> Public Property filePath() As String
         Get
             Return Me._filePath
         End Get
@@ -51,7 +60,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("tnxDatabase")>
-    Public Property database() As tnxDatabase
+    <DataMember()> Public Property database() As tnxDatabase
         Get
             Return Me._database
         End Get
@@ -60,7 +69,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Settings")>
-    Public Property settings() As tnxSettings
+    <DataMember()> Public Property settings() As tnxSettings
         Get
             Return Me._settings
         End Get
@@ -69,7 +78,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Solution Settings")>
-    Public Property solutionSettings() As tnxSolutionSettings
+    <DataMember()> Public Property solutionSettings() As tnxSolutionSettings
         Get
             Return Me._solutionSettings
         End Get
@@ -78,7 +87,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("MTO Settings")>
-    Public Property MTOSettings() As tnxMTOSettings
+    <DataMember()> Public Property MTOSettings() As tnxMTOSettings
         Get
             Return Me._MTOSettings
         End Get
@@ -87,7 +96,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Report Settings")>
-    Public Property reportSettings() As tnxReportSettings
+    <DataMember()> Public Property reportSettings() As tnxReportSettings
         Get
             Return Me._reportSettings
         End Get
@@ -96,7 +105,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("CCI Report")>
-    Public Property CCIReport() As tnxCCIReport
+    <DataMember()> Public Property CCIReport() As tnxCCIReport
         Get
             Return Me._CCIReport
         End Get
@@ -105,7 +114,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Code")>
-    Public Property code() As tnxCode
+    <DataMember()> Public Property code() As tnxCode
         Get
             Return Me._code
         End Get
@@ -114,7 +123,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Options")>
-    Public Property options() As tnxOptions
+    <DataMember()> Public Property options() As tnxOptions
         Get
             Return Me._options
         End Get
@@ -123,7 +132,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Geometry")>
-    Public Property geometry() As tnxGeometry
+    <DataMember()> Public Property geometry() As tnxGeometry
         Get
             Return Me._geometry
         End Get
@@ -132,7 +141,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Feed Lines")>
-    Public Property feedLines() As List(Of tnxFeedLine)
+    <DataMember()> Public Property feedLines() As List(Of tnxFeedLine)
         Get
             Return Me._feedLines
         End Get
@@ -141,7 +150,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Discrete Loads")>
-    Public Property discreteLoads() As List(Of tnxDiscreteLoad)
+    <DataMember()> Public Property discreteLoads() As List(Of tnxDiscreteLoad)
         Get
             Return Me._discreteLoads
         End Get
@@ -150,7 +159,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("Dishes")>
-    Public Property dishes() As List(Of tnxDish)
+    <DataMember()> Public Property dishes() As List(Of tnxDish)
         Get
             Return Me._dishes
         End Get
@@ -159,7 +168,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("User Forces")>
-    Public Property userForces() As List(Of tnxUserForce)
+    <DataMember()> Public Property userForces() As List(Of tnxUserForce)
         Get
             Return Me._userForces
         End Get
@@ -168,7 +177,7 @@ Partial Public Class tnxModel
         End Set
     End Property
     <Category("TNX"), Description(""), DisplayName("All the other stuff")>
-    Public Property otherLines() As List(Of String())
+    <DataMember()> Public Property otherLines() As List(Of String())
         Get
             Return Me._otherLines
         End Get
@@ -178,7 +187,7 @@ Partial Public Class tnxModel
     End Property
 
     <Category("Settings"), Description("Consider loading in the equality comparison."), DisplayName("Consider Loading Equality")>
-    Public Property ConsiderLoadingEquality() As Boolean
+    <DataMember()> Public Property ConsiderLoadingEquality() As Boolean
         Get
             Return _ConsiderLoadingEquality
         End Get
@@ -188,13 +197,16 @@ Partial Public Class tnxModel
     End Property
 
     <Category("Settings"), Description("Consider database item and tower sections in the equality comparison. Disable this when determining if the main TNX table needs to be updated."), DisplayName("Consider Geometry Equality")>
-    Public Property ConsiderGeometryEquality() As Boolean
+    <DataMember()> Public Property ConsiderGeometryEquality() As Boolean
         Get
             Return _ConsiderGeometryEquality
         End Get
         Set(value As Boolean)
             _ConsiderGeometryEquality = value
-            Me.geometry.ConsiderSectionEquality = value
+            Try
+                Me.geometry.ConsiderSectionEquality = value
+            Catch
+            End Try
         End Set
     End Property
 
@@ -213,6 +225,8 @@ Partial Public Class tnxModel
         If StructureDS.Tables.Contains("TNX") And StructureDS.Tables("TNX").Rows.Count > 0 Then
             setIndInputs(StructureDS.Tables("TNX").Rows(0))
 
+            Me.geometry.Absorb(Me)
+
             If StructureDS.Tables.Contains("Base Structure") Then
                 For Each baseSection As DataRow In StructureDS.Tables("Base Structure").Rows
                     Me.geometry.baseStructure.Add(New tnxTowerRecord(baseSection, Me.geometry))
@@ -229,9 +243,41 @@ Partial Public Class tnxModel
 
             If StructureDS.Tables.Contains("Guys") Then
                 For Each guyLevel As DataRow In StructureDS.Tables("Guys").Rows
-                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me.geometry))
+                    Me.geometry.guyWires.Add(New tnxGuyRecord(guyLevel, Me))
                 Next
                 Me.geometry.guyWires.Sort()
+            End If
+
+            'Discrete
+            If StructureDS.Tables.Contains("Discretes") Then
+                For Each disc As DataRow In StructureDS.Tables("Discretes").Rows
+                    Me.discreteLoads.Add(New tnxDiscreteLoad(disc, Me))
+                Next
+                Me.discreteLoads.Sort()
+            End If
+
+            'Dish
+            If StructureDS.Tables.Contains("Dishes") Then
+                For Each dish As DataRow In StructureDS.Tables("Dishes").Rows
+                    Me.dishes.Add(New tnxDish(dish, Me))
+                Next
+                Me.dishes.Sort()
+            End If
+
+            'User Forces
+            If StructureDS.Tables.Contains("User Forces") Then
+                For Each user As DataRow In StructureDS.Tables("User Forces").Rows
+                    Me.userForces.Add(New tnxUserForce(user, Me))
+                Next
+                Me.userForces.Sort()
+            End If
+
+            'Linear
+            If StructureDS.Tables.Contains("Lines") Then
+                For Each line As DataRow In StructureDS.Tables("Lines").Rows
+                    Me.feedLines.Add(New tnxFeedLine(line, Me))
+                Next
+                Me.feedLines.Sort()
             End If
 
             If StructureDS.Tables.Contains("Materials") Then
@@ -322,18 +368,18 @@ Partial Public Class tnxModel
         Me.CCIReport.sReportCarrierSiteNumber = DBtoStr(Data.Item("sReportCarrierSiteNumber"))
         Me.CCIReport.sReportCarrierSiteName = DBtoStr(Data.Item("sReportCarrierSiteName"))
         Me.CCIReport.sReportSiteAddress = DBtoStr(Data.Item("sReportSiteAddress"))
-        Me.CCIReport.sReportLatitudeDegree = DBtoNullableDbl(Data.Item("sReportLatitudeDegree"))
-        Me.CCIReport.sReportLatitudeMinute = DBtoNullableDbl(Data.Item("sReportLatitudeMinute"))
-        Me.CCIReport.sReportLatitudeSecond = DBtoNullableDbl(Data.Item("sReportLatitudeSecond"))
-        Me.CCIReport.sReportLongitudeDegree = DBtoNullableDbl(Data.Item("sReportLongitudeDegree"))
-        Me.CCIReport.sReportLongitudeMinute = DBtoNullableDbl(Data.Item("sReportLongitudeMinute"))
-        Me.CCIReport.sReportLongitudeSecond = DBtoNullableDbl(Data.Item("sReportLongitudeSecond"))
+        Me.CCIReport.sReportLatitudeDegree = DBtoNullableDbl(Data.Item("sReportLatitudeDegree"), 6)
+        Me.CCIReport.sReportLatitudeMinute = DBtoNullableDbl(Data.Item("sReportLatitudeMinute"), 6)
+        Me.CCIReport.sReportLatitudeSecond = DBtoNullableDbl(Data.Item("sReportLatitudeSecond"), 6)
+        Me.CCIReport.sReportLongitudeDegree = DBtoNullableDbl(Data.Item("sReportLongitudeDegree"), 6)
+        Me.CCIReport.sReportLongitudeMinute = DBtoNullableDbl(Data.Item("sReportLongitudeMinute"), 6)
+        Me.CCIReport.sReportLongitudeSecond = DBtoNullableDbl(Data.Item("sReportLongitudeSecond"), 6)
         Me.CCIReport.sReportLocalCodeRequirement = DBtoStr(Data.Item("sReportLocalCodeRequirement"))
         Me.CCIReport.sReportSiteHistory = DBtoStr(Data.Item("sReportSiteHistory"))
         Me.CCIReport.sReportTowerManufacturer = DBtoStr(Data.Item("sReportTowerManufacturer"))
         Me.CCIReport.sReportMonthManufactured = DBtoStr(Data.Item("sReportMonthManufactured"))
         Me.CCIReport.sReportYearManufactured = DBtoNullableInt(Data.Item("sReportYearManufactured"))
-        Me.CCIReport.sReportOriginalSpeed = DBtoNullableDbl(Data.Item("sReportOriginalSpeed"))
+        Me.CCIReport.sReportOriginalSpeed = DBtoNullableDbl(Data.Item("sReportOriginalSpeed"), 6)
         Me.CCIReport.sReportOriginalCode = DBtoStr(Data.Item("sReportOriginalCode"))
         Me.CCIReport.sReportTowerType = DBtoStr(Data.Item("sReportTowerType"))
         Me.CCIReport.sReportEngrName = DBtoStr(Data.Item("sReportEngrName"))
@@ -373,38 +419,38 @@ Partial Public Class tnxModel
         Me.code.design.DesignCode = DBtoStr(Data.Item("DesignCode"))
         Me.geometry.TowerType = DBtoStr(Data.Item("TowerType"))
         Me.geometry.AntennaType = DBtoStr(Data.Item("AntennaType"))
-        Me.geometry.OverallHeight = DBtoNullableDbl(Data.Item("OverallHeight"))
-        Me.geometry.BaseElevation = DBtoNullableDbl(Data.Item("BaseElevation"))
-        Me.geometry.Lambda = DBtoNullableDbl(Data.Item("Lambda"))
-        Me.geometry.TowerTopFaceWidth = DBtoNullableDbl(Data.Item("TowerTopFaceWidth"))
-        Me.geometry.TowerBaseFaceWidth = DBtoNullableDbl(Data.Item("TowerBaseFaceWidth"))
-        Me.code.wind.WindSpeed = DBtoNullableDbl(Data.Item("WindSpeed"))
-        Me.code.wind.WindSpeedIce = DBtoNullableDbl(Data.Item("WindSpeedIce"))
-        Me.code.wind.WindSpeedService = DBtoNullableDbl(Data.Item("WindSpeedService"))
-        Me.code.ice.IceThickness = DBtoNullableDbl(Data.Item("IceThickness"))
-        Me.code.wind.CSA_S37_RefVelPress = DBtoNullableDbl(Data.Item("CSA_S37_RefVelPress"))
+        Me.geometry.OverallHeight = DBtoNullableDbl(Data.Item("OverallHeight"), 6)
+        Me.geometry.BaseElevation = DBtoNullableDbl(Data.Item("BaseElevation"), 6)
+        Me.geometry.Lambda = DBtoNullableDbl(Data.Item("Lambda"), 6)
+        Me.geometry.TowerTopFaceWidth = DBtoNullableDbl(Data.Item("TowerTopFaceWidth"), 6)
+        Me.geometry.TowerBaseFaceWidth = DBtoNullableDbl(Data.Item("TowerBaseFaceWidth"), 6)
+        Me.code.wind.WindSpeed = DBtoNullableDbl(Data.Item("WindSpeed"), 6)
+        Me.code.wind.WindSpeedIce = DBtoNullableDbl(Data.Item("WindSpeedIce"), 6)
+        Me.code.wind.WindSpeedService = DBtoNullableDbl(Data.Item("WindSpeedService"), 6)
+        Me.code.ice.IceThickness = DBtoNullableDbl(Data.Item("IceThickness"), 6)
+        Me.code.wind.CSA_S37_RefVelPress = DBtoNullableDbl(Data.Item("CSA_S37_RefVelPress"), 6)
         Me.code.wind.CSA_S37_ReliabilityClass = DBtoNullableInt(Data.Item("CSA_S37_ReliabilityClass"))
-        Me.code.wind.CSA_S37_ServiceabilityFactor = DBtoNullableDbl(Data.Item("CSA_S37_ServiceabilityFactor"))
+        Me.code.wind.CSA_S37_ServiceabilityFactor = DBtoNullableDbl(Data.Item("CSA_S37_ServiceabilityFactor"), 6)
         Me.code.ice.UseModified_TIA_222_IceParameters = DBtoNullableBool(Data.Item("UseModified_TIA_222_IceParameters"))
-        Me.code.ice.TIA_222_IceThicknessMultiplier = DBtoNullableDbl(Data.Item("TIA_222_IceThicknessMultiplier"))
+        Me.code.ice.TIA_222_IceThicknessMultiplier = DBtoNullableDbl(Data.Item("TIA_222_IceThicknessMultiplier"), 6)
         Me.code.ice.DoNotUse_TIA_222_IceEscalation = DBtoNullableBool(Data.Item("DoNotUse_TIA_222_IceEscalation"))
-        Me.code.ice.IceDensity = DBtoNullableDbl(Data.Item("IceDensity"))
+        Me.code.ice.IceDensity = DBtoNullableDbl(Data.Item("IceDensity"), 6)
         Me.code.seismic.SeismicSiteClass = DBtoNullableInt(Data.Item("SeismicSiteClass"))
-        Me.code.seismic.SeismicSs = DBtoNullableDbl(Data.Item("SeismicSs"))
-        Me.code.seismic.SeismicS1 = DBtoNullableDbl(Data.Item("SeismicS1"))
-        Me.code.thermal.TempDrop = DBtoNullableDbl(Data.Item("TempDrop"))
-        Me.code.misclCode.GroutFc = DBtoNullableDbl(Data.Item("GroutFc"))
-        Me.options.defaultGirtOffsets.GirtOffset = DBtoNullableDbl(Data.Item("GirtOffset"))
-        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = DBtoNullableDbl(Data.Item("GirtOffsetLatticedPole"))
-        Me.options.foundationStiffness.MastVert = DBtoNullableDbl(Data.Item("MastVert"))
-        Me.options.foundationStiffness.MastHorz = DBtoNullableDbl(Data.Item("MastHorz"))
-        Me.options.foundationStiffness.GuyVert = DBtoNullableDbl(Data.Item("GuyVert"))
-        Me.options.foundationStiffness.GuyHorz = DBtoNullableDbl(Data.Item("GuyHorz"))
-        Me.options.misclOptions.HogRodTakeup = DBtoNullableDbl(Data.Item("HogRodTakeup"))
+        Me.code.seismic.SeismicSs = DBtoNullableDbl(Data.Item("SeismicSs"), 6)
+        Me.code.seismic.SeismicS1 = DBtoNullableDbl(Data.Item("SeismicS1"), 6)
+        Me.code.thermal.TempDrop = DBtoNullableDbl(Data.Item("TempDrop"), 6)
+        Me.code.misclCode.GroutFc = DBtoNullableDbl(Data.Item("GroutFc"), 6)
+        Me.options.defaultGirtOffsets.GirtOffset = DBtoNullableDbl(Data.Item("GirtOffset"), 6)
+        Me.options.defaultGirtOffsets.GirtOffsetLatticedPole = DBtoNullableDbl(Data.Item("GirtOffsetLatticedPole"), 6)
+        Me.options.foundationStiffness.MastVert = DBtoNullableDbl(Data.Item("MastVert"), 6)
+        Me.options.foundationStiffness.MastHorz = DBtoNullableDbl(Data.Item("MastHorz"), 6)
+        Me.options.foundationStiffness.GuyVert = DBtoNullableDbl(Data.Item("GuyVert"), 6)
+        Me.options.foundationStiffness.GuyHorz = DBtoNullableDbl(Data.Item("GuyHorz"), 6)
+        Me.options.misclOptions.HogRodTakeup = DBtoNullableDbl(Data.Item("HogRodTakeup"), 6)
         Me.geometry.TowerTaper = DBtoStr(Data.Item("TowerTaper"))
         Me.geometry.GuyedMonopoleBaseType = DBtoStr(Data.Item("GuyedMonopoleBaseType"))
-        Me.geometry.TaperHeight = DBtoNullableDbl(Data.Item("TaperHeight"))
-        Me.geometry.PivotHeight = DBtoNullableDbl(Data.Item("PivotHeight"))
+        Me.geometry.TaperHeight = DBtoNullableDbl(Data.Item("TaperHeight"), 6)
+        Me.geometry.PivotHeight = DBtoNullableDbl(Data.Item("PivotHeight"), 6)
         Me.geometry.AutoCalcGH = DBtoNullableBool(Data.Item("AutoCalcGH"))
         Me.MTOSettings.IncludeCapacityNote = DBtoNullableBool(Data.Item("IncludeCapacityNote"))
         Me.MTOSettings.IncludeAppurtGraphics = DBtoNullableBool(Data.Item("IncludeAppurtGraphics"))
@@ -416,29 +462,29 @@ Partial Public Class tnxModel
         Me.code.wind.AutoCalc_ASCE_GH = DBtoNullableBool(Data.Item("AutoCalc_ASCE_GH"))
         Me.code.wind.ASCE_ExposureCat = DBtoNullableInt(Data.Item("ASCE_ExposureCat"))
         Me.code.wind.ASCE_Year = DBtoNullableInt(Data.Item("ASCE_Year"))
-        Me.code.wind.ASCEGh = DBtoNullableDbl(Data.Item("ASCEGh"))
-        Me.code.wind.ASCEI = DBtoNullableDbl(Data.Item("ASCEI"))
+        Me.code.wind.ASCEGh = DBtoNullableDbl(Data.Item("ASCEGh"), 6)
+        Me.code.wind.ASCEI = DBtoNullableDbl(Data.Item("ASCEI"), 6)
         Me.code.wind.UseASCEWind = DBtoNullableBool(Data.Item("UseASCEWind"))
-        Me.geometry.UserGHElev = DBtoNullableDbl(Data.Item("UserGHElev"))
+        Me.geometry.UserGHElev = DBtoNullableDbl(Data.Item("UserGHElev"), 6)
         Me.code.design.UseCodeGuySF = DBtoNullableBool(Data.Item("UseCodeGuySF"))
-        Me.code.design.GuySF = DBtoNullableDbl(Data.Item("GuySF"))
+        Me.code.design.GuySF = DBtoNullableDbl(Data.Item("GuySF"), 6)
         Me.code.wind.CalcWindAt = DBtoNullableInt(Data.Item("CalcWindAt"))
         Me.code.misclCode.TowerBoltGrade = DBtoStr(Data.Item("TowerBoltGrade"))
-        Me.code.misclCode.TowerBoltMinEdgeDist = DBtoNullableDbl(Data.Item("TowerBoltMinEdgeDist"))
-        Me.code.design.AllowStressRatio = DBtoNullableDbl(Data.Item("AllowStressRatio"))
-        Me.code.design.AllowAntStressRatio = DBtoNullableDbl(Data.Item("AllowAntStressRatio"))
-        Me.code.wind.WindCalcPoints = DBtoNullableDbl(Data.Item("WindCalcPoints"))
+        Me.code.misclCode.TowerBoltMinEdgeDist = DBtoNullableDbl(Data.Item("TowerBoltMinEdgeDist"), 6)
+        Me.code.design.AllowStressRatio = DBtoNullableDbl(Data.Item("AllowStressRatio"), 6)
+        Me.code.design.AllowAntStressRatio = DBtoNullableDbl(Data.Item("AllowAntStressRatio"), 6)
+        Me.code.wind.WindCalcPoints = DBtoNullableDbl(Data.Item("WindCalcPoints"), 6)
         Me.geometry.UseIndexPlate = DBtoNullableBool(Data.Item("UseIndexPlate"))
         Me.geometry.EnterUserDefinedGhValues = DBtoNullableBool(Data.Item("EnterUserDefinedGhValues"))
-        Me.geometry.BaseTowerGhInput = DBtoNullableDbl(Data.Item("BaseTowerGhInput"))
-        Me.geometry.UpperStructureGhInput = DBtoNullableDbl(Data.Item("UpperStructureGhInput"))
+        Me.geometry.BaseTowerGhInput = DBtoNullableDbl(Data.Item("BaseTowerGhInput"), 6)
+        Me.geometry.UpperStructureGhInput = DBtoNullableDbl(Data.Item("UpperStructureGhInput"), 6)
         Me.geometry.EnterUserDefinedCgValues = DBtoNullableBool(Data.Item("EnterUserDefinedCgValues"))
-        Me.geometry.BaseTowerCgInput = DBtoNullableDbl(Data.Item("BaseTowerCgInput"))
-        Me.geometry.UpperStructureCgInput = DBtoNullableDbl(Data.Item("UpperStructureCgInput"))
+        Me.geometry.BaseTowerCgInput = DBtoNullableDbl(Data.Item("BaseTowerCgInput"), 6)
+        Me.geometry.UpperStructureCgInput = DBtoNullableDbl(Data.Item("UpperStructureCgInput"), 6)
         Me.options.cantileverPoles.CheckVonMises = DBtoNullableBool(Data.Item("CheckVonMises"))
         Me.options.UseClearSpans = DBtoNullableBool(Data.Item("UseClearSpans"))
         Me.options.UseClearSpansKlr = DBtoNullableBool(Data.Item("UseClearSpansKlr"))
-        Me.geometry.AntennaFaceWidth = DBtoNullableDbl(Data.Item("AntennaFaceWidth"))
+        Me.geometry.AntennaFaceWidth = DBtoNullableDbl(Data.Item("AntennaFaceWidth"), 6)
         Me.code.design.DoInteraction = DBtoNullableBool(Data.Item("DoInteraction"))
         Me.code.design.DoHorzInteraction = DBtoNullableBool(Data.Item("DoHorzInteraction"))
         Me.code.design.DoDiagInteraction = DBtoNullableBool(Data.Item("DoDiagInteraction"))
@@ -457,20 +503,20 @@ Partial Public Class tnxModel
         Me.code.wind.RiskCategory = DBtoNullableInt(Data.Item("RiskCategory"))
         Me.code.wind.TopoCategory = DBtoNullableInt(Data.Item("TopoCategory"))
         Me.code.wind.RSMTopographicFeature = DBtoNullableInt(Data.Item("RSMTopographicFeature"))
-        Me.code.wind.RSM_L = DBtoNullableDbl(Data.Item("RSM_L"))
-        Me.code.wind.RSM_X = DBtoNullableDbl(Data.Item("RSM_X"))
-        Me.code.wind.CrestHeight = DBtoNullableDbl(Data.Item("CrestHeight"))
+        Me.code.wind.RSM_L = DBtoNullableDbl(Data.Item("RSM_L"), 6)
+        Me.code.wind.RSM_X = DBtoNullableDbl(Data.Item("RSM_X"), 6)
+        Me.code.wind.CrestHeight = DBtoNullableDbl(Data.Item("CrestHeight"), 6)
         Me.code.wind.TIA_222_H_TopoFeatureDownwind = DBtoNullableBool(Data.Item("TIA_222_H_TopoFeatureDownwind"))
-        Me.code.wind.BaseElevAboveSeaLevel = DBtoNullableDbl(Data.Item("BaseElevAboveSeaLevel"))
+        Me.code.wind.BaseElevAboveSeaLevel = DBtoNullableDbl(Data.Item("BaseElevAboveSeaLevel"), 6)
         Me.code.wind.ConsiderRooftopSpeedUp = DBtoNullableBool(Data.Item("ConsiderRooftopSpeedUp"))
-        Me.code.wind.RooftopWS = DBtoNullableDbl(Data.Item("RooftopWS"))
-        Me.code.wind.RooftopHS = DBtoNullableDbl(Data.Item("RooftopHS"))
-        Me.code.wind.RooftopParapetHt = DBtoNullableDbl(Data.Item("RooftopParapetHt"))
-        Me.code.wind.RooftopXB = DBtoNullableDbl(Data.Item("RooftopXB"))
+        Me.code.wind.RooftopWS = DBtoNullableDbl(Data.Item("RooftopWS"), 6)
+        Me.code.wind.RooftopHS = DBtoNullableDbl(Data.Item("RooftopHS"), 6)
+        Me.code.wind.RooftopParapetHt = DBtoNullableDbl(Data.Item("RooftopParapetHt"), 6)
+        Me.code.wind.RooftopXB = DBtoNullableDbl(Data.Item("RooftopXB"), 6)
         Me.code.design.UseTIA222H_AnnexS = DBtoNullableBool(Data.Item("UseTIA222H_AnnexS"))
-        Me.code.design.TIA_222_H_AnnexS_Ratio = DBtoNullableDbl(Data.Item("TIA_222_H_AnnexS_Ratio"))
-        Me.code.wind.EIACWindMult = DBtoNullableDbl(Data.Item("EIACWindMult"))
-        Me.code.wind.EIACWindMultIce = DBtoNullableDbl(Data.Item("EIACWindMultIce"))
+        Me.code.design.TIA_222_H_AnnexS_Ratio = DBtoNullableDbl(Data.Item("TIA_222_H_AnnexS_Ratio"), 6)
+        Me.code.wind.EIACWindMult = DBtoNullableDbl(Data.Item("EIACWindMult"), 6)
+        Me.code.wind.EIACWindMultIce = DBtoNullableDbl(Data.Item("EIACWindMultIce"), 6)
         Me.code.wind.EIACIgnoreCableDrag = DBtoNullableBool(Data.Item("EIACIgnoreCableDrag"))
         Me.MTOSettings.Notes = DBtoStr(Data.Item("Notes"))
         Me.reportSettings.ReportInputCosts = DBtoNullableBool(Data.Item("ReportInputCosts"))
@@ -534,13 +580,13 @@ Partial Public Class tnxModel
         Me.options.cantileverPoles.AssumePoleWithNoAttachments = DBtoNullableBool(Data.Item("AssumePoleWithNoAttachments"))
         Me.options.cantileverPoles.AssumePoleWithShroud = DBtoNullableBool(Data.Item("AssumePoleWithShroud"))
         Me.options.cantileverPoles.PoleCornerRadiusKnown = DBtoNullableBool(Data.Item("PoleCornerRadiusKnown"))
-        Me.solutionSettings.SolutionMinStiffness = DBtoNullableDbl(Data.Item("SolutionMinStiffness"))
-        Me.solutionSettings.SolutionMaxStiffness = DBtoNullableDbl(Data.Item("SolutionMaxStiffness"))
+        Me.solutionSettings.SolutionMinStiffness = DBtoNullableDbl(Data.Item("SolutionMinStiffness"), 6)
+        Me.solutionSettings.SolutionMaxStiffness = DBtoNullableDbl(Data.Item("SolutionMaxStiffness"), 6)
         Me.solutionSettings.SolutionMaxCycles = DBtoNullableInt(Data.Item("SolutionMaxCycles"))
-        Me.solutionSettings.SolutionPower = DBtoNullableDbl(Data.Item("SolutionPower"))
-        Me.solutionSettings.SolutionTolerance = DBtoNullableDbl(Data.Item("SolutionTolerance"))
-        Me.options.cantileverPoles.CantKFactor = DBtoNullableDbl(Data.Item("CantKFactor"))
-        Me.options.misclOptions.RadiusSampleDist = DBtoNullableDbl(Data.Item("RadiusSampleDist"))
+        Me.solutionSettings.SolutionPower = DBtoNullableDbl(Data.Item("SolutionPower"), 6)
+        Me.solutionSettings.SolutionTolerance = DBtoNullableDbl(Data.Item("SolutionTolerance"), 6)
+        Me.options.cantileverPoles.CantKFactor = DBtoNullableDbl(Data.Item("CantKFactor"), 6)
+        Me.options.misclOptions.RadiusSampleDist = DBtoNullableDbl(Data.Item("RadiusSampleDist"), 6)
         Me.options.BypassStabilityChecks = DBtoNullableBool(Data.Item("BypassStabilityChecks"))
         Me.options.UseWindProjection = DBtoNullableBool(Data.Item("UseWindProjection"))
         Me.code.ice.UseIceEscalation = DBtoNullableBool(Data.Item("UseIceEscalation"))
@@ -618,7 +664,7 @@ Partial Public Class tnxModel
 
     <Description("Build TNX object from TNX file.")>
     Public Sub BuildFromFile(ByVal tnxPath As String)
-
+        Me.geometry.Absorb(Me)
         Me.filePath = tnxPath
 
         Dim tnxVar As String
@@ -7411,6 +7457,8 @@ Partial Public Class tnxModel
             End If
         End If
 
+        EDSQueryBuilder += InsertMyLoading()
+
         'Database
         EDSQueryBuilder += Me.database.members.TNXMemberListQueryBuilder(TNXToCompare?.database.members)
         EDSQueryBuilder += Me.database.materials.TNXMemberListQueryBuilder(TNXToCompare?.database.materials)
@@ -7421,11 +7469,50 @@ Partial Public Class tnxModel
         EDSQueryBuilder += Me.geometry.baseStructure.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.baseStructure, AllowUpdate)
         EDSQueryBuilder += Me.geometry.guyWires.TNXGeometryRecListQueryBuilder(TNXToCompare?.geometry.guyWires, AllowUpdate)
 
+        'EDSQueryBuilder += loadQuery
         EDSQueryBuilder += "SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf
 
         Return EDSQueryBuilder
 
     End Function
+
+    Private Function InsertMyLoading() As String
+
+        'DELETE all loads associated with the tnx model and insert all new ones. 
+        'We may need to look into where this query is added. There are a lot of different pieces to the tnx file. 
+        Dim discQuery As String = ""
+        Dim lineQuery As String = ""
+        Dim userQuery As String = ""
+        Dim dishQuery As String = ""
+        Dim loadQuery As String = ""
+
+        loadQuery += "DELETE FROM load.discrete_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each disc In Me.discreteLoads
+            discQuery += disc.SQLInsert & vbCrLf
+        Next
+        loadQuery += discQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.linear_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each line In Me.feedLines
+            lineQuery += line.SQLInsert & vbCrLf
+        Next
+        loadQuery += lineQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.user_force_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each user In Me.userForces
+            userQuery += user.SQLInsert & vbCrLf
+        Next
+        loadQuery += userQuery & vbCrLf
+
+        loadQuery += "DELETE FROM load.dish_output WHERE tnx_id = @TopLevelID" & vbCrLf
+        For Each dish In Me.dishes
+            dishQuery += dish.SQLInsert & vbCrLf
+        Next
+        loadQuery += dishQuery & vbCrLf
+
+        Return loadQuery
+    End Function
+
     'Private _Insert As String
     'Private _Update As String
     'Private _Delete As String
@@ -7809,6 +7896,8 @@ Partial Public Class tnxModel
         SQLInsertFields = SQLInsertFields.AddtoDBString("WindDir2_14")
         SQLInsertFields = SQLInsertFields.AddtoDBString("WindDir2_15")
         SQLInsertFields = SQLInsertFields.AddtoDBString("SuppressWindPatternLoading")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -8156,6 +8245,8 @@ Partial Public Class tnxModel
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.WindDir2_14.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.WindDir2_15.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -8504,6 +8595,8 @@ Partial Public Class tnxModel
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("WindDir2_14 = " & Me.options.windDirections.WindDir2_14.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("WindDir2_15 = " & Me.options.windDirections.WindDir2_15.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("SuppressWindPatternLoading = " & Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -8511,14 +8604,193 @@ Partial Public Class tnxModel
 #End Region
 
 #Region "Save to TNX"
-    Public Sub GenerateERI(FilePath As String)
+
+    Public Sub GenerateERI(overwriteFile As OverwriteFile, FilePath As String)
+        If File.Exists(FilePath) AndAlso Not overwriteFile(FilePath) Then Exit Sub
+        GenerateERI(FilePath)
+    End Sub
+
+    Public Sub GenerateERI(FilePath As String, Optional replaceFile As Boolean = True)
+
+        If File.Exists(FilePath) And Not replaceFile Then Exit Sub
 
         Dim newERIList As New List(Of String)
         Dim i As Integer
+        Dim defaults As New DefaultERItxtValues
+
+        'ReportInputCosts is first line after userforces
+#Region "Individual fields after User Forces"
+        '''''''        ReportInputCosts = No
+        '''''''        ReportInputGeometry = Yes
+        '''''''        ReportInputOptions = Yes
+        '''''''        ReportMaxForces = Yes
+        '''''''        ReportInputMap = No
+        '''''''        CostReportOutputType = No Cost Output
+        '''''''        CapacityReportOutputType = Capacity Summary
+        '''''''        ReportPrintForceTotals = No
+        '''''''        ReportPrintForceDetails = No
+        '''''''        ReportPrintMastVectors = No
+        '''''''        ReportPrintAntPoleVectors = No
+        '''''''        ReportPrintDiscreteVectors = No
+        '''''''        ReportPrintDishVectors = No
+        '''''''        ReportPrintFeedTowerVectors = No
+        '''''''        ReportPrintUserLoadVectors = No
+        '''''''        ReportPrintPressures = No
+        '''''''        ReportPrintAppurtForces = No
+        '''''''        ReportPrintGuyForces = No
+        '''''''        ReportPrintGuyStressing = No
+        '''''''        ReportPrintDeflections = Yes
+        '''''''        ReportPrintReactions = Yes
+        '''''''        ReportPrintStressChecks = Yes
+        '''''''        ReportPrintBoltChecks = No
+        '''''''        ReportPrintInputGVerificationTables = No
+        '''''''        ReportPrintOutputGVerificationTables = No
+        '''''''        MastMultiplier = 1.0
+        '''''''        SocketTopMount = No
+        '''''''        SRTakeCompression = No
+        '''''''        AllLegPanelsSame = No
+        '''''''        UseCombinedBoltCapacity = No
+        '''''''        SecHorzBracesLeg = No
+        '''''''        SortByComponent = Yes
+        '''''''        SRCutEnds = No
+        '''''''        SRConcentric = No
+        '''''''        CalcBlockShear = No
+        '''''''        Use4SidedDiamondBracing = No
+        '''''''        TriangulateInnerBracing = No
+        '''''''        PrintCarrierNotes = No
+        '''''''        AddIBCWindCase = No
+        '''''''        UseStateCountyLookup = Yes
+        '''''''        State = Ohio
+        '''''''        County = Franklin
+        '''''''        EnforceAllOffsetsVer2 = Yes
+        '''''''        LegBoltsAtTop = No
+        '''''''        PrintMonopoleAtIncrements = No
+        '''''''        UseTIA222Exemptions_MinBracingResistance = No
+        '''''''        UseTIA222Exemptions_TensionSplice = No
+        '''''''        IgnoreKLryFor60DegAngleLegs = No
+        '''''''        ASCE_7_10_WindData = No
+        '''''''        ASCE_7_10_ConvertWindToASD = No
+        '''''''        SolutionUsePDelta = Yes
+        '''''''        UseFeedlineTorque = Yes
+        '''''''        UsePinnedElements = No
+        '''''''        UseMaxKz = No
+        '''''''        UseRigidIndex = Yes
+        '''''''        UseTrueCable = No
+        '''''''        UseASCELy = No
+        '''''''        CalcBracingForces = No
+        '''''''        IgnoreBracingFEA = No
+        '''''''        UseSubCriticalFlow = No
+        '''''''        AssumePoleWithNoAttachments = No
+        '''''''        AssumePoleWithShroud = No
+        '''''''        PoleCornerRadiusKnown = No
+        '''''''        SolutionMinStiffness = 0.000000
+        '''''''        SolutionMaxStiffness = 0.000000
+        '''''''        SolutionMaxCycles = 200
+        '''''''        SolutionPower = 0.000000
+        '''''''        SolutionTolerance = 0.001
+        '''''''        CantKFactor = 1.0
+        '''''''        RadiusSampleDist = 5.0
+        '''''''        BypassStabilityChecks = Yes
+        '''''''        UseWindProjection = Yes
+        '''''''        UseIceEscalation = No
+        '''''''        UseDishCoeff = Yes
+        '''''''        UseMastResponse = No
+        '''''''        AutoCalcTorqArmArea = No
+        '''''''        Use_TIA_222_G_Addendum2_MP = Yes
+        '''''''        WindDirOption = 1
+        '''''''        WindDir0_0 = Yes
+        '''''''        WindDir0_1 = Yes
+        '''''''        WindDir0_2 = No
+        '''''''        WindDir0_3 = Yes
+        '''''''        WindDir0_4 = Yes
+        '''''''        WindDir0_5 = Yes
+        '''''''        WindDir0_6 = No
+        '''''''        WindDir0_7 = Yes
+        '''''''        WindDir0_8 = Yes
+        '''''''        WindDir0_9 = Yes
+        '''''''        WindDir0_10 = No
+        '''''''        WindDir0_11 = Yes
+        '''''''        WindDir0_12 = Yes
+        '''''''        WindDir0_13 = Yes
+        '''''''        WindDir0_14 = No
+        '''''''        WindDir0_15 = Yes
+        '''''''        WindDir1_0 = Yes
+        '''''''        WindDir1_1 = Yes
+        '''''''        WindDir1_2 = No
+        '''''''        WindDir1_3 = Yes
+        '''''''        WindDir1_4 = Yes
+        '''''''        WindDir1_5 = Yes
+        '''''''        WindDir1_6 = No
+        '''''''        WindDir1_7 = Yes
+        '''''''        WindDir1_8 = Yes
+        '''''''        WindDir1_9 = Yes
+        '''''''        WindDir1_10 = No
+        '''''''        WindDir1_11 = Yes
+        '''''''        WindDir1_12 = Yes
+        '''''''        WindDir1_13 = Yes
+        '''''''        WindDir1_14 = No
+        '''''''        WindDir1_15 = Yes
+        '''''''        WindDir2_0 = Yes
+        '''''''        WindDir2_1 = Yes
+        '''''''        WindDir2_2 = No
+        '''''''        WindDir2_3 = Yes
+        '''''''        WindDir2_4 = Yes
+        '''''''        WindDir2_5 = Yes
+        '''''''        WindDir2_6 = No
+        '''''''        WindDir2_7 = Yes
+        '''''''        WindDir2_8 = Yes
+        '''''''        WindDir2_9 = Yes
+        '''''''        WindDir2_10 = No
+        '''''''        WindDir2_11 = Yes
+        '''''''        WindDir2_12 = Yes
+        '''''''        WindDir2_13 = Yes
+        '''''''        WindDir2_14 = No
+        '''''''        WindDir2_15 = Yes
+        '''''''        SuppressWindPatternLoading = No
+        '''''''        DoELCAnalysis = No
+#End Region
+
+        If Me.otherLines.Count < 1 Then
+            Me.otherLines.Add(New String() {"[Common]", ""})
+            Me.otherLines.Add(New String() {"[US Units]", ""})
+            Me.otherLines.Add(New String() {"[SI Units]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[Codes]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[Application]", ""}) 'Missing
+            'Me.otherLines.Add(New String() {"[Databases]", ""}) 'Missing (Inside of Application
+            Me.otherLines.Add(New String() {"[Structure]", ""})
+            Me.otherLines.Add(New String() {"NumAntennaRecs", ""})
+            Me.otherLines.Add(New String() {"NumTowerRecs", ""})
+            Me.otherLines.Add(New String() {"NumGuyRecs", ""})
+            Me.otherLines.Add(New String() {"NumFeedLineRecs", ""})
+            Me.otherLines.Add(New String() {"NumTowerLoadRecs", ""})
+            Me.otherLines.Add(New String() {"NumDishRecs", ""})
+            Me.otherLines.Add(New String() {"NumUserForceRecs", ""})
+            Me.otherLines.Add(New String() {"[End Structure]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[End Application]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[CHRONOS]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[Nodes]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Supports]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[ConnectionArray]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Elements]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Conditions]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Segments]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Material]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Properties]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[SelfWeight]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Thermal]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Combinations]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Envelopes]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[Cases]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[OutputOptions]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[ReportOptions]", ""}) 'Missing + comments in section
+            Me.otherLines.Add(New String() {"[EndCHRONOS]", ""}) 'Missing
+            Me.otherLines.Add(New String() {"[Material]", ""}) 'Missing - This is weird because this is the second one
+            Me.otherLines.Add(New String() {"[EndOverwrite]", ""}) 'Missing
+        End If
 
         For Each line In Me.otherLines
-
             Select Case True
+#Region "[Common]"
                 Case line(0).Equals("[Common]")
                     newERIList.Add(line(0))
                     'Project Settings
@@ -8532,6 +8804,8 @@ Partial Public Class tnxModel
                     newERIList.Add("LastUsedBy=" & Me.settings.projectInfo.LastUsedBy)
                     newERIList.Add("LastUsedOn=" & Me.settings.projectInfo.LastUsedOn)
                     newERIList.Add("VersionUsed=" & Me.settings.projectInfo.VersionUsed)
+#End Region
+#Region "US Units"
                 Case line(0).Equals("[US Units]")
                     newERIList.Add(line(0))
                     newERIList.Add("Length=" & Me.settings.USUnits.Length.value)
@@ -8574,9 +8848,34 @@ Partial Public Class tnxModel
                     newERIList.Add("RotationPrec=" & Me.settings.USUnits.Rotation.precision)
                     newERIList.Add("Spacing=" & Me.settings.USUnits.Spacing.value)
                     newERIList.Add("SpacingPrec=" & Me.settings.USUnits.Spacing.precision)
-                Case line(0).Equals("[Structure]")
+#End Region
+#Region "SI Units"
+                Case line(0).Equals("[SI Units]")
+                    'SI Units was missing from creating file
                     newERIList.Add(line(0))
-                    'User Info Settings
+                    newERIList.AddRange(defaults.SIUnits)
+#End Region
+#Region "Codes"
+                Case line(0).Equals("[Codes]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("SteelCode=" & Me.code.design.DesignCode)
+                    newERIList.AddRange(defaults.CodeValues)
+#End Region
+#Region "Materials"
+                Case line(0).Equals("[APPLICATION]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("[DATABASE]")
+                    For Each mat In database.materials
+                        newERIList.Add(IIf(mat.IsBolt, "BoltMatFile=", "MembermatFile=") & mat.MemberMatFile)
+                        newERIList.Add("MatName=" & mat.MatName)
+                        newERIList.Add("MatValues=" & mat.MatValues)
+                    Next
+#End Region
+#Region "[STRUCTURE]"
+                Case line(0).Equals("[Structure]")
+
+                    newERIList.Add(line(0))
+#Region "User Info Settings"
                     newERIList.Add("ViewerUserName=" & Me.settings.userInfo.ViewerUserName)
                     newERIList.Add("ViewerCompanyName=" & Me.settings.userInfo.ViewerCompanyName)
                     newERIList.Add("ViewerStreetAddress=" & Me.settings.userInfo.ViewerStreetAddress)
@@ -8585,25 +8884,8 @@ Partial Public Class tnxModel
                     newERIList.Add("ViewerFAX=" & Me.settings.userInfo.ViewerFAX)
                     newERIList.Add("ViewerLogo=" & Me.settings.userInfo.ViewerLogo)
                     newERIList.Add("ViewerCompanyBitmap=" & Me.settings.userInfo.ViewerCompanyBitmap)
-                    'Solution Settings
-                    newERIList.Add("SolutionUsePDelta=" & trueFalseYesNo(Me.solutionSettings.SolutionUsePDelta))
-                    newERIList.Add("SolutionMinStiffness=" & Me.solutionSettings.SolutionMinStiffness)
-                    newERIList.Add("SolutionMaxStiffness=" & Me.solutionSettings.SolutionMaxStiffness)
-                    newERIList.Add("SolutionMaxCycles=" & Me.solutionSettings.SolutionMaxCycles)
-                    newERIList.Add("SolutionPower=" & Me.solutionSettings.SolutionPower)
-                    newERIList.Add("SolutionTolerance=" & Me.solutionSettings.SolutionTolerance)
-                    'MTO Settings
-                    newERIList.Add("IncludeCapacityNote=" & trueFalseYesNo(Me.MTOSettings.IncludeCapacityNote))
-                    newERIList.Add("IncludeAppurtGraphics=" & trueFalseYesNo(Me.MTOSettings.IncludeAppurtGraphics))
-                    newERIList.Add("DisplayNotes=" & trueFalseYesNo(Me.MTOSettings.DisplayNotes))
-                    newERIList.Add("DisplayReactions=" & trueFalseYesNo(Me.MTOSettings.DisplayReactions))
-                    newERIList.Add("DisplaySchedule=" & trueFalseYesNo(Me.MTOSettings.DisplaySchedule))
-                    newERIList.Add("DisplayAppurtenanceTable=" & trueFalseYesNo(Me.MTOSettings.DisplayAppurtenanceTable))
-                    newERIList.Add("DisplayMaterialStrengthTable=" & trueFalseYesNo(Me.MTOSettings.DisplayMaterialStrengthTable))
-                    For Each note As String In Split(Me.MTOSettings.Notes, "||")
-                        newERIList.Add("Notes=" & note)
-                    Next
-                    'Report Settings
+#End Region
+#Region "Report Settings"
                     newERIList.Add("ReportInputCosts=" & trueFalseYesNo(Me.reportSettings.ReportInputCosts))
                     newERIList.Add("ReportInputGeometry=" & trueFalseYesNo(Me.reportSettings.ReportInputGeometry))
                     newERIList.Add("ReportInputOptions=" & trueFalseYesNo(Me.reportSettings.ReportInputOptions))
@@ -8629,7 +8911,61 @@ Partial Public Class tnxModel
                     newERIList.Add("ReportPrintBoltChecks=" & trueFalseYesNo(Me.reportSettings.ReportPrintBoltChecks))
                     newERIList.Add("ReportPrintInputGVerificationTables=" & trueFalseYesNo(Me.reportSettings.ReportPrintInputGVerificationTables))
                     newERIList.Add("ReportPrintOutputGVerificationTables=" & trueFalseYesNo(Me.reportSettings.ReportPrintOutputGVerificationTables))
-                    'CCIReport
+#End Region
+#Region "Options - Wind"
+                    newERIList.Add("WindDirOption=" & Me.options.windDirections.WindDirOption)
+                    newERIList.Add("WindDir0_0=" & trueFalseYesNo(Me.options.windDirections.WindDir0_0))
+                    newERIList.Add("WindDir0_1=" & trueFalseYesNo(Me.options.windDirections.WindDir0_1))
+                    newERIList.Add("WindDir0_2=" & trueFalseYesNo(Me.options.windDirections.WindDir0_2))
+                    newERIList.Add("WindDir0_3=" & trueFalseYesNo(Me.options.windDirections.WindDir0_3))
+                    newERIList.Add("WindDir0_4=" & trueFalseYesNo(Me.options.windDirections.WindDir0_4))
+                    newERIList.Add("WindDir0_5=" & trueFalseYesNo(Me.options.windDirections.WindDir0_5))
+                    newERIList.Add("WindDir0_6=" & trueFalseYesNo(Me.options.windDirections.WindDir0_6))
+                    newERIList.Add("WindDir0_7=" & trueFalseYesNo(Me.options.windDirections.WindDir0_7))
+                    newERIList.Add("WindDir0_8=" & trueFalseYesNo(Me.options.windDirections.WindDir0_8))
+                    newERIList.Add("WindDir0_9=" & trueFalseYesNo(Me.options.windDirections.WindDir0_9))
+                    newERIList.Add("WindDir0_10=" & trueFalseYesNo(Me.options.windDirections.WindDir0_10))
+                    newERIList.Add("WindDir0_11=" & trueFalseYesNo(Me.options.windDirections.WindDir0_11))
+                    newERIList.Add("WindDir0_12=" & trueFalseYesNo(Me.options.windDirections.WindDir0_12))
+                    newERIList.Add("WindDir0_13=" & trueFalseYesNo(Me.options.windDirections.WindDir0_13))
+                    newERIList.Add("WindDir0_14=" & trueFalseYesNo(Me.options.windDirections.WindDir0_14))
+                    newERIList.Add("WindDir0_15=" & trueFalseYesNo(Me.options.windDirections.WindDir0_15))
+                    newERIList.Add("WindDir1_0=" & trueFalseYesNo(Me.options.windDirections.WindDir1_0))
+                    newERIList.Add("WindDir1_1=" & trueFalseYesNo(Me.options.windDirections.WindDir1_1))
+                    newERIList.Add("WindDir1_2=" & trueFalseYesNo(Me.options.windDirections.WindDir1_2))
+                    newERIList.Add("WindDir1_3=" & trueFalseYesNo(Me.options.windDirections.WindDir1_3))
+                    newERIList.Add("WindDir1_4=" & trueFalseYesNo(Me.options.windDirections.WindDir1_4))
+                    newERIList.Add("WindDir1_5=" & trueFalseYesNo(Me.options.windDirections.WindDir1_5))
+                    newERIList.Add("WindDir1_6=" & trueFalseYesNo(Me.options.windDirections.WindDir1_6))
+                    newERIList.Add("WindDir1_7=" & trueFalseYesNo(Me.options.windDirections.WindDir1_7))
+                    newERIList.Add("WindDir1_8=" & trueFalseYesNo(Me.options.windDirections.WindDir1_8))
+                    newERIList.Add("WindDir1_9=" & trueFalseYesNo(Me.options.windDirections.WindDir1_9))
+                    newERIList.Add("WindDir1_10=" & trueFalseYesNo(Me.options.windDirections.WindDir1_10))
+                    newERIList.Add("WindDir1_11=" & trueFalseYesNo(Me.options.windDirections.WindDir1_11))
+                    newERIList.Add("WindDir1_12=" & trueFalseYesNo(Me.options.windDirections.WindDir1_12))
+                    newERIList.Add("WindDir1_13=" & trueFalseYesNo(Me.options.windDirections.WindDir1_13))
+                    newERIList.Add("WindDir1_14=" & trueFalseYesNo(Me.options.windDirections.WindDir1_14))
+                    newERIList.Add("WindDir1_15=" & trueFalseYesNo(Me.options.windDirections.WindDir1_15))
+                    newERIList.Add("WindDir2_0=" & trueFalseYesNo(Me.options.windDirections.WindDir2_0))
+                    newERIList.Add("WindDir2_1=" & trueFalseYesNo(Me.options.windDirections.WindDir2_1))
+                    newERIList.Add("WindDir2_2=" & trueFalseYesNo(Me.options.windDirections.WindDir2_2))
+                    newERIList.Add("WindDir2_3=" & trueFalseYesNo(Me.options.windDirections.WindDir2_3))
+                    newERIList.Add("WindDir2_4=" & trueFalseYesNo(Me.options.windDirections.WindDir2_4))
+                    newERIList.Add("WindDir2_5=" & trueFalseYesNo(Me.options.windDirections.WindDir2_5))
+                    newERIList.Add("WindDir2_6=" & trueFalseYesNo(Me.options.windDirections.WindDir2_6))
+                    newERIList.Add("WindDir2_7=" & trueFalseYesNo(Me.options.windDirections.WindDir2_7))
+                    newERIList.Add("WindDir2_8=" & trueFalseYesNo(Me.options.windDirections.WindDir2_8))
+                    newERIList.Add("WindDir2_9=" & trueFalseYesNo(Me.options.windDirections.WindDir2_9))
+                    newERIList.Add("WindDir2_10=" & trueFalseYesNo(Me.options.windDirections.WindDir2_10))
+                    newERIList.Add("WindDir2_11=" & trueFalseYesNo(Me.options.windDirections.WindDir2_11))
+                    newERIList.Add("WindDir2_12=" & trueFalseYesNo(Me.options.windDirections.WindDir2_12))
+                    newERIList.Add("WindDir2_13=" & trueFalseYesNo(Me.options.windDirections.WindDir2_13))
+                    newERIList.Add("WindDir2_14=" & trueFalseYesNo(Me.options.windDirections.WindDir2_14))
+                    newERIList.Add("WindDir2_15=" & trueFalseYesNo(Me.options.windDirections.WindDir2_15))
+                    newERIList.Add("SuppressWindPatternLoading=" & trueFalseYesNo(Me.options.windDirections.SuppressWindPatternLoading))
+                    newERIList.Add("DoELCAnalysis=No")
+#End Region
+#Region "CCIReport"
                     newERIList.Add("sReportProjectNumber=" & Me.CCIReport.sReportProjectNumber)
                     newERIList.Add("sReportJobType=" & Me.CCIReport.sReportJobType)
                     newERIList.Add("sReportCarrierName=" & Me.CCIReport.sReportCarrierName)
@@ -8702,7 +9038,28 @@ Partial Public Class tnxModel
                     newERIList.Add("sReportAddlCapacityNote2=" & Me.CCIReport.sReportAddlCapacityNote2)
                     newERIList.Add("sReportAddlCapacityNote3=" & Me.CCIReport.sReportAddlCapacityNote3)
                     newERIList.Add("sReportAddlCapacityNote4=" & Me.CCIReport.sReportAddlCapacityNote4)
-                    'Code - Design
+#End Region
+#Region "Solution Settings"
+                    newERIList.Add("SolutionUsePDelta=" & trueFalseYesNo(Me.solutionSettings.SolutionUsePDelta))
+                    newERIList.Add("SolutionMinStiffness=" & Me.solutionSettings.SolutionMinStiffness)
+                    newERIList.Add("SolutionMaxStiffness=" & Me.solutionSettings.SolutionMaxStiffness)
+                    newERIList.Add("SolutionMaxCycles=" & Me.solutionSettings.SolutionMaxCycles)
+                    newERIList.Add("SolutionPower=" & Me.solutionSettings.SolutionPower)
+                    newERIList.Add("SolutionTolerance=" & Me.solutionSettings.SolutionTolerance)
+#End Region
+#Region "MTO Settings"
+                    newERIList.Add("IncludeCapacityNote=" & trueFalseYesNo(Me.MTOSettings.IncludeCapacityNote))
+                    newERIList.Add("IncludeAppurtGraphics=" & trueFalseYesNo(Me.MTOSettings.IncludeAppurtGraphics))
+                    newERIList.Add("DisplayNotes=" & trueFalseYesNo(Me.MTOSettings.DisplayNotes))
+                    newERIList.Add("DisplayReactions=" & trueFalseYesNo(Me.MTOSettings.DisplayReactions))
+                    newERIList.Add("DisplaySchedule=" & trueFalseYesNo(Me.MTOSettings.DisplaySchedule))
+                    newERIList.Add("DisplayAppurtenanceTable=" & trueFalseYesNo(Me.MTOSettings.DisplayAppurtenanceTable))
+                    newERIList.Add("DisplayMaterialStrengthTable=" & trueFalseYesNo(Me.MTOSettings.DisplayMaterialStrengthTable))
+                    For Each note As String In Split(Me.MTOSettings.Notes, "||")
+                        newERIList.Add("Notes=" & note)
+                    Next
+#End Region
+#Region "Code - Design"
                     newERIList.Add("DesignCode=" & Me.code.design.DesignCode)
                     newERIList.Add("ERIDesignMode=" & Me.code.design.ERIDesignMode)
                     newERIList.Add("DoInteraction=" & trueFalseYesNo(Me.code.design.DoInteraction))
@@ -8717,7 +9074,8 @@ Partial Public Class tnxModel
                     newERIList.Add("UseTIA222H_AnnexS=" & trueFalseYesNo(Me.code.design.UseTIA222H_AnnexS))
                     newERIList.Add("TIA_222_H_AnnexS_Ratio=" & Me.code.design.TIA_222_H_AnnexS_Ratio)
                     newERIList.Add("PrintBitmaps=" & trueFalseYesNo(Me.code.design.PrintBitmaps))
-                    'Code - Wind
+#End Region
+#Region "Code - Wind"
                     newERIList.Add("WindSpeed=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeed))
                     newERIList.Add("WindSpeedIce=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeedIce))
                     newERIList.Add("WindSpeedService=" & Me.settings.USUnits.Velocity.convertToERIUnits(Me.code.wind.WindSpeedService))
@@ -8757,25 +9115,30 @@ Partial Public Class tnxModel
                     newERIList.Add("CSA_S37_RefVelPress=" & Me.settings.USUnits.Pressure.convertToERIUnits(Me.code.wind.CSA_S37_RefVelPress))
                     newERIList.Add("CSA_S37_ReliabilityClass=" & Me.code.wind.CSA_S37_ReliabilityClass)
                     newERIList.Add("CSA_S37_ServiceabilityFactor=" & Me.code.wind.CSA_S37_ServiceabilityFactor)
-                    'Code - Seismic
+#End Region
+#Region "Code - Seismic"
                     newERIList.Add("UseASCE7_10_Seismic_Lcomb=" & trueFalseYesNo(Me.code.seismic.UseASCE7_10_Seismic_Lcomb))
                     newERIList.Add("SeismicSiteClass=" & Me.code.seismic.SeismicSiteClass)
                     newERIList.Add("SeismicSs=" & Me.code.seismic.SeismicSs)
                     newERIList.Add("SeismicS1=" & Me.code.seismic.SeismicS1)
-                    'Code - Ice
+#End Region
+#Region "Code - Ice"
                     newERIList.Add("IceThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.code.ice.IceThickness))
                     newERIList.Add("IceDensity=" & Me.settings.USUnits.Density.convertToERIUnits(Me.code.ice.IceDensity))
                     newERIList.Add("UseModified_TIA_222_IceParameters=" & trueFalseYesNo(Me.code.ice.UseModified_TIA_222_IceParameters))
                     newERIList.Add("TIA_222_IceThicknessMultiplier=" & Me.code.ice.TIA_222_IceThicknessMultiplier)
                     newERIList.Add("DoNotUse_TIA_222_IceEscalation=" & trueFalseYesNo(Me.code.ice.DoNotUse_TIA_222_IceEscalation))
                     newERIList.Add("UseIceEscalation=" & trueFalseYesNo(Me.code.ice.UseIceEscalation))
-                    'Code - Thermal
+#End Region
+#Region "Code - Thermal"
                     newERIList.Add("TempDrop=" & Me.settings.USUnits.Temperature.convertToERIUnits(Me.code.thermal.TempDrop))
-                    'Code - Miscl
+#End Region
+#Region "Code - Miscl"
                     newERIList.Add("GroutFc=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.code.misclCode.GroutFc))
                     newERIList.Add("TowerBoltGrade=" & Me.code.misclCode.TowerBoltGrade)
                     newERIList.Add("TowerBoltMinEdgeDist=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.code.misclCode.TowerBoltMinEdgeDist))
-                    'Options - General
+#End Region
+#Region "Options - General"
                     newERIList.Add("UseClearSpans=" & trueFalseYesNo(Me.options.UseClearSpans))
                     newERIList.Add("UseClearSpansKlr=" & trueFalseYesNo(Me.options.UseClearSpansKlr))
                     newERIList.Add("UseFeedlineAsCylinder=" & trueFalseYesNo(Me.options.UseFeedlineAsCylinder))
@@ -8807,12 +9170,14 @@ Partial Public Class tnxModel
                     newERIList.Add("UseWindProjection=" & trueFalseYesNo(Me.options.UseWindProjection))
                     newERIList.Add("UseDishCoeff=" & trueFalseYesNo(Me.options.UseDishCoeff))
                     newERIList.Add("AutoCalcTorqArmArea=" & trueFalseYesNo(Me.options.AutoCalcTorqArmArea))
-                    'Options - Foundations
+#End Region
+#Region "Options - Foundations"
                     newERIList.Add("MastVert=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.MastVert))
                     newERIList.Add("MastHorz=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.MastHorz))
                     newERIList.Add("GuyVert=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.GuyVert))
                     newERIList.Add("GuyHorz=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.GuyHorz))
-                    'Options - Poles
+#End Region
+#Region "Options - Poles"
                     newERIList.Add("CheckVonMises=" & trueFalseYesNo(Me.options.cantileverPoles.CheckVonMises))
                     newERIList.Add("SocketTopMount=" & trueFalseYesNo(Me.options.cantileverPoles.SocketTopMount))
                     newERIList.Add("PrintMonopoleAtIncrements=" & trueFalseYesNo(Me.options.cantileverPoles.PrintMonopoleAtIncrements))
@@ -8821,65 +9186,17 @@ Partial Public Class tnxModel
                     newERIList.Add("AssumePoleWithShroud=" & trueFalseYesNo(Me.options.cantileverPoles.AssumePoleWithShroud))
                     newERIList.Add("PoleCornerRadiusKnown=" & trueFalseYesNo(Me.options.cantileverPoles.PoleCornerRadiusKnown))
                     newERIList.Add("CantKFactor=" & Me.options.cantileverPoles.CantKFactor)
-                    'Options - Girts
+#End Region
+#Region "Options - Girts"
                     newERIList.Add("GirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.defaultGirtOffsets.GirtOffset))
                     newERIList.Add("GirtOffsetLatticedPole=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.defaultGirtOffsets.GirtOffsetLatticedPole))
                     newERIList.Add("OffsetBotGirt=" & trueFalseYesNo(Me.options.defaultGirtOffsets.OffsetBotGirt))
-                    'Options - Wind
-                    newERIList.Add("WindDirOption=" & Me.options.windDirections.WindDirOption)
-                    newERIList.Add("WindDir0_0=" & trueFalseYesNo(Me.options.windDirections.WindDir0_0))
-                    newERIList.Add("WindDir0_1=" & trueFalseYesNo(Me.options.windDirections.WindDir0_1))
-                    newERIList.Add("WindDir0_2=" & trueFalseYesNo(Me.options.windDirections.WindDir0_2))
-                    newERIList.Add("WindDir0_3=" & trueFalseYesNo(Me.options.windDirections.WindDir0_3))
-                    newERIList.Add("WindDir0_4=" & trueFalseYesNo(Me.options.windDirections.WindDir0_4))
-                    newERIList.Add("WindDir0_5=" & trueFalseYesNo(Me.options.windDirections.WindDir0_5))
-                    newERIList.Add("WindDir0_6=" & trueFalseYesNo(Me.options.windDirections.WindDir0_6))
-                    newERIList.Add("WindDir0_7=" & trueFalseYesNo(Me.options.windDirections.WindDir0_7))
-                    newERIList.Add("WindDir0_8=" & trueFalseYesNo(Me.options.windDirections.WindDir0_8))
-                    newERIList.Add("WindDir0_9=" & trueFalseYesNo(Me.options.windDirections.WindDir0_9))
-                    newERIList.Add("WindDir0_10=" & trueFalseYesNo(Me.options.windDirections.WindDir0_10))
-                    newERIList.Add("WindDir0_11=" & trueFalseYesNo(Me.options.windDirections.WindDir0_11))
-                    newERIList.Add("WindDir0_12=" & trueFalseYesNo(Me.options.windDirections.WindDir0_12))
-                    newERIList.Add("WindDir0_13=" & trueFalseYesNo(Me.options.windDirections.WindDir0_13))
-                    newERIList.Add("WindDir0_14=" & trueFalseYesNo(Me.options.windDirections.WindDir0_14))
-                    newERIList.Add("WindDir0_15=" & trueFalseYesNo(Me.options.windDirections.WindDir0_15))
-                    newERIList.Add("WindDir1_0=" & trueFalseYesNo(Me.options.windDirections.WindDir1_0))
-                    newERIList.Add("WindDir1_1=" & trueFalseYesNo(Me.options.windDirections.WindDir1_1))
-                    newERIList.Add("WindDir1_2=" & trueFalseYesNo(Me.options.windDirections.WindDir1_2))
-                    newERIList.Add("WindDir1_3=" & trueFalseYesNo(Me.options.windDirections.WindDir1_3))
-                    newERIList.Add("WindDir1_4=" & trueFalseYesNo(Me.options.windDirections.WindDir1_4))
-                    newERIList.Add("WindDir1_5=" & trueFalseYesNo(Me.options.windDirections.WindDir1_5))
-                    newERIList.Add("WindDir1_6=" & trueFalseYesNo(Me.options.windDirections.WindDir1_6))
-                    newERIList.Add("WindDir1_7=" & trueFalseYesNo(Me.options.windDirections.WindDir1_7))
-                    newERIList.Add("WindDir1_8=" & trueFalseYesNo(Me.options.windDirections.WindDir1_8))
-                    newERIList.Add("WindDir1_9=" & trueFalseYesNo(Me.options.windDirections.WindDir1_9))
-                    newERIList.Add("WindDir1_10=" & trueFalseYesNo(Me.options.windDirections.WindDir1_10))
-                    newERIList.Add("WindDir1_11=" & trueFalseYesNo(Me.options.windDirections.WindDir1_11))
-                    newERIList.Add("WindDir1_12=" & trueFalseYesNo(Me.options.windDirections.WindDir1_12))
-                    newERIList.Add("WindDir1_13=" & trueFalseYesNo(Me.options.windDirections.WindDir1_13))
-                    newERIList.Add("WindDir1_14=" & trueFalseYesNo(Me.options.windDirections.WindDir1_14))
-                    newERIList.Add("WindDir1_15=" & trueFalseYesNo(Me.options.windDirections.WindDir1_15))
-                    newERIList.Add("WindDir2_0=" & trueFalseYesNo(Me.options.windDirections.WindDir2_0))
-                    newERIList.Add("WindDir2_1=" & trueFalseYesNo(Me.options.windDirections.WindDir2_1))
-                    newERIList.Add("WindDir2_2=" & trueFalseYesNo(Me.options.windDirections.WindDir2_2))
-                    newERIList.Add("WindDir2_3=" & trueFalseYesNo(Me.options.windDirections.WindDir2_3))
-                    newERIList.Add("WindDir2_4=" & trueFalseYesNo(Me.options.windDirections.WindDir2_4))
-                    newERIList.Add("WindDir2_5=" & trueFalseYesNo(Me.options.windDirections.WindDir2_5))
-                    newERIList.Add("WindDir2_6=" & trueFalseYesNo(Me.options.windDirections.WindDir2_6))
-                    newERIList.Add("WindDir2_7=" & trueFalseYesNo(Me.options.windDirections.WindDir2_7))
-                    newERIList.Add("WindDir2_8=" & trueFalseYesNo(Me.options.windDirections.WindDir2_8))
-                    newERIList.Add("WindDir2_9=" & trueFalseYesNo(Me.options.windDirections.WindDir2_9))
-                    newERIList.Add("WindDir2_10=" & trueFalseYesNo(Me.options.windDirections.WindDir2_10))
-                    newERIList.Add("WindDir2_11=" & trueFalseYesNo(Me.options.windDirections.WindDir2_11))
-                    newERIList.Add("WindDir2_12=" & trueFalseYesNo(Me.options.windDirections.WindDir2_12))
-                    newERIList.Add("WindDir2_13=" & trueFalseYesNo(Me.options.windDirections.WindDir2_13))
-                    newERIList.Add("WindDir2_14=" & trueFalseYesNo(Me.options.windDirections.WindDir2_14))
-                    newERIList.Add("WindDir2_15=" & trueFalseYesNo(Me.options.windDirections.WindDir2_15))
-                    newERIList.Add("SuppressWindPatternLoading=" & trueFalseYesNo(Me.options.windDirections.SuppressWindPatternLoading))
-                    'Options - Miscl
+#End Region
+#Region "Options - Miscl"
                     newERIList.Add("HogRodTakeup=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.options.misclOptions.HogRodTakeup))
                     newERIList.Add("RadiusSampleDist=" & Me.settings.USUnits.Length.convertToERIUnits(Me.options.misclOptions.RadiusSampleDist))
-                    'General Geometry
+#End Region
+#Region "General Geometry"
                     newERIList.Add("TowerType=" & Me.geometry.TowerType)
                     newERIList.Add("AntennaType=" & Me.geometry.AntennaType)
                     newERIList.Add("OverallHeight=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.OverallHeight))
@@ -8903,753 +9220,992 @@ Partial Public Class tnxModel
                     newERIList.Add("AntennaFaceWidth=" & Me.settings.USUnits.Spacing.convertToERIUnits(Me.geometry.AntennaFaceWidth))
                     newERIList.Add("UseTopTakeup=" & trueFalseYesNo(Me.geometry.UseTopTakeup))
                     newERIList.Add("ConstantSlope=" & trueFalseYesNo(Me.geometry.ConstantSlope))
+
+#End Region
+#Region "Missing Structure Variables"
+                    newERIList.AddRange(defaults.AntennaPole)
+                    newERIList.AddRange(defaults.Beacon)
+                    newERIList.AddRange(defaults.DesignChoicesList)
+                    newERIList.AddRange(defaults.MRSS)
+                    newERIList.AddRange(defaults.FTG)
+                    newERIList.AddRange(defaults.MissingSettings)
+                    newERIList.AddRange(defaults.CostData)
+                    newERIList.AddRange(defaults.BasePlate)
+                    newERIList.AddRange(defaults.Supp)
+#End Region
+
+#End Region
+#Region "Geometry"
                 Case line(0).Equals("NumAntennaRecs")
                     newERIList.Add(line(0) & "=" & Me.geometry.upperStructure.Count)
                     'For Each upperSection In Me.geometry.upperStructure
+                    ''''^^Not entirely sure why this is commented out. I would much rather use For Each here but I assume it is because of the way it is sorted. 
                     For i = 0 To Me.geometry.upperStructure.Count - 1
-                        newERIList.Add("AntennaRec=" & Me.geometry.upperStructure(i).Rec)
-                        newERIList.Add("AntennaBraceType=" & Me.geometry.upperStructure(i).AntennaBraceType)
-                        newERIList.Add("AntennaHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHeight))
-                        newERIList.Add("AntennaDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalSpacing))
-                        newERIList.Add("AntennaDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalSpacingEx))
-                        newERIList.Add("AntennaNumSections=" & Me.geometry.upperStructure(i).AntennaNumSections)
-                        newERIList.Add("AntennaNumSesctions=" & Me.geometry.upperStructure(i).AntennaNumSesctions)
-                        newERIList.Add("AntennaSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.upperStructure(i).AntennaSectionLength))
-                        newERIList.Add("AntennaLegType=" & Me.geometry.upperStructure(i).AntennaLegType)
-                        newERIList.Add("AntennaLegSize=" & Me.geometry.upperStructure(i).AntennaLegSize)
-                        newERIList.Add("AntennaLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegGrade))
-                        newERIList.Add("AntennaLegMatlGrade=" & Me.geometry.upperStructure(i).AntennaLegMatlGrade)
-                        newERIList.Add("AntennaDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalGrade))
-                        newERIList.Add("AntennaDiagonalMatlGrade=" & Me.geometry.upperStructure(i).AntennaDiagonalMatlGrade)
-                        newERIList.Add("AntennaInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerBracingGrade))
-                        newERIList.Add("AntennaInnerBracingMatlGrade=" & Me.geometry.upperStructure(i).AntennaInnerBracingMatlGrade)
-                        newERIList.Add("AntennaTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtGrade))
-                        newERIList.Add("AntennaTopGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaTopGirtMatlGrade)
-                        newERIList.Add("AntennaBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtGrade))
-                        newERIList.Add("AntennaBotGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaBotGirtMatlGrade)
-                        newERIList.Add("AntennaInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtGrade))
-                        newERIList.Add("AntennaInnerGirtMatlGrade=" & Me.geometry.upperStructure(i).AntennaInnerGirtMatlGrade)
-                        newERIList.Add("AntennaLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLongHorizontalGrade))
-                        newERIList.Add("AntennaLongHorizontalMatlGrade=" & Me.geometry.upperStructure(i).AntennaLongHorizontalMatlGrade)
-                        newERIList.Add("AntennaShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalGrade))
-                        newERIList.Add("AntennaShortHorizontalMatlGrade=" & Me.geometry.upperStructure(i).AntennaShortHorizontalMatlGrade)
-                        newERIList.Add("AntennaDiagonalType=" & Me.geometry.upperStructure(i).AntennaDiagonalType)
-                        newERIList.Add("AntennaDiagonalSize=" & Me.geometry.upperStructure(i).AntennaDiagonalSize)
-                        newERIList.Add("AntennaInnerBracingType=" & Me.geometry.upperStructure(i).AntennaInnerBracingType)
-                        newERIList.Add("AntennaInnerBracingSize=" & Me.geometry.upperStructure(i).AntennaInnerBracingSize)
-                        newERIList.Add("AntennaTopGirtType=" & Me.geometry.upperStructure(i).AntennaTopGirtType)
-                        newERIList.Add("AntennaTopGirtSize=" & Me.geometry.upperStructure(i).AntennaTopGirtSize)
-                        newERIList.Add("AntennaBotGirtType=" & Me.geometry.upperStructure(i).AntennaBotGirtType)
-                        newERIList.Add("AntennaBotGirtSize=" & Me.geometry.upperStructure(i).AntennaBotGirtSize)
-                        newERIList.Add("AntennaTopGirtOffset=" & Me.geometry.upperStructure(i).AntennaTopGirtOffset)
-                        newERIList.Add("AntennaBotGirtOffset=" & Me.geometry.upperStructure(i).AntennaBotGirtOffset)
-                        newERIList.Add("AntennaHasKBraceEndPanels=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHasKBraceEndPanels))
-                        newERIList.Add("AntennaHasHorizontals=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHasHorizontals))
-                        newERIList.Add("AntennaLongHorizontalType=" & Me.geometry.upperStructure(i).AntennaLongHorizontalType)
-                        newERIList.Add("AntennaLongHorizontalSize=" & Me.geometry.upperStructure(i).AntennaLongHorizontalSize)
-                        newERIList.Add("AntennaShortHorizontalType=" & Me.geometry.upperStructure(i).AntennaShortHorizontalType)
-                        newERIList.Add("AntennaShortHorizontalSize=" & Me.geometry.upperStructure(i).AntennaShortHorizontalSize)
-                        newERIList.Add("AntennaRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantGrade))
-                        newERIList.Add("AntennaRedundantMatlGrade=" & Me.geometry.upperStructure(i).AntennaRedundantMatlGrade)
-                        newERIList.Add("AntennaRedundantType=" & Me.geometry.upperStructure(i).AntennaRedundantType)
-                        newERIList.Add("AntennaRedundantDiagType=" & Me.geometry.upperStructure(i).AntennaRedundantDiagType)
-                        newERIList.Add("AntennaRedundantSubDiagonalType=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalType)
-                        newERIList.Add("AntennaRedundantSubHorizontalType=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalType)
-                        newERIList.Add("AntennaRedundantVerticalType=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalType)
-                        newERIList.Add("AntennaRedundantHipType=" & Me.geometry.upperStructure(i).AntennaRedundantHipType)
-                        newERIList.Add("AntennaRedundantHipDiagonalType=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalType)
-                        newERIList.Add("AntennaRedundantHorizontalSize=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize)
-                        newERIList.Add("AntennaRedundantHorizontalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize2)
-                        newERIList.Add("AntennaRedundantHorizontalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize3)
-                        newERIList.Add("AntennaRedundantHorizontalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalSize4)
-                        newERIList.Add("AntennaRedundantDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize)
-                        newERIList.Add("AntennaRedundantDiagonalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize2)
-                        newERIList.Add("AntennaRedundantDiagonalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize3)
-                        newERIList.Add("AntennaRedundantDiagonalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalSize4)
-                        newERIList.Add("AntennaRedundantSubHorizontalSize=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalSize)
-                        newERIList.Add("AntennaRedundantSubDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalSize)
-                        newERIList.Add("AntennaSubDiagLocation=" & Me.geometry.upperStructure(i).AntennaSubDiagLocation)
-                        newERIList.Add("AntennaRedundantVerticalSize=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalSize)
-                        newERIList.Add("AntennaRedundantHipDiagonalSize=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize)
-                        newERIList.Add("AntennaRedundantHipDiagonalSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize2)
-                        newERIList.Add("AntennaRedundantHipDiagonalSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize3)
-                        newERIList.Add("AntennaRedundantHipDiagonalSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalSize4)
-                        newERIList.Add("AntennaRedundantHipSize=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize)
-                        newERIList.Add("AntennaRedundantHipSize2=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize2)
-                        newERIList.Add("AntennaRedundantHipSize3=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize3)
-                        newERIList.Add("AntennaRedundantHipSize4=" & Me.geometry.upperStructure(i).AntennaRedundantHipSize4)
-                        newERIList.Add("AntennaNumInnerGirts=" & Me.geometry.upperStructure(i).AntennaNumInnerGirts)
-                        newERIList.Add("AntennaInnerGirtType=" & Me.geometry.upperStructure(i).AntennaInnerGirtType)
-                        newERIList.Add("AntennaInnerGirtSize=" & Me.geometry.upperStructure(i).AntennaInnerGirtSize)
-                        newERIList.Add("AntennaPoleShapeType=" & Me.geometry.upperStructure(i).AntennaPoleShapeType)
-                        newERIList.Add("AntennaPoleSize=" & Me.geometry.upperStructure(i).AntennaPoleSize)
-                        newERIList.Add("AntennaPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaPoleGrade))
-                        newERIList.Add("AntennaPoleMatlGrade=" & Me.geometry.upperStructure(i).AntennaPoleMatlGrade)
-                        newERIList.Add("AntennaPoleSpliceLength=" & Me.geometry.upperStructure(i).AntennaPoleSpliceLength)
-                        newERIList.Add("AntennaTaperPoleNumSides=" & Me.geometry.upperStructure(i).AntennaTaperPoleNumSides)
-                        newERIList.Add("AntennaTaperPoleTopDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleTopDiameter))
-                        newERIList.Add("AntennaTaperPoleBotDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleBotDiameter))
-                        newERIList.Add("AntennaTaperPoleWallThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleWallThickness))
-                        newERIList.Add("AntennaTaperPoleBendRadius=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleBendRadius))
-                        newERIList.Add("AntennaTaperPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTaperPoleGrade))
-                        newERIList.Add("AntennaTaperPoleMatlGrade=" & Me.geometry.upperStructure(i).AntennaTaperPoleMatlGrade)
-                        newERIList.Add("AntennaSWMult=" & Me.geometry.upperStructure(i).AntennaSWMult)
-                        newERIList.Add("AntennaWPMult=" & Me.geometry.upperStructure(i).AntennaWPMult)
-                        newERIList.Add("AntennaAutoCalcKSingleAngle=" & Me.geometry.upperStructure(i).AntennaAutoCalcKSingleAngle)
-                        newERIList.Add("AntennaAutoCalcKSolidRound=" & Me.geometry.upperStructure(i).AntennaAutoCalcKSolidRound)
-                        newERIList.Add("AntennaAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.upperStructure(i).AntennaAfGusset))
-                        newERIList.Add("AntennaTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTfGusset))
-                        newERIList.Add("AntennaGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaGussetBoltEdgeDistance))
-                        newERIList.Add("AntennaGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.upperStructure(i).AntennaGussetGrade))
-                        newERIList.Add("AntennaGussetMatlGrade=" & Me.geometry.upperStructure(i).AntennaGussetMatlGrade)
-                        newERIList.Add("AntennaAfMult=" & Me.geometry.upperStructure(i).AntennaAfMult)
-                        newERIList.Add("AntennaArMult=" & Me.geometry.upperStructure(i).AntennaArMult)
-                        newERIList.Add("AntennaFlatIPAPole=" & Me.geometry.upperStructure(i).AntennaFlatIPAPole)
-                        newERIList.Add("AntennaRoundIPAPole=" & Me.geometry.upperStructure(i).AntennaRoundIPAPole)
-                        newERIList.Add("AntennaFlatIPALeg=" & Me.geometry.upperStructure(i).AntennaFlatIPALeg)
-                        newERIList.Add("AntennaRoundIPALeg=" & Me.geometry.upperStructure(i).AntennaRoundIPALeg)
-                        newERIList.Add("AntennaFlatIPAHorizontal=" & Me.geometry.upperStructure(i).AntennaFlatIPAHorizontal)
-                        newERIList.Add("AntennaRoundIPAHorizontal=" & Me.geometry.upperStructure(i).AntennaRoundIPAHorizontal)
-                        newERIList.Add("AntennaFlatIPADiagonal=" & Me.geometry.upperStructure(i).AntennaFlatIPADiagonal)
-                        newERIList.Add("AntennaRoundIPADiagonal=" & Me.geometry.upperStructure(i).AntennaRoundIPADiagonal)
-                        newERIList.Add("AntennaCSA_S37_SpeedUpFactor=" & Me.geometry.upperStructure(i).AntennaCSA_S37_SpeedUpFactor)
-                        newERIList.Add("AntennaKLegs=" & Me.geometry.upperStructure(i).AntennaKLegs)
-                        newERIList.Add("AntennaKXBracedDiags=" & Me.geometry.upperStructure(i).AntennaKXBracedDiags)
-                        newERIList.Add("AntennaKKBracedDiags=" & Me.geometry.upperStructure(i).AntennaKKBracedDiags)
-                        newERIList.Add("AntennaKZBracedDiags=" & Me.geometry.upperStructure(i).AntennaKZBracedDiags)
-                        newERIList.Add("AntennaKHorzs=" & Me.geometry.upperStructure(i).AntennaKHorzs)
-                        newERIList.Add("AntennaKSecHorzs=" & Me.geometry.upperStructure(i).AntennaKSecHorzs)
-                        newERIList.Add("AntennaKGirts=" & Me.geometry.upperStructure(i).AntennaKGirts)
-                        newERIList.Add("AntennaKInners=" & Me.geometry.upperStructure(i).AntennaKInners)
-                        newERIList.Add("AntennaKXBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKXBracedDiagsY)
-                        newERIList.Add("AntennaKKBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKKBracedDiagsY)
-                        newERIList.Add("AntennaKZBracedDiagsY=" & Me.geometry.upperStructure(i).AntennaKZBracedDiagsY)
-                        newERIList.Add("AntennaKHorzsY=" & Me.geometry.upperStructure(i).AntennaKHorzsY)
-                        newERIList.Add("AntennaKSecHorzsY=" & Me.geometry.upperStructure(i).AntennaKSecHorzsY)
-                        newERIList.Add("AntennaKGirtsY=" & Me.geometry.upperStructure(i).AntennaKGirtsY)
-                        newERIList.Add("AntennaKInnersY=" & Me.geometry.upperStructure(i).AntennaKInnersY)
-                        newERIList.Add("AntennaKRedHorz=" & Me.geometry.upperStructure(i).AntennaKRedHorz)
-                        newERIList.Add("AntennaKRedDiag=" & Me.geometry.upperStructure(i).AntennaKRedDiag)
-                        newERIList.Add("AntennaKRedSubDiag=" & Me.geometry.upperStructure(i).AntennaKRedSubDiag)
-                        newERIList.Add("AntennaKRedSubHorz=" & Me.geometry.upperStructure(i).AntennaKRedSubHorz)
-                        newERIList.Add("AntennaKRedVert=" & Me.geometry.upperStructure(i).AntennaKRedVert)
-                        newERIList.Add("AntennaKRedHip=" & Me.geometry.upperStructure(i).AntennaKRedHip)
-                        newERIList.Add("AntennaKRedHipDiag=" & Me.geometry.upperStructure(i).AntennaKRedHipDiag)
-                        newERIList.Add("AntennaKTLX=" & Me.geometry.upperStructure(i).AntennaKTLX)
-                        newERIList.Add("AntennaKTLZ=" & Me.geometry.upperStructure(i).AntennaKTLZ)
-                        newERIList.Add("AntennaKTLLeg=" & Me.geometry.upperStructure(i).AntennaKTLLeg)
-                        newERIList.Add("AntennaInnerKTLX=" & Me.geometry.upperStructure(i).AntennaInnerKTLX)
-                        newERIList.Add("AntennaInnerKTLZ=" & Me.geometry.upperStructure(i).AntennaInnerKTLZ)
-                        newERIList.Add("AntennaInnerKTLLeg=" & Me.geometry.upperStructure(i).AntennaInnerKTLLeg)
-                        newERIList.Add("AntennaStitchBoltLocationHoriz=" & Me.geometry.upperStructure(i).AntennaStitchBoltLocationHoriz)
-                        newERIList.Add("AntennaStitchBoltLocationDiag=" & Me.geometry.upperStructure(i).AntennaStitchBoltLocationDiag)
-                        newERIList.Add("AntennaStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacing))
-                        newERIList.Add("AntennaStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingHorz))
-                        newERIList.Add("AntennaStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingDiag))
-                        newERIList.Add("AntennaStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaStitchSpacingRed))
-                        newERIList.Add("AntennaLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegNetWidthDeduct))
-                        newERIList.Add("AntennaLegUFactor=" & Me.geometry.upperStructure(i).AntennaLegUFactor)
-                        newERIList.Add("AntennaDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalNetWidthDeduct))
-                        newERIList.Add("AntennaTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtNetWidthDeduct))
-                        newERIList.Add("AntennaBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtNetWidthDeduct))
-                        newERIList.Add("AntennaInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtNetWidthDeduct))
-                        newERIList.Add("AntennaHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalNetWidthDeduct))
-                        newERIList.Add("AntennaShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalNetWidthDeduct))
-                        newERIList.Add("AntennaDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaDiagonalUFactor)
-                        newERIList.Add("AntennaTopGirtUFactor=" & Me.geometry.upperStructure(i).AntennaTopGirtUFactor)
-                        newERIList.Add("AntennaBotGirtUFactor=" & Me.geometry.upperStructure(i).AntennaBotGirtUFactor)
-                        newERIList.Add("AntennaInnerGirtUFactor=" & Me.geometry.upperStructure(i).AntennaInnerGirtUFactor)
-                        newERIList.Add("AntennaHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaHorizontalUFactor)
-                        newERIList.Add("AntennaShortHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaShortHorizontalUFactor)
-                        newERIList.Add("AntennaLegConnType=" & Me.geometry.upperStructure(i).AntennaLegConnType)
-                        newERIList.Add("AntennaLegNumBolts=" & Me.geometry.upperStructure(i).AntennaLegNumBolts)
-                        newERIList.Add("AntennaDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaDiagonalNumBolts)
-                        newERIList.Add("AntennaTopGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaTopGirtNumBolts)
-                        newERIList.Add("AntennaBotGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaBotGirtNumBolts)
-                        newERIList.Add("AntennaInnerGirtNumBolts=" & Me.geometry.upperStructure(i).AntennaInnerGirtNumBolts)
-                        newERIList.Add("AntennaHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaHorizontalNumBolts)
-                        newERIList.Add("AntennaShortHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaShortHorizontalNumBolts)
-                        newERIList.Add("AntennaLegBoltGrade=" & Me.geometry.upperStructure(i).AntennaLegBoltGrade)
-                        newERIList.Add("AntennaLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaLegBoltSize))
-                        newERIList.Add("AntennaDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaDiagonalBoltGrade)
-                        newERIList.Add("AntennaDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalBoltSize))
-                        newERIList.Add("AntennaTopGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaTopGirtBoltGrade)
-                        newERIList.Add("AntennaTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtBoltSize))
-                        newERIList.Add("AntennaBotGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaBotGirtBoltGrade)
-                        newERIList.Add("AntennaBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtBoltSize))
-                        newERIList.Add("AntennaInnerGirtBoltGrade=" & Me.geometry.upperStructure(i).AntennaInnerGirtBoltGrade)
-                        newERIList.Add("AntennaInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtBoltSize))
-                        newERIList.Add("AntennaHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaHorizontalBoltGrade)
-                        newERIList.Add("AntennaHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalBoltSize))
-                        newERIList.Add("AntennaShortHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaShortHorizontalBoltGrade)
-                        newERIList.Add("AntennaShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalBoltSize))
-                        newERIList.Add("AntennaLegBoltEdgeDistance=" & Me.geometry.upperStructure(i).AntennaLegBoltEdgeDistance)
-                        newERIList.Add("AntennaDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalBoltEdgeDistance))
-                        newERIList.Add("AntennaTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtBoltEdgeDistance))
-                        newERIList.Add("AntennaBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtBoltEdgeDistance))
-                        newERIList.Add("AntennaInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtBoltEdgeDistance))
-                        newERIList.Add("AntennaHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalBoltEdgeDistance))
-                        newERIList.Add("AntennaShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalBoltEdgeDistance))
-                        newERIList.Add("AntennaDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagonalGageG1Distance))
-                        newERIList.Add("AntennaTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaTopGirtGageG1Distance))
-                        newERIList.Add("AntennaBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaBotGirtGageG1Distance))
-                        newERIList.Add("AntennaInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaInnerGirtGageG1Distance))
-                        newERIList.Add("AntennaHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaHorizontalGageG1Distance))
-                        newERIList.Add("AntennaShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaShortHorizontalGageG1Distance))
-                        newERIList.Add("AntennaRedundantHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltGrade)
-                        newERIList.Add("AntennaRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltSize))
-                        newERIList.Add("AntennaRedundantHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalNumBolts)
-                        newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalGageG1Distance))
-                        newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHorizontalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHorizontalUFactor)
-                        newERIList.Add("AntennaRedundantDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltGrade)
-                        newERIList.Add("AntennaRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltSize))
-                        newERIList.Add("AntennaRedundantDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalNumBolts)
-                        newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalGageG1Distance))
-                        newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantDiagonalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantDiagonalUFactor)
-                        newERIList.Add("AntennaRedundantSubDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltGrade)
-                        newERIList.Add("AntennaRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltSize))
-                        newERIList.Add("AntennaRedundantSubDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalNumBolts)
-                        newERIList.Add("AntennaRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalGageG1Distance))
-                        newERIList.Add("AntennaRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantSubDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantSubDiagonalUFactor)
-                        newERIList.Add("AntennaRedundantSubHorizontalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltGrade)
-                        newERIList.Add("AntennaRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltSize))
-                        newERIList.Add("AntennaRedundantSubHorizontalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalNumBolts)
-                        newERIList.Add("AntennaRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalGageG1Distance))
-                        newERIList.Add("AntennaRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantSubHorizontalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantSubHorizontalUFactor)
-                        newERIList.Add("AntennaRedundantVerticalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltGrade)
-                        newERIList.Add("AntennaRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltSize))
-                        newERIList.Add("AntennaRedundantVerticalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalNumBolts)
-                        newERIList.Add("AntennaRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalGageG1Distance))
-                        newERIList.Add("AntennaRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantVerticalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantVerticalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantVerticalUFactor)
-                        newERIList.Add("AntennaRedundantHipBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHipBoltGrade)
-                        newERIList.Add("AntennaRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipBoltSize))
-                        newERIList.Add("AntennaRedundantHipNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHipNumBolts)
-                        newERIList.Add("AntennaRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipGageG1Distance))
-                        newERIList.Add("AntennaRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantHipUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHipUFactor)
-                        newERIList.Add("AntennaRedundantHipDiagonalBoltGrade=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltGrade)
-                        newERIList.Add("AntennaRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltSize))
-                        newERIList.Add("AntennaRedundantHipDiagonalNumBolts=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalNumBolts)
-                        newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalBoltEdgeDistance))
-                        newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalGageG1Distance))
-                        newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalNetWidthDeduct))
-                        newERIList.Add("AntennaRedundantHipDiagonalUFactor=" & Me.geometry.upperStructure(i).AntennaRedundantHipDiagonalUFactor)
-                        newERIList.Add("AntennaDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaDiagonalOutOfPlaneRestraint))
-                        newERIList.Add("AntennaTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaTopGirtOutOfPlaneRestraint))
-                        newERIList.Add("AntennaBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaBottomGirtOutOfPlaneRestraint))
-                        newERIList.Add("AntennaMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaMidGirtOutOfPlaneRestraint))
-                        newERIList.Add("AntennaHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaHorizontalOutOfPlaneRestraint))
-                        newERIList.Add("AntennaSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.upperStructure(i).AntennaSecondaryHorizontalOutOfPlaneRestraint))
-                        newERIList.Add("AntennaDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetNEY))
-                        newERIList.Add("AntennaDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetNEX))
-                        newERIList.Add("AntennaDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetPEY))
-                        newERIList.Add("AntennaDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaDiagOffsetPEX))
-                        newERIList.Add("AntennaKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetNEY))
-                        newERIList.Add("AntennaKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetNEX))
-                        newERIList.Add("AntennaKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEY))
-                        newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.upperStructure(i).AntennaKbraceOffsetPEX))
+                        With Me.geometry.upperStructure(i)
+                            newERIList.Add("AntennaRec=" & .Rec)
+                            newERIList.Add("AntennaBraceType=" & .AntennaBraceType)
+                            newERIList.Add("AntennaHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.AntennaHeight))
+                            newERIList.Add("AntennaDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalSpacing))
+                            newERIList.Add("AntennaDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalSpacingEx))
+                            newERIList.Add("AntennaNumSections=" & .AntennaNumSections)
+                            newERIList.Add("AntennaNumSesctions=" & .AntennaNumSesctions)
+                            newERIList.Add("AntennaSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(.AntennaSectionLength))
+                            newERIList.Add("AntennaLegType=" & .AntennaLegType)
+                            newERIList.Add("AntennaLegSize=" & .AntennaLegSize)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLegGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLegGrade))
+                            End If
+                            If IsSomethingString(.AntennaLegMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLegMatlGrade=" & .AntennaLegMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaDiagonalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaDiagonalGrade))
+                            End If
+                            If IsSomethingString(.AntennaDiagonalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaDiagonalMatlGrade=" & .AntennaDiagonalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerBracingGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerBracingGrade))
+                            End If
+                            If IsSomethingString(.AntennaInnerBracingMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerBracingMatlGrade=" & .AntennaInnerBracingMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTopGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTopGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaTopGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTopGirtMatlGrade=" & .AntennaTopGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaBotGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaBotGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaBotGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaBotGirtMatlGrade=" & .AntennaBotGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerGirtGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaInnerGirtGrade))
+                            End If
+                            If IsSomethingString(.AntennaInnerGirtMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaInnerGirtMatlGrade=" & .AntennaInnerGirtMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLongHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaLongHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaLongHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaLongHorizontalMatlGrade=" & .AntennaLongHorizontalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaShortHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaShortHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaShortHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaShortHorizontalMatlGrade=" & .AntennaShortHorizontalMatlGrade)
+                            End If
+                            newERIList.Add("AntennaDiagonalType=" & .AntennaDiagonalType)
+                            newERIList.Add("AntennaDiagonalSize=" & .AntennaDiagonalSize)
+                            newERIList.Add("AntennaInnerBracingType=" & .AntennaInnerBracingType)
+                            newERIList.Add("AntennaInnerBracingSize=" & .AntennaInnerBracingSize)
+                            newERIList.Add("AntennaTopGirtType=" & .AntennaTopGirtType)
+                            newERIList.Add("AntennaTopGirtSize=" & .AntennaTopGirtSize)
+                            newERIList.Add("AntennaBotGirtType=" & .AntennaBotGirtType)
+                            newERIList.Add("AntennaBotGirtSize=" & .AntennaBotGirtSize)
+                            newERIList.Add("AntennaTopGirtOffset=" & .AntennaTopGirtOffset)
+                            newERIList.Add("AntennaBotGirtOffset=" & .AntennaBotGirtOffset)
+                            newERIList.Add("AntennaHasKBraceEndPanels=" & trueFalseYesNo(.AntennaHasKBraceEndPanels))
+                            newERIList.Add("AntennaHasHorizontals=" & trueFalseYesNo(.AntennaHasHorizontals))
+                            newERIList.Add("AntennaLongHorizontalType=" & .AntennaLongHorizontalType)
+                            newERIList.Add("AntennaLongHorizontalSize=" & .AntennaLongHorizontalSize)
+                            newERIList.Add("AntennaShortHorizontalType=" & .AntennaShortHorizontalType)
+                            newERIList.Add("AntennaShortHorizontalSize=" & .AntennaShortHorizontalSize)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantMatlGrade=" & .AntennaRedundantMatlGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantType=" & .AntennaRedundantType)
+                            newERIList.Add("AntennaRedundantDiagType=" & .AntennaRedundantDiagType)
+                            newERIList.Add("AntennaRedundantSubDiagonalType=" & .AntennaRedundantSubDiagonalType)
+                            newERIList.Add("AntennaRedundantSubHorizontalType=" & .AntennaRedundantSubHorizontalType)
+                            newERIList.Add("AntennaRedundantVerticalType=" & .AntennaRedundantVerticalType)
+                            newERIList.Add("AntennaRedundantHipType=" & .AntennaRedundantHipType)
+                            newERIList.Add("AntennaRedundantHipDiagonalType=" & .AntennaRedundantHipDiagonalType)
+                            newERIList.Add("AntennaRedundantHorizontalSize=" & .AntennaRedundantHorizontalSize)
+                            newERIList.Add("AntennaRedundantHorizontalSize2=" & .AntennaRedundantHorizontalSize2)
+                            newERIList.Add("AntennaRedundantHorizontalSize3=" & .AntennaRedundantHorizontalSize3)
+                            newERIList.Add("AntennaRedundantHorizontalSize4=" & .AntennaRedundantHorizontalSize4)
+                            newERIList.Add("AntennaRedundantDiagonalSize=" & .AntennaRedundantDiagonalSize)
+                            newERIList.Add("AntennaRedundantDiagonalSize2=" & .AntennaRedundantDiagonalSize2)
+                            newERIList.Add("AntennaRedundantDiagonalSize3=" & .AntennaRedundantDiagonalSize3)
+                            newERIList.Add("AntennaRedundantDiagonalSize4=" & .AntennaRedundantDiagonalSize4)
+                            newERIList.Add("AntennaRedundantSubHorizontalSize=" & .AntennaRedundantSubHorizontalSize)
+                            newERIList.Add("AntennaRedundantSubDiagonalSize=" & .AntennaRedundantSubDiagonalSize)
+                            newERIList.Add("AntennaSubDiagLocation=" & .AntennaSubDiagLocation)
+                            newERIList.Add("AntennaRedundantVerticalSize=" & .AntennaRedundantVerticalSize)
+                            newERIList.Add("AntennaRedundantHipDiagonalSize=" & .AntennaRedundantHipDiagonalSize)
+                            newERIList.Add("AntennaRedundantHipDiagonalSize2=" & .AntennaRedundantHipDiagonalSize2)
+                            newERIList.Add("AntennaRedundantHipDiagonalSize3=" & .AntennaRedundantHipDiagonalSize3)
+                            newERIList.Add("AntennaRedundantHipDiagonalSize4=" & .AntennaRedundantHipDiagonalSize4)
+                            newERIList.Add("AntennaRedundantHipSize=" & .AntennaRedundantHipSize)
+                            newERIList.Add("AntennaRedundantHipSize2=" & .AntennaRedundantHipSize2)
+                            newERIList.Add("AntennaRedundantHipSize3=" & .AntennaRedundantHipSize3)
+                            newERIList.Add("AntennaRedundantHipSize4=" & .AntennaRedundantHipSize4)
+                            newERIList.Add("AntennaNumInnerGirts=" & .AntennaNumInnerGirts)
+                            newERIList.Add("AntennaInnerGirtType=" & .AntennaInnerGirtType)
+                            newERIList.Add("AntennaInnerGirtSize=" & .AntennaInnerGirtSize)
+                            newERIList.Add("AntennaPoleShapeType=" & .AntennaPoleShapeType)
+                            newERIList.Add("AntennaPoleSize=" & .AntennaPoleSize)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaPoleGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaPoleGrade))
+                            End If
+                            If IsSomethingString(.AntennaPoleMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaPoleMatlGrade=" & .AntennaPoleMatlGrade)
+                            End If
+                            newERIList.Add("AntennaPoleSpliceLength=" & .AntennaPoleSpliceLength)
+                            newERIList.Add("AntennaTaperPoleNumSides=" & .AntennaTaperPoleNumSides)
+                            newERIList.Add("AntennaTaperPoleTopDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleTopDiameter))
+                            newERIList.Add("AntennaTaperPoleBotDiameter=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleBotDiameter))
+                            newERIList.Add("AntennaTaperPoleWallThickness=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleWallThickness))
+                            newERIList.Add("AntennaTaperPoleBendRadius=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTaperPoleBendRadius))
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTaperPoleGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTaperPoleGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaTaperPoleGrade))
+                            End If
+                            If IsSomethingString(.AntennaTaperPoleMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaTaperPoleMatlGrade=" & .AntennaTaperPoleMatlGrade)
+                            End If
+                            newERIList.Add("AntennaSWMult=" & .AntennaSWMult)
+                            If Not IsNothing(.AntennaWPMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaWPMult=" & .AntennaWPMult)
+                            End If
+                            newERIList.Add("AntennaAutoCalcKSingleAngle=" & .AntennaAutoCalcKSingleAngle)
+                            newERIList.Add("AntennaAutoCalcKSolidRound=" & .AntennaAutoCalcKSolidRound)
+                            newERIList.Add("AntennaAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(.AntennaAfGusset))
+                            newERIList.Add("AntennaTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTfGusset))
+                            newERIList.Add("AntennaGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaGussetBoltEdgeDistance))
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaGussetGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaGussetGrade))
+                            End If
+                            If IsSomethingString(.AntennaGussetMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaGussetMatlGrade=" & .AntennaGussetMatlGrade)
+                            End If
+                            If Not IsNothing(.AntennaAfMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaAfMult=" & .AntennaAfMult)
+                            End If
+                            If Not IsNothing(.AntennaArMult) Then 'This field does not get saved when generated from CCIpole. Defaults to 1.
+                                newERIList.Add("AntennaArMult=" & .AntennaArMult)
+                            End If
+                            newERIList.Add("AntennaFlatIPAPole=" & .AntennaFlatIPAPole)
+                            newERIList.Add("AntennaRoundIPAPole=" & .AntennaRoundIPAPole)
+                            newERIList.Add("AntennaFlatIPALeg=" & .AntennaFlatIPALeg)
+                            newERIList.Add("AntennaRoundIPALeg=" & .AntennaRoundIPALeg)
+                            newERIList.Add("AntennaFlatIPAHorizontal=" & .AntennaFlatIPAHorizontal)
+                            newERIList.Add("AntennaRoundIPAHorizontal=" & .AntennaRoundIPAHorizontal)
+                            newERIList.Add("AntennaFlatIPADiagonal=" & .AntennaFlatIPADiagonal)
+                            newERIList.Add("AntennaRoundIPADiagonal=" & .AntennaRoundIPADiagonal)
+                            newERIList.Add("AntennaCSA_S37_SpeedUpFactor=" & .AntennaCSA_S37_SpeedUpFactor)
+                            newERIList.Add("AntennaKLegs=" & .AntennaKLegs)
+                            newERIList.Add("AntennaKXBracedDiags=" & .AntennaKXBracedDiags)
+                            newERIList.Add("AntennaKKBracedDiags=" & .AntennaKKBracedDiags)
+                            newERIList.Add("AntennaKZBracedDiags=" & .AntennaKZBracedDiags)
+                            newERIList.Add("AntennaKHorzs=" & .AntennaKHorzs)
+                            newERIList.Add("AntennaKSecHorzs=" & .AntennaKSecHorzs)
+                            newERIList.Add("AntennaKGirts=" & .AntennaKGirts)
+                            newERIList.Add("AntennaKInners=" & .AntennaKInners)
+                            newERIList.Add("AntennaKXBracedDiagsY=" & .AntennaKXBracedDiagsY)
+                            newERIList.Add("AntennaKKBracedDiagsY=" & .AntennaKKBracedDiagsY)
+                            newERIList.Add("AntennaKZBracedDiagsY=" & .AntennaKZBracedDiagsY)
+                            newERIList.Add("AntennaKHorzsY=" & .AntennaKHorzsY)
+                            newERIList.Add("AntennaKSecHorzsY=" & .AntennaKSecHorzsY)
+                            newERIList.Add("AntennaKGirtsY=" & .AntennaKGirtsY)
+                            newERIList.Add("AntennaKInnersY=" & .AntennaKInnersY)
+                            newERIList.Add("AntennaKRedHorz=" & .AntennaKRedHorz)
+                            newERIList.Add("AntennaKRedDiag=" & .AntennaKRedDiag)
+                            newERIList.Add("AntennaKRedSubDiag=" & .AntennaKRedSubDiag)
+                            newERIList.Add("AntennaKRedSubHorz=" & .AntennaKRedSubHorz)
+                            newERIList.Add("AntennaKRedVert=" & .AntennaKRedVert)
+                            newERIList.Add("AntennaKRedHip=" & .AntennaKRedHip)
+                            newERIList.Add("AntennaKRedHipDiag=" & .AntennaKRedHipDiag)
+                            newERIList.Add("AntennaKTLX=" & .AntennaKTLX)
+                            newERIList.Add("AntennaKTLZ=" & .AntennaKTLZ)
+                            newERIList.Add("AntennaKTLLeg=" & .AntennaKTLLeg)
+                            newERIList.Add("AntennaInnerKTLX=" & .AntennaInnerKTLX)
+                            newERIList.Add("AntennaInnerKTLZ=" & .AntennaInnerKTLZ)
+                            newERIList.Add("AntennaInnerKTLLeg=" & .AntennaInnerKTLLeg)
+                            newERIList.Add("AntennaStitchBoltLocationHoriz=" & .AntennaStitchBoltLocationHoriz)
+                            newERIList.Add("AntennaStitchBoltLocationDiag=" & .AntennaStitchBoltLocationDiag)
+                            newERIList.Add("AntennaStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaStitchSpacing))
+                            newERIList.Add("AntennaStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaStitchSpacingHorz))
+                            newERIList.Add("AntennaStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaStitchSpacingDiag))
+                            newERIList.Add("AntennaStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaStitchSpacingRed))
+                            newERIList.Add("AntennaLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaLegNetWidthDeduct))
+                            newERIList.Add("AntennaLegUFactor=" & .AntennaLegUFactor)
+                            newERIList.Add("AntennaDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalNetWidthDeduct))
+                            newERIList.Add("AntennaTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTopGirtNetWidthDeduct))
+                            newERIList.Add("AntennaBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaBotGirtNetWidthDeduct))
+                            newERIList.Add("AntennaInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtNetWidthDeduct))
+                            newERIList.Add("AntennaHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalNetWidthDeduct))
+                            newERIList.Add("AntennaShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalNetWidthDeduct))
+                            newERIList.Add("AntennaDiagonalUFactor=" & .AntennaDiagonalUFactor)
+                            newERIList.Add("AntennaTopGirtUFactor=" & .AntennaTopGirtUFactor)
+                            newERIList.Add("AntennaBotGirtUFactor=" & .AntennaBotGirtUFactor)
+                            newERIList.Add("AntennaInnerGirtUFactor=" & .AntennaInnerGirtUFactor)
+                            newERIList.Add("AntennaHorizontalUFactor=" & .AntennaHorizontalUFactor)
+                            newERIList.Add("AntennaShortHorizontalUFactor=" & .AntennaShortHorizontalUFactor)
+                            newERIList.Add("AntennaLegConnType=" & .AntennaLegConnType)
+                            newERIList.Add("AntennaLegNumBolts=" & .AntennaLegNumBolts)
+                            newERIList.Add("AntennaDiagonalNumBolts=" & .AntennaDiagonalNumBolts)
+                            newERIList.Add("AntennaTopGirtNumBolts=" & .AntennaTopGirtNumBolts)
+                            newERIList.Add("AntennaBotGirtNumBolts=" & .AntennaBotGirtNumBolts)
+                            newERIList.Add("AntennaInnerGirtNumBolts=" & .AntennaInnerGirtNumBolts)
+                            newERIList.Add("AntennaHorizontalNumBolts=" & .AntennaHorizontalNumBolts)
+                            newERIList.Add("AntennaShortHorizontalNumBolts=" & .AntennaShortHorizontalNumBolts)
+                            If IsSomethingString(.AntennaLegBoltGrade) Then 'This field does not get saved when generated from CCIpole.
+                                newERIList.Add("AntennaLegBoltGrade=" & .AntennaLegBoltGrade)
+                            End If
+                            newERIList.Add("AntennaLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaLegBoltSize))
+                            If IsSomethingString(.AntennaDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaDiagonalBoltGrade=" & .AntennaDiagonalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalBoltSize))
+                            If IsSomethingString(.AntennaTopGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaTopGirtBoltGrade=" & .AntennaTopGirtBoltGrade)
+                            End If
+                            newERIList.Add("AntennaTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTopGirtBoltSize))
+                            If IsSomethingString(.AntennaBotGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaBotGirtBoltGrade=" & .AntennaBotGirtBoltGrade)
+                            End If
+                            newERIList.Add("AntennaBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaBotGirtBoltSize))
+                            If IsSomethingString(.AntennaInnerGirtBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaInnerGirtBoltGrade=" & .AntennaInnerGirtBoltGrade)
+                            End If
+                            newERIList.Add("AntennaInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtBoltSize))
+                            If IsSomethingString(.AntennaHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaHorizontalBoltGrade=" & .AntennaHorizontalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalBoltSize))
+                            If IsSomethingString(.AntennaShortHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaShortHorizontalBoltGrade=" & .AntennaShortHorizontalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalBoltSize))
+                            newERIList.Add("AntennaLegBoltEdgeDistance=" & .AntennaLegBoltEdgeDistance)
+                            newERIList.Add("AntennaDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalBoltEdgeDistance))
+                            newERIList.Add("AntennaTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTopGirtBoltEdgeDistance))
+                            newERIList.Add("AntennaBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaBotGirtBoltEdgeDistance))
+                            newERIList.Add("AntennaInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtBoltEdgeDistance))
+                            newERIList.Add("AntennaHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalBoltEdgeDistance))
+                            newERIList.Add("AntennaShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalBoltEdgeDistance))
+                            newERIList.Add("AntennaDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagonalGageG1Distance))
+                            newERIList.Add("AntennaTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaTopGirtGageG1Distance))
+                            newERIList.Add("AntennaBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaBotGirtGageG1Distance))
+                            newERIList.Add("AntennaInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaInnerGirtGageG1Distance))
+                            newERIList.Add("AntennaHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaHorizontalGageG1Distance))
+                            newERIList.Add("AntennaShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaShortHorizontalGageG1Distance))
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade=" & .AntennaRedundantHorizontalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize))
+                            newERIList.Add("AntennaRedundantHorizontalNumBolts=" & .AntennaRedundantHorizontalNumBolts)
+                            newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance))
+                            newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantHorizontalUFactor=" & .AntennaRedundantHorizontalUFactor)
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade=" & .AntennaRedundantDiagonalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize))
+                            newERIList.Add("AntennaRedundantDiagonalNumBolts=" & .AntennaRedundantDiagonalNumBolts)
+                            newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance))
+                            newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantDiagonalUFactor=" & .AntennaRedundantDiagonalUFactor)
+                            If IsSomethingString(.AntennaRedundantSubDiagonalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantSubDiagonalBoltGrade=" & .AntennaRedundantSubDiagonalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalBoltSize))
+                            newERIList.Add("AntennaRedundantSubDiagonalNumBolts=" & .AntennaRedundantSubDiagonalNumBolts)
+                            newERIList.Add("AntennaRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalGageG1Distance))
+                            newERIList.Add("AntennaRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubDiagonalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantSubDiagonalUFactor=" & .AntennaRedundantSubDiagonalUFactor)
+                            If IsSomethingString(.AntennaRedundantSubHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantSubHorizontalBoltGrade=" & .AntennaRedundantSubHorizontalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalBoltSize))
+                            newERIList.Add("AntennaRedundantSubHorizontalNumBolts=" & .AntennaRedundantSubHorizontalNumBolts)
+                            newERIList.Add("AntennaRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalGageG1Distance))
+                            newERIList.Add("AntennaRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantSubHorizontalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantSubHorizontalUFactor=" & .AntennaRedundantSubHorizontalUFactor)
+                            If IsSomethingString(.AntennaRedundantVerticalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantVerticalBoltGrade=" & .AntennaRedundantVerticalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalBoltSize))
+                            newERIList.Add("AntennaRedundantVerticalNumBolts=" & .AntennaRedundantVerticalNumBolts)
+                            newERIList.Add("AntennaRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalGageG1Distance))
+                            newERIList.Add("AntennaRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantVerticalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantVerticalUFactor=" & .AntennaRedundantVerticalUFactor)
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHipBoltGrade=" & .AntennaRedundantHipBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize))
+                            newERIList.Add("AntennaRedundantHipNumBolts=" & .AntennaRedundantHipNumBolts)
+                            newERIList.Add("AntennaRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance))
+                            newERIList.Add("AntennaRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantHipUFactor=" & .AntennaRedundantHipUFactor)
+                            If IsSomethingString(.AntennaShortHorizontalBoltGrade) Then 'This field does not get saved when generated from CCIpole. 
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade=" & .AntennaRedundantHipDiagonalBoltGrade)
+                            End If
+                            newERIList.Add("AntennaRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize))
+                            newERIList.Add("AntennaRedundantHipDiagonalNumBolts=" & .AntennaRedundantHipDiagonalNumBolts)
+                            newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance))
+                            newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance))
+                            newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct))
+                            newERIList.Add("AntennaRedundantHipDiagonalUFactor=" & .AntennaRedundantHipDiagonalUFactor)
+                            newERIList.Add("AntennaDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaDiagonalOutOfPlaneRestraint))
+                            newERIList.Add("AntennaTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaTopGirtOutOfPlaneRestraint))
+                            newERIList.Add("AntennaBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaBottomGirtOutOfPlaneRestraint))
+                            newERIList.Add("AntennaMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaMidGirtOutOfPlaneRestraint))
+                            newERIList.Add("AntennaHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaHorizontalOutOfPlaneRestraint))
+                            newERIList.Add("AntennaSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(.AntennaSecondaryHorizontalOutOfPlaneRestraint))
+                            newERIList.Add("AntennaDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagOffsetNEY))
+                            newERIList.Add("AntennaDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagOffsetNEX))
+                            newERIList.Add("AntennaDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagOffsetPEY))
+                            newERIList.Add("AntennaDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaDiagOffsetPEX))
+                            newERIList.Add("AntennaKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetNEY))
+                            newERIList.Add("AntennaKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetNEX))
+                            newERIList.Add("AntennaKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetPEY))
+                            newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetPEX))
+                        End With
                     Next i
                 Case line(0).Equals("NumTowerRecs")
                     newERIList.Add(line(0) & "=" & Me.geometry.baseStructure.Count)
                     For i = 0 To Me.geometry.baseStructure.Count - 1
-                        newERIList.Add("TowerRec=" & Me.geometry.baseStructure(i).Rec)
-                        newERIList.Add("TowerDatabase=" & Me.geometry.baseStructure(i).TowerDatabase)
-                        newERIList.Add("TowerName=" & Me.geometry.baseStructure(i).TowerName)
-                        newERIList.Add("TowerHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.baseStructure(i).TowerHeight))
-                        newERIList.Add("TowerFaceWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerFaceWidth))
-                        newERIList.Add("TowerNumSections=" & Me.geometry.baseStructure(i).TowerNumSections)
-                        newERIList.Add("TowerSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.baseStructure(i).TowerSectionLength))
-                        newERIList.Add("TowerDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalSpacing))
-                        newERIList.Add("TowerDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalSpacingEx))
-                        newERIList.Add("TowerBraceType=" & Me.geometry.baseStructure(i).TowerBraceType)
-                        newERIList.Add("TowerFaceBevel=" & Me.geometry.baseStructure(i).TowerFaceBevel)
-                        newERIList.Add("TowerTopGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtOffset))
-                        newERIList.Add("TowerBotGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtOffset))
-                        newERIList.Add("TowerHasKBraceEndPanels=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHasKBraceEndPanels))
-                        newERIList.Add("TowerHasHorizontals=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHasHorizontals))
-                        newERIList.Add("TowerLegType=" & Me.geometry.baseStructure(i).TowerLegType)
-                        newERIList.Add("TowerLegSize=" & Me.geometry.baseStructure(i).TowerLegSize)
-                        newERIList.Add("TowerLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegGrade))
-                        newERIList.Add("TowerLegMatlGrade=" & Me.geometry.baseStructure(i).TowerLegMatlGrade)
-                        newERIList.Add("TowerDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalGrade))
-                        newERIList.Add("TowerDiagonalMatlGrade=" & Me.geometry.baseStructure(i).TowerDiagonalMatlGrade)
-                        newERIList.Add("TowerInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerBracingGrade))
-                        newERIList.Add("TowerInnerBracingMatlGrade=" & Me.geometry.baseStructure(i).TowerInnerBracingMatlGrade)
-                        newERIList.Add("TowerTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtGrade))
-                        newERIList.Add("TowerTopGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerTopGirtMatlGrade)
-                        newERIList.Add("TowerBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtGrade))
-                        newERIList.Add("TowerBotGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerBotGirtMatlGrade)
-                        newERIList.Add("TowerInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtGrade))
-                        newERIList.Add("TowerInnerGirtMatlGrade=" & Me.geometry.baseStructure(i).TowerInnerGirtMatlGrade)
-                        newERIList.Add("TowerLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerLongHorizontalGrade))
-                        newERIList.Add("TowerLongHorizontalMatlGrade=" & Me.geometry.baseStructure(i).TowerLongHorizontalMatlGrade)
-                        newERIList.Add("TowerShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalGrade))
-                        newERIList.Add("TowerShortHorizontalMatlGrade=" & Me.geometry.baseStructure(i).TowerShortHorizontalMatlGrade)
-                        newERIList.Add("TowerDiagonalType=" & Me.geometry.baseStructure(i).TowerDiagonalType)
-                        newERIList.Add("TowerDiagonalSize=" & Me.geometry.baseStructure(i).TowerDiagonalSize)
-                        newERIList.Add("TowerInnerBracingType=" & Me.geometry.baseStructure(i).TowerInnerBracingType)
-                        newERIList.Add("TowerInnerBracingSize=" & Me.geometry.baseStructure(i).TowerInnerBracingSize)
-                        newERIList.Add("TowerTopGirtType=" & Me.geometry.baseStructure(i).TowerTopGirtType)
-                        newERIList.Add("TowerTopGirtSize=" & Me.geometry.baseStructure(i).TowerTopGirtSize)
-                        newERIList.Add("TowerBotGirtType=" & Me.geometry.baseStructure(i).TowerBotGirtType)
-                        newERIList.Add("TowerBotGirtSize=" & Me.geometry.baseStructure(i).TowerBotGirtSize)
-                        newERIList.Add("TowerNumInnerGirts=" & Me.geometry.baseStructure(i).TowerNumInnerGirts)
-                        newERIList.Add("TowerInnerGirtType=" & Me.geometry.baseStructure(i).TowerInnerGirtType)
-                        newERIList.Add("TowerInnerGirtSize=" & Me.geometry.baseStructure(i).TowerInnerGirtSize)
-                        newERIList.Add("TowerLongHorizontalType=" & Me.geometry.baseStructure(i).TowerLongHorizontalType)
-                        newERIList.Add("TowerLongHorizontalSize=" & Me.geometry.baseStructure(i).TowerLongHorizontalSize)
-                        newERIList.Add("TowerShortHorizontalType=" & Me.geometry.baseStructure(i).TowerShortHorizontalType)
-                        newERIList.Add("TowerShortHorizontalSize=" & Me.geometry.baseStructure(i).TowerShortHorizontalSize)
-                        newERIList.Add("TowerRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantGrade))
-                        newERIList.Add("TowerRedundantMatlGrade=" & Me.geometry.baseStructure(i).TowerRedundantMatlGrade)
-                        newERIList.Add("TowerRedundantType=" & Me.geometry.baseStructure(i).TowerRedundantType)
-                        newERIList.Add("TowerRedundantDiagType=" & Me.geometry.baseStructure(i).TowerRedundantDiagType)
-                        newERIList.Add("TowerRedundantSubDiagonalType=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalType)
-                        newERIList.Add("TowerRedundantSubHorizontalType=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalType)
-                        newERIList.Add("TowerRedundantVerticalType=" & Me.geometry.baseStructure(i).TowerRedundantVerticalType)
-                        newERIList.Add("TowerRedundantHipType=" & Me.geometry.baseStructure(i).TowerRedundantHipType)
-                        newERIList.Add("TowerRedundantHipDiagonalType=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalType)
-                        newERIList.Add("TowerRedundantHorizontalSize=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize)
-                        newERIList.Add("TowerRedundantHorizontalSize2=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize2)
-                        newERIList.Add("TowerRedundantHorizontalSize3=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize3)
-                        newERIList.Add("TowerRedundantHorizontalSize4=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalSize4)
-                        newERIList.Add("TowerRedundantDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize)
-                        newERIList.Add("TowerRedundantDiagonalSize2=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize2)
-                        newERIList.Add("TowerRedundantDiagonalSize3=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize3)
-                        newERIList.Add("TowerRedundantDiagonalSize4=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalSize4)
-                        newERIList.Add("TowerRedundantSubHorizontalSize=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalSize)
-                        newERIList.Add("TowerRedundantSubDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalSize)
-                        newERIList.Add("TowerSubDiagLocation=" & Me.geometry.baseStructure(i).TowerSubDiagLocation)
-                        newERIList.Add("TowerRedundantVerticalSize=" & Me.geometry.baseStructure(i).TowerRedundantVerticalSize)
-                        newERIList.Add("TowerRedundantHipSize=" & Me.geometry.baseStructure(i).TowerRedundantHipSize)
-                        newERIList.Add("TowerRedundantHipSize2=" & Me.geometry.baseStructure(i).TowerRedundantHipSize2)
-                        newERIList.Add("TowerRedundantHipSize3=" & Me.geometry.baseStructure(i).TowerRedundantHipSize3)
-                        newERIList.Add("TowerRedundantHipSize4=" & Me.geometry.baseStructure(i).TowerRedundantHipSize4)
-                        newERIList.Add("TowerRedundantHipDiagonalSize=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize)
-                        newERIList.Add("TowerRedundantHipDiagonalSize2=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize2)
-                        newERIList.Add("TowerRedundantHipDiagonalSize3=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize3)
-                        newERIList.Add("TowerRedundantHipDiagonalSize4=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalSize4)
-                        newERIList.Add("TowerSWMult=" & Me.geometry.baseStructure(i).TowerSWMult)
-                        newERIList.Add("TowerWPMult=" & Me.geometry.baseStructure(i).TowerWPMult)
-                        newERIList.Add("TowerAutoCalcKSingleAngle=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerAutoCalcKSingleAngle))
-                        newERIList.Add("TowerAutoCalcKSolidRound=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerAutoCalcKSolidRound))
-                        newERIList.Add("TowerAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.baseStructure(i).TowerAfGusset))
-                        newERIList.Add("TowerTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTfGusset))
-                        newERIList.Add("TowerGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerGussetBoltEdgeDistance))
-                        newERIList.Add("TowerGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.baseStructure(i).TowerGussetGrade))
-                        newERIList.Add("TowerGussetMatlGrade=" & Me.geometry.baseStructure(i).TowerGussetMatlGrade)
-                        newERIList.Add("TowerAfMult=" & Me.geometry.baseStructure(i).TowerAfMult)
-                        newERIList.Add("TowerArMult=" & Me.geometry.baseStructure(i).TowerArMult)
-                        newERIList.Add("TowerFlatIPAPole=" & Me.geometry.baseStructure(i).TowerFlatIPAPole)
-                        newERIList.Add("TowerRoundIPAPole=" & Me.geometry.baseStructure(i).TowerRoundIPAPole)
-                        newERIList.Add("TowerFlatIPALeg=" & Me.geometry.baseStructure(i).TowerFlatIPALeg)
-                        newERIList.Add("TowerRoundIPALeg=" & Me.geometry.baseStructure(i).TowerRoundIPALeg)
-                        newERIList.Add("TowerFlatIPAHorizontal=" & Me.geometry.baseStructure(i).TowerFlatIPAHorizontal)
-                        newERIList.Add("TowerRoundIPAHorizontal=" & Me.geometry.baseStructure(i).TowerRoundIPAHorizontal)
-                        newERIList.Add("TowerFlatIPADiagonal=" & Me.geometry.baseStructure(i).TowerFlatIPADiagonal)
-                        newERIList.Add("TowerRoundIPADiagonal=" & Me.geometry.baseStructure(i).TowerRoundIPADiagonal)
-                        newERIList.Add("TowerCSA_S37_SpeedUpFactor=" & Me.geometry.baseStructure(i).TowerCSA_S37_SpeedUpFactor)
-                        newERIList.Add("TowerKLegs=" & Me.geometry.baseStructure(i).TowerKLegs)
-                        newERIList.Add("TowerKXBracedDiags=" & Me.geometry.baseStructure(i).TowerKXBracedDiags)
-                        newERIList.Add("TowerKKBracedDiags=" & Me.geometry.baseStructure(i).TowerKKBracedDiags)
-                        newERIList.Add("TowerKZBracedDiags=" & Me.geometry.baseStructure(i).TowerKZBracedDiags)
-                        newERIList.Add("TowerKHorzs=" & Me.geometry.baseStructure(i).TowerKHorzs)
-                        newERIList.Add("TowerKSecHorzs=" & Me.geometry.baseStructure(i).TowerKSecHorzs)
-                        newERIList.Add("TowerKGirts=" & Me.geometry.baseStructure(i).TowerKGirts)
-                        newERIList.Add("TowerKInners=" & Me.geometry.baseStructure(i).TowerKInners)
-                        newERIList.Add("TowerKXBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKXBracedDiagsY)
-                        newERIList.Add("TowerKKBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKKBracedDiagsY)
-                        newERIList.Add("TowerKZBracedDiagsY=" & Me.geometry.baseStructure(i).TowerKZBracedDiagsY)
-                        newERIList.Add("TowerKHorzsY=" & Me.geometry.baseStructure(i).TowerKHorzsY)
-                        newERIList.Add("TowerKSecHorzsY=" & Me.geometry.baseStructure(i).TowerKSecHorzsY)
-                        newERIList.Add("TowerKGirtsY=" & Me.geometry.baseStructure(i).TowerKGirtsY)
-                        newERIList.Add("TowerKInnersY=" & Me.geometry.baseStructure(i).TowerKInnersY)
-                        newERIList.Add("TowerKRedHorz=" & Me.geometry.baseStructure(i).TowerKRedHorz)
-                        newERIList.Add("TowerKRedDiag=" & Me.geometry.baseStructure(i).TowerKRedDiag)
-                        newERIList.Add("TowerKRedSubDiag=" & Me.geometry.baseStructure(i).TowerKRedSubDiag)
-                        newERIList.Add("TowerKRedSubHorz=" & Me.geometry.baseStructure(i).TowerKRedSubHorz)
-                        newERIList.Add("TowerKRedVert=" & Me.geometry.baseStructure(i).TowerKRedVert)
-                        newERIList.Add("TowerKRedHip=" & Me.geometry.baseStructure(i).TowerKRedHip)
-                        newERIList.Add("TowerKRedHipDiag=" & Me.geometry.baseStructure(i).TowerKRedHipDiag)
-                        newERIList.Add("TowerKTLX=" & Me.geometry.baseStructure(i).TowerKTLX)
-                        newERIList.Add("TowerKTLZ=" & Me.geometry.baseStructure(i).TowerKTLZ)
-                        newERIList.Add("TowerKTLLeg=" & Me.geometry.baseStructure(i).TowerKTLLeg)
-                        newERIList.Add("TowerInnerKTLX=" & Me.geometry.baseStructure(i).TowerInnerKTLX)
-                        newERIList.Add("TowerInnerKTLZ=" & Me.geometry.baseStructure(i).TowerInnerKTLZ)
-                        newERIList.Add("TowerInnerKTLLeg=" & Me.geometry.baseStructure(i).TowerInnerKTLLeg)
-                        newERIList.Add("TowerStitchBoltLocationHoriz=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationHoriz)
-                        newERIList.Add("TowerStitchBoltLocationDiag=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationDiag)
-                        newERIList.Add("TowerStitchBoltLocationRed=" & Me.geometry.baseStructure(i).TowerStitchBoltLocationRed)
-                        newERIList.Add("TowerStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacing))
-                        newERIList.Add("TowerStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingDiag))
-                        newERIList.Add("TowerStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingHorz))
-                        newERIList.Add("TowerStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerStitchSpacingRed))
-                        newERIList.Add("TowerLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegNetWidthDeduct))
-                        newERIList.Add("TowerLegUFactor=" & Me.geometry.baseStructure(i).TowerLegUFactor)
-                        newERIList.Add("TowerDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalNetWidthDeduct))
-                        newERIList.Add("TowerTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtNetWidthDeduct))
-                        newERIList.Add("TowerBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtNetWidthDeduct))
-                        newERIList.Add("TowerInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtNetWidthDeduct))
-                        newERIList.Add("TowerHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalNetWidthDeduct))
-                        newERIList.Add("TowerShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalNetWidthDeduct))
-                        newERIList.Add("TowerDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerDiagonalUFactor)
-                        newERIList.Add("TowerTopGirtUFactor=" & Me.geometry.baseStructure(i).TowerTopGirtUFactor)
-                        newERIList.Add("TowerBotGirtUFactor=" & Me.geometry.baseStructure(i).TowerBotGirtUFactor)
-                        newERIList.Add("TowerInnerGirtUFactor=" & Me.geometry.baseStructure(i).TowerInnerGirtUFactor)
-                        newERIList.Add("TowerHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerHorizontalUFactor)
-                        newERIList.Add("TowerShortHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerShortHorizontalUFactor)
-                        newERIList.Add("TowerLegConnType=" & Me.geometry.baseStructure(i).TowerLegConnType)
-                        newERIList.Add("TowerLegNumBolts=" & Me.geometry.baseStructure(i).TowerLegNumBolts)
-                        newERIList.Add("TowerDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerDiagonalNumBolts)
-                        newERIList.Add("TowerTopGirtNumBolts=" & Me.geometry.baseStructure(i).TowerTopGirtNumBolts)
-                        newERIList.Add("TowerBotGirtNumBolts=" & Me.geometry.baseStructure(i).TowerBotGirtNumBolts)
-                        newERIList.Add("TowerInnerGirtNumBolts=" & Me.geometry.baseStructure(i).TowerInnerGirtNumBolts)
-                        newERIList.Add("TowerHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerHorizontalNumBolts)
-                        newERIList.Add("TowerShortHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerShortHorizontalNumBolts)
-                        newERIList.Add("TowerLegBoltGrade=" & Me.geometry.baseStructure(i).TowerLegBoltGrade)
-                        newERIList.Add("TowerLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegBoltSize))
-                        newERIList.Add("TowerDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerDiagonalBoltGrade)
-                        newERIList.Add("TowerDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalBoltSize))
-                        newERIList.Add("TowerTopGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerTopGirtBoltGrade)
-                        newERIList.Add("TowerTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtBoltSize))
-                        newERIList.Add("TowerBotGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerBotGirtBoltGrade)
-                        newERIList.Add("TowerBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtBoltSize))
-                        newERIList.Add("TowerInnerGirtBoltGrade=" & Me.geometry.baseStructure(i).TowerInnerGirtBoltGrade)
-                        newERIList.Add("TowerInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtBoltSize))
-                        newERIList.Add("TowerHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerHorizontalBoltGrade)
-                        newERIList.Add("TowerHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalBoltSize))
-                        newERIList.Add("TowerShortHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerShortHorizontalBoltGrade)
-                        newERIList.Add("TowerShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalBoltSize))
-                        newERIList.Add("TowerLegBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerLegBoltEdgeDistance))
-                        newERIList.Add("TowerDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalBoltEdgeDistance))
-                        newERIList.Add("TowerTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtBoltEdgeDistance))
-                        newERIList.Add("TowerBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtBoltEdgeDistance))
-                        newERIList.Add("TowerInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtBoltEdgeDistance))
-                        newERIList.Add("TowerHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalBoltEdgeDistance))
-                        newERIList.Add("TowerShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalBoltEdgeDistance))
-                        newERIList.Add("TowerDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagonalGageG1Distance))
-                        newERIList.Add("TowerTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerTopGirtGageG1Distance))
-                        newERIList.Add("TowerBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerBotGirtGageG1Distance))
-                        newERIList.Add("TowerInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerInnerGirtGageG1Distance))
-                        newERIList.Add("TowerHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerHorizontalGageG1Distance))
-                        newERIList.Add("TowerShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerShortHorizontalGageG1Distance))
-                        newERIList.Add("TowerRedundantHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltGrade)
-                        newERIList.Add("TowerRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltSize))
-                        newERIList.Add("TowerRedundantHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalNumBolts)
-                        newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalGageG1Distance))
-                        newERIList.Add("TowerRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHorizontalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHorizontalUFactor)
-                        newERIList.Add("TowerRedundantDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltGrade)
-                        newERIList.Add("TowerRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltSize))
-                        newERIList.Add("TowerRedundantDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalNumBolts)
-                        newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalGageG1Distance))
-                        newERIList.Add("TowerRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantDiagonalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantDiagonalUFactor)
-                        newERIList.Add("TowerRedundantSubDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltGrade)
-                        newERIList.Add("TowerRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltSize))
-                        newERIList.Add("TowerRedundantSubDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalNumBolts)
-                        newERIList.Add("TowerRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalGageG1Distance))
-                        newERIList.Add("TowerRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubDiagonalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantSubDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantSubDiagonalUFactor)
-                        newERIList.Add("TowerRedundantSubHorizontalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltGrade)
-                        newERIList.Add("TowerRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltSize))
-                        newERIList.Add("TowerRedundantSubHorizontalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalNumBolts)
-                        newERIList.Add("TowerRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalGageG1Distance))
-                        newERIList.Add("TowerRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantSubHorizontalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantSubHorizontalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantSubHorizontalUFactor)
-                        newERIList.Add("TowerRedundantVerticalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantVerticalBoltGrade)
-                        newERIList.Add("TowerRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalBoltSize))
-                        newERIList.Add("TowerRedundantVerticalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantVerticalNumBolts)
-                        newERIList.Add("TowerRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalGageG1Distance))
-                        newERIList.Add("TowerRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantVerticalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantVerticalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantVerticalUFactor)
-                        newERIList.Add("TowerRedundantHipBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHipBoltGrade)
-                        newERIList.Add("TowerRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipBoltSize))
-                        newERIList.Add("TowerRedundantHipNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHipNumBolts)
-                        newERIList.Add("TowerRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipGageG1Distance))
-                        newERIList.Add("TowerRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipNetWidthDeduct))
-                        newERIList.Add("TowerRedundantHipUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHipUFactor)
-                        newERIList.Add("TowerRedundantHipDiagonalBoltGrade=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltGrade)
-                        newERIList.Add("TowerRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltSize))
-                        newERIList.Add("TowerRedundantHipDiagonalNumBolts=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalNumBolts)
-                        newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalBoltEdgeDistance))
-                        newERIList.Add("TowerRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalGageG1Distance))
-                        newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerRedundantHipDiagonalNetWidthDeduct))
-                        newERIList.Add("TowerRedundantHipDiagonalUFactor=" & Me.geometry.baseStructure(i).TowerRedundantHipDiagonalUFactor)
-                        newERIList.Add("TowerDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerDiagonalOutOfPlaneRestraint))
-                        newERIList.Add("TowerTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerTopGirtOutOfPlaneRestraint))
-                        newERIList.Add("TowerBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerBottomGirtOutOfPlaneRestraint))
-                        newERIList.Add("TowerMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerMidGirtOutOfPlaneRestraint))
-                        newERIList.Add("TowerHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerHorizontalOutOfPlaneRestraint))
-                        newERIList.Add("TowerSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.baseStructure(i).TowerSecondaryHorizontalOutOfPlaneRestraint))
-                        newERIList.Add("TowerUniqueFlag=" & Me.geometry.baseStructure(i).TowerUniqueFlag)
-                        newERIList.Add("TowerDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetNEY))
-                        newERIList.Add("TowerDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetNEX))
-                        newERIList.Add("TowerDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetPEY))
-                        newERIList.Add("TowerDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerDiagOffsetPEX))
-                        newERIList.Add("TowerKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetNEY))
-                        newERIList.Add("TowerKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetNEX))
-                        newERIList.Add("TowerKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetPEY))
-                        newERIList.Add("TowerKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.baseStructure(i).TowerKbraceOffsetPEX))
-
+                        With Me.geometry.baseStructure(i)
+                            newERIList.Add("TowerRec=" & .Rec)
+                            newERIList.Add("TowerDatabase=" & .TowerDatabase)
+                            newERIList.Add("TowerName=" & .TowerName)
+                            newERIList.Add("TowerHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerHeight))
+                            newERIList.Add("TowerFaceWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerFaceWidth))
+                            newERIList.Add("TowerNumSections=" & .TowerNumSections)
+                            newERIList.Add("TowerSectionLength=" & Me.settings.USUnits.Length.convertToERIUnits(.TowerSectionLength))
+                            newERIList.Add("TowerDiagonalSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalSpacing))
+                            newERIList.Add("TowerDiagonalSpacingEx=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalSpacingEx))
+                            newERIList.Add("TowerBraceType=" & .TowerBraceType)
+                            newERIList.Add("TowerFaceBevel=" & .TowerFaceBevel)
+                            newERIList.Add("TowerTopGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtOffset))
+                            newERIList.Add("TowerBotGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtOffset))
+                            newERIList.Add("TowerHasKBraceEndPanels=" & trueFalseYesNo(.TowerHasKBraceEndPanels))
+                            newERIList.Add("TowerHasHorizontals=" & trueFalseYesNo(.TowerHasHorizontals))
+                            newERIList.Add("TowerLegType=" & .TowerLegType)
+                            newERIList.Add("TowerLegSize=" & .TowerLegSize)
+                            newERIList.Add("TowerLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerLegGrade))
+                            newERIList.Add("TowerLegMatlGrade=" & .TowerLegMatlGrade)
+                            newERIList.Add("TowerDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerDiagonalGrade))
+                            newERIList.Add("TowerDiagonalMatlGrade=" & .TowerDiagonalMatlGrade)
+                            newERIList.Add("TowerInnerBracingGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerInnerBracingGrade))
+                            newERIList.Add("TowerInnerBracingMatlGrade=" & .TowerInnerBracingMatlGrade)
+                            newERIList.Add("TowerTopGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerTopGirtGrade))
+                            newERIList.Add("TowerTopGirtMatlGrade=" & .TowerTopGirtMatlGrade)
+                            newERIList.Add("TowerBotGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerBotGirtGrade))
+                            newERIList.Add("TowerBotGirtMatlGrade=" & .TowerBotGirtMatlGrade)
+                            newERIList.Add("TowerInnerGirtGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerInnerGirtGrade))
+                            newERIList.Add("TowerInnerGirtMatlGrade=" & .TowerInnerGirtMatlGrade)
+                            newERIList.Add("TowerLongHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerLongHorizontalGrade))
+                            newERIList.Add("TowerLongHorizontalMatlGrade=" & .TowerLongHorizontalMatlGrade)
+                            newERIList.Add("TowerShortHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerShortHorizontalGrade))
+                            newERIList.Add("TowerShortHorizontalMatlGrade=" & .TowerShortHorizontalMatlGrade)
+                            newERIList.Add("TowerDiagonalType=" & .TowerDiagonalType)
+                            newERIList.Add("TowerDiagonalSize=" & .TowerDiagonalSize)
+                            newERIList.Add("TowerInnerBracingType=" & .TowerInnerBracingType)
+                            newERIList.Add("TowerInnerBracingSize=" & .TowerInnerBracingSize)
+                            newERIList.Add("TowerTopGirtType=" & .TowerTopGirtType)
+                            newERIList.Add("TowerTopGirtSize=" & .TowerTopGirtSize)
+                            newERIList.Add("TowerBotGirtType=" & .TowerBotGirtType)
+                            newERIList.Add("TowerBotGirtSize=" & .TowerBotGirtSize)
+                            newERIList.Add("TowerNumInnerGirts=" & .TowerNumInnerGirts)
+                            newERIList.Add("TowerInnerGirtType=" & .TowerInnerGirtType)
+                            newERIList.Add("TowerInnerGirtSize=" & .TowerInnerGirtSize)
+                            newERIList.Add("TowerLongHorizontalType=" & .TowerLongHorizontalType)
+                            newERIList.Add("TowerLongHorizontalSize=" & .TowerLongHorizontalSize)
+                            newERIList.Add("TowerShortHorizontalType=" & .TowerShortHorizontalType)
+                            newERIList.Add("TowerShortHorizontalSize=" & .TowerShortHorizontalSize)
+                            newERIList.Add("TowerRedundantGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerRedundantGrade))
+                            newERIList.Add("TowerRedundantMatlGrade=" & .TowerRedundantMatlGrade)
+                            newERIList.Add("TowerRedundantType=" & .TowerRedundantType)
+                            newERIList.Add("TowerRedundantDiagType=" & .TowerRedundantDiagType)
+                            newERIList.Add("TowerRedundantSubDiagonalType=" & .TowerRedundantSubDiagonalType)
+                            newERIList.Add("TowerRedundantSubHorizontalType=" & .TowerRedundantSubHorizontalType)
+                            newERIList.Add("TowerRedundantVerticalType=" & .TowerRedundantVerticalType)
+                            newERIList.Add("TowerRedundantHipType=" & .TowerRedundantHipType)
+                            newERIList.Add("TowerRedundantHipDiagonalType=" & .TowerRedundantHipDiagonalType)
+                            newERIList.Add("TowerRedundantHorizontalSize=" & .TowerRedundantHorizontalSize)
+                            newERIList.Add("TowerRedundantHorizontalSize2=" & .TowerRedundantHorizontalSize2)
+                            newERIList.Add("TowerRedundantHorizontalSize3=" & .TowerRedundantHorizontalSize3)
+                            newERIList.Add("TowerRedundantHorizontalSize4=" & .TowerRedundantHorizontalSize4)
+                            newERIList.Add("TowerRedundantDiagonalSize=" & .TowerRedundantDiagonalSize)
+                            newERIList.Add("TowerRedundantDiagonalSize2=" & .TowerRedundantDiagonalSize2)
+                            newERIList.Add("TowerRedundantDiagonalSize3=" & .TowerRedundantDiagonalSize3)
+                            newERIList.Add("TowerRedundantDiagonalSize4=" & .TowerRedundantDiagonalSize4)
+                            newERIList.Add("TowerRedundantSubHorizontalSize=" & .TowerRedundantSubHorizontalSize)
+                            newERIList.Add("TowerRedundantSubDiagonalSize=" & .TowerRedundantSubDiagonalSize)
+                            newERIList.Add("TowerSubDiagLocation=" & .TowerSubDiagLocation)
+                            newERIList.Add("TowerRedundantVerticalSize=" & .TowerRedundantVerticalSize)
+                            newERIList.Add("TowerRedundantHipSize=" & .TowerRedundantHipSize)
+                            newERIList.Add("TowerRedundantHipSize2=" & .TowerRedundantHipSize2)
+                            newERIList.Add("TowerRedundantHipSize3=" & .TowerRedundantHipSize3)
+                            newERIList.Add("TowerRedundantHipSize4=" & .TowerRedundantHipSize4)
+                            newERIList.Add("TowerRedundantHipDiagonalSize=" & .TowerRedundantHipDiagonalSize)
+                            newERIList.Add("TowerRedundantHipDiagonalSize2=" & .TowerRedundantHipDiagonalSize2)
+                            newERIList.Add("TowerRedundantHipDiagonalSize3=" & .TowerRedundantHipDiagonalSize3)
+                            newERIList.Add("TowerRedundantHipDiagonalSize4=" & .TowerRedundantHipDiagonalSize4)
+                            newERIList.Add("TowerSWMult=" & .TowerSWMult)
+                            newERIList.Add("TowerWPMult=" & .TowerWPMult)
+                            newERIList.Add("TowerAutoCalcKSingleAngle=" & trueFalseYesNo(.TowerAutoCalcKSingleAngle))
+                            newERIList.Add("TowerAutoCalcKSolidRound=" & trueFalseYesNo(.TowerAutoCalcKSolidRound))
+                            newERIList.Add("TowerAfGusset=" & Me.settings.USUnits.Length.convertToERIUnits(.TowerAfGusset))
+                            newERIList.Add("TowerTfGusset=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTfGusset))
+                            newERIList.Add("TowerGussetBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerGussetBoltEdgeDistance))
+                            newERIList.Add("TowerGussetGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerGussetGrade))
+                            newERIList.Add("TowerGussetMatlGrade=" & .TowerGussetMatlGrade)
+                            newERIList.Add("TowerAfMult=" & .TowerAfMult)
+                            newERIList.Add("TowerArMult=" & .TowerArMult)
+                            newERIList.Add("TowerFlatIPAPole=" & .TowerFlatIPAPole)
+                            newERIList.Add("TowerRoundIPAPole=" & .TowerRoundIPAPole)
+                            newERIList.Add("TowerFlatIPALeg=" & .TowerFlatIPALeg)
+                            newERIList.Add("TowerRoundIPALeg=" & .TowerRoundIPALeg)
+                            newERIList.Add("TowerFlatIPAHorizontal=" & .TowerFlatIPAHorizontal)
+                            newERIList.Add("TowerRoundIPAHorizontal=" & .TowerRoundIPAHorizontal)
+                            newERIList.Add("TowerFlatIPADiagonal=" & .TowerFlatIPADiagonal)
+                            newERIList.Add("TowerRoundIPADiagonal=" & .TowerRoundIPADiagonal)
+                            newERIList.Add("TowerCSA_S37_SpeedUpFactor=" & .TowerCSA_S37_SpeedUpFactor)
+                            newERIList.Add("TowerKLegs=" & .TowerKLegs)
+                            newERIList.Add("TowerKXBracedDiags=" & .TowerKXBracedDiags)
+                            newERIList.Add("TowerKKBracedDiags=" & .TowerKKBracedDiags)
+                            newERIList.Add("TowerKZBracedDiags=" & .TowerKZBracedDiags)
+                            newERIList.Add("TowerKHorzs=" & .TowerKHorzs)
+                            newERIList.Add("TowerKSecHorzs=" & .TowerKSecHorzs)
+                            newERIList.Add("TowerKGirts=" & .TowerKGirts)
+                            newERIList.Add("TowerKInners=" & .TowerKInners)
+                            newERIList.Add("TowerKXBracedDiagsY=" & .TowerKXBracedDiagsY)
+                            newERIList.Add("TowerKKBracedDiagsY=" & .TowerKKBracedDiagsY)
+                            newERIList.Add("TowerKZBracedDiagsY=" & .TowerKZBracedDiagsY)
+                            newERIList.Add("TowerKHorzsY=" & .TowerKHorzsY)
+                            newERIList.Add("TowerKSecHorzsY=" & .TowerKSecHorzsY)
+                            newERIList.Add("TowerKGirtsY=" & .TowerKGirtsY)
+                            newERIList.Add("TowerKInnersY=" & .TowerKInnersY)
+                            newERIList.Add("TowerKRedHorz=" & .TowerKRedHorz)
+                            newERIList.Add("TowerKRedDiag=" & .TowerKRedDiag)
+                            newERIList.Add("TowerKRedSubDiag=" & .TowerKRedSubDiag)
+                            newERIList.Add("TowerKRedSubHorz=" & .TowerKRedSubHorz)
+                            newERIList.Add("TowerKRedVert=" & .TowerKRedVert)
+                            newERIList.Add("TowerKRedHip=" & .TowerKRedHip)
+                            newERIList.Add("TowerKRedHipDiag=" & .TowerKRedHipDiag)
+                            newERIList.Add("TowerKTLX=" & .TowerKTLX)
+                            newERIList.Add("TowerKTLZ=" & .TowerKTLZ)
+                            newERIList.Add("TowerKTLLeg=" & .TowerKTLLeg)
+                            newERIList.Add("TowerInnerKTLX=" & .TowerInnerKTLX)
+                            newERIList.Add("TowerInnerKTLZ=" & .TowerInnerKTLZ)
+                            newERIList.Add("TowerInnerKTLLeg=" & .TowerInnerKTLLeg)
+                            newERIList.Add("TowerStitchBoltLocationHoriz=" & .TowerStitchBoltLocationHoriz)
+                            newERIList.Add("TowerStitchBoltLocationDiag=" & .TowerStitchBoltLocationDiag)
+                            newERIList.Add("TowerStitchBoltLocationRed=" & .TowerStitchBoltLocationRed)
+                            newERIList.Add("TowerStitchSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerStitchSpacing))
+                            newERIList.Add("TowerStitchSpacingDiag=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerStitchSpacingDiag))
+                            newERIList.Add("TowerStitchSpacingHorz=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerStitchSpacingHorz))
+                            newERIList.Add("TowerStitchSpacingRed=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerStitchSpacingRed))
+                            newERIList.Add("TowerLegNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerLegNetWidthDeduct))
+                            newERIList.Add("TowerLegUFactor=" & .TowerLegUFactor)
+                            newERIList.Add("TowerDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalNetWidthDeduct))
+                            newERIList.Add("TowerTopGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtNetWidthDeduct))
+                            newERIList.Add("TowerBotGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtNetWidthDeduct))
+                            newERIList.Add("TowerInnerGirtNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerInnerGirtNetWidthDeduct))
+                            newERIList.Add("TowerHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerHorizontalNetWidthDeduct))
+                            newERIList.Add("TowerShortHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerShortHorizontalNetWidthDeduct))
+                            newERIList.Add("TowerDiagonalUFactor=" & .TowerDiagonalUFactor)
+                            newERIList.Add("TowerTopGirtUFactor=" & .TowerTopGirtUFactor)
+                            newERIList.Add("TowerBotGirtUFactor=" & .TowerBotGirtUFactor)
+                            newERIList.Add("TowerInnerGirtUFactor=" & .TowerInnerGirtUFactor)
+                            newERIList.Add("TowerHorizontalUFactor=" & .TowerHorizontalUFactor)
+                            newERIList.Add("TowerShortHorizontalUFactor=" & .TowerShortHorizontalUFactor)
+                            newERIList.Add("TowerLegConnType=" & .TowerLegConnType)
+                            newERIList.Add("TowerLegNumBolts=" & .TowerLegNumBolts)
+                            newERIList.Add("TowerDiagonalNumBolts=" & .TowerDiagonalNumBolts)
+                            newERIList.Add("TowerTopGirtNumBolts=" & .TowerTopGirtNumBolts)
+                            newERIList.Add("TowerBotGirtNumBolts=" & .TowerBotGirtNumBolts)
+                            newERIList.Add("TowerInnerGirtNumBolts=" & .TowerInnerGirtNumBolts)
+                            newERIList.Add("TowerHorizontalNumBolts=" & .TowerHorizontalNumBolts)
+                            newERIList.Add("TowerShortHorizontalNumBolts=" & .TowerShortHorizontalNumBolts)
+                            newERIList.Add("TowerLegBoltGrade=" & .TowerLegBoltGrade)
+                            newERIList.Add("TowerLegBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerLegBoltSize))
+                            newERIList.Add("TowerDiagonalBoltGrade=" & .TowerDiagonalBoltGrade)
+                            newERIList.Add("TowerDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalBoltSize))
+                            newERIList.Add("TowerTopGirtBoltGrade=" & .TowerTopGirtBoltGrade)
+                            newERIList.Add("TowerTopGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtBoltSize))
+                            newERIList.Add("TowerBotGirtBoltGrade=" & .TowerBotGirtBoltGrade)
+                            newERIList.Add("TowerBotGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtBoltSize))
+                            newERIList.Add("TowerInnerGirtBoltGrade=" & .TowerInnerGirtBoltGrade)
+                            newERIList.Add("TowerInnerGirtBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerInnerGirtBoltSize))
+                            newERIList.Add("TowerHorizontalBoltGrade=" & .TowerHorizontalBoltGrade)
+                            newERIList.Add("TowerHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerHorizontalBoltSize))
+                            newERIList.Add("TowerShortHorizontalBoltGrade=" & .TowerShortHorizontalBoltGrade)
+                            newERIList.Add("TowerShortHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerShortHorizontalBoltSize))
+                            newERIList.Add("TowerLegBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerLegBoltEdgeDistance))
+                            newERIList.Add("TowerDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalBoltEdgeDistance))
+                            newERIList.Add("TowerTopGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtBoltEdgeDistance))
+                            newERIList.Add("TowerBotGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtBoltEdgeDistance))
+                            newERIList.Add("TowerInnerGirtBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerInnerGirtBoltEdgeDistance))
+                            newERIList.Add("TowerHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerHorizontalBoltEdgeDistance))
+                            newERIList.Add("TowerShortHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerShortHorizontalBoltEdgeDistance))
+                            newERIList.Add("TowerDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagonalGageG1Distance))
+                            newERIList.Add("TowerTopGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtGageG1Distance))
+                            newERIList.Add("TowerBotGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtGageG1Distance))
+                            newERIList.Add("TowerInnerGirtGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerInnerGirtGageG1Distance))
+                            newERIList.Add("TowerHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerHorizontalGageG1Distance))
+                            newERIList.Add("TowerShortHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerShortHorizontalGageG1Distance))
+                            newERIList.Add("TowerRedundantHorizontalBoltGrade=" & .TowerRedundantHorizontalBoltGrade)
+                            newERIList.Add("TowerRedundantHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize))
+                            newERIList.Add("TowerRedundantHorizontalNumBolts=" & .TowerRedundantHorizontalNumBolts)
+                            newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance))
+                            newERIList.Add("TowerRedundantHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantHorizontalUFactor=" & .TowerRedundantHorizontalUFactor)
+                            newERIList.Add("TowerRedundantDiagonalBoltGrade=" & .TowerRedundantDiagonalBoltGrade)
+                            newERIList.Add("TowerRedundantDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize))
+                            newERIList.Add("TowerRedundantDiagonalNumBolts=" & .TowerRedundantDiagonalNumBolts)
+                            newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance))
+                            newERIList.Add("TowerRedundantDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantDiagonalUFactor=" & .TowerRedundantDiagonalUFactor)
+                            newERIList.Add("TowerRedundantSubDiagonalBoltGrade=" & .TowerRedundantSubDiagonalBoltGrade)
+                            newERIList.Add("TowerRedundantSubDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalBoltSize))
+                            newERIList.Add("TowerRedundantSubDiagonalNumBolts=" & .TowerRedundantSubDiagonalNumBolts)
+                            newERIList.Add("TowerRedundantSubDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantSubDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalGageG1Distance))
+                            newERIList.Add("TowerRedundantSubDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantSubDiagonalUFactor=" & .TowerRedundantSubDiagonalUFactor)
+                            newERIList.Add("TowerRedundantSubHorizontalBoltGrade=" & .TowerRedundantSubHorizontalBoltGrade)
+                            newERIList.Add("TowerRedundantSubHorizontalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalBoltSize))
+                            newERIList.Add("TowerRedundantSubHorizontalNumBolts=" & .TowerRedundantSubHorizontalNumBolts)
+                            newERIList.Add("TowerRedundantSubHorizontalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantSubHorizontalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalGageG1Distance))
+                            newERIList.Add("TowerRedundantSubHorizontalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantSubHorizontalUFactor=" & .TowerRedundantSubHorizontalUFactor)
+                            newERIList.Add("TowerRedundantVerticalBoltGrade=" & .TowerRedundantVerticalBoltGrade)
+                            newERIList.Add("TowerRedundantVerticalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalBoltSize))
+                            newERIList.Add("TowerRedundantVerticalNumBolts=" & .TowerRedundantVerticalNumBolts)
+                            newERIList.Add("TowerRedundantVerticalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantVerticalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalGageG1Distance))
+                            newERIList.Add("TowerRedundantVerticalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantVerticalUFactor=" & .TowerRedundantVerticalUFactor)
+                            newERIList.Add("TowerRedundantHipBoltGrade=" & .TowerRedundantHipBoltGrade)
+                            newERIList.Add("TowerRedundantHipBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize))
+                            newERIList.Add("TowerRedundantHipNumBolts=" & .TowerRedundantHipNumBolts)
+                            newERIList.Add("TowerRedundantHipBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantHipGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance))
+                            newERIList.Add("TowerRedundantHipNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct))
+                            newERIList.Add("TowerRedundantHipUFactor=" & .TowerRedundantHipUFactor)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltGrade=" & .TowerRedundantHipDiagonalBoltGrade)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize))
+                            newERIList.Add("TowerRedundantHipDiagonalNumBolts=" & .TowerRedundantHipDiagonalNumBolts)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance))
+                            newERIList.Add("TowerRedundantHipDiagonalGageG1Distance=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance))
+                            newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor=" & .TowerRedundantHipDiagonalUFactor)
+                            newERIList.Add("TowerDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(.TowerDiagonalOutOfPlaneRestraint))
+                            newERIList.Add("TowerTopGirtOutOfPlaneRestraint=" & trueFalseYesNo(.TowerTopGirtOutOfPlaneRestraint))
+                            newERIList.Add("TowerBottomGirtOutOfPlaneRestraint=" & trueFalseYesNo(.TowerBottomGirtOutOfPlaneRestraint))
+                            newERIList.Add("TowerMidGirtOutOfPlaneRestraint=" & trueFalseYesNo(.TowerMidGirtOutOfPlaneRestraint))
+                            newERIList.Add("TowerHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(.TowerHorizontalOutOfPlaneRestraint))
+                            newERIList.Add("TowerSecondaryHorizontalOutOfPlaneRestraint=" & trueFalseYesNo(.TowerSecondaryHorizontalOutOfPlaneRestraint))
+                            newERIList.Add("TowerUniqueFlag=" & .TowerUniqueFlag)
+                            newERIList.Add("TowerDiagOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagOffsetNEY))
+                            newERIList.Add("TowerDiagOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagOffsetNEX))
+                            newERIList.Add("TowerDiagOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagOffsetPEY))
+                            newERIList.Add("TowerDiagOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerDiagOffsetPEX))
+                            newERIList.Add("TowerKbraceOffsetNEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetNEY))
+                            newERIList.Add("TowerKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetNEX))
+                            newERIList.Add("TowerKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetPEY))
+                            newERIList.Add("TowerKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetPEX))
+                        End With
                     Next i
                 Case line(0).Equals("NumGuyRecs")
                     newERIList.Add(line(0) & "=" & Me.geometry.guyWires.Count)
                     For i = 0 To Me.geometry.guyWires.Count - 1
-                        newERIList.Add("GuyRec=" & Me.geometry.guyWires(i).Rec)
-                        newERIList.Add("GuyHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).GuyHeight))
-                        newERIList.Add("GuyAutoCalcKSingleAngle=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalcKSingleAngle))
-                        newERIList.Add("GuyAutoCalcKSolidRound=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalcKSolidRound))
-                        newERIList.Add("GuyMount=" & Me.geometry.guyWires(i).GuyMount)
-                        newERIList.Add("TorqueArmStyle=" & Me.geometry.guyWires(i).TorqueArmStyle)
-                        newERIList.Add("GuyRadius=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius))
-                        newERIList.Add("GuyRadius120=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius120))
-                        newERIList.Add("GuyRadius240=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius240))
-                        newERIList.Add("GuyRadius360=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).GuyRadius360))
-                        newERIList.Add("TorqueArmRadius=" & Me.settings.USUnits.Length.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmRadius))
-                        newERIList.Add("TorqueArmLegAngle=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmLegAngle))
-                        newERIList.Add("Azimuth0Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth0Adjustment))
-                        newERIList.Add("Azimuth120Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth120Adjustment))
-                        newERIList.Add("Azimuth240Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth240Adjustment))
-                        newERIList.Add("Azimuth360Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.geometry.guyWires(i).Azimuth360Adjustment))
-                        newERIList.Add("Anchor0Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor0Elevation))
-                        newERIList.Add("Anchor120Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor120Elevation))
-                        newERIList.Add("Anchor240Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor240Elevation))
-                        newERIList.Add("Anchor360Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.geometry.guyWires(i).Anchor360Elevation))
-                        newERIList.Add("GuySize=" & Me.geometry.guyWires(i).GuySize)
-                        newERIList.Add("Guy120Size=" & Me.geometry.guyWires(i).Guy120Size)
-                        newERIList.Add("Guy240Size=" & Me.geometry.guyWires(i).Guy240Size)
-                        newERIList.Add("Guy360Size=" & Me.geometry.guyWires(i).Guy360Size)
-                        newERIList.Add("GuyGrade=" & Me.geometry.guyWires(i).GuyGrade)
-                        newERIList.Add("TorqueArmSize=" & Me.geometry.guyWires(i).TorqueArmSize)
-                        newERIList.Add("TorqueArmSizeBot=" & Me.geometry.guyWires(i).TorqueArmSizeBot)
-                        newERIList.Add("TorqueArmType=" & Me.geometry.guyWires(i).TorqueArmType)
-                        newERIList.Add("TorqueArmGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).TorqueArmGrade))
-                        newERIList.Add("TorqueArmMatlGrade=" & Me.geometry.guyWires(i).TorqueArmMatlGrade)
-                        newERIList.Add("TorqueArmKFactor=" & Me.geometry.guyWires(i).TorqueArmKFactor)
-                        newERIList.Add("TorqueArmKFactorY=" & Me.geometry.guyWires(i).TorqueArmKFactorY)
-                        newERIList.Add("GuyPullOffKFactorX=" & Me.geometry.guyWires(i).GuyPullOffKFactorX)
-                        newERIList.Add("GuyPullOffKFactorY=" & Me.geometry.guyWires(i).GuyPullOffKFactorY)
-                        newERIList.Add("GuyDiagKFactorX=" & Me.geometry.guyWires(i).GuyDiagKFactorX)
-                        newERIList.Add("GuyDiagKFactorY=" & Me.geometry.guyWires(i).GuyDiagKFactorY)
-                        newERIList.Add("GuyAutoCalc=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAutoCalc))
-                        newERIList.Add("GuyAllGuysSame=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAllGuysSame))
-                        newERIList.Add("GuyAllGuysAnchorSame=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyAllGuysAnchorSame))
-                        newERIList.Add("GuyIsStrapping=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyIsStrapping))
-                        newERIList.Add("GuyPullOffSize=" & Me.geometry.guyWires(i).GuyPullOffSize)
-                        newERIList.Add("GuyPullOffSizeBot=" & Me.geometry.guyWires(i).GuyPullOffSizeBot)
-                        newERIList.Add("GuyPullOffType=" & Me.geometry.guyWires(i).GuyPullOffType)
-                        newERIList.Add("GuyPullOffGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffGrade))
-                        newERIList.Add("GuyPullOffMatlGrade=" & Me.geometry.guyWires(i).GuyPullOffMatlGrade)
-                        newERIList.Add("GuyUpperDiagSize=" & Me.geometry.guyWires(i).GuyUpperDiagSize)
-                        newERIList.Add("GuyLowerDiagSize=" & Me.geometry.guyWires(i).GuyLowerDiagSize)
-                        newERIList.Add("GuyDiagType=" & Me.geometry.guyWires(i).GuyDiagType)
-                        newERIList.Add("GuyDiagGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagGrade))
-                        newERIList.Add("GuyDiagMatlGrade=" & Me.geometry.guyWires(i).GuyDiagMatlGrade)
-                        newERIList.Add("GuyDiagNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagNetWidthDeduct))
-                        newERIList.Add("GuyDiagUFactor=" & Me.geometry.guyWires(i).GuyDiagUFactor)
-                        newERIList.Add("GuyDiagNumBolts=" & Me.geometry.guyWires(i).GuyDiagNumBolts)
-                        newERIList.Add("GuyDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyDiagonalOutOfPlaneRestraint))
-                        newERIList.Add("GuyDiagBoltGrade=" & Me.geometry.guyWires(i).GuyDiagBoltGrade)
-                        newERIList.Add("GuyDiagBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltSize))
-                        newERIList.Add("GuyDiagBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltEdgeDistance))
-                        newERIList.Add("GuyDiagBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyDiagBoltGageDistance))
-                        newERIList.Add("GuyPullOffNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffNetWidthDeduct))
-                        newERIList.Add("GuyPullOffUFactor=" & Me.geometry.guyWires(i).GuyPullOffUFactor)
-                        newERIList.Add("GuyPullOffNumBolts=" & Me.geometry.guyWires(i).GuyPullOffNumBolts)
-                        newERIList.Add("GuyPullOffOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyPullOffOutOfPlaneRestraint))
-                        newERIList.Add("GuyPullOffBoltGrade=" & Me.geometry.guyWires(i).GuyPullOffBoltGrade)
-                        newERIList.Add("GuyPullOffBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltSize))
-                        newERIList.Add("GuyPullOffBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltEdgeDistance))
-                        newERIList.Add("GuyPullOffBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyPullOffBoltGageDistance))
-                        newERIList.Add("GuyTorqueArmNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmNetWidthDeduct))
-                        newERIList.Add("GuyTorqueArmUFactor=" & Me.geometry.guyWires(i).GuyTorqueArmUFactor)
-                        newERIList.Add("GuyTorqueArmNumBolts=" & Me.geometry.guyWires(i).GuyTorqueArmNumBolts)
-                        newERIList.Add("GuyTorqueArmOutOfPlaneRestraint=" & trueFalseYesNo(Me.geometry.guyWires(i).GuyTorqueArmOutOfPlaneRestraint))
-                        newERIList.Add("GuyTorqueArmBoltGrade=" & Me.geometry.guyWires(i).GuyTorqueArmBoltGrade)
-                        newERIList.Add("GuyTorqueArmBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltSize))
-                        newERIList.Add("GuyTorqueArmBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltEdgeDistance))
-                        newERIList.Add("GuyTorqueArmBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyTorqueArmBoltGageDistance))
-                        newERIList.Add("GuyPerCentTension=" & Me.geometry.guyWires(i).GuyPerCentTension)
-                        newERIList.Add("GuyPerCentTension120=" & Me.geometry.guyWires(i).GuyPerCentTension120)
-                        newERIList.Add("GuyPerCentTension240=" & Me.geometry.guyWires(i).GuyPerCentTension240)
-                        newERIList.Add("GuyPerCentTension360=" & Me.geometry.guyWires(i).GuyPerCentTension360)
-                        newERIList.Add("GuyEffFactor=" & Me.geometry.guyWires(i).GuyEffFactor)
-                        newERIList.Add("GuyEffFactor120=" & Me.geometry.guyWires(i).GuyEffFactor120)
-                        newERIList.Add("GuyEffFactor240=" & Me.geometry.guyWires(i).GuyEffFactor240)
-                        newERIList.Add("GuyEffFactor360=" & Me.geometry.guyWires(i).GuyEffFactor360)
-                        newERIList.Add("GuyNumInsulators=" & Me.geometry.guyWires(i).GuyNumInsulators)
-                        newERIList.Add("GuyInsulatorLength=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorLength))
-                        newERIList.Add("GuyInsulatorDia=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorDia))
-                        newERIList.Add("GuyInsulatorWt=" & Me.settings.USUnits.Force.convertToERIUnits(Me.geometry.guyWires(i).GuyInsulatorWt))
+                        With Me.geometry.guyWires(i)
+                            newERIList.Add("GuyRec=" & .Rec)
+                            newERIList.Add("GuyHeight=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.GuyHeight))
+                            newERIList.Add("GuyAutoCalcKSingleAngle=" & trueFalseYesNo(.GuyAutoCalcKSingleAngle))
+                            newERIList.Add("GuyAutoCalcKSolidRound=" & trueFalseYesNo(.GuyAutoCalcKSolidRound))
+                            newERIList.Add("GuyMount=" & .GuyMount)
+                            newERIList.Add("TorqueArmStyle=" & .TorqueArmStyle)
+                            newERIList.Add("GuyRadius=" & Me.settings.USUnits.Length.convertToERIUnits(.GuyRadius))
+                            newERIList.Add("GuyRadius120=" & Me.settings.USUnits.Length.convertToERIUnits(.GuyRadius120))
+                            newERIList.Add("GuyRadius240=" & Me.settings.USUnits.Length.convertToERIUnits(.GuyRadius240))
+                            newERIList.Add("GuyRadius360=" & Me.settings.USUnits.Length.convertToERIUnits(.GuyRadius360))
+                            newERIList.Add("TorqueArmRadius=" & Me.settings.USUnits.Length.convertToERIUnits(.TorqueArmRadius))
+                            newERIList.Add("TorqueArmLegAngle=" & Me.settings.USUnits.Rotation.convertToERIUnits(.TorqueArmLegAngle))
+                            newERIList.Add("Azimuth0Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.Azimuth0Adjustment))
+                            newERIList.Add("Azimuth120Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.Azimuth120Adjustment))
+                            newERIList.Add("Azimuth240Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.Azimuth240Adjustment))
+                            newERIList.Add("Azimuth360Adjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.Azimuth360Adjustment))
+                            newERIList.Add("Anchor0Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.Anchor0Elevation))
+                            newERIList.Add("Anchor120Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.Anchor120Elevation))
+                            newERIList.Add("Anchor240Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.Anchor240Elevation))
+                            newERIList.Add("Anchor360Elevation=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.Anchor360Elevation))
+                            newERIList.Add("GuySize=" & .GuySize)
+                            newERIList.Add("Guy120Size=" & .Guy120Size)
+                            newERIList.Add("Guy240Size=" & .Guy240Size)
+                            newERIList.Add("Guy360Size=" & .Guy360Size)
+                            newERIList.Add("GuyGrade=" & .GuyGrade)
+                            newERIList.Add("TorqueArmSize=" & .TorqueArmSize)
+                            newERIList.Add("TorqueArmSizeBot=" & .TorqueArmSizeBot)
+                            newERIList.Add("TorqueArmType=" & .TorqueArmType)
+                            newERIList.Add("TorqueArmGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TorqueArmGrade))
+                            newERIList.Add("TorqueArmMatlGrade=" & .TorqueArmMatlGrade)
+                            newERIList.Add("TorqueArmKFactor=" & .TorqueArmKFactor)
+                            newERIList.Add("TorqueArmKFactorY=" & .TorqueArmKFactorY)
+                            newERIList.Add("GuyPullOffKFactorX=" & .GuyPullOffKFactorX)
+                            newERIList.Add("GuyPullOffKFactorY=" & .GuyPullOffKFactorY)
+                            newERIList.Add("GuyDiagKFactorX=" & .GuyDiagKFactorX)
+                            newERIList.Add("GuyDiagKFactorY=" & .GuyDiagKFactorY)
+                            newERIList.Add("GuyAutoCalc=" & trueFalseYesNo(.GuyAutoCalc))
+                            newERIList.Add("GuyAllGuysSame=" & trueFalseYesNo(.GuyAllGuysSame))
+                            newERIList.Add("GuyAllGuysAnchorSame=" & trueFalseYesNo(.GuyAllGuysAnchorSame))
+                            newERIList.Add("GuyIsStrapping=" & trueFalseYesNo(.GuyIsStrapping))
+                            newERIList.Add("GuyPullOffSize=" & .GuyPullOffSize)
+                            newERIList.Add("GuyPullOffSizeBot=" & .GuyPullOffSizeBot)
+                            newERIList.Add("GuyPullOffType=" & .GuyPullOffType)
+                            newERIList.Add("GuyPullOffGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.GuyPullOffGrade))
+                            newERIList.Add("GuyPullOffMatlGrade=" & .GuyPullOffMatlGrade)
+                            newERIList.Add("GuyUpperDiagSize=" & .GuyUpperDiagSize)
+                            newERIList.Add("GuyLowerDiagSize=" & .GuyLowerDiagSize)
+                            newERIList.Add("GuyDiagType=" & .GuyDiagType)
+                            newERIList.Add("GuyDiagGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.GuyDiagGrade))
+                            newERIList.Add("GuyDiagMatlGrade=" & .GuyDiagMatlGrade)
+                            newERIList.Add("GuyDiagNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyDiagNetWidthDeduct))
+                            newERIList.Add("GuyDiagUFactor=" & .GuyDiagUFactor)
+                            newERIList.Add("GuyDiagNumBolts=" & .GuyDiagNumBolts)
+                            newERIList.Add("GuyDiagonalOutOfPlaneRestraint=" & trueFalseYesNo(.GuyDiagonalOutOfPlaneRestraint))
+                            newERIList.Add("GuyDiagBoltGrade=" & .GuyDiagBoltGrade)
+                            newERIList.Add("GuyDiagBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyDiagBoltSize))
+                            newERIList.Add("GuyDiagBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyDiagBoltEdgeDistance))
+                            newERIList.Add("GuyDiagBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyDiagBoltGageDistance))
+                            newERIList.Add("GuyPullOffNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyPullOffNetWidthDeduct))
+                            newERIList.Add("GuyPullOffUFactor=" & .GuyPullOffUFactor)
+                            newERIList.Add("GuyPullOffNumBolts=" & .GuyPullOffNumBolts)
+                            newERIList.Add("GuyPullOffOutOfPlaneRestraint=" & trueFalseYesNo(.GuyPullOffOutOfPlaneRestraint))
+                            newERIList.Add("GuyPullOffBoltGrade=" & .GuyPullOffBoltGrade)
+                            newERIList.Add("GuyPullOffBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyPullOffBoltSize))
+                            newERIList.Add("GuyPullOffBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyPullOffBoltEdgeDistance))
+                            newERIList.Add("GuyPullOffBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyPullOffBoltGageDistance))
+                            newERIList.Add("GuyTorqueArmNetWidthDeduct=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyTorqueArmNetWidthDeduct))
+                            newERIList.Add("GuyTorqueArmUFactor=" & .GuyTorqueArmUFactor)
+                            newERIList.Add("GuyTorqueArmNumBolts=" & .GuyTorqueArmNumBolts)
+                            newERIList.Add("GuyTorqueArmOutOfPlaneRestraint=" & trueFalseYesNo(.GuyTorqueArmOutOfPlaneRestraint))
+                            newERIList.Add("GuyTorqueArmBoltGrade=" & .GuyTorqueArmBoltGrade)
+                            newERIList.Add("GuyTorqueArmBoltSize=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyTorqueArmBoltSize))
+                            newERIList.Add("GuyTorqueArmBoltEdgeDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyTorqueArmBoltEdgeDistance))
+                            newERIList.Add("GuyTorqueArmBoltGageDistance=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyTorqueArmBoltGageDistance))
+                            newERIList.Add("GuyPerCentTension=" & .GuyPerCentTension)
+                            newERIList.Add("GuyPerCentTension120=" & .GuyPerCentTension120)
+                            newERIList.Add("GuyPerCentTension240=" & .GuyPerCentTension240)
+                            newERIList.Add("GuyPerCentTension360=" & .GuyPerCentTension360)
+                            newERIList.Add("GuyEffFactor=" & .GuyEffFactor)
+                            newERIList.Add("GuyEffFactor120=" & .GuyEffFactor120)
+                            newERIList.Add("GuyEffFactor240=" & .GuyEffFactor240)
+                            newERIList.Add("GuyEffFactor360=" & .GuyEffFactor360)
+                            newERIList.Add("GuyNumInsulators=" & .GuyNumInsulators)
+                            newERIList.Add("GuyInsulatorLength=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyInsulatorLength))
+                            newERIList.Add("GuyInsulatorDia=" & Me.settings.USUnits.Properties.convertToERIUnits(.GuyInsulatorDia))
+                            newERIList.Add("GuyInsulatorWt=" & Me.settings.USUnits.Force.convertToERIUnits(.GuyInsulatorWt))
+                        End With
                     Next i
+#End Region
+#Region "Loading"
                 Case line(0).Equals("NumFeedLineRecs")
                     newERIList.Add(line(0) & "=" & Me.feedLines.Count)
                     For i = 0 To Me.feedLines.Count - 1
-                        newERIList.Add("FeedLineRec=" & Me.feedLines(i).FeedLineRec)
-                        newERIList.Add("FeedLineEnabled=" & trueFalseYesNo(Me.feedLines(i).FeedLineEnabled))
-                        newERIList.Add("FeedLineDatabase=" & Me.feedLines(i).FeedLineDatabase)
-                        newERIList.Add("FeedLineDescription=" & Me.feedLines(i).FeedLineDescription)
-                        newERIList.Add("FeedLineClassificationCategory=" & Me.feedLines(i).FeedLineClassificationCategory)
-                        newERIList.Add("FeedLineNote=" & Me.feedLines(i).FeedLineNote)
-                        newERIList.Add("FeedLineNum=" & Me.feedLines(i).FeedLineNum)
-                        newERIList.Add("FeedLineUseShielding=" & trueFalseYesNo(Me.feedLines(i).FeedLineUseShielding))
-                        newERIList.Add("ExcludeFeedLineFromTorque=" & trueFalseYesNo(Me.feedLines(i).ExcludeFeedLineFromTorque))
-                        newERIList.Add("FeedLineNumPerRow=" & Me.feedLines(i).FeedLineNumPerRow)
-                        newERIList.Add("FeedLineFace=" & Me.feedLines(i).FeedLineFace)
-                        newERIList.Add("FeedLineComponentType=" & Me.feedLines(i).FeedLineComponentType)
-                        newERIList.Add("FeedLineGroupTreatmentType=" & Me.feedLines(i).FeedLineGroupTreatmentType)
-                        newERIList.Add("FeedLineRoundClusterDia=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineRoundClusterDia))
-                        newERIList.Add("FeedLineWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineWidth))
-                        newERIList.Add("FeedLinePerimeter=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLinePerimeter))
-                        newERIList.Add("FlatAttachmentEffectiveWidthRatio=" & Me.feedLines(i).FlatAttachmentEffectiveWidthRatio)
-                        newERIList.Add("AutoCalcFlatAttachmentEffectiveWidthRatio=" & trueFalseYesNo(Me.feedLines(i).AutoCalcFlatAttachmentEffectiveWidthRatio))
-                        newERIList.Add("FeedLineShieldingFactorKaNoIce=" & Me.feedLines(i).FeedLineShieldingFactorKaNoIce)
-                        newERIList.Add("FeedLineShieldingFactorKaIce=" & Me.feedLines(i).FeedLineShieldingFactorKaIce)
-                        newERIList.Add("FeedLineAutoCalcKa=" & trueFalseYesNo(Me.feedLines(i).FeedLineAutoCalcKa))
-                        newERIList.Add("FeedLineCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaNoIce))
-                        newERIList.Add("FeedLineCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce))
-                        newERIList.Add("FeedLineCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_1))
-                        newERIList.Add("FeedLineCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_2))
-                        newERIList.Add("FeedLineCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.feedLines(i).FeedLineCaAaIce_4))
-                        newERIList.Add("FeedLineWtNoIce=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtNoIce))
-                        newERIList.Add("FeedLineWtIce=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce))
-                        newERIList.Add("FeedLineWtIce_1=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_1))
-                        newERIList.Add("FeedLineWtIce_2=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_2))
-                        newERIList.Add("FeedLineWtIce_4=" & Me.settings.USUnits.Load.convertToERIUnits(Me.feedLines(i).FeedLineWtIce_4))
-                        newERIList.Add("FeedLineFaceOffset=" & Me.feedLines(i).FeedLineFaceOffset)
-                        newERIList.Add("FeedLineOffsetFrac=" & Me.feedLines(i).FeedLineOffsetFrac)
-                        newERIList.Add("FeedLinePerimeterOffsetStartFrac=" & Me.feedLines(i).FeedLinePerimeterOffsetStartFrac)
-                        newERIList.Add("FeedLinePerimeterOffsetEndFrac=" & Me.feedLines(i).FeedLinePerimeterOffsetEndFrac)
-                        newERIList.Add("FeedLineStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.feedLines(i).FeedLineStartHt))
-                        newERIList.Add("FeedLineEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.feedLines(i).FeedLineEndHt))
-                        newERIList.Add("FeedLineClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineClearSpacing))
-                        newERIList.Add("FeedLineRowClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.feedLines(i).FeedLineRowClearSpacing))
+                        With Me.feedLines(i)
+                            newERIList.Add("FeedLineRec=" & .FeedLineRec)
+                            newERIList.Add("FeedLineEnabled=" & trueFalseYesNo(.FeedLineEnabled))
+                            newERIList.Add("FeedLineDatabase=" & .FeedLineDatabase)
+                            newERIList.Add("FeedLineDescription=" & .FeedLineDescription)
+                            newERIList.Add("FeedLineClassificationCategory=" & .FeedLineClassificationCategory)
+                            newERIList.Add("FeedLineNote=" & .FeedLineNote)
+                            newERIList.Add("FeedLineNum=" & .FeedLineNum)
+                            newERIList.Add("FeedLineUseShielding=" & trueFalseYesNo(.FeedLineUseShielding))
+                            newERIList.Add("ExcludeFeedLineFromTorque=" & trueFalseYesNo(.ExcludeFeedLineFromTorque))
+                            newERIList.Add("FeedLineNumPerRow=" & .FeedLineNumPerRow)
+                            newERIList.Add("FeedLineFace=" & .FeedLineFace)
+                            newERIList.Add("FeedLineComponentType=" & .FeedLineComponentType)
+                            newERIList.Add("FeedLineGroupTreatmentType=" & .FeedLineGroupTreatmentType)
+                            newERIList.Add("FeedLineRoundClusterDia=" & Me.settings.USUnits.Properties.convertToERIUnits(.FeedLineRoundClusterDia))
+                            newERIList.Add("FeedLineWidth=" & Me.settings.USUnits.Properties.convertToERIUnits(.FeedLineWidth))
+                            newERIList.Add("FeedLinePerimeter=" & Me.settings.USUnits.Properties.convertToERIUnits(.FeedLinePerimeter))
+                            newERIList.Add("FlatAttachmentEffectiveWidthRatio=" & .FlatAttachmentEffectiveWidthRatio)
+                            newERIList.Add("AutoCalcFlatAttachmentEffectiveWidthRatio=" & trueFalseYesNo(.AutoCalcFlatAttachmentEffectiveWidthRatio))
+                            newERIList.Add("FeedLineShieldingFactorKaNoIce=" & .FeedLineShieldingFactorKaNoIce)
+                            newERIList.Add("FeedLineShieldingFactorKaIce=" & .FeedLineShieldingFactorKaIce)
+                            newERIList.Add("FeedLineAutoCalcKa=" & trueFalseYesNo(.FeedLineAutoCalcKa))
+                            newERIList.Add("FeedLineCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.FeedLineCaAaNoIce))
+                            newERIList.Add("FeedLineCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.FeedLineCaAaIce))
+                            newERIList.Add("FeedLineCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.FeedLineCaAaIce_1))
+                            newERIList.Add("FeedLineCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.FeedLineCaAaIce_2))
+                            newERIList.Add("FeedLineCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.FeedLineCaAaIce_4))
+                            newERIList.Add("FeedLineWtNoIce=" & Me.settings.USUnits.Load.convertToERIUnits(.FeedLineWtNoIce))
+                            newERIList.Add("FeedLineWtIce=" & Me.settings.USUnits.Load.convertToERIUnits(.FeedLineWtIce))
+                            newERIList.Add("FeedLineWtIce_1=" & Me.settings.USUnits.Load.convertToERIUnits(.FeedLineWtIce_1))
+                            newERIList.Add("FeedLineWtIce_2=" & Me.settings.USUnits.Load.convertToERIUnits(.FeedLineWtIce_2))
+                            newERIList.Add("FeedLineWtIce_4=" & Me.settings.USUnits.Load.convertToERIUnits(.FeedLineWtIce_4))
+                            newERIList.Add("FeedLineFaceOffset=" & .FeedLineFaceOffset)
+                            newERIList.Add("FeedLineOffsetFrac=" & .FeedLineOffsetFrac)
+                            newERIList.Add("FeedLinePerimeterOffsetStartFrac=" & .FeedLinePerimeterOffsetStartFrac)
+                            newERIList.Add("FeedLinePerimeterOffsetEndFrac=" & .FeedLinePerimeterOffsetEndFrac)
+                            newERIList.Add("FeedLineStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.FeedLineStartHt))
+                            newERIList.Add("FeedLineEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.FeedLineEndHt))
+                            newERIList.Add("FeedLineClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.FeedLineClearSpacing))
+                            newERIList.Add("FeedLineRowClearSpacing=" & Me.settings.USUnits.Properties.convertToERIUnits(.FeedLineRowClearSpacing))
+                        End With
                     Next i
                 Case line(0).Equals("NumTowerLoadRecs")
                     newERIList.Add(line(0) & "=" & Me.discreteLoads.Count)
                     For i = 0 To Me.discreteLoads.Count - 1
-                        newERIList.Add("TowerLoadRec=" & Me.discreteLoads(i).TowerLoadRec)
-                        newERIList.Add("TowerLoadEnabled=" & trueFalseYesNo(Me.discreteLoads(i).TowerLoadEnabled))
-                        newERIList.Add("TowerLoadDatabase=" & Me.discreteLoads(i).TowerLoadDatabase)
-                        newERIList.Add("TowerLoadDescription=" & Me.discreteLoads(i).TowerLoadDescription)
-                        newERIList.Add("TowerLoadType=" & Me.discreteLoads(i).TowerLoadType)
-                        newERIList.Add("TowerLoadClassificationCategory=" & Me.discreteLoads(i).TowerLoadClassificationCategory)
-                        newERIList.Add("TowerLoadNote=" & Me.discreteLoads(i).TowerLoadNote)
-                        newERIList.Add("TowerLoadNum=" & Me.discreteLoads(i).TowerLoadNum)
-                        newERIList.Add("TowerLoadFace=" & Me.discreteLoads(i).TowerLoadFace)
-                        newERIList.Add("TowerOffsetType=" & Me.discreteLoads(i).TowerOffsetType)
-                        newERIList.Add("TowerOffsetDist=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerOffsetDist))
-                        newERIList.Add("TowerVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerVertOffset))
-                        newERIList.Add("TowerLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLateralOffset))
-                        newERIList.Add("TowerAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.discreteLoads(i).TowerAzimuthAdjustment))
-                        newERIList.Add("TowerAppurtSymbol=" & Me.discreteLoads(i).TowerAppurtSymbol)
-                        newERIList.Add("TowerLoadShieldingFactorKaNoIce=" & Me.discreteLoads(i).TowerLoadShieldingFactorKaNoIce)
-                        newERIList.Add("TowerLoadShieldingFactorKaIce=" & Me.discreteLoads(i).TowerLoadShieldingFactorKaIce)
-                        newERIList.Add("TowerLoadAutoCalcKa=" & trueFalseYesNo(Me.discreteLoads(i).TowerLoadAutoCalcKa))
-                        newERIList.Add("TowerLoadCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaNoIce))
-                        newERIList.Add("TowerLoadCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce))
-                        newERIList.Add("TowerLoadCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_1))
-                        newERIList.Add("TowerLoadCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_2))
-                        newERIList.Add("TowerLoadCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_4))
-                        newERIList.Add("TowerLoadCaAaNoIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaNoIce_Side))
-                        newERIList.Add("TowerLoadCaAaIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side))
-                        newERIList.Add("TowerLoadCaAaIce_Side_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_1))
-                        newERIList.Add("TowerLoadCaAaIce_Side_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_2))
-                        newERIList.Add("TowerLoadCaAaIce_Side_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.discreteLoads(i).TowerLoadCaAaIce_Side_4))
-                        newERIList.Add("TowerLoadWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtNoIce))
-                        newERIList.Add("TowerLoadWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce))
-                        newERIList.Add("TowerLoadWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_1))
-                        newERIList.Add("TowerLoadWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_2))
-                        newERIList.Add("TowerLoadWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(Me.discreteLoads(i).TowerLoadWtIce_4))
-                        newERIList.Add("TowerLoadStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLoadStartHt))
-                        newERIList.Add("TowerLoadEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.discreteLoads(i).TowerLoadEndHt))
+                        With Me.discreteLoads(i)
+                            newERIList.Add("TowerLoadRec=" & .TowerLoadRec)
+                            newERIList.Add("TowerLoadEnabled=" & trueFalseYesNo(.TowerLoadEnabled))
+                            newERIList.Add("TowerLoadDatabase=" & .TowerLoadDatabase)
+                            newERIList.Add("TowerLoadDescription=" & .TowerLoadDescription)
+                            newERIList.Add("TowerLoadType=" & .TowerLoadType)
+                            newERIList.Add("TowerLoadClassificationCategory=" & .TowerLoadClassificationCategory)
+                            newERIList.Add("TowerLoadNote=" & .TowerLoadNote)
+                            newERIList.Add("TowerLoadNum=" & .TowerLoadNum)
+                            newERIList.Add("TowerLoadFace=" & .TowerLoadFace)
+                            newERIList.Add("TowerOffsetType=" & .TowerOffsetType)
+                            newERIList.Add("TowerOffsetDist=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerOffsetDist))
+                            newERIList.Add("TowerVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerVertOffset))
+                            newERIList.Add("TowerLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerLateralOffset))
+                            newERIList.Add("TowerAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.TowerAzimuthAdjustment))
+                            newERIList.Add("TowerAppurtSymbol=" & .TowerAppurtSymbol)
+                            newERIList.Add("TowerLoadShieldingFactorKaNoIce=" & .TowerLoadShieldingFactorKaNoIce)
+                            newERIList.Add("TowerLoadShieldingFactorKaIce=" & .TowerLoadShieldingFactorKaIce)
+                            newERIList.Add("TowerLoadAutoCalcKa=" & trueFalseYesNo(.TowerLoadAutoCalcKa))
+                            newERIList.Add("TowerLoadCaAaNoIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaNoIce))
+                            newERIList.Add("TowerLoadCaAaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce))
+                            newERIList.Add("TowerLoadCaAaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_1))
+                            newERIList.Add("TowerLoadCaAaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_2))
+                            newERIList.Add("TowerLoadCaAaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_4))
+                            newERIList.Add("TowerLoadCaAaNoIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaNoIce_Side))
+                            newERIList.Add("TowerLoadCaAaIce_Side=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_Side))
+                            newERIList.Add("TowerLoadCaAaIce_Side_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_Side_1))
+                            newERIList.Add("TowerLoadCaAaIce_Side_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_Side_2))
+                            newERIList.Add("TowerLoadCaAaIce_Side_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.TowerLoadCaAaIce_Side_4))
+                            newERIList.Add("TowerLoadWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.TowerLoadWtNoIce))
+                            newERIList.Add("TowerLoadWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(.TowerLoadWtIce))
+                            newERIList.Add("TowerLoadWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(.TowerLoadWtIce_1))
+                            newERIList.Add("TowerLoadWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(.TowerLoadWtIce_2))
+                            newERIList.Add("TowerLoadWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(.TowerLoadWtIce_4))
+                            newERIList.Add("TowerLoadStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerLoadStartHt))
+                            newERIList.Add("TowerLoadEndHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.TowerLoadEndHt))
+                        End With
                     Next i
                 Case line(0).Equals("NumDishRecs")
                     newERIList.Add(line(0) & "=" & Me.dishes.Count)
                     For i = 0 To Me.dishes.Count - 1
-                        newERIList.Add("DishRec=" & Me.dishes(i).DishRec)
-                        newERIList.Add("DishEnabled=" & trueFalseYesNo(Me.dishes(i).DishEnabled))
-                        newERIList.Add("DishDatabase=" & Me.dishes(i).DishDatabase)
-                        newERIList.Add("DishDescription=" & Me.dishes(i).DishDescription)
-                        newERIList.Add("DishClassificationCategory=" & Me.dishes(i).DishClassificationCategory)
-                        newERIList.Add("DishNote=" & Me.dishes(i).DishNote)
-                        newERIList.Add("DishNum=" & Me.dishes(i).DishNum)
-                        newERIList.Add("DishFace=" & Me.dishes(i).DishFace)
-                        newERIList.Add("DishType=" & Me.dishes(i).DishType)
-                        newERIList.Add("DishOffsetType=" & Me.dishes(i).DishOffsetType)
-                        newERIList.Add("DishVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishVertOffset))
-                        newERIList.Add("DishLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishLateralOffset))
-                        newERIList.Add("DishOffsetDist=" & Me.settings.USUnits.Properties.convertToERIUnits(Me.dishes(i).DishOffsetDist))
-                        newERIList.Add("DishArea=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishArea))
-                        newERIList.Add("DishAreaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce))
-                        newERIList.Add("DishAreaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_1))
-                        newERIList.Add("DishAreaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_2))
-                        newERIList.Add("DishAreaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(Me.dishes(i).DishAreaIce_4))
-                        newERIList.Add("DishDiameter=" & Me.settings.USUnits.Length.convertToERIUnits(Me.dishes(i).DishDiameter))
-                        newERIList.Add("DishWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtNoIce))
-                        newERIList.Add("DishWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce))
-                        newERIList.Add("DishWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_1))
-                        newERIList.Add("DishWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_2))
-                        newERIList.Add("DishWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(Me.dishes(i).DishWtIce_4))
-                        newERIList.Add("DishStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.dishes(i).DishStartHt))
-                        newERIList.Add("DishAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.dishes(i).DishAzimuthAdjustment))
-                        newERIList.Add("DishBeamWidth=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.dishes(i).DishBeamWidth))
+                        With Me.dishes(i)
+                            newERIList.Add("DishRec=" & .DishRec)
+                            newERIList.Add("DishEnabled=" & trueFalseYesNo(.DishEnabled))
+                            newERIList.Add("DishDatabase=" & .DishDatabase)
+                            newERIList.Add("DishDescription=" & .DishDescription)
+                            newERIList.Add("DishClassificationCategory=" & .DishClassificationCategory)
+                            newERIList.Add("DishNote=" & .DishNote)
+                            newERIList.Add("DishNum=" & .DishNum)
+                            newERIList.Add("DishFace=" & .DishFace)
+                            newERIList.Add("DishType=" & .DishType)
+                            newERIList.Add("DishOffsetType=" & .DishOffsetType)
+                            newERIList.Add("DishVertOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.DishVertOffset))
+                            newERIList.Add("DishLateralOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.DishLateralOffset))
+                            newERIList.Add("DishOffsetDist=" & Me.settings.USUnits.Properties.convertToERIUnits(.DishOffsetDist))
+                            newERIList.Add("DishArea=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.DishArea))
+                            newERIList.Add("DishAreaIce=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.DishAreaIce))
+                            newERIList.Add("DishAreaIce_1=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.DishAreaIce_1))
+                            newERIList.Add("DishAreaIce_2=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.DishAreaIce_2))
+                            newERIList.Add("DishAreaIce_4=" & Me.settings.USUnits.Length.convertAreaToERIUnits(.DishAreaIce_4))
+                            newERIList.Add("DishDiameter=" & Me.settings.USUnits.Length.convertToERIUnits(.DishDiameter))
+                            newERIList.Add("DishWtNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.DishWtNoIce))
+                            newERIList.Add("DishWtIce=" & Me.settings.USUnits.Force.convertToERIUnits(.DishWtIce))
+                            newERIList.Add("DishWtIce_1=" & Me.settings.USUnits.Force.convertToERIUnits(.DishWtIce_1))
+                            newERIList.Add("DishWtIce_2=" & Me.settings.USUnits.Force.convertToERIUnits(.DishWtIce_2))
+                            newERIList.Add("DishWtIce_4=" & Me.settings.USUnits.Force.convertToERIUnits(.DishWtIce_4))
+                            newERIList.Add("DishStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.DishStartHt))
+                            newERIList.Add("DishAzimuthAdjustment=" & Me.settings.USUnits.Rotation.convertToERIUnits(.DishAzimuthAdjustment))
+                            newERIList.Add("DishBeamWidth=" & Me.settings.USUnits.Rotation.convertToERIUnits(.DishBeamWidth))
+                        End With
                     Next i
                 Case line(0).Equals("NumUserForceRecs")
                     newERIList.Add(line(0) & "=" & Me.userForces.Count)
                     For i = 0 To Me.userForces.Count - 1
-                        newERIList.Add("UserForceRec=" & Me.userForces(i).UserForceRec)
-                        newERIList.Add("UserForceEnabled=" & trueFalseYesNo(Me.userForces(i).UserForceEnabled))
-                        newERIList.Add("UserForceDescription=" & Me.userForces(i).UserForceDescription)
-                        newERIList.Add("UserForceStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.userForces(i).UserForceStartHt))
-                        newERIList.Add("UserForceOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(Me.userForces(i).UserForceOffset))
-                        newERIList.Add("UserForceAzimuth=" & Me.settings.USUnits.Rotation.convertToERIUnits(Me.userForces(i).UserForceAzimuth))
-                        newERIList.Add("UserForceFxNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxNoIce))
-                        newERIList.Add("UserForceFzNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzNoIce))
-                        newERIList.Add("UserForceAxialNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialNoIce))
-                        newERIList.Add("UserForceShearNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearNoIce))
-                        newERIList.Add("UserForceCaAcNoIce=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcNoIce))
-                        newERIList.Add("UserForceFxIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxIce))
-                        newERIList.Add("UserForceFzIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzIce))
-                        newERIList.Add("UserForceAxialIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialIce))
-                        newERIList.Add("UserForceShearIce=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearIce))
-                        newERIList.Add("UserForceCaAcIce=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcIce))
-                        newERIList.Add("UserForceFxService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFxService))
-                        newERIList.Add("UserForceFzService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceFzService))
-                        newERIList.Add("UserForceAxialService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceAxialService))
-                        newERIList.Add("UserForceShearService=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceShearService))
-                        newERIList.Add("UserForceCaAcService=" & Me.settings.USUnits.Length.convertToERIUnits(Me.userForces(i).UserForceCaAcService))
-                        newERIList.Add("UserForceEhx=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEhx))
-                        newERIList.Add("UserForceEhz=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEhz))
-                        newERIList.Add("UserForceEv=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEv))
-                        newERIList.Add("UserForceEh=" & Me.settings.USUnits.Force.convertToERIUnits(Me.userForces(i).UserForceEh))
+                        With Me.userForces(i)
+                            newERIList.Add("UserForceRec=" & .UserForceRec)
+                            newERIList.Add("UserForceEnabled=" & trueFalseYesNo(.UserForceEnabled))
+                            newERIList.Add("UserForceDescription=" & .UserForceDescription)
+                            newERIList.Add("UserForceStartHt=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.UserForceStartHt))
+                            newERIList.Add("UserForceOffset=" & Me.settings.USUnits.Coordinate.convertToERIUnits(.UserForceOffset))
+                            newERIList.Add("UserForceAzimuth=" & Me.settings.USUnits.Rotation.convertToERIUnits(.UserForceAzimuth))
+                            newERIList.Add("UserForceFxNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFxNoIce))
+                            newERIList.Add("UserForceFzNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFzNoIce))
+                            newERIList.Add("UserForceAxialNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceAxialNoIce))
+                            newERIList.Add("UserForceShearNoIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceShearNoIce))
+                            newERIList.Add("UserForceCaAcNoIce=" & Me.settings.USUnits.Length.convertToERIUnits(.UserForceCaAcNoIce))
+                            newERIList.Add("UserForceFxIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFxIce))
+                            newERIList.Add("UserForceFzIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFzIce))
+                            newERIList.Add("UserForceAxialIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceAxialIce))
+                            newERIList.Add("UserForceShearIce=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceShearIce))
+                            newERIList.Add("UserForceCaAcIce=" & Me.settings.USUnits.Length.convertToERIUnits(.UserForceCaAcIce))
+                            newERIList.Add("UserForceFxService=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFxService))
+                            newERIList.Add("UserForceFzService=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceFzService))
+                            newERIList.Add("UserForceAxialService=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceAxialService))
+                            newERIList.Add("UserForceShearService=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceShearService))
+                            newERIList.Add("UserForceCaAcService=" & Me.settings.USUnits.Length.convertToERIUnits(.UserForceCaAcService))
+                            newERIList.Add("UserForceEhx=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceEhx))
+                            newERIList.Add("UserForceEhz=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceEhz))
+                            newERIList.Add("UserForceEv=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceEv))
+                            newERIList.Add("UserForceEh=" & Me.settings.USUnits.Force.convertToERIUnits(.UserForceEh))
+                        End With
                     Next i
-                Case Else
+#End Region
+#Region "Chronos and Data after Structure"
+                Case line(0).Equals("[Nodes]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#node_number activity x y z")
+
+                Case line(0).Equals("[Supports]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#node_number code_dx dy dz ox oy oz stiffness_dx dy dz ox oy oz alpha beta gamma ref_temp")
+
+                Case line(0).Equals("[ConnectionArray]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#node_number conn[24]")
+
+                Case line(0).Equals("[Elements]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#elem_number activity group mat prop inspect")
+                    newERIList.Add("#for groups 1,2,3,4,5,6,7,8,9")
+                    newERIList.Add("#   node1 node2")
+                    newERIList.Add("#for group 1a (composite beam)")
+                    newERIList.Add("#   composite_prop_id node1 node2")
+
+                Case line(0).Equals("[Conditions]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#elem_number group temp")
+                    newERIList.Add("#if groups 1-9 offsets: dx1 dy1 dz1 dx2 dy2 dz2")
+                    newERIList.Add("#if group = 1, 2 (beam or npbeam)")
+                    newERIList.Add("#  gamma release1 release2")
+                    newERIList.Add("#  node1_stiffness_dx dy dz ox oy oz")
+                    newERIList.Add("#  node2_stiffness_dx dy dz ox oy oz")
+                    newERIList.Add("#if group = 3, 4, 8 (truss, strut, fuse)")
+                    newERIList.Add("#  gamma")
+                    newERIList.Add("#if group = 5, 6, 7 (hook, gap, slot)")
+                    newERIList.Add("#  gamma gap")
+                    newERIList.Add("#if group = 9 (cable)")
+                    newERIList.Add("#  initial_tension unstressed_length")
+
+                Case line(0).Equals("[Segments]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#master_element number_of_internal_nodes")
+                    newERIList.Add("#internal_node1 internal_node2 falseTE: node is - if end of span....")
+
+                Case line(0).Equals("[Material]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#mat activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#emod poiss thermal mden wden")
+
+                Case line(0).Equals("[Properties]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#prop activity group")
+                    newERIList.Add("#desigination")
+                    newERIList.Add("#section_file")
+                    newERIList.Add("#if group = 1 (beam)")
+                    newERIList.Add("#  area ix iy iz ixy sfy sfx cw")
+                    newERIList.Add("#else if group = 2 (npbeam)")
+                    newERIList.Add("#  area ix iy iz r1 r2 r3 r4 n1 n2 n3 n4")
+                    newERIList.Add("#else if group = 3,4,5,6,7 (truss,strut,hook,gap,or slot)")
+                    newERIList.Add("#  area")
+                    newERIList.Add("#else if group = 8 (fuse)")
+                    newERIList.Add("#  area comp_capacity ecu/ecy ten_capacity etu/ety")
+                    newERIList.Add("#else if group = 9 (cable)")
+                    newERIList.Add("#  area diameter")
+
+                Case line(0).Equals("[SelfWeight]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#rec activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#cases")
+                    newERIList.Add("#elem_list")
+                    newERIList.Add("#x_mult y_mult z_mult")
+
+                Case line(0).Equals("[Thermal]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#rec activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#cases")
+                    newERIList.Add("#elem_list")
+                    newERIList.Add("#multiplier")
+
+                Case line(0).Equals("[Combinations]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#comb_number activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#list_of_factors")
+                    newERIList.AddRange(defaults.LoadCombos)
+
+                Case line(0).Equals("[Envelopes]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#envelope_number activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#list_of_combinations")
+                    newERIList.AddRange(defaults.LoadEnvs)
+
+                Case line(0).Equals("[Cases]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#rec activity internal_ref_case")
+                    newERIList.Add("#description")
+                    newERIList.AddRange(defaults.LoadCases)
+
+                Case line(0).Equals("[OutputOptions]")
+                    newERIList.Add(line(0))
+                    newERIList.AddRange(defaults.OutputOptions)
+
+                Case line(0).Equals("[ReportOptions]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#rec activity group type")
+                    newERIList.Add("#elemlist")
+                    newERIList.Add("#description")
+                    newERIList.Add("#if type = 4,5 (force range SumOfAppliedForcesmary or worst)")
+                    newERIList.Add("#  amin amax smin smax mmin mmax tmin tmax")
+                    newERIList.Add("#else if type = 6 (axial force past limit)")
+                    newERIList.Add("#  compression tension")
+
+                Case line(0).Equals("[Material]")
+                    newERIList.Add(line(0))
+                    newERIList.Add("#mat activity")
+                    newERIList.Add("#description")
+                    newERIList.Add("#emod poiss thermal mden wden")
+#End Region
+#Region "One liners"
+                Case Else '[EndCHRONOS], [EndOverwrite], [CHRONOS], [End Structure], [End Application]
                     If line.Count = 1 Then
                         newERIList.Add(line(0))
                     Else
-                        newERIList.Add(line(0) & "=" & line(1))
+                        If line(0).Contains("[") Then
+                            newERIList.Add(line(0))
+                        Else
+                            newERIList.Add(line(0) & "=" & line(1))
+                        End If
                     End If
+#End Region
             End Select
-
         Next
 
         File.WriteAllLines(FilePath, newERIList, Text.Encoding.ASCII)
@@ -9667,12 +10223,12 @@ Partial Public Class tnxModel
             Exit Sub
         End If
 
-        Dim resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
-        Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
+        Using resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
+            Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
+            Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
+            tnxXMLResults.ConverttoEDSResults(geometry)
+        End Using
 
-        Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
-
-        tnxXMLResults.ConverttoEDSResults(geometry)
 
     End Sub
 
@@ -10078,4 +10634,900 @@ Partial Public Class tnxModel
         Return TNXEquals
     End Function
 
+    Public Overrides Sub Clear()
+        Me.feedLines.Clear()
+        Me.discreteLoads.Clear()
+        Me.dishes.Clear()
+        Me.userForces.Clear()
+        Me.otherLines.Clear()
+        Me.geometry.Clear()
+    End Sub
+End Class
+
+Public Class DefaultERItxtValues
+    Private newList As New List(Of String)
+
+#Region "Variables Not part of TNX Class"
+    Public ReadOnly Property SIUnits() As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("Length = m")
+            newList.Add("LengthPrec = 4")
+            newList.Add("Coordinate = m")
+            newList.Add("CoordinatePrec = 4")
+            newList.Add("Force = N")
+            newList.Add("ForcePrec = 2")
+            newList.Add("Load = Nlm")
+            newList.Add("LoadPrec = 2")
+            newList.Add("Moment = N - m")
+            newList.Add("MomentPrec = 0")
+            newList.Add("Properties = mm")
+            newList.Add("PropertiesPrec = 0")
+            newList.Add("Pressure = kPa")
+            newList.Add("PressurePrec = 2")
+            newList.Add("Velocity = kph")
+            newList.Add("VelocityPrec = 0")
+            newList.Add("Displacement = mm")
+            newList.Add("DisplacementPrec = 2")
+            newList.Add("Mass = kg")
+            newList.Add("MassPrec = 2")
+            newList.Add("Acceleration = G")
+            newList.Add("AccelerationPrec = 2")
+            newList.Add("Stress = kPa")
+            newList.Add("StressPrec = 0")
+            newList.Add("Density = N / m3")
+            newList.Add("DensityPrec = 2")
+            newList.Add("UnitWt = Nlm")
+            newList.Add("UnitWtPrec = 2")
+            newList.Add("Strength = kPa")
+            newList.Add("StrengthPrec = 0")
+            newList.Add("Modulus = kPa")
+            newList.Add("ModulusPrec = 0")
+            newList.Add("Temperature = C")
+            newList.Add("TemperaturePrec = 0")
+            newList.Add("Printer = mm")
+            newList.Add("PrinterPrec = 0")
+            newList.Add("Rotation = rad")
+            newList.Add("RotationPrec = 4")
+            newList.Add("Spacing = m")
+            newList.Add("SpacingPrec = 4")
+            newList.Add("Architectural = No")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property CodeValues As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("AluminumCode = Aluminum Assoc.")
+            newList.Add("TimberCode = AFPA NDS 1993")
+            newList.Add("ConcreteCode = ACI USD")
+            newList.Add("MasonryCode = UBC Unity")
+            newList.Add("BuildingCode = User Defined")
+            newList.Add("PatternLive = Yes")
+            newList.Add("PostalCode = 53223")
+            newList.Add("PatternPerCent = 100")
+            newList.Add("LoadsActPositiveDown = Yes")
+            newList.Add("IncludeSelfWeight = Yes")
+            newList.Add("UseLiveLoadReduction = Yes")
+            newList.Add("PreCompositeConstructionLoad = 10")
+            newList.Add("ConstructionLoad = 10")
+            newList.Add("PreCompositeDeadLoad = 10")
+            newList.Add("PostCompositeDeadLoad = 10")
+            newList.Add("RoofLiveLoad = 20")
+            newList.Add("FloorLiveLoad = 40")
+            newList.Add("SnowLoad = 20")
+            newList.Add("WindLoad = 20")
+            newList.Add("UBCSeismicZone = 4")
+            newList.Add("UBCSeismicI = 1")
+            newList.Add("UBCSeismicS = 1")
+            newList.Add("UBCSeismicRw = 8")
+            newList.Add("UBCWindExposureCategory = B")
+            newList.Add("UBCWindI = 1")
+            newList.Add("UBCWindSpeed = 70")
+            newList.Add("UBCWindOpenDoor = No")
+            newList.Add("UBCSnowLoad = 20")
+            newList.Add("UBCConcentratedForce = 0")
+            newList.Add("UBCSnowI = 1")
+            newList.Add("UBCSnowCe = 0.7")
+            newList.Add("UBCIsGarage = No")
+            newList.Add("UBCUsePostal = Yes")
+            newList.Add("SBCCISeismicAv = 0.4")
+            newList.Add("SBCCISeismicAa = 0.4")
+            newList.Add("SBCCISeismicS = 1")
+            newList.Add("SBCCISeismicR = 8")
+            newList.Add("SBCCISeismicCd = 4")
+            newList.Add("SBCCIWindExposureCategory = A")
+            newList.Add("SBCCIWindI = 1")
+            newList.Add("SBCCIWindSpeed = 70")
+            newList.Add("SBCCIWindOpenDoor = No")
+            newList.Add("SBCCISnowLoad = 20")
+            newList.Add("SBCCIConcentratedForce = 0")
+            newList.Add("SBCCISnowI = 1")
+            newList.Add("SBCCISnowCe = 0.7")
+            newList.Add("SBCCISnowCt = 1")
+            newList.Add("SBCCIIsGarage = No")
+            newList.Add("SBCCIUsePostal = Yes")
+            newList.Add("BOCASeismicAv = 0.4")
+            newList.Add("BOCASeismicAa = 0.4")
+            newList.Add("BOCASeismicS = 1")
+            newList.Add("BOCASeismicR = 8")
+            newList.Add("BOCASeismicCd = 4")
+            newList.Add("BOCAWindExposureCategory = A")
+            newList.Add("BOCAWindI = 1")
+            newList.Add("BOCAWindSpeed = 70")
+            newList.Add("BOCAWindOpenDoor = No")
+            newList.Add("BOCASnowLoad = 20")
+            newList.Add("BOCAConcentratedForce = 0")
+            newList.Add("BOCASnowI = 1")
+            newList.Add("BOCASnowCe = 0.7")
+            newList.Add("BOCAIsGarage = No")
+            newList.Add("BOCAUsePostal = Yes")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property AntennaPole As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("AntennaPoleType=0")
+            newList.Add("AntennaPoleHt=0.000000")
+            newList.Add("AntennaPoleIx=0.000000")
+            newList.Add("AntennaPoleIy=0.000000")
+            newList.Add("AntennaPoleEmod=0.000000")
+            newList.Add("AntennaPoleWtNoIce=0.000000")
+            newList.Add("AntennaPoleWtIce=0.000000")
+            newList.Add("AntennaPoleWindNoIce=0.000000")
+            newList.Add("AntennaPoleWindIce=0.000000")
+            newList.Add("AntennaPoleWindService=0.000000")
+            newList.Add("AntennaPoleCaAaNoIce=0.000000")
+            newList.Add("AntennaPoleCaAaIce=0.000000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property Supp As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("SuppElev1=0.000000")
+            newList.Add("SuppNone1=Yes")
+            newList.Add("SuppLegA1=No")
+            newList.Add("SuppLegB1=No")
+            newList.Add("SuppLegC1=No")
+            newList.Add("SuppLegD1=No")
+            newList.Add("SuppVert1=No")
+            newList.Add("SuppElev2=0.000000")
+            newList.Add("SuppNone2=Yes")
+            newList.Add("SuppLegA2=No")
+            newList.Add("SuppLegB2=No")
+            newList.Add("SuppLegC2=No")
+            newList.Add("SuppLegD2=No")
+            newList.Add("SuppVert2=No")
+            newList.Add("SuppNone3=Yes")
+            newList.Add("SuppLegA3=No")
+            newList.Add("SuppLegB3=No")
+            newList.Add("SuppLegC3=No")
+            newList.Add("SuppLegD3=No")
+            newList.Add("SuppVert3=No")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property MRSS As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("MRSSNumSpiderLegs=0")
+            newList.Add("MRSSUseMitredLegs=No")
+            newList.Add("MRSSSpiderType=Tube")
+            newList.Add("MRSSSpiderSize=HSS8x8x3/8")
+            newList.Add("MRSSSpiderGradeVal=36")
+            newList.Add("MRSSSpiderGrade=A36")
+            newList.Add("MRSSSpacerThick=0.250000")
+            newList.Add("MRSSSpiderRadius=15.000000")
+            newList.Add("MRSSClampRingHt=15.000000")
+            newList.Add("MRSSSpiderMaxPoleMoment=0.000000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property Beacon As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("BeaconDiameter=0.000000")
+            newList.Add("BeaconWtNoIce=0.000000")
+            newList.Add("BeaconWtIce=0.000000")
+            newList.Add("BeaconWindNoIce=0.000000")
+            newList.Add("BeaconWindIce=0.000000")
+            newList.Add("BeaconWindService=0.000000")
+            newList.Add("BeaconCaAaNoIce=0.000000")
+            newList.Add("BeaconCaAaIce=0.000000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property BasePlate As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("BasePlateDataPlateGradeVal=36")
+            newList.Add("BasePlateDataPlateGrade=A36")
+            newList.Add("BasePlateDataSquareBasePlate=No")
+            newList.Add("BasePlateDataGrouted=No")
+            newList.Add("BasePlateDataAnchorBoltGrade=A325X")
+            newList.Add("BasePlateDataBasePlateType=Plain Plate")
+            newList.Add("BasePlateDataNumBolts=12")
+            newList.Add("BasePlateDataNumBoltsPerStiffener=1")
+            newList.Add("BasePlateDataAnchorBoltSize=1.500000")
+            newList.Add("BasePlateDataAnchorBoltCircle=0.000000")
+            newList.Add("BasePlateDataEmbedmentLength=24.000000")
+            newList.Add("BasePlateDataGroutSpace=2.000000")
+            newList.Add("BasePlateDataThick=0.000000")
+            newList.Add("BasePlateDataInnerDiameter=0.000000")
+            newList.Add("BasePlateDataOuterDiameter=0.000000")
+            newList.Add("BasePlateDataClippedCorner=0.000000")
+            newList.Add("BasePlateDataStiffenerThick=0.000000")
+            newList.Add("BasePlateDataStiffenerHeight=0.000000")
+            newList.Add("BasePlateDatafpc=4.000000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property DesignChoicesList As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("DesignChoicesList=0 1")
+            newList.Add("DesignChoicesList=1 1")
+            newList.Add("DesignChoicesList=2 1")
+            newList.Add("DesignChoicesList=3 1")
+            newList.Add("DesignChoicesList=4 1")
+            newList.Add("DesignChoicesList=5 1")
+            newList.Add("DesignChoicesList=6 1")
+            newList.Add("DesignChoicesList=7 1")
+            newList.Add("DesignChoicesList=8 1")
+            newList.Add("DesignChoicesList=9 1")
+            newList.Add("DesignChoicesList=10 1")
+            newList.Add("DesignChoicesList=11 1")
+            newList.Add("DesignChoicesList=12 1")
+            newList.Add("DesignChoicesList=13 1")
+            newList.Add("DesignChoicesList=14 1")
+            newList.Add("DesignChoicesList=15 1")
+            newList.Add("DesignChoicesList=16 1")
+            newList.Add("DesignChoicesList=17 1")
+            newList.Add("DesignChoicesList=18 1")
+            newList.Add("DesignChoicesList=19 1")
+            newList.Add("DesignChoicesList=20 1")
+            newList.Add("DesignChoicesList=21 1")
+            newList.Add("DesignChoicesList=22 1")
+            newList.Add("DesignChoicesList=23 1")
+            newList.Add("DesignChoicesList=24 1")
+            newList.Add("DesignChoicesList=25 1")
+            newList.Add("DesignChoicesList=26 1")
+            newList.Add("DesignChoicesList=27 1")
+            newList.Add("DesignChoicesList=28 1")
+            newList.Add("DesignChoicesList=29 1")
+            newList.Add("DesignChoicesList=30 1")
+            newList.Add("DesignChoicesList=31 1")
+            newList.Add("DesignChoicesList=32 1")
+            newList.Add("DesignChoicesList=33 1")
+            newList.Add("DesignChoicesList=34 1")
+            newList.Add("DesignChoicesList=35 1")
+            newList.Add("DesignChoicesList=36 1")
+            newList.Add("DesignChoicesList=37 1")
+            newList.Add("DesignChoicesList=38 1")
+            newList.Add("DesignChoicesList=39 1")
+            newList.Add("DesignChoicesList=40 1")
+            newList.Add("DesignChoicesList=41 1")
+            newList.Add("DesignChoicesList=42 1")
+            newList.Add("DesignChoicesList=43 1")
+            newList.Add("DesignChoicesList=44 1")
+            newList.Add("DesignChoicesList=45 1")
+            newList.Add("DesignChoicesList=46 1")
+            newList.Add("DesignChoicesList=47 1")
+            newList.Add("DesignChoicesList=48 1")
+            newList.Add("DesignChoicesList=49 1")
+            newList.Add("DesignChoicesList=50 1")
+            newList.Add("DesignChoicesList=51 1")
+            newList.Add("DesignChoicesList=52 1")
+            newList.Add("DesignChoicesList=53 1")
+            newList.Add("DesignChoicesList=54 1")
+            newList.Add("DesignChoicesList=55 1")
+            newList.Add("DesignChoicesList=56 1")
+            newList.Add("DesignChoicesList=57 1")
+            newList.Add("DesignChoicesList=58 1")
+            newList.Add("DesignChoicesList=59 1")
+            newList.Add("DesignChoicesList=60 1")
+            newList.Add("DesignChoicesList=61 1")
+            newList.Add("DesignChoicesList=62 1")
+            newList.Add("DesignChoicesList=63 1")
+            newList.Add("DesignChoicesList=64 1")
+            newList.Add("DesignChoicesList=65 1")
+            newList.Add("DesignChoicesList=66 1")
+            newList.Add("DesignChoicesList=67 1")
+            newList.Add("DesignChoicesList=68 1")
+            newList.Add("DesignChoicesList=69 1")
+            newList.Add("DesignChoicesList=70 1")
+            newList.Add("DesignChoicesList=71 1")
+            newList.Add("DesignChoicesList=72 1")
+            newList.Add("DesignChoicesList=73 1")
+            newList.Add("DesignChoicesList=74 1")
+            newList.Add("DesignChoicesList=75 1")
+            newList.Add("DesignChoicesList=76 1")
+            newList.Add("DesignChoicesList=77 1")
+            newList.Add("DesignChoicesList=78 1")
+            newList.Add("DesignChoicesList=79 1")
+            newList.Add("DesignChoicesList=80 1")
+            newList.Add("DesignChoicesList=81 1")
+            newList.Add("DesignChoicesList=82 1")
+            newList.Add("DesignChoicesList=83 1")
+            newList.Add("DesignChoicesList=84 1")
+            newList.Add("DesignChoicesList=85 1")
+            newList.Add("DesignChoicesList=86 1")
+            newList.Add("DesignChoicesList=87 1")
+            newList.Add("DesignChoicesList=88 1")
+            newList.Add("DesignChoicesList=89 1")
+            newList.Add("DesignChoicesList=90 1")
+            newList.Add("DesignChoicesList=91 1")
+            newList.Add("DesignChoicesList=92 1")
+            newList.Add("DesignChoicesList=93 1")
+            newList.Add("DesignChoicesList=94 1")
+            newList.Add("DesignChoicesList=95 1")
+            newList.Add("DesignChoicesList=96 1")
+            newList.Add("DesignChoicesList=97 1")
+            newList.Add("DesignChoicesList=98 1")
+            newList.Add("DesignChoicesList=99 1")
+            newList.Add("DesignChoicesList=100 1")
+            newList.Add("DesignChoicesList=101 1")
+            newList.Add("DesignChoicesList=102 1")
+            newList.Add("DesignChoicesList=103 1")
+            newList.Add("DesignChoicesList=104 1")
+            newList.Add("DesignChoicesList=105 1")
+            newList.Add("DesignChoicesList=106 1")
+            newList.Add("DesignChoicesList=107 1")
+            newList.Add("DesignChoicesList=108 1")
+            newList.Add("DesignChoicesList=109 1")
+            newList.Add("DesignChoicesList=110 1")
+            newList.Add("DesignChoicesList=111 1")
+            newList.Add("DesignChoicesList=112 1")
+            newList.Add("DesignChoicesList=113 1")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property FTG As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("FtgDataFtgType=Pier Broms Eqn")
+            newList.Add("FtgDataPierDiameter=60.000000")
+            newList.Add("FtgDataPierLength=30.000000")
+            newList.Add("FtgDataSpreadPierWidth=24.000000")
+            newList.Add("FtgDataSpreadFtgDepth=0.000000")
+            newList.Add("FtgDataSpreadFtgWidth=8.000000")
+            newList.Add("FtgDataSpreadFtgThickness=24.000000")
+            newList.Add("FtgDataTieSpacing=12.000000")
+            newList.Add("FtgDataAllowBrgPressure=3000.000000")
+            newList.Add("FtgDataConcretefpc=3.500000")
+            newList.Add("FtgDataRebarFy=60.000000")
+            newList.Add("FtgDataPierBarSize=#10")
+            newList.Add("FtgDataTopBarSize=#8")
+            newList.Add("FtgDataBotBarSize=#8")
+            newList.Add("FtgDataTieSize=#4")
+            newList.Add("FtgDataNumBotBars=0")
+            newList.Add("FtgDataNumPierBars=0")
+            newList.Add("FtgDataNumTopBars=0")
+            newList.Add("FtgDataSoilLayers0soilType=Medium Clay")
+            newList.Add("FtgDataSoilLayers0layerDepth=50.000000")
+            newList.Add("FtgDataSoilLayers0density=120.000000")
+            newList.Add("FtgDataSoilLayers0shearStrength=0.000000")
+            newList.Add("FtgDataSoilLayers0phiAngle=30.000000")
+            newList.Add("FtgDataSoilLayers1soilType=")
+            newList.Add("FtgDataSoilLayers1layerDepth=0.000000")
+            newList.Add("FtgDataSoilLayers1density=0.000000")
+            newList.Add("FtgDataSoilLayers1shearStrength=0.000000")
+            newList.Add("FtgDataSoilLayers1phiAngle=0.000000")
+            newList.Add("FtgDataSoilLayers2soilType=")
+            newList.Add("FtgDataSoilLayers2layerDepth=0.000000")
+            newList.Add("FtgDataSoilLayers2density=0.000000")
+            newList.Add("FtgDataSoilLayers2shearStrength=0.000000")
+            newList.Add("FtgDataSoilLayers2phiAngle=0.000000")
+            newList.Add("FtgDataSoilLayers3soilType=")
+            newList.Add("FtgDataSoilLayers3layerDepth=0.000000")
+            newList.Add("FtgDataSoilLayers3density=0.000000")
+            newList.Add("FtgDataSoilLayers3shearStrength=0.000000")
+            newList.Add("FtgDataSoilLayers3phiAngle=0.000000")
+            newList.Add("FtgDataSoilLayers4soilType=")
+            newList.Add("FtgDataSoilLayers4layerDepth=0.000000")
+            newList.Add("FtgDataSoilLayers4density=0.000000")
+            newList.Add("FtgDataSoilLayers4shearStrength=0.000000")
+            newList.Add("FtgDataSoilLayers4phiAngle=0.000000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property CostData As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("CostData=0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000")
+            newList.Add("HandlingCostData=0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000 0.500000")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property MissingSettings As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("MastMultiplier=1.000000")
+            newList.Add("EnforceAllOffsetsVer2=Yes")
+            newList.Add("UseMaxKz=No")
+            newList.Add("UseMastResponse=No")
+            newList.Add("Use_TIA_222_G_Addendum2_MP=Yes")
+            newList.Add("UseTopTakeup=Yes")
+            newList.Add("EliminateBase=No")
+
+            Return newList
+        End Get
+    End Property
+#End Region
+
+#Region "Extra Chronos Stuff"
+    Public ReadOnly Property LoadCombos As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("1 1")
+            newList.Add("Dead Only")
+            newList.Add("1.0*1")
+            newList.Add("2 1")
+            newList.Add("1.2 Dead+1.0 Wind 0 deg - No Ice")
+            newList.Add("1.2*1,1.0*2")
+            newList.Add("3 1")
+            newList.Add("0.9 Dead+1.0 Wind 0 deg - No Ice")
+            newList.Add("0.9*1,1.0*2")
+            newList.Add("4 1")
+            newList.Add("1.2 Dead+1.0 Wind 30 deg - No Ice")
+            newList.Add("1.2*1,1.0*3")
+            newList.Add("5 1")
+            newList.Add("0.9 Dead+1.0 Wind 30 deg - No Ice")
+            newList.Add("0.9*1,1.0*3")
+            newList.Add("6 1")
+            newList.Add("1.2 Dead+1.0 Wind 60 deg - No Ice")
+            newList.Add("1.2*1,1.0*4")
+            newList.Add("7 1")
+            newList.Add("0.9 Dead+1.0 Wind 60 deg - No Ice")
+            newList.Add("0.9*1,1.0*4")
+            newList.Add("8 1")
+            newList.Add("1.2 Dead+1.0 Wind 90 deg - No Ice")
+            newList.Add("1.2*1,1.0*5")
+            newList.Add("9 1")
+            newList.Add("0.9 Dead+1.0 Wind 90 deg - No Ice")
+            newList.Add("0.9*1,1.0*5")
+            newList.Add("10 1")
+            newList.Add("1.2 Dead+1.0 Wind 120 deg - No Ice")
+            newList.Add("1.2*1,1.0*6")
+            newList.Add("11 1")
+            newList.Add("0.9 Dead+1.0 Wind 120 deg - No Ice")
+            newList.Add("0.9*1,1.0*6")
+            newList.Add("12 1")
+            newList.Add("1.2 Dead+1.0 Wind 150 deg - No Ice")
+            newList.Add("1.2*1,1.0*7")
+            newList.Add("13 1")
+            newList.Add("0.9 Dead+1.0 Wind 150 deg - No Ice")
+            newList.Add("0.9*1,1.0*7")
+            newList.Add("14 1")
+            newList.Add("1.2 Dead+1.0 Wind 180 deg - No Ice")
+            newList.Add("1.2*1,1.0*8")
+            newList.Add("15 1")
+            newList.Add("0.9 Dead+1.0 Wind 180 deg - No Ice")
+            newList.Add("0.9*1,1.0*8")
+            newList.Add("16 1")
+            newList.Add("1.2 Dead+1.0 Wind 210 deg - No Ice")
+            newList.Add("1.2*1,1.0*9")
+            newList.Add("17 1")
+            newList.Add("0.9 Dead+1.0 Wind 210 deg - No Ice")
+            newList.Add("0.9*1,1.0*9")
+            newList.Add("18 1")
+            newList.Add("1.2 Dead+1.0 Wind 240 deg - No Ice")
+            newList.Add("1.2*1,1.0*10")
+            newList.Add("19 1")
+            newList.Add("0.9 Dead+1.0 Wind 240 deg - No Ice")
+            newList.Add("0.9*1,1.0*10")
+            newList.Add("20 1")
+            newList.Add("1.2 Dead+1.0 Wind 270 deg - No Ice")
+            newList.Add("1.2*1,1.0*11")
+            newList.Add("21 1")
+            newList.Add("0.9 Dead+1.0 Wind 270 deg - No Ice")
+            newList.Add("0.9*1,1.0*11")
+            newList.Add("22 1")
+            newList.Add("1.2 Dead+1.0 Wind 300 deg - No Ice")
+            newList.Add("1.2*1,1.0*12")
+            newList.Add("23 1")
+            newList.Add("0.9 Dead+1.0 Wind 300 deg - No Ice")
+            newList.Add("0.9*1,1.0*12")
+            newList.Add("24 1")
+            newList.Add("1.2 Dead+1.0 Wind 330 deg - No Ice")
+            newList.Add("1.2*1,1.0*13")
+            newList.Add("25 1")
+            newList.Add("0.9 Dead+1.0 Wind 330 deg - No Ice")
+            newList.Add("0.9*1,1.0*13")
+            newList.Add("26 1")
+            newList.Add("1.2 Dead+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*14,1.0*15")
+            newList.Add("27 1")
+            newList.Add("1.2 Dead+1.0 Wind 0 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*16,1.0*14,1.0*15")
+            newList.Add("28 1")
+            newList.Add("1.2 Dead+1.0 Wind 30 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*17,1.0*14,1.0*15")
+            newList.Add("29 1")
+            newList.Add("1.2 Dead+1.0 Wind 60 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*18,1.0*14,1.0*15")
+            newList.Add("30 1")
+            newList.Add("1.2 Dead+1.0 Wind 90 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*19,1.0*14,1.0*15")
+            newList.Add("31 1")
+            newList.Add("1.2 Dead+1.0 Wind 120 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*20,1.0*14,1.0*15")
+            newList.Add("32 1")
+            newList.Add("1.2 Dead+1.0 Wind 150 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*21,1.0*14,1.0*15")
+            newList.Add("33 1")
+            newList.Add("1.2 Dead+1.0 Wind 180 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*22,1.0*14,1.0*15")
+            newList.Add("34 1")
+            newList.Add("1.2 Dead+1.0 Wind 210 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*23,1.0*14,1.0*15")
+            newList.Add("35 1")
+            newList.Add("1.2 Dead+1.0 Wind 240 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*24,1.0*14,1.0*15")
+            newList.Add("36 1")
+            newList.Add("1.2 Dead+1.0 Wind 270 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*25,1.0*14,1.0*15")
+            newList.Add("37 1")
+            newList.Add("1.2 Dead+1.0 Wind 300 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*26,1.0*14,1.0*15")
+            newList.Add("38 1")
+            newList.Add("1.2 Dead+1.0 Wind 330 deg+1.0 Ice+1.0 Temp")
+            newList.Add("1.2*1,1.0*27,1.0*14,1.0*15")
+            newList.Add("39 1")
+            newList.Add("Dead+Wind 0 deg - Service")
+            newList.Add("1.0*1,1.0*28")
+            newList.Add("40 1")
+            newList.Add("Dead+Wind 30 deg - Service")
+            newList.Add("1.0*1,1.0*29")
+            newList.Add("41 1")
+            newList.Add("Dead+Wind 60 deg - Service")
+            newList.Add("1.0*1,1.0*30")
+            newList.Add("42 1")
+            newList.Add("Dead+Wind 90 deg - Service")
+            newList.Add("1.0*1,1.0*31")
+            newList.Add("43 1")
+            newList.Add("Dead+Wind 120 deg - Service")
+            newList.Add("1.0*1,1.0*32")
+            newList.Add("44 1")
+            newList.Add("Dead+Wind 150 deg - Service")
+            newList.Add("1.0*1,1.0*33")
+            newList.Add("45 1")
+            newList.Add("Dead+Wind 180 deg - Service")
+            newList.Add("1.0*1,1.0*34")
+            newList.Add("46 1")
+            newList.Add("Dead+Wind 210 deg - Service")
+            newList.Add("1.0*1,1.0*35")
+            newList.Add("47 1")
+            newList.Add("Dead+Wind 240 deg - Service")
+            newList.Add("1.0*1,1.0*36")
+            newList.Add("48 1")
+            newList.Add("Dead+Wind 270 deg - Service")
+            newList.Add("1.0*1,1.0*37")
+            newList.Add("49 1")
+            newList.Add("Dead+Wind 300 deg - Service")
+            newList.Add("1.0*1,1.0*38")
+            newList.Add("50 1")
+            newList.Add("Dead+Wind 330 deg - Service")
+            newList.Add("1.0*1,1.0*39")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property LoadEnvs As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("1 1")
+            newList.Add("Dead Only")
+            newList.Add("1")
+            newList.Add("2 1")
+            newList.Add("1.2 Dead+1.0 Wind 0 deg - No Ice")
+            newList.Add("2")
+            newList.Add("3 1")
+            newList.Add("0.9 Dead+1.0 Wind 0 deg - No Ice")
+            newList.Add("3")
+            newList.Add("4 1")
+            newList.Add("1.2 Dead+1.0 Wind 30 deg - No Ice")
+            newList.Add("4")
+            newList.Add("5 1")
+            newList.Add("0.9 Dead+1.0 Wind 30 deg - No Ice")
+            newList.Add("5")
+            newList.Add("6 1")
+            newList.Add("1.2 Dead+1.0 Wind 60 deg - No Ice")
+            newList.Add("6")
+            newList.Add("7 1")
+            newList.Add("0.9 Dead+1.0 Wind 60 deg - No Ice")
+            newList.Add("7")
+            newList.Add("8 1")
+            newList.Add("1.2 Dead+1.0 Wind 90 deg - No Ice")
+            newList.Add("8")
+            newList.Add("9 1")
+            newList.Add("0.9 Dead+1.0 Wind 90 deg - No Ice")
+            newList.Add("9")
+            newList.Add("10 1")
+            newList.Add("1.2 Dead+1.0 Wind 120 deg - No Ice")
+            newList.Add("10")
+            newList.Add("11 1")
+            newList.Add("0.9 Dead+1.0 Wind 120 deg - No Ice")
+            newList.Add("11")
+            newList.Add("12 1")
+            newList.Add("1.2 Dead+1.0 Wind 150 deg - No Ice")
+            newList.Add("12")
+            newList.Add("13 1")
+            newList.Add("0.9 Dead+1.0 Wind 150 deg - No Ice")
+            newList.Add("13")
+            newList.Add("14 1")
+            newList.Add("1.2 Dead+1.0 Wind 180 deg - No Ice")
+            newList.Add("14")
+            newList.Add("15 1")
+            newList.Add("0.9 Dead+1.0 Wind 180 deg - No Ice")
+            newList.Add("15")
+            newList.Add("16 1")
+            newList.Add("1.2 Dead+1.0 Wind 210 deg - No Ice")
+            newList.Add("16")
+            newList.Add("17 1")
+            newList.Add("0.9 Dead+1.0 Wind 210 deg - No Ice")
+            newList.Add("17")
+            newList.Add("18 1")
+            newList.Add("1.2 Dead+1.0 Wind 240 deg - No Ice")
+            newList.Add("18")
+            newList.Add("19 1")
+            newList.Add("0.9 Dead+1.0 Wind 240 deg - No Ice")
+            newList.Add("19")
+            newList.Add("20 1")
+            newList.Add("1.2 Dead+1.0 Wind 270 deg - No Ice")
+            newList.Add("20")
+            newList.Add("21 1")
+            newList.Add("0.9 Dead+1.0 Wind 270 deg - No Ice")
+            newList.Add("21")
+            newList.Add("22 1")
+            newList.Add("1.2 Dead+1.0 Wind 300 deg - No Ice")
+            newList.Add("22")
+            newList.Add("23 1")
+            newList.Add("0.9 Dead+1.0 Wind 300 deg - No Ice")
+            newList.Add("23")
+            newList.Add("24 1")
+            newList.Add("1.2 Dead+1.0 Wind 330 deg - No Ice")
+            newList.Add("24")
+            newList.Add("25 1")
+            newList.Add("0.9 Dead+1.0 Wind 330 deg - No Ice")
+            newList.Add("25")
+            newList.Add("26 1")
+            newList.Add("1.2 Dead+1.0 Ice+1.0 Temp")
+            newList.Add("26")
+            newList.Add("27 1")
+            newList.Add("1.2 Dead+1.0 Wind 0 deg+1.0 Ice+1.0 Temp")
+            newList.Add("27")
+            newList.Add("28 1")
+            newList.Add("1.2 Dead+1.0 Wind 30 deg+1.0 Ice+1.0 Temp")
+            newList.Add("28")
+            newList.Add("29 1")
+            newList.Add("1.2 Dead+1.0 Wind 60 deg+1.0 Ice+1.0 Temp")
+            newList.Add("29")
+            newList.Add("30 1")
+            newList.Add("1.2 Dead+1.0 Wind 90 deg+1.0 Ice+1.0 Temp")
+            newList.Add("30")
+            newList.Add("31 1")
+            newList.Add("1.2 Dead+1.0 Wind 120 deg+1.0 Ice+1.0 Temp")
+            newList.Add("31")
+            newList.Add("32 1")
+            newList.Add("1.2 Dead+1.0 Wind 150 deg+1.0 Ice+1.0 Temp")
+            newList.Add("32")
+            newList.Add("33 1")
+            newList.Add("1.2 Dead+1.0 Wind 180 deg+1.0 Ice+1.0 Temp")
+            newList.Add("33")
+            newList.Add("34 1")
+            newList.Add("1.2 Dead+1.0 Wind 210 deg+1.0 Ice+1.0 Temp")
+            newList.Add("34")
+            newList.Add("35 1")
+            newList.Add("1.2 Dead+1.0 Wind 240 deg+1.0 Ice+1.0 Temp")
+            newList.Add("35")
+            newList.Add("36 1")
+            newList.Add("1.2 Dead+1.0 Wind 270 deg+1.0 Ice+1.0 Temp")
+            newList.Add("36")
+            newList.Add("37 1")
+            newList.Add("1.2 Dead+1.0 Wind 300 deg+1.0 Ice+1.0 Temp")
+            newList.Add("37")
+            newList.Add("38 1")
+            newList.Add("1.2 Dead+1.0 Wind 330 deg+1.0 Ice+1.0 Temp")
+            newList.Add("38")
+            newList.Add("39 1")
+            newList.Add("Dead+Wind 0 deg - Service")
+            newList.Add("39")
+            newList.Add("40 1")
+            newList.Add("Dead+Wind 30 deg - Service")
+            newList.Add("40")
+            newList.Add("41 1")
+            newList.Add("Dead+Wind 60 deg - Service")
+            newList.Add("41")
+            newList.Add("42 1")
+            newList.Add("Dead+Wind 90 deg - Service")
+            newList.Add("42")
+            newList.Add("43 1")
+            newList.Add("Dead+Wind 120 deg - Service")
+            newList.Add("43")
+            newList.Add("44 1")
+            newList.Add("Dead+Wind 150 deg - Service")
+            newList.Add("44")
+            newList.Add("45 1")
+            newList.Add("Dead+Wind 180 deg - Service")
+            newList.Add("45")
+            newList.Add("46 1")
+            newList.Add("Dead+Wind 210 deg - Service")
+            newList.Add("46")
+            newList.Add("47 1")
+            newList.Add("Dead+Wind 240 deg - Service")
+            newList.Add("47")
+            newList.Add("48 1")
+            newList.Add("Dead+Wind 270 deg - Service")
+            newList.Add("48")
+            newList.Add("49 1")
+            newList.Add("Dead+Wind 300 deg - Service")
+            newList.Add("49")
+            newList.Add("50 1")
+            newList.Add("Dead+Wind 330 deg - Service")
+            newList.Add("50")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property LoadCases As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("1 1 3")
+            newList.Add("Dead")
+            newList.Add("2 1 9")
+            newList.Add("No Ice Wind 0 deg")
+            newList.Add("3 1 9")
+            newList.Add("No Ice Wind 30 deg")
+            newList.Add("4 1 9")
+            newList.Add("No Ice Wind 60 deg")
+            newList.Add("5 1 9")
+            newList.Add("No Ice Wind 90 deg")
+            newList.Add("6 1 9")
+            newList.Add("No Ice Wind 120 deg")
+            newList.Add("7 1 9")
+            newList.Add("No Ice Wind 150 deg")
+            newList.Add("8 1 9")
+            newList.Add("No Ice Wind 180 deg")
+            newList.Add("9 1 9")
+            newList.Add("No Ice Wind 210 deg")
+            newList.Add("10 1 9")
+            newList.Add("No Ice Wind 240 deg")
+            newList.Add("11 1 9")
+            newList.Add("No Ice Wind 270 deg")
+            newList.Add("12 1 9")
+            newList.Add("No Ice Wind 300 deg")
+            newList.Add("13 1 9")
+            newList.Add("No Ice Wind 330 deg")
+            newList.Add("14 1 5")
+            newList.Add("Ice")
+            newList.Add("15 1 5")
+            newList.Add("Temperature Drop")
+            newList.Add("16 1 9")
+            newList.Add("Ice Wind 0 deg")
+            newList.Add("17 1 9")
+            newList.Add("Ice Wind 30 deg")
+            newList.Add("18 1 9")
+            newList.Add("Ice Wind 60 deg")
+            newList.Add("19 1 9")
+            newList.Add("Ice Wind 90 deg")
+            newList.Add("20 1 9")
+            newList.Add("Ice Wind 120 deg")
+            newList.Add("21 1 9")
+            newList.Add("Ice Wind 150 deg")
+            newList.Add("22 1 9")
+            newList.Add("Ice Wind 180 deg")
+            newList.Add("23 1 9")
+            newList.Add("Ice Wind 210 deg")
+            newList.Add("24 1 9")
+            newList.Add("Ice Wind 240 deg")
+            newList.Add("25 1 9")
+            newList.Add("Ice Wind 270 deg")
+            newList.Add("26 1 9")
+            newList.Add("Ice Wind 300 deg")
+            newList.Add("27 1 9")
+            newList.Add("Ice Wind 330 deg")
+            newList.Add("28 1 9")
+            newList.Add("Service Wind 0 deg")
+            newList.Add("29 1 9")
+            newList.Add("Service Wind 30 deg")
+            newList.Add("30 1 9")
+            newList.Add("Service Wind 60 deg")
+            newList.Add("31 1 9")
+            newList.Add("Service Wind 90 deg")
+            newList.Add("32 1 9")
+            newList.Add("Service Wind 120 deg")
+            newList.Add("33 1 9")
+            newList.Add("Service Wind 150 deg")
+            newList.Add("34 1 9")
+            newList.Add("Service Wind 180 deg")
+            newList.Add("35 1 9")
+            newList.Add("Service Wind 210 deg")
+            newList.Add("36 1 9")
+            newList.Add("Service Wind 240 deg")
+            newList.Add("37 1 9")
+            newList.Add("Service Wind 270 deg")
+            newList.Add("38 1 9")
+            newList.Add("Service Wind 300 deg")
+            newList.Add("39 1 9")
+            newList.Add("Service Wind 330 deg")
+
+            Return newList
+        End Get
+    End Property
+
+    Public ReadOnly Property OutputOptions As List(Of String)
+        Get
+            newList.Clear()
+            newList.Add("#device")
+            newList.Add("#echo")
+            newList.Add("#case_list")
+            newList.Add("#combination_list")
+            newList.Add("#envelope_list")
+            newList.Add("#prn_report")
+            newList.Add("#reband")
+            newList.Add("#restart")
+            newList.Add("#save_stiff")
+            newList.Add("#anatype")
+            newList.Add("#if anatype = 2")
+            newList.Add("#  pdelta_only")
+            newList.Add("#  axial_effect")
+            newList.Add("#  tol min_stif power cycle start stop")
+            newList.Add("#if anatype = 3 or 4")
+            newList.Add("#  dtype (1,2,3,4: mode shapes,modal time history,response spectrum, direct time history)")
+            newList.Add("#  if dtype = 1")
+            newList.Add("#    no_modes cut_off")
+            newList.Add("#    prn_modes")
+            newList.Add("#  if dtype = 2")
+            newList.Add("#    no_modes cut_off step_size no_steps interval damp_ratio gmo_no")
+            newList.Add("#    prn_modes")
+            newList.Add("#  if dtype = 3")
+            newList.Add("#    no_modes cut_off damp_ratio  gmo_no mode_comb dir_comb")
+            newList.Add("#    prn_modes")
+            newList.Add("#  if dtype = 4")
+            newList.Add("#    step_size no_steps interval alpha_damp beta_damp gmo_no")
+            newList.Add("#displ_list")
+            newList.Add("#reacts_list")
+            newList.Add("#forces_list")
+            newList.Add("chronos.txt")
+            newList.Add("Yes")
+            newList.Add("All")
+            newList.Add("All")
+            newList.Add("All")
+            newList.Add("0")
+            newList.Add("N")
+            newList.Add("No")
+            newList.Add("No")
+            newList.Add("1")
+            newList.Add("All")
+            newList.Add("All")
+
+            Return newList
+        End Get
+    End Property
+#End Region
 End Class

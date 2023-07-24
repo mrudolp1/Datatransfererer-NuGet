@@ -1,0 +1,43 @@
+﻿**************************************
+***********Foundation Tools***********
+UNLOCK WORKBOOK:
+(current)
+  =Y=f987L=Wug
+
+(old)
+  qmVIf|zD_2.L
+
+UNLOCK VBA:
+  y:7+ji|Q"?<i
+***********Foundation Tools***********
+**************************************
+********Leg Reinforcement Tool********
+UNLOCK VBA:
+  LegReinforcement2020
+********Leg Reinforcement Tool********
+**************************************
+*************CCISeismic***************
+Worksheets are not password protected.
+UNLOCK VBA:
+  CCISeismic3
+or
+  CCISeismic 
+     (before version 3.0.0)
+*************CCISeismic***************
+**************************************
+*************CCIPole******************
+UNLOCK VBA:
+  A-{​​​​​​​​p]RBHq>&d7p=47-X+71t=6
+ 
+UNLOCK WORKBOOK:
+  !Crown123!
+*************CCIPole******************
+**************************************
+*************CCIPlate*****************
+UNLOCK VBA:
+  x]5qD@{​​7jY.3M19xM>z8]{​​​​​​​​​{​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​ x
+ 
+UNLOCK WORKBOOK:
+  Crown!
+*************CCIPlate*****************
+**************************************

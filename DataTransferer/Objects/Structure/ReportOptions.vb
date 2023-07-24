@@ -1,95 +1,102 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
 Imports System.IO
-'Imports Microsoft.Data.SqlClient
+Imports System.Runtime.Serialization
 
-Imports System.Security.Principal
-
+<DataContractAttribute()>
 Public Class ReportOptions
     Inherits EDSObjectWithQueries
 
 #Region "Properties"
-    
+
     'Required overriden Properties
-    Public Overrides ReadOnly Property EDSObjectName As String = "Report Options"
-    Public Overrides ReadOnly Property EDSTableName As String = "report.report_options"
+    Public Overrides ReadOnly Property EDSObjectName As String
+        Get
+            Return "Report Options"
+        End Get
+    End Property
+    Public Overrides ReadOnly Property EDSTableName As String
+        Get
+            Return "report.report_options"
+        End Get
+    End Property
 
     'Properties: Store in SQL report.report_options table (PK = WO)
-    Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
-
-    Public Property ReportType As String
-    Public Property ConfigurationType As String
-    Public Property LC As String
-    Public Property LCSubtype As String
-    Public Property CodeRef As String
-    Public Property ToBeStamped As Boolean
-    Public Property ToBeGivenToCustomer As Boolean
-    Public Property OnlySuperStructureAnalyzed As Boolean
-    Public Property NewBuildInNewCode As Boolean
-    Public Property IBM As Boolean
-    Public Property TacExposureChange As Boolean
-    Public Property TacTopoChange As Boolean
-    Public Property MappingDocuments As Boolean
-    Public Property ProposedExtension As Boolean
-    Public Property ExtensionHeight As Double
-    Public Property CanisterExtension As Boolean
-    Public Property IsModified As Boolean
-    Public Property RohnPirodFlangePlates As Boolean
-    Public Property FlangeFEA As Boolean
-    Public Property MpSliceOption As Integer '0,1,2
-    Public Property ConditionallyPassing As Boolean
-    Public Property GradeBeamAnalysisNeeded As Boolean
-    Public Property GradeBeamsRequired As Boolean
-    Public Property GroutRequired As Boolean
-    Public Property ATTAddendum As Boolean
-    Public Property RemoveCFDAreas As Boolean = True
-    Public Property UseTiltTwistWording As Boolean
-    Public Property LicenseOnly As Boolean
-    Public Property MultipleFoundationsConsidered As Boolean
-    Public Property RohnClips As Boolean
-    Public Property TopographicCategoryOtherThan1 As Boolean
-    Public Property ImportanceFactorOtherThan1 As Boolean
-    Public Property PrevWO As Integer
-    Public Property IsDefault As Boolean
+    <DataMember()> Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
+    <DataMember()> Public Property ReportType As String
+     <DataMember()> Public Property ConfigurationType As String
+     <DataMember()> Public Property LC As String
+     <DataMember()> Public Property LCSubtype As String
+     <DataMember()> Public Property CodeRef As String
+     <DataMember()> Public Property ToBeStamped As Boolean
+     <DataMember()> Public Property ToBeGivenToCustomer As Boolean
+     <DataMember()> Public Property OnlySuperStructureAnalyzed As Boolean
+     <DataMember()> Public Property NewBuildInNewCode As Boolean
+     <DataMember()> Public Property IBM As Boolean
+     <DataMember()> Public Property TacExposureChange As Boolean
+     <DataMember()> Public Property TacTopoChange As Boolean
+     <DataMember()> Public Property MappingDocuments As Boolean
+     <DataMember()> Public Property ProposedExtension As Boolean
+     <DataMember()> Public Property ExtensionHeight As Double
+     <DataMember()> Public Property CanisterExtension As Boolean
+     <DataMember()> Public Property IsModified As Boolean
+     <DataMember()> Public Property RohnPirodFlangePlates As Boolean
+     <DataMember()> Public Property FlangeFEA As Boolean
+     <DataMember()> Public Property MpSliceOption As Integer '0,1,2
+     <DataMember()> Public Property ConditionallyPassing As Boolean
+     <DataMember()> Public Property GradeBeamAnalysisNeeded As Boolean
+     <DataMember()> Public Property GradeBeamsRequired As Boolean
+     <DataMember()> Public Property GroutRequired As Boolean
+     <DataMember()> Public Property ATTAddendum As Boolean
+     <DataMember()> Public Property RemoveCFDAreas As Boolean = True
+     <DataMember()> Public Property UseTiltTwistWording As Boolean
+     <DataMember()> Public Property LicenseOnly As Boolean
+     <DataMember()> Public Property MultipleFoundationsConsidered As Boolean
+     <DataMember()> Public Property RohnClips As Boolean
+     <DataMember()> Public Property TopographicCategoryOtherThan1 As Boolean
+     <DataMember()> Public Property ImportanceFactorOtherThan1 As Boolean
+     <DataMember()> Public Property PrevWO As Integer
+     <DataMember()> Public Property IsDefault As Boolean
 
     'Properties: Get from EDS based on WO(???)
-    Public Property EngName As String
-    Public Property EngQAName As String
-    Public Property EngStampName As String
-    Public Property EngStampTitle As String
+     <DataMember()> Public Property EngName As String
+     <DataMember()> Public Property EngQAName As String
+     <DataMember()> Public Property EngStampName As String
+     <DataMember()> Public Property EngStampTitle As String
 
-    Public Property ReportDate As Date = Today
-    Public Property JurisdictionWording As String
+     <DataMember()> Public Property ReportDate As Date = Today
+     <DataMember()> Public Property JurisdictionWording As String
 
 
     'Lists: Stored in db under report.report_lists
-    Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
     'From
     '{"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
-    Public Property Notes As BindingList(Of String) = New BindingList(Of String)
-    Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property Notes As BindingList(Of String) = New BindingList(Of String)
+     <DataMember()> Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
     'Equipment (Tables 1,2,3)
-    Public ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
-    Public ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
-    Public OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
+    <DataMember()> Public Property ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
+    <DataMember()> Public Property ConditionalEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 2
+    <DataMember()> Public Property OtherEquipment As List(Of Equipment) = New List(Of Equipment)    'Table 3
 
     'Documents (for Table 4)
-    Public TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
+    <DataMember()> Public Property TableDocuments As List(Of TableDocument) = New List(Of TableDocument) 'Table 4
 
     'Temporary place to put LMP data, to eventually be merged with the Equipment Tables in the Report Class Library...
-    Public temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
+    <DataMember()> Public Property temp_LMP As List(Of FeedLineInformation) = New List(Of FeedLineInformation)
 
     'File management
-    Public RootDir As DirectoryInfo
+    <DataMember()> Public Property WorkingDir As DirectoryInfo
+    <DataMember()> Public Property ReportDir As DirectoryInfo
 
     'Files / Appendixes
-    Public Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
+    <DataMember()> Public Property Files As Dictionary(Of String, List(Of FilepathWithPriority)) = New Dictionary(Of String, List(Of FilepathWithPriority))()
 
 
     'Helper Variables
-    Public Property IsFromDB As Boolean
-    Public Property IsFromDefault As Boolean
+    <DataMember()> Public Property IsFromDB As Boolean
+    <DataMember()> Public Property IsFromDefault As Boolean
 
 #End Region
 
@@ -160,23 +167,30 @@ Public Class ReportOptions
 
     End Sub
 
-    Public Sub New(ReportDir As String, ByVal Parent As EDSObject)
+    Public Sub New(WorkingDir As String, ReportDir As String, ByVal Parent As EDSObject)
         If Parent IsNot Nothing Then Me.Absorb(Parent)
 
-        Me.RootDir = New DirectoryInfo(ReportDir)
+        Me.WorkingDir = New DirectoryInfo(WorkingDir)
+        Me.ReportDir = New DirectoryInfo(ReportDir)
 
         Initialize()
     End Sub
 
-    Public Sub New(BU As String, SID As String, WO As String, ReportDir As String, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub New(BU As String, SID As String, WO As String, WorkingDir As String, ReportDir As String)
         bus_unit = BU
         structure_id = SID
         work_order_seq_num = WO
 
-        If ReportDir = Nothing Then
-            Me.RootDir = Nothing
+        If WorkingDir = Nothing Then
+            Me.WorkingDir = Nothing
         Else
-            Me.RootDir = New DirectoryInfo(ReportDir)
+            Me.WorkingDir = New DirectoryInfo(WorkingDir)
+        End If
+
+        If ReportDir = Nothing Then
+            Me.ReportDir = Nothing
+        Else
+            Me.ReportDir = New DirectoryInfo(ReportDir)
         End If
 
         Initialize()
@@ -192,7 +206,7 @@ Public Class ReportOptions
                 IsFromDB = True
                 IsFromDefault = False
 
-                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
+                Generate(strDS.Tables(0).Rows(0))
                 Return
             End If
         End Using
@@ -205,7 +219,7 @@ Public Class ReportOptions
                 IsFromDB = True
                 IsFromDefault = True
 
-                Generate(strDS.Tables(0).Rows(0), databaseIdentity, activeDatabase)
+                Generate(strDS.Tables(0).Rows(0))
                 Return
             End If
         End Using
@@ -218,7 +232,7 @@ Public Class ReportOptions
     End Sub
 
     'Load everything from EDS data tables (in progress report)
-    Public Sub Generate(ByVal SiteCodeDataRow As DataRow, ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String)
+    Public Sub Generate(ByVal SiteCodeDataRow As DataRow)
 
 #Region "Items"
         Try
@@ -641,7 +655,7 @@ Public Class ReportOptions
         'Load list items
         Dim query = "SELECT * FROM report.report_lists WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 Assumptions.Clear()
                 Notes.Clear()
@@ -666,11 +680,11 @@ Public Class ReportOptions
         If Not IsFromDefault Then
 
             'Load list items
-            If (RootDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
+            If (WorkingDir IsNot Nothing) Then 'Logically: if RootDir isn't set, can't load existing appendix documents. If in UI, will reload from WO folder.
                 query = "SELECT * FROM report.report_files WHERE work_order_seq_num = '" & work_order_seq_num & "'"
 
                 Using strDS As New DataSet
-                    sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                    sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
                     If (strDS.Tables(0).Rows.Count > 0) Then
                         Files.Clear()
                         Files.Add("CCIPole", New List(Of FilepathWithPriority))
@@ -692,7 +706,7 @@ Public Class ReportOptions
 
                         Files(appendix).Add(New FilepathWithPriority(
                     -1,
-                    Me.RootDir.FullName,
+                    Me.WorkingDir.FullName,
                     item.Item("filename").ToString()
                     ))
 
@@ -709,7 +723,7 @@ Public Class ReportOptions
 
         Using strDS As New DataSet
             TableDocuments.Clear()
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 For Each item In strDS.Tables(0).Rows
                     Dim t As TableDocument = New TableDocument(
@@ -736,7 +750,7 @@ Public Class ReportOptions
             ProposedEquipment.Clear()
             ConditionalEquipment.Clear()
             OtherEquipment.Clear()
-            sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
 
             If (strDS.Tables(0).Rows.Count > 0) Then
                 For Each item In strDS.Tables(0).Rows
@@ -779,7 +793,8 @@ Public Class ReportOptions
                     --Dual is an empty dummy table. Use this CTE to pull in variables.
                     --(SELECT 2087011 AS work_order_seq_num FROM DUAL), 
                     --(SELECT 2113811 AS work_order_seq_num FROM DUAL), 
-                    (SELECT " + work_order_seq_num + " AS work_order_seq_num FROM DUAL), 
+                    --(SELECT 2038745 AS wo FROM DUAL), 
+                    (SELECT " + work_order_seq_num + " AS wo FROM DUAL), 
 
                 work_order_seq_num AS (
                     SELECT  wos.work_order_seq_num 
@@ -796,7 +811,7 @@ Public Class ReportOptions
                             ,aim.structure str 
                             ,isite.eng_application ord
                     WHERE 
-                        wos.work_order_seq_num = vars.work_order_seq_num
+                        wos.work_order_seq_num = vars.wo
                         AND wos.bus_unit = str.bus_unit (+)
                         AND wos.structure_id = str.structure_id (+)
                         AND wos.eng_app_id = ord.eng_app_id (+)
@@ -816,7 +831,7 @@ Public Class ReportOptions
                             ,NULL eng_app_id
                             ,c.quantity_installed_per_antenna quantity
                         FROM aim.installed_component c
-                            ,wo
+                            ,work_order_seq_num wo
                         WHERE c.bus_unit = wo.bus_unit
                         AND c.structure_id = wo.structure_id
                     ),
@@ -835,7 +850,7 @@ Public Class ReportOptions
                             ,pc.eng_app_id
                             ,pc.quantity_installed_per_antenna quantity
                         FROM aim.proposed_component pc
-                            ,wo
+                            ,work_order_seq_num wo
                         WHERE pc.bus_unit = wo.bus_unit
                         AND pc.structure_id = wo.structure_id
                         AND pc.merged_ind = 'N'
@@ -895,7 +910,7 @@ Public Class ReportOptions
                             ,es.size_text
                         FROM
                             lmp
-                            ,wo
+                            ,work_order_seq_num wo
                             ,equipment.equipment_catalog            ec
                             ,equipment.equipment_specification      es
                             ,aim.org                                mfg
@@ -1029,28 +1044,28 @@ Public Class ReportOptions
 #End Region
 
 #Region "Saving"
-    Public Function SaveReportOptionsToEds(ByVal LogOnUser As WindowsIdentity, ByVal ActiveDatabase As String) As Integer
+    Public Function SaveReportOptionsToEds() As Integer
 
         Try
             'If new default options, make other options not default
             If IsDefault Then 'Update bit
                 Dim x = SQLReplace_Default()
-                sqlSender(SQLReplace_Default(), ActiveDatabase, LogOnUser, 0.ToString)
+                sqlSender(SQLReplace_Default(), activeDatabase, databaseIdentity, 0.ToString)
             End If
 
             'Find and update (or insert) report options
             Dim query = "SELECT 1 FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
             Using strDS As New DataSet
-                sqlLoader(query, strDS, ActiveDatabase, LogOnUser, 500)
+                sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
                 If strDS.Tables(0).Rows.Count > 0 Then 'Update
-                    Dim opt_result = sqlSender(SQLUpdate(), ActiveDatabase, LogOnUser, 0.ToString)
+                    Dim opt_result = sqlSender(SQLUpdate(), activeDatabase, databaseIdentity, 0.ToString)
                     If (Not opt_result) Then
                         Console.WriteLine(SQLUpdate())
                         Return 500
                     End If
 
                 Else
-                    Dim opt_result = sqlSender(SQLInsert(), ActiveDatabase, LogOnUser, 0.ToString)
+                    Dim opt_result = sqlSender(SQLInsert(), activeDatabase, databaseIdentity, 0.ToString)
                     If (Not opt_result) Then
                         Console.WriteLine(SQLInsert())
                         Return 500
@@ -1098,7 +1113,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            Dim result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            Dim result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1132,7 +1147,7 @@ Public Class ReportOptions
 
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1169,7 +1184,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1255,7 +1270,7 @@ Public Class ReportOptions
                 commands.Add(command)
             Next
 
-            result = safeSqlTransactionSender(commands, ActiveDatabase, LogOnUser, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1360,7 +1375,8 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDate.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
@@ -1418,7 +1434,8 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("report_date")
         SQLInsertFields = SQLInsertFields.AddtoDBString("custom_jurisdiction_wording")
 
-        SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir")
+        'SQLInsertFields = SQLInsertFields.AddtoDBString("working_dir")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir") 'report_dir
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngName")
         SQLInsertFields = SQLInsertFields.AddtoDBString("EngQAName")
@@ -1476,9 +1493,8 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("report_date=" & Me.ReportDate.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
 
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.RootDir.NullableToString.Replace("'", "''").FormatDBValue)
-
-
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("working_dir=" & Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
 
@@ -1500,11 +1516,12 @@ Public Class ReportOptions
 End Class
 
 #Region "Helper Classes"
+<DataContract()>
 Public Class FilepathWithPriority
-    Public priority As Integer
-    Public rootDir As String
-    Public filename As String
-    Public enabled As Boolean = True
+    <DataMember()> Public Property priority As Integer
+    <DataMember()> Public Property rootDir As String
+    <DataMember()> Public Property filename As String
+    <DataMember()> Public Property enabled As Boolean = True
 
     Public Sub New(ByVal priority As Integer, ByVal rootDir As String, ByVal filename As String)
         Me.priority = priority
@@ -1530,12 +1547,13 @@ Public Class FilepathWithPriority
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class TableDocument
-    Public Property Enabled As Boolean
+     <DataMember()> Public Property Enabled As Boolean
 
-    Public Property Document As String
-    Public Property Reference As String
-    Public Property Source As String
+     <DataMember()> Public Property Document As String
+     <DataMember()> Public Property Reference As String
+     <DataMember()> Public Property Source As String
 
     Private _valid As Boolean
 
@@ -1563,28 +1581,29 @@ Public Class TableDocument
     End Sub
 End Class
 
+<DataContractAttribute()>
 Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Mounting Level")>
-    Public Property mounting_level As String
+     <DataMember()> Public Property mounting_level As String
 
 
     <Category("EDS"), Description(""), DisplayName("Center Line Elevation")>
-    Public Property center_line_elevation As String
+     <DataMember()> Public Property center_line_elevation As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Antennas")>
-    Public Property num_antennas As Long
+     <DataMember()> Public Property num_antennas As Long
 
     <Category("EDS"), Description(""), DisplayName("Antenna Manufacturer")>
-    Public Property antenna_manufacturer As String
+     <DataMember()> Public Property antenna_manufacturer As String
 
     <Category("EDS"), Description(""), DisplayName("Antenna Model")>
-    Public Property antenna_model As String
+     <DataMember()> Public Property antenna_model As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
-    Public Property num_feed_lines As String
+    <DataMember()> Public Property num_feed_lines As String 'Long
 
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
-    Public Property feed_line_size As String
+     <DataMember()> Public Property feed_line_size As String
 
     Public Sub New()
         mounting_level = " - "
@@ -1592,7 +1611,7 @@ Public Class Equipment
         num_antennas = 0
         antenna_manufacturer = " - "
         antenna_model = " - "
-        num_feed_lines = ""
+        num_feed_lines = "" 'num_feed_lines = 0 'Needs to be set to Long to be able to pull an actual number if we want to reference the eri data rather than database value which I think it is currently doing - MRR
         feed_line_size = ""
     End Sub
     Public Sub New(equipment As Equipment)
@@ -1614,7 +1633,7 @@ Public Class Equipment
             num_ant As Long,
             antenna_man As String,
             antenna_mod As String,
-            num_feed As String,
+            num_feed As String, 'num_feed As Long
             feed_size As String
         )
 
@@ -1642,14 +1661,15 @@ Public Class Equipment
     End Function
 End Class
 
+<DataContractAttribute()>
 Public Class FeedLineInformation
 
-    Public Property enabled As Boolean
-    Public Property size As String
-    Public Property status As String
-    Public Property ccicode As String
-    Public Property sum_count As String
-    Public Property endheight As String
+     <DataMember()> Public Property enabled As Boolean
+     <DataMember()> Public Property size As String
+     <DataMember()> Public Property status As String
+     <DataMember()> Public Property ccicode As String
+     <DataMember()> Public Property sum_count As String
+     <DataMember()> Public Property endheight As String
 
     Public Sub New()
 

@@ -333,9 +333,9 @@ Begin
 	Drop Table #TempSection
 	Drop Table #TempRSection
 
-
-	--Site code criteria
-	SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU
+	----REMOVED 7/5/2023
+	--------Site code criteria
+	------SELECT * FROM gen.site_code_criteria WHERE bus_unit = @BU
 
 	--File Upload
 	SELECT * FROM gen.file_upload fu, (SELECT MAX(work_order_seq_num) work_order_seq_num FROM gen.work_orders WHERE bus_unit = @BU AND structure_id = @strID) wo WHERE fu.work_order_seq_num = wo.work_order_seq_num
@@ -344,22 +344,34 @@ Begin
 	Select dp.* From fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID)
 
 	--Drilled Pier Profile
-	SELECT dpp.* FROM fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dpp.id = dp.drilled_pier_profile_id
+	SELECT dpp.* 
+	FROM fnd.drilled_pier_profile dpp, fnd.drilled_pier dp 
+	WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dpp.id = dp.pier_profile_id
 	
 	--Drilled Pier Section
-	SELECT dps.* FROM fnd.drilled_pier_section dps, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	SELECT dps.* 
+	FROM fnd.drilled_pier_section dps, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp 
+	WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.pier_profile_id = dpp.id AND dpp.id = dp.pier_profile_id
 
 	--Drilled Pier Rebar
-	SELECT dpr.* FROM fnd.drilled_pier_rebar dpr, fnd.drilled_pier_section dps ,fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.id = dpr.section_id AND dps.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	SELECT dpr.* 
+	FROM fnd.drilled_pier_rebar dpr, fnd.drilled_pier_section dps ,fnd.drilled_pier_profile dpp, fnd.drilled_pier dp 
+	WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND dps.id = dpr.section_id AND dps.pier_profile_id = dpp.id AND dpp.id = dp.pier_profile_id
 	
 	--Belled Pier
-	SELECT bp.* FROM fnd.belled_pier bp, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND bp.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	SELECT bp.* 
+	FROM fnd.belled_pier bp, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp 
+	WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND bp.pier_profile_id = dpp.id AND dpp.id = dp.pier_profile_id
 	
 	--Embedded Pole
-	SELECT ep.* FROM fnd.embedded_pole ep, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND ep.drilled_pier_profile_id = dpp.id AND dpp.id = dp.drilled_pier_profile_id
+	SELECT ep.* 
+	FROM fnd.embedded_pole ep, fnd.drilled_pier_profile dpp, fnd.drilled_pier dp 
+	WHERE (dp.bus_unit=@BU AND dp.structure_id=@strID) AND ep.pier_profile_id = dpp.id AND dpp.id = dp.pier_profile_id
 
 	--Drilled Pier Tool
-	Select * From fnd.drilled_pier_tool WHERE bus_unit=@BU AND structure_id=@strID
+	Select * 
+	From fnd.drilled_pier_tool 
+	WHERE bus_unit=@BU AND structure_id=@strID
 
 	--Guy Anchor Block Tool
 	Select * From fnd.anchor_block_tool WHERE bus_unit=@BU AND structure_id=@strID
@@ -398,4 +410,47 @@ Begin
 		lr.bus_unit = @BU
 		AND lr.structure_id = @strID
 		AND lr.ID = lrdet.leg_reinforcement_id
+
+	--CCISeismic
+	Select * From load.seismic WHERE bus_unit=@BU AND structure_id=@strID
+
+	--Discrete
+	Select app.* 
+	From 
+		load.discrete_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--Dishes
+	Select app.* 
+	From 
+		load.dish_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--User Forces
+	Select app.* 
+	From 
+		load.user_force_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
+
+	--Lines
+	Select app.* 
+	From 
+		load.linear_output app
+		,tnx.tnx tnx
+	WHERE
+		tnx.bus_unit = @BU
+		AND tnx.structure_id = @strID
+		AND tnx.ID = app.tnx_ID
 END
