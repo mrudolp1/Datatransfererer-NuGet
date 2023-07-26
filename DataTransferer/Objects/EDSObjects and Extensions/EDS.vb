@@ -656,18 +656,8 @@ Partial Public Class EDSResult
         Me.databaseIdentity = Host.databaseIdentity
         Me.modified_person_id = Host.modified_person_id
         Me.process_stage = Host.process_stage
-        'Results don't have a set table depth, it depends on their parent depth
-        Me.EDSTableDepth = Host.EDSTableDepth + 1
-        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
-        'Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
-        '                     Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
-        '                     Host.EDSTableName) & "_results"
+        Me.EDSTableDepth = Host.EDSTableDepth + 1  'Results don't have a set table depth, it depends on their parent depth
         Me.EDSTableName = RemovePlural(Host.EDSTableName) & "_results"
-        'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
-        'Seperate the table name from the schema then add _id
-        'Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
-        '                        Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
-        '                        Host.EDSTableName & "_id")
         Me.ForeignKeyName = RemovePlural(Host.EDSTableName.Split(".").Last) & "_id"
     End Sub
 
