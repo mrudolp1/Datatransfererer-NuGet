@@ -1,3 +1,4 @@
+
 BEGIN
 
 	UPDATE load.seismic
