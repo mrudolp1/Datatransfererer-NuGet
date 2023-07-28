@@ -3631,7 +3631,6 @@ Partial Public Class PoleReinfResults
 #Region "Define"
     'Private _ID As Integer?
     Private _result_id As Integer?
-    Private _work_order_seq_num As Integer?
     Private _pole_id As Integer?
     Private _section_id As Integer?
     Private _local_section_id As Integer?
@@ -3639,9 +3638,6 @@ Partial Public Class PoleReinfResults
     Private _local_group_id As Integer?
     Private _result_lkup As String
     Private _rating As Decimal?
-    'Private _modified_person_id As Integer?
-    'Private _process_stage As String
-    'Private _modified_date As DateTime?
 
     <Category("CCIpole Results"), Description(""), DisplayName("Result Id")>
     <DataMember()> Public Property result_id() As Integer?
@@ -3650,15 +3646,6 @@ Partial Public Class PoleReinfResults
         End Get
         Set
             Me._result_id = Value
-        End Set
-    End Property
-    <Category("CCIpole Results"), Description(""), DisplayName("Work Order Seq Num")>
-    <DataMember()> Public Property work_order_seq_num() As Integer?
-        Get
-            Return Me._work_order_seq_num
-        End Get
-        Set
-            Me._work_order_seq_num = Value
         End Set
     End Property
     <Category("CCIpole Results"), Description(""), DisplayName("Pole Id")>
@@ -3725,33 +3712,6 @@ Partial Public Class PoleReinfResults
             Me._rating = Value
         End Set
     End Property
-    '<Category("CCIpole Results"), Description(""), DisplayName("Modified Person Id")>
-    ' <DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("CCIpole Results"), Description(""), DisplayName("Process Stage")>
-    ' <DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
-    'End Property
-    '<Category("CCIpole Results"), Description(""), DisplayName("Modified Date")>
-    ' <DataMember()> Public Property modified_date() As DateTime?
-    '    Get
-    '        Return Me._modified_date
-    '    End Get
-    '    Set
-    '        Me._modified_date = Value
-    '    End Set
-    'End Property
 
 #End Region
 
@@ -3768,7 +3728,7 @@ Partial Public Class PoleReinfResults
         Dim dr = Row
 
         Me.result_id = DBtoNullableInt(dr.Item("ID"))
-        Me.work_order_seq_num = DBtoNullableInt(dr.Item("work_order_seq_num")) 'Change to Parent WO downstream - MRR
+        Me.work_order_seq_num = DBtoStr(dr.Item("work_order_seq_num")) 'Change to Parent WO downstream - MRR
         Me.pole_id = DBtoNullableInt(dr.Item("pole_id"))
         Me.section_id = DBtoNullableInt(dr.Item("section_id"))
         Me.local_section_id = DBtoNullableInt(dr.Item("local_section_id"))
@@ -3797,9 +3757,8 @@ Partial Public Class PoleReinfResults
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_group_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -3816,9 +3775,8 @@ Partial Public Class PoleReinfResults
         SQLInsertFields = SQLInsertFields.AddtoDBString("local_group_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("result_lkup")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rating")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("modified_date")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
 
         Return SQLInsertFields
     End Function
@@ -3837,9 +3795,8 @@ Partial Public Class PoleReinfResults
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_date = " & Me.modified_date.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function

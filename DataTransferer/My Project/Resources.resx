@@ -217,6 +217,9 @@
   <data name="CCIplate_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\CCIplate\CCIplate (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="CCIplate__4_1_2_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\CCIplate (4.1.2).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="CCIpole" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\CCIpole.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -301,6 +304,9 @@
   <data name="CCIpole_Unreinf_Section_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\CCIpole\2 Unreinf Section (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="CCIpole__4_5_8_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\CCIpole (4.5.8).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="CCISeismic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\CCISeismic.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -313,8 +319,14 @@
   <data name="CCISeismic_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CCISeismic (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="CCISeismic__3_3_9_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\CCISeismic (3.3.9).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Drilled_Pier_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Drilled Pier Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Drilled_Pier_Foundation__5_0_5_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\Drilled Pier Foundation (5.0.5).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Drilled_Pier_Profile__INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Drilled Pier Profile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -340,6 +352,9 @@
   <data name="Guyed_Anchor_Block_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Guyed Anchor Block Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Guyed_Anchor_Block_Foundation__4_0_0_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\Guyed Anchor Block Foundation (4.0.0).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Leg_Reinforcement_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Leg Reinforcement (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -361,17 +376,26 @@
   <data name="Leg_Reinforcement_Tool" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Leg Reinforcement Tool.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Leg_Reinforcement_Tool__10_0_4_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\Leg Reinforcement Tool (10.0.4).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Leg_Reinforcement_UPDATE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Leg Reinforcement (UPDATE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Pier_and_Pad_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Pier and Pad Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Pier_and_Pad_Foundation__4_1_1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\Pier and Pad Foundation (4.1.1).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Pile_DELETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Pile\Pile (DELETE).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Pile_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\Pile Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Pile_Foundation__2_2_1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\Pile Foundation (2.2.1).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Pile_INSERT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Pile\Pile (INSERT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -408,6 +432,9 @@
   </data>
   <data name="SST_Unit_Base_Foundation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Templates\SST Unit Base Foundation.xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SST_Unit_Base_Foundation__4_0_3_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Templates\Previous Versions\SST Unit Base Foundation (4.0.3).xlsm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Structure_SELECT" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Queries\Structure\Structure (SELECT).sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

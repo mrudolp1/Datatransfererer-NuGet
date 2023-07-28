@@ -33,7 +33,7 @@ Partial Public Class PierAndPad
     End Property
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AR3", "Details (SAPI)"),
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Pier and Pad General Details EXCEL", "A2:AT3", "Details (SAPI)"),
                                                         New EXCELDTParameter("Pier and Pad General Results EXCEL", "A2:C16", "Results (SAPI)")}
         End Get
     End Property
@@ -83,6 +83,8 @@ Partial Public Class PierAndPad
     Private _pier_rebar_quantity As Integer?
     Private _basic_soil_check As Boolean?
     Private _structural_check As Boolean?
+
+    Private _seismic_design_category As String 'Only storing if user selected within tool. Selection doesn't impact calculations. 
 
     <Category("Pier"), Description(""), DisplayName("Pier Shape")>
      <DataMember()> Public Property pier_shape() As String
@@ -462,7 +464,15 @@ Partial Public Class PierAndPad
             Me._structural_check = Value
         End Set
     End Property
-
+    <Category("Pier and Pad "), Description(""), DisplayName("Seismic Design Category")>
+    <DataMember()> Public Property seismic_design_category() As String
+        Get
+            Return Me._seismic_design_category
+        End Get
+        Set
+            Me._seismic_design_category = Value
+        End Set
+    End Property
 
 
 #End Region
@@ -525,6 +535,7 @@ Partial Public Class PierAndPad
         Me.Version = DBtoStr(dr.Item("tool_version"))
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
+        Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
     End Sub 'Generate a pp from EDS
 
     'Public Sub New(ExcelFilePath As String, Optional BU As String = Nothing, Optional structureID As String = Nothing)
@@ -587,7 +598,8 @@ Partial Public Class PierAndPad
             Me.spt_blow_count = DBtoNullableInt(dr.Item("spt_blow_count"))
             Me.base_friction_factor = DBtoNullableDbl(dr.Item("base_friction_factor"))
             Me.neglect_depth = DBtoNullableDbl(dr.Item("neglect_depth"))
-            Me.bearing_distribution_type = DBtoNullableBool(dr.Item("bearing_distribution_type"))
+            'Me.bearing_distribution_type = DBtoNullableBool(dr.Item("bearing_distribution_type"))
+            Me.bearing_distribution_type = If(DBtoStr(dr.Item("bearing_distribution_type")) = "Yes", True, If(DBtoStr(dr.Item("bearing_distribution_type")) = "No", False, DBtoNullableBool(dr.Item("bearing_distribution_type")))) 'Listed as a string and need to convert to Boolean
             Me.groundwater_depth = DBtoNullableDbl(dr.Item("groundwater_depth"))
             Me.top_and_bottom_rebar_different = DBtoNullableBool(dr.Item("top_and_bottom_rebar_different"))
             Me.block_foundation = DBtoNullableBool(dr.Item("block_foundation"))
@@ -600,6 +612,7 @@ Partial Public Class PierAndPad
             Me.Version = DBtoStr(dr.Item("tool_version"))
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
+            Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
         End If
 
         If excelDS.Tables.Contains("Pier and Pad General Results EXCEL") Then
@@ -815,10 +828,12 @@ Partial Public Class PierAndPad
                 .Worksheets("Input").Range("N").Value = CType(Me.neglect_depth, Double)
             End If
 
-            If Me.bearing_distribution_type = False Then
-                .Worksheets("Input").Range("Rock").Value = "No"
-            Else
-                .Worksheets("Input").Range("Rock").Value = "Yes"
+            If Not IsNothing(Me.bearing_distribution_type) Then
+                If Me.bearing_distribution_type = False Then
+                    .Worksheets("Input").Range("Rock").Value = "No"
+                Else
+                    .Worksheets("Input").Range("Rock").Value = "Yes"
+                End If
             End If
 
             If IsNothing(Me.groundwater_depth) OrElse Me.groundwater_depth.Value = -1 Then
@@ -901,6 +916,10 @@ Partial Public Class PierAndPad
                 .Worksheets("Input").Range("Section15.5Boolean").Value = Me.ParentStructure.structureCodeCriteria.rev_h_section_15_5.Value
             End If
 
+            If Not IsNothing(Me.seismic_design_category) Then
+                .Worksheets("Input").Range("SDC").Value = CType(Me.seismic_design_category, String)
+            End If
+
         End With
 
     End Sub
@@ -959,6 +978,7 @@ Partial Public Class PierAndPad
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -1013,6 +1033,7 @@ Partial Public Class PierAndPad
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("seismic_design_category")
 
         Return SQLInsertFields
     End Function
@@ -1067,6 +1088,7 @@ Partial Public Class PierAndPad
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -1128,6 +1150,7 @@ Partial Public Class PierAndPad
         Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals, False)
         Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals, False)
         Equals = If(Me.Version.CheckChange(otherToCompare.Version, changes, categoryName, "Tool Version"), Equals, False)
+        Equals = If(Me.seismic_design_category.CheckChange(otherToCompare.seismic_design_category, changes, categoryName, "Seismic Design Category"), Equals, False)
 
         Return Equals
 

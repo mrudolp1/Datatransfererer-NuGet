@@ -5,6 +5,7 @@ Imports System.IO
 Imports System.Runtime.InteropServices
 Imports Excel = Microsoft.Office.Interop.Excel
 Imports System.Runtime.Serialization
+Imports MoreLinq
 'Imports Microsoft.Office.Interop 'added for testing running macros
 
 Public Delegate Function OverwriteFile(ByVal FileName As String) As Boolean
@@ -169,7 +170,17 @@ Partial Public MustInherit Class EDSObjectWithQueries
     Public Overridable ReadOnly Property EDSTableDepth As Integer = 0
 
     <DataMember()>
+    <Category("Results"), Description(""), DisplayName("Results")>
     Public Overridable Property Results As New List(Of EDSResult)
+
+    <Category("Results"), Description("Max overall result. Does not account for different maximum allowable values (i.e. soil result vs structure)."), DisplayName("Max Result")>
+    Public Overridable ReadOnly Property MaxResult As EDSResult
+        Get
+            ''From the results that have a rating value, select the max based on the rating value.
+            Return Me.Results?.Where(Function(x) x.rating.HasValue).MaxBy(Function(x) x.rating.Value).FirstOrDefault()
+        End Get
+    End Property
+
 
     <Category("EDS Queries"), Description("Insert this object and results into EDS. For use in whole structure query. Requires two variable in main query [@Prev Table (ID INT)] and [@Prev ID INT]"), DisplayName("SQL Insert Query")>
     Public Overridable Function SQLInsert() As String
@@ -656,19 +667,10 @@ Partial Public Class EDSResult
         Me.databaseIdentity = Host.databaseIdentity
         Me.modified_person_id = Host.modified_person_id
         Me.process_stage = Host.process_stage
-        'Results don't have a set table depth, it depends on their parent depth
-        Me.EDSTableDepth = Host.EDSTableDepth + 1
-        'Results table should be the Parent Table Name + _results (fnd.pier_pad -> fnd.pier_pad_results, tnx.upper_structure_sections -> tnx.upper_structure_section_results)
-        'Me.EDSTableName = If(Host.EDSTableName(Host.EDSTableName.Length - 1) = "s",
-        '                     Host.EDSTableName.Substring(0, Host.EDSTableName.Length - 1),
-        '                     Host.EDSTableName) & "_results"
-        Me.EDSTableName = RemovePlural(Host.EDSTableName) & "_results"
-        'Result ID name should be Parent Table Name + _id (fnd.pier_pad -> pier_pad_id)
-        'Seperate the table name from the schema then add _id
-        'Me.ForeignKeyName = If(Host.EDSTableName.Contains("."),
-        '                        Host.EDSTableName.Substring(Host.EDSTableName.IndexOf(".") + 1, Host.EDSTableName.Length - Host.EDSTableName.IndexOf(".") - 1) & "_id",
-        '                        Host.EDSTableName & "_id")
-        Me.ForeignKeyName = RemovePlural(Host.EDSTableName.Split(".").Last) & "_id"
+        Me.EDSTableDepth = Host.EDSTableDepth + 1  'Results don't have a set table depth, it depends on their parent depth
+        Dim eDSTableName = RemovePlural(Host.EDSTableName) 'Local non-plural table name
+        Me.EDSTableName = eDSTableName & "_results"
+        Me.ForeignKeyName = String.Concat(eDSTableName.Split(".").Last) & "_id"
     End Sub
 
     Private Function RemovePlural(possiblyPlural As String) As String

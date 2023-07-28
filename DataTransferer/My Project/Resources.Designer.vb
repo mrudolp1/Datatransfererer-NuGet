@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  A strongly-typed resource class, for looking up localized strings, etc.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -156,6 +156,16 @@ Namespace My.Resources
         Public ReadOnly Property CCIplate() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("CCIplate", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property CCIplate__4_1_2_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCIplate__4_1_2_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -410,7 +420,8 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to BEGIN
+        '''  Looks up a localized string similar to 
+        '''BEGIN
         '''
         '''	--BEGIN --[CONNECTION DELETE BEGIN]
         '''	--[CONNECTION INSERT]
@@ -427,7 +438,8 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to BEGIN
+        '''  Looks up a localized string similar to 
+        '''BEGIN
         '''
         '''INSERT INTO conn.connections ([CCIPLATE FIELDS]) 
         '''	OUTPUT INSERTED.ID INTO @TopLevel
@@ -653,7 +665,8 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to BEGIN
+        '''  Looks up a localized string similar to 
+        '''BEGIN
         '''
         '''	UPDATE conn.connections
         '''	SET [UPDATE] 
@@ -681,6 +694,16 @@ Namespace My.Resources
         Public ReadOnly Property CCIpole() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("CCIpole", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property CCIpole__4_5_8_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCIpole__4_5_8_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -1276,6 +1299,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property CCISeismic__3_3_9_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CCISeismic__3_3_9_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to BEGIN
         '''
         '''DELETE FROM load.seismic WHERE ID = [ID]
@@ -1358,6 +1391,16 @@ Namespace My.Resources
         Public ReadOnly Property Drilled_Pier_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Drilled_Pier_Foundation", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property Drilled_Pier_Foundation__5_0_5_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Drilled_Pier_Foundation__5_0_5_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -1465,6 +1508,16 @@ Namespace My.Resources
         Public ReadOnly Property Guyed_Anchor_Block_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Guyed_Anchor_Block_Foundation", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property Guyed_Anchor_Block_Foundation__4_0_0_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Guyed_Anchor_Block_Foundation__4_0_0_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -1585,6 +1638,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property Leg_Reinforcement_Tool__10_0_4_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Leg_Reinforcement_Tool__10_0_4_", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to BEGIN
         '''
         '''	UPDATE tnx.memb_leg_reinforcement
@@ -1607,6 +1670,16 @@ Namespace My.Resources
         Public ReadOnly Property Pier_and_Pad_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Pier_and_Pad_Foundation", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property Pier_and_Pad_Foundation__4_1_1_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Pier_and_Pad_Foundation__4_1_1_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -1643,6 +1716,16 @@ Namespace My.Resources
         Public ReadOnly Property Pile_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Pile_Foundation", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property Pile_Foundation__2_2_1_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Pile_Foundation__2_2_1_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -1832,6 +1915,16 @@ Namespace My.Resources
         Public ReadOnly Property SST_Unit_Base_Foundation() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("SST_Unit_Base_Foundation", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Public ReadOnly Property SST_Unit_Base_Foundation__4_0_3_() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("SST_Unit_Base_Foundation__4_0_3_", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property

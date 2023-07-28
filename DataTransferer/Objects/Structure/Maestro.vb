@@ -870,6 +870,7 @@ ErrorSkip:
                 "ReportPrintDeflection=No|ReportPrintDeflection=Yes",
                 "ReportPrintBoltChecks=No|ReportPrintBoltChecks=Yes",
                 "ReportPrintStressChecks=No|ReportPrintStressChecks=Yes",
+                "ReportInputGeometry=No|ReportInputGeometry=Yes",
                 "ReportInputOptions=No|ReportInputOptions=Yes",
                 "CapacityReportOutputType=No Capacity Output|CapacityReportOutputType=Capacity Summary",
                 "CapacityReportOutputType=Capacity Details|CapacityReportOutputType=Capacity Summary",
