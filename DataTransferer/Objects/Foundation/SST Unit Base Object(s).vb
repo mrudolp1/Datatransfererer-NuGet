@@ -92,7 +92,7 @@ Partial Public Class UnitBase
     'Private _base_face_width As Double? 'TNX
     'Private _bp_dist_above_fnd As Double? 'CCIplate
     'Private _ar_bolt_circle As Double? 'CCIplate
-    'Private _seismic_design_category As String 'Seismic Tool?
+    Private _seismic_design_category As String 'Only storing if user selected within tool. Selection doesn't impact calculations. 
 
 
     <Category("Pier"), Description(""), DisplayName("Pier Shape")>
@@ -474,12 +474,21 @@ Partial Public Class UnitBase
         End Set
     End Property
     <Category("Unit Base"), Description(""), DisplayName("Structural Check")>
-     <DataMember()> Public Property structural_check() As Boolean?
+    <DataMember()> Public Property structural_check() As Boolean?
         Get
             Return Me._structural_check
         End Get
         Set
             Me._structural_check = Value
+        End Set
+    End Property
+    <Category("Unit Base"), Description(""), DisplayName("Seismic Design Category")>
+    <DataMember()> Public Property seismic_design_category() As String
+        Get
+            Return Me._seismic_design_category
+        End Get
+        Set
+            Me._seismic_design_category = Value
         End Set
     End Property
 
@@ -585,6 +594,8 @@ Partial Public Class UnitBase
         Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
+        Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
+
     End Sub 'Generate a ub from EDS
 
     Public Sub New(ExcelFilePath As String, Optional ByVal Parent As EDSObject = Nothing)
@@ -650,7 +661,8 @@ Partial Public Class UnitBase
             Me.spt_blow_count = DBtoNullableInt(dr.Item("spt_blow_count"))
             Me.base_friction_factor = DBtoNullableDbl(dr.Item("base_friction_factor"))
             Me.neglect_depth = DBtoNullableDbl(dr.Item("neglect_depth"))
-            Me.bearing_distribution_type = DBtoNullableBool(dr.Item("bearing_distribution_type"))
+            'Me.bearing_distribution_type = DBtoNullableBool(dr.Item("bearing_distribution_type"))
+            Me.bearing_distribution_type = If(DBtoStr(dr.Item("bearing_distribution_type")) = "Yes", True, If(DBtoStr(dr.Item("bearing_distribution_type")) = "No", False, DBtoNullableBool(dr.Item("bearing_distribution_type")))) 'Listed as a string and need to convert to Boolean
             Me.groundwater_depth = DBtoNullableDbl(dr.Item("groundwater_depth"))
             Me.top_and_bottom_rebar_different = DBtoNullableBool(dr.Item("top_and_bottom_rebar_different"))
             Me.block_foundation = DBtoNullableBool(dr.Item("block_foundation"))
@@ -665,7 +677,7 @@ Partial Public Class UnitBase
             'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
             'Me.process_stage = DBtoStr(dr.Item("process_stage"))
 
-            'Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
+            Me.seismic_design_category = DBtoStr(dr.Item("seismic_design_category")) 'SDC
 
         End If
 
@@ -883,10 +895,12 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("N").Value = CType(Me.neglect_depth, Double)
             End If
 
-            If Me.bearing_distribution_type = False Then
-                .Worksheets("Input").Range("Rock").Value = "No"
-            Else
-                .Worksheets("Input").Range("Rock").Value = "Yes"
+            If Not IsNothing(Me.bearing_distribution_type) Then
+                If Me.bearing_distribution_type = False Then
+                    .Worksheets("Input").Range("Rock").Value = "No"
+                Else
+                    .Worksheets("Input").Range("Rock").Value = "Yes"
+                End If
             End If
 
             If IsNothing(Me.groundwater_depth) OrElse Me.groundwater_depth = -1 Then
@@ -944,8 +958,14 @@ Partial Public Class UnitBase
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
                 .Worksheets("Input").Range("Section15.5Boolean").Value = CType(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5, Boolean)
             End If
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category) Then
-                .Worksheets("Input").Range("SDC").Value = CType(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category, String)
+
+            'Structure code criteria is not a reliable source
+            'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category) Then
+            '    .Worksheets("Input").Range("SDC").Value = CType(Me.ParentStructure?.structureCodeCriteria?.seismic_design_category, String)
+            'End If
+
+            If Not IsNothing(Me.seismic_design_category) Then
+                .Worksheets("Input").Range("SDC").Value = CType(Me.seismic_design_category, String)
             End If
 
             'Worksheet Change Events
@@ -1138,7 +1158,7 @@ Partial Public Class UnitBase
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structural_check.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.NullableToString.FormatDBValue)
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.seismic_design_category.NullableToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.NullableToString.FormatDBValue)
@@ -1251,7 +1271,7 @@ Partial Public Class UnitBase
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("basic_soil_check = " & Me.basic_soil_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structural_check = " & Me.structural_check.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.NullableToString.FormatDBValue)
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("seismic_design_category = " & Me.seismic_design_category.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.NullableToString.FormatDBValue)
 
@@ -1314,6 +1334,7 @@ Partial Public Class UnitBase
         Equals = If(Me.pier_rebar_quantity.CheckChange(otherToCompare.pier_rebar_quantity, changes, categoryName, "Pier Rebar Quantity"), Equals, False)
         Equals = If(Me.basic_soil_check.CheckChange(otherToCompare.basic_soil_check, changes, categoryName, "Basic Soil Check"), Equals, False)
         Equals = If(Me.structural_check.CheckChange(otherToCompare.structural_check, changes, categoryName, "Structural Check"), Equals, False)
+        Equals = If(Me.seismic_design_category.CheckChange(otherToCompare.seismic_design_category, changes, categoryName, "Seismic Design Category"), Equals, False)
 
         Return Equals
 
