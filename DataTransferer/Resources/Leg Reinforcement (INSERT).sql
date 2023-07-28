@@ -1,3 +1,4 @@
+
 BEGIN
 
 INSERT INTO tnx.memb_leg_reinforcement ([LEG REINFORCEMENT FIELDS]) 

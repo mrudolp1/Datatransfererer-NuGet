@@ -364,7 +364,7 @@ Partial Public Class EDSStructure
                             AND wo.structure_id = str.structure_id
                             AND str.bus_unit = sit.bus_unit
                             AND str.bus_unit = tr.bus_unit
-                            AND pi.eng_app_id(+) = wo.eng_app_id" & vbCrLf
+                            AND pi.eng_app_id(+) = wo.eng_app_id "
                 sqlOrder = ",pi.eng_app_id
                             ,pi.crrnt_rvsn_num eng_app_id_revision"
             Else
@@ -372,7 +372,7 @@ Partial Public Class EDSStructure
                              str.bus_unit = '" & bus_unit & "' 
                              AND str.structure_id = '" & structure_id & "'
                              AND str.bus_unit = sit.bus_unit
-                             AND str.bus_unit = tr.bus_unit" & vbCrLf
+                             AND str.bus_unit = tr.bus_unit "
             End If
 
             OracleLoader("
@@ -389,10 +389,10 @@ Partial Public Class EDSStructure
                                 ,'True' rev_h_section_15_5
                                 ,0 tower_point_elev                                
                                 ,str.structure_type
-                                ,str.LAT_DEC
-                                ,str.LONG_DEC" & vbCrLf &
-                                sqlOrder & vbCrLf &
-                            "FROM
+                                ,CAST(str.LAT_DEC as DECIMAL(12,8)) LAT_DEC
+                                ,CAST(str.LONG_DEC as DECIMAL(12,8)) LONG_DEC " &
+                                sqlOrder &
+                            " FROM
                                 isit_aim.structure                      str
                                 ,isit_aim.site                          sit
                                 ,rpt_appl.eng_tower_rating_vw           tr " &

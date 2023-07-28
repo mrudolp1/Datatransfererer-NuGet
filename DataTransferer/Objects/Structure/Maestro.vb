@@ -806,7 +806,7 @@ ErrorSkip:
                 End If
 
                 With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateCCIReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
                 With .StartInfo
                         .CreateNoWindow = True
                         .UseShellExecute = False
@@ -870,6 +870,7 @@ ErrorSkip:
                 "ReportPrintDeflection=No|ReportPrintDeflection=Yes",
                 "ReportPrintBoltChecks=No|ReportPrintBoltChecks=Yes",
                 "ReportPrintStressChecks=No|ReportPrintStressChecks=Yes",
+                "ReportInputGeometry=No|ReportInputGeometry=Yes",
                 "ReportInputOptions=No|ReportInputOptions=Yes",
                 "CapacityReportOutputType=No Capacity Output|CapacityReportOutputType=Capacity Summary",
                 "CapacityReportOutputType=Capacity Details|CapacityReportOutputType=Capacity Summary",
@@ -966,7 +967,7 @@ ErrorSkip:
         Dim logReader As StreamReader
 
         If generateReport Then
-            finishedPhrase = "CROWN CASTLE REPORT END"  '"ANALYSIS AND DESIGN REPORT END"
+            finishedPhrase = "ANALYSIS AND DESIGN REPORT END" '"CROWN CASTLE REPORT END"
         Else
             finishedPhrase = "DESIGN END"
         End If
