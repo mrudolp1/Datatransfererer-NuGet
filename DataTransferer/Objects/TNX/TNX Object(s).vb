@@ -29,6 +29,21 @@ Partial Public Class tnxModel
         End Get
     End Property
 
+    Public Overrides Property Results As List(Of EDSResult)
+        Get
+            Dim AllResults As List(Of EDSResult) = New List(Of EDSResult)()
+            '' baseStructure.Select(Function(x) x.Results) returns a List(Of List(Of EDSResult)
+            '' baseStructure.Select(Function(x) x.Results).SelectMany(Function (x) x) returns all the EDSResults in one List(Of EDSResult)
+            AllResults.AddRange(Me.geometry.baseStructure.Select(Function(x) x.Results).SelectMany(Function(x) x))
+            AllResults.AddRange(Me.geometry.upperStructure.Select(Function(x) x.Results).SelectMany(Function(x) x))
+            AllResults.AddRange(Me.geometry.guyWires.Select(Function(x) x.Results).SelectMany(Function(x) x))
+            Return AllResults
+        End Get
+        Set(value As List(Of EDSResult))
+            MyBase.Results = value
+        End Set
+    End Property
+
 #End Region
 
 #Region "Define"
