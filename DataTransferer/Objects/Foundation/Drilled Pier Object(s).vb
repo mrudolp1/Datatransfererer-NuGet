@@ -756,49 +756,53 @@ Partial Public Class DrilledPier
             Dim dt As New DataTable
             dt.Columns.Add("result_lkup", GetType(String))
             dt.Columns.Add("rating", GetType(Double))
-
+            Dim rowNum As Integer = 0
+            'Workflow bug 218 
+            'Added wording to separate anchor and base foundations for guyed towers
+            Dim extra As String = ""
             For Each resRow In strDS.Tables("Drilled Pier Result").Rows
-
+                rowNum += 1
+                If rowNum > 1 Then extra = "_ANCHOR"
                 If DBtoNullableInt(resRow.item("local_drilled_pier_id")) = Me.local_drilled_pier_id Then
 
                     Try
-                        IIf(resRow.item("Soil Later (Comp)") IsNot Nothing, dt.Rows.Add("FND_SOIL_LAT_COMP", Math.Round(CType(resRow.item("Soil Later (Comp)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Soil Later (Comp)") IsNot Nothing, dt.Rows.Add("FND_SOIL_LAT_COMP" + extra, Math.Round(CType(resRow.item("Soil Later (Comp)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Soil Later (Uplift)") IsNot Nothing, dt.Rows.Add("FND_SOIL_LAT_UP", Math.Round(CType(resRow.item("Soil Later (Uplift)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Soil Later (Uplift)") IsNot Nothing, dt.Rows.Add("FND_SOIL_LAT_UP" + extra, Math.Round(CType(resRow.item("Soil Later (Uplift)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Soil Vertical (Comp)") IsNot Nothing, dt.Rows.Add("FND_SOIL_VERT_COMP", Math.Round(CType(resRow.item("Soil Vertical (Comp)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Soil Vertical (Comp)") IsNot Nothing, dt.Rows.Add("FND_SOIL_VERT_COMP" + extra, Math.Round(CType(resRow.item("Soil Vertical (Comp)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Soil Vertical (Uplift)") IsNot Nothing, dt.Rows.Add("FND_SOIL_VERT_UP", Math.Round(CType(resRow.item("Soil Vertical (Uplift)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Soil Vertical (Uplift)") IsNot Nothing, dt.Rows.Add("FND_SOIL_VERT_UP" + extra, Math.Round(CType(resRow.item("Soil Vertical (Uplift)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Concrete Flexure (Uplift)") IsNot Nothing, dt.Rows.Add("FND_CON_FLEX_UP", Math.Round(CType(resRow.item("Concrete Flexure (Uplift)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Concrete Flexure (Uplift)") IsNot Nothing, dt.Rows.Add("FND_CON_FLEX_UP" + extra, Math.Round(CType(resRow.item("Concrete Flexure (Uplift)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Concrete Shear (Comp)") IsNot Nothing, dt.Rows.Add("FND_CON_SHEAR_COMP", Math.Round(CType(resRow.item("Concrete Shear (Comp)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Concrete Shear (Comp)") IsNot Nothing, dt.Rows.Add("FND_CON_SHEAR_COMP" + extra, Math.Round(CType(resRow.item("Concrete Shear (Comp)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Concrete Flexure (Comp)") IsNot Nothing, dt.Rows.Add("FND_CON_FLEX_COMP", Math.Round(CType(resRow.item("Concrete Flexure (Comp)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Concrete Flexure (Comp)") IsNot Nothing, dt.Rows.Add("FND_CON_FLEX_COMP" + extra, Math.Round(CType(resRow.item("Concrete Flexure (Comp)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Concrete Shear (Uplift)") IsNot Nothing, dt.Rows.Add("FND_CON_SHEAR_UP", Math.Round(CType(resRow.item("Concrete Shear (Uplift)"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Concrete Shear (Uplift)") IsNot Nothing, dt.Rows.Add("FND_CON_SHEAR_UP" + extra, Math.Round(CType(resRow.item("Concrete Shear (Uplift)"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Soil Max") IsNot Nothing, dt.Rows.Add("FND_SOIL_MAX", Math.Round(CType(resRow.item("Soil Max"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Soil Max") IsNot Nothing, dt.Rows.Add("FND_SOIL_MAX" + extra, Math.Round(CType(resRow.item("Soil Max"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     Try
-                        IIf(resRow.item("Structure Max") IsNot Nothing, dt.Rows.Add("FND_STRC_MAX", Math.Round(CType(resRow.item("Structure Max"), Double), 3) * 100), Nothing)
+                        IIf(resRow.item("Structure Max") IsNot Nothing, dt.Rows.Add("FND_STRC_MAX" + extra, Math.Round(CType(resRow.item("Structure Max"), Double), 3) * 100), Nothing)
                     Catch
                     End Try
                     'dt.Rows.Add("DPSOIL", Math.Round(CType(resRow.item("Soil Rating"), Double), 3))
