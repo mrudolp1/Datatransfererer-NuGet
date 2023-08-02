@@ -261,6 +261,7 @@ Partial Public Class tnxMember
             "       End" & vbCrLf &
             "   INSERT INTO tnx.members_xref(member_id, tnx_id) VALUES(" & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & "," & If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), ParentID.ToString.FormatDBValue) & ")" & vbCrLf &
             "   DELETE FROM " & EDSStructure.SQLQueryTableVar(Me.EDSTableDepth) & "" & vbCrLf &
+            "   SET " & EDSStructure.SQLQueryIDVar(Me.EDSTableDepth) & " = NULL" & vbCrLf &
             "END" & vbCrLf
         Return SQLInsert
     End Function
