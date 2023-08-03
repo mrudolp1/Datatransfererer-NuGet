@@ -10269,7 +10269,7 @@ Partial Public Class tnxModel
                 Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
                 tnxXMLResults.ConverttoEDSResults(geometry)
             Catch ex As Exception
-                Debug.WriteLine($"Failed to deserialize TNX results: \n {ex.Message}")
+                Debug.WriteLine($"Failed to deserialize TNX results: {ex.Message}")
             End Try
         End Using
 
