@@ -50,6 +50,9 @@ Public Class ReportOptions
     'Workflow bug 189 
     'Added RCTInlucded option 
     <DataMember()> Public Property RCTIncluded As Boolean
+    'Workflow bug 10
+    'added Concealment_Tower option
+    <DataMember()> Public Property ConcealmentTower As Boolean
     <DataMember()> Public Property ATTAddendum As Boolean
      <DataMember()> Public Property RemoveCFDAreas As Boolean = True
      <DataMember()> Public Property UseTiltTwistWording As Boolean
@@ -486,6 +489,15 @@ Public Class ReportOptions
             End If
         Catch ex As Exception
             Me.RCTIncluded = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("concealment_tower"), String)) Then
+                Me.ConcealmentTower = CType(SiteCodeDataRow.Item("concealment_tower"), String)
+            Else
+                Me.ConcealmentTower = Nothing
+            End If
+        Catch ex As Exception
+            Me.ConcealmentTower = Nothing
         End Try
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("atat_addendum"), String)) Then
@@ -1360,6 +1372,7 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.GradeBeamsRequired.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.GroutRequired.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.RCTIncluded.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ConcealmentTower.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IBM.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.LicenseOnly.NullableToString.FormatDBValue)
@@ -1421,6 +1434,7 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("grade_beams_required")
         SQLInsertFields = SQLInsertFields.AddtoDBString("grout_required")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rct_included")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("concealment_tower")
         SQLInsertFields = SQLInsertFields.AddtoDBString("IBM")
         SQLInsertFields = SQLInsertFields.AddtoDBString("importance_factor_other_than_1")
         SQLInsertFields = SQLInsertFields.AddtoDBString("license_only")
@@ -1481,6 +1495,7 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("grade_beams_required=" & Me.GradeBeamsRequired.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("grout_required=" & Me.GroutRequired.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rct_included=" & Me.RCTIncluded.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concealment_tower=" & Me.ConcealmentTower.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ibm=" & Me.IBM.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("importance_factor_other_than_1=" & Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("license_only=" & Me.LicenseOnly.NullableToString.FormatDBValue)
