@@ -1,7 +1,6 @@
 ﻿Option Strict On
 
 Imports System.ComponentModel
-Imports System.Data
 Imports System.Runtime.Serialization
 Imports DevExpress.Spreadsheet
 'Imports Microsoft.Office.Interop
@@ -183,35 +182,7 @@ Partial Public Class CCIplate
 
     <DataMember()> Public Property Connections As New List(Of Connection)
     <DataMember()> Public Property CCIplateMaterials As New List(Of CCIplateMaterial)
-    '<DataMember()> Public Property ConnectionResults As New List(Of ConnectionResults)
 
-    '<Category("Connection"), Description(""), DisplayName("Id")>
-    '<DataMember()> Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
-    '<Category("Connection"), Description(""), DisplayName("Bus Unit")>
-    '<DataMember()> Public Property bus_unit() As String
-    '    Get
-    '        Return Me._bus_unit
-    '    End Get
-    '    Set
-    '        Me._bus_unit = Value
-    '    End Set
-    'End Property
-    '<Category("Connection"), Description(""), DisplayName("Structure Id")>
-    '<DataMember()> Public Property structure_id() As String
-    '    Get
-    '        Return Me._structure_id
-    '    End Get
-    '    Set
-    '        Me._structure_id = Value
-    '    End Set
-    'End Property
     <Category("CCIplate"), Description(""), DisplayName("Anchor Rod Spacing")>
     <DataMember()> Public Property anchor_rod_spacing() As Double?
         Get
@@ -293,35 +264,78 @@ Partial Public Class CCIplate
             Me._Structural_105 = Value
         End Set
     End Property
-    '<Category("Connection"), Description(""), DisplayName("Tool Version")>
-    '<DataMember()> Public Property tool_version() As String
-    '    Get
-    '        Return Me._tool_version
-    '    End Get
-    '    Set
-    '        Me._tool_version = Value
-    '    End Set
-    'End Property
-    '<Category("Connection"), Description(""), DisplayName("Modified Person Id")>
-    '<DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("Connection"), Description(""), DisplayName("Process Stage")>
-    '<DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
+
 #End Region
 
 #Region "Constructors"
+    'Overriding the Results field to return a list of all connection, plate, and bolt results (casted as EDSResult objects)
+    Private _results As List(Of EDSResult)
+    <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
+    <DataMember()>
+    Public Overrides Property Results As List(Of EDSResult)
+        Get
+            Dim returnThis As New List(Of EDSResult)()
+
+            'Get all connections from all CCIPlates and order descending
+            Dim AllConnections As List(Of Connection) = Me.Connections _
+            .OrderByDescending(Function(c) c.connection_elevation) _
+            .ToList()
+
+            For Each connection As Connection In AllConnections
+                'BoltGroups
+                For Each boltGroup As BoltGroup In connection.BoltGroups
+                    For Each boltResult As BoltResults In boltGroup.BoltResults
+                        Dim edsResult As New EDSResult()
+                        edsResult.result_lkup = boltResult.result_lkup
+                        edsResult.rating = boltResult.rating
+                        edsResult.modified_person_id = boltResult.modified_person_id
+                        edsResult.process_stage = boltResult.process_stage
+                        edsResult.EDSTableDepth = boltResult.EDSTableDepth + 1
+                        edsResult.EDSTableName = EDSTableName & "_results"
+                        edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                        edsResult.foreign_key = boltResult.Parent.ID
+                        returnThis.Add(edsResult)
+                    Next
+                Next
+
+                'ConnectionResults
+                For Each connectionResult As ConnectionResults In connection.ConnectionResults
+                    Dim edsResult As New EDSResult()
+                    edsResult.result_lkup = connectionResult.result_lkup
+                    edsResult.rating = connectionResult.rating
+                    edsResult.modified_person_id = connectionResult.modified_person_id
+                    edsResult.process_stage = connectionResult.process_stage
+                    edsResult.EDSTableDepth = connectionResult.EDSTableDepth + 1
+                    edsResult.EDSTableName = EDSTableName & "_results"
+                    edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                    edsResult.foreign_key = connectionResult.Parent.ID
+                    returnThis.Add(edsResult)
+                Next
+
+                'PlateDetails
+                For Each plateDetail As PlateDetail In connection.PlateDetails
+                    For Each plateResult As PlateResults In plateDetail.PlateResults
+                        Dim edsResult As New EDSResult()
+                        edsResult.result_lkup = plateResult.result_lkup
+                        edsResult.rating = plateResult.rating
+                        edsResult.modified_person_id = plateResult.modified_person_id
+                        edsResult.process_stage = plateResult.process_stage
+                        edsResult.EDSTableDepth = plateResult.EDSTableDepth + 1
+                        edsResult.EDSTableName = EDSTableName & "_results"
+                        edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                        edsResult.foreign_key = plateResult.Parent.ID
+                        returnThis.Add(edsResult)
+
+                    Next
+                Next
+            Next
+            Return returnThis
+        End Get
+        Set(value As List(Of EDSResult))
+            Me._results = value
+        End Set
+    End Property
+
     Public Sub New()
         'Leave method empty
     End Sub
@@ -1547,108 +1561,108 @@ Partial Public Class CCIplate
                 Next
 
                 Dim polmatflag As Boolean = False
-                    Dim poltempMaterials As New List(Of CCIplateMaterial)
-                    Dim poltempMaterial As New CCIplateMaterial 'Temp material object to determine if already added to Excel
-                    'Pole Geometry (when CCIpole exists)
-                    'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
-                    'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
-                    If Me.ParentStructure.Poles().Count > 0 Then
-                        If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
-                            Dim col, GeoRow As Integer
-                            GeoRow = 18
-                            .Worksheets("Sub Tables (SAPI)").Range("A4").Value = CType(True, Boolean) 'Flags if geometry was produced by CCIpole. If true, geometry won't pull in from tnx file path.
-                            For Each ps As PoleSection In Me.ParentStructure.Poles(0).unreinf_sections
-                                col = 3
-                                If Not IsNothing(ps.length_section) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_section, Double)
-                                col += 1
-                                If Not IsNothing(ps.length_splice) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_splice, Double)
-                                col += 1
-                                If Not IsNothing(ps.num_sides) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.num_sides, Integer)
-                                col += 1
-                                If Not IsNothing(ps.diam_top) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_top, Double)
-                                col += 1
-                                If Not IsNothing(ps.diam_bot) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_bot, Double)
-                                col += 1
-                                If Not IsNothing(ps.wall_thickness) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.wall_thickness, Double)
-                                col += 1
-                                If Not IsNothing(ps.matl_id) Then
-                                    For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
-                                        If matl.matl_id = ps.matl_id Then
-                                            .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
-                                            'Determine if material needs to be added to CCIplate's material database
-                                            'check and see if material matches default materials in CCIplate.
-                                            For Each mrow As CCIplateMaterial In CCIplateMaterials
-                                                If mrow.name = matl.name And mrow.fy_0 = matl.fy And mrow.fu_0 = matl.fu Then
+                Dim poltempMaterials As New List(Of CCIplateMaterial)
+                Dim poltempMaterial As New CCIplateMaterial 'Temp material object to determine if already added to Excel
+                'Pole Geometry (when CCIpole exists)
+                'This is to ensure that the unreinforced geometry is always referenced in CCIplate. 
+                'Sometimes the reinforced geometry is required depending on the type of connection and therefore a warning will be logged when CCIpole exists)
+                If Me.ParentStructure.Poles().Count > 0 Then
+                    If Me.ParentStructure.Poles(0).unreinf_sections.Count > 0 Then
+                        Dim col, GeoRow As Integer
+                        GeoRow = 18
+                        .Worksheets("Sub Tables (SAPI)").Range("A4").Value = CType(True, Boolean) 'Flags if geometry was produced by CCIpole. If true, geometry won't pull in from tnx file path.
+                        For Each ps As PoleSection In Me.ParentStructure.Poles(0).unreinf_sections
+                            col = 3
+                            If Not IsNothing(ps.length_section) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_section, Double)
+                            col += 1
+                            If Not IsNothing(ps.length_splice) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.length_splice, Double)
+                            col += 1
+                            If Not IsNothing(ps.num_sides) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.num_sides, Integer)
+                            col += 1
+                            If Not IsNothing(ps.diam_top) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_top, Double)
+                            col += 1
+                            If Not IsNothing(ps.diam_bot) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.diam_bot, Double)
+                            col += 1
+                            If Not IsNothing(ps.wall_thickness) Then .Worksheets("Main").Cells(GeoRow, col).Value = CType(ps.wall_thickness, Double)
+                            col += 1
+                            If Not IsNothing(ps.matl_id) Then
+                                For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
+                                    If matl.matl_id = ps.matl_id Then
+                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
+                                        'Determine if material needs to be added to CCIplate's material database
+                                        'check and see if material matches default materials in CCIplate.
+                                        For Each mrow As CCIplateMaterial In CCIplateMaterials
+                                            If mrow.name = matl.name And mrow.fy_0 = matl.fy And mrow.fu_0 = matl.fu Then
+                                                polmatflag = True 'don't add to materials database, already exists
+                                                Exit For
+                                            End If
+                                        Next
+                                        If polmatflag = False Then
+                                            'Check and see if material matches temp materials (nondefault associated to site)
+                                            For Each tmrow In tempMaterials
+                                                If tmrow.name = matl.name And tmrow.fy_0 = matl.fy And tmrow.fu_0 = matl.fu Then
                                                     polmatflag = True 'don't add to materials database, already exists
                                                     Exit For
                                                 End If
                                             Next
-                                            If polmatflag = False Then
-                                                'Check and see if material matches temp materials (nondefault associated to site)
-                                                For Each tmrow In tempMaterials
-                                                    If tmrow.name = matl.name And tmrow.fy_0 = matl.fy And tmrow.fu_0 = matl.fu Then
-                                                        polmatflag = True 'don't add to materials database, already exists
-                                                        Exit For
-                                                    End If
-                                                Next
-                                            End If
-                                            If polmatflag = False Then
-                                                'check and see if ccipole material already added
-                                                For Each ptmrow In poltempMaterials
-                                                    If ptmrow.ID = ps.matl_id Then
-                                                        polmatflag = True 'don't add to excel
-                                                        Exit For
-                                                    End If
-                                                Next
-                                            End If
-                                            'If false, add to materials database. 
-                                            If polmatflag = False Then
-                                                poltempMaterial = New CCIplateMaterial(matl.matl_id)
-                                                poltempMaterials.Add(poltempMaterial)
-                                                If Not IsNothing(matl.name) Then
-                                                    .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String)
+                                        End If
+                                        If polmatflag = False Then
+                                            'check and see if ccipole material already added
+                                            For Each ptmrow In poltempMaterials
+                                                If ptmrow.ID = ps.matl_id Then
+                                                    polmatflag = True 'don't add to excel
+                                                    Exit For
                                                 End If
-                                                If Not IsNothing(matl.fy) Then
-                                                    .Worksheets("Materials").Range("C" & MatRow).Value = CType(matl.fy, Double)
-                                                Else
-                                                    .Worksheets("Materials").Range("C" & MatRow).ClearContents
-                                                End If
-                                                If Not IsNothing(matl.fu) Then
-                                                    .Worksheets("Materials").Range("K" & MatRow).Value = CType(matl.fu, Double)
-                                                Else
-                                                    .Worksheets("Materials").Range("K" & MatRow).ClearContents
-                                                End If
-                                                MatRow += 1
+                                            Next
+                                        End If
+                                        'If false, add to materials database. 
+                                        If polmatflag = False Then
+                                            poltempMaterial = New CCIplateMaterial(matl.matl_id)
+                                            poltempMaterials.Add(poltempMaterial)
+                                            If Not IsNothing(matl.name) Then
+                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String)
                                             End If
-
-                                            Exit For
+                                            If Not IsNothing(matl.fy) Then
+                                                .Worksheets("Materials").Range("C" & MatRow).Value = CType(matl.fy, Double)
+                                            Else
+                                                .Worksheets("Materials").Range("C" & MatRow).ClearContents
+                                            End If
+                                            If Not IsNothing(matl.fu) Then
+                                                .Worksheets("Materials").Range("K" & MatRow).Value = CType(matl.fu, Double)
+                                            Else
+                                                .Worksheets("Materials").Range("K" & MatRow).ClearContents
+                                            End If
+                                            MatRow += 1
                                         End If
 
-                                    Next
-                                End If
+                                        Exit For
+                                    End If
 
-                                polmatflag = False 'reset flag
-                                GeoRow += 1
-                            Next
-                        End If
+                                Next
+                            End If
+
+                            polmatflag = False 'reset flag
+                            GeoRow += 1
+                        Next
                     End If
-
-                    'Update named ranges so dropdown seletions work correctly
-                    'Materials
-                    Dim qty, polqty As Integer
-                    qty = tempMaterials.Count
-                    polqty = poltempMaterials.Count
-                    'Dim definedName As DefinedName = .DefinedNames.Add("Materials", "Materials!$B$5:$D$" & qty + 39)
-                    'Dim definedName As DefinedName = .DefinedNames.
-                    ''Dim definedName As DefinedName = .DefinedNames.scope()
-                    'Dim rangeC2D3 As CellRange = .Range(definedName.Name)
-                    ''IWorkbook.DefinedNames
-
-                    Dim definedName As DefinedName = .DefinedNames.GetDefinedName("Materials")
-                    definedName.RefersTo = "Materials!$B$5:$B$" & qty + polqty + 39
-
-
                 End If
+
+                'Update named ranges so dropdown seletions work correctly
+                'Materials
+                Dim qty, polqty As Integer
+                qty = tempMaterials.Count
+                polqty = poltempMaterials.Count
+                'Dim definedName As DefinedName = .DefinedNames.Add("Materials", "Materials!$B$5:$D$" & qty + 39)
+                'Dim definedName As DefinedName = .DefinedNames.
+                ''Dim definedName As DefinedName = .DefinedNames.scope()
+                'Dim rangeC2D3 As CellRange = .Range(definedName.Name)
+                ''IWorkbook.DefinedNames
+
+                Dim definedName As DefinedName = .DefinedNames.GetDefinedName("Materials")
+                definedName.RefersTo = "Materials!$B$5:$B$" & qty + polqty + 39
+
+
+            End If
 
 
 

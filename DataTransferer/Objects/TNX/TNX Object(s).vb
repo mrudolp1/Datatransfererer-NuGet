@@ -8771,7 +8771,7 @@ Partial Public Class tnxModel
             Me.otherLines.Add(New String() {"[SI Units]", ""}) 'Missing
             Me.otherLines.Add(New String() {"[Codes]", ""}) 'Missing
             Me.otherLines.Add(New String() {"[Application]", ""}) 'Missing
-            'Me.otherLines.Add(New String() {"[Databases]", ""}) 'Missing (Inside of Application
+            Me.otherLines.Add(New String() {"[Databases]", ""}) 'Missing (Inside of Application
             Me.otherLines.Add(New String() {"[Structure]", ""})
             Me.otherLines.Add(New String() {"NumAntennaRecs", ""})
             Me.otherLines.Add(New String() {"NumTowerRecs", ""})
@@ -8876,16 +8876,17 @@ Partial Public Class tnxModel
                     newERIList.Add("SteelCode=" & Me.code.design.DesignCode)
                     newERIList.AddRange(defaults.CodeValues)
 #End Region
-#Region "Materials"
-                Case line(0).Equals("[APPLICATION]")
-                    newERIList.Add(line(0))
-                    newERIList.Add("[DATABASE]")
-                    For Each mat In database.materials
-                        newERIList.Add(IIf(mat.IsBolt, "BoltMatFile=", "MembermatFile=") & mat.MemberMatFile)
-                        newERIList.Add("MatName=" & mat.MatName)
-                        newERIList.Add("MatValues=" & mat.MatValues)
-                    Next
-#End Region
+'Code below didn't pull in materials. maybe case sensitive? - added materials under [Databases]
+'#Region "Materials"
+'                Case line(0).Equals("[APPLICATION]")
+'                    newERIList.Add(line(0))
+'                    newERIList.Add("[DATABASE]")
+'                    For Each mat In database.materials
+'                        newERIList.Add(IIf(mat.IsBolt, "BoltMatFile=", "MembermatFile=") & mat.MemberMatFile)
+'                        newERIList.Add("MatName=" & mat.MatName)
+'                        newERIList.Add("MatValues=" & mat.MatValues)
+'                    Next
+'#End Region
 #Region "[STRUCTURE]"
                 Case line(0).Equals("[Structure]")
 
@@ -10208,6 +10209,29 @@ Partial Public Class tnxModel
                     newERIList.Add("#description")
                     newERIList.Add("#emod poiss thermal mden wden")
 #End Region
+
+#Region "[Databases]"
+                Case line(0).Equals("[Databases]")
+                    newERIList.Add(line(0))
+                    For Each memb In database.members
+                        newERIList.Add("File=" & memb.File)
+                        newERIList.Add("USName=" & memb.USName)
+                        newERIList.Add("SIName=" & memb.SIName)
+                        newERIList.Add("Values=" & memb.Values)
+                    Next
+                    For Each mat In database.materials 'Member materials
+                        newERIList.Add(IIf(mat.IsBolt, "BoltMatFile=", "MembermatFile=") & mat.MemberMatFile)
+                        newERIList.Add("MatName=" & mat.MatName)
+                        newERIList.Add("MatValues=" & mat.MatValues)
+                    Next
+                    For Each mat In database.bolts 'Bolt materials
+                        newERIList.Add(IIf(mat.IsBolt, "BoltMatFile=", "MembermatFile=") & mat.MemberMatFile)
+                        newERIList.Add("MatName=" & mat.MatName)
+                        newERIList.Add("MatValues=" & mat.MatValues)
+                    Next
+
+#End Region
+
 #Region "One liners"
                 Case Else '[EndCHRONOS], [EndOverwrite], [CHRONOS], [End Structure], [End Application]
                     If line.Count = 1 Then
@@ -10220,6 +10244,7 @@ Partial Public Class tnxModel
                         End If
                     End If
 #End Region
+
             End Select
         Next
 
