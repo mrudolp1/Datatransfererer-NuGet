@@ -10240,8 +10240,12 @@ Partial Public Class tnxModel
 
         Using resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
             Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
-            Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
-            tnxXMLResults.ConverttoEDSResults(geometry)
+            Try
+                Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
+                tnxXMLResults.ConverttoEDSResults(geometry)
+            Catch ex As Exception
+                Debug.WriteLine($"Failed to deserialize TNX results: \n {ex.Message}")
+            End Try
         End Using
 
 
