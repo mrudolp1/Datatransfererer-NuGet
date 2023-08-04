@@ -291,8 +291,8 @@ Partial Public Class CCIplate
                         edsResult.modified_person_id = boltResult.modified_person_id
                         edsResult.process_stage = boltResult.process_stage
                         edsResult.EDSTableDepth = boltResult.EDSTableDepth + 1
-                        edsResult.EDSTableName = EDSTableName & "_results"
-                        edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                        edsResult.EDSTableName = "conn.bolt" & "_results"
+                        edsResult.ForeignKeyName = "bolt" & "_id"
                         edsResult.foreign_key = boltResult.Parent.ID
                         returnThis.Add(edsResult)
                     Next
@@ -306,8 +306,8 @@ Partial Public Class CCIplate
                     edsResult.modified_person_id = connectionResult.modified_person_id
                     edsResult.process_stage = connectionResult.process_stage
                     edsResult.EDSTableDepth = connectionResult.EDSTableDepth + 1
-                    edsResult.EDSTableName = EDSTableName & "_results"
-                    edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                    edsResult.EDSTableName = "conn.connection" & "_results"
+                    edsResult.ForeignKeyName = "plate" & "_id"
                     edsResult.foreign_key = connectionResult.Parent.ID
                     returnThis.Add(edsResult)
                 Next
@@ -321,8 +321,8 @@ Partial Public Class CCIplate
                         edsResult.modified_person_id = plateResult.modified_person_id
                         edsResult.process_stage = plateResult.process_stage
                         edsResult.EDSTableDepth = plateResult.EDSTableDepth + 1
-                        edsResult.EDSTableName = EDSTableName & "_results"
-                        edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                        edsResult.EDSTableName = "conn.plate" & "_results"
+                        edsResult.ForeignKeyName = "plate_details" & "_id"
                         edsResult.foreign_key = plateResult.Parent.ID
                         returnThis.Add(edsResult)
 
