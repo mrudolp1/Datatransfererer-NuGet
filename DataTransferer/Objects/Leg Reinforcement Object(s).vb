@@ -142,70 +142,11 @@ Partial Public Class LegReinforcement
 
 #Region "Define"
 
-    'Private _ID As Integer? 'Defined in EDSObject
-    'Private _tool_version As String 'Defined in EDSExcelObject
-    'Private _bus_unit As Integer? 'Defined in EDSObject
-    'Private _structure_id As String 'Defined in EDSObject
-    'Private _modified_person_id As Integer? 'Defined in EDSExcelObject
-    'Private _process_stage As String 'Defined in EDSExcelObject
     Private _Structural_105 As Boolean?
 
     <DataMember()> Public Property LegReinforcementDetails As New List(Of LegReinforcementDetail)
 
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Id")>
-    ' <DataMember()> Public Property ID() As Integer?
-    '    Get
-    '        Return Me._ID
-    '    End Get
-    '    Set
-    '        Me._ID = Value
-    '    End Set
-    'End Property
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Tool Version")>
-    ' <DataMember()> Public Property tool_version() As String
-    '    Get
-    '        Return Me._tool_version
-    '    End Get
-    '    Set
-    '        Me._tool_version = Value
-    '    End Set
-    'End Property
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Bus Unit")>
-    ' <DataMember()> Public Property bus_unit() As Integer?
-    '    Get
-    '        Return Me._bus_unit
-    '    End Get
-    '    Set
-    '        Me._bus_unit = Value
-    '    End Set
-    'End Property
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Structure Id")>
-    ' <DataMember()> Public Property structure_id() As String
-    '    Get
-    '        Return Me._structure_id
-    '    End Get
-    '    Set
-    '        Me._structure_id = Value
-    '    End Set
-    'End Property
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Modified Person Id")>
-    ' <DataMember()> Public Property modified_person_id() As Integer?
-    '    Get
-    '        Return Me._modified_person_id
-    '    End Get
-    '    Set
-    '        Me._modified_person_id = Value
-    '    End Set
-    'End Property
-    '<Category("Leg Reinforcements"), Description(""), DisplayName("Process Stage")>
-    ' <DataMember()> Public Property process_stage() As String
-    '    Get
-    '        Return Me._process_stage
-    '    End Get
-    '    Set
-    '        Me._process_stage = Value
-    '    End Set
-    'End Property
+
     <Category("Leg Reinforcements"), Description(""), DisplayName("Structural 105")>
     <DataMember()> Public Property Structural_105() As Boolean?
         Get
@@ -271,28 +212,6 @@ Partial Public Class LegReinforcement
                 LegReinforcementDetails.Add(lrDetails)
                 'Results.Add(lrDetails)
             End If
-
-            '***way implemented in CCIplate below***
-            'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
-            '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
-            '        lrResult1 = New LegReinforcementResults(lrrrow, EDStruefalse, Me)
-            '        'lrResult1 = New LegReinforcementResults(lrrrow, EDStruefalse, LegReinforcementDetails)
-            '        If If(EDStruefalse, False, lrResult1.local_id = lrDetails.local_id) Then
-            '            lrDetails.LegReinforcementResults.Add(lrResult1)
-            '            'lrDetails.Results.Add(lrResult1)
-            '        End If
-            '    Next
-            'End If
-            ''***
-            'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
-            '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
-            '        lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me)
-            '        If If(EDStruefalse, False, lrResult.local_id = lrDetails.local_id) Then
-            '            'lrDetails.LegReinforcementResults.Add(lrResult)
-            '            lrDetails.Results.Add(lrResult)
-            '        End If
-            '    Next
-            'End If
         Next
 
     End Sub
@@ -689,7 +608,6 @@ Partial Public Class LegReinforcement
     Public Overrides Function SQLInsertValues() As String
         SQLInsertValues = ""
 
-        'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ID.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.Version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bus_unit.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.structure_id.ToString.FormatDBValue)
@@ -703,7 +621,6 @@ Partial Public Class LegReinforcement
     Public Overrides Function SQLInsertFields() As String
         SQLInsertFields = ""
 
-        'SQLInsertFields = SQLInsertFields.AddtoDBString("ID")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("bus_unit")
         SQLInsertFields = SQLInsertFields.AddtoDBString("structure_id")
@@ -717,7 +634,6 @@ Partial Public Class LegReinforcement
     Public Overrides Function SQLUpdateFieldsandValues() As String
         SQLUpdateFieldsandValues = ""
 
-        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ID = " & Me.ID.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.Version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bus_unit = " & Me.bus_unit.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("structure_id = " & Me.structure_id.ToString.FormatDBValue)
@@ -849,8 +765,6 @@ Partial Public Class LegReinforcementDetail
 #End Region
 
 #Region "Define"
-    'Private _local_id As Integer?
-    Private _ID As Integer?
     Private _leg_reinforcement_id As Integer?
     Private _leg_load_time_mod_option As Boolean?
     Private _end_connection_type As String
@@ -902,27 +816,6 @@ Partial Public Class LegReinforcementDetail
     Private _top_elev As Double?
     Private _bot_elev As Double?
 
-    ' <DataMember()> Public Property LegReinforcementResults As New List(Of LegReinforcementResults)
-    ' <DataMember()> Public Property LegReinforcementResults2 As New List(Of LegReinforcementResults2)
-
-    '<Category("Leg Reinforcement Details"), Description(""), DisplayName("Local Id")>
-    ' <DataMember()> Public Property local_id() As Integer?
-    '    Get
-    '        Return Me._local_id
-    '    End Get
-    '    Set
-    '        Me._local_id = Value
-    '    End Set
-    'End Property
-    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Id")>
-    <DataMember()> Public Property ID() As Integer?
-        Get
-            Return Me._ID
-        End Get
-        Set
-            Me._ID = Value
-        End Set
-    End Property
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Id")>
     <DataMember()> Public Property leg_reinforcement_id() As Integer?
         Get
@@ -1446,21 +1339,6 @@ Partial Public Class LegReinforcementDetail
         Me.top_elev = DBtoNullableDbl(dr.Item("top_elev"))
         Me.bot_elev = DBtoNullableDbl(dr.Item("bot_elev"))
 
-        'Dim lrResult As New LegReinforcementResults
-        ''Dim lrResult As New LegReinforcementResults2 'results 2
-
-        'If IsSomething(ds.Tables("Leg Reinforcement Results")) Then
-        '    For Each lrrrow As DataRow In ds.Tables("Leg Reinforcement Results").Rows
-        '        lrResult = New LegReinforcementResults(lrrrow, EDStruefalse, Me) 'results1
-        '        'lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me) 'results2
-        '        If If(EDStruefalse, False, lrResult.local_id = Me.local_id) Then
-        '            'lrResult = New LegReinforcementResults2(lrrrow, EDStruefalse, Me)
-        '            'LegReinforcementResults2.Add(lrResult1)
-        '            'Me.Results.Add(lrResult)
-        '            Me.Results.Add(New EDSResult(lrrrow, Me))
-        '        End If
-        '    Next
-        'End If
 
         'only store when populating from an Excel sheet
         If EDStruefalse = False Then
@@ -1469,6 +1347,12 @@ Partial Public Class LegReinforcementDetail
                 If local_id = Me.local_id Then
                     Me.Results.Add(New EDSResult(resrow, Me))
                 End If
+            Next
+
+            'Needed to add this in because it was simpler that editing the SQL database. 
+            'The results table is not named appropriately based on how the EDSresult is constructed. 
+            For Each res In Me.Results
+                res.ForeignKeyName = "memb_leg_reinforcement_details_id"
             Next
         End If
 

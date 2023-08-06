@@ -346,6 +346,36 @@ Partial Public Class Pole
 #End Region
 
 #Region "Constructors"
+
+    'Overriding the Results field to return a list of all connection, plate, and bolt results (casted as EDSResult objects)
+    Private _results As List(Of EDSResult)
+    <Category("Ratio"), Description("This rating takes into account TIA-222-H Annex S Section 15.5 when applicable."), DisplayName("Rating")>
+    <DataMember()>
+    Public Overrides Property Results As List(Of EDSResult)
+        Get
+            Dim returnThis As New List(Of EDSResult)()
+
+            'Casting the PoleReinfResults objects in reinf_section_results to EDSResult objects and placing
+            'them in Results. This is for consistency across tools.
+            For Each result As PoleReinfResults In Me.reinf_section_results
+                Dim edsResult As New EDSResult()
+                edsResult.result_lkup = result.result_lkup
+                edsResult.rating = result.rating
+                edsResult.modified_person_id = result.modified_person_id
+                edsResult.process_stage = result.process_stage
+                edsResult.EDSTableDepth = result.EDSTableDepth + 1
+                edsResult.EDSTableName = EDSTableName & "_results"
+                edsResult.ForeignKeyName = String.Concat(EDSTableName.Split("."c).Last) & "_id"
+                edsResult.foreign_key = result.Parent.ID
+                returnThis.Add(edsResult)
+            Next
+
+            Return returnThis
+        End Get
+        Set(value As List(Of EDSResult))
+            Me._results = value
+        End Set
+    End Property
     Public Sub New()
         'Leave method empty
     End Sub

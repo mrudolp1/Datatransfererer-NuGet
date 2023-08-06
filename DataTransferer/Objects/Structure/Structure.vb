@@ -494,10 +494,10 @@ Partial Public Class EDSStructure
                 End If
                 Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
             Else
-                Return Nothing
+                Return New Tuple(Of Boolean, DataTable)(False, Nothing)
             End If
         Else
-            Return New Tuple(Of Boolean, DataTable)(Nothing, Nothing)
+            Return New Tuple(Of Boolean, DataTable)(False, Nothing)
         End If
     End Function
 #End Region
