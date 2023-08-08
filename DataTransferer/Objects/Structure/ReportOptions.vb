@@ -53,6 +53,13 @@ Public Class ReportOptions
     'Workflow bug 10
     'added Concealment_Tower option
     <DataMember()> Public Property ConcealmentTower As Boolean
+    'Workflow bug 138
+    'added mapped_by 
+    <DataMember()> Public Property MappedBy As String
+    'Workflow bug 204
+    'Added statewording option
+    <DataMember()> Public Property UseStateWording As Boolean
+
     <DataMember()> Public Property ATTAddendum As Boolean
      <DataMember()> Public Property RemoveCFDAreas As Boolean = True
      <DataMember()> Public Property UseTiltTwistWording As Boolean
@@ -490,6 +497,26 @@ Public Class ReportOptions
         Catch ex As Exception
             Me.RCTIncluded = Nothing
         End Try
+
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("designed_by"), String)) Then
+                Me.MappedBy = CType(SiteCodeDataRow.Item("designed_by"), String)
+            Else
+                Me.MappedBy = Nothing
+            End If
+        Catch ex As Exception
+            Me.MappedBy = Nothing
+        End Try
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("use_state_wording"), String)) Then
+                Me.UseStateWording = CType(SiteCodeDataRow.Item("use_state_wording"), String)
+            Else
+                Me.UseStateWording = Nothing
+            End If
+        Catch ex As Exception
+            Me.UseStateWording = Nothing
+        End Try
+
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("concealment_tower"), String)) Then
                 Me.ConcealmentTower = CType(SiteCodeDataRow.Item("concealment_tower"), String)
@@ -1372,6 +1399,10 @@ Public Class ReportOptions
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.GradeBeamsRequired.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.GroutRequired.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.RCTIncluded.NullableToString.FormatDBValue)
+
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.MappedBy.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.UseStateWording.NullableToString.FormatDBValue)
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ConcealmentTower.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IBM.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
@@ -1434,6 +1465,10 @@ Public Class ReportOptions
         SQLInsertFields = SQLInsertFields.AddtoDBString("grade_beams_required")
         SQLInsertFields = SQLInsertFields.AddtoDBString("grout_required")
         SQLInsertFields = SQLInsertFields.AddtoDBString("rct_included")
+
+        SQLInsertFields = SQLInsertFields.AddtoDBString("mapped_by")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("use_state_wording")
+
         SQLInsertFields = SQLInsertFields.AddtoDBString("concealment_tower")
         SQLInsertFields = SQLInsertFields.AddtoDBString("IBM")
         SQLInsertFields = SQLInsertFields.AddtoDBString("importance_factor_other_than_1")
@@ -1495,6 +1530,10 @@ Public Class ReportOptions
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("grade_beams_required=" & Me.GradeBeamsRequired.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("grout_required=" & Me.GroutRequired.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rct_included=" & Me.RCTIncluded.NullableToString.FormatDBValue)
+
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("mapped_by=" & Me.MappedBy.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("use_state_wording=" & Me.UseStateWording.NullableToString.FormatDBValue)
+
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("concealment_tower=" & Me.ConcealmentTower.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ibm=" & Me.IBM.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("importance_factor_other_than_1=" & Me.ImportanceFactorOtherThan1.NullableToString.FormatDBValue)
