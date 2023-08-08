@@ -231,7 +231,7 @@ Partial Public Class DrilledPierFoundation
                     Else
                         If Me.DrilledPiers.Count > 1 Then
                             structure_type = "Guyed (Base)"
-                            .Range("D8").Value = "Guyed (Base)"
+                            .Range("D8").Value = "Base"
                         Else
                             structure_type = "Guyed (Anchor)"
                         End If
@@ -330,7 +330,7 @@ Partial Public Class DrilledPierFoundation
                 'Sections
                 Dim rebCountAdj As Integer = 0
                 For Each section In drilledPier.PierProfile.Sections
-                    Dim secAdj As Integer = section.local_section_id - 5 * (drilledPier.local_pier_profile_id - 1) - 1
+                    Dim secAdj As Integer = section.local_section_id - 5 * (1 - 1) - 1 ' '1-1 --> drilledPier.local_pier_profile_id - 1
 
                     If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
                     If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + bump15 * secAdj, myCol).Value = CType(section.pier_diameter, Double)
@@ -347,7 +347,7 @@ Partial Public Class DrilledPierFoundation
 
                     'Rebar
                     For Each rebar In section.Rebar
-                        Select Case rebar.local_rebar_id - 15 * (drilledPier.local_pier_profile_id - 1)
+                        Select Case rebar.local_rebar_id - 15 * (1 - 1) '1-1 --> drilledPier.local_pier_profile_id - 1
                             Case 1
                                 If Not IsNothing(rebar.longitudinal_rebar_quantity) Then .Cells(pierProfileRow + 21 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_quantity, Integer)
                                 If Not IsNothing(rebar.longitudinal_rebar_size) Then .Cells(pierProfileRow + 22 + bump15 * secAdj, myCol).Value = CType(rebar.longitudinal_rebar_size, Integer)
