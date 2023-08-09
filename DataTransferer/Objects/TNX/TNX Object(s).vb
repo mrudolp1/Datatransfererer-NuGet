@@ -9088,7 +9088,9 @@ Partial Public Class tnxModel
                     newERIList.Add("UseCodeGuySF=" & trueFalseYesNo(Me.code.design.UseCodeGuySF))
                     newERIList.Add("GuySF=" & Me.code.design.GuySF)
                     newERIList.Add("UseTIA222H_AnnexS=" & trueFalseYesNo(Me.code.design.UseTIA222H_AnnexS))
-                    newERIList.Add("TIA_222_H_AnnexS_Ratio=" & Me.code.design.TIA_222_H_AnnexS_Ratio)
+                    If Not IsNothing(Me.code.design.TIA_222_H_AnnexS_Ratio) Then 'Sometimes this value stores as null in EDS which causes errors if populated in TNX for subsequent SAs
+                        newERIList.Add("TIA_222_H_AnnexS_Ratio=" & Me.code.design.TIA_222_H_AnnexS_Ratio)
+                    End If
                     newERIList.Add("PrintBitmaps=" & trueFalseYesNo(Me.code.design.PrintBitmaps))
 #End Region
 #Region "Code - Wind"
@@ -10265,12 +10267,8 @@ Partial Public Class tnxModel
 
         Using resultsReader As XmlReader = XmlReader.Create(tnxResultXMLPath)
             Dim tnxResultSerializer As New XmlSerializer(GetType(tnxTowerOutput))
-            Try
-                Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
-                tnxXMLResults.ConverttoEDSResults(geometry)
-            Catch ex As Exception
-                Debug.WriteLine($"Failed to deserialize TNX results: {ex.Message}")
-            End Try
+            Dim tnxXMLResults As tnxTowerOutput = tnxResultSerializer.Deserialize(resultsReader)
+            tnxXMLResults.ConverttoEDSResults(geometry)
         End Using
 
 
