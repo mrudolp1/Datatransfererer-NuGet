@@ -953,6 +953,10 @@ Partial Public Class UnitBase
                 .Worksheets("Input").Range("C3").Value = CType(Me.bus_unit, Integer)
             End If
 
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.site_name) Then
+                .Worksheets("Input").Range("C4").Value = CType(Me.ParentStructure?.structureCodeCriteria?.site_name, String)
+            End If
+
             .Worksheets("Input").Range("TIA_Input").Value = MyTIA()
 
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
