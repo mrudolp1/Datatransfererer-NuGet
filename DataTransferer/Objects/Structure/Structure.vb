@@ -46,6 +46,16 @@ Partial Public Class EDSStructure
     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
 
+    Public Event MessageLogged As EventHandler(Of MessageLoggedEventArgs)
+
+    Protected Overridable Sub OnMessageLogged(logMessage As LogMessage)
+        If MessageLoggedEvent IsNot Nothing Then ''If the event has a handler this will be something.
+            RaiseEvent MessageLogged(Me, New MessageLoggedEventArgs(logMessage))
+        End If
+    End Sub
+
+    Public Delegate Sub MaestroProgressHandler(logMessage As LogMessage)
+
     Public Overrides Sub Clear()
         Me.CCIplates.Clear()
         Me.PierandPads.Clear()
