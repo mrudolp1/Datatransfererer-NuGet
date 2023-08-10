@@ -544,20 +544,20 @@ ErrorSkip:
                     End If
                 End If
                 WriteLineLogLine("INFO | Tool: " & toolFileName)
-                    WriteLineLogLine("INFO | Running macro: " & bigMac)
+                WriteLineLogLine("INFO | Running macro: " & bigMac)
 
-                    If Not IsNothing(tnxFilePath) Then
-                        logString = xlApp.Run(bigMac, tnxFilePath)
-                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
-                    Else
-                        WriteLineLogLine("WARNING | No TNX file path in structure..")
-                        logString = xlApp.Run(bigMac)
-                        WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
-                    End If
-
-                    xlWorkBook.Save()
+                If Not IsNothing(tnxFilePath) Then
+                    logString = xlApp.Run(bigMac, tnxFilePath)
+                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
                 Else
-                    errorMessage = $"ERROR | {excelPath} path not found!"
+                    WriteLineLogLine("WARNING | No TNX file path in structure..")
+                    logString = xlApp.Run(bigMac)
+                    WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim)
+                End If
+
+                xlWorkBook.Save()
+            Else
+                errorMessage = $"ERROR | {excelPath} path not found!"
                 WriteLineLogLine(errorMessage)
                 Return "Fail"
             End If
@@ -759,6 +759,9 @@ ErrorSkip:
         Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
 
         Dim tnxProdVersion As String = ""
+
+        Dim tnxSuccess As Boolean = False
+
         Try
             Dim cmdProcess As New Process
 
@@ -774,6 +777,13 @@ ErrorSkip:
                 Return False
             End If
 
+            'see whether arch notation is used or not
+            If ArchNotReg() Then
+                WriteLineLogLine("INFO | Architectural notation is set to 'Yes'")
+            Else
+                WriteLineLogLine("INFO | Architectural notation is set to 'No'")
+            End If
+
             Try
                 Me.tnx.settings.projectInfo.VersionUsed = tnxProdVersion
             Catch ex As Exception
@@ -781,75 +791,111 @@ ErrorSkip:
             End Try
 
             Try
-                    'delete tnx log file if it exist
-                    If File.Exists(tnxLogFilePath) Then
-                        File.Delete(tnxLogFilePath)
-                    End If
-                Catch ex As Exception
-                    WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
-                    Return False
-                End Try
-                'Need to determine if word is open prior to running TNX
-                'If it is open then it shouldn't be killed when closing the RTF
-                'If it isn't open before tnx then it should be killed
-                'Dim isWordOpen As Boolean
-                'Try
-                '    Dim word As Object = GetObject(, "Word.Application")
-                '    isWordOpen = True
-                'Catch ex As Exception
-                '    isWordOpen = False
-                'End Try
-
-                'Make sure ReportPrintReactions=Yes in eri file
-                If Not SetEriOutputVariables(tnxFilePath) Then
-                    WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables")
+                'delete tnx log file if it exist
+                If File.Exists(tnxLogFilePath) Then
+                    File.Delete(tnxLogFilePath)
                 End If
+            Catch ex As Exception
+                WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
+                Return False
+            End Try
+            'Need to determine if word is open prior to running TNX
+            'If it is open then it shouldn't be killed when closing the RTF
+            'If it isn't open before tnx then it should be killed
+            'Dim isWordOpen As Boolean
+            'Try
+            '    Dim word As Object = GetObject(, "Word.Application")
+            '    isWordOpen = True
+            'Catch ex As Exception
+            '    isWordOpen = False
+            'End Try
 
-                With cmdProcess
+            'Make sure ReportPrintReactions=Yes in eri file
+            If Not SetEriOutputVariables(tnxFilePath) Then
+                WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables")
+            End If
+
+            With cmdProcess
                 .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
                 With .StartInfo
-                        .CreateNoWindow = True
-                        .UseShellExecute = False
-                        .RedirectStandardOutput = True
+                    .CreateNoWindow = True
+                    .UseShellExecute = False
+                    .RedirectStandardOutput = True
 
-                    End With
-                    .Start()
+                End With
+                .Start()
 
-                    CheckLogFileForFinished(tnxLogFilePath, 300000, True)
-                    Try
-                        WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
-                        .Kill()
-                        WriteLineLogLine("INFO | TNX termination complete..")
-                    Catch ex As Exception
-                        WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
-                    Finally
-                        'Try
-                        '    'For the time being the RTF file still opens 
-                        '    'This needs to be closed before returning TRUE
-                        '    CloseRTF(tnxFilePath, isWordOpen)
-                        'Catch ex As Exception
-                        '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
-                        'End Try
-                    End Try
+                If CheckLogFileForFinished(tnxLogFilePath, 300000, True) Then
+                    tnxSuccess = True
+                Else
+                    tnxSuccess = False
+                End If
 
-                    '.WaitForInputIdle()
-                    '.WaitForExit()
-                End With ' Read output to a string variable.
-                Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
+                Try
+                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..")
+                    .Kill()
+                    WriteLineLogLine("INFO | TNX termination complete..")
+                Catch ex As Exception
+                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                Finally
+                    'Try
+                    '    'For the time being the RTF file still opens 
+                    '    'This needs to be closed before returning TRUE
+                    '    CloseRTF(tnxFilePath, isWordOpen)
+                    'Catch ex As Exception
+                    '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
+                    'End Try
+                End Try
+
+                '.WaitForInputIdle()
+                '.WaitForExit()
+            End With ' Read output to a string variable.
+            Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
-                'WriteLineLogLine("INFO | " & ipconfigOutput)
-                'For the time being the RTF file still opens 
-                'This needs to be closed before returning TRUE
-                'I put this around a try catch in cases where an ERI is run and files already exist. 
+            'WriteLineLogLine("INFO | " & ipconfigOutput)
+            'For the time being the RTF file still opens 
+            'This needs to be closed before returning TRUE
+            'I put this around a try catch in cases where an ERI is run and files already exist. 
 
-
+            If tnxSuccess Then
                 Return True
+            Else
+                Return False
+            End If
 
-            Catch ex As Exception
-                WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
             Return False
         End Try
+    End Function
+    ''' <summary>
+    ''' Checks registry settings to see if Architectural Notation is set
+    ''' Returns True if Yes
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function ArchNotReg() As Boolean
+        Dim tnxRegPath As String = "HKEY_CURRENT_USER\SOFTWARE\TNX\tnxTower\US Units"
+
+        Dim archNot As Object
+
+        Try
+            archNot = My.Computer.Registry.GetValue(tnxRegPath, "Architectural", Nothing)
+        Catch ex As Exception
+            WriteLineLogLine("ERROR | Exception getting Archetectural Notation setting: " & ex.Message)
+
+            Return False
+        End Try
+
+        If archNot.toupper.contains("Y") Then
+            Return True
+        ElseIf archNot.toupper.contains("N") Then
+            Return False
+        Else
+            WriteLineLogLine("WARNING | Could not determine Architectural Notation value: " & archNot.ToString)
+            Return False
+        End If
+
     End Function
 
     ''' <summary>
