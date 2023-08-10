@@ -2816,7 +2816,7 @@ Public Class DrilledPierResult
 
         Me.foreign_key = Parent?.ID
         Me.result_lkup = DBtoStr(resultDr.Item("result_lkup"))
-        Me.rating = DBtoNullableDbl(resultDr.Item("rating"))
+        Me.rating = DBtoNullableDbl(resultDr.Item("rating"), 10)
         Me.ForeignKeyName = "drilled_pier_id"
         Me.EDSTableDepth = 0
     End Sub
@@ -2827,7 +2827,7 @@ Public Class DrilledPierResult
         sqlValues = sqlValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(If(parentID Is Nothing, "@TopLevel", Me.foreign_key.ToString.FormatDBValue))
         sqlValues = sqlValues.AddtoDBString(Me.result_lkup.FormatDBValue)
-        sqlValues = sqlValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        sqlValues = sqlValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
