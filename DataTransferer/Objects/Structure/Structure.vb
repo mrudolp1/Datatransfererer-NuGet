@@ -500,6 +500,18 @@ Partial Public Class EDSStructure
             Return New Tuple(Of Boolean, DataTable)(False, Nothing)
         End If
     End Function
+
+    Public Sub RefreshReportOptions()
+        Dim newRep As ReportOptions = New ReportOptions()
+        newRep.WorkingDir = Me.ReportOptions.WorkingDir
+        newRep.ReportDir = Me.ReportOptions.ReportDir
+        newRep.Absorb(Me)
+        newRep.Initialize()
+
+        If newRep.IsFromDB Then
+            Me.ReportOptions = newRep
+        End If
+    End Sub
 #End Region
 
 #Region "Files"

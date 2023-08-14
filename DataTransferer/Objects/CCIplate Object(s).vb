@@ -1904,7 +1904,15 @@ Partial Public Class Connection
             SQLInsert = SQLInsert.Replace("--BEGIN --[PLATE DETAIL INSERT BEGIN]", "BEGIN --[PLATE DETAIL INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[PLATE DETAIL INSERT END]", "END --[PLATE DETAIL INSERT END]")
             For Each row As PlateDetail In PlateDetails
-                SQLInsert = SQLInsert.Replace("--[PLATE DETAIL INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomethingString(row.plate_location) Or IsSomethingString(row.plate_type) Or IsSomething(row.plate_diameter) Or IsSomething(row.plate_thickness) Or IsSomething(row.plate_material) Or IsSomething(row.stiffener_configuration) Or IsSomething(row.stiffener_clear_space) Or IsSomething(row.plate_check) Then
+                        SQLInsert = SQLInsert.Replace("--[PLATE DETAIL INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[PLATE DETAIL INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[PLATE DETAIL INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -1913,7 +1921,15 @@ Partial Public Class Connection
             SQLInsert = SQLInsert.Replace("--BEGIN --[BOLT GROUP INSERT BEGIN]", "BEGIN --[BOLT GROUP INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[BOLT GROUP INSERT END]", "END --[BOLT GROUP INSERT END]")
             For Each row As BoltGroup In BoltGroups
-                SQLInsert = SQLInsert.Replace("--[BOLT GROUP INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomething(row.resist_axial) Or IsSomething(row.resist_shear) Or IsSomething(row.plate_bending) Or IsSomething(row.grout_considered) Or IsSomething(row.apply_barb_elevation) Or IsSomething(row.bolt_name) Then
+                        SQLInsert = SQLInsert.Replace("--[BOLT GROUP INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[BOLT GROUP INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[BOLT GROUP INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -1922,7 +1938,23 @@ Partial Public Class Connection
             SQLInsert = SQLInsert.Replace("--BEGIN --[BRIDGE STIFFENER DETAIL INSERT BEGIN]", "BEGIN --[BRIDGE STIFFENER DETAIL INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[BRIDGE STIFFENER DETAIL INSERT END]", "END --[BRIDGE STIFFENER DETAIL INSERT END]")
             For Each row As BridgeStiffenerDetail In BridgeStiffenerDetails
-                SQLInsert = SQLInsert.Replace("--[BRIDGE STIFFENER DETAIL INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomething(row.local_connection_id) Or IsSomethingString(row.stiffener_type) Or IsSomethingString(row.analysis_type) Or IsSomething(row.quantity) Or IsSomething(row.bridge_stiffener_width) _
+                        Or IsSomething(row.bridge_stiffener_thickness) Or IsSomething(row.bridge_stiffener_material) Or IsSomething(row.unbraced_length) Or IsSomething(row.total_length) _
+                        Or IsSomething(row.weld_size) Or IsSomething(row.exx) Or IsSomething(row.upper_weld_length) Or IsSomething(row.lower_weld_length) _
+                        Or IsSomething(row.upper_plate_width) Or IsSomething(row.lower_plate_width) Or IsSomething(row.neglect_flange_connection) Then
+                        'not including below since a user typically won't delete associated fields since on a seperate window in tool. 
+                        'Or IsSomething(row.bolt_hole_diameter) _
+                        'Or IsSomething(row.bolt_qty_eccentric) Or IsSomething(row.bolt_qty_shear) Or IsSomething(row.intermediate_bolt_spacing) Or IsSomething(row.bolt_diameter) _
+                        'Or IsSomething(row.bolt_sleeve_diameter) Or IsSomething(row.washer_diameter) Or IsSomething(row.bolt_tensile_strength) Or IsSomething(row.bolt_allowable_shear) _
+                        'Or IsSomething(row.exx_shim_plate) Or IsSomething(row.filler_shim_thickness)
+                        SQLInsert = SQLInsert.Replace("--[BRIDGE STIFFENER DETAIL INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[BRIDGE STIFFENER DETAIL INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[BRIDGE STIFFENER DETAIL INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -2256,7 +2288,15 @@ Partial Public Class PlateDetail
             SQLInsert = SQLInsert.Replace("--BEGIN --[STIFFENER GROUP INSERT BEGIN]", "BEGIN --[STIFFENER GROUP INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[STIFFENER GROUP INSERT END]", "END --[STIFFENER GROUP INSERT END]")
             For Each row As StiffenerGroup In StiffenerGroups
-                SQLInsert = SQLInsert.Replace("--[STIFFENER GROUP INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomethingString(row.stiffener_name) Then
+                        SQLInsert = SQLInsert.Replace("--[STIFFENER GROUP INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[STIFFENER GROUP INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[STIFFENER GROUP INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -2615,7 +2655,15 @@ Partial Public Class BoltGroup
             SQLInsert = SQLInsert.Replace("--BEGIN --[BOLT DETAIL INSERT BEGIN]", "BEGIN --[BOLT DETAIL INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[BOLT DETAIL INSERT END]", "END --[BOLT DETAIL INSERT END]")
             For Each row As BoltDetail In BoltDetails
-                SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomething(row.bolt_location) Or IsSomething(row.bolt_diameter) Or IsSomething(row.bolt_material) Or IsSomething(row.bolt_circle) Or IsSomething(row.eta_factor) Or IsSomething(row.lar) Or IsSomethingString(row.bolt_thread_type) Or IsSomething(row.area_override) Or IsSomething(row.tension_only) Then
+                        SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -3655,7 +3703,7 @@ Partial Public Class PlateResults
             Me.local_plate_id = DBtoNullableInt(dr.Item("local_plate_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDec(dr.Item("rating"))
+        Me.rating = DBtoNullableDec(dr.Item("rating"), 10)
         Me.result_lkup = DBtoStr(dr.Item("result_lkup"))
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -3672,7 +3720,7 @@ Partial Public Class PlateResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -3701,7 +3749,7 @@ Partial Public Class PlateResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_details_id = " & Me.plate_details_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -3870,7 +3918,7 @@ Partial Public Class BoltResults
             Me.local_bolt_group_id = DBtoNullableInt(dr.Item("local_bolt_group_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating"), 10) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -3887,7 +3935,7 @@ Partial Public Class BoltResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -3916,7 +3964,7 @@ Partial Public Class BoltResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_id = " & Me.bolt_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -3972,7 +4020,19 @@ Partial Public Class StiffenerGroup
             SQLInsert = SQLInsert.Replace("--BEGIN --[STIFFENER DETAIL INSERT BEGIN]", "BEGIN --[STIFFENER DETAIL INSERT BEGIN]")
             SQLInsert = SQLInsert.Replace("--END --[STIFFENER DETAIL INSERT END]", "END --[STIFFENER DETAIL INSERT END]")
             For Each row As StiffenerDetail In StiffenerDetails
-                SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
+                    If IsSomething(row.stiffener_location) Or IsSomething(row.stiffener_width) Or IsSomething(row.stiffener_height) _
+                        Or IsSomething(row.stiffener_thickness) Or IsSomething(row.stiffener_h_notch) Or IsSomething(row.stiffener_v_notch) _
+                        Or IsSomething(row.stiffener_grade) Or IsSomethingString(row.weld_type) Or IsSomething(row.groove_depth) _
+                        Or IsSomething(row.groove_angle) Or IsSomething(row.h_fillet_weld) Or IsSomething(row.v_fillet_weld) _
+                        Or IsSomething(row.weld_strength) Then
+                        SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLUpdate)
+                    Else
+                        SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLDelete)
+                    End If
+                Else
+                    SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                End If
             Next
         End If
 
@@ -4708,7 +4768,7 @@ Partial Public Class StiffenerResults
             Me.local_stiffener_group_id = DBtoNullableInt(dr.Item("local_bolt_group_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating"), 10) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -4725,7 +4785,7 @@ Partial Public Class StiffenerResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel3ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -4754,7 +4814,7 @@ Partial Public Class StiffenerResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_id = " & Me.stiffener_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -5513,7 +5573,7 @@ Partial Public Class ConnectionResults
             Me.local_connection_id = DBtoNullableInt(dr.Item("local_connection_id"))
         End If
         'Me.work_order_seq_num = DBtoNullableDbl(dr.Item("work_order_seq_num"))
-        Me.rating = DBtoNullableDec(dr.Item("rating")) 'same in all 
+        Me.rating = DBtoNullableDec(dr.Item("rating"), 10) 'same in all 
         Me.result_lkup = DBtoStr(dr.Item("result_lkup")) 'same in all
         'Me.modified_person_id = DBtoNullableInt(dr.Item("modified_person_id"))
         'Me.process_stage = DBtoStr(dr.Item("process_stage"))
@@ -5530,7 +5590,7 @@ Partial Public Class ConnectionResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -5559,7 +5619,7 @@ Partial Public Class ConnectionResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_id = " & Me.plate_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
