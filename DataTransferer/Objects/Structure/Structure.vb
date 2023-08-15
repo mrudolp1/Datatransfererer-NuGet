@@ -19,6 +19,8 @@ Partial Public Class EDSStructure
             Return "Structure Model"
         End Get
     End Property
+
+
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
     Public Overrides ReadOnly Property ParentStructure As EDSStructure
@@ -208,7 +210,7 @@ Partial Public Class EDSStructure
     End Sub
 
     Public Overrides Function ToString() As String
-        Return Me.bus_unit & " - " & Me.structure_id
+        Return String.Format("WO: {0}, BU: {1}, Structure: {2}", Me.EDSObjectName, Me.work_order_seq_num, Me.bus_unit, Me.structure_id)
     End Function
 #End Region
 
