@@ -1218,7 +1218,7 @@ ErrorSkip:
     End Sub
 
     <DebuggerStepThrough()>
-    Public Sub WriteLineLogLine(msg As String)
+    Public Sub WriteLineLogLine(ByVal msg As String)
         ' Get the current date and time
         Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
         Dim splt() As String = dt.Split(" ")
@@ -1244,7 +1244,7 @@ ErrorSkip:
             Console.WriteLine("Error writing to log file: " & ex.Message)
         End Try
     End Sub
-    <DebuggerStepThrough()>
+    '<DebuggerStepThrough()>
     Public Async Function WriteLineLogLineAsync(msg As String, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task
 
         Await Task.Run(Sub() WriteLineLogLine(msg))
@@ -1252,7 +1252,7 @@ ErrorSkip:
         ''Raise a message logged event so these notifications can be passed up to the dashboard.
         If progress IsNot Nothing Then
             Dim msgSplt() As String = msg.Split("|")
-            progress.Report(New LogMessage(msgSplt.FirstOrDefault.Trim, msgSplt.LastOrDefault.Trim))
+            progress.Report(New LogMessage(msgSplt.FirstOrDefault.Trim, msgSplt.LastOrDefault.Trim, user:="Maestro"))
         End If
 
         If cancelToken <> CancellationToken.None Then
