@@ -9595,6 +9595,11 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetPEX))
                         End With
                     Next i
+
+#Region "Supp Abracadabruh"
+                    newERIList.AddRange(defaults.Supp)
+#End Region
+
                 Case line(0).Equals("NumTowerRecs")
                     newERIList.Add(line(0) & "=" & Me.geometry.baseStructure.Count)
                     For i = 0 To Me.geometry.baseStructure.Count - 1
@@ -9938,10 +9943,6 @@ Partial Public Class tnxModel
                             newERIList.Add("GuyInsulatorWt=" & Me.settings.USUnits.Force.convertToERIUnits(.GuyInsulatorWt))
                         End With
                     Next i
-#End Region
-
-#Region "Supp Abracadabruh"
-                    newERIList.AddRange(defaults.Supp)
 #End Region
 
 #Region "Loading"
