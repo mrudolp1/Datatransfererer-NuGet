@@ -9249,7 +9249,6 @@ Partial Public Class tnxModel
                     newERIList.AddRange(defaults.MissingSettings)
                     newERIList.AddRange(defaults.CostData)
                     newERIList.AddRange(defaults.BasePlate)
-                    newERIList.AddRange(defaults.Supp)
 #End Region
 
 #End Region
@@ -9940,6 +9939,11 @@ Partial Public Class tnxModel
                         End With
                     Next i
 #End Region
+
+#Region "Supp Abracadabruh"
+                    newERIList.AddRange(defaults.Supp)
+#End Region
+
 #Region "Loading"
                 Case line(0).Equals("NumFeedLineRecs")
                     newERIList.Add(line(0) & "=" & Me.feedLines.Count)
