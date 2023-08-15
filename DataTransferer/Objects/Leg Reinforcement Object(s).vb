@@ -12,7 +12,7 @@ Partial Public Class LegReinforcement
     '''Must override these inherited properties
     Public Overrides ReadOnly Property EDSObjectName As String
         Get
-            Return "Leg Reinforcement"
+            Return "Leg Reinforcement Tool"
         End Get
     End Property
     Public Overrides ReadOnly Property EDSTableName As String
