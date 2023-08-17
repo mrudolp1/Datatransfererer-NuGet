@@ -589,31 +589,31 @@ Partial Public Class EDSStructure
         If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(Path.Combine(folderPath, Me.bus_unit & ".eri"), replaceFiles)
 
         For i = 0 To Me.PierandPads.Count - 1
-            PierandPads(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            PierandPads(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.Piles.Count - 1
-            Piles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            Piles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.UnitBases.Count - 1
-            UnitBases(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            UnitBases(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.DrilledPierTools.Count - 1
-            DrilledPierTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            DrilledPierTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.GuyAnchorBlockTools.Count - 1
-            GuyAnchorBlockTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            GuyAnchorBlockTools(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.CCIplates.Count - 1
-            CCIplates(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            CCIplates(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.Poles.Count - 1
-            Poles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            Poles(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.LegReinforcements.Count - 1
-            LegReinforcements(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            LegReinforcements(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
         For i = 0 To Me.CCISeismics.Count - 1
-            CCISeismics(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles)
+            CCISeismics(i).SavetoExcel(index:=i, replaceFiles:=replaceFiles, FolderPath:=folderPath)
         Next
     End Sub
 

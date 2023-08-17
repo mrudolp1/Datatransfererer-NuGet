@@ -454,7 +454,7 @@ Partial Public MustInherit Class EDSExcelObject
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
 
-    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True)
+    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True, Optional OverrideWorkbookPath As Boolean = True, Optional FolderPath As String = "")
         Dim wb As New Workbook
 
 
@@ -465,11 +465,11 @@ Partial Public MustInherit Class EDSExcelObject
             End If
 
             'Build Path
-            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+            workBookPath = Path.Combine(IIf(FolderPath = "", Me.ParentStructure.WorkingDirectory, FolderPath), Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
 
         End If
 
-        Me.WorkBookPath = workBookPath
+        If FolderPath = "" Then Me.WorkBookPath = workBookPath
 
         If File.Exists(workBookPath) AndAlso Not replaceFiles Then Exit Sub
 
