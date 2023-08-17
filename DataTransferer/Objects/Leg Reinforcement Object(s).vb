@@ -268,8 +268,8 @@ Partial Public Class LegReinforcement
             'If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.structure_type) Then
             If Me.ParentStructure?.structureCodeCriteria?.structure_type = "SELF SUPPORT" Then
                 structure_type = "Self Support"
-            ElseIf Me.ParentStructure?.structureCodeCriteria?.structure_type = "GUYED TOWER" Then ' ****Note sure if this is correct, need to validate****
-                structure_type = "Guyed Tower"
+            ElseIf Me.ParentStructure?.structureCodeCriteria?.structure_type = "GUYED" Then
+                structure_type = "Guyed"
             Else
                 structure_type = "Self Support"
             End If
@@ -594,6 +594,9 @@ Partial Public Class LegReinforcement
                         '    .Worksheets("TNX File").Range("A" & tnxdataRow).ClearContents
                     End If
                 Next
+
+                'Adding following unique line to TNX File to address previous issues and help determine final line of text on Tab. 
+                .Worksheets("TNX File").Range("A" & tnxdataRow).Value = "[EndOverwrite]"
 
             End If
 
