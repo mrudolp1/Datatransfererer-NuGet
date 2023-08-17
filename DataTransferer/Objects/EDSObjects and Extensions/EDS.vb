@@ -635,7 +635,14 @@ Partial Public Class EDSResult
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 

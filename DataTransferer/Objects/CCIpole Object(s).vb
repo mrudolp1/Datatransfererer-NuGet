@@ -3786,7 +3786,14 @@ Partial Public Class PoleReinfResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID") '(Me.group_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_group_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
@@ -3824,7 +3831,14 @@ Partial Public Class PoleReinfResults
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("group_id = " & Me.group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+
+        'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        End If
+
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
 
