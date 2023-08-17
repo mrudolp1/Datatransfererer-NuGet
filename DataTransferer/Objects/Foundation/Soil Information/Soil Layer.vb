@@ -168,6 +168,7 @@ SQLInsert = CCI_Engineering_Templates.My.Resources.Soil_Layer_INSERT
     Public Sub New(ByVal absl As AnchorBlockSoilLayer, Optional ByVal parent As EDSObject = Nothing)
         If parent IsNot Nothing Then Me.Absorb(parent)
 
+        Me.ID = absl.ID
         Me.Soil_Profile_id = absl.Soil_Profile_id
         Me.bottom_depth = absl.bottom_depth
         Me.effective_soil_density = absl.effective_soil_density
