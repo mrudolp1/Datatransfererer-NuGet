@@ -69,74 +69,44 @@ Partial Public Class EDSStructure
 
         Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & "_" & dt & ".txt"
 
-        Dim errOccured As Boolean = False
-
         GetVerNum()
 
         LogPath = Path.Combine(workingAreaPath, logFileName)
 
         CreateLogFile()
 
-        WriteLineLogLine("INFO | Beginning Maestro process..", progress)
+        Await WriteLineLogLine("INFO | Beginning Maestro process..", progress)
 
         Select Case strType
             Case "MONOPOLE"
                 'CCI Pole Step 1 - Create TNX
                 If Me.Poles.Count > 0 Then
                     If Me.Poles.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.Poles.Count & " CCIPole files found! Using first or default..", progress)
+                        Await WriteLineLogLine("WARNING | " & Me.Poles.Count & " CCIPole files found! Using first or default..", progress)
                     End If
                     CCIPoleExists = True
                     poleWeUsin = Me.Poles.FirstOrDefault
                     'create TNX file
                     excelResult = Await OpenExcelRunMacroAsync(poleWeUsin, poleMacCreateTNX, xlVisibility, toolName:="CCIPole - Step 1", cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                 End If
-
-
 
                 If Me.CCISeismics.Count > 0 Then
                     If Me.CCISeismics.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..", progress)
+                        Await WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..", progress)
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
                     excelResult = Await OpenExcelRunMacroAsync(seismicWeUsin, seisMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
-                End If
-
-                If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                    errOccured = True
-                    GoTo ErrorSkip
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                 End If
 
                 'Run TNX
-                If File.Exists(tnxFullPath) Then
-                    If (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) OrElse Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) Then
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
-                Else
-                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath, progress)
-                    errOccured = True
-                    GoTo ErrorSkip
-                End If
+                If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
 
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     excelResult = Await OpenExcelRunMacroAsync(poleWeUsin, poleMacImportTNXReactions, xlVisibility, toolName:="CCIPole - Step 2", cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                 End If
 
                 'Splice Check
@@ -153,22 +123,18 @@ Partial Public Class EDSStructure
 
                 If Me.CCIplates.Count > 0 Then
                     If Me.CCIplates.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..", progress)
+                        Await WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..", progress)
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
                     excelResult = Await OpenExcelRunMacroAsync(plateWeUsin, plateMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
 
-                    WriteLineLogLine("INFO | Checking for BARB..", progress)
+                    Await WriteLineLogLine("INFO | Checking for BARB..", progress)
 
                     'barb
                     'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
                     If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
-                        WriteLineLogLine("INFO | BARB elevation found..", progress)
+                        Await WriteLineLogLine("INFO | BARB elevation found..", progress)
                         DoBARB(poleWeUsin, plateWeUsin, isDevMode)
                     End If
                 End If
@@ -176,11 +142,7 @@ Partial Public Class EDSStructure
                 'CCI Pole step 3 - Run Analysis
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     excelResult = Await OpenExcelRunMacroAsync(poleWeUsin, poleMacRunAnalysis, xlVisibility, toolName:="CCIPole - Step 3", cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                 End If
 
 
@@ -191,59 +153,42 @@ Partial Public Class EDSStructure
                 'loop through FNDs, open, input reactions & run macros
                 '//drilled pier
                 If Me.DrilledPierTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Pier Fnd(s) found..", progress)
 
                     'For Each dp As DrilledPierFoundation In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(DrilledPierTools(i), drilledPierMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//pier & pad
                 If Me.PierandPads.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..", progress)
                     'For Each pierPad As PierAndPad In Me.PierandPads
                     For i As Integer = 0 To PierandPads.Count - 1
                         'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
                         'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
                         excelResult = Await OpenExcelRunMacroAsync(PierandPads(i), pierPadMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Pile
                 If Me.Piles.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.Piles.Count & " Pile Fnd(s) found..", progress)
                     'For Each pile As Pile In Me.Piles
                     For i As Integer = 0 To Me.Piles.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(Piles(i), pierPadMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Guy Anchor
 
                 If Me.GuyAnchorBlockTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..", progress)
                     'For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(GuyAnchorBlockTools(i), guyAnchorMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
 
@@ -254,43 +199,28 @@ Partial Public Class EDSStructure
 
 
                 '/run tnx
-                If File.Exists(tnxFullPath) Then
-                    If (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) OrElse Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) Then
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
-                Else
-                    WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFullPath, progress)
-                    errOccured = True
-                    GoTo ErrorSkip
-                End If
+                If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+
                 '/run seismic macro to create eri with seismic loads if needed
 
                 If Me.CCISeismics.Count > 0 Then
                     If Me.CCISeismics.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..", progress)
+                        Await WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..", progress)
                     End If
                     seismicWeUsin = Me.CCISeismics.FirstOrDefault
                     ' plateWeUsin = Me.CCIplates.FirstOrDefault
 
                     'run seismic.
                     excelResult = Await OpenExcelRunMacroAsync(seismicWeUsin, seisMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
 
                     'Check if seismic analysis is required
                     If excelResult.SeismicRequired Then
-                        WriteLineLogLine("INFO | Seismic Analysis required. Rerunning TNX.", progress)
-                        WriteLineLogLine("WARNING | Seismic loading included in TNX analysis. Further evaluation required to determine if 1.5 overstrength factor controls.", progress)
+                        Await WriteLineLogLine("INFO | Seismic Analysis required. Rerunning TNX.", progress)
+                        Await WriteLineLogLine("WARNING | Seismic loading included in TNX analysis. Further evaluation required to determine if 1.5 overstrength factor controls.", progress)
 
                         '/run tnx
-                        If (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) OrElse Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) Then
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     End If
 
                 End If
@@ -310,124 +240,94 @@ Partial Public Class EDSStructure
                           EDSMe.LegReinforcements.Count = 0 Or
                           Not Me.tnx.geometry.Equals(EDSMe.tnx.geometry) Or
                           Not Me.LegReinforcements.Equals(EDSMe.LegReinforcements) Then
-                            WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.", progress)
+                            Await WriteLineLogLine("WARNING | Leg Reinforcement not found or could not verify TNX Leg Reinforcement. Make sure it is generated before running maestro.", progress)
                         End If
                     End If
 
                     'For Each legReinforcement As LegReinforcement In LegReinforcements
                     For i As Integer = 0 To LegReinforcements.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(LegReinforcements(i), legReinforcementMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 Else
-                    'WriteLineLogLine("WARNING | No Leg Reinforcement found! Could not verify Leg Reinforcement.")
+                    'await writelinelogline("WARNING | No Leg Reinforcement found! Could not verify Leg Reinforcement.")
                 End If
 
                 '/if plate exists, run - if Chris can update plate easily
                 If Me.CCIplates.Count > 0 Then
                     If Me.CCIplates.Count > 1 Then
-                        WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..", progress)
+                        Await WriteLineLogLine("WARNING | " & Me.CCIplates.Count & " CCIPlate files found! Using first or default..", progress)
                     End If
                     plateWeUsin = Me.CCIplates.FirstOrDefault
                     excelResult = Await OpenExcelRunMacroAsync(plateWeUsin, plateMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                        If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                        errOccured = True
-                        GoTo ErrorSkip
-                    End If
+                    If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                 End If
 
                 '/loop through FNDs, open, input reactions & run macros
                 '//Run Unit Base
                 If Me.UnitBases.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.UnitBases.Count & " Unit Bases found..", progress)
                     'For Each unitbase In Me.UnitBases
                     For i As Integer = 0 To UnitBases.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(UnitBases(i), unitBaseMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
-                        'Dim tempPath As String = Path.Combine(workingAreaPath, "881358 SST Unit Base Foundation.xlsm")
-                        'OpenExcelRunMacro(tempPath, unitBaseMac, isDevMode)
-
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Run Drilled Pier
                 If Me.DrilledPierTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.DrilledPierTools.Count & " Drilled Piers found..", progress)
                     'For Each drilledPier In Me.DrilledPierTools
                     For i As Integer = 0 To DrilledPierTools.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(DrilledPierTools(i), drilledPierMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Run Pad/Pier
                 If Me.PierandPads.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier and Pads found..", progress)
                     'For Each pierAndPad In Me.PierandPads
                     For i As Integer = 0 To PierandPads.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(PierandPads(i), pierPadMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Run Pile
                 If Me.Piles.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.Piles.Count & " Piles found..", progress)
                     'For Each pile In Me.Piles
                     For i As Integer = 0 To Piles.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(Piles(i), pileMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
                 '//Run Guy Anchor
                 If Me.GuyAnchorBlockTools.Count > 0 Then
-                    WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..", progress)
+                    Await WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchors found..", progress)
                     'For Each guyAnchor In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(GuyAnchorBlockTools(i), guyAnchorMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
-                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then
-                            If Not excelResult.Success Then WriteLineLogLine(excelResult.ErrorMsg, progress)
-                            errOccured = True
-                            GoTo ErrorSkip
-                        End If
+                        If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
 
             Case Else
                 'manual process
-                WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType, progress)
-                errOccured = True
+                Await WriteLineLogLine("WARNING | Manual process due to Tower Type: " & strType, progress)
+                GoTo ErrorSkip
         End Select
 
+        Await WriteLineLogLine("INFO | Maestro Complete", progress)
+        AnalysisRunning = False
+        Return True
 
 ErrorSkip:
+        If cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested Then
+            Await WriteLineLogLine("WARNING | Maestro Cancelled", progress)
+        ElseIf Not excelResult.Success AndAlso String.IsNullOrEmpty(excelResult.MacroName) Then
+            Await WriteLineLogLine(excelResult.ErrorMsg, progress)
+        End If
         AnalysisRunning = False
-        WriteLineLogLine("INFO | Maestro Log [END]", progress)
-        Return Not errOccured
-        'determine sufficiency
-
-        'generate report
-
-        'save results
+        Return False
 
     End Function
 
@@ -549,7 +449,7 @@ ErrorSkip:
         Dim Result As OpenExcelRunMacroResult = New OpenExcelRunMacroResult(False, False, If(toolName, objectTorun.EDSObjectName))
 
         If String.IsNullOrEmpty(excelPath) Or String.IsNullOrEmpty(bigMac) Then
-            WriteLineLogLine("ERROR | excelPath or bigMac parameter is null or empty", progress)
+            Await WriteLineLogLine("ERROR | excelPath or bigMac parameter is null or empty", progress)
             Return Result
         End If
 
@@ -561,7 +461,7 @@ ErrorSkip:
         Try
             If Not File.Exists(excelPath) Then
                 errorMessage = $"ERROR | {excelPath} path not found!"
-                WriteLineLogLine(errorMessage, progress)
+                Await WriteLineLogLine(errorMessage, progress)
                 Return Result
             End If
 
@@ -574,21 +474,21 @@ ErrorSkip:
             If Me.ParentStructure.CCIplates.Count > 0 Then
                 If objectTorun.EDSObjectName.ToUpper = "CCIPOLE" And IsSomething(Me.ParentStructure.CCIplates(0).Connections) Then
                     'insert baseplate grade into pole from plate
-                    WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
+                    Await WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
 
                     AssignBasePlateGrade(xlWorkBook)
                 End If
             End If
-            WriteLineLogLine("INFO | Tool: " & toolFileName, progress)
-            WriteLineLogLine("INFO | Running macro: " & bigMac, progress)
+            Await WriteLineLogLine("INFO | Tool: " & toolFileName, progress)
+            Await WriteLineLogLine("INFO | Running macro: " & bigMac, progress)
 
             If Not IsNothing(tnxFilePath) Then
                 logString = xlApp.Run(bigMac, tnxFilePath)
-                WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim, progress)
+                Await WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim, progress)
             Else
-                WriteLineLogLine("WARNING | No TNX file path in structure..")
+                Await WriteLineLogLine("WARNING | No TNX file path in structure..", progress)
                 logString = xlApp.Run(bigMac)
-                WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim, progress)
+                Await WriteLineLogLine("INFO | Macro result: " & vbCrLf & logString.Trim, progress)
             End If
 
             xlWorkBook.Save()
@@ -609,13 +509,13 @@ ErrorSkip:
                     xlApp = Nothing
                 End If
             Catch ex As Exception
-                WriteLineLogLine("WARNING | Could not close Excel file or App", progress)
+                WriteLineLogLine("WARNING | Could not close Excel file or App")
             End Try
         End Try
 
         'check for errors returned from Excel
         If logString.Contains("| ERROR |") Then
-            WriteLineLogLine(Result.ErrorMsg, progress)
+            Await WriteLineLogLine(Result.ErrorMsg, progress)
             Return Result
         End If
         'reload structure object
@@ -623,7 +523,7 @@ ErrorSkip:
             objectTorun.Clear()
             objectTorun.LoadFromExcel()
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message, progress)
+            WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message)
             Return Result
         End Try
 
@@ -794,26 +694,31 @@ ErrorSkip:
 
         Dim tnxSuccess As Boolean = False
 
+        If Not File.Exists(tnxFilePath) Then
+            Await WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFilePath, progress)
+            Return False
+        End If
+
         Try
             Dim cmdProcess As New Process
 
 
-            WriteLineLogLine("INFO | Running TNX..", progress)
+            Await WriteLineLogLine("INFO | Running TNX..", progress)
 
             'determine TNX File path - newest version
             tnxAppLocation = WhereInTheWorldIsTNXTower(tnxProdVersion, isDevMode)
 
             If tnxAppLocation = "" Then
                 'TNX app not found
-                WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.", progress)
+                Await WriteLineLogLine("ERROR | TNX Not installed! Cannot proceed.", progress)
                 Return False
             End If
 
             'see whether arch notation is used or not
             If ArchNotReg() Then
-                WriteLineLogLine("INFO | Architectural notation is set to 'Yes'", progress)
+                Await WriteLineLogLine("WARNING | Architectural notation is set to 'Yes'", progress)
             Else
-                WriteLineLogLine("INFO | Architectural notation is set to 'No'", progress)
+                Await WriteLineLogLine("INFO | Architectural notation is set to 'No'", progress)
             End If
 
             Try
@@ -844,7 +749,7 @@ ErrorSkip:
 
             'Make sure ReportPrintReactions=Yes in eri file
             If Not SetEriOutputVariables(tnxFilePath) Then
-                WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables", progress)
+                Await WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables", progress)
             End If
 
             With cmdProcess
@@ -858,9 +763,9 @@ ErrorSkip:
 
                 Await CheckLogFileForFinishedAsync(tnxLogFilePath, 300000, True, cancelToken, progress)
                 Try
-                    WriteLineLogLine("INFO | TNX finished, attempting to terminate..", progress)
+                    Await WriteLineLogLine("INFO | TNX finished, attempting to terminate..", progress)
                     .Kill()
-                    WriteLineLogLine("INFO | TNX termination complete..", progress)
+                    Await WriteLineLogLine("INFO | TNX termination complete..", progress)
                 Catch ex As Exception
                     WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
                 Finally
@@ -876,6 +781,7 @@ ErrorSkip:
                 '.WaitForInputIdle()
                 '.WaitForExit()
             End With ' Read output to a string variable.
+
             Dim ipconfigOutput As String = cmdProcess.StandardOutput.ReadToEnd
 
 
@@ -1228,7 +1134,7 @@ ErrorSkip:
     End Sub
 
     <DebuggerStepThrough()>
-    Public Sub WriteLineLogLine(ByVal msg As String, Optional progress As IProgress(Of LogMessage) = Nothing)
+    Public Sub WriteLineLogLine(ByVal msg As String)
         ' Get the current date and time
         Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
         Dim splt() As String = dt.Split(" ")
@@ -1254,30 +1160,28 @@ ErrorSkip:
             Console.WriteLine("Error writing to log file: " & ex.Message)
         End Try
 
-        ''Raise a message logged event so these notifications can be passed up to the dashboard.
-        If progress IsNot Nothing Then
-            Dim msgSplt() As String = msg.Split("|")
-            progress.Report(New LogMessage(msgSplt.FirstOrDefault.Trim, msgSplt.LastOrDefault.Trim, user:="Maestro"))
-        End If
     End Sub
     '<DebuggerStepThrough()>
-    'Public Async Function WriteLineLogLine(msg As String, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task
+    Public Async Function WriteLineLogLine(msg As String, progress As IProgress(Of LogMessage)) As Task
 
-    '    Await Task.Run(Sub() WriteLineLogLine(msg))
+        Await Task.Run(Sub() WriteLineLogLine(msg))
 
-    '    ''Raise a message logged event so these notifications can be passed up to the dashboard.
-    '    If progress IsNot Nothing Then
-    '        Dim msgSplt() As String = msg.Split("|")
-    '        progress.Report(New LogMessage(msgSplt.FirstOrDefault.Trim, msgSplt.LastOrDefault.Trim, user:="Maestro"))
-    '    End If
+        ''Raise a message logged event so these notifications can be passed up to the dashboard.
+        If progress IsNot Nothing Then
+            Dim msgs As String() = msg.Split(vbCrLf)
+            For Each msg In msgs
+                Dim msgSplt As String() = msg.Split("|")
+                Dim logMsg As LogMessage
+                If msgSplt.Length = 2 Then
+                    logMsg = New LogMessage(msgSplt(0).Trim, msgSplt(1).Trim, user:="Maestro")
+                ElseIf msgSplt.Length = 3 Then
+                    logMsg = New LogMessage(msgSplt(1).Trim, msgSplt(2).Trim, user:="Maestro", timeStamp:=msgSplt(0).Trim)
+                End If
+                progress.Report(logMsg)
+            Next
+        End If
 
-    '    If cancelToken <> CancellationToken.None Then
-    '        If cancelToken.IsCancellationRequested Then
-    '            AnalysisRunning = False
-    '            cancelToken.ThrowIfCancellationRequested()
-    '        End If
-    '    End If
-    'End Function
+    End Function
 
     Public Function GetReactionsBARB(ByVal con As Connection, ByRef mom As Double?, ByRef comp As Double?, ByRef sheer As Double?) As Boolean
         Dim plateComp As Double
@@ -1430,8 +1334,8 @@ End Class
 
 Public Class OpenExcelRunMacroResult
     Public Property MacroName As String
-    Public Property Success As Boolean
-    Public Property SeismicRequired As Boolean
+    Public Property Success As Boolean = True
+    Public Property SeismicRequired As Boolean = False
 
     Public ReadOnly Property ErrorMsg As String
         Get
