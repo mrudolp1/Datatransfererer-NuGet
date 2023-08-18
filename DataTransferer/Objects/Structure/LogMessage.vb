@@ -50,7 +50,8 @@
     End Function
 
     Public Overrides Function ToString() As String
-        ToString = Me.TimeStamp
+        Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy")
+        ToString = If(Me.TimeStamp.Length < 15, dt & " " & Me.TimeStamp, Me.TimeStamp)
         ToString += String.Format(" | {0}", Me.User)
         ToString += String.Format(" | {0}", Me.Type.ToString())
         ToString += String.Format(" | {0}", Me.Description)
