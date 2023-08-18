@@ -3720,12 +3720,15 @@ Partial Public Class PlateResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_date.ToString.FormatDBValue)
-
 
         Return SQLInsertValues
     End Function
@@ -3749,7 +3752,11 @@ Partial Public Class PlateResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_details_id = " & Me.plate_details_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        End If
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -3935,7 +3942,11 @@ Partial Public Class BoltResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel2ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -3964,7 +3975,11 @@ Partial Public Class BoltResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_id = " & Me.bolt_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        End If
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -4785,7 +4800,11 @@ Partial Public Class StiffenerResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel3ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -4814,7 +4833,11 @@ Partial Public Class StiffenerResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("stiffener_id = " & Me.stiffener_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        End If
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
@@ -5590,7 +5613,11 @@ Partial Public Class ConnectionResults
         SQLInsertValues = SQLInsertValues.AddtoDBString("@SubLevel1ID")
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.plate_details_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
@@ -5619,7 +5646,11 @@ Partial Public Class ConnectionResults
         SQLUpdateFieldsandValues = ""
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("plate_id = " & Me.plate_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("work_order_seq_num = " & Me.work_order_seq_num.ToString.FormatDBValue)
-        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("rating = " & Me.rating.ToString.FormatDBValue)
+        End If
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("result_lkup = " & Me.result_lkup.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)

@@ -2827,7 +2827,14 @@ Public Class DrilledPierResult
         sqlValues = sqlValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(If(parentID Is Nothing, "@TopLevel", Me.foreign_key.ToString.FormatDBValue))
         sqlValues = sqlValues.AddtoDBString(Me.result_lkup.FormatDBValue)
-        sqlValues = sqlValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+
+        'sqlValues = sqlValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            sqlValues = sqlValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            sqlValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
+
         sqlValues = sqlValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
         sqlValues = sqlValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)

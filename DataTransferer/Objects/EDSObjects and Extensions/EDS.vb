@@ -454,7 +454,7 @@ Partial Public MustInherit Class EDSExcelObject
 #Region "Save to Excel"
     Public MustOverride Sub workBookFiller(ByRef wb As Workbook)
 
-    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True)
+    Public Sub SavetoExcel(Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional replaceFiles As Boolean = True, Optional OverrideWorkbookPath As Boolean = True, Optional FolderPath As String = "")
         Dim wb As New Workbook
 
 
@@ -465,11 +465,11 @@ Partial Public MustInherit Class EDSExcelObject
             End If
 
             'Build Path
-            workBookPath = Path.Combine(Me.ParentStructure.WorkingDirectory, Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
+            workBookPath = Path.Combine(IIf(FolderPath = "", Me.ParentStructure.WorkingDirectory, FolderPath), Me.bus_unit & " " & Me.EDSObjectName & " EDS" & If(index = 0, "", " " & (index + 1).ToString()) & Me.FileType.GetExtension())
 
         End If
 
-        Me.WorkBookPath = workBookPath
+        If FolderPath = "" Then Me.WorkBookPath = workBookPath
 
         If File.Exists(workBookPath) AndAlso Not replaceFiles Then Exit Sub
 
@@ -635,7 +635,14 @@ Partial Public Class EDSResult
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.work_order_seq_num.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(If(ParentID Is Nothing, EDSStructure.SQLQueryIDVar(Me.EDSTableDepth - 1), Me.foreign_key.ToString.FormatDBValue))
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.result_lkup.FormatDBValue)
-        SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+
+        'SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        If Not IsNothing(Me.rating) Then
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Math.Round(CDbl(Me.rating), 4).ToString.FormatDBValue)
+        Else
+            SQLInsertValues = SQLInsertValues.AddtoDBString(Me.rating.ToString.FormatDBValue)
+        End If
+
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
 
