@@ -335,7 +335,11 @@ Partial Public Class DrilledPierFoundation
                     If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
                     If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + bump15 * secAdj, myCol).Value = CType(section.pier_diameter, Double)
                     If Not IsNothing(section.clear_cover) Then .Cells(pierProfileRow + 23 + bump15 * secAdj, myCol).Value = CType(section.clear_cover, Double)
-                    If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
+                    If Not IsNothing(section.tie_size) Then
+                        .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
+                    Else
+                        .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = ""
+                    End If
                     If Not IsNothing(section.tie_spacing) Then .Cells(pierProfileRow + 25 + bump15 * secAdj, myCol).Value = CType(section.tie_spacing, Double)
                     With .Cells(pierProfileRow + 34 + bump15 * secAdj, myCol)
                         If section.clear_cover_rebar_cage_option Then
