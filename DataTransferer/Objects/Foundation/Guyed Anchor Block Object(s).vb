@@ -522,16 +522,11 @@ Partial Public Class AnchorBlockFoundation
                     gab_rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
                     .Range("M3").Value = CType(gab_rev_h_section_15_5, Boolean)
                 End If
-                'Work Order
-                If Not IsNothing(Me.ParentStructure?.work_order_seq_num) Then
-                    work_order_seq_num = Me.ParentStructure?.work_order_seq_num
-                    .Range("K3").Value = CType(work_order_seq_num, Integer)
-                End If
                 'Site Name
-                'If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
-                '    site_name = Me.ParentStructure?.SiteInfo.site_name
-                '    .Range("J3").Value = CType(site_name, String)
-                'End If
+                If Not IsNothing(Me.ParentStructure?.SiteInfo.site_name) Then
+                    site_name = Me.ParentStructure?.SiteInfo.site_name
+                    .Range("J3").Value = CType(site_name, String)
+                End If
             End With
 
             'Anchors
