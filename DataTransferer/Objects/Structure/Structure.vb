@@ -19,6 +19,8 @@ Partial Public Class EDSStructure
             Return "Structure Model"
         End Get
     End Property
+
+
     'The structure class should return itself if the parent is requested
     Private _ParentStructure As EDSStructure
     Public Overrides ReadOnly Property ParentStructure As EDSStructure
@@ -45,6 +47,16 @@ Partial Public Class EDSStructure
     <DataMember()> Public Property WorkingDirectory As String
     <DataMember()> Public Property LegReinforcements As New List(Of LegReinforcement)
     <DataMember()> Public Property CCISeismics As New List(Of CCISeismic)
+
+    Public Event MessageLogged As EventHandler(Of MessageLoggedEventArgs)
+
+    Protected Overridable Sub OnMessageLogged(logMessage As LogMessage)
+        If MessageLoggedEvent IsNot Nothing Then ''If the event has a handler this will be something.
+            RaiseEvent MessageLogged(Me, New MessageLoggedEventArgs(logMessage))
+        End If
+    End Sub
+
+    Public Delegate Sub MaestroProgressHandler(logMessage As LogMessage)
 
     Public Overrides Sub Clear()
         Me.CCIplates.Clear()
@@ -198,7 +210,7 @@ Partial Public Class EDSStructure
     End Sub
 
     Public Overrides Function ToString() As String
-        Return Me.bus_unit & " - " & Me.structure_id
+        Return String.Format("WO: {0}, BU: {1}, Structure: {2}", Me.EDSObjectName, Me.work_order_seq_num, Me.bus_unit, Me.structure_id)
     End Function
 #End Region
 
