@@ -335,7 +335,11 @@ Partial Public Class DrilledPierFoundation
                     If Not IsNothing(section.bottom_elevation) Then .Cells(pierProfileRow + 12 + secAdj, myCol).Value = CType(section.bottom_elevation, Integer)
                     If Not IsNothing(section.pier_diameter) Then .Cells(pierProfileRow + 20 + bump15 * secAdj, myCol).Value = CType(section.pier_diameter, Double)
                     If Not IsNothing(section.clear_cover) Then .Cells(pierProfileRow + 23 + bump15 * secAdj, myCol).Value = CType(section.clear_cover, Double)
-                    If Not IsNothing(section.tie_size) Then .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
+                    If Not IsNothing(section.tie_size) Then
+                        .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = CType(section.tie_size, Integer)
+                    Else
+                        .Cells(pierProfileRow + 24 + bump15 * secAdj, myCol).Value = ""
+                    End If
                     If Not IsNothing(section.tie_spacing) Then .Cells(pierProfileRow + 25 + bump15 * secAdj, myCol).Value = CType(section.tie_spacing, Double)
                     With .Cells(pierProfileRow + 34 + bump15 * secAdj, myCol)
                         If section.clear_cover_rebar_cage_option Then
@@ -2729,6 +2733,31 @@ Public Class DrilledPierSoilProfile
         Return SQLUpdate
     End Function
 
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As DrilledPierSoilProfile = TryCast(other, DrilledPierSoilProfile)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.groundwater_depth.CheckChange(otherToCompare.groundwater_depth, changes, categoryName, "Groundwater Depth"), Equals, False)
+        Equals = If(Me.neglect_depth.CheckChange(otherToCompare.neglect_depth, changes, categoryName, "Neglect Depth"), Equals, False)
+        Equals = If(Me.local_drilled_pier_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile ID"), Equals, False)
+        Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.local_drilled_pier_id, changes, categoryName, "Local Drilled Pier ID"), Equals, False)
+        Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier ID"), Equals, False)
+
+
+        'Soil Layers
+        Equals = If(Me.DPSoilLayers.CheckChange(otherToCompare.SoilLayers, changes, categoryName, "Soil Layers"), Equals, False)
+
+        Return Equals
+
+    End Function
+
 End Class
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierSoilLayer))>
@@ -2775,6 +2804,33 @@ Public Class DrilledPierSoilLayer
         Catch
         End Try
     End Sub
+
+    Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
+        Equals = True
+        If changes Is Nothing Then changes = New List(Of AnalysisChange)
+        Dim categoryName As String = Me.EDSObjectFullName
+
+        'Makes sure you are comparing to the same object type
+        'Customize this to the object type
+        Dim otherToCompare As DrilledPierSoilLayer = TryCast(other, DrilledPierSoilLayer)
+        If otherToCompare Is Nothing Then Return False
+
+        'Equals = If(Me.ID.CheckChange(otherToCompare.ID, changes, categoryName, "Id"), Equals, False)
+        Equals = If(Me.bottom_depth.CheckChange(otherToCompare.bottom_depth, changes, categoryName, "Bottom Depth"), Equals, False)
+        Equals = If(Me.effective_soil_density.CheckChange(otherToCompare.effective_soil_density, changes, categoryName, "Effective Soil Density"), Equals, False)
+        Equals = If(Me.cohesion.CheckChange(otherToCompare.cohesion, changes, categoryName, "Cohesion"), Equals, False)
+        Equals = If(Me.friction_angle.CheckChange(otherToCompare.friction_angle, changes, categoryName, "Friction Angle"), Equals, False)
+        Equals = If(Me.skin_friction_override_comp.CheckChange(otherToCompare.skin_friction_override_comp, changes, categoryName, "Skin Friction Override Comp"), Equals, False)
+        Equals = If(Me.skin_friction_override_uplift.CheckChange(otherToCompare.skin_friction_override_uplift, changes, categoryName, "Skin Friction Override Uplift"), Equals, False)
+        Equals = If(Me.nominal_bearing_capacity.CheckChange(otherToCompare.nominal_bearing_capacity, changes, categoryName, "Nominal Bearing Capacity"), Equals, False)
+        Equals = If(Me.local_soil_profile_id.CheckChange(otherToCompare.local_soil_profile_id, changes, categoryName, "Local Soil Profile ID"), Equals, False)
+        Equals = If(Me.soil_profile_id.CheckChange(otherToCompare.Soil_Profile_id, changes, categoryName, "Soil Profile ID"), Equals, False)
+        Equals = If(Me.local_soil_layer_id.CheckChange(otherToCompare.local_soil_layer_id, changes, categoryName, "Local Soil Layer ID"), Equals, False)
+        Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier ID"), Equals, False)
+        Equals = If(Me.local_drilled_pier_id.CheckChange(otherToCompare.local_drilled_pier_id, changes, categoryName, "Local Drilled Pier ID"), Equals, False)
+        Equals = If(Me.spt_blow_count.CheckChange(otherToCompare.spt_blow_count, changes, categoryName, "Spt Blow Count"), Equals, False)
+
+    End Function
 End Class
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierResult))>
