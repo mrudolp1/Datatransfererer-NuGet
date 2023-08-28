@@ -7,6 +7,8 @@ Imports DevExpress.DataAccess.Excel
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 Imports System.Runtime.Serialization
+Imports DevExpress.Data.Helpers.SyncHelper.ZombieContextsDetector
+Imports DevExpress.DataProcessing.InMemoryDataProcessor
 
 <Serializable()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
@@ -207,6 +209,21 @@ Partial Public Class EDSStructure
         Me.SiteInfo = New SiteInfo(WorkOrder)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
+    End Sub
+
+    Public Sub CloneSettings(ByVal strctr As EDSStructure)
+        Me.bus_unit = strctr.bus_unit
+        Me.structure_id = strctr.structure_id
+        Me.work_order_seq_num = strctr.work_order_seq_num
+        Me.order = strctr.order
+        Me.orderRev = strctr.orderRev
+        Me.modified_person_id = strctr.modified_person_id
+        Me.process_stage = strctr.process_stage
+        Me.databaseIdentity = strctr.databaseIdentity
+        Me.activeDatabase = strctr.activeDatabase
+        Me.WorkingDirectory = strctr.WorkingDirectory
+        Me.ReportOptions = strctr.ReportOptions
+        Me.SiteInfo = strctr.SiteInfo
     End Sub
 
     Public Overrides Function ToString() As String
