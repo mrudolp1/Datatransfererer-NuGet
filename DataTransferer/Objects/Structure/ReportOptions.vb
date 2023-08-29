@@ -1728,6 +1728,21 @@ Public Class Equipment
             feed_line_size
         }
     End Function
+
+    Public Function IsBlank() As Boolean
+        If mounting_level = " - " And
+        center_line_elevation = " -  " And
+        num_antennas = 0 And
+        antenna_manufacturer = " - " And
+        antenna_model = " - " And
+        num_feed_lines = "" And
+        feed_line_size = "" Then
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
 End Class
 
 <DataContractAttribute()>
