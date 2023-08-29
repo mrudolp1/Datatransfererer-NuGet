@@ -1443,7 +1443,7 @@ Partial Public Class Pile
             'TIA Revision- Defaulting to Rev. H if not available. 
             .Worksheets("Input").Range("TIA").Value = MyTIA()
             'ORder Number
-            .Worksheets("Input").Range("C7").Value = MyOrder()
+            .Worksheets("Input").Range("D7").Value = MyOrder()
             'H Section 15.5
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5) Then
                 rev_h_section_15_5 = Me.ParentStructure?.structureCodeCriteria?.rev_h_section_15_5
