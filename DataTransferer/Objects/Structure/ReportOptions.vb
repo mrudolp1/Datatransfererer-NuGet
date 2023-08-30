@@ -1127,8 +1127,9 @@ Public Class ReportOptions
         Dim Golden As List(Of String) = New List(Of String)({
             "4-GEOTECHNICAL REPORTS",
             "4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS",
+                orList.Add(t)
             "4-TOWER MANUFACTURER DRAWINGS",
-            "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
+
             "4-POST-INSTALLATION INSPECTION",
             "4-POST-MODIFICATION INSPECTION"})
 
@@ -1153,7 +1154,7 @@ Public Class ReportOptions
                 End If
                 orList.Add(t)
 
-                Dim found As Boolean = False
+               Dim found As Boolean = False
                 For Each doc As TableDocument In Me.TableDocuments
                     If Golden.Equals(doc) Then
                         found = True
@@ -1164,6 +1165,7 @@ Public Class ReportOptions
                 If Not found Then
                     TableDocuments.Add(t)
                 End If
+
             Next
         End Using
     End Sub
@@ -1294,13 +1296,13 @@ Public Class ReportOptions
             command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
 
             command.Parameters("@PARAM1").Value = Item.Component
-                    command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
-                    command.Parameters("@PARAM3").Value = Item.Notes
-                    command.Parameters("@PARAM4").Value = Item.cap.ToString()
-                    command.Parameters("@PARAM5").Value = Item.PassFail
+            command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
+            command.Parameters("@PARAM3").Value = Item.Notes
+            command.Parameters("@PARAM4").Value = Item.cap.ToString()
+            command.Parameters("@PARAM5").Value = Item.PassFail
 
-                    commands.Add(command)
-                Next
+            commands.Add(command)
+            Next
             result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
