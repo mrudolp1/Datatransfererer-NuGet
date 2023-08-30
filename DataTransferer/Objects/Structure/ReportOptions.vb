@@ -789,8 +789,9 @@ Public Class ReportOptions
                     TableDocuments.Add(t)
 
                 Next
+                LoadDocumentsFromOracle()
             Else
-                'LoadDocumentsFromOracle()
+                LoadDocumentsFromOracle()
             End If
 
         End Using
@@ -1104,6 +1105,8 @@ Public Class ReportOptions
                     and dim.doc_id=t.doc_id
                     and dim.bus_unit in ('" & bus_unit & "')
                     and dtm.doc_type_name LIKE '4-%'"
+        Dim orList As New List(Of TableDocument)
+
         Using strDS As New DataSet
             OracleLoader(doc_query, "Documents", strDS, 3000, "isit")
 
@@ -1113,8 +1116,19 @@ Public Class ReportOptions
                 If (Golden.Contains(t.Document) And t.Valid) Then
                     t.Enabled = True
                 End If
+                orList.Add(t)
 
-                TableDocuments.Add(t)
+                Dim found As Boolean = False
+                For Each doc As TableDocument In Me.TableDocuments
+                    If Golden.Equals(doc) Then
+                        found = True
+                        Exit For
+                    End If
+                Next
+
+                If Not found Then
+                    TableDocuments.Add(t)
+                End If
             Next
         End Using
     End Sub
@@ -1668,6 +1682,16 @@ Public Class TableDocument
         _valid = val
 
     End Sub
+
+    Public Function Equals(obj As TableDocument) As Boolean
+
+        If Me.Document <> obj.Document Then Return False
+        If Me.Reference <> obj.Reference Then Return False
+        If Me.Source <> obj.Source Then Return False
+        If Me.Valid <> obj.Valid Then Return False
+
+        Return True
+    End Function
 End Class
 
 <DataContractAttribute()>
