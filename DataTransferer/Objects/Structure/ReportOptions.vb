@@ -78,11 +78,12 @@ Public Class ReportOptions
      <DataMember()> Public Property EngStampTitle As String
 
      <DataMember()> Public Property ReportDate As Date = Today
-     <DataMember()> Public Property JurisdictionWording As String
+    <DataMember()> Public Property JurisdictionWording As String
+    <DataMember()> Public Property IsEditMode As Boolean
 
 
     'Lists: Stored in db under report.report_lists
-     <DataMember()> Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
+    <DataMember()> Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
     'From
     '{"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
      <DataMember()> Public Property Notes As BindingList(Of String) = New BindingList(Of String)
@@ -650,6 +651,16 @@ Public Class ReportOptions
             End If
         Catch ex As Exception
             Me.JurisdictionWording = Nothing
+        End Try
+
+        Try
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("is_edit_mode"), String)) Then
+                Me.IsEditMode = CType(SiteCodeDataRow.Item("is_edit_mode"), String)
+            Else
+                Me.IsEditMode = Nothing
+            End If
+        Catch ex As Exception
+            Me.IsEditMode = Nothing
         End Try
 
         'If Not Me.IsFromDefault Then
@@ -1431,6 +1442,7 @@ Public Class ReportOptions
 
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDate.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.IsEditMode.NullableToString.FormatDBValue)
 
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
@@ -1496,6 +1508,7 @@ Public Class ReportOptions
 
         SQLInsertFields = SQLInsertFields.AddtoDBString("report_date")
         SQLInsertFields = SQLInsertFields.AddtoDBString("custom_jurisdiction_wording")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("is_edit_mode")
 
         'SQLInsertFields = SQLInsertFields.AddtoDBString("working_dir")
         SQLInsertFields = SQLInsertFields.AddtoDBString("root_dir") 'report_dir
@@ -1561,16 +1574,14 @@ Public Class ReportOptions
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("report_date=" & Me.ReportDate.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("custom_jurisdiction_wording=" & Me.JurisdictionWording.NullableToString.Replace("'", "''").FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("is_edit_mode=" & Me.IsEditMode.NullableToString.FormatDBValue)
 
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("working_dir=" & Me.WorkingDir.NullableToString.Replace("'", "''").FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("root_dir=" & Me.ReportDir.NullableToString.Replace("'", "''").FormatDBValue)
 
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngName=" & Me.EngName.NullableToString.Replace("'", "''").FormatDBValue)
-
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngQAName=" & Me.EngQAName.NullableToString.Replace("'", "''").FormatDBValue)
-
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampName =" & Me.EngStampName.NullableToString.Replace("'", "''").FormatDBValue)
-
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("EngStampTitle=" & Me.EngStampTitle.NullableToString.Replace("'", "''").FormatDBValue)
 
         Return SQLUpdateFieldsandValues
