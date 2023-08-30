@@ -686,13 +686,14 @@ ErrorSkip:
     End Function
 
     Public Async Function RunTNXAsync(tnxFilePath As String, Optional isDevMode As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
+        'tnx vars
         Dim tnxAppLocation As String = "C:\Program Files (x86)\TNX\tnxTower 8.1.5.0 BETA\tnxtower.exe"
-
         Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
-
         Dim tnxProdVersion As String = ""
-
         Dim tnxSuccess As Boolean = False
+
+        Dim twrType As String = Me.SiteInfo.tower_type.ToUpper
+        Dim timeOutCounter As Integer 'set in milliseconds
 
         If Not File.Exists(tnxFilePath) Then
             Await WriteLineLogLine("ERROR | .eri file does not exist: " & tnxFilePath, progress)
@@ -752,6 +753,13 @@ ErrorSkip:
                 Await WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables", progress)
             End If
 
+            'seting timout duration - longer for guyeds
+            If twrType = "GUYED" Then
+                timeOutCounter = 600000
+            Else
+                timeOutCounter = 300000
+            End If
+
             With cmdProcess
                 .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
                 With .StartInfo
@@ -761,7 +769,8 @@ ErrorSkip:
                 End With
                 .Start()
 
-                Await CheckLogFileForFinishedAsync(tnxLogFilePath, 300000, True, cancelToken, progress)
+
+                Await CheckLogFileForFinishedAsync(tnxLogFilePath, timeOutCounter, True, cancelToken, progress)
                 Try
                     Await WriteLineLogLine("INFO | TNX finished, attempting to terminate..", progress)
                     .Kill()
