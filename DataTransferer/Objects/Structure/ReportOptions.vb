@@ -845,8 +845,7 @@ Public Class ReportOptions
                             CType(item.Item("note"), String),
                             CType(item.Item("component"), String),
                             CType(item.Item("elevation"), Decimal),
-                            CType(item.Item("capacity"), Decimal),
-                            CType(item.Item("pass_fail_text"), String))
+                            CType(item.Item("capacity"), Decimal))
                     OtherCapacities.Add(t)
 
                 Next
@@ -1290,33 +1289,30 @@ Public Class ReportOptions
             queryTemplate = "INSERT INTO report.report_capacities (work_order_seq_num,component,elevation,note,capacity) VALUES(" & work_order_seq_num & ",@PARAM1, @PARAM2, @PARAM3, @PARAM4);"
             Dim command As SqlCommand = New SqlCommand(queryTemplate)
             command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
-                command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
-                command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
-                command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
+            command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
+            command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
+            command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
 
-                command.Parameters("@PARAM1").Value = Item.Component
-                command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
-                command.Parameters("@PARAM3").Value = Item.Notes
-                command.Parameters("@PARAM4").Value = Item.cap.ToString()
+            command.Parameters("@PARAM1").Value = Item.Component
+                    command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
+                    command.Parameters("@PARAM3").Value = Item.Notes
+                    command.Parameters("@PARAM4").Value = Item.cap.ToString()
+                    command.Parameters("@PARAM5").Value = Item.PassFail
 
-                commands.Add(command)
-            Next
-
+                    commands.Add(command)
+                Next
             result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
-
 #End Region
 #Region "Save report equipment (Table 1,2,3)"
-
+            'Delete all list items associated with WO
+            commands = New List(Of SqlCommand)
             'Delete all list items associated with WO
             commands = New List(Of SqlCommand)
 
             'Delete all document items associated with WO
-            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
-
-
             queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & work_order_seq_num & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
             For Each Item In ProposedEquipment
                 Dim command As SqlCommand = New SqlCommand(queryTemplate)
@@ -1889,7 +1885,6 @@ Public Class Capacity
         End If
 
     End Function
-
 End Class
 
 #End Region
