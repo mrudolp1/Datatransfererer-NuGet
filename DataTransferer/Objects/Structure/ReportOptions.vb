@@ -820,8 +820,7 @@ Public Class ReportOptions
                             CType(item.Item("note"), String),
                             CType(item.Item("component"), String),
                             CType(item.Item("elevation"), Decimal),
-                            CType(item.Item("capacity"), Decimal),
-                            CType(item.Item("pass_fail_text"), String))
+                            CType(item.Item("capacity"), Decimal))
                     OtherCapacities.Add(t)
 
                 Next
@@ -1245,35 +1244,31 @@ Public Class ReportOptions
 #End Region
 #Region "Save other capacity data (Table 5)"
 
-            If OtherCapacities.Count > 0 Then
-                commands = New List(Of SqlCommand)
+            commands = New List(Of SqlCommand)
 
                 'Delete all document items associated with WO
                 commands.Add(New SqlCommand("DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
-                queryTemplate = "INSERT INTO report.report_capacities (work_order_seq_num,component,elevation,note,capacity,pass_fail_tex) VALUES(" & work_order_seq_num & ",@PARAM1, @PARAM2, @PARAM3, @PARAM4, @PARAM5);"
+            queryTemplate = "INSERT INTO report.report_capacities (work_order_seq_num,component,elevation,note,capacity) VALUES(" & work_order_seq_num & ",@PARAM1, @PARAM2, @PARAM3, @PARAM4);"
 
-                For Each Item In OtherCapacities
+            For Each Item In OtherCapacities
                     Dim command As SqlCommand = New SqlCommand(queryTemplate)
                     command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
                     command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
                     command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
-                    command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
-                    command.Parameters.Add("@PARAM5", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
 
-                    command.Parameters("@PARAM1").Value = Item.Component
+                command.Parameters("@PARAM1").Value = Item.Component
                     command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
                     command.Parameters("@PARAM3").Value = Item.Notes
-                    command.Parameters("@PARAM4").Value = Item.cap.ToString()
-                    command.Parameters("@PARAM5").Value = Item.PassFail
+                command.Parameters("@PARAM4").Value = Item.cap.ToString()
 
-                    commands.Add(command)
+                commands.Add(command)
                 Next
 
                 result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
-                If (Not result) Then
-                    Return 500
-                End If
+            If (Not result) Then
+                Return 500
             End If
 
 #End Region
@@ -1822,31 +1817,32 @@ Public Class Capacity
     <DataMember()> Public Property Component As String
     <DataMember()> Public Property Elevation As Decimal
     <DataMember()> <DisplayName("Capacity")> Public Property cap As Decimal
-    <DataMember()> <DisplayName("Pass / Fail")> Public Property PassFail As String
-
-    Private _valid As Boolean
-
-    Public ReadOnly Property Valid
-        Get
-            Return _valid
-        End Get
-    End Property
 
     Public Sub New()
         Notes = ""
         Component = ""
         Elevation = 0
         Me.cap = 0
-        PassFail = ""
     End Sub
 
-    Public Sub New(note As String, component As String, elev As Decimal, cap As Decimal, pf As String)
+    Public Sub New(note As String, component As String, elev As Decimal, cap As Decimal)
         Notes = note
         Me.Component = component
         Elevation = elev
         Me.cap = cap
-        PassFail = pf
     End Sub
+
+    Public Function IsBlank() As Boolean
+        If Notes = "" And
+            Component = "" And
+            Elevation = 0 And
+            Me.cap = 0 Then
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
 End Class
 
 #End Region
