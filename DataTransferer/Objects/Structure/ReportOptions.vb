@@ -825,32 +825,6 @@ Public Class ReportOptions
                     OtherCapacities.Add(t)
 
                 Next
-            Else
-                'LoadDocumentsFromOracle()
-            End If
-
-        End Using
-#End Region
-
-#Region "Load related extra capacites (for table 5)"
-        'Load doc items
-        query = "SELECT * FROM report.report_capacities WHERE work_order_seq_num = '" & work_order_seq_num & "'"
-
-        Using strDS As New DataSet
-            OtherCapacities.Clear()
-            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
-            If (strDS.Tables(0).Rows.Count > 0) Then
-                For Each item In strDS.Tables(0).Rows
-                    Dim t As Capacity = New Capacity(
-                            CType(item.Item("note"), String),
-                            CType(item.Item("component"), String),
-                            CType(item.Item("elevation"), Decimal),
-                            CType(item.Item("capacity"), Decimal))
-                    OtherCapacities.Add(t)
-
-                Next
-            Else
-                'LoadDocumentsFromOracle()
             End If
 
         End Using
@@ -1127,9 +1101,7 @@ Public Class ReportOptions
         Dim Golden As List(Of String) = New List(Of String)({
             "4-GEOTECHNICAL REPORTS",
             "4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS",
-                orList.Add(t)
             "4-TOWER MANUFACTURER DRAWINGS",
-
             "4-POST-INSTALLATION INSPECTION",
             "4-POST-MODIFICATION INSPECTION"})
 
@@ -1289,25 +1261,26 @@ Public Class ReportOptions
             commands.Add(New SqlCommand("DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
             queryTemplate = "INSERT INTO report.report_capacities (work_order_seq_num,component,elevation,note,capacity) VALUES(" & work_order_seq_num & ",@PARAM1, @PARAM2, @PARAM3, @PARAM4);"
-            Dim command As SqlCommand = New SqlCommand(queryTemplate)
-            command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
-            command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
-            command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
-            command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
+            For Each Item In OtherCapacities
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
 
-            command.Parameters("@PARAM1").Value = Item.Component
-            command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
-            command.Parameters("@PARAM3").Value = Item.Notes
-            command.Parameters("@PARAM4").Value = Item.cap.ToString()
+                command.Parameters("@PARAM1").Value = Item.Component
+                command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
+                command.Parameters("@PARAM3").Value = Item.Notes
+                command.Parameters("@PARAM4").Value = Item.cap.ToString()
 
-            commands.Add(command)
+                commands.Add(command)
             Next
 
             result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
-
+#End Region
 #Region "Save report equipment (Table 1,2,3)"
             'Delete all list items associated with WO
             commands = New List(Of SqlCommand)
@@ -1640,7 +1613,6 @@ Public Class ReportOptions
 
         Return SQLUpdateFieldsandValues
     End Function
-
 #End Region
 
     Public Overrides Function Equals(other As EDSObject, ByRef changes As List(Of AnalysisChange)) As Boolean
