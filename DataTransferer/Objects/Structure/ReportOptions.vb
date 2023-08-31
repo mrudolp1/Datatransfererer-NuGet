@@ -1284,8 +1284,8 @@ Public Class ReportOptions
 #Region "Save report equipment (Table 1,2,3)"
             'Delete all list items associated with WO
             commands = New List(Of SqlCommand)
-            'Delete all list items associated with WO
-            commands = New List(Of SqlCommand)
+            'Delete all document items associated with WO
+            commands.Add(New SqlCommand("DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
             'Delete all document items associated with WO
             queryTemplate = "INSERT INTO report.report_equipment (work_order_seq_num,mounting_level, center_line_elevation, num_antennas, antenna_manufacturer, antenna_model, num_feed_lines, feed_line_size, table_num) VALUES(" & work_order_seq_num & ",@mounting_level, @center_line_elevation, @num_antennas, @antenna_manufacturer, @antenna_model, @num_feed_lines, @feed_line_size, @table_num);"
