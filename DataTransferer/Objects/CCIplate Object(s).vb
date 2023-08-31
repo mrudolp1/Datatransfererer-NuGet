@@ -776,6 +776,7 @@ Partial Public Class CCIplate
                     ElseIf structure_type = "Monopole" Then
                         If Not IsNothing(row.connection_elevation) Then
                             .Worksheets("MP Connection Summary").Range("C" & PlateRow2).Value = CType(row.connection_elevation, Double)
+                            .Worksheets("Database").Cells(3, mycol).Value = CType(row.connection_elevation, Double) 'noticed this needs added to the database tab or else custom connections won't run after downloaded from eds. 
                         End If
                         If Not IsNothing(row.bolt_configuration) Then
                             .Worksheets("MP Connection Summary").Range("K" & PlateRow2).Value = CType(row.bolt_configuration, String)
