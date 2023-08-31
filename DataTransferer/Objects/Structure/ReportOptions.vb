@@ -24,28 +24,28 @@ Public Class ReportOptions
     'Properties: Store in SQL report.report_options table (PK = WO)
     <DataMember()> Public Property FromDatabaseWO As String 'Not actual WO; just whatever we get from the Database (so for default options, could be old WO)
     <DataMember()> Public Property ReportType As String
-     <DataMember()> Public Property ConfigurationType As String
-     <DataMember()> Public Property LC As String
-     <DataMember()> Public Property LCSubtype As String
-     <DataMember()> Public Property CodeRef As String
-     <DataMember()> Public Property ToBeStamped As Boolean
-     <DataMember()> Public Property ToBeGivenToCustomer As Boolean
-     <DataMember()> Public Property OnlySuperStructureAnalyzed As Boolean
-     <DataMember()> Public Property NewBuildInNewCode As Boolean
-     <DataMember()> Public Property IBM As Boolean
-     <DataMember()> Public Property TacExposureChange As Boolean
-     <DataMember()> Public Property TacTopoChange As Boolean
-     <DataMember()> Public Property MappingDocuments As Boolean
-     <DataMember()> Public Property ProposedExtension As Boolean
-     <DataMember()> Public Property ExtensionHeight As Double
-     <DataMember()> Public Property CanisterExtension As Boolean
-     <DataMember()> Public Property IsModified As Boolean
-     <DataMember()> Public Property RohnPirodFlangePlates As Boolean
-     <DataMember()> Public Property FlangeFEA As Boolean
-     <DataMember()> Public Property MpSliceOption As Integer '0,1,2
-     <DataMember()> Public Property ConditionallyPassing As Boolean
-     <DataMember()> Public Property GradeBeamAnalysisNeeded As Boolean
-     <DataMember()> Public Property GradeBeamsRequired As Boolean
+    <DataMember()> Public Property ConfigurationType As String
+    <DataMember()> Public Property LC As String
+    <DataMember()> Public Property LCSubtype As String
+    <DataMember()> Public Property CodeRef As String
+    <DataMember()> Public Property ToBeStamped As Boolean
+    <DataMember()> Public Property ToBeGivenToCustomer As Boolean
+    <DataMember()> Public Property OnlySuperStructureAnalyzed As Boolean
+    <DataMember()> Public Property NewBuildInNewCode As Boolean
+    <DataMember()> Public Property IBM As Boolean
+    <DataMember()> Public Property TacExposureChange As Boolean
+    <DataMember()> Public Property TacTopoChange As Boolean
+    <DataMember()> Public Property MappingDocuments As Boolean
+    <DataMember()> Public Property ProposedExtension As Boolean
+    <DataMember()> Public Property ExtensionHeight As Double
+    <DataMember()> Public Property CanisterExtension As Boolean
+    <DataMember()> Public Property IsModified As Boolean
+    <DataMember()> Public Property RohnPirodFlangePlates As Boolean
+    <DataMember()> Public Property FlangeFEA As Boolean
+    <DataMember()> Public Property MpSliceOption As Integer '0,1,2
+    <DataMember()> Public Property ConditionallyPassing As Boolean
+    <DataMember()> Public Property GradeBeamAnalysisNeeded As Boolean
+    <DataMember()> Public Property GradeBeamsRequired As Boolean
     <DataMember()> Public Property GroutRequired As Boolean
     'Workflow bug 189 
     'Added RCTInlucded option 
@@ -61,23 +61,23 @@ Public Class ReportOptions
     <DataMember()> Public Property UseStateWording As Boolean
 
     <DataMember()> Public Property ATTAddendum As Boolean
-     <DataMember()> Public Property RemoveCFDAreas As Boolean = True
-     <DataMember()> Public Property UseTiltTwistWording As Boolean
-     <DataMember()> Public Property LicenseOnly As Boolean
-     <DataMember()> Public Property MultipleFoundationsConsidered As Boolean
-     <DataMember()> Public Property RohnClips As Boolean
-     <DataMember()> Public Property TopographicCategoryOtherThan1 As Boolean
-     <DataMember()> Public Property ImportanceFactorOtherThan1 As Boolean
-     <DataMember()> Public Property PrevWO As Integer
-     <DataMember()> Public Property IsDefault As Boolean
+    <DataMember()> Public Property RemoveCFDAreas As Boolean = True
+    <DataMember()> Public Property UseTiltTwistWording As Boolean
+    <DataMember()> Public Property LicenseOnly As Boolean
+    <DataMember()> Public Property MultipleFoundationsConsidered As Boolean
+    <DataMember()> Public Property RohnClips As Boolean
+    <DataMember()> Public Property TopographicCategoryOtherThan1 As Boolean
+    <DataMember()> Public Property ImportanceFactorOtherThan1 As Boolean
+    <DataMember()> Public Property PrevWO As Integer
+    <DataMember()> Public Property IsDefault As Boolean
 
     'Properties: Get from EDS based on WO(???)
-     <DataMember()> Public Property EngName As String
-     <DataMember()> Public Property EngQAName As String
-     <DataMember()> Public Property EngStampName As String
-     <DataMember()> Public Property EngStampTitle As String
+    <DataMember()> Public Property EngName As String
+    <DataMember()> Public Property EngQAName As String
+    <DataMember()> Public Property EngStampName As String
+    <DataMember()> Public Property EngStampTitle As String
 
-     <DataMember()> Public Property ReportDate As Date = Today
+    <DataMember()> Public Property ReportDate As Date = Today
     <DataMember()> Public Property JurisdictionWording As String
     <DataMember()> Public Property IsEditMode As Boolean
 
@@ -86,8 +86,8 @@ Public Class ReportOptions
     <DataMember()> Public Property Assumptions As BindingList(Of String) = New BindingList(Of String)
     'From
     '{"Tower and structures were maintained in accordance with the TIA-222 Standard.", "The configuration of antennas, transmission cables, mounts and other appurtenances are as specified in Tables 1 and 2 and the referenced drawings."}
-     <DataMember()> Public Property Notes As BindingList(Of String) = New BindingList(Of String)
-     <DataMember()> Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
+    <DataMember()> Public Property Notes As BindingList(Of String) = New BindingList(Of String)
+    <DataMember()> Public Property LoadingChanges As BindingList(Of String) = New BindingList(Of String)
 
     'Equipment (Tables 1,2,3)
     <DataMember()> Public Property ProposedEquipment As List(Of Equipment) = New List(Of Equipment) 'Table 1
@@ -832,6 +832,31 @@ Public Class ReportOptions
         End Using
 #End Region
 
+#Region "Load related extra capacites (for table 5)"
+        'Load doc items
+        query = "SELECT * FROM report.report_capacities WHERE work_order_seq_num = '" & work_order_seq_num & "'"
+
+        Using strDS As New DataSet
+            OtherCapacities.Clear()
+            sqlLoader(query, strDS, activeDatabase, databaseIdentity, 500)
+            If (strDS.Tables(0).Rows.Count > 0) Then
+                For Each item In strDS.Tables(0).Rows
+                    Dim t As Capacity = New Capacity(
+                            CType(item.Item("note"), String),
+                            CType(item.Item("component"), String),
+                            CType(item.Item("elevation"), Decimal),
+                            CType(item.Item("capacity"), Decimal),
+                            CType(item.Item("pass_fail_text"), String))
+                    OtherCapacities.Add(t)
+
+                Next
+            Else
+                'LoadDocumentsFromOracle()
+            End If
+
+        End Using
+#End Region
+
 #Region "Load related report equipment (for table 1-3)"
         'Load list items
         query = "SELECT * FROM report.report_equipment WHERE work_order_seq_num = '" & work_order_seq_num & "'"
@@ -1259,28 +1284,25 @@ Public Class ReportOptions
 #Region "Save other capacity data (Table 5)"
 
             commands = New List(Of SqlCommand)
-
-                'Delete all document items associated with WO
-                commands.Add(New SqlCommand("DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
+            'Delete all document items associated with WO
+            commands.Add(New SqlCommand("DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
 
             queryTemplate = "INSERT INTO report.report_capacities (work_order_seq_num,component,elevation,note,capacity) VALUES(" & work_order_seq_num & ",@PARAM1, @PARAM2, @PARAM3, @PARAM4);"
-
-            For Each Item In OtherCapacities
-                    Dim command As SqlCommand = New SqlCommand(queryTemplate)
-                    command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
-                    command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
-                    command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
+            Dim command As SqlCommand = New SqlCommand(queryTemplate)
+            command.Parameters.Add("@PARAM1", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM2", SqlDbType.VarChar)
+                command.Parameters.Add("@PARAM3", SqlDbType.VarChar)
                 command.Parameters.Add("@PARAM4", SqlDbType.VarChar)
 
                 command.Parameters("@PARAM1").Value = Item.Component
-                    command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
-                    command.Parameters("@PARAM3").Value = Item.Notes
+                command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
+                command.Parameters("@PARAM3").Value = Item.Notes
                 command.Parameters("@PARAM4").Value = Item.cap.ToString()
 
                 commands.Add(command)
-                Next
+            Next
 
-                result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
@@ -1663,11 +1685,11 @@ End Class
 
 <DataContractAttribute()>
 Public Class TableDocument
-     <DataMember()> Public Property Enabled As Boolean
+    <DataMember()> Public Property Enabled As Boolean
 
-     <DataMember()> Public Property Document As String
-     <DataMember()> Public Property Reference As String
-     <DataMember()> Public Property Source As String
+    <DataMember()> Public Property Document As String
+    <DataMember()> Public Property Reference As String
+    <DataMember()> Public Property Source As String
 
     Private _valid As Boolean
 
@@ -1708,26 +1730,26 @@ End Class
 <DataContractAttribute()>
 Public Class Equipment
     <Category("EDS"), Description(""), DisplayName("Mounting Level")>
-     <DataMember()> Public Property mounting_level As String
+    <DataMember()> Public Property mounting_level As String
 
 
     <Category("EDS"), Description(""), DisplayName("Center Line Elevation")>
-     <DataMember()> Public Property center_line_elevation As String
+    <DataMember()> Public Property center_line_elevation As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Antennas")>
-     <DataMember()> Public Property num_antennas As Long
+    <DataMember()> Public Property num_antennas As Long
 
     <Category("EDS"), Description(""), DisplayName("Antenna Manufacturer")>
-     <DataMember()> Public Property antenna_manufacturer As String
+    <DataMember()> Public Property antenna_manufacturer As String
 
     <Category("EDS"), Description(""), DisplayName("Antenna Model")>
-     <DataMember()> Public Property antenna_model As String
+    <DataMember()> Public Property antenna_model As String
 
     <Category("EDS"), Description(""), DisplayName("Number of Feed Lines")>
     <DataMember()> Public Property num_feed_lines As String 'Long
 
     <Category("EDS"), Description(""), DisplayName("Feed Line Size")>
-     <DataMember()> Public Property feed_line_size As String
+    <DataMember()> Public Property feed_line_size As String
 
     Public Sub New()
         mounting_level = " - "
@@ -1867,6 +1889,7 @@ Public Class Capacity
         End If
 
     End Function
+
 End Class
 
 #End Region
