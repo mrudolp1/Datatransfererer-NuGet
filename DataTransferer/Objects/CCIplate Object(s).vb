@@ -739,7 +739,24 @@ Partial Public Class CCIplate
                 Dim BridgeDRow As Integer = 3 'SAPI Tab
                 'Dim BridgeDRow2 As Integer = 167 'MP Connection Summary Tab
 
+                Dim isFirst As Boolean = True
+
                 For Each row As Connection In Connections
+
+                    'Need to adjust starting rows when no baseplate exists (e.g. directly embedded pole). Only perform for first connection. 
+                    If isFirst Then
+                        If row.connection_type = "Flange" Then
+                            PlateRow += 1
+                            PlateDRow += 1
+                            PlateRow2 -= 2
+                            StiffDRow2 -= 1
+                            mycol += 1 'Need to further review this one. Might not need to add. 
+                            bump += 5
+                            bump2 += 100
+                        End If
+                        isFirst = False
+                    End If
+
 
                     'Excel Database Reference (resets for each plate connection)
                     Dim myrow4 As Integer '= 1027 'Stiffener Details
@@ -759,6 +776,7 @@ Partial Public Class CCIplate
                     ElseIf structure_type = "Monopole" Then
                         If Not IsNothing(row.connection_elevation) Then
                             .Worksheets("MP Connection Summary").Range("C" & PlateRow2).Value = CType(row.connection_elevation, Double)
+                            .Worksheets("Database").Cells(3, mycol).Value = CType(row.connection_elevation, Double) 'noticed this needs added to the database tab or else custom connections won't run after downloaded from eds. 
                         End If
                         If Not IsNothing(row.bolt_configuration) Then
                             .Worksheets("MP Connection Summary").Range("K" & PlateRow2).Value = CType(row.bolt_configuration, String)
