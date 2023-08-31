@@ -1299,15 +1299,15 @@ Public Class ReportOptions
             command.Parameters("@PARAM2").Value = Item.Elevation.ToString()
             command.Parameters("@PARAM3").Value = Item.Notes
             command.Parameters("@PARAM4").Value = Item.cap.ToString()
-            command.Parameters("@PARAM5").Value = Item.PassFail
 
             commands.Add(command)
             Next
+
             result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
             If (Not result) Then
                 Return 500
             End If
-#End Region
+
 #Region "Save report equipment (Table 1,2,3)"
             'Delete all list items associated with WO
             commands = New List(Of SqlCommand)
