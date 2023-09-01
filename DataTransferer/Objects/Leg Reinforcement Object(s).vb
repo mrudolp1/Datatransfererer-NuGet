@@ -318,11 +318,6 @@ Partial Public Class LegReinforcement
             Else
                 .Worksheets("IMPORT").Range("BU_Import").ClearContents
             End If
-            If Not IsNothing(Me.work_order_seq_num) Then
-                .Worksheets("IMPORT").Range("Order_Import").Value = CType(Me.work_order_seq_num, Integer)
-            Else
-                .Worksheets("IMPORT").Range("Order_Import").ClearContents
-            End If
             'If Not IsNothing(Me.structure_id) Then
             '    .Worksheets("").Range("").Value = CType(Me.structure_id, String)
             'End If
