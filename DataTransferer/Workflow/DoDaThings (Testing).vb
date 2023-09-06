@@ -14,7 +14,10 @@ Public Module WorkflowHelpers
                                 ByVal importingFrom As FileInfo,
                                 ByVal importingTo As FileInfo,
                                 ByVal SAPICompatible As Boolean,
-                                Optional ByVal excelVisible As Boolean = True) As Tuple(Of Boolean, String)
+                                Optional ByVal excelVisible As Boolean = True,
+                                Optional ByVal orderSheet As String = "",
+                                Optional ByVal orderRange As String = "",
+                                Optional ByVal edsStructure As EDSStructure = Nothing) As Tuple(Of Boolean, String)
 
         Dim myLog As String = ""
         Dim myXL As Tuple(Of Excel.Application, Boolean) = GetXlApp()
@@ -39,7 +42,7 @@ Public Module WorkflowHelpers
                 End If
             End If
 
-            If Import_Previous_Version(myLog, myXL.Item1, importingTo, macroname, params, excelVisible, prefix) Then
+            If Import_Previous_Version(myLog, myXL.Item1, importingTo, macroname, params, excelVisible, prefix, orderSheet, orderRange, edsStructure) Then
                 myLog += ("INFO | Import Inputs Completed for: " & importingTo.FullName + vbCrLf)
             Else
                 myLog += ("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName + vbCrLf)
@@ -90,7 +93,10 @@ Public Module WorkflowHelpers
                                            ByVal macroName As String,
                                            ByVal params As Tuple(Of String, String, Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
                                            Optional ByVal xlVisibility As Boolean = False,
-                                           Optional ByVal prefix As String = ""
+                                           Optional ByVal prefix As String = "",
+                                           Optional ByVal orderSheet As String = "",
+                                           Optional ByVal orderRange As String = "",
+                                           Optional ByVal edsStructure As EDSStructure = Nothing
                                            ) As Boolean
 
         Dim toolFileName As String = Path.GetFileName(workbookFile.Name)
@@ -111,6 +117,18 @@ Public Module WorkflowHelpers
 
                 myLog += ("DEBUG | Tool: " & toolFileName + vbCrLf)
                 myLog += ("DEBUG | BEGIN MACRO: " & macroName + vbCrLf)
+
+                'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
+                If toolFileName.ToLower.Contains("ccipole") Then
+                    xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
+                ElseIf toolFileName.ToLower.Contains("cciseismic") Then
+                    xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
+                    xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
+                    xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
+                Else
+                    xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
+                End If
+
 
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
@@ -256,7 +274,7 @@ Public Module WorkflowHelpers
     'Invalid files return blank datatables
 
     Public Function SummarizedResults(ByVal info As IO.FileInfo) As DataTable
-        Dim myTemplate As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
+        Dim myTemplate As Tuple(Of Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
         Dim range As String = myTemplate.Item5
         Dim tempds As New DataSet
         Dim finalDt As New DataTable
@@ -521,7 +539,7 @@ Public Module WorkflowHelpers
                 logString.NewLine("DEBUG | File found for structure: " & info.Name)
             ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
                 'Determine if the file is one of the templates
-                Dim template As Tuple(Of Byte(), Byte(), String, String, String) = WhichFile(info)
+                Dim template As Tuple(Of Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
 
                 'If the properties of the tuple are nothing then they aren't templates
                 If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
@@ -579,79 +597,101 @@ Public Module WorkflowHelpers
 
     'Used to determine which template is being used
     'This could have been set up as a class but ended up going too far and now we have tuples. Enjoy! :)
-    Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of Byte(), Byte(), String, String, String)
-        Dim returner As Tuple(Of Byte(), Byte(), String, String, String)
+    Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of Byte(), Byte(), String, String, String, String, String)
+        Dim returner As Tuple(Of Byte(), Byte(), String, String, String, String, String)
         'Item 1 = current published versions
         'Item 2 = new versions created for SAPI
         'Item 3 = File name to be used with the bytes
         'Item 4 = Worksheet with results
         'Item 5 = Range for results 
+        'Item 6 = Worksheet for order input
+        'Item 7 = Range for order
 
         If file.Name.ToLower.Contains("cciplate") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.CCIplate__4_1_2_,
                 CCI_Engineering_Templates.My.Resources.CCIplate,
                 "CCIplate.xlsm",
                 "Results Database",
-                "B1:BO64")
+                "B1:BO64",
+                "Main",
+                "C5")
         ElseIf file.Name.ToLower.Contains("ccipole") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.CCIpole__4_5_8_,
                 CCI_Engineering_Templates.My.Resources.CCIpole,
                 "CCIpole.xlsm",
                 "Results",
-                "AZ4:BT108")
+                "AZ4:BT108",
+                "Input",
+                "WO")
         ElseIf file.Name.ToLower.Contains("cciseismic") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.CCISeismic__3_3_9_,
                 CCI_Engineering_Templates.My.Resources.CCISeismic,
                 "CCISeismic.xlsm",
                 Nothing,
-                Nothing)
+                Nothing,
+                "",
+                "")
         ElseIf file.Name.ToLower.Contains("drilled pier") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation__5_0_5_,
                 CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation,
                 "Drilled Pier Foundation.xlsm",
                 "Foundation Input",
-                "BD8:CF59|H10:L31")
+                "BD8:CF59|H10:L31",
+                "Input",
+                "D5")
         ElseIf file.Name.ToLower.Contains("guyed anchor") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation__4_0_0_,
                 CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation,
                 "Guyed Anchor Block Foundation.xlsm",
                 "Input",
-                "M20:X70")
+                "M20:X70",
+                "Input",
+                "WO")
         ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool,
                 "Leg Reinforcement Tool.xlsm",
                 Nothing,
-                Nothing)
+                Nothing,
+                "IMPORT",
+                "Order_Import")
         ElseIf file.Name.ToLower.Contains("pier and pad") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation__4_1_1_,
                 CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation,
                 "Pier and Pad Foundation.xlsm",
                 "Input",
-                "F12:K25")
+                "F12:K25",
+                "Input",
+                "C5")
         ElseIf file.Name.ToLower.Contains("pile") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Pile_Foundation__2_2_1_,
                 CCI_Engineering_Templates.My.Resources.Pile_Foundation,
                 "Pile Foundation.xlsm",
                 "Input",
-                "G13:M31")
+                "G13:M31",
+                "Input",
+                "C7")
         ElseIf file.Name.ToLower.Contains("unit base") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation__4_0_3_,
                 CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation,
                 "SST Unit Base Foundation.xlsm",
                 "Input",
-                "F12:K24")
+                "F12:K24",
+                "Input",
+                "C5")
         Else
-            returner = New Tuple(Of Byte(), Byte(), String, String, String)(
+            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+                Nothing,
+                Nothing,
                 Nothing,
                 Nothing,
                 Nothing,
