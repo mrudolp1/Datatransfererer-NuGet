@@ -503,8 +503,8 @@ Public Class ReportOptions
         End Try
 
         Try
-            If Not IsDBNull(CType(SiteCodeDataRow.Item("designed_by"), String)) Then
-                Me.MappedBy = CType(SiteCodeDataRow.Item("designed_by"), String)
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("mapped_by"), String)) Then
+                Me.MappedBy = CType(SiteCodeDataRow.Item("mapped_by"), String)
             Else
                 Me.MappedBy = Nothing
             End If
