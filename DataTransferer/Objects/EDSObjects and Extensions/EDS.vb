@@ -151,6 +151,20 @@ Partial Public MustInherit Class EDSObject
 
     End Sub
 
+    Public Function MyOrder() As String
+        Dim site_app As String = ""
+        Dim site_rev As String = ""
+
+        If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
+            site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id.ToString
+            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision) Then
+                site_rev = Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision.ToString
+                site_app += " REV. " & site_rev
+            End If
+        End If
+        Return site_app
+    End Function
+
 End Class
 
 <DataContract()>
@@ -342,19 +356,7 @@ Partial Public MustInherit Class EDSExcelObject
         Return tia_current
     End Function
 
-    Public Function MyOrder() As String
-        Dim site_app As String = ""
-        Dim site_rev As String = ""
 
-        If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id) Then
-            site_app = Me.ParentStructure?.structureCodeCriteria?.eng_app_id.ToString
-            If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision) Then
-                site_rev = Me.ParentStructure?.structureCodeCriteria?.eng_app_id_revision.ToString
-                site_app += " REV. " & site_rev
-            End If
-        End If
-        Return site_app
-    End Function
 
 #Region "Load From Excel"
     Public Overridable Sub LoadFromExcel()
