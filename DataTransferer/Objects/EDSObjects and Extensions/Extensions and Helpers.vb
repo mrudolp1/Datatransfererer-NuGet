@@ -156,6 +156,18 @@ Public Module Extensions
     'End Function
 
     <Extension()>
+    Public Function EDSDELETEListQueryBuilder(Of T As EDSObjectWithQueries)(alist As List(Of T)) As String
+        EDSDELETEListQueryBuilder = ""
+        Dim currentSortedList As List(Of T) = alist.ToList
+
+        For i As Integer = 0 To currentSortedList.Count - 1
+            EDSDELETEListQueryBuilder += currentSortedList(i).SQLDelete
+        Next
+
+        Return EDSDELETEListQueryBuilder
+    End Function
+
+    <Extension()>
     Public Function EDSListQueryBuilder(Of T As EDSObjectWithQueries)(alist As List(Of T), Optional prevList As List(Of T) = Nothing, Optional ByVal AllowUpdate As Boolean = True) As String
 
         EDSListQueryBuilder = ""

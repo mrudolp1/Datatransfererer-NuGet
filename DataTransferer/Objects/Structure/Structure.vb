@@ -489,6 +489,51 @@ Partial Public Class EDSStructure
 
     End Function
 
+    Public Function DeleteFromEDSQuery() As String
+
+        If EDSMe Is Nothing Then
+            Throw New Exception("EDS Structure object not set.")
+        End If
+
+        Dim structureQuery As String = ""
+
+
+        For Each level In _SQLQueryVariables
+            structureQuery.NewLine("DECLARE " & level & " TABLE(ID INT)")
+            structureQuery.NewLine("DECLARE " & level & "ID INT")
+        Next
+        If Me.Poles.Count > 0 Then
+            structureQuery.NewLine("DECLARE @TopBoltID INT" & vbCrLf & "DECLARE @BotBoltID INT")
+        End If
+
+
+        Dim transactionName As String = "deleting" & Me.process_stage & Me.structure_id & Me.bus_unit.NullableToString & Me.work_order_seq_num.NullableToString
+        structureQuery.NewLine("BEGIN TRY")
+        structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
+        structureQuery.NewLine(Me.EDSMe.tnx?.SQLDelete)
+        structureQuery.NewLine(Me.EDSMe.PierandPads.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.UnitBases.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.Piles.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.DrilledPierTools.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.GuyAnchorBlockTools.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.CCIplates.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.Poles.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.LegReinforcements.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.EDSMe.CCISeismics.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.ReportOptions.SQLDelete)
+        structureQuery.NewLine("COMMIT TRANSACTION " & transactionName)
+        structureQuery.NewLine("SELECT '" & Me.bus_unit.NullableToString & "' bus_unit, '" & Me.structure_id & "' structure_id, '" & Me.work_order_seq_num.NullableToString & "' work_order_seq_num, '" & "Success" & "' result")
+        structureQuery.NewLine("END TRY")
+        structureQuery.NewLine("BEGIN CATCH")
+        structureQuery.NewLine("ROLLBACK TRANSACTION " & transactionName)
+        structureQuery.NewLine("EXECUTE dbo.usp_GetErrorInfo '" & Me.bus_unit.NullableToString & "', '" & Me.structure_id & "', '" & Me.work_order_seq_num.NullableToString & "'")
+        structureQuery.NewLine("END CATCH")
+
+        Return structureQuery
+
+
+    End Function
+
     ''' <summary>
     ''' Save to EDS functionality to save the whole structure to EDS.
     ''' Returns a tuple of Boolean and Datatable
