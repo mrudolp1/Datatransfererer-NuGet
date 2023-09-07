@@ -644,7 +644,7 @@ Public Module WorkflowHelpers
                 "Drilled Pier Foundation.xlsm",
                 "Foundation Input",
                 "BD8:CF59|H10:L31",
-                "Input",
+                "Foundation Input",
                 "D5")
         ElseIf file.Name.ToLower.Contains("guyed anchor") Then
             returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
@@ -654,7 +654,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "M20:X70",
                 "Input",
-                "WO")
+                "R5")
         ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
             returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
