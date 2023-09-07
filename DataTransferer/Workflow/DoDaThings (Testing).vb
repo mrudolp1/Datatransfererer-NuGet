@@ -119,16 +119,19 @@ Public Module WorkflowHelpers
                 myLog += ("DEBUG | BEGIN MACRO: " & macroName + vbCrLf)
 
                 'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
-                If toolFileName.ToLower.Contains("ccipole") Then
-                    xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
-                ElseIf toolFileName.ToLower.Contains("cciseismic") Then
-                    xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
-                    xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
-                    xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
-                Else
-                    xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
-                End If
-
+                Try
+                    If toolFileName.ToLower.Contains("ccipole") Then
+                        xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
+                    ElseIf toolFileName.ToLower.Contains("cciseismic") Then
+                        xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
+                        xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
+                        xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
+                    Else
+                        xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
+                    End If
+                Catch ex As Exception
+                    'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
+                End Try
 
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
