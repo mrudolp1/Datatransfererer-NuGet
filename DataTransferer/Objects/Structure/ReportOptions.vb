@@ -215,13 +215,16 @@ Public Class ReportOptions
     End Sub
 
     Public Sub Initialize()
+        IsFromDB = False 'Me.ParentStructure.ReportOptions.
+        IsFromDefault = False 'Me.ParentStructure.ReportOptions.
+
         'Try to load in-progress report
         Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
             sqlLoader(query1, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 IsFromDB = True
-                IsFromDefault = False
+                'IsFromDefault = False
 
                 Generate(strDS.Tables(0).Rows(0))
                 Return
@@ -233,7 +236,7 @@ Public Class ReportOptions
         Using strDS As New DataSet
             sqlLoader(query2, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
-                IsFromDB = True
+                'IsFromDB = True
                 IsFromDefault = True
 
                 Generate(strDS.Tables(0).Rows(0))

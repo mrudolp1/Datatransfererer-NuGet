@@ -582,9 +582,9 @@ Partial Public Class EDSStructure
         newRep.Absorb(Me)
         newRep.Initialize()
 
-        If newRep.IsFromDB Then
-            Me.ReportOptions = newRep
-        End If
+        'If newRep.IsFromDB Then
+        Me.ReportOptions = newRep
+        'End If
     End Sub
 #End Region
 
