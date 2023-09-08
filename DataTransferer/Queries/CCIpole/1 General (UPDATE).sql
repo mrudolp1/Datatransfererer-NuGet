@@ -4,6 +4,7 @@ BEGIN
 	UPDATE pole.pole
 	SET [UPDATE] 
 	WHERE ID = [ID]
+	SET @TopLevelID = [ID]
 
 
 	--[UNREINF SECTION SUBQUERY]

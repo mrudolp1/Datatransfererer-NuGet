@@ -4,6 +4,7 @@ BEGIN
 	UPDATE pole.interferences
 	SET [UPDATE] 
 	WHERE ID = [ID]
+	SET @SubLevel1ID = [ID]
 
 
 	--[INT DETAIL SUBQUERY]

@@ -7,6 +7,7 @@ BEGIN
 	UPDATE pole.reinforcements
 	SET [UPDATE] 
 	WHERE ID = [ID]
+	SET @SubLevel1ID = [ID]
 
 
 	--[REINF DETAIL SUBQUERY]
