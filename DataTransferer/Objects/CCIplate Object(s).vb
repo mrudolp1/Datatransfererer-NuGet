@@ -3002,9 +3002,13 @@ Partial Public Class BoltDetail
         SQLUpdate = SQLUpdate.TrimEnd() 'Removes empty rows that generate within query for each record
 
         'Plate Material
-        For Each row As CCIplateMaterial In CCIplateMaterials
-            SQLUpdate = SQLUpdate.Replace("--[CCIPLATE MATERIAL INSERT]", row.SQLInsert) 'Can only insert materials, no deleting or updating since database is referenced by all BUs. 
-        Next
+        If Me.CCIplateMaterials.Count > 0 Then
+            For Each row As CCIplateMaterial In CCIplateMaterials
+                SQLUpdate = SQLUpdate.Replace("--[CCIPLATE MATERIAL INSERT]", row.SQLInsert) 'Can only insert materials, no deleting or updating since database is referenced by all BUs. 
+            Next
+        Else
+            SQLUpdate = SQLUpdate.Replace("--[CCIPLATE MATERIAL INSERT]", "SET @SubLevel3ID = NULL --NO MATERIAL SPECIFIED IN TOOL")
+        End If
 
         Return SQLUpdate
 
