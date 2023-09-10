@@ -215,13 +215,16 @@ Public Class ReportOptions
     End Sub
 
     Public Sub Initialize()
+        IsFromDB = False 'Me.ParentStructure.ReportOptions.
+        IsFromDefault = False 'Me.ParentStructure.ReportOptions.
+
         'Try to load in-progress report
         Dim query1 = "SELECT * FROM report.report_options WHERE work_order_seq_num = '" & work_order_seq_num & "'"
         Using strDS As New DataSet
             sqlLoader(query1, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
                 IsFromDB = True
-                IsFromDefault = False
+                'IsFromDefault = False
 
                 Generate(strDS.Tables(0).Rows(0))
                 Return
@@ -233,7 +236,7 @@ Public Class ReportOptions
         Using strDS As New DataSet
             sqlLoader(query2, strDS, activeDatabase, databaseIdentity, 500)
             If (strDS.Tables(0).Rows.Count > 0) Then
-                IsFromDB = True
+                'IsFromDB = True
                 IsFromDefault = True
 
                 Generate(strDS.Tables(0).Rows(0))
@@ -503,8 +506,8 @@ Public Class ReportOptions
         End Try
 
         Try
-            If Not IsDBNull(CType(SiteCodeDataRow.Item("designed_by"), String)) Then
-                Me.MappedBy = CType(SiteCodeDataRow.Item("designed_by"), String)
+            If Not IsDBNull(CType(SiteCodeDataRow.Item("mapped_by"), String)) Then
+                Me.MappedBy = CType(SiteCodeDataRow.Item("mapped_by"), String)
             Else
                 Me.MappedBy = Nothing
             End If
@@ -1254,6 +1257,43 @@ Public Class ReportOptions
             End If
 
 #End Region
+#Region "Deal with report documents (Table 4)"
+
+
+            commands = New List(Of SqlCommand)
+
+            'Delete all document items associated with WO
+            commands.Add(New SqlCommand("DELETE FROM report.report_documents WHERE work_order_seq_num ='" & work_order_seq_num & "'"))
+
+            queryTemplate = "INSERT INTO report.report_documents (work_order_seq_num, doc_name, checked, doc_id, valid, source) VALUES(" & work_order_seq_num & ",@DOC_NAME, @CHECKED, @DOC_ID, @VALID, @SOURCE);"
+
+            For Each Item In TableDocuments
+                Dim checkedInt As Integer = 0
+                If (Item.Enabled) Then
+                    checkedInt = 1
+                End If
+                Dim command As SqlCommand = New SqlCommand(queryTemplate)
+                command.Parameters.Add("@DOC_NAME", SqlDbType.VarChar)
+                command.Parameters.Add("@CHECKED", SqlDbType.VarChar)
+                command.Parameters.Add("@DOC_ID", SqlDbType.VarChar)
+                command.Parameters.Add("@VALID", SqlDbType.VarChar)
+                command.Parameters.Add("@SOURCE", SqlDbType.VarChar)
+
+                command.Parameters("@DOC_NAME").Value = Item.Document
+                command.Parameters("@CHECKED").Value = checkedInt.ToString()
+                command.Parameters("@DOC_ID").Value = Item.Reference
+                command.Parameters("@VALID").Value = Item.Valid
+                command.Parameters("@SOURCE").Value = Item.Source
+
+                commands.Add(command)
+            Next
+
+            result = safeSqlTransactionSender(commands, activeDatabase, databaseIdentity, 500)
+            If (Not result) Then
+                Return 500
+            End If
+
+#End Region
 #Region "Save other capacity data (Table 5)"
 
             commands = New List(Of SqlCommand)
@@ -1371,6 +1411,17 @@ Public Class ReportOptions
             Return 500
         End Try
 
+    End Function
+
+    Public Overrides Function SQLDelete() As String
+        SQLDelete = ""
+        SQLDelete += "DELETE FROM report.report_documents WHERE work_order_seq_num ='" & work_order_seq_num & "'"
+        SQLDelete += "DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'"
+        SQLDelete += "DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"
+        SQLDelete += "DELETE FROM report.report_files WHERE work_order_seq_num ='" & work_order_seq_num & "'"
+        SQLDelete += "DELETE FROM report.report_lists WHERE work_order_seq_num ='" & work_order_seq_num & "'"
+        SQLDelete += "DELETE FROM report.report_options WHERE work_order_seq_num ='" & work_order_seq_num & "' AND is_default <> 'True'"
+        Return SQLDelete
     End Function
 
     Public Overrides Function SQLInsert() As String
