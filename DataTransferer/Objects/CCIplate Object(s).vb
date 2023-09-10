@@ -2674,13 +2674,15 @@ Partial Public Class BoltGroup
             SQLInsert = SQLInsert.Replace("--END --[BOLT DETAIL INSERT END]", "END --[BOLT DETAIL INSERT END]")
             For Each row As BoltDetail In BoltDetails
                 If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                    If IsSomething(row.bolt_location) Or IsSomething(row.bolt_diameter) Or IsSomething(row.bolt_material) Or IsSomething(row.bolt_circle) Or IsSomething(row.eta_factor) Or IsSomething(row.lar) Or IsSomethingString(row.bolt_thread_type) Or IsSomething(row.area_override) Or IsSomething(row.tension_only) Then
+                    If IsSomething(row.local_group_id) And (IsSomething(row.bolt_location) Or IsSomething(row.bolt_diameter) Or IsSomething(row.bolt_material) Or IsSomething(row.bolt_circle) Or IsSomething(row.eta_factor) Or IsSomething(row.lar) Or IsSomethingString(row.bolt_thread_type) Or IsSomething(row.area_override) Or IsSomething(row.tension_only)) Then
                         SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLUpdate)
                     Else
                         SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLDelete)
                     End If
                 Else
-                    SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                    If IsSomething(row.local_group_id) Then
+                        SQLInsert = SQLInsert.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                    End If
                 End If
             Next
         End If
@@ -2710,13 +2712,15 @@ Partial Public Class BoltGroup
             SQLUpdate = SQLUpdate.Replace("--END --[BOLT DETAIL UPDATE END]", "END --[BOLT DETAIL UPDATE END]")
             For Each row As BoltDetail In BoltDetails
                 If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                    If IsSomething(row.bolt_location) Or IsSomething(row.bolt_diameter) Or IsSomething(row.bolt_material) Or IsSomething(row.bolt_circle) Or IsSomething(row.eta_factor) Or IsSomething(row.lar) Or IsSomethingString(row.bolt_thread_type) Or IsSomething(row.area_override) Or IsSomething(row.tension_only) Then
+                    If IsSomething(row.local_group_id) And (IsSomething(row.bolt_location) Or IsSomething(row.bolt_diameter) Or IsSomething(row.bolt_material) Or IsSomething(row.bolt_circle) Or IsSomething(row.eta_factor) Or IsSomething(row.lar) Or IsSomethingString(row.bolt_thread_type) Or IsSomething(row.area_override) Or IsSomething(row.tension_only)) Then
                         SQLUpdate = SQLUpdate.Replace("--[BOLT DETAIL INSERT]", row.SQLUpdate)
                     Else
                         SQLUpdate = SQLUpdate.Replace("--[BOLT DETAIL INSERT]", row.SQLDelete)
                     End If
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                    If IsSomething(row.local_group_id) Then
+                        SQLUpdate = SQLUpdate.Replace("--[BOLT DETAIL INSERT]", row.SQLInsert)
+                    End If
                 End If
             Next
         End If
@@ -2985,9 +2989,13 @@ Partial Public Class BoltDetail
         SQLInsert = SQLInsert.TrimEnd() 'Removes empty rows that generate within query for each record
 
         'Plate Material
-        For Each row As CCIplateMaterial In CCIplateMaterials
-            SQLInsert = SQLInsert.Replace("--[CCIPLATE MATERIAL INSERT]", row.SQLInsert)
-        Next
+        If Me.CCIplateMaterials.Count > 0 Then
+            For Each row As CCIplateMaterial In CCIplateMaterials
+                SQLInsert = SQLInsert.Replace("--[CCIPLATE MATERIAL INSERT]", row.SQLInsert)
+            Next
+        Else
+            SQLInsert = SQLInsert.Replace("--[CCIPLATE MATERIAL INSERT]", "SET @SubLevel3ID = NULL --NO MATERIAL SPECIFIED IN TOOL")
+        End If
 
         Return SQLInsert
 
@@ -4058,17 +4066,19 @@ Partial Public Class StiffenerGroup
             SQLInsert = SQLInsert.Replace("--END --[STIFFENER DETAIL INSERT END]", "END --[STIFFENER DETAIL INSERT END]")
             For Each row As StiffenerDetail In StiffenerDetails
                 If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                    If IsSomething(row.stiffener_location) Or IsSomething(row.stiffener_width) Or IsSomething(row.stiffener_height) _
+                    If IsSomething(row.local_group_id) And (IsSomething(row.stiffener_location) Or IsSomething(row.stiffener_width) Or IsSomething(row.stiffener_height) _
                         Or IsSomething(row.stiffener_thickness) Or IsSomething(row.stiffener_h_notch) Or IsSomething(row.stiffener_v_notch) _
                         Or IsSomething(row.stiffener_grade) Or IsSomethingString(row.weld_type) Or IsSomething(row.groove_depth) _
                         Or IsSomething(row.groove_angle) Or IsSomething(row.h_fillet_weld) Or IsSomething(row.v_fillet_weld) _
-                        Or IsSomething(row.weld_strength) Then
+                        Or IsSomething(row.weld_strength)) Then
                         SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLUpdate)
                     Else
                         SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLDelete)
                     End If
                 Else
-                    SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                    If IsSomething(row.local_group_id) Then
+                        SQLInsert = SQLInsert.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                    End If
                 End If
             Next
         End If
@@ -4098,17 +4108,19 @@ Partial Public Class StiffenerGroup
             SQLUpdate = SQLUpdate.Replace("--END --[STIFFENER DETAIL UPDATE END]", "END --[STIFFENER DETAIL UPDATE END]")
             For Each row As StiffenerDetail In StiffenerDetails
                 If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
-                    If IsSomething(row.stiffener_location) Or IsSomething(row.stiffener_width) Or IsSomething(row.stiffener_height) _
+                    If IsSomething(row.local_group_id) And (IsSomething(row.stiffener_location) Or IsSomething(row.stiffener_width) Or IsSomething(row.stiffener_height) _
                         Or IsSomething(row.stiffener_thickness) Or IsSomething(row.stiffener_h_notch) Or IsSomething(row.stiffener_v_notch) _
                         Or IsSomething(row.stiffener_grade) Or IsSomethingString(row.weld_type) Or IsSomething(row.groove_depth) _
                         Or IsSomething(row.groove_angle) Or IsSomething(row.h_fillet_weld) Or IsSomething(row.v_fillet_weld) _
-                        Or IsSomething(row.weld_strength) Then
+                        Or IsSomething(row.weld_strength)) Then
                         SQLUpdate = SQLUpdate.Replace("--[STIFFENER DETAIL INSERT]", row.SQLUpdate)
                     Else
                         SQLUpdate = SQLUpdate.Replace("--[STIFFENER DETAIL INSERT]", row.SQLDelete)
                     End If
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                    If IsSomething(row.local_group_id) Then
+                        SQLUpdate = SQLUpdate.Replace("--[STIFFENER DETAIL INSERT]", row.SQLInsert)
+                    End If
                 End If
             Next
         End If
