@@ -667,7 +667,7 @@ ErrorSkip:
         'exStruct.tnx.geometry.baseStructure.Count = 0
         'exStruct.tnx.geometry.upperStructure.Contains("pole")
 
-        If repoInfo.sReportTowerManufacturer.ToUpper = "PYROD" And twrType = "TAPERED POLE" Then
+        If repoInfo.sReportTowerManufacturer.ToUpper = "PIROD" And twrType = "TAPERED POLE" Then
             'copy splice tool
             'run macro to import TNX
             'run the "run" macro
@@ -761,7 +761,11 @@ ErrorSkip:
             End If
 
             With cmdProcess
-                .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                If Version821OrLater(tnxProdVersion) Then
+                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport GenerateE1PDF SaveInputFileOnCompletion") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                Else
+                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                End If
                 With .StartInfo
                     .CreateNoWindow = True
                     .UseShellExecute = False
@@ -1063,6 +1067,34 @@ ErrorSkip:
             WriteLineLogLine("ERROR | Exception finding TNX App: " & ex.Message)
             Return ""
         End Try
+    End Function
+
+    'Written by Bard
+    Public Function Version821OrLater(ByVal version As String) As Boolean
+        ' Check if the version string has the correct format.
+        If Not version.Contains(".") Then
+            Exit Function
+        End If
+
+        version = version.Replace(" ", "").Replace("BETA", "")
+
+        ' Split the version string into its components.
+        Dim versionParts As String() = version.Split(".")
+
+        ' If the version string has 4 components, then check the fourth component as well.
+        If versionParts.Length = 4 Then
+            ' Return true if all four components are equal to or greater than 8, 2, 1, and 0, respectively.
+            Return (Integer.Parse(versionParts(0)) >= 8 And
+                Integer.Parse(versionParts(1)) >= 2 And
+                Integer.Parse(versionParts(2)) >= 1 And
+                Integer.Parse(versionParts(3)) >= 0)
+        Else
+            ' The version string only has 3 components, so only check the first three.
+            ' Return true if all three components are equal to or greater than 8, 2, and 1, respectively.
+            Return (Integer.Parse(versionParts(0)) >= 8 And
+                Integer.Parse(versionParts(1)) >= 2 And
+                Integer.Parse(versionParts(2)) >= 1)
+        End If
     End Function
 
     'copy file from original path to new path
