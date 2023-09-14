@@ -1,4 +1,5 @@
 ﻿Imports System.Text.RegularExpressions
+Imports DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper
 
 Public Class LogMessage
     Public Enum MessageType
@@ -18,20 +19,8 @@ Public Class LogMessage
         'Default
     End Sub
     Public Sub New(type As MessageType, description As String, Optional user As String = Nothing, Optional timeStamp As String = Nothing)
-
-        Dim pattern As String = "(\r\n|\r|\n|vbCrLf|vbCr|vbLf)"
-        ' Use Regex.Replace to remove line breaks and replace them with a space.
-        Dim result As String = Regex.Replace(description, pattern, " ")
-
-        'If the error is because office needs repaired, the log doesn't have a type
-        'forcing error for this known type.
-        If result.Contains("COM object of type 'Microsoft") Then type = MessageType.ERROR
-
-        'replacing pipes so it doesn't accientally split the message as another column.
-        result = result.Replace("|", "[]")
-
         Me.Type = type
-        Me.Description = result
+        Me.Description = description
         Me.User = If(user, Environment.UserName)
         Me.TimeStamp = If(timeStamp, DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt"))
     End Sub
@@ -42,6 +31,14 @@ Public Class LogMessage
         Me.User = If(user, Environment.UserName)
         Me.TimeStamp = If(timeStamp, DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt"))
     End Sub
+
+    Private Function RemoveLineBreaks(ByVal description As String)
+        Dim pattern As String = "(\r\n|\r|\n|vbCrLf|vbCr|vbLf)"
+        ' Use Regex.Replace to remove line breaks and replace them with a space.
+        Dim result As String = Regex.Replace(description, pattern, " ")
+
+        Return result
+    End Function
 
     Public Shared Function CreateDebug(ByVal msg As String, Optional user As String = Nothing, Optional timeStamp As String = Nothing) As LogMessage
         Return (New LogMessage(LogMessage.MessageType.DEBUG, msg, user, timeStamp))

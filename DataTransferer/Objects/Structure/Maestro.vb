@@ -2,6 +2,7 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 Imports System.Threading
+Imports CCI_Engineering_Templates.LogMessage
 Imports Excel = Microsoft.Office.Interop.Excel
 
 Partial Public Class EDSStructure
@@ -1213,10 +1214,24 @@ ErrorSkip:
             For Each msg In msgs
                 Dim msgSplt As String() = msg.Split("|")
                 Dim logMsg As LogMessage
+                Dim myType As LogMessage.MessageType
+
                 If msgSplt.Length = 2 Then
-                    logMsg = New LogMessage(msgSplt(0).Trim, msgSplt(1).Trim, user:="Maestro")
+                    'Sometimes it returns information with no type
+                    'This information will default to ERROR since we handle everything else in the tools
+                    Try
+                        'Attempt to set the first item as a type
+                        myType = DirectCast([Enum].Parse(GetType(MessageType), msgSplt(0).Trim), MessageType)
+                        logMsg = New LogMessage(msgSplt(0).Trim, msgSplt(1).Trim, user:="Maestro")
+                    Catch ex As Exception
+                        'if it can't be set then it is most likely the acutal message
+                        logMsg = New LogMessage("ERROR", msgSplt(1).Trim, user:="Maestro", timeStamp:=msgSplt(0).Trim)
+                    End Try
                 ElseIf msgSplt.Length = 3 Then
                     logMsg = New LogMessage(msgSplt(1).Trim, msgSplt(2).Trim, user:="Maestro", timeStamp:=msgSplt(0).Trim)
+                ElseIf msgSplt.Length = 1 Then
+                    'When the length is equal to 1 then it is only a message and should most likely be displayed as an error. 
+                    logMsg = New LogMessage("ERROR", msgSplt(0).Trim, user:="Maestro", timeStamp:=Now.ToString())
                 End If
                 progress.Report(logMsg)
             Next
