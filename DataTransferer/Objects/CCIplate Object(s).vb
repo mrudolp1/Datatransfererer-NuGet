@@ -1606,7 +1606,7 @@ Partial Public Class CCIplate
                             If Not IsNothing(ps.matl_id) Then
                                 For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
                                     If matl.matl_id = ps.matl_id Then
-                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
+                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)"
                                         'Determine if material needs to be added to CCIplate's material database
                                         'check and see if material matches default materials in CCIplate.
                                         For Each mrow As CCIplateMaterial In CCIplateMaterials
@@ -1638,7 +1638,7 @@ Partial Public Class CCIplate
                                             poltempMaterial = New CCIplateMaterial(matl.matl_id)
                                             poltempMaterials.Add(poltempMaterial)
                                             If Not IsNothing(matl.name) Then
-                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String)
+                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String) & " (Pole)"
                                             End If
                                             If Not IsNothing(matl.fy) Then
                                                 .Worksheets("Materials").Range("C" & MatRow).Value = CType(matl.fy, Double)
