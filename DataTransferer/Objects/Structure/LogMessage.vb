@@ -1,4 +1,6 @@
-﻿Public Class LogMessage
+﻿Imports System.Text.RegularExpressions
+
+Public Class LogMessage
     Public Enum MessageType
         DEBUG
         WARNING
@@ -16,8 +18,20 @@
         'Default
     End Sub
     Public Sub New(type As MessageType, description As String, Optional user As String = Nothing, Optional timeStamp As String = Nothing)
+
+        Dim pattern As String = "(\r\n|\r|\n|vbCrLf|vbCr|vbLf)"
+        ' Use Regex.Replace to remove line breaks and replace them with a space.
+        Dim result As String = Regex.Replace(description, pattern, " ")
+
+        'If the error is because office needs repaired, the log doesn't have a type
+        'forcing error for this known type.
+        If result.Contains("COM object of type 'Microsoft") Then type = MessageType.ERROR
+
+        'replacing pipes so it doesn't accientally split the message as another column.
+        result = result.Replace("|", "[]")
+
         Me.Type = type
-        Me.Description = description
+        Me.Description = result
         Me.User = If(user, Environment.UserName)
         Me.TimeStamp = If(timeStamp, DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt"))
     End Sub
