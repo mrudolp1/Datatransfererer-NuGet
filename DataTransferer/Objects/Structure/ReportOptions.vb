@@ -641,8 +641,8 @@ Public Class ReportOptions
 
         Try
             If Not IsDBNull(CType(SiteCodeDataRow.Item("report_date"), String)) Then
-                Me.ReportDate = CType(SiteCodeDataRow.Item("report_date"), String)
-            Else
+                '    Me.ReportDate = CType(SiteCodeDataRow.Item("report_date"), String)
+                'Else
                 Me.ReportDate = Today
             End If
         Catch ex As Exception
