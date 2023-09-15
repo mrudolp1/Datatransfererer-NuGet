@@ -485,11 +485,14 @@ ErrorSkip:
 
             'check for pole and plate
             If Me.ParentStructure.CCIplates.Count > 0 Then
-                If objectTorun.EDSObjectName.ToUpper = "CCIPOLE" And IsSomething(Me.ParentStructure.CCIplates(0).Connections) And toolName.ToLower().Contains("step 1") Then
-                    'insert baseplate grade into pole from plate
-                    Await WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
+                If objectTorun.EDSObjectName.ToUpper = "CCIPOLE" And IsSomething(Me.ParentStructure.CCIplates(0).Connections) Then
+                    If toolName.ToLower().Contains("step 1") Then
+                        'insert baseplate grade into pole from plate
+                        Await WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
 
-                    Await AssignBasePlateGrade(xlWorkBook, cancelToken, progress)
+                        Await AssignBasePlateGrade(xlWorkBook, cancelToken, progress)
+                    End If
+
                 End If
             End If
             Await WriteLineLogLine("INFO | Tool: " & toolFileName, progress)
