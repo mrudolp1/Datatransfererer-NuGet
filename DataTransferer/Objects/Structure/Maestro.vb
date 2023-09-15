@@ -575,9 +575,10 @@ ErrorSkip:
                                       Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
         Dim plateGradeAssigned As Boolean = True
+        Dim plateGradeAssignedError As String = ""
+        Dim pole_flange_fy As Double = 0
         Try
             With xlWorkBook
-                Dim pole_flange_fy As Double = 0
                 Dim row As Integer = 74
                 .Worksheets("Macro References").Range("I74:J83").ClearContents
                 For Each conn As Connection In Me.ParentStructure.CCIplates(0).Connections 'Does this need to loop through all potential CCIplate files? - MRR
@@ -600,13 +601,16 @@ ErrorSkip:
             End With
         Catch ex As Exception
             plateGradeAssigned = False
+            plateGradeAssignedError = ex.Message
         End Try
 
         If Not plateGradeAssigned Then
             Await WriteLineLogLine("WARNING | Could not determine baseplate grade from CCIPlate. Assumed grades may be used.", progress)
+            Await WriteLineLogLine("WARNING | " & plateGradeAssignedError, progress)
             Return False
         End If
 
+        Await WriteLineLogLine("DEBUG | Baseplate grade from found: " & pole_flange_fy.ToString(), progress)
         Return True
     End Function
 
