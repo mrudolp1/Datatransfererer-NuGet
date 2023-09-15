@@ -136,7 +136,7 @@ Partial Public Class EDSStructure
                     'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
                     If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
                         Await WriteLineLogLine("INFO | BARB elevation found..", progress)
-                        DoBARB(poleWeUsin, plateWeUsin, isDevMode)
+                        Await DoBARB(poleWeUsin, plateWeUsin, isDevMode, cancelToken, progress)
                     End If
                 End If
 
@@ -372,7 +372,8 @@ ErrorSkip:
     ''' <param name="toolName"></param>
     ''' <returns></returns>
 
-    Public Function DoBARB(ByVal poleWeUsin As Pole, ByVal plateWeUsin As CCIplate, Optional ByVal isDevMode As Boolean = False) As Boolean
+    Public Async Function DoBARB(ByVal poleWeUsin As Pole, ByVal plateWeUsin As CCIplate, Optional ByVal isDevMode As Boolean = False,
+                                      Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
         Dim barbCL As Double
         Dim plateComp As Double
@@ -398,19 +399,27 @@ ErrorSkip:
             If boltGroup.apply_barb_elevation Then
                 applyBarb = True
                 basePlateBoltGroup = boltGroup
-                WriteLineLogLine("INFO | Baseplate Bolt Group found for BARB..")
+                Await WriteLineLogLine("INFO | Baseplate Bolt Group found for BARB..", progress)
 
                 Exit For
             End If
         Next
 
         If applyBarb And Not IsNothing(basePlateBoltGroup) Then
-            WriteLineLogLine("INFO | Getting reactions for BARB..")
+            Await WriteLineLogLine("INFO | Getting reactions for BARB..", progress)
             barbCL = plateWeUsin.barb_cl_elevation 'exStruct.plate.barbCL
 
-            If GetReactionsBARB(basePlateConnection, plateMom, plateComp, plateSheer) Then
+            Dim getReations As Tuple(Of Boolean, Double?, Double?, Double?) = Await GetReactionsBARB(basePlateConnection, plateMom, plateComp, plateSheer, cancelToken, progress)
+            '''Item 1 = Bool
+            '''Item 2 = mom
+            '''Item 3 = comp
+            '''item 4 = sheer
+            If getReations.Item1 Then
+                plateMom = getReations.Item2
+                plateComp = getReations.Item3
+                plateSheer = getReations.Item4
                 'replace values in Pole
-                If Not BarbValuesIntoPole(poleWeUsin, poleWeUsin.WorkBookPath, barbCL, plateComp, plateSheer, plateMom, isDevMode) Then
+                If Not Await BarbValuesIntoPole(poleWeUsin, poleWeUsin.WorkBookPath, barbCL, plateComp, plateSheer, plateMom, isDevMode, cancelToken, progress) Then
                     Return False
                 End If
             Else
@@ -418,10 +427,10 @@ ErrorSkip:
             End If
             'Run TNX Reactions Macro in Pole
         ElseIf applyBarb = False Then
-            WriteLineLogLine("INFO | Apply Barb = False")
+            Await WriteLineLogLine("INFO | Apply Barb = False", progress)
             Return False
         Else
-            WriteLineLogLine("ERROR | No Plate group found..")
+            Await WriteLineLogLine("ERROR | No Plate group found..", progress)
             Return False
         End If
         Return True
@@ -458,6 +467,9 @@ ErrorSkip:
         Dim xlWorkBook As Excel.Workbook = Nothing
 
         Dim errorMessage As String = ""
+        Dim excelClose As Boolean = True
+        Dim macroRan As Boolean = True
+        Dim macroErrorMessage As String = ""
 
         Try
             If Not File.Exists(excelPath) Then
@@ -474,10 +486,13 @@ ErrorSkip:
             'check for pole and plate
             If Me.ParentStructure.CCIplates.Count > 0 Then
                 If objectTorun.EDSObjectName.ToUpper = "CCIPOLE" And IsSomething(Me.ParentStructure.CCIplates(0).Connections) Then
-                    'insert baseplate grade into pole from plate
-                    Await WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
+                    If toolName.ToLower().Contains("step 1") Then
+                        'insert baseplate grade into pole from plate
+                        Await WriteLineLogLine("INFO | Inserting Baseplate grade into CCIPole from CCIPlate", progress)
 
-                    AssignBasePlateGrade(xlWorkBook)
+                        Await AssignBasePlateGrade(xlWorkBook, cancelToken, progress)
+                    End If
+
                 End If
             End If
             Await WriteLineLogLine("INFO | Tool: " & toolFileName, progress)
@@ -495,8 +510,8 @@ ErrorSkip:
             xlWorkBook.Save()
 
         Catch ex As Exception
-            WriteLineLogLine(ex.Message)
-            Return Result
+            macroRan = False
+            macroErrorMessage = ex.Message
         Finally
             Try
                 If xlWorkBook IsNot Nothing Then
@@ -510,23 +525,45 @@ ErrorSkip:
                     xlApp = Nothing
                 End If
             Catch ex As Exception
-                WriteLineLogLine("WARNING | Could not close Excel file or App")
+                excelClose = False
             End Try
         End Try
+
+        If Not macroRan Then
+            Await WriteLineLogLine(macroErrorMessage, progress)
+            If Not excelClose Then
+                Await WriteLineLogLine("WARNING | Could not close Excel file or App", progress)
+            End If
+
+            Return Result
+        End If
+
+        If Not excelClose Then
+            Await WriteLineLogLine("WARNING | Could not close Excel file or App", progress)
+        End If
 
         'check for errors returned from Excel
         If logString.Contains("| ERROR |") Then
             Await WriteLineLogLine(Result.ErrorMsg, progress)
             Return Result
         End If
+
         'reload structure object
+        Dim structureReload As Boolean = True
+        Dim strucutreReloadError As String = ""
         Try
             objectTorun.Clear()
             objectTorun.LoadFromExcel()
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Could not rebuild structure object! " & ex.Message)
-            Return Result
+            structureReload = False
+            strucutreReloadError = ex.Message
         End Try
+
+        If Not structureReload Then
+            Await WriteLineLogLine("ERROR | Could not rebuild structure object! " & strucutreReloadError, progress)
+
+            Return Result
+        End If
 
         'check for seismic
         If objectTorun.EDSObjectName.ToUpper = "CCISEISMIC" And logString.ToUpper.Contains("SEISMIC ANALYSIS REQUIRED") Then
@@ -537,12 +574,14 @@ ErrorSkip:
         Return Result
     End Function
 
-    Public Function AssignBasePlateGrade(ByVal xlWorkBook As Excel.Workbook) As Boolean
+    Public Async Function AssignBasePlateGrade(ByVal xlWorkBook As Excel.Workbook,
+                                      Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
-
+        Dim plateGradeAssigned As Boolean = True
+        Dim plateGradeAssignedError As String = ""
+        Dim pole_flange_fy As Double = 0
         Try
             With xlWorkBook
-                Dim pole_flange_fy As Double = 0
                 Dim row As Integer = 74
                 .Worksheets("Macro References").Range("I74:J83").ClearContents
                 For Each conn As Connection In Me.ParentStructure.CCIplates(0).Connections 'Does this need to loop through all potential CCIplate files? - MRR
@@ -564,16 +603,24 @@ ErrorSkip:
                 Next
             End With
         Catch ex As Exception
-            WriteLineLogLine("WARNING | Could not determine baseplate grade from CCIPlate. Assumed grades may be used.")
-            Return False
+            plateGradeAssigned = False
+            plateGradeAssignedError = ex.Message
         End Try
 
+        If Not plateGradeAssigned Then
+            Await WriteLineLogLine("WARNING | Could not determine baseplate grade from CCIPlate. Assumed grades may be used.", progress)
+            Await WriteLineLogLine("WARNING | " & plateGradeAssignedError, progress)
+            Return False
+        End If
+
+        If pole_flange_fy > 0 Then Await WriteLineLogLine("DEBUG | Baseplate grade found: " & pole_flange_fy.ToString(), progress)
         Return True
     End Function
 
 
-    Public Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
-                                      plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False) As Boolean
+    Public Async Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
+                                      plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False,
+                                      Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         Dim xlApp As Excel.Application
         Dim xlWorkBook As Excel.Workbook
         Dim xlWorkSheet As Excel.Worksheet = Nothing
@@ -590,6 +637,8 @@ ErrorSkip:
             xlVisibility = True
         End If
 
+        Dim BarbValueSet As Boolean = True
+        Dim barbValueSetError As String = ""
         Try
             If File.Exists(excelPath) Then
                 xlApp = CreateObject("Excel.Application")
@@ -646,19 +695,24 @@ ErrorSkip:
                 xlWorkBook.Close()
                 xlApp.Quit()
             Else
-                WriteLineLogLine("WARNING | " & excelPath & " CCIPole path for BARB not found!")
+                Await WriteLineLogLine("WARNING | " & excelPath & " CCIPole path for BARB not found!", progress)
                 Return False
             End If
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Error putting BARB values into CCIPole" & ex.Message)
-            Return False
+            BarbValueSet = False
+            barbValueSetError = ex.Message
         End Try
 
+        If Not BarbValueSet Then
+            Await WriteLineLogLine("ERROR | Error putting BARB values into CCIPole" & barbValueSetError, progress)
+            Return False
+        End If
 
         Return True
     End Function
 
-    Public Function SpliceCheck(workingAreaPath As String) As String
+    Public Async Function SpliceCheck(workingAreaPath As String,
+                                      Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
         Dim repoInfo As New tnxCCIReport(Me)
         Dim twrType As String = Me.tnx.geometry.AntennaType.ToUpper 'exStruct.tnx.geometry.upperStructure.ToString.ToUpper
         Dim spliceFile As String
@@ -673,11 +727,11 @@ ErrorSkip:
             'run macro to import TNX
             'run the "run" macro
 
-            spliceFile = FindSpliceTool()
+            spliceFile = Await FindSpliceTool(cancelToken:=cancelToken, progress:=progress)
 
             If Not spliceFile = "" Then
                 'copy tool
-                workingSpliceFile = CopyFile(spliceFile, workingAreaPath)
+                workingSpliceFile = Await CopyFile(spliceFile, workingAreaPath, cancelToken, progress)
 
                 Return workingSpliceFile
             End If
@@ -701,6 +755,8 @@ ErrorSkip:
             Return False
         End If
 
+        Dim tnxRan As Boolean = True
+        Dim tnxRanError As String = ""
         Try
             Dim cmdProcess As New Process
 
@@ -708,7 +764,9 @@ ErrorSkip:
             Await WriteLineLogLine("INFO | Running TNX..", progress)
 
             'determine TNX File path - newest version
-            tnxAppLocation = WhereInTheWorldIsTNXTower(tnxProdVersion, isDevMode)
+            Dim whereBeTNX As Tuple(Of String, String) = Await WhereInTheWorldIsTNXTower(tnxProdVersion, isDevMode, cancelToken, progress)
+            tnxAppLocation = whereBeTNX.Item1
+            tnxProdVersion = whereBeTNX.Item2
 
             If tnxAppLocation = "" Then
                 'TNX app not found
@@ -717,27 +775,37 @@ ErrorSkip:
             End If
 
             'see whether arch notation is used or not
-            If ArchNotReg() Then
+            If Await ArchNotReg(cancelToken, progress) Then
                 Await WriteLineLogLine("WARNING | Architectural notation is set to 'Yes'", progress)
             Else
                 Await WriteLineLogLine("INFO | Architectural notation is set to 'No'", progress)
             End If
 
+            Dim tnxVersionGot As Boolean = True
             Try
                 Me.tnx.settings.projectInfo.VersionUsed = tnxProdVersion
             Catch ex As Exception
-                WriteLineLogLine("WARNING | Could not set TNX object version. EDS may show older TNX version number.")
+                tnxVersionGot = False
             End Try
 
+            If Not tnxVersionGot Then
+                Await WriteLineLogLine("WARNING | Could not set TNX object version. EDS may show older TNX version number.", progress)
+            End If
+
+            Dim tnxLogDeleted As Boolean = True
             Try
                 'delete tnx log file if it exist
                 If File.Exists(tnxLogFilePath) Then
                     File.Delete(tnxLogFilePath)
                 End If
             Catch ex As Exception
-                WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath)
-                Return False
+                tnxLogDeleted = False
             End Try
+
+            If Not tnxLogDeleted Then
+                Await WriteLineLogLine("ERROR | Could not delete TNX API log file. Please delete before continuing: " & tnxLogFilePath, progress)
+                Return False
+            End If
             'Need to determine if word is open prior to running TNX
             'If it is open then it shouldn't be killed when closing the RTF
             'If it isn't open before tnx then it should be killed
@@ -750,7 +818,7 @@ ErrorSkip:
             'End Try
 
             'Make sure ReportPrintReactions=Yes in eri file
-            If Not SetEriOutputVariables(tnxFilePath) Then
+            If Not Await SetEriOutputVariables(tnxFilePath, cancelToken, progress) Then
                 Await WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables", progress)
             End If
 
@@ -776,12 +844,15 @@ ErrorSkip:
 
 
                 Await CheckLogFileForFinishedAsync(tnxLogFilePath, timeOutCounter, True, cancelToken, progress)
+                Dim tnxDead As Boolean = True
+                Dim tnxDeadError As String = ""
                 Try
                     Await WriteLineLogLine("INFO | TNX finished, attempting to terminate..", progress)
                     .Kill()
                     Await WriteLineLogLine("INFO | TNX termination complete..", progress)
                 Catch ex As Exception
-                    WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & ex.Message)
+                    tnxDead = False
+                    tnxDeadError = ex.Message
                 Finally
                     'Try
                     '    'For the time being the RTF file still opens 
@@ -791,6 +862,10 @@ ErrorSkip:
                     '    WriteLineLogLine("WARNING | Could not close RFT file: " & ex.Message)
                     'End Try
                 End Try
+
+                If Not tnxDead Then
+                    Await WriteLineLogLine("WARNING | Exception closing TNX - check and close via task manager: " & tnxDeadError, progress)
+                End If
 
                 '.WaitForInputIdle()
                 '.WaitForExit()
@@ -808,34 +883,45 @@ ErrorSkip:
             Return True
 
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception Running TNX: " & ex.Message)
-            Return False
+            tnxRan = False
+            tnxRanError = ex.Message
         End Try
+
+        If Not tnxRan Then
+            Await WriteLineLogLine("ERROR | Exception Running TNX: " & tnxRanError, progress)
+            Return False
+        End If
     End Function
     ''' <summary>
     ''' Checks registry settings to see if Architectural Notation is set
     ''' Returns True if Yes
     ''' </summary>
     ''' <returns></returns>
-    Public Function ArchNotReg() As Boolean
+    Public Async Function ArchNotReg(Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         Dim tnxRegPath As String = "HKEY_CURRENT_USER\SOFTWARE\TNX\tnxTower\US Units"
 
         Dim archNot As Object
-
+        Dim archBool As Boolean = True
+        Dim archBoolError As String = ""
         Try
             archNot = My.Computer.Registry.GetValue(tnxRegPath, "Architectural", Nothing)
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception getting Archetectural Notation setting: " & ex.Message)
+            archBool = False
+            archBoolError = ex.Message
+        End Try
+
+        If Not archBool Then
+            Await WriteLineLogLine("ERROR | Exception getting Archetectural Notation setting: " & archBoolError, progress)
 
             Return False
-        End Try
+        End If
 
         If archNot.toupper.contains("Y") Then
             Return True
         ElseIf archNot.toupper.contains("N") Then
             Return False
         Else
-            WriteLineLogLine("WARNING | Could not determine Architectural Notation value: " & archNot.ToString)
+            Await WriteLineLogLine("WARNING | Could not determine Architectural Notation value: " & archNot.ToString, progress)
             Return False
         End If
 
@@ -846,10 +932,12 @@ ErrorSkip:
     ''' </summary>
     ''' <param name="tnxFilePath"></param>
     ''' <returns></returns>
-    Public Function SetEriOutputVariables(tnxFilePath As String) As Boolean
+    Public Async Function SetEriOutputVariables(tnxFilePath As String, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         Dim eriAllText As String
 
         If Not File.Exists(tnxFilePath) Then Return False
+        Dim varsSet As Boolean = True
+        Dim varsSetError As String = ""
         Try
 
             Using fs As FileStream = New FileStream(tnxFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
@@ -883,9 +971,15 @@ ErrorSkip:
                 End Using
             End Using
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception setting ERI output variables: " & ex.Message)
-            Return False
+            varsSet = False
+            varsSetError = ex.Message
         End Try
+
+        If Not varsSet Then
+            Await WriteLineLogLine("ERROR | Exception setting ERI output variables: " & varsSetError, progress)
+            Return False
+        End If
+
         Return True
     End Function
 
@@ -968,7 +1062,7 @@ ErrorSkip:
             Else
                 ' Check if the maximum timeout has been reached
                 If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
-                    WriteLineLogLine("WARNING | Checking TNX log exceeded timeout - could not find log file: " & logFilePath, progress)
+                    Await WriteLineLogLine("WARNING | Checking TNX log exceeded timeout - could not find log file: " & logFilePath, progress)
                     Return False
                 End If
                 ' Wait for the check interval before checking again
@@ -977,6 +1071,8 @@ ErrorSkip:
             End If
         End While
 
+        Dim tnxTimeoutBool As Boolean = True
+        Dim tnxTimeoutError As String = ""
         Try
             ' Loop until the "Finished" line is found or the maximum timeout is reached
             While True
@@ -1005,19 +1101,24 @@ ErrorSkip:
 
             ' Check if the "Finished" line was found or if the maximum timeout was reached
             If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
-                WriteLineLogLine("WARNING | Checking TNX log exceeded timeout", progress)
+                Await WriteLineLogLine("WARNING | Checking TNX log exceeded timeout", progress)
                 Return False
             Else
-                WriteLineLogLine("INFO | TNX API Finished..", progress)
+                Await WriteLineLogLine("INFO | TNX API Finished..", progress)
                 Return True
             End If
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception checking TNX Log: " & ex.Message)
-            Return False
+            tnxTimeoutBool = False
+            tnxTimeoutError = ex.Message
         End Try
+
+        If Not tnxTimeoutBool Then
+            Await WriteLineLogLine("ERROR | Exception checking TNX Log: " & tnxTimeoutError, progress)
+            Return False
+        End If
     End Function
 
-    Public Function WhereInTheWorldIsTNXTower(ByRef tnxVersion As String, Optional isDevMode As Boolean = False) As String
+    Public Async Function WhereInTheWorldIsTNXTower(ByVal tnxVersion As String, Optional isDevMode As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Tuple(Of String, String))
         Dim defaultAppLocationBase As String = "C:\Program Files (x86)\TNX"
         Dim appName As String = "tnxTower"
         Dim newestAppFolderName As String
@@ -1027,10 +1128,12 @@ ErrorSkip:
 
         Dim appLoc As String
 
+        Dim gottnx As Boolean = True
+        Dim gottnxError As String = ""
         Try
             If Not Directory.Exists(defaultAppLocationBase) Then
                 'TNX not installed
-                Return ""
+                Return New Tuple(Of String, String)("", "")
             End If
 
             For Each folder In Directory.GetDirectories(defaultAppLocationBase)
@@ -1058,16 +1161,21 @@ ErrorSkip:
 
             newestAppFolderName = New DirectoryInfo(newestFolder).Name
 
-            WriteLineLogLine("INFO | Newest TNX Version found: " & newestAppFolderName)
+            Await WriteLineLogLine("INFO | Newest TNX Version found: " & newestAppFolderName, progress)
             appLoc = Path.Combine(newestFolder, appName & ".exe")
 
             tnxVersion = FileVersionInfo.GetVersionInfo(appLoc).FileVersion
 
-            Return appLoc
+            Return New Tuple(Of String, String)(appLoc, tnxVersion)
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception finding TNX App: " & ex.Message)
-            Return ""
+            gottnx = False
+            gottnxError = ex.Message
         End Try
+
+        If Not gottnx Then
+            Await WriteLineLogLine("ERROR | Exception finding TNX App: " & gottnxError, progress)
+            Return New Tuple(Of String, String)("", "")
+        End If
     End Function
 
     'Written by Bard
@@ -1100,9 +1208,12 @@ ErrorSkip:
 
     'copy file from original path to new path
     'pass original file path with name/extension and new path without file name
-    Public Function CopyFile(origPath As String, newPath As String) As String
+    Public Async Function CopyFile(origPath As String, newPath As String, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
         Dim fileName As String = ""
         Dim newPathWithFileName As String = ""
+
+        Dim gotFileName As Boolean = True
+        Dim gotFileNameError As String = ""
 
         Try
             fileName = Path.GetFileName(origPath)
@@ -1121,17 +1232,22 @@ ErrorSkip:
             Return newPathWithFileName
 
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Error copying file '" & fileName & "': " & ex.Message)
-            Return ""
+            gotFileName = False
+            gotFileNameError = ex.Message
         End Try
+
+        If Not gotFileName Then
+            Await WriteLineLogLine("ERROR | Error copying file '" & fileName & "': " & gotFileNameError, progress)
+            Return ""
+        End If
     End Function
     'assuming this has a pole passed in
-    Public Function FindSpliceTool(Optional extension As String = "xls") As String
+    Public Async Function FindSpliceTool(Optional extension As String = "xls", Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
         Dim fileName As String = ""
 
         ' Check if the directory exists
         If Not Directory.Exists(SpliceCheckLocation) Then
-            WriteLineLogLine("ERROR | Splice Check path not found!")
+            Await WriteLineLogLine("ERROR | Splice Check path not found!", progress)
             Return ""
         End If
 
@@ -1146,7 +1262,7 @@ ErrorSkip:
         Next
 
         ' File not found
-        WriteLineLogLine("ERROR | Splice Check file not found!")
+        Await WriteLineLogLine("ERROR | Splice Check file not found!", progress)
         Return ""
     End Function
 #End Region
@@ -1176,7 +1292,7 @@ ErrorSkip:
     End Sub
 
     <DebuggerStepThrough()>
-    Public Sub WriteLineLogLine(ByVal msg As String)
+    Public Async Sub WriteLineLogLine(ByVal msg As String)
         ' Get the current date and time
         Dim dt As String = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt")
         Dim splt() As String = dt.Split(" ")
@@ -1239,7 +1355,12 @@ ErrorSkip:
 
     End Function
 
-    Public Function GetReactionsBARB(ByVal con As Connection, ByRef mom As Double?, ByRef comp As Double?, ByRef sheer As Double?) As Boolean
+    Public Async Function GetReactionsBARB(ByVal con As Connection, ByVal mom As Double?, ByVal comp As Double?, ByVal sheer As Double?,
+                                     Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Tuple(Of Boolean, Double?, Double?, Double?))
+        '''Item 1 = Bool
+        '''Item 2 = mom
+        '''Item 3 = comp
+        '''item 4 = sheer
         Dim plateComp As Double
         Dim plateSheer As Double
         Dim plateMom As Double
@@ -1248,6 +1369,8 @@ ErrorSkip:
         Dim plateMomSeis As Double
 
         'get BARB values from Plate
+        Dim gotReactions As Boolean = True
+        Dim gotReactionsError As String = ""
         Try
             For Each result In con.ConnectionResults ' basePlateConnection.ConnectionResults
                 Select Case result.result_lkup
@@ -1266,26 +1389,42 @@ ErrorSkip:
                 End Select
             Next
 
-            If Not CompareRatingsBARB(plateMom, plateComp, plateSheer, plateMomSeis, plateCompSeis, plateSheerSeis, mom, comp, sheer) Then
-                Return False
+            Dim compareRatings As Tuple(Of Boolean, Double?, Double?, Double?) = Await CompareRatingsBARB(plateMom, plateComp, plateSheer, plateMomSeis, plateCompSeis, plateSheerSeis, mom, comp, sheer, cancelToken, progress)
+            If Not compareRatings.Item1 Then
+                Return New Tuple(Of Boolean, Double?, Double?, Double?)(False, 0, 0, 0)
+            Else
+                mom = compareRatings.Item2
+                comp = compareRatings.Item3
+                sheer = compareRatings.Item4
             End If
 
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception finding BARB Ratings: " & ex.Message)
-            Return False
+            gotReactions = False
+            gotReactionsError = ex.Message
         End Try
 
-        Return True
+        If Not gotReactions Then
+            Await WriteLineLogLine("ERROR | Exception finding BARB Ratings: " & gotReactionsError, progress)
+            Return New Tuple(Of Boolean, Double?, Double?, Double?)(False, 0, 0, 0)
+        End If
+
+        Return New Tuple(Of Boolean, Double?, Double?, Double?)(True, mom, comp, sheer)
     End Function
     'figure out which results to return
     'The following combination of reactions may be provided: wind only, seismic only, wind & seismic.
     'Multiple CCIpole objects will also need to be compared as applicable.
     'Suggested: If seismic and wind exist for the BU, compare both for largest moment and override CCIpole with respective reactions. 
 
-    Public Function CompareRatingsBARB(ByVal plateMom As Double?, ByVal plateComp As Double?, ByVal plateSheer As Double?,
+    Public Async Function CompareRatingsBARB(ByVal plateMom As Double?, ByVal plateComp As Double?, ByVal plateSheer As Double?,
                                        ByVal plateMomSeis As Double?, ByVal plateCompSeis As Double?, ByVal plateSheerSeis As Double?,
-                                       ByRef momToUse As Double, ByRef compToUse As Double, ByRef sheerToUse As Double) As Boolean
-
+                                       ByVal momToUse As Double, ByVal compToUse As Double, ByVal sheerToUse As Double,
+                                       Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Tuple(Of Boolean, Double?, Double?, Double?))
+        '''Item 1 = Bool
+        '''Item 2 = mom
+        '''Item 3 = comp
+        '''item 4 = sheer
+        Dim compareWorked As Boolean = True
+        Dim compareWorkedError As String = ""
         Try
             If IsSomething(plateMom) And
                 IsSomething(plateComp) And
@@ -1296,19 +1435,19 @@ ErrorSkip:
                 'compare wind and seis to see which one is larger
                 'only compare moment and use the larger set of values
                 'return larger
-                momToUse = GetLarger(plateMom, plateMomSeis)
+                momToUse = Await GetLarger(plateMom, plateMomSeis, cancelToken, progress)
 
                 If momToUse = plateMom Then
                     'use wind
                     compToUse = plateComp
                     sheerToUse = plateSheer
-                    WriteLineLogLine("INFO | Using Wind reactions")
+                    Await WriteLineLogLine("INFO | Using Wind reactions", progress)
 
                 ElseIf momToUse = plateMomSeis Then
                     'use seismic
                     compToUse = plateCompSeis
                     sheerToUse = plateSheerSeis
-                    WriteLineLogLine("INFO | Using Seismic reactions")
+                    Await WriteLineLogLine("INFO | Using Seismic reactions", progress)
 
                 Else GoTo SkipCompare
                 End If
@@ -1337,27 +1476,33 @@ ErrorSkip:
 
             Else
                 'no sufficient values
-                WriteLineLogLine("WARNING | No BARB values found!")
+                Await WriteLineLogLine("WARNING | No BARB values found!", progress)
 
             End If
 
             If momToUse = -1 Or compToUse = -1 Or sheerToUse = -1 Then
 SkipCompare:
-                WriteLineLogLine("ERROR | Could not compare  reaction values! Moment: " & momToUse & " Compression:  " & compToUse & " Sheer: " & sheerToUse & "")
-                Return False
+                Await WriteLineLogLine("ERROR | Could not compare  reaction values! Moment: " & momToUse & " Compression:  " & compToUse & " Sheer: " & sheerToUse & "", progress)
+                Return New Tuple(Of Boolean, Double?, Double?, Double?)(False, 0, 0, 0)
             End If
 
         Catch ex As Exception
-            WriteLineLogLine("ERROR | Exception comparing BARB Ratings: " & ex.Message)
-            Return False
+            compareWorked = False
+            compareWorkedError = ex.Message
         End Try
-        Return True
+
+        If Not compareWorked Then
+            Await WriteLineLogLine("ERROR | Exception comparing BARB Ratings: " & compareWorkedError, progress)
+            Return New Tuple(Of Boolean, Double?, Double?, Double?)(False, 0, 0, 0)
+        End If
+
+        Return New Tuple(Of Boolean, Double?, Double?, Double?)(True, momToUse, compToUse, sheerToUse)
     End Function
     'return larger of 2 values
     'return-1 if both vals are not numbers
-    Public Function GetLarger(val1 As Double, val2 As Double) As Double
+    Public Async Function GetLarger(val1 As Double, val2 As Double, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Double)
         If Double.IsNaN(val1) And Double.IsNaN(val2) Then
-            WriteLineLogLine("ERROR | Null Value for comparison")
+            Await WriteLineLogLine("ERROR | Null Value for comparison", progress)
             Return -1
         ElseIf Double.IsNaN(val1) Then
             Return val2
