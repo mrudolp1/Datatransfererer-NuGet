@@ -1,4 +1,7 @@
-﻿Public Class LogMessage
+﻿Imports System.Text.RegularExpressions
+Imports DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper
+
+Public Class LogMessage
     Public Enum MessageType
         DEBUG
         WARNING
@@ -28,6 +31,14 @@
         Me.User = If(user, Environment.UserName)
         Me.TimeStamp = If(timeStamp, DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt"))
     End Sub
+
+    Private Function RemoveLineBreaks(ByVal description As String)
+        Dim pattern As String = "(\r\n|\r|\n|vbCrLf|vbCr|vbLf)"
+        ' Use Regex.Replace to remove line breaks and replace them with a space.
+        Dim result As String = Regex.Replace(description, pattern, " ")
+
+        Return result
+    End Function
 
     Public Shared Function CreateDebug(ByVal msg As String, Optional user As String = Nothing, Optional timeStamp As String = Nothing) As LogMessage
         Return (New LogMessage(LogMessage.MessageType.DEBUG, msg, user, timeStamp))

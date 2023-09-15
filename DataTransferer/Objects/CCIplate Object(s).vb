@@ -309,7 +309,10 @@ Partial Public Class CCIplate
                     edsResult.EDSTableName = "conn.connection" & "_results"
                     edsResult.ForeignKeyName = "plate" & "_id"
                     edsResult.foreign_key = connectionResult.Parent.ID
-                    returnThis.Add(edsResult)
+                    If Not (edsResult.result_lkup = "CONN_BARB_MOMENT" Or edsResult.result_lkup = "CONN_BARB_AXIAL" Or edsResult.result_lkup = "CONN_BARB_SHEAR" Or
+                            edsResult.result_lkup = "CONN_BARB_MOMENT_SEISMIC" Or edsResult.result_lkup = "CONN_BARB_AXIAL_SEISMIC" Or edsResult.result_lkup = "CONN_BARB_SHEAR_SEISMIC") Then
+                        returnThis.Add(edsResult)
+                    End If
                 Next
 
                 'PlateDetails
@@ -1628,6 +1631,7 @@ Partial Public Class CCIplate
                                             'check and see if ccipole material already added
                                             For Each ptmrow In poltempMaterials
                                                 If ptmrow.ID = ps.matl_id Then
+                                                    .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)" 'unique to CCIpole, include Pole in material name.
                                                     polmatflag = True 'don't add to excel
                                                     Exit For
                                                 End If
@@ -1635,10 +1639,11 @@ Partial Public Class CCIplate
                                         End If
                                         'If false, add to materials database. 
                                         If polmatflag = False Then
+                                            .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)" 'unique to CCIpole, include Pole in material name.
                                             poltempMaterial = New CCIplateMaterial(matl.matl_id)
                                             poltempMaterials.Add(poltempMaterial)
                                             If Not IsNothing(matl.name) Then
-                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String)
+                                                .Worksheets("Materials").Range("B" & MatRow).Value = CType(matl.name, String) & " (Pole)"
                                             End If
                                             If Not IsNothing(matl.fy) Then
                                                 .Worksheets("Materials").Range("C" & MatRow).Value = CType(matl.fy, Double)
