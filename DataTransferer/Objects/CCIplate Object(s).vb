@@ -1606,7 +1606,7 @@ Partial Public Class CCIplate
                             If Not IsNothing(ps.matl_id) Then
                                 For Each matl As PoleMatlProp In Me.ParentStructure.Poles(0).matls
                                     If matl.matl_id = ps.matl_id Then
-                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)"
+                                        .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String)
                                         'Determine if material needs to be added to CCIplate's material database
                                         'check and see if material matches default materials in CCIplate.
                                         For Each mrow As CCIplateMaterial In CCIplateMaterials
@@ -1628,6 +1628,7 @@ Partial Public Class CCIplate
                                             'check and see if ccipole material already added
                                             For Each ptmrow In poltempMaterials
                                                 If ptmrow.ID = ps.matl_id Then
+                                                    .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)" 'unique to CCIpole, include Pole in material name.
                                                     polmatflag = True 'don't add to excel
                                                     Exit For
                                                 End If
@@ -1635,6 +1636,7 @@ Partial Public Class CCIplate
                                         End If
                                         'If false, add to materials database. 
                                         If polmatflag = False Then
+                                            .Worksheets("Main").Cells(GeoRow, col).Value = CType(matl.name, String) & " (Pole)" 'unique to CCIpole, include Pole in material name.
                                             poltempMaterial = New CCIplateMaterial(matl.matl_id)
                                             poltempMaterials.Add(poltempMaterial)
                                             If Not IsNothing(matl.name) Then
