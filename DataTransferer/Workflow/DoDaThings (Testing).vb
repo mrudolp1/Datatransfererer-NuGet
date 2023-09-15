@@ -116,27 +116,31 @@ Public Module WorkflowHelpers
                 xlWorkBook = xlapp.Workbooks.Open(workbookFile.FullName)
 
                 myLog += ("DEBUG | Tool: " & toolFileName + vbCrLf)
-                myLog += ("DEBUG | BEGIN MACRO: " & macroName + vbCrLf)
-
-                'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
-                Try
-                    If toolFileName.ToLower.Contains("ccipole") Then
-                        xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
-                    ElseIf toolFileName.ToLower.Contains("cciseismic") Then
-                        xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
-                        xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
-                        xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
-                    Else
-                        xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
-                    End If
-                Catch ex As Exception
-                    'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
-                End Try
 
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
+                    myLog += ("DEBUG | BEGIN MACRO: " & macroName + vbCrLf)
                     xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
                     myLog += ("DEBUG | END MACRO:  " & macroName + vbCrLf)
+
+                    'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
+                    Try
+                        If toolFileName.ToLower.Contains("ccipole") Then
+                            xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
+                            myLog += ("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook" + vbCrLf)
+                        ElseIf toolFileName.ToLower.Contains("cciseismic") Then
+                            xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
+                            xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
+                            xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
+                            myLog += ("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook" + vbCrLf)
+                            myLog += ("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook" + vbCrLf)
+                        Else
+                            xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
+                            myLog += ("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook" + vbCrLf)
+                        End If
+                    Catch ex As Exception
+                        'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
+                    End Try
                 Else
                     myLog += ("ERROR | Parameters not specific " + vbCrLf)
                     myLog += ("DEBUG | Tool: " & toolFileName & " failed to import inputs" + vbCrLf)
