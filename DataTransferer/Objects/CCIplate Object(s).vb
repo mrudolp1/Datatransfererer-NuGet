@@ -309,7 +309,10 @@ Partial Public Class CCIplate
                     edsResult.EDSTableName = "conn.connection" & "_results"
                     edsResult.ForeignKeyName = "plate" & "_id"
                     edsResult.foreign_key = connectionResult.Parent.ID
-                    returnThis.Add(edsResult)
+                    If Not (edsResult.result_lkup = "CONN_BARB_MOMENT" Or edsResult.result_lkup = "CONN_BARB_AXIAL" Or edsResult.result_lkup = "CONN_BARB_SHEAR" Or
+                            edsResult.result_lkup = "CONN_BARB_MOMENT_SEISMIC" Or edsResult.result_lkup = "CONN_BARB_AXIAL_SEISMIC" Or edsResult.result_lkup = "CONN_BARB_SHEAR_SEISMIC") Then
+                        returnThis.Add(edsResult)
+                    End If
                 Next
 
                 'PlateDetails
