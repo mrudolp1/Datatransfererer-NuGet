@@ -610,7 +610,7 @@ ErrorSkip:
             Return False
         End If
 
-        Await WriteLineLogLine("DEBUG | Baseplate grade from found: " & pole_flange_fy.ToString(), progress)
+        If pole_flange_fy > 0 Then Await WriteLineLogLine("DEBUG | Baseplate grade found: " & pole_flange_fy.ToString(), progress)
         Return True
     End Function
 
