@@ -7557,6 +7557,7 @@ Partial Public Class tnxModel
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = "BEGIN" & vbCrLf &
+                     "  DELETE FROM load.dish_output WHERE tnx_id = " & Me.ID.ToString.FormatDBValue & vbCrLf &
                      "  DELETE FROM load.discrete_output WHERE tnx_id = " & Me.ID.ToString.FormatDBValue & vbCrLf &
                      "  DELETE FROM load.linear_output WHERE tnx_id = " & Me.ID.ToString.FormatDBValue & vbCrLf &
                      "  DELETE FROM load.user_force_output WHERE tnx_id = " & Me.ID.ToString.FormatDBValue & vbCrLf &
