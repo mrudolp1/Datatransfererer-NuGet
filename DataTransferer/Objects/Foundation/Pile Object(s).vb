@@ -165,7 +165,7 @@ Partial Public Class Pile
 
         If _Delete = "" Then
             '_Delete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql")
-            _Update = CCI_Engineering_Templates.My.Resources.Pile_DELETE
+            _Delete = CCI_Engineering_Templates.My.Resources.Pile_DELETE
         End If
         SQLDelete = _Delete
         'SQLDelete = QueryBuilderFromFile(queryPath & "Pile\Pile (DELETE).sql") 'previously ran into issues when _Delete = String which is why this code was used. 
