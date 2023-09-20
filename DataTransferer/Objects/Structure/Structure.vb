@@ -628,8 +628,8 @@ Partial Public Class EDSStructure
         Me.CCISeismics = New List(Of CCISeismic)
     End Sub
 
-    Public Sub LoadFromFiles(filePaths As String())
-        LoadSiteCodeCriteria()
+    Public Sub LoadFromFiles(filePaths As String(), Optional LoadSiteData As Boolean = True)
+        If LoadSiteData Then LoadSiteCodeCriteria()
 
         Me.PierandPads = New List(Of PierAndPad)
         Me.Piles = New List(Of Pile)
