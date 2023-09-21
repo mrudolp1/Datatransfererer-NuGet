@@ -843,7 +843,7 @@ ErrorSkip:
                 .Start()
 
 
-                Await CheckLogFileForFinishedAsync(tnxLogFilePath, timeOutCounter, True, cancelToken, progress)
+                tnxSuccess = Await CheckLogFileForFinishedAsync(tnxLogFilePath, timeOutCounter, True, cancelToken, progress)
                 Dim tnxDead As Boolean = True
                 Dim tnxDeadError As String = ""
                 Try
@@ -879,13 +879,15 @@ ErrorSkip:
             'This needs to be closed before returning TRUE
             'I put this around a try catch in cases where an ERI is run and files already exist. 
 
-
-            Return True
+            If Not tnxSuccess Then Return False Else Return True
 
         Catch ex As Exception
             tnxRan = False
             tnxRanError = ex.Message
         End Try
+
+
+
 
         If Not tnxRan Then
             Await WriteLineLogLine("ERROR | Exception Running TNX: " & tnxRanError, progress)
@@ -1041,6 +1043,8 @@ ErrorSkip:
         Dim checkInterval As Integer = 2000 ' 2 seconds
         ' Set the phrase to look for in the log file
         Dim finishedPhrase As String = "DESIGN END"
+        'Set phrase to look for in the log file in case of error
+        Dim errorPhrase As String = "ANALYSIS INCOMPLETE"
         ' Set the initial time
         Dim startTime As DateTime = DateTime.Now
 
@@ -1050,7 +1054,7 @@ ErrorSkip:
         Dim logReader As StreamReader
 
         If generateReport Then
-            finishedPhrase = "ANALYSIS AND DESIGN REPORT END" '"CROWN CASTLE REPORT END"
+            finishedPhrase = "CROWN CASTLE REPORT END" '"ANALYSIS AND DESIGN REPORT END"
         Else
             finishedPhrase = "DESIGN END"
         End If
@@ -1062,7 +1066,7 @@ ErrorSkip:
             Else
                 ' Check if the maximum timeout has been reached
                 If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
-                    Await WriteLineLogLine("WARNING | Checking TNX log exceeded timeout - could not find log file: " & logFilePath, progress)
+                    Await WriteLineLogLine("ERROR | Checking TNX log exceeded timeout - could not find log file: " & logFilePath, progress)
                     Return False
                 End If
                 ' Wait for the check interval before checking again
@@ -1071,8 +1075,9 @@ ErrorSkip:
             End If
         End While
 
-        Dim tnxTimeoutBool As Boolean = True
-        Dim tnxTimeoutError As String = ""
+        Dim tnxTimeoutBool As Boolean = False
+        Dim tnxErrorBool As Boolean = False
+        Dim tnxError As String = ""
         Try
             ' Loop until the "Finished" line is found or the maximum timeout is reached
             While True
@@ -1085,10 +1090,15 @@ ErrorSkip:
                     ' If the line contains "Finished", exit the loop
                     If line.ToUpper.Contains(finishedPhrase) Then
                         Exit While
+                    ElseIf line.ToUpper.Contains(errorPhrase) Then
+                        'found an error in TNX - abort
+                        tnxErrorBool = True
+                        Exit While
                     End If
                 End If
                 ' Check if the maximum timeout has been reached
                 If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
+                    tnxTimeoutBool = True
                     Exit While
                 End If
                 ' Wait for the check interval before checking again
@@ -1100,22 +1110,26 @@ ErrorSkip:
             logReader.Close()
 
             ' Check if the "Finished" line was found or if the maximum timeout was reached
-            If (DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
-                Await WriteLineLogLine("WARNING | Checking TNX log exceeded timeout", progress)
+            If tnxTimeoutBool Then '(DateTime.Now - startTime).TotalMilliseconds > maxTimeout Then
+                Await WriteLineLogLine("ERROR | Checking TNX log exceeded timeout", progress)
+                Return False
+            ElseIf tnxErrorBool Then
+                Await WriteLineLogLine("ERROR | Error found in TNX log - Aborting Maestro", progress)
                 Return False
             Else
                 Await WriteLineLogLine("INFO | TNX API Finished..", progress)
                 Return True
             End If
         Catch ex As Exception
-            tnxTimeoutBool = False
-            tnxTimeoutError = ex.Message
+            'tnxTimeoutBool = False
+            tnxError = ex.Message
         End Try
 
-        If Not tnxTimeoutBool Then
-            Await WriteLineLogLine("ERROR | Exception checking TNX Log: " & tnxTimeoutError, progress)
-            Return False
-        End If
+        'if we get here, there was an exception
+        'If Not tnxTimeoutBool Then
+        Await WriteLineLogLine("ERROR | Exception checking TNX Log: " & tnxError, progress)
+        Return False
+        ' End If
     End Function
 
     Public Async Function WhereInTheWorldIsTNXTower(ByVal tnxVersion As String, Optional isDevMode As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Tuple(Of String, String))
