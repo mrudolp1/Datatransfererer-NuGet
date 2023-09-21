@@ -542,7 +542,7 @@ Partial Public Class EDSStructure
     ''' <param name="ActiveDatabase"></param>
     ''' <param name="copyQueryToClipboard"></param>
     ''' <returns>Item1 = saveCheck, Item2 = Datatable of information</returns>
-    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As Tuple(Of Boolean, DataTable)
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As (success As Boolean, returner As DataTable, query As String)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
@@ -564,16 +564,16 @@ Partial Public Class EDSStructure
                 If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
                     saveCheck = False
                 End If
-                Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+                Return (saveCheck, resDS.Tables(0), myQuery)
             Else
-                Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+                Return (False, Nothing, Nothing)
             End If
         Else
-            Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+            Return (False, Nothing, Nothing)
         End If
     End Function
 
-    Public Function DeleteFromEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As Tuple(Of Boolean, DataTable)
+    Public Function DeleteFromEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As (result As Boolean, returner As DataTable, query As String)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
@@ -593,12 +593,12 @@ Partial Public Class EDSStructure
                 If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
                     saveCheck = False
                 End If
-                Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+                Return (saveCheck, resDS.Tables(0), myQuery)
             Else
-                Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+                Return (False, Nothing, Nothing)
             End If
         Else
-            Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+            Return (False, Nothing, Nothing)
         End If
     End Function
 
