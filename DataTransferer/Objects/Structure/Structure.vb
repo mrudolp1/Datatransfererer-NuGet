@@ -159,6 +159,8 @@ Partial Public Class EDSStructure
         Me.work_order_seq_num = WorkOrder
         Me.databaseIdentity = LogOnUser
         Me.activeDatabase = ActiveDatabase
+        Me.ReportOptions = New ReportOptions()
+        Me.ReportOptions.Absorb(Me)
 
         LoadFromEDS(BU, structureID, LogOnUser, ActiveDatabase)
     End Sub
@@ -491,10 +493,6 @@ Partial Public Class EDSStructure
 
     Public Function DeleteFromEDSQuery() As String
 
-        If EDSMe Is Nothing Then
-            Throw New Exception("EDS Structure object not set.")
-        End If
-
         Dim structureQuery As String = ""
 
 
@@ -510,16 +508,16 @@ Partial Public Class EDSStructure
         Dim transactionName As String = "deleting" & Me.process_stage & Me.structure_id & Me.bus_unit.NullableToString & Me.work_order_seq_num.NullableToString
         structureQuery.NewLine("BEGIN TRY")
         structureQuery.NewLine("BEGIN TRANSACTION " & transactionName)
-        structureQuery.NewLine(Me.EDSMe.tnx?.SQLDelete)
-        structureQuery.NewLine(Me.EDSMe.PierandPads.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.UnitBases.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.Piles.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.DrilledPierTools.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.GuyAnchorBlockTools.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.CCIplates.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.Poles.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.LegReinforcements.EDSDELETEListQueryBuilder())
-        structureQuery.NewLine(Me.EDSMe.CCISeismics.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.tnx?.SQLDelete)
+        structureQuery.NewLine(Me.PierandPads.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.UnitBases.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.Piles.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.DrilledPierTools.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.GuyAnchorBlockTools.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.CCIplates.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.Poles.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.LegReinforcements.EDSDELETEListQueryBuilder())
+        structureQuery.NewLine(Me.CCISeismics.EDSDELETEListQueryBuilder())
         structureQuery.NewLine(Me.ReportOptions.SQLDelete)
         structureQuery.NewLine("COMMIT TRANSACTION " & transactionName)
         structureQuery.NewLine("SELECT '" & Me.bus_unit.NullableToString & "' bus_unit, '" & Me.structure_id & "' structure_id, '" & Me.work_order_seq_num.NullableToString & "' work_order_seq_num, '" & "Success" & "' result")
@@ -544,7 +542,7 @@ Partial Public Class EDSStructure
     ''' <param name="ActiveDatabase"></param>
     ''' <param name="copyQueryToClipboard"></param>
     ''' <returns>Item1 = saveCheck, Item2 = Datatable of information</returns>
-    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As Tuple(Of Boolean, DataTable)
+    Public Function SavetoEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As (success As Boolean, returner As DataTable, query As String)
         If databaseID Is Nothing Then databaseID = Me.databaseIdentity
         If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
 
@@ -566,12 +564,41 @@ Partial Public Class EDSStructure
                 If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
                     saveCheck = False
                 End If
-                Return New Tuple(Of Boolean, DataTable)(saveCheck, resDS.Tables(0))
+                Return (saveCheck, resDS.Tables(0), myQuery)
             Else
-                Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+                Return (False, Nothing, Nothing)
             End If
         Else
-            Return New Tuple(Of Boolean, DataTable)(False, Nothing)
+            Return (False, Nothing, Nothing)
+        End If
+    End Function
+
+    Public Function DeleteFromEDS(ByVal Optional databaseID As WindowsIdentity = Nothing, ByVal Optional ActiveDatabase As String = Nothing, Optional ByVal copyQueryToClipboard As Boolean = False, Optional ByVal commitQuery As Boolean = True) As (result As Boolean, returner As DataTable, query As String)
+        If databaseID Is Nothing Then databaseID = Me.databaseIdentity
+        If ActiveDatabase Is Nothing Then ActiveDatabase = Me.activeDatabase
+
+        Dim resDS As New DataSet
+        Dim myQuery As String = DeleteFromEDSQuery()
+
+        If copyQueryToClipboard Then
+            My.Computer.Clipboard.SetText(myQuery)
+        End If
+
+        If commitQuery Then
+            sqlLoader(myQuery, resDS, ActiveDatabase, databaseID, 4052.ToString)
+
+            If resDS.Tables.Count > 0 Then
+                'Check for success or failure here. Changing this to a function to return as a datatable of informatoin 
+                Dim saveCheck As Boolean = True
+                If resDS.Tables(0).Rows(0).Item("Result").ToString = "Error" Then
+                    saveCheck = False
+                End If
+                Return (saveCheck, resDS.Tables(0), myQuery)
+            Else
+                Return (False, Nothing, Nothing)
+            End If
+        Else
+            Return (False, Nothing, Nothing)
         End If
     End Function
 
@@ -601,8 +628,8 @@ Partial Public Class EDSStructure
         Me.CCISeismics = New List(Of CCISeismic)
     End Sub
 
-    Public Sub LoadFromFiles(filePaths As String())
-        LoadSiteCodeCriteria()
+    Public Sub LoadFromFiles(filePaths As String(), Optional LoadSiteData As Boolean = True)
+        If LoadSiteData Then LoadSiteCodeCriteria()
 
         Me.PierandPads = New List(Of PierAndPad)
         Me.Piles = New List(Of Pile)

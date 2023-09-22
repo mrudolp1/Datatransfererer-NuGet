@@ -1415,12 +1415,12 @@ Public Class ReportOptions
 
     Public Overrides Function SQLDelete() As String
         SQLDelete = ""
-        SQLDelete += "DELETE FROM report.report_documents WHERE work_order_seq_num ='" & work_order_seq_num & "'"
-        SQLDelete += "DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'"
-        SQLDelete += "DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'"
-        SQLDelete += "DELETE FROM report.report_files WHERE work_order_seq_num ='" & work_order_seq_num & "'"
-        SQLDelete += "DELETE FROM report.report_lists WHERE work_order_seq_num ='" & work_order_seq_num & "'"
-        SQLDelete += "DELETE FROM report.report_options WHERE work_order_seq_num ='" & work_order_seq_num & "' AND is_default <> 'True'"
+        SQLDelete += "DELETE FROM report.report_documents WHERE work_order_seq_num ='" & work_order_seq_num & "'" + vbCrLf
+        SQLDelete += "DELETE FROM report.report_equipment WHERE work_order_seq_num ='" & work_order_seq_num & "'" + vbCrLf
+        SQLDelete += "DELETE FROM report.report_capacities WHERE work_order_seq_num ='" & work_order_seq_num & "'" + vbCrLf
+        SQLDelete += "DELETE FROM report.report_files WHERE work_order_seq_num ='" & work_order_seq_num & "'" + vbCrLf
+        SQLDelete += "DELETE FROM report.report_lists WHERE work_order_seq_num ='" & work_order_seq_num & "'" + vbCrLf
+        SQLDelete += "DELETE FROM report.report_options WHERE work_order_seq_num ='" & work_order_seq_num & "' AND is_default <> 'True'" + vbCrLf
         Return SQLDelete
     End Function
 

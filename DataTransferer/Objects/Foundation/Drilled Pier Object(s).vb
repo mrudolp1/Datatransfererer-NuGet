@@ -87,7 +87,14 @@ Partial Public Class DrilledPierFoundation
     Public Overrides Function SQLDelete() As String
         SQLDelete = CCI_Engineering_Templates.My.Resources.General__DELETE
         SQLDelete = SQLDelete.Replace("[TABLE]", Me.EDSTableName)
-        SQLDelete = SQLDelete.Replace("[ID]", Me.ID)
+        SQLDelete = SQLDelete.Replace("[ID]", Me.ID) + vbCrLf
+
+        For Each dp As DrilledPier In Me.DrilledPiers
+            For Each sl In dp.SoilProfile.DPSoilLayers
+                SQLDelete += sl.SQLDelete + vbCrLf
+            Next
+            SQLDelete += dp.SoilProfile.SQLDelete + vbCrLf
+        Next
 
         Return SQLDelete & vbCrLf
     End Function
