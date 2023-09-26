@@ -1334,9 +1334,9 @@ ErrorSkip:
 
     End Sub
     '<DebuggerStepThrough()>
-    Public Async Function WriteLineLogLine(msg As String, progress As IProgress(Of LogMessage), Optional SkipMaeLog As Boolean = False) As Task
+    Public Async Function WriteLineLogLine(msg As String, progress As IProgress(Of LogMessage)) As Task
 
-        If Not SkipMaeLog Then Await Task.Run(Sub() WriteLineLogLine(msg))
+        Await Task.Run(Sub() WriteLineLogLine(msg))
 
         ''Raise a message logged event so these notifications can be passed up to the dashboard.
         If progress IsNot Nothing Then
