@@ -139,7 +139,7 @@ Public Module UnitTestingExtensions
                         IIf(Double.IsNaN(comparerVal), "N/A", comparerVal),
                         IIf(Double.IsNaN(delta), "N/A", delta),
                         IIf(Double.IsNaN(perDelta), "N/A", perDelta),
-                        IIf(Double.IsNaN(delta) Or Math.Abs(delta) > 0.1, "Fail", "Pass")
+                        IIf(Double.IsNaN(delta) Or Math.Abs(delta) > 0.1, "FAIL", "pass")
                        )
             Catch ex As Exception
 

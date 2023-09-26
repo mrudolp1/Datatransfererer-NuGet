@@ -207,6 +207,7 @@ Public Module WorkflowHelpers
                         .Width = 500.0!
                         .Controls.Add(myPg)
                         .Text = info.Name
+                        .StartPosition = FormStartPosition.CenterParent
                         .Show()
                     End With
                 End If
@@ -802,5 +803,89 @@ Public Module WorkflowHelpers
 
         Return dt
     End Function
+
+    'Determine if a file is open
+    Private Function FileIsOpen(ByVal file As FileInfo) As Boolean
+        Dim stream As FileStream = Nothing
+        Try
+            stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)
+            stream.Close()
+            Return False
+        Catch ex As Exception
+            Return True
+        End Try
+    End Function
+
+    'This was taken from logic used in the CCI SQL Manager but has been adjusted to use a datatable instead of a datagrid. 
+    'If you are trying to output something that a user is editing. The data will need to be converted to a datatable to utilize this
+    'This could probably be updated to work similar to the thing Ken Linck wrote that accepts any type of object. Instead of ouputting HTML calls we could output CSV.
+    Public Sub DatatableToCSV(ByVal dtDataTable As DataTable, ByVal strFilePath As String)
+        Dim counter As Integer = 1
+RetryFileOpenCheck:
+        If IO.File.Exists(strFilePath) Then
+            If FileIsOpen(New FileInfo(strFilePath)) Then
+                MsgBox(strFilePath & " Is currently open. " & vbCrLf & vbCrLf & "Please close the file To Continue.", MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "File Is In use")
+
+                counter += 1
+                If counter > 2 Then
+                    MsgBox("It seems the file Is still open." & vbCrLf & vbCrLf & "Data was Not saved To CSV.", vbInformation)
+                    Exit Sub
+                End If
+                GoTo RetryFileOpenCheck
+            End If
+        End If
+
+        Using sw As StreamWriter = New StreamWriter(strFilePath, False)
+            For i As Integer = 0 To dtDataTable.Columns.Count - 1
+                sw.Write(dtDataTable.Columns(i))
+
+                If i < dtDataTable.Columns.Count - 1 Then
+                    sw.Write(",")
+                End If
+            Next
+
+            sw.Write(sw.NewLine)
+
+            For Each dr As DataRow In dtDataTable.Rows
+
+                For i As Integer = 0 To dtDataTable.Columns.Count - 1
+
+                    If Not Convert.IsDBNull(dr(i)) Then
+                        Dim value As String = dr(i).ToString()
+
+                        If value.Contains(","c) Then
+                            value = String.Format("""{0}""", value)
+                            sw.Write(value)
+                        Else
+                            sw.Write(dr(i).ToString())
+                        End If
+                    End If
+
+                    If i < dtDataTable.Columns.Count - 1 Then
+                        sw.Write(",")
+                    End If
+                Next
+
+                sw.Write(sw.NewLine)
+            Next
+
+            sw.Close()
+        End Using
+    End Sub
+
+    'Gets a combined datatbale of results for all spreadsheets in directory.
+    Public Sub GetAllResults(ByVal folder As String)
+        Dim combinedResults As New DataTable
+        'Loop through all files in the specified folder
+        For Each info As FileInfo In New DirectoryInfo(folder).GetFiles
+            If info.Extension.ToLower = ".xlsm" And Not info.Name.Contains("~") Then
+                'Merge the datatable to append all data together
+                combinedResults.Merge(SummarizedResults(info))
+            End If
+        Next
+
+        'Save the datatable to a CSV in the specified folder location
+        DatatableToCSV(combinedResults, folder & "\Summarized Results.csv")
+    End Sub
 End Module
 
