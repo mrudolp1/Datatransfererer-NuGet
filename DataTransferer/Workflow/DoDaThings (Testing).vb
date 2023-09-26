@@ -4,6 +4,9 @@ Imports System.Runtime.InteropServices
 Imports System.Security.Principal
 Imports System.Runtime.Serialization.Json
 Imports System.Text
+Imports DevExpress.CodeParser
+Imports System.Threading
+Imports CCI_Engineering_Templates.LogMessage
 
 Public Module WorkflowHelpers
 #Region "Import Input"
@@ -11,50 +14,72 @@ Public Module WorkflowHelpers
 
     'Import inputs for all files in a directory
     Public Async Function ImportingInputsAsync(
-                                ByVal importingFrom As FileInfo,
-                                ByVal importingTo As FileInfo,
+                                ByVal ImportingFrom As FileInfo,
+                                ByVal saveToDirectory As String,
                                 ByVal SAPICompatible As Boolean,
                                 Optional ByVal excelVisible As Boolean = True,
-                                Optional ByVal orderSheet As String = "",
-                                Optional ByVal orderRange As String = "",
                                 Optional ByVal edsStructure As EDSStructure = Nothing,
+                                Optional cancelToken As CancellationToken = Nothing,
                                 Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
-        Dim myXL As (myApp As Excel.Application, alreadyOpen As Boolean) = GetXlApp()
+
+        Dim whichFileVar As (curver As Byte(), SAPIversion As Byte(), newFileName As String, resultsSheet As String, resultsRange As String, orderSheet As String, orderRange As String) = Await WhichFile(ImportingFrom, cancelToken, progress)
         Dim success As Boolean = True
+        Dim ImportingTo As FileInfo
         'Item 1 = Excel application
         'Item 2 = Boolean (If true that means excel was previously open
 
-        If importingFrom.Extension.ToLower = ".xlsm" Then
+        If whichFileVar.curver Is Nothing Then
+            Await WriteLineLogLine("WARNING | Invalid Excel Tool: " & ImportingFrom.FullName, progress, True)
+            Return False
+        End If
+
+        Dim getnewFileNameVar As String = Await GetNewFileName(saveToDirectory, fileName:=edsStructure.bus_unit.ToString() + " " + whichFileVar.newFileName.Replace(ImportingFrom.Extension.ToLower(), " (II).xlsm"), cancelToken:=cancelToken, progress:=progress)
+        Dim fileCreated As Boolean = True
+        Dim fileCreatedError As String = ""
+
+        Try
+            System.IO.File.WriteAllBytes(getnewFileNameVar, whichFileVar.SAPIversion)
+            ImportingTo = New FileInfo(getnewFileNameVar)
+        Catch ex As Exception
+            fileCreated = False
+            fileCreatedError = ex.Message
+        End Try
+
+        If Not fileCreated Then
+            Await WriteLineLogLine("ERROR | New template file could not be created", progress, True)
+            Await WriteLineLogLine("ERROR |  " & fileCreatedError, progress, True)
+            Return False
+        End If
+
+        Dim myXL As (myApp As Excel.Application, alreadyOpen As Boolean) = Await GetXlApp(cancelToken, progress)
+        If ImportingFrom.Extension.ToLower = ".xlsm" Then
 
             Dim macroname As String = "Import_Previous_Version"
             Dim prefix As String = ""
-            Dim toolVer As String = importingFrom.TemplateVersion
+            Dim toolVer As String = ImportingFrom.TemplateVersion
 
             If progress IsNot Nothing And toolVer <> "-" Then
-                Await edsStructure.WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
+                Await WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
             End If
 
-            Dim params As (String, String, Boolean) = (importingFrom.FullName.ToString, toolVer, True)
+            Dim params As (String, String, Boolean) = (ImportingFrom.FullName.ToString, toolVer, True)
 
-            If importingTo.Name.ToLower.Contains("pile") Then
+            If ImportingTo.Name.ToLower.Contains("pile") Then
                 macroname = "Button173_Click"
-            ElseIf importingTo.Name.ToLower.Contains("drilled pier") Then
+            ElseIf ImportingTo.Name.ToLower.Contains("drilled pier") Then
                 If SAPICompatible Then
                     macroname += "_Performer"
                 End If
-            ElseIf importingTo.Name.ToLower.Contains("leg reinforcement") Then
+            ElseIf ImportingTo.Name.ToLower.Contains("leg reinforcement") Then
                 If SAPICompatible Then
                     prefix = "m_"
                 End If
             End If
 
-            If Await Import_Previous_Version(myXL.Item1, importingTo, macroname, params, excelVisible, prefix, orderSheet, orderRange, edsStructure, progress) Then
-                Await edsStructure.WriteLineLogLine("INFO | Import Inputs Completed for: " & importingTo.FullName, progress, True)
-            Else
-                Await edsStructure.WriteLineLogLine("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName, progress, True)
-                success = False
-            End If
+            Dim importer As Boolean = Await Import_Previous_Version(myXL.Item1, ImportingTo, macroname, params, excelVisible, prefix, whichFileVar.orderSheet, whichFileVar.orderRange, edsStructure, cancelToken, progress)
+            success = importer
+
         End If
 
         DisposeXlApp(myXL.myApp, myXL.alreadyOpen)
@@ -62,8 +87,46 @@ Public Module WorkflowHelpers
         Return success
     End Function
 
+    Private Async Sub WriteLineLogLine(ByVal msg As String)
+        Return
+    End Sub
+
+    Private Async Function WriteLineLogLine(msg As String, progress As IProgress(Of LogMessage), Optional SkipMaeLog As Boolean = False) As Task
+        Await Task.Run(Sub() WriteLineLogLine(msg))
+
+        ''Raise a message logged event so these notifications can be passed up to the dashboard.
+        If progress IsNot Nothing Then
+            Dim msgs As String() = msg.Split(vbCrLf)
+            For Each msg In msgs
+                Dim msgSplt As String() = msg.Split("|")
+                Dim logMsg As LogMessage
+                Dim myType As LogMessage.MessageType
+
+                If msgSplt.Length = 2 Then
+                    'Sometimes it returns information with no type
+                    'This information will default to ERROR since we handle everything else in the tools
+                    Try
+                        'Attempt to set the first item as a type
+                        myType = DirectCast([Enum].Parse(GetType(MessageType), msgSplt(0).Trim), MessageType)
+                        logMsg = New LogMessage(msgSplt(0).Trim, msgSplt(1).Trim, user:="Maestro")
+                    Catch ex As Exception
+                        'if it can't be set then it is most likely the acutal message
+                        logMsg = New LogMessage("ERROR", msgSplt(1).Trim, user:="Maestro", timeStamp:=msgSplt(0).Trim)
+                    End Try
+                ElseIf msgSplt.Length = 3 Then
+                    logMsg = New LogMessage(msgSplt(1).Trim, msgSplt(2).Trim, user:="Maestro", timeStamp:=msgSplt(0).Trim)
+                ElseIf msgSplt.Length = 1 Then
+                    'When the length is equal to 1 then it is only a message and should most likely be displayed as an error. 
+                    logMsg = New LogMessage("ERROR", msgSplt(0).Trim, user:="Maestro", timeStamp:=Now.ToString())
+                End If
+                progress.Report(logMsg)
+            Next
+        End If
+
+    End Function
+
     'Create or get the excel application to use.
-    Public Function GetXlApp() As (Excel.Application, Boolean)
+    Public Async Function GetXlApp(Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of (Excel.Application, Boolean))
         Try
             Return (GetObject(, "Excel.Appliction"), True)
         Catch ex As Exception
@@ -99,6 +162,7 @@ Public Module WorkflowHelpers
                                            Optional ByVal orderSheet As String = "",
                                            Optional ByVal orderRange As String = "",
                                            Optional ByVal edsStructure As EDSStructure = Nothing,
+                                           Optional cancelToken As CancellationToken = Nothing,
                                            Optional progress As IProgress(Of LogMessage) = Nothing
                                            ) As Task(Of Boolean)
 
@@ -110,9 +174,9 @@ Public Module WorkflowHelpers
         Dim workbMessage As String = ""
 
         If workbookFile Is Nothing Or String.IsNullOrEmpty(macroName) Then
-                Await edsStructure.WriteLineLogLine("ERROR | workbookFile or macroName parameter is null or empty", progress, True)
-                Return False
-            End If
+            Await WriteLineLogLine("ERROR | workbookFile or macroName parameter is null or empty", progress, True)
+            Return False
+        End If
 
         Try
             If workbookFile.Exists Then
@@ -120,41 +184,41 @@ Public Module WorkflowHelpers
                 xlapp.Visible = xlVisibility
                 xlWorkBook = xlapp.Workbooks.Open(workbookFile.FullName)
 
-                Await edsStructure.WriteLineLogLine("DEBUG | Tool: " & toolFileName, progress, True)
+                Await WriteLineLogLine("DEBUG | Tool: " & toolFileName, progress, True)
 
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
-                    Await edsStructure.WriteLineLogLine("DEBUG | BEGIN MACRO: " & macroName, progress, True)
+                    Await WriteLineLogLine("DEBUG | BEGIN MACRO: " & macroName, progress, True)
                     xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
-                    Await edsStructure.WriteLineLogLine("DEBUG | END MACRO:  " & macroName, progress, True)
+                    Await WriteLineLogLine("DEBUG | END MACRO:  " & macroName, progress, True)
 
                     'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
                     Try
                         If toolFileName.ToLower.Contains("ccipole") Then
                             xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
-                            Await edsStructure.WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
+                            Await WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
                         ElseIf toolFileName.ToLower.Contains("cciseismic") Then
                             xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
                             xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
                             xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
-                            Await edsStructure.WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
-                            Await edsStructure.WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
+                            Await WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
+                            Await WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
                         Else
                             xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
-                            Await edsStructure.WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
+                            Await WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
                         End If
                     Catch ex As Exception
                         'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
                     End Try
                 Else
-                    Await edsStructure.WriteLineLogLine("ERROR | Parameters not specific ", progress, True)
-                    Await edsStructure.WriteLineLogLine("DEBUG | Tool: " & toolFileName & " failed to import inputs", progress, True)
+                    Await WriteLineLogLine("ERROR | Parameters not specific ", progress, True)
+                    Await WriteLineLogLine("DEBUG | Tool: " & toolFileName & " failed to import inputs", progress, True)
                     isSuccess = False
                 End If
 
                 xlWorkBook.Save()
             Else
-                Await edsStructure.WriteLineLogLine("ERROR | " & workbookFile.FullName & " path not found!", progress, True)
+                Await WriteLineLogLine("ERROR | " & workbookFile.FullName & " path not found!", progress, True)
             End If
         Catch ex As Exception
             errorMessage = ex.Message
@@ -173,13 +237,13 @@ Public Module WorkflowHelpers
             End Try
         End Try
 
-        If isSuccess Then
-            Await edsStructure.WriteLineLogLine("ERROR | " & errorMessage, progress, True)
+        If Not isSuccess Then
+            Await WriteLineLogLine("ERROR | " & errorMessage, progress, True)
         End If
 
         If workbIssue Then
-            Await edsStructure.WriteLineLogLine("WARNING | Could not close Excel Workbook: " & toolFileName, progress, True)
-            Await edsStructure.WriteLineLogLine("ERROR | " & workbMessage, progress, True)
+            Await WriteLineLogLine("WARNING | Could not close Excel Workbook: " & toolFileName, progress, True)
+            Await WriteLineLogLine("ERROR | " & workbMessage, progress, True)
         End If
 
         Return isSuccess
@@ -296,7 +360,8 @@ Public Module WorkflowHelpers
     'Invalid files return blank datatables
 
     Public Function SummarizedResults(ByVal info As IO.FileInfo) As DataTable
-        Dim myTemplate As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
+
+        Dim myTemplate As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info).Result
         Dim range As String = myTemplate.Item5
         Dim tempds As New DataSet
         Dim finalDt As New DataTable
@@ -343,9 +408,9 @@ Public Module WorkflowHelpers
             End If
 
             'Add columns to the final DT that shows the summary of the component, type and rating.
-            finalDt.Columns.Add("Type", Type.GetType("System.String"))
-            finalDt.Columns.Add("Rating", Type.GetType("System.String"))
-            finalDt.Columns.Add("Tool", Type.GetType("System.String"))
+            finalDt.Columns.Add("Type", System.Type.GetType("System.String"))
+            finalDt.Columns.Add("Rating", System.Type.GetType("System.String"))
+            finalDt.Columns.Add("Tool", System.Type.GetType("System.String"))
 
             With resultsDt
                 'Select case based on 'Filename_Range'
@@ -561,7 +626,7 @@ Public Module WorkflowHelpers
                 logString.NewLine("DEBUG | File found for structure: " & info.Name)
             ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
                 'Determine if the file is one of the templates
-                Dim template As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
+                Dim template As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info).Result
 
                 'If the properties of the tuple are nothing then they aren't templates
                 If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
@@ -595,7 +660,9 @@ Public Module WorkflowHelpers
 
     'Determines the file name for the new templates being saved.
     'Increments file names if they arleady exist in the new directory.
-    Public Function GetNewFileName(ByVal newFolder As String, ByVal Optional file As FileInfo = Nothing, ByVal Optional fileName As String = Nothing) As String
+    Public Async Function GetNewFileName(ByVal newFolder As String, ByVal Optional file As FileInfo = Nothing, ByVal Optional fileName As String = Nothing,
+                                Optional cancelToken As CancellationToken = Nothing,
+                                Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
         Dim counter As Integer = 0
         Dim filePath As String
 
@@ -619,7 +686,9 @@ Public Module WorkflowHelpers
 
     'Used to determine which template is being used
     'This could have been set up as a class but ended up going too far and now we have tuples. Enjoy! :)
-    Public Function WhichFile(ByVal file As FileInfo) As (Byte(), Byte(), String, String, String, String, String)
+    Public Async Function WhichFile(ByVal file As FileInfo,
+                                Optional cancelToken As CancellationToken = Nothing,
+                                Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of (Byte(), Byte(), String, String, String, String, String))
         Dim returner As (Byte(), Byte(), String, String, String, String, String)
         'Item 1 = current published versions
         'Item 2 = new versions created for SAPI
