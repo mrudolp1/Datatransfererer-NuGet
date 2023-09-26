@@ -10,17 +10,18 @@ Public Module WorkflowHelpers
 
 
     'Import inputs for all files in a directory
-    Public Function ImportingInputs(
+    Public Async Function ImportingInputsAsync(
                                 ByVal importingFrom As FileInfo,
                                 ByVal importingTo As FileInfo,
                                 ByVal SAPICompatible As Boolean,
                                 Optional ByVal excelVisible As Boolean = True,
                                 Optional ByVal orderSheet As String = "",
                                 Optional ByVal orderRange As String = "",
-                                Optional ByVal edsStructure As EDSStructure = Nothing) As Tuple(Of Boolean, String)
+                                Optional ByVal edsStructure As EDSStructure = Nothing,
+                                Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
-        Dim myLog As String = ""
-        Dim myXL As Tuple(Of Excel.Application, Boolean) = GetXlApp()
+        Dim myXL As (myApp As Excel.Application, alreadyOpen As Boolean) = GetXlApp()
+        Dim success As Boolean = True
         'Item 1 = Excel application
         'Item 2 = Boolean (If true that means excel was previously open
 
@@ -28,7 +29,13 @@ Public Module WorkflowHelpers
 
             Dim macroname As String = "Import_Previous_Version"
             Dim prefix As String = ""
-            Dim params As Tuple(Of String, String, Boolean) = New Tuple(Of String, String, Boolean)(importingFrom.FullName.ToString, importingFrom.TemplateVersion, True)
+            Dim toolVer As String = importingFrom.TemplateVersion
+
+            If progress IsNot Nothing And toolVer <> "-" Then
+                Await edsStructure.WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
+            End If
+
+            Dim params As (String, String, Boolean) = (importingFrom.FullName.ToString, toolVer, True)
 
             If importingTo.Name.ToLower.Contains("pile") Then
                 macroname = "Button173_Click"
@@ -42,29 +49,25 @@ Public Module WorkflowHelpers
                 End If
             End If
 
-            If Import_Previous_Version(myLog, myXL.Item1, importingTo, macroname, params, excelVisible, prefix, orderSheet, orderRange, edsStructure) Then
-                myLog += ("INFO | Import Inputs Completed for: " & importingTo.FullName + vbCrLf)
+            If Await Import_Previous_Version(myXL.Item1, importingTo, macroname, params, excelVisible, prefix, orderSheet, orderRange, edsStructure, progress) Then
+                Await edsStructure.WriteLineLogLine("INFO | Import Inputs Completed for: " & importingTo.FullName, progress, True)
             Else
-                myLog += ("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName + vbCrLf)
+                Await edsStructure.WriteLineLogLine("WARNING | Import Inputs NOT Completed for: " & importingTo.FullName, progress, True)
+                success = False
             End If
         End If
 
-        DisposeXlApp(myXL.Item1, myXL.Item2)
+        DisposeXlApp(myXL.myApp, myXL.alreadyOpen)
 
-        Dim success As Boolean = True
-        If myLog.Contains("ERROR") Then
-            success = False
-        End If
-
-        Return New Tuple(Of Boolean, String)(success, myLog)
+        Return success
     End Function
 
     'Create or get the excel application to use.
-    Public Function GetXlApp() As Tuple(Of Excel.Application, Boolean)
+    Public Function GetXlApp() As (Excel.Application, Boolean)
         Try
-            Return New Tuple(Of Excel.Application, Boolean)(GetObject(, "Excel.Appliction"), True)
+            Return (GetObject(, "Excel.Appliction"), True)
         Catch ex As Exception
-            Return New Tuple(Of Excel.Application, Boolean)(CreateObject("Excel.Application"), False)
+            Return (CreateObject("Excel.Application"), False)
         End Try
     End Function
 
@@ -86,28 +89,30 @@ Public Module WorkflowHelpers
     End Function
 
     'Seb's macro runner adjusted specifically for unit testing
-    Public Function Import_Previous_Version(
-                                           ByRef myLog As String,
+    Public Async Function Import_Previous_Version(
                                            ByVal xlapp As Excel.Application,
                                            ByVal workbookFile As FileInfo,
                                            ByVal macroName As String,
-                                           ByVal params As Tuple(Of String, String, Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
+                                           ByVal params As (filepath As String, version As String, isMaesting As Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
                                            Optional ByVal xlVisibility As Boolean = False,
                                            Optional ByVal prefix As String = "",
                                            Optional ByVal orderSheet As String = "",
                                            Optional ByVal orderRange As String = "",
-                                           Optional ByVal edsStructure As EDSStructure = Nothing
-                                           ) As Boolean
+                                           Optional ByVal edsStructure As EDSStructure = Nothing,
+                                           Optional progress As IProgress(Of LogMessage) = Nothing
+                                           ) As Task(Of Boolean)
 
         Dim toolFileName As String = Path.GetFileName(workbookFile.Name)
         Dim xlWorkBook As Excel.Workbook = Nothing
         Dim errorMessage As String = ""
         Dim isSuccess As Boolean = True
+        Dim workbIssue As Boolean = False
+        Dim workbMessage As String = ""
 
         If workbookFile Is Nothing Or String.IsNullOrEmpty(macroName) Then
-            myLog += ("ERROR | workbookFile or macroName parameter is null or empty" + vbCrLf)
-            Return False
-        End If
+                Await edsStructure.WriteLineLogLine("ERROR | workbookFile or macroName parameter is null or empty", progress, True)
+                Return False
+            End If
 
         Try
             If workbookFile.Exists Then
@@ -115,57 +120,67 @@ Public Module WorkflowHelpers
                 xlapp.Visible = xlVisibility
                 xlWorkBook = xlapp.Workbooks.Open(workbookFile.FullName)
 
-                myLog += ("DEBUG | Tool: " & toolFileName + vbCrLf)
+                Await edsStructure.WriteLineLogLine("DEBUG | Tool: " & toolFileName, progress, True)
 
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
-                    myLog += ("DEBUG | BEGIN MACRO: " & macroName + vbCrLf)
+                    Await edsStructure.WriteLineLogLine("DEBUG | BEGIN MACRO: " & macroName, progress, True)
                     xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
-                    myLog += ("DEBUG | END MACRO:  " & macroName + vbCrLf)
+                    Await edsStructure.WriteLineLogLine("DEBUG | END MACRO:  " & macroName, progress, True)
 
                     'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
                     Try
                         If toolFileName.ToLower.Contains("ccipole") Then
                             xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
-                            myLog += ("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook" + vbCrLf)
+                            Await edsStructure.WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
                         ElseIf toolFileName.ToLower.Contains("cciseismic") Then
                             xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
                             xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
                             xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
-                            myLog += ("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook" + vbCrLf)
-                            myLog += ("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook" + vbCrLf)
+                            Await edsStructure.WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
+                            Await edsStructure.WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
                         Else
                             xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
-                            myLog += ("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook" + vbCrLf)
+                            Await edsStructure.WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
                         End If
                     Catch ex As Exception
                         'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
                     End Try
                 Else
-                    myLog += ("ERROR | Parameters not specific " + vbCrLf)
-                    myLog += ("DEBUG | Tool: " & toolFileName & " failed to import inputs" + vbCrLf)
+                    Await edsStructure.WriteLineLogLine("ERROR | Parameters not specific ", progress, True)
+                    Await edsStructure.WriteLineLogLine("DEBUG | Tool: " & toolFileName & " failed to import inputs", progress, True)
                     isSuccess = False
                 End If
 
                 xlWorkBook.Save()
             Else
-                myLog += ("ERROR | " & workbookFile.FullName & " path not found!" + vbCrLf)
+                Await edsStructure.WriteLineLogLine("ERROR | " & workbookFile.FullName & " path not found!", progress, True)
             End If
         Catch ex As Exception
             errorMessage = ex.Message
-            myLog += ("ERROR | " & ex.Message + vbCrLf)
             isSuccess = False
         Finally
+
+            If xlWorkBook IsNot Nothing Then
+                xlWorkBook.Close(True)
+                Marshal.ReleaseComObject(xlWorkBook)
+                xlWorkBook = Nothing
+            End If
             Try
-                If xlWorkBook IsNot Nothing Then
-                    xlWorkBook.Close(True)
-                    Marshal.ReleaseComObject(xlWorkBook)
-                    xlWorkBook = Nothing
-                End If
             Catch ex As Exception
-                myLog += ("WARNING | Could not close Excel Workbook: " & toolFileName + vbCrLf)
+                workbIssue = True
+                workbMessage = ex.Message
             End Try
         End Try
+
+        If isSuccess Then
+            Await edsStructure.WriteLineLogLine("ERROR | " & errorMessage, progress, True)
+        End If
+
+        If workbIssue Then
+            Await edsStructure.WriteLineLogLine("WARNING | Could not close Excel Workbook: " & toolFileName, progress, True)
+            Await edsStructure.WriteLineLogLine("ERROR | " & workbMessage, progress, True)
+        End If
 
         Return isSuccess
     End Function
@@ -281,7 +296,7 @@ Public Module WorkflowHelpers
     'Invalid files return blank datatables
 
     Public Function SummarizedResults(ByVal info As IO.FileInfo) As DataTable
-        Dim myTemplate As Tuple(Of Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
+        Dim myTemplate As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
         Dim range As String = myTemplate.Item5
         Dim tempds As New DataSet
         Dim finalDt As New DataTable
@@ -546,7 +561,7 @@ Public Module WorkflowHelpers
                 logString.NewLine("DEBUG | File found for structure: " & info.Name)
             ElseIf info.Extension = ".xlsm" Then 'All tools are current xlsm files and this should be a safe assumption
                 'Determine if the file is one of the templates
-                Dim template As Tuple(Of Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
+                Dim template As (Byte(), Byte(), String, String, String, String, String) = WhichFile(info)
 
                 'If the properties of the tuple are nothing then they aren't templates
                 If template.Item1 IsNot Nothing And template.Item2 IsNot Nothing And template.Item3 IsNot Nothing Then
@@ -604,8 +619,8 @@ Public Module WorkflowHelpers
 
     'Used to determine which template is being used
     'This could have been set up as a class but ended up going too far and now we have tuples. Enjoy! :)
-    Public Function WhichFile(ByVal file As FileInfo) As Tuple(Of Byte(), Byte(), String, String, String, String, String)
-        Dim returner As Tuple(Of Byte(), Byte(), String, String, String, String, String)
+    Public Function WhichFile(ByVal file As FileInfo) As (Byte(), Byte(), String, String, String, String, String)
+        Dim returner As (Byte(), Byte(), String, String, String, String, String)
         'Item 1 = current published versions
         'Item 2 = new versions created for SAPI
         'Item 3 = File name to be used with the bytes
@@ -615,7 +630,7 @@ Public Module WorkflowHelpers
         'Item 7 = Range for order
 
         If file.Name.ToLower.Contains("cciplate") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.CCIplate__4_1_2_,
                 CCI_Engineering_Templates.My.Resources.CCIplate,
                 "CCIplate.xlsm",
@@ -624,7 +639,7 @@ Public Module WorkflowHelpers
                 "Main",
                 "C5")
         ElseIf file.Name.ToLower.Contains("ccipole") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.CCIpole__4_5_8_,
                 CCI_Engineering_Templates.My.Resources.CCIpole,
                 "CCIpole.xlsm",
@@ -633,7 +648,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "WO")
         ElseIf file.Name.ToLower.Contains("cciseismic") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.CCISeismic__3_3_9_,
                 CCI_Engineering_Templates.My.Resources.CCISeismic,
                 "CCISeismic.xlsm",
@@ -642,7 +657,7 @@ Public Module WorkflowHelpers
                 "",
                 "")
         ElseIf file.Name.ToLower.Contains("drilled pier") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation__5_0_5_,
                 CCI_Engineering_Templates.My.Resources.Drilled_Pier_Foundation,
                 "Drilled Pier Foundation.xlsm",
@@ -651,7 +666,7 @@ Public Module WorkflowHelpers
                 "Foundation Input",
                 "D5")
         ElseIf file.Name.ToLower.Contains("guyed anchor") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation__4_0_0_,
                 CCI_Engineering_Templates.My.Resources.Guyed_Anchor_Block_Foundation,
                 "Guyed Anchor Block Foundation.xlsm",
@@ -660,7 +675,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "R5")
         ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool,
                 "Leg Reinforcement Tool.xlsm",
@@ -669,7 +684,7 @@ Public Module WorkflowHelpers
                 "IMPORT",
                 "Order_Import")
         ElseIf file.Name.ToLower.Contains("pier and pad") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation__4_1_1_,
                 CCI_Engineering_Templates.My.Resources.Pier_and_Pad_Foundation,
                 "Pier and Pad Foundation.xlsm",
@@ -678,7 +693,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "C5")
         ElseIf file.Name.ToLower.Contains("pile") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.Pile_Foundation__2_2_1_,
                 CCI_Engineering_Templates.My.Resources.Pile_Foundation,
                 "Pile Foundation.xlsm",
@@ -687,7 +702,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "C7")
         ElseIf file.Name.ToLower.Contains("unit base") Then
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation__4_0_3_,
                 CCI_Engineering_Templates.My.Resources.SST_Unit_Base_Foundation,
                 "SST Unit Base Foundation.xlsm",
@@ -696,7 +711,7 @@ Public Module WorkflowHelpers
                 "Input",
                 "C5")
         Else
-            returner = New Tuple(Of Byte(), Byte(), String, String, String, String, String)(
+            returner = (
                 Nothing,
                 Nothing,
                 Nothing,
