@@ -59,9 +59,9 @@ Public Module WorkflowHelpers
             Dim prefix As String = ""
             Dim toolVer As String = ImportingFrom.TemplateVersion
 
-            If progress IsNot Nothing And toolVer <> "-" Then
-                Await WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
-            End If
+            'If progress IsNot Nothing And toolVer <> "-" Then
+            '    Await WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
+            'End If
 
             Dim params As (String, String, Boolean) = (ImportingFrom.FullName.ToString, toolVer, True)
 
