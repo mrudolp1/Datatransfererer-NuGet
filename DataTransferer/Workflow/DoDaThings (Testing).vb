@@ -59,9 +59,9 @@ Public Module WorkflowHelpers
             Dim prefix As String = ""
             Dim toolVer As String = ImportingFrom.TemplateVersion
 
-            'If progress IsNot Nothing And toolVer <> "-" Then
-            '    Await WriteLineLogLine("DEBUG | Version: " & toolVer & " found for importing", progress, True)
-            'End If
+            If progress IsNot Nothing And toolVer <> "-" Then
+                Await WriteLineLogLine("DEBUG | Previous Tool Version: " & toolVer & " found for importing", progress, True)
+            End If
 
             Dim params As (String, String, Boolean) = (ImportingFrom.FullName.ToString, toolVer, True)
 
@@ -189,9 +189,11 @@ Public Module WorkflowHelpers
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
                     Await WriteLineLogLine("DEBUG | BEGIN MACRO: " & macroName, progress, True)
-                    xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
+                    Await xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
                     Await WriteLineLogLine("DEBUG | END MACRO:  " & macroName, progress, True)
 
+                    Dim savedOrder As Boolean = True
+                    Dim savedOrderError As String = ""
                     'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
                     Try
                         If toolFileName.ToLower.Contains("ccipole") Then
@@ -208,8 +210,15 @@ Public Module WorkflowHelpers
                             Await WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
                         End If
                     Catch ex As Exception
+                        savedOrder = False
+                        savedOrderError = ex.Message
                         'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
                     End Try
+
+                    If Not savedOrder Then
+                        Await WriteLineLogLine("WARNING | Could not add WO/Order data to workbook", progress, True)
+                        Await WriteLineLogLine("ERROR | " & savedOrderError, progress, True)
+                    End If
                 Else
                     Await WriteLineLogLine("ERROR | Parameters not specific ", progress, True)
                     Await WriteLineLogLine("DEBUG | Tool: " & toolFileName & " failed to import inputs", progress, True)
