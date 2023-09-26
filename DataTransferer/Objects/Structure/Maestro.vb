@@ -136,7 +136,7 @@ Partial Public Class EDSStructure
                     'If BARB exists, include in report = true and CCI Pole exists, execute barb logic
                     If plateWeUsin.barb_cl_elevation >= 0 And plateWeUsin.include_pole_reactions And CCIPoleExists Then
                         Await WriteLineLogLine("INFO | BARB elevation found..", progress)
-                        Await DoBARB(poleWeUsin, plateWeUsin, isDevMode, cancelToken, progress)
+                        Await DoBARB(poleWeUsin, plateWeUsin, xlVisibility, cancelToken, progress)
                     End If
                 End If
 
