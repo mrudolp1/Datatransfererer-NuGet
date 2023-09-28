@@ -566,10 +566,10 @@ Partial Public Class EDSStructure
                 End If
                 Return (saveCheck, resDS.Tables(0), myQuery)
             Else
-                Return (False, Nothing, Nothing)
+                Return (False, Nothing, myQuery)
             End If
         Else
-            Return (False, Nothing, Nothing)
+            Return (False, Nothing, myQuery)
         End If
     End Function
 
@@ -595,10 +595,10 @@ Partial Public Class EDSStructure
                 End If
                 Return (saveCheck, resDS.Tables(0), myQuery)
             Else
-                Return (False, Nothing, Nothing)
+                Return (False, Nothing, myQuery)
             End If
         Else
-            Return (False, Nothing, Nothing)
+            Return (False, Nothing, myQuery)
         End If
     End Function
 
