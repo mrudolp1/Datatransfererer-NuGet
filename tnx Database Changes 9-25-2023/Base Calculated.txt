@@ -205,43 +205,43 @@ ADD TowerRedundantHipDiagonalMatlGrade4Overwrite varchar(100),
 \\\\\\
 \\\\\\
 ######################## BEGIN Define ########################
-Private _TowerRedundantHorizontalGrade As Decimal ?
+Private _TowerRedundantHorizontalGrade As Double? 
 Private _TowerRedundantHorizontalMatlGrade As String 
-Private _TowerRedundantHorizontalGrade2 As Decimal ?
+Private _TowerRedundantHorizontalGrade2 As Double? 
 Private _TowerRedundantHorizontalMatlGrade2 As String 
-Private _TowerRedundantHorizontalGrade3 As Decimal ?
+Private _TowerRedundantHorizontalGrade3 As Double? 
 Private _TowerRedundantHorizontalMatlGrade3 As String 
-Private _TowerRedundantHorizontalGrade4 As Decimal ?
+Private _TowerRedundantHorizontalGrade4 As Double? 
 Private _TowerRedundantHorizontalMatlGrade4 As String 
-Private _TowerRedundantDiagonalGrade As Decimal ?
+Private _TowerRedundantDiagonalGrade As Double? 
 Private _TowerRedundantDiagonalMatlGrade As String 
-Private _TowerRedundantDiagonalGrade2 As Decimal ?
+Private _TowerRedundantDiagonalGrade2 As Double? 
 Private _TowerRedundantDiagonalMatlGrade2 As String 
-Private _TowerRedundantDiagonalGrade3 As Decimal ?
+Private _TowerRedundantDiagonalGrade3 As Double? 
 Private _TowerRedundantDiagonalMatlGrade3 As String 
-Private _TowerRedundantDiagonalGrade4 As Decimal ?
+Private _TowerRedundantDiagonalGrade4 As Double? 
 Private _TowerRedundantDiagonalMatlGrade4 As String 
-Private _TowerRedundantSubHorizontalGrade As Decimal ?
+Private _TowerRedundantSubHorizontalGrade As Double? 
 Private _TowerRedundantSubHorizontalMatlGrade As String 
-Private _TowerRedundantSubDiagonalGrade As Decimal ?
+Private _TowerRedundantSubDiagonalGrade As Double? 
 Private _TowerRedundantSubDiagonalMatlGrade As String 
-Private _TowerRedundantVerticalGrade As Decimal ?
+Private _TowerRedundantVerticalGrade As Double? 
 Private _TowerRedundantVerticalMatlGrade3 As String 
-Private _TowerRedundantHipGrade As Decimal ?
+Private _TowerRedundantHipGrade As Double? 
 Private _TowerRedundantHipMatlGrade As String 
-Private _TowerRedundantHipGrade2 As Decimal ?
+Private _TowerRedundantHipGrade2 As Double? 
 Private _TowerRedundantHipMatlGrade2 As String 
-Private _TowerRedundantHipGrade3 As Decimal ?
+Private _TowerRedundantHipGrade3 As Double? 
 Private _TowerRedundantHipMatlGrade3 As String 
-Private _TowerRedundantHipGrade4 As Decimal ?
+Private _TowerRedundantHipGrade4 As Double? 
 Private _TowerRedundantHipMatlGrade4 As String 
-Private _TowerRedundantHipDiagonalGrade As Decimal ?
+Private _TowerRedundantHipDiagonalGrade As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade As String 
-Private _TowerRedundantHipDiagonalGrade2 As Decimal ?
+Private _TowerRedundantHipDiagonalGrade2 As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade2 As String 
-Private _TowerRedundantHipDiagonalGrade3 As Decimal ?
+Private _TowerRedundantHipDiagonalGrade3 As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade3 As String 
-Private _TowerRedundantHipDiagonalGrade4 As Decimal ?
+Private _TowerRedundantHipDiagonalGrade4 As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade4 As String 
 Private _TowerRedundantHorizontalType As String 
 Private _TowerRedundantHorizontalType2 As String 
@@ -257,161 +257,161 @@ Private _TowerRedundantHipDiagonalType2 As String
 Private _TowerRedundantHipDiagonalType3 As String 
 Private _TowerRedundantHipDiagonalType4 As String 
 Private _TowerRedundantHorizontalBoltGrade1 As String 
-Private _TowerRedundantHorizontalBoltSize1 As Decimal 
-Private _TowerRedundantHorizontalNumBolts1 As Integer 
-Private _TowerRedundantHorizontalBoltEdgeDistance1 As Decimal 
-Private _TowerRedundantHorizontalGageG1Distance1 As Decimal 
-Private _TowerRedundantHorizontalNetWidthDeduct1 As Decimal 
-Private _TowerRedundantHorizontalUFactor1 As Decimal 
+Private _TowerRedundantHorizontalBoltSize1 As Double? 
+Private _TowerRedundantHorizontalNumBolts1 As Integer? 
+Private _TowerRedundantHorizontalBoltEdgeDistance1 As Double? 
+Private _TowerRedundantHorizontalGageG1Distance1 As Double? 
+Private _TowerRedundantHorizontalNetWidthDeduct1 As Double? 
+Private _TowerRedundantHorizontalUFactor1 As Double? 
 Private _TowerRedundantHorizontalBoltGrade2 As String 
-Private _TowerRedundantHorizontalBoltSize2 As Decimal 
-Private _TowerRedundantHorizontalNumBolts2 As Integer 
-Private _TowerRedundantHorizontalBoltEdgeDistance2 As Decimal 
-Private _TowerRedundantHorizontalGageG1Distance2 As Decimal 
-Private _TowerRedundantHorizontalNetWidthDeduct2 As Decimal 
-Private _TowerRedundantHorizontalUFactor2 As Decimal 
+Private _TowerRedundantHorizontalBoltSize2 As Double? 
+Private _TowerRedundantHorizontalNumBolts2 As Integer? 
+Private _TowerRedundantHorizontalBoltEdgeDistance2 As Double? 
+Private _TowerRedundantHorizontalGageG1Distance2 As Double? 
+Private _TowerRedundantHorizontalNetWidthDeduct2 As Double? 
+Private _TowerRedundantHorizontalUFactor2 As Double? 
 Private _TowerRedundantHorizontalBoltGrade3 As String 
-Private _TowerRedundantHorizontalBoltSize3 As Decimal 
-Private _TowerRedundantHorizontalNumBolts3 As Integer 
-Private _TowerRedundantHorizontalBoltEdgeDistance3 As Decimal 
-Private _TowerRedundantHorizontalGageG1Distance3 As Decimal 
-Private _TowerRedundantHorizontalNetWidthDeduct3 As Decimal 
-Private _TowerRedundantHorizontalUFactor3 As Decimal 
+Private _TowerRedundantHorizontalBoltSize3 As Double? 
+Private _TowerRedundantHorizontalNumBolts3 As Integer? 
+Private _TowerRedundantHorizontalBoltEdgeDistance3 As Double? 
+Private _TowerRedundantHorizontalGageG1Distance3 As Double? 
+Private _TowerRedundantHorizontalNetWidthDeduct3 As Double? 
+Private _TowerRedundantHorizontalUFactor3 As Double? 
 Private _TowerRedundantHorizontalBoltGrade4 As String 
-Private _TowerRedundantHorizontalBoltSize4 As Decimal 
-Private _TowerRedundantHorizontalNumBolts4 As Integer 
-Private _TowerRedundantHorizontalBoltEdgeDistance4 As Decimal 
-Private _TowerRedundantHorizontalGageG1Distance4 As Decimal 
-Private _TowerRedundantHorizontalNetWidthDeduct4 As Decimal 
-Private _TowerRedundantHorizontalUFactor4 As Decimal 
+Private _TowerRedundantHorizontalBoltSize4 As Double? 
+Private _TowerRedundantHorizontalNumBolts4 As Integer? 
+Private _TowerRedundantHorizontalBoltEdgeDistance4 As Double? 
+Private _TowerRedundantHorizontalGageG1Distance4 As Double? 
+Private _TowerRedundantHorizontalNetWidthDeduct4 As Double? 
+Private _TowerRedundantHorizontalUFactor4 As Double? 
 Private _TowerRedundantDiagonalBoltGrade1 As String 
-Private _TowerRedundantDiagonalBoltSize1 As Decimal 
-Private _TowerRedundantDiagonalNumBolts1 As Integer 
-Private _TowerRedundantDiagonalBoltEdgeDistance1 As Decimal 
-Private _TowerRedundantDiagonalGageG1Distance1 As Decimal 
-Private _TowerRedundantDiagonalNetWidthDeduct1 As Decimal 
-Private _TowerRedundantDiagonalUFactor1 As Decimal 
+Private _TowerRedundantDiagonalBoltSize1 As Double? 
+Private _TowerRedundantDiagonalNumBolts1 As Integer? 
+Private _TowerRedundantDiagonalBoltEdgeDistance1 As Double? 
+Private _TowerRedundantDiagonalGageG1Distance1 As Double? 
+Private _TowerRedundantDiagonalNetWidthDeduct1 As Double? 
+Private _TowerRedundantDiagonalUFactor1 As Double? 
 Private _TowerRedundantDiagonalBoltGrade2 As String 
-Private _TowerRedundantDiagonalBoltSize2 As Decimal 
-Private _TowerRedundantDiagonalNumBolts2 As Integer 
-Private _TowerRedundantDiagonalBoltEdgeDistance2 As Decimal 
-Private _TowerRedundantDiagonalGageG1Distance2 As Decimal 
-Private _TowerRedundantDiagonalNetWidthDeduct2 As Decimal 
-Private _TowerRedundantDiagonalUFactor2 As Decimal 
+Private _TowerRedundantDiagonalBoltSize2 As Double? 
+Private _TowerRedundantDiagonalNumBolts2 As Integer? 
+Private _TowerRedundantDiagonalBoltEdgeDistance2 As Double? 
+Private _TowerRedundantDiagonalGageG1Distance2 As Double? 
+Private _TowerRedundantDiagonalNetWidthDeduct2 As Double? 
+Private _TowerRedundantDiagonalUFactor2 As Double? 
 Private _TowerRedundantDiagonalBoltGrade3 As String 
-Private _TowerRedundantDiagonalBoltSize3 As Decimal 
-Private _TowerRedundantDiagonalNumBolts3 As Integer 
-Private _TowerRedundantDiagonalBoltEdgeDistance3 As Decimal 
-Private _TowerRedundantDiagonalGageG1Distance3 As Decimal 
-Private _TowerRedundantDiagonalNetWidthDeduct3 As Decimal 
-Private _TowerRedundantDiagonalUFactor3 As Decimal 
+Private _TowerRedundantDiagonalBoltSize3 As Double? 
+Private _TowerRedundantDiagonalNumBolts3 As Integer? 
+Private _TowerRedundantDiagonalBoltEdgeDistance3 As Double? 
+Private _TowerRedundantDiagonalGageG1Distance3 As Double? 
+Private _TowerRedundantDiagonalNetWidthDeduct3 As Double? 
+Private _TowerRedundantDiagonalUFactor3 As Double? 
 Private _TowerRedundantDiagonalBoltGrade4 As String 
-Private _TowerRedundantDiagonalBoltSize4 As Decimal 
-Private _TowerRedundantDiagonalNumBolts4 As Integer 
-Private _TowerRedundantDiagonalBoltEdgeDistance4 As Decimal 
-Private _TowerRedundantDiagonalGageG1Distance4 As Decimal 
-Private _TowerRedundantDiagonalNetWidthDeduct4 As Decimal 
-Private _TowerRedundantDiagonalUFactor4 As Decimal 
+Private _TowerRedundantDiagonalBoltSize4 As Double? 
+Private _TowerRedundantDiagonalNumBolts4 As Integer? 
+Private _TowerRedundantDiagonalBoltEdgeDistance4 As Double? 
+Private _TowerRedundantDiagonalGageG1Distance4 As Double? 
+Private _TowerRedundantDiagonalNetWidthDeduct4 As Double? 
+Private _TowerRedundantDiagonalUFactor4 As Double? 
 Private _TowerRedundantHipBoltGrade1 As String 
-Private _TowerRedundantHipBoltSize1 As Decimal 
-Private _TowerRedundantHipNumBolts1 As Integer 
-Private _TowerRedundantHipBoltEdgeDistance1 As Decimal 
-Private _TowerRedundantHipGageG1Distance1 As Decimal 
-Private _TowerRedundantHipNetWidthDeduct1 As Decimal 
-Private _TowerRedundantHipUFactor1 As Decimal 
+Private _TowerRedundantHipBoltSize1 As Double? 
+Private _TowerRedundantHipNumBolts1 As Integer? 
+Private _TowerRedundantHipBoltEdgeDistance1 As Double? 
+Private _TowerRedundantHipGageG1Distance1 As Double? 
+Private _TowerRedundantHipNetWidthDeduct1 As Double? 
+Private _TowerRedundantHipUFactor1 As Double? 
 Private _TowerRedundantHipBoltGrade2 As String 
-Private _TowerRedundantHipBoltSize2 As Decimal 
-Private _TowerRedundantHipNumBolts2 As Integer 
-Private _TowerRedundantHipBoltEdgeDistance2 As Decimal 
-Private _TowerRedundantHipGageG1Distance2 As Decimal 
-Private _TowerRedundantHipNetWidthDeduct2 As Decimal 
-Private _TowerRedundantHipUFactor2 As Decimal 
+Private _TowerRedundantHipBoltSize2 As Double? 
+Private _TowerRedundantHipNumBolts2 As Integer? 
+Private _TowerRedundantHipBoltEdgeDistance2 As Double? 
+Private _TowerRedundantHipGageG1Distance2 As Double? 
+Private _TowerRedundantHipNetWidthDeduct2 As Double? 
+Private _TowerRedundantHipUFactor2 As Double? 
 Private _TowerRedundantHipBoltGrade3 As String 
-Private _TowerRedundantHipBoltSize3 As Decimal 
-Private _TowerRedundantHipNumBolts3 As Integer 
-Private _TowerRedundantHipBoltEdgeDistance3 As Decimal 
-Private _TowerRedundantHipGageG1Distance3 As Decimal 
-Private _TowerRedundantHipNetWidthDeduct3 As Decimal 
-Private _TowerRedundantHipUFactor3 As Decimal 
+Private _TowerRedundantHipBoltSize3 As Double? 
+Private _TowerRedundantHipNumBolts3 As Integer? 
+Private _TowerRedundantHipBoltEdgeDistance3 As Double? 
+Private _TowerRedundantHipGageG1Distance3 As Double? 
+Private _TowerRedundantHipNetWidthDeduct3 As Double? 
+Private _TowerRedundantHipUFactor3 As Double? 
 Private _TowerRedundantHipBoltGrade4 As String 
-Private _TowerRedundantHipBoltSize4 As Decimal 
-Private _TowerRedundantHipNumBolts4 As Integer 
-Private _TowerRedundantHipBoltEdgeDistance4 As Decimal 
-Private _TowerRedundantHipGageG1Distance4 As Decimal 
-Private _TowerRedundantHipNetWidthDeduct4 As Decimal 
-Private _TowerRedundantHipUFactor4 As Decimal 
+Private _TowerRedundantHipBoltSize4 As Double? 
+Private _TowerRedundantHipNumBolts4 As Integer? 
+Private _TowerRedundantHipBoltEdgeDistance4 As Double? 
+Private _TowerRedundantHipGageG1Distance4 As Double? 
+Private _TowerRedundantHipNetWidthDeduct4 As Double? 
+Private _TowerRedundantHipUFactor4 As Double? 
 Private _TowerRedundantHipDiagonalBoltGrade1 As String 
-Private _TowerRedundantHipDiagonalBoltSize1 As Decimal 
-Private _TowerRedundantHipDiagonalNumBolts1 As Integer 
-Private _TowerRedundantHipDiagonalBoltEdgeDistance1 As Decimal 
-Private _TowerRedundantHipDiagonalGageG1Distance1 As Decimal 
-Private _TowerRedundantHipDiagonalNetWidthDeduct1 As Decimal 
-Private _TowerRedundantHipDiagonalUFactor1 As Decimal 
+Private _TowerRedundantHipDiagonalBoltSize1 As Double? 
+Private _TowerRedundantHipDiagonalNumBolts1 As Integer? 
+Private _TowerRedundantHipDiagonalBoltEdgeDistance1 As Double? 
+Private _TowerRedundantHipDiagonalGageG1Distance1 As Double? 
+Private _TowerRedundantHipDiagonalNetWidthDeduct1 As Double? 
+Private _TowerRedundantHipDiagonalUFactor1 As Double? 
 Private _TowerRedundantHipDiagonalBoltGrade2 As String 
-Private _TowerRedundantHipDiagonalBoltSize2 As Decimal 
-Private _TowerRedundantHipDiagonalNumBolts2 As Integer 
-Private _TowerRedundantHipDiagonalBoltEdgeDistance2 As Decimal 
-Private _TowerRedundantHipDiagonalGageG1Distance2 As Decimal 
-Private _TowerRedundantHipDiagonalNetWidthDeduct2 As Decimal 
-Private _TowerRedundantHipDiagonalUFactor2 As Decimal 
+Private _TowerRedundantHipDiagonalBoltSize2 As Double? 
+Private _TowerRedundantHipDiagonalNumBolts2 As Integer? 
+Private _TowerRedundantHipDiagonalBoltEdgeDistance2 As Double? 
+Private _TowerRedundantHipDiagonalGageG1Distance2 As Double? 
+Private _TowerRedundantHipDiagonalNetWidthDeduct2 As Double? 
+Private _TowerRedundantHipDiagonalUFactor2 As Double? 
 Private _TowerRedundantHipDiagonalBoltGrade3 As String 
-Private _TowerRedundantHipDiagonalBoltSize3 As Decimal 
-Private _TowerRedundantHipDiagonalNumBolts3 As Integer 
-Private _TowerRedundantHipDiagonalBoltEdgeDistance3 As Decimal 
-Private _TowerRedundantHipDiagonalGageG1Distance3 As Decimal 
-Private _TowerRedundantHipDiagonalNetWidthDeduct3 As Decimal 
-Private _TowerRedundantHipDiagonalUFactor3 As Decimal 
+Private _TowerRedundantHipDiagonalBoltSize3 As Double? 
+Private _TowerRedundantHipDiagonalNumBolts3 As Integer? 
+Private _TowerRedundantHipDiagonalBoltEdgeDistance3 As Double? 
+Private _TowerRedundantHipDiagonalGageG1Distance3 As Double? 
+Private _TowerRedundantHipDiagonalNetWidthDeduct3 As Double? 
+Private _TowerRedundantHipDiagonalUFactor3 As Double? 
 Private _TowerRedundantHipDiagonalBoltGrade4 As String 
-Private _TowerRedundantHipDiagonalBoltSize4 As Decimal 
-Private _TowerRedundantHipDiagonalNumBolts4 As Integer 
-Private _TowerRedundantHipDiagonalBoltEdgeDistance4 As Decimal 
-Private _TowerRedundantHipDiagonalGageG1Distance4 As Decimal 
-Private _TowerRedundantHipDiagonalNetWidthDeduct4 As Decimal 
-Private _TowerRedundantHipDiagonalUFactor4 As Decimal 
-Private _TowerRedundantHorizontalGradeOverwrite As Decimal ?
+Private _TowerRedundantHipDiagonalBoltSize4 As Double? 
+Private _TowerRedundantHipDiagonalNumBolts4 As Integer? 
+Private _TowerRedundantHipDiagonalBoltEdgeDistance4 As Double? 
+Private _TowerRedundantHipDiagonalGageG1Distance4 As Double? 
+Private _TowerRedundantHipDiagonalNetWidthDeduct4 As Double? 
+Private _TowerRedundantHipDiagonalUFactor4 As Double? 
+Private _TowerRedundantHorizontalGradeOverwrite As Double? 
 Private _TowerRedundantHorizontalMatlGradeOverwrite As String 
-Private _TowerRedundantHorizontalGrade2Overwrite As Decimal ?
+Private _TowerRedundantHorizontalGrade2Overwrite As Double? 
 Private _TowerRedundantHorizontalMatlGrade2Overwrite As String 
-Private _TowerRedundantHorizontalGrade3Overwrite As Decimal ?
+Private _TowerRedundantHorizontalGrade3Overwrite As Double? 
 Private _TowerRedundantHorizontalMatlGrade3Overwrite As String 
-Private _TowerRedundantHorizontalGrade4Overwrite As Decimal ?
+Private _TowerRedundantHorizontalGrade4Overwrite As Double? 
 Private _TowerRedundantHorizontalMatlGrade4Overwrite As String 
-Private _TowerRedundantDiagonalGradeOverwrite As Decimal ?
+Private _TowerRedundantDiagonalGradeOverwrite As Double? 
 Private _TowerRedundantDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantDiagonalGrade2Overwrite As Decimal ?
+Private _TowerRedundantDiagonalGrade2Overwrite As Double? 
 Private _TowerRedundantDiagonalMatlGrade2Overwrite As String 
-Private _TowerRedundantDiagonalGrade3Overwrite As Decimal ?
+Private _TowerRedundantDiagonalGrade3Overwrite As Double? 
 Private _TowerRedundantDiagonalMatlGrade3Overwrite As String 
-Private _TowerRedundantDiagonalGrade4Overwrite As Decimal ?
+Private _TowerRedundantDiagonalGrade4Overwrite As Double? 
 Private _TowerRedundantDiagonalMatlGrade4Overwrite As String 
-Private _TowerRedundantSubHorizontalGradeOverwrite As Decimal ?
+Private _TowerRedundantSubHorizontalGradeOverwrite As Double? 
 Private _TowerRedundantSubHorizontalMatlGradeOverwrite As String 
-Private _TowerRedundantSubDiagonalGradeOverwrite As Decimal ?
+Private _TowerRedundantSubDiagonalGradeOverwrite As Double? 
 Private _TowerRedundantSubDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantVerticalGradeOverwrite As Decimal ?
+Private _TowerRedundantVerticalGradeOverwrite As Double? 
 Private _TowerRedundantVerticalMatlGrade3Overwrite As String 
-Private _TowerRedundantHipGradeOverwrite As Decimal ?
+Private _TowerRedundantHipGradeOverwrite As Double? 
 Private _TowerRedundantHipMatlGradeOverwrite As String 
-Private _TowerRedundantHipGrade2Overwrite As Decimal ?
+Private _TowerRedundantHipGrade2Overwrite As Double? 
 Private _TowerRedundantHipMatlGrade2Overwrite As String 
-Private _TowerRedundantHipGrade3Overwrite As Decimal ?
+Private _TowerRedundantHipGrade3Overwrite As Double? 
 Private _TowerRedundantHipMatlGrade3Overwrite As String 
-Private _TowerRedundantHipGrade4Overwrite As Decimal ?
+Private _TowerRedundantHipGrade4Overwrite As Double? 
 Private _TowerRedundantHipMatlGrade4Overwrite As String 
-Private _TowerRedundantHipDiagonalGradeOverwrite As Decimal ?
+Private _TowerRedundantHipDiagonalGradeOverwrite As Double? 
 Private _TowerRedundantHipDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantHipDiagonalGrade2Overwrite As Decimal ?
+Private _TowerRedundantHipDiagonalGrade2Overwrite As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade2Overwrite As String 
-Private _TowerRedundantHipDiagonalGrade3Overwrite As Decimal ?
+Private _TowerRedundantHipDiagonalGrade3Overwrite As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade3Overwrite As String 
-Private _TowerRedundantHipDiagonalGrade4Overwrite As Decimal ?
+Private _TowerRedundantHipDiagonalGrade4Overwrite As Double? 
 Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String 
 ######################## END Define ########################
 \\\\\\
 \\\\\\
 ######################## BEGIN Property ########################
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade
         			End Get
@@ -429,7 +429,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade2() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade2() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade2
         			End Get
@@ -447,7 +447,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade3() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade3() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade3
         			End Get
@@ -465,7 +465,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade4() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade4() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade4
         			End Get
@@ -483,7 +483,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade
         			End Get
@@ -501,7 +501,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade2() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade2() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade2
         			End Get
@@ -519,7 +519,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade3() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade3() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade3
         			End Get
@@ -537,7 +537,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade4() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade4() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade4
         			End Get
@@ -555,7 +555,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Grade")>
-    		<DataMember()> Public Property TowerRedundantSubHorizontalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantSubHorizontalGrade() As Double??
         			Get
             				Return Me._TowerRedundantSubHorizontalGrade
         			End Get
@@ -573,7 +573,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Grade")>
-    		<DataMember()> Public Property TowerRedundantSubDiagonalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantSubDiagonalGrade() As Double??
         			Get
             				Return Me._TowerRedundantSubDiagonalGrade
         			End Get
@@ -591,7 +591,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Grade")>
-    		<DataMember()> Public Property TowerRedundantVerticalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantVerticalGrade() As Double??
         			Get
             				Return Me._TowerRedundantVerticalGrade
         			End Get
@@ -609,7 +609,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade")>
-    		<DataMember()> Public Property TowerRedundantHipGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade
         			End Get
@@ -627,7 +627,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 2")>
-    		<DataMember()> Public Property TowerRedundantHipGrade2() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade2() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade2
         			End Get
@@ -645,7 +645,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 3")>
-    		<DataMember()> Public Property TowerRedundantHipGrade3() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade3() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade3
         			End Get
@@ -663,7 +663,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 4")>
-    		<DataMember()> Public Property TowerRedundantHipGrade4() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade4() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade4
         			End Get
@@ -681,7 +681,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade
         			End Get
@@ -699,7 +699,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade2() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade2() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade2
         			End Get
@@ -717,7 +717,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade3() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade3() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade3
         			End Get
@@ -735,7 +735,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade4() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade4() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade4
         			End Get
@@ -879,7 +879,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize1() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltSize1
         			End Get
@@ -888,7 +888,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts1() As Integer
+    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts1() As Integer?
         			Get
             				Return Me._TowerRedundantHorizontalNumBolts1
         			End Get
@@ -897,7 +897,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance1() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltEdgeDistance1
         			End Get
@@ -906,7 +906,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance1() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalGageG1Distance1
         			End Get
@@ -915,7 +915,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct1() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalNetWidthDeduct1
         			End Get
@@ -924,7 +924,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 1")>
-    		<DataMember()> Public Property TowerRedundantHorizontalUFactor1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalUFactor1() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalUFactor1
         			End Get
@@ -942,7 +942,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize2() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltSize2
         			End Get
@@ -951,7 +951,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts2() As Integer
+    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts2() As Integer?
         			Get
             				Return Me._TowerRedundantHorizontalNumBolts2
         			End Get
@@ -960,7 +960,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance2() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltEdgeDistance2
         			End Get
@@ -969,7 +969,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance2() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalGageG1Distance2
         			End Get
@@ -978,7 +978,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct2() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalNetWidthDeduct2
         			End Get
@@ -987,7 +987,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 2")>
-    		<DataMember()> Public Property TowerRedundantHorizontalUFactor2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalUFactor2() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalUFactor2
         			End Get
@@ -1005,7 +1005,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize3() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltSize3
         			End Get
@@ -1014,7 +1014,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts3() As Integer
+    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts3() As Integer?
         			Get
             				Return Me._TowerRedundantHorizontalNumBolts3
         			End Get
@@ -1023,7 +1023,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance3() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltEdgeDistance3
         			End Get
@@ -1032,7 +1032,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance3() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalGageG1Distance3
         			End Get
@@ -1041,7 +1041,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct3() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalNetWidthDeduct3
         			End Get
@@ -1050,7 +1050,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 3")>
-    		<DataMember()> Public Property TowerRedundantHorizontalUFactor3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalUFactor3() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalUFactor3
         			End Get
@@ -1068,7 +1068,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltSize4() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltSize4
         			End Get
@@ -1077,7 +1077,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts4() As Integer
+    		<DataMember()> Public Property TowerRedundantHorizontalNumBolts4() As Integer?
         			Get
             				Return Me._TowerRedundantHorizontalNumBolts4
         			End Get
@@ -1086,7 +1086,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance4() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalBoltEdgeDistance4
         			End Get
@@ -1095,7 +1095,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalGageG1Distance4() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalGageG1Distance4
         			End Get
@@ -1104,7 +1104,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct4() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalNetWidthDeduct4
         			End Get
@@ -1113,7 +1113,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 4")>
-    		<DataMember()> Public Property TowerRedundantHorizontalUFactor4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHorizontalUFactor4() As Double?
         			Get
             				Return Me._TowerRedundantHorizontalUFactor4
         			End Get
@@ -1131,7 +1131,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize1() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize1() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltSize1
         			End Get
@@ -1140,7 +1140,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts1() As Integer
+    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts1() As Integer?
         			Get
             				Return Me._TowerRedundantDiagonalNumBolts1
         			End Get
@@ -1149,7 +1149,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance1() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltEdgeDistance1
         			End Get
@@ -1158,7 +1158,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance1() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalGageG1Distance1
         			End Get
@@ -1167,7 +1167,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct1() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct1() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalNetWidthDeduct1
         			End Get
@@ -1176,7 +1176,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 1")>
-    		<DataMember()> Public Property TowerRedundantDiagonalUFactor1() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalUFactor1() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalUFactor1
         			End Get
@@ -1194,7 +1194,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize2() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize2() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltSize2
         			End Get
@@ -1203,7 +1203,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts2() As Integer
+    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts2() As Integer?
         			Get
             				Return Me._TowerRedundantDiagonalNumBolts2
         			End Get
@@ -1212,7 +1212,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance2() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltEdgeDistance2
         			End Get
@@ -1221,7 +1221,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance2() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalGageG1Distance2
         			End Get
@@ -1230,7 +1230,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct2() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct2() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalNetWidthDeduct2
         			End Get
@@ -1239,7 +1239,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 2")>
-    		<DataMember()> Public Property TowerRedundantDiagonalUFactor2() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalUFactor2() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalUFactor2
         			End Get
@@ -1257,7 +1257,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize3() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize3() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltSize3
         			End Get
@@ -1266,7 +1266,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts3() As Integer
+    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts3() As Integer?
         			Get
             				Return Me._TowerRedundantDiagonalNumBolts3
         			End Get
@@ -1275,7 +1275,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance3() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltEdgeDistance3
         			End Get
@@ -1284,7 +1284,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance3() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalGageG1Distance3
         			End Get
@@ -1293,7 +1293,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct3() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct3() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalNetWidthDeduct3
         			End Get
@@ -1302,7 +1302,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 3")>
-    		<DataMember()> Public Property TowerRedundantDiagonalUFactor3() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalUFactor3() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalUFactor3
         			End Get
@@ -1320,7 +1320,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize4() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltSize4() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltSize4
         			End Get
@@ -1329,7 +1329,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts4() As Integer
+    		<DataMember()> Public Property TowerRedundantDiagonalNumBolts4() As Integer?
         			Get
             				Return Me._TowerRedundantDiagonalNumBolts4
         			End Get
@@ -1338,7 +1338,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance4() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalBoltEdgeDistance4
         			End Get
@@ -1347,7 +1347,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalGageG1Distance4() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalGageG1Distance4
         			End Get
@@ -1356,7 +1356,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct4() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct4() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalNetWidthDeduct4
         			End Get
@@ -1365,7 +1365,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 4")>
-    		<DataMember()> Public Property TowerRedundantDiagonalUFactor4() As Decimal
+    		<DataMember()> Public Property TowerRedundantDiagonalUFactor4() As Double?
         			Get
             				Return Me._TowerRedundantDiagonalUFactor4
         			End Get
@@ -1383,7 +1383,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 1")>
-    		<DataMember()> Public Property TowerRedundantHipBoltSize1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltSize1() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltSize1
         			End Get
@@ -1392,7 +1392,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 1")>
-    		<DataMember()> Public Property TowerRedundantHipNumBolts1() As Integer
+    		<DataMember()> Public Property TowerRedundantHipNumBolts1() As Integer?
         			Get
             				Return Me._TowerRedundantHipNumBolts1
         			End Get
@@ -1401,7 +1401,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance1() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltEdgeDistance1
         			End Get
@@ -1410,7 +1410,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHipGageG1Distance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipGageG1Distance1() As Double?
         			Get
             				Return Me._TowerRedundantHipGageG1Distance1
         			End Get
@@ -1419,7 +1419,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 1")>
-    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct1() As Double?
         			Get
             				Return Me._TowerRedundantHipNetWidthDeduct1
         			End Get
@@ -1428,7 +1428,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 1")>
-    		<DataMember()> Public Property TowerRedundantHipUFactor1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipUFactor1() As Double?
         			Get
             				Return Me._TowerRedundantHipUFactor1
         			End Get
@@ -1446,7 +1446,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 2")>
-    		<DataMember()> Public Property TowerRedundantHipBoltSize2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltSize2() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltSize2
         			End Get
@@ -1455,7 +1455,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 2")>
-    		<DataMember()> Public Property TowerRedundantHipNumBolts2() As Integer
+    		<DataMember()> Public Property TowerRedundantHipNumBolts2() As Integer?
         			Get
             				Return Me._TowerRedundantHipNumBolts2
         			End Get
@@ -1464,7 +1464,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance2() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltEdgeDistance2
         			End Get
@@ -1473,7 +1473,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHipGageG1Distance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipGageG1Distance2() As Double?
         			Get
             				Return Me._TowerRedundantHipGageG1Distance2
         			End Get
@@ -1482,7 +1482,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 2")>
-    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct2() As Double?
         			Get
             				Return Me._TowerRedundantHipNetWidthDeduct2
         			End Get
@@ -1491,7 +1491,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 2")>
-    		<DataMember()> Public Property TowerRedundantHipUFactor2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipUFactor2() As Double?
         			Get
             				Return Me._TowerRedundantHipUFactor2
         			End Get
@@ -1509,7 +1509,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 3")>
-    		<DataMember()> Public Property TowerRedundantHipBoltSize3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltSize3() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltSize3
         			End Get
@@ -1518,7 +1518,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 3")>
-    		<DataMember()> Public Property TowerRedundantHipNumBolts3() As Integer
+    		<DataMember()> Public Property TowerRedundantHipNumBolts3() As Integer?
         			Get
             				Return Me._TowerRedundantHipNumBolts3
         			End Get
@@ -1527,7 +1527,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance3() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltEdgeDistance3
         			End Get
@@ -1536,7 +1536,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHipGageG1Distance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipGageG1Distance3() As Double?
         			Get
             				Return Me._TowerRedundantHipGageG1Distance3
         			End Get
@@ -1545,7 +1545,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 3")>
-    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct3() As Double?
         			Get
             				Return Me._TowerRedundantHipNetWidthDeduct3
         			End Get
@@ -1554,7 +1554,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 3")>
-    		<DataMember()> Public Property TowerRedundantHipUFactor3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipUFactor3() As Double?
         			Get
             				Return Me._TowerRedundantHipUFactor3
         			End Get
@@ -1572,7 +1572,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 4")>
-    		<DataMember()> Public Property TowerRedundantHipBoltSize4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltSize4() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltSize4
         			End Get
@@ -1581,7 +1581,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 4")>
-    		<DataMember()> Public Property TowerRedundantHipNumBolts4() As Integer
+    		<DataMember()> Public Property TowerRedundantHipNumBolts4() As Integer?
         			Get
             				Return Me._TowerRedundantHipNumBolts4
         			End Get
@@ -1590,7 +1590,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipBoltEdgeDistance4() As Double?
         			Get
             				Return Me._TowerRedundantHipBoltEdgeDistance4
         			End Get
@@ -1599,7 +1599,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHipGageG1Distance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipGageG1Distance4() As Double?
         			Get
             				Return Me._TowerRedundantHipGageG1Distance4
         			End Get
@@ -1608,7 +1608,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 4")>
-    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipNetWidthDeduct4() As Double?
         			Get
             				Return Me._TowerRedundantHipNetWidthDeduct4
         			End Get
@@ -1617,7 +1617,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 4")>
-    		<DataMember()> Public Property TowerRedundantHipUFactor4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipUFactor4() As Double?
         			Get
             				Return Me._TowerRedundantHipUFactor4
         			End Get
@@ -1635,7 +1635,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize1() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltSize1
         			End Get
@@ -1644,7 +1644,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts1() As Integer
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts1() As Integer?
         			Get
             				Return Me._TowerRedundantHipDiagonalNumBolts1
         			End Get
@@ -1653,7 +1653,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance1() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltEdgeDistance1
         			End Get
@@ -1662,7 +1662,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance1() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalGageG1Distance1
         			End Get
@@ -1671,7 +1671,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct1() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalNetWidthDeduct1
         			End Get
@@ -1680,7 +1680,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 1")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor1() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor1() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalUFactor1
         			End Get
@@ -1698,7 +1698,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize2() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltSize2
         			End Get
@@ -1707,7 +1707,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts2() As Integer
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts2() As Integer?
         			Get
             				Return Me._TowerRedundantHipDiagonalNumBolts2
         			End Get
@@ -1716,7 +1716,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance2() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltEdgeDistance2
         			End Get
@@ -1725,7 +1725,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance2() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalGageG1Distance2
         			End Get
@@ -1734,7 +1734,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct2() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalNetWidthDeduct2
         			End Get
@@ -1743,7 +1743,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 2")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor2() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor2() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalUFactor2
         			End Get
@@ -1761,7 +1761,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize3() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltSize3
         			End Get
@@ -1770,7 +1770,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts3() As Integer
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts3() As Integer?
         			Get
             				Return Me._TowerRedundantHipDiagonalNumBolts3
         			End Get
@@ -1779,7 +1779,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance3() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltEdgeDistance3
         			End Get
@@ -1788,7 +1788,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance3() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalGageG1Distance3
         			End Get
@@ -1797,7 +1797,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct3() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalNetWidthDeduct3
         			End Get
@@ -1806,7 +1806,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 3")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor3() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor3() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalUFactor3
         			End Get
@@ -1824,7 +1824,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltSize4() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltSize4
         			End Get
@@ -1833,7 +1833,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts4() As Integer
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNumBolts4() As Integer?
         			Get
             				Return Me._TowerRedundantHipDiagonalNumBolts4
         			End Get
@@ -1842,7 +1842,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance4() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalBoltEdgeDistance4
         			End Get
@@ -1851,7 +1851,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance4() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalGageG1Distance4
         			End Get
@@ -1860,7 +1860,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct4() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalNetWidthDeduct4
         			End Get
@@ -1869,7 +1869,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 4")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor4() As Decimal
+    		<DataMember()> Public Property TowerRedundantHipDiagonalUFactor4() As Double?
         			Get
             				Return Me._TowerRedundantHipDiagonalUFactor4
         			End Get
@@ -1878,7 +1878,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGradeOverwrite
         			End Get
@@ -1896,7 +1896,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade2Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade2Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade2Overwrite
         			End Get
@@ -1914,7 +1914,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade3Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade3Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade3Overwrite
         			End Get
@@ -1932,7 +1932,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade4Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHorizontalGrade4Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHorizontalGrade4Overwrite
         			End Get
@@ -1950,7 +1950,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGradeOverwrite
         			End Get
@@ -1968,7 +1968,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade2Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade2Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade2Overwrite
         			End Get
@@ -1986,7 +1986,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade3Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade3Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade3Overwrite
         			End Get
@@ -2004,7 +2004,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade4Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantDiagonalGrade4Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantDiagonalGrade4Overwrite
         			End Get
@@ -2022,7 +2022,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubHorizontalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantSubHorizontalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantSubHorizontalGradeOverwrite
         			End Get
@@ -2040,7 +2040,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubDiagonalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantSubDiagonalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantSubDiagonalGradeOverwrite
         			End Get
@@ -2058,7 +2058,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantVerticalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantVerticalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantVerticalGradeOverwrite
         			End Get
@@ -2076,7 +2076,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipGradeOverwrite
         			End Get
@@ -2094,7 +2094,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade2Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade2Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade2Overwrite
         			End Get
@@ -2112,7 +2112,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade3Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade3Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade3Overwrite
         			End Get
@@ -2130,7 +2130,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade4Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipGrade4Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipGrade4Overwrite
         			End Get
@@ -2148,7 +2148,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGradeOverwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGradeOverwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGradeOverwrite
         			End Get
@@ -2166,7 +2166,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade2Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade2Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade2Overwrite
         			End Get
@@ -2184,7 +2184,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade3Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade3Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade3Overwrite
         			End Get
@@ -2202,7 +2202,7 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
         			End Set
     		End Property
      		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade4Overwrite() As Decimal?
+    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade4Overwrite() As Double??
         			Get
             				Return Me._TowerRedundantHipDiagonalGrade4Overwrite
         			End Get
@@ -4048,206 +4048,783 @@ Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagona
 \\\\\\
 \\\\\\
 ######################## BEGIN GenerateERI ########################
-newERIList.Add("TowerRedundantHorizontalGrade=" & .TowerRedundantHorizontalGrade)
-newERIList.Add("TowerRedundantHorizontalMatlGrade=" & .TowerRedundantHorizontalMatlGrade)
-newERIList.Add("TowerRedundantHorizontalGrade2=" & .TowerRedundantHorizontalGrade2)
-newERIList.Add("TowerRedundantHorizontalMatlGrade2=" & .TowerRedundantHorizontalMatlGrade2)
-newERIList.Add("TowerRedundantHorizontalGrade3=" & .TowerRedundantHorizontalGrade3)
-newERIList.Add("TowerRedundantHorizontalMatlGrade3=" & .TowerRedundantHorizontalMatlGrade3)
-newERIList.Add("TowerRedundantHorizontalGrade4=" & .TowerRedundantHorizontalGrade4)
-newERIList.Add("TowerRedundantHorizontalMatlGrade4=" & .TowerRedundantHorizontalMatlGrade4)
-newERIList.Add("TowerRedundantDiagonalGrade=" & .TowerRedundantDiagonalGrade)
-newERIList.Add("TowerRedundantDiagonalMatlGrade=" & .TowerRedundantDiagonalMatlGrade)
-newERIList.Add("TowerRedundantDiagonalGrade2=" & .TowerRedundantDiagonalGrade2)
-newERIList.Add("TowerRedundantDiagonalMatlGrade2=" & .TowerRedundantDiagonalMatlGrade2)
-newERIList.Add("TowerRedundantDiagonalGrade3=" & .TowerRedundantDiagonalGrade3)
-newERIList.Add("TowerRedundantDiagonalMatlGrade3=" & .TowerRedundantDiagonalMatlGrade3)
-newERIList.Add("TowerRedundantDiagonalGrade4=" & .TowerRedundantDiagonalGrade4)
-newERIList.Add("TowerRedundantDiagonalMatlGrade4=" & .TowerRedundantDiagonalMatlGrade4)
-newERIList.Add("TowerRedundantSubHorizontalGrade=" & .TowerRedundantSubHorizontalGrade)
-newERIList.Add("TowerRedundantSubHorizontalMatlGrade=" & .TowerRedundantSubHorizontalMatlGrade)
-newERIList.Add("TowerRedundantSubDiagonalGrade=" & .TowerRedundantSubDiagonalGrade)
-newERIList.Add("TowerRedundantSubDiagonalMatlGrade=" & .TowerRedundantSubDiagonalMatlGrade)
-newERIList.Add("TowerRedundantVerticalGrade=" & .TowerRedundantVerticalGrade)
-newERIList.Add("TowerRedundantVerticalMatlGrade3=" & .TowerRedundantVerticalMatlGrade3)
-newERIList.Add("TowerRedundantHipGrade=" & .TowerRedundantHipGrade)
-newERIList.Add("TowerRedundantHipMatlGrade=" & .TowerRedundantHipMatlGrade)
-newERIList.Add("TowerRedundantHipGrade2=" & .TowerRedundantHipGrade2)
-newERIList.Add("TowerRedundantHipMatlGrade2=" & .TowerRedundantHipMatlGrade2)
-newERIList.Add("TowerRedundantHipGrade3=" & .TowerRedundantHipGrade3)
-newERIList.Add("TowerRedundantHipMatlGrade3=" & .TowerRedundantHipMatlGrade3)
-newERIList.Add("TowerRedundantHipGrade4=" & .TowerRedundantHipGrade4)
-newERIList.Add("TowerRedundantHipMatlGrade4=" & .TowerRedundantHipMatlGrade4)
-newERIList.Add("TowerRedundantHipDiagonalGrade=" & .TowerRedundantHipDiagonalGrade)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade=" & .TowerRedundantHipDiagonalMatlGrade)
-newERIList.Add("TowerRedundantHipDiagonalGrade2=" & .TowerRedundantHipDiagonalGrade2)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade2=" & .TowerRedundantHipDiagonalMatlGrade2)
-newERIList.Add("TowerRedundantHipDiagonalGrade3=" & .TowerRedundantHipDiagonalGrade3)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade3=" & .TowerRedundantHipDiagonalMatlGrade3)
-newERIList.Add("TowerRedundantHipDiagonalGrade4=" & .TowerRedundantHipDiagonalGrade4)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade4=" & .TowerRedundantHipDiagonalMatlGrade4)
-newERIList.Add("TowerRedundantHorizontalType=" & .TowerRedundantHorizontalType)
-newERIList.Add("TowerRedundantHorizontalType2=" & .TowerRedundantHorizontalType2)
-newERIList.Add("TowerRedundantHorizontalType3=" & .TowerRedundantHorizontalType3)
-newERIList.Add("TowerRedundantHorizontalType4=" & .TowerRedundantHorizontalType4)
-newERIList.Add("TowerRedundantDiagType2=" & .TowerRedundantDiagType2)
-newERIList.Add("TowerRedundantDiagType3=" & .TowerRedundantDiagType3)
-newERIList.Add("TowerRedundantDiagType4=" & .TowerRedundantDiagType4)
-newERIList.Add("TowerRedundantHipType2=" & .TowerRedundantHipType2)
-newERIList.Add("TowerRedundantHipType3=" & .TowerRedundantHipType3)
-newERIList.Add("TowerRedundantHipType4=" & .TowerRedundantHipType4)
-newERIList.Add("TowerRedundantHipDiagonalType2=" & .TowerRedundantHipDiagonalType2)
-newERIList.Add("TowerRedundantHipDiagonalType3=" & .TowerRedundantHipDiagonalType3)
-newERIList.Add("TowerRedundantHipDiagonalType4=" & .TowerRedundantHipDiagonalType4)
-newERIList.Add("TowerRedundantHorizontalBoltGrade1=" & .TowerRedundantHorizontalBoltGrade1)
-newERIList.Add("TowerRedundantHorizontalBoltSize1=" & .TowerRedundantHorizontalBoltSize1)
-newERIList.Add("TowerRedundantHorizontalNumBolts1=" & .TowerRedundantHorizontalNumBolts1)
-newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance1=" & .TowerRedundantHorizontalBoltEdgeDistance1)
-newERIList.Add("TowerRedundantHorizontalGageG1Distance1=" & .TowerRedundantHorizontalGageG1Distance1)
-newERIList.Add("TowerRedundantHorizontalNetWidthDeduct1=" & .TowerRedundantHorizontalNetWidthDeduct1)
-newERIList.Add("TowerRedundantHorizontalUFactor1=" & .TowerRedundantHorizontalUFactor1)
-newERIList.Add("TowerRedundantHorizontalBoltGrade2=" & .TowerRedundantHorizontalBoltGrade2)
-newERIList.Add("TowerRedundantHorizontalBoltSize2=" & .TowerRedundantHorizontalBoltSize2)
-newERIList.Add("TowerRedundantHorizontalNumBolts2=" & .TowerRedundantHorizontalNumBolts2)
-newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance2=" & .TowerRedundantHorizontalBoltEdgeDistance2)
-newERIList.Add("TowerRedundantHorizontalGageG1Distance2=" & .TowerRedundantHorizontalGageG1Distance2)
-newERIList.Add("TowerRedundantHorizontalNetWidthDeduct2=" & .TowerRedundantHorizontalNetWidthDeduct2)
-newERIList.Add("TowerRedundantHorizontalUFactor2=" & .TowerRedundantHorizontalUFactor2)
-newERIList.Add("TowerRedundantHorizontalBoltGrade3=" & .TowerRedundantHorizontalBoltGrade3)
-newERIList.Add("TowerRedundantHorizontalBoltSize3=" & .TowerRedundantHorizontalBoltSize3)
-newERIList.Add("TowerRedundantHorizontalNumBolts3=" & .TowerRedundantHorizontalNumBolts3)
-newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance3=" & .TowerRedundantHorizontalBoltEdgeDistance3)
-newERIList.Add("TowerRedundantHorizontalGageG1Distance3=" & .TowerRedundantHorizontalGageG1Distance3)
-newERIList.Add("TowerRedundantHorizontalNetWidthDeduct3=" & .TowerRedundantHorizontalNetWidthDeduct3)
-newERIList.Add("TowerRedundantHorizontalUFactor3=" & .TowerRedundantHorizontalUFactor3)
-newERIList.Add("TowerRedundantHorizontalBoltGrade4=" & .TowerRedundantHorizontalBoltGrade4)
-newERIList.Add("TowerRedundantHorizontalBoltSize4=" & .TowerRedundantHorizontalBoltSize4)
-newERIList.Add("TowerRedundantHorizontalNumBolts4=" & .TowerRedundantHorizontalNumBolts4)
-newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance4=" & .TowerRedundantHorizontalBoltEdgeDistance4)
-newERIList.Add("TowerRedundantHorizontalGageG1Distance4=" & .TowerRedundantHorizontalGageG1Distance4)
-newERIList.Add("TowerRedundantHorizontalNetWidthDeduct4=" & .TowerRedundantHorizontalNetWidthDeduct4)
-newERIList.Add("TowerRedundantHorizontalUFactor4=" & .TowerRedundantHorizontalUFactor4)
-newERIList.Add("TowerRedundantDiagonalBoltGrade1=" & .TowerRedundantDiagonalBoltGrade1)
-newERIList.Add("TowerRedundantDiagonalBoltSize1=" & .TowerRedundantDiagonalBoltSize1)
-newERIList.Add("TowerRedundantDiagonalNumBolts1=" & .TowerRedundantDiagonalNumBolts1)
-newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance1=" & .TowerRedundantDiagonalBoltEdgeDistance1)
-newERIList.Add("TowerRedundantDiagonalGageG1Distance1=" & .TowerRedundantDiagonalGageG1Distance1)
-newERIList.Add("TowerRedundantDiagonalNetWidthDeduct1=" & .TowerRedundantDiagonalNetWidthDeduct1)
-newERIList.Add("TowerRedundantDiagonalUFactor1=" & .TowerRedundantDiagonalUFactor1)
-newERIList.Add("TowerRedundantDiagonalBoltGrade2=" & .TowerRedundantDiagonalBoltGrade2)
-newERIList.Add("TowerRedundantDiagonalBoltSize2=" & .TowerRedundantDiagonalBoltSize2)
-newERIList.Add("TowerRedundantDiagonalNumBolts2=" & .TowerRedundantDiagonalNumBolts2)
-newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance2=" & .TowerRedundantDiagonalBoltEdgeDistance2)
-newERIList.Add("TowerRedundantDiagonalGageG1Distance2=" & .TowerRedundantDiagonalGageG1Distance2)
-newERIList.Add("TowerRedundantDiagonalNetWidthDeduct2=" & .TowerRedundantDiagonalNetWidthDeduct2)
-newERIList.Add("TowerRedundantDiagonalUFactor2=" & .TowerRedundantDiagonalUFactor2)
-newERIList.Add("TowerRedundantDiagonalBoltGrade3=" & .TowerRedundantDiagonalBoltGrade3)
-newERIList.Add("TowerRedundantDiagonalBoltSize3=" & .TowerRedundantDiagonalBoltSize3)
-newERIList.Add("TowerRedundantDiagonalNumBolts3=" & .TowerRedundantDiagonalNumBolts3)
-newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance3=" & .TowerRedundantDiagonalBoltEdgeDistance3)
-newERIList.Add("TowerRedundantDiagonalGageG1Distance3=" & .TowerRedundantDiagonalGageG1Distance3)
-newERIList.Add("TowerRedundantDiagonalNetWidthDeduct3=" & .TowerRedundantDiagonalNetWidthDeduct3)
-newERIList.Add("TowerRedundantDiagonalUFactor3=" & .TowerRedundantDiagonalUFactor3)
-newERIList.Add("TowerRedundantDiagonalBoltGrade4=" & .TowerRedundantDiagonalBoltGrade4)
-newERIList.Add("TowerRedundantDiagonalBoltSize4=" & .TowerRedundantDiagonalBoltSize4)
-newERIList.Add("TowerRedundantDiagonalNumBolts4=" & .TowerRedundantDiagonalNumBolts4)
-newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance4=" & .TowerRedundantDiagonalBoltEdgeDistance4)
-newERIList.Add("TowerRedundantDiagonalGageG1Distance4=" & .TowerRedundantDiagonalGageG1Distance4)
-newERIList.Add("TowerRedundantDiagonalNetWidthDeduct4=" & .TowerRedundantDiagonalNetWidthDeduct4)
-newERIList.Add("TowerRedundantDiagonalUFactor4=" & .TowerRedundantDiagonalUFactor4)
-newERIList.Add("TowerRedundantHipBoltGrade1=" & .TowerRedundantHipBoltGrade1)
-newERIList.Add("TowerRedundantHipBoltSize1=" & .TowerRedundantHipBoltSize1)
-newERIList.Add("TowerRedundantHipNumBolts1=" & .TowerRedundantHipNumBolts1)
-newERIList.Add("TowerRedundantHipBoltEdgeDistance1=" & .TowerRedundantHipBoltEdgeDistance1)
-newERIList.Add("TowerRedundantHipGageG1Distance1=" & .TowerRedundantHipGageG1Distance1)
-newERIList.Add("TowerRedundantHipNetWidthDeduct1=" & .TowerRedundantHipNetWidthDeduct1)
-newERIList.Add("TowerRedundantHipUFactor1=" & .TowerRedundantHipUFactor1)
-newERIList.Add("TowerRedundantHipBoltGrade2=" & .TowerRedundantHipBoltGrade2)
-newERIList.Add("TowerRedundantHipBoltSize2=" & .TowerRedundantHipBoltSize2)
-newERIList.Add("TowerRedundantHipNumBolts2=" & .TowerRedundantHipNumBolts2)
-newERIList.Add("TowerRedundantHipBoltEdgeDistance2=" & .TowerRedundantHipBoltEdgeDistance2)
-newERIList.Add("TowerRedundantHipGageG1Distance2=" & .TowerRedundantHipGageG1Distance2)
-newERIList.Add("TowerRedundantHipNetWidthDeduct2=" & .TowerRedundantHipNetWidthDeduct2)
-newERIList.Add("TowerRedundantHipUFactor2=" & .TowerRedundantHipUFactor2)
-newERIList.Add("TowerRedundantHipBoltGrade3=" & .TowerRedundantHipBoltGrade3)
-newERIList.Add("TowerRedundantHipBoltSize3=" & .TowerRedundantHipBoltSize3)
-newERIList.Add("TowerRedundantHipNumBolts3=" & .TowerRedundantHipNumBolts3)
-newERIList.Add("TowerRedundantHipBoltEdgeDistance3=" & .TowerRedundantHipBoltEdgeDistance3)
-newERIList.Add("TowerRedundantHipGageG1Distance3=" & .TowerRedundantHipGageG1Distance3)
-newERIList.Add("TowerRedundantHipNetWidthDeduct3=" & .TowerRedundantHipNetWidthDeduct3)
-newERIList.Add("TowerRedundantHipUFactor3=" & .TowerRedundantHipUFactor3)
-newERIList.Add("TowerRedundantHipBoltGrade4=" & .TowerRedundantHipBoltGrade4)
-newERIList.Add("TowerRedundantHipBoltSize4=" & .TowerRedundantHipBoltSize4)
-newERIList.Add("TowerRedundantHipNumBolts4=" & .TowerRedundantHipNumBolts4)
-newERIList.Add("TowerRedundantHipBoltEdgeDistance4=" & .TowerRedundantHipBoltEdgeDistance4)
-newERIList.Add("TowerRedundantHipGageG1Distance4=" & .TowerRedundantHipGageG1Distance4)
-newERIList.Add("TowerRedundantHipNetWidthDeduct4=" & .TowerRedundantHipNetWidthDeduct4)
-newERIList.Add("TowerRedundantHipUFactor4=" & .TowerRedundantHipUFactor4)
-newERIList.Add("TowerRedundantHipDiagonalBoltGrade1=" & .TowerRedundantHipDiagonalBoltGrade1)
-newERIList.Add("TowerRedundantHipDiagonalBoltSize1=" & .TowerRedundantHipDiagonalBoltSize1)
-newERIList.Add("TowerRedundantHipDiagonalNumBolts1=" & .TowerRedundantHipDiagonalNumBolts1)
-newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance1=" & .TowerRedundantHipDiagonalBoltEdgeDistance1)
-newERIList.Add("TowerRedundantHipDiagonalGageG1Distance1=" & .TowerRedundantHipDiagonalGageG1Distance1)
-newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct1=" & .TowerRedundantHipDiagonalNetWidthDeduct1)
-newERIList.Add("TowerRedundantHipDiagonalUFactor1=" & .TowerRedundantHipDiagonalUFactor1)
-newERIList.Add("TowerRedundantHipDiagonalBoltGrade2=" & .TowerRedundantHipDiagonalBoltGrade2)
-newERIList.Add("TowerRedundantHipDiagonalBoltSize2=" & .TowerRedundantHipDiagonalBoltSize2)
-newERIList.Add("TowerRedundantHipDiagonalNumBolts2=" & .TowerRedundantHipDiagonalNumBolts2)
-newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance2=" & .TowerRedundantHipDiagonalBoltEdgeDistance2)
-newERIList.Add("TowerRedundantHipDiagonalGageG1Distance2=" & .TowerRedundantHipDiagonalGageG1Distance2)
-newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct2=" & .TowerRedundantHipDiagonalNetWidthDeduct2)
-newERIList.Add("TowerRedundantHipDiagonalUFactor2=" & .TowerRedundantHipDiagonalUFactor2)
-newERIList.Add("TowerRedundantHipDiagonalBoltGrade3=" & .TowerRedundantHipDiagonalBoltGrade3)
-newERIList.Add("TowerRedundantHipDiagonalBoltSize3=" & .TowerRedundantHipDiagonalBoltSize3)
-newERIList.Add("TowerRedundantHipDiagonalNumBolts3=" & .TowerRedundantHipDiagonalNumBolts3)
-newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance3=" & .TowerRedundantHipDiagonalBoltEdgeDistance3)
-newERIList.Add("TowerRedundantHipDiagonalGageG1Distance3=" & .TowerRedundantHipDiagonalGageG1Distance3)
-newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct3=" & .TowerRedundantHipDiagonalNetWidthDeduct3)
-newERIList.Add("TowerRedundantHipDiagonalUFactor3=" & .TowerRedundantHipDiagonalUFactor3)
-newERIList.Add("TowerRedundantHipDiagonalBoltGrade4=" & .TowerRedundantHipDiagonalBoltGrade4)
-newERIList.Add("TowerRedundantHipDiagonalBoltSize4=" & .TowerRedundantHipDiagonalBoltSize4)
-newERIList.Add("TowerRedundantHipDiagonalNumBolts4=" & .TowerRedundantHipDiagonalNumBolts4)
-newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance4=" & .TowerRedundantHipDiagonalBoltEdgeDistance4)
-newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & .TowerRedundantHipDiagonalGageG1Distance4)
-newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & .TowerRedundantHipDiagonalNetWidthDeduct4)
-newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & .TowerRedundantHipDiagonalUFactor4)
-newERIList.Add("TowerRedundantHorizontalGradeOverwrite=" & .TowerRedundantHorizontalGradeOverwrite)
-newERIList.Add("TowerRedundantHorizontalMatlGradeOverwrite=" & .TowerRedundantHorizontalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHorizontalGrade2Overwrite=" & .TowerRedundantHorizontalGrade2Overwrite)
-newERIList.Add("TowerRedundantHorizontalMatlGrade2Overwrite=" & .TowerRedundantHorizontalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHorizontalGrade3Overwrite=" & .TowerRedundantHorizontalGrade3Overwrite)
-newERIList.Add("TowerRedundantHorizontalMatlGrade3Overwrite=" & .TowerRedundantHorizontalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHorizontalGrade4Overwrite=" & .TowerRedundantHorizontalGrade4Overwrite)
-newERIList.Add("TowerRedundantHorizontalMatlGrade4Overwrite=" & .TowerRedundantHorizontalMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantDiagonalGradeOverwrite=" & .TowerRedundantDiagonalGradeOverwrite)
-newERIList.Add("TowerRedundantDiagonalMatlGradeOverwrite=" & .TowerRedundantDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantDiagonalGrade2Overwrite=" & .TowerRedundantDiagonalGrade2Overwrite)
-newERIList.Add("TowerRedundantDiagonalMatlGrade2Overwrite=" & .TowerRedundantDiagonalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantDiagonalGrade3Overwrite=" & .TowerRedundantDiagonalGrade3Overwrite)
-newERIList.Add("TowerRedundantDiagonalMatlGrade3Overwrite=" & .TowerRedundantDiagonalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantDiagonalGrade4Overwrite=" & .TowerRedundantDiagonalGrade4Overwrite)
-newERIList.Add("TowerRedundantDiagonalMatlGrade4Overwrite=" & .TowerRedundantDiagonalMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantSubHorizontalGradeOverwrite=" & .TowerRedundantSubHorizontalGradeOverwrite)
-newERIList.Add("TowerRedundantSubHorizontalMatlGradeOverwrite=" & .TowerRedundantSubHorizontalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantSubDiagonalGradeOverwrite=" & .TowerRedundantSubDiagonalGradeOverwrite)
-newERIList.Add("TowerRedundantSubDiagonalMatlGradeOverwrite=" & .TowerRedundantSubDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantVerticalGradeOverwrite=" & .TowerRedundantVerticalGradeOverwrite)
-newERIList.Add("TowerRedundantVerticalMatlGrade3Overwrite=" & .TowerRedundantVerticalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipGradeOverwrite=" & .TowerRedundantHipGradeOverwrite)
-newERIList.Add("TowerRedundantHipMatlGradeOverwrite=" & .TowerRedundantHipMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHipGrade2Overwrite=" & .TowerRedundantHipGrade2Overwrite)
-newERIList.Add("TowerRedundantHipMatlGrade2Overwrite=" & .TowerRedundantHipMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHipGrade3Overwrite=" & .TowerRedundantHipGrade3Overwrite)
-newERIList.Add("TowerRedundantHipMatlGrade3Overwrite=" & .TowerRedundantHipMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipGrade4Overwrite=" & .TowerRedundantHipGrade4Overwrite)
-newERIList.Add("TowerRedundantHipMatlGrade4Overwrite=" & .TowerRedundantHipMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGradeOverwrite=" & .TowerRedundantHipDiagonalGradeOverwrite)
-newERIList.Add("TowerRedundantHipDiagonalMatlGradeOverwrite=" & .TowerRedundantHipDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade2Overwrite=" & .TowerRedundantHipDiagonalGrade2Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade2Overwrite=" & .TowerRedundantHipDiagonalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade3Overwrite=" & .TowerRedundantHipDiagonalGrade3Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade3Overwrite=" & .TowerRedundantHipDiagonalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade4Overwrite=" & .TowerRedundantHipDiagonalGrade4Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade4Overwrite=" & .TowerRedundantHipDiagonalMatlGrade4Overwrite)
+newERIList.Add("TowerRedundantHorizontalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade))
+newERIList.Add("TowerRedundantHorizontalMatlGrade=" &  .TowerRedundantHorizontalMatlGrade)
+newERIList.Add("TowerRedundantHorizontalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade2))
+newERIList.Add("TowerRedundantHorizontalMatlGrade2=" &  .TowerRedundantHorizontalMatlGrade2)
+newERIList.Add("TowerRedundantHorizontalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade3))
+newERIList.Add("TowerRedundantHorizontalMatlGrade3=" &  .TowerRedundantHorizontalMatlGrade3)
+newERIList.Add("TowerRedundantHorizontalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade4))
+newERIList.Add("TowerRedundantHorizontalMatlGrade4=" &  .TowerRedundantHorizontalMatlGrade4)
+newERIList.Add("TowerRedundantDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade))
+newERIList.Add("TowerRedundantDiagonalMatlGrade=" &  .TowerRedundantDiagonalMatlGrade)
+newERIList.Add("TowerRedundantDiagonalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade2))
+newERIList.Add("TowerRedundantDiagonalMatlGrade2=" &  .TowerRedundantDiagonalMatlGrade2)
+newERIList.Add("TowerRedundantDiagonalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade3))
+newERIList.Add("TowerRedundantDiagonalMatlGrade3=" &  .TowerRedundantDiagonalMatlGrade3)
+newERIList.Add("TowerRedundantDiagonalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade4))
+newERIList.Add("TowerRedundantDiagonalMatlGrade4=" &  .TowerRedundantDiagonalMatlGrade4)
+newERIList.Add("TowerRedundantSubHorizontalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubHorizontalGrade))
+newERIList.Add("TowerRedundantSubHorizontalMatlGrade=" &  .TowerRedundantSubHorizontalMatlGrade)
+newERIList.Add("TowerRedundantSubDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubDiagonalGrade))
+newERIList.Add("TowerRedundantSubDiagonalMatlGrade=" &  .TowerRedundantSubDiagonalMatlGrade)
+newERIList.Add("TowerRedundantVerticalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantVerticalGrade))
+newERIList.Add("TowerRedundantVerticalMatlGrade3=" &  .TowerRedundantVerticalMatlGrade3)
+newERIList.Add("TowerRedundantHipGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade))
+newERIList.Add("TowerRedundantHipMatlGrade=" &  .TowerRedundantHipMatlGrade)
+newERIList.Add("TowerRedundantHipGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade2))
+newERIList.Add("TowerRedundantHipMatlGrade2=" &  .TowerRedundantHipMatlGrade2)
+newERIList.Add("TowerRedundantHipGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade3))
+newERIList.Add("TowerRedundantHipMatlGrade3=" &  .TowerRedundantHipMatlGrade3)
+newERIList.Add("TowerRedundantHipGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade4))
+newERIList.Add("TowerRedundantHipMatlGrade4=" &  .TowerRedundantHipMatlGrade4)
+newERIList.Add("TowerRedundantHipDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade=" &  .TowerRedundantHipDiagonalMatlGrade)
+newERIList.Add("TowerRedundantHipDiagonalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade2))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade2=" &  .TowerRedundantHipDiagonalMatlGrade2)
+newERIList.Add("TowerRedundantHipDiagonalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade3))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade3=" &  .TowerRedundantHipDiagonalMatlGrade3)
+newERIList.Add("TowerRedundantHipDiagonalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade4))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade4=" &  .TowerRedundantHipDiagonalMatlGrade4)
+newERIList.Add("TowerRedundantHorizontalType=" &  .TowerRedundantHorizontalType)
+newERIList.Add("TowerRedundantHorizontalType2=" &  .TowerRedundantHorizontalType2)
+newERIList.Add("TowerRedundantHorizontalType3=" &  .TowerRedundantHorizontalType3)
+newERIList.Add("TowerRedundantHorizontalType4=" &  .TowerRedundantHorizontalType4)
+newERIList.Add("TowerRedundantDiagType2=" &  .TowerRedundantDiagType2)
+newERIList.Add("TowerRedundantDiagType3=" &  .TowerRedundantDiagType3)
+newERIList.Add("TowerRedundantDiagType4=" &  .TowerRedundantDiagType4)
+newERIList.Add("TowerRedundantHipType2=" &  .TowerRedundantHipType2)
+newERIList.Add("TowerRedundantHipType3=" &  .TowerRedundantHipType3)
+newERIList.Add("TowerRedundantHipType4=" &  .TowerRedundantHipType4)
+newERIList.Add("TowerRedundantHipDiagonalType2=" &  .TowerRedundantHipDiagonalType2)
+newERIList.Add("TowerRedundantHipDiagonalType3=" &  .TowerRedundantHipDiagonalType3)
+newERIList.Add("TowerRedundantHipDiagonalType4=" &  .TowerRedundantHipDiagonalType4)
+newERIList.Add("TowerRedundantHorizontalBoltGrade1=" &  .TowerRedundantHorizontalBoltGrade1)
+newERIList.Add("TowerRedundantHorizontalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltSize1))
+newERIList.Add("TowerRedundantHorizontalNumBolts1=" &  .TowerRedundantHorizontalNumBolts1)
+newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltEdgeDistance1))
+newERIList.Add("TowerRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGageG1Distance1))
+newERIList.Add("TowerRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalNetWidthDeduct1))
+newERIList.Add("TowerRedundantHorizontalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalUFactor1))
+newERIList.Add("TowerRedundantHorizontalBoltGrade2=" &  .TowerRedundantHorizontalBoltGrade2)
+newERIList.Add("TowerRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltSize2))
+newERIList.Add("TowerRedundantHorizontalNumBolts2=" &  .TowerRedundantHorizontalNumBolts2)
+newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltEdgeDistance2))
+newERIList.Add("TowerRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGageG1Distance2))
+newERIList.Add("TowerRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalNetWidthDeduct2))
+newERIList.Add("TowerRedundantHorizontalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalUFactor2))
+newERIList.Add("TowerRedundantHorizontalBoltGrade3=" &  .TowerRedundantHorizontalBoltGrade3)
+newERIList.Add("TowerRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltSize3))
+newERIList.Add("TowerRedundantHorizontalNumBolts3=" &  .TowerRedundantHorizontalNumBolts3)
+newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltEdgeDistance3))
+newERIList.Add("TowerRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGageG1Distance3))
+newERIList.Add("TowerRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalNetWidthDeduct3))
+newERIList.Add("TowerRedundantHorizontalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalUFactor3))
+newERIList.Add("TowerRedundantHorizontalBoltGrade4=" &  .TowerRedundantHorizontalBoltGrade4)
+newERIList.Add("TowerRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltSize4))
+newERIList.Add("TowerRedundantHorizontalNumBolts4=" &  .TowerRedundantHorizontalNumBolts4)
+newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalBoltEdgeDistance4))
+newERIList.Add("TowerRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGageG1Distance4))
+newERIList.Add("TowerRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalNetWidthDeduct4))
+newERIList.Add("TowerRedundantHorizontalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalUFactor4))
+newERIList.Add("TowerRedundantDiagonalBoltGrade1=" &  .TowerRedundantDiagonalBoltGrade1)
+newERIList.Add("TowerRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltSize1))
+newERIList.Add("TowerRedundantDiagonalNumBolts1=" &  .TowerRedundantDiagonalNumBolts1)
+newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltEdgeDistance1))
+newERIList.Add("TowerRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGageG1Distance1))
+newERIList.Add("TowerRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalNetWidthDeduct1))
+newERIList.Add("TowerRedundantDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalUFactor1))
+newERIList.Add("TowerRedundantDiagonalBoltGrade2=" &  .TowerRedundantDiagonalBoltGrade2)
+newERIList.Add("TowerRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltSize2))
+newERIList.Add("TowerRedundantDiagonalNumBolts2=" &  .TowerRedundantDiagonalNumBolts2)
+newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltEdgeDistance2))
+newERIList.Add("TowerRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGageG1Distance2))
+newERIList.Add("TowerRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalNetWidthDeduct2))
+newERIList.Add("TowerRedundantDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalUFactor2))
+newERIList.Add("TowerRedundantDiagonalBoltGrade3=" &  .TowerRedundantDiagonalBoltGrade3)
+newERIList.Add("TowerRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltSize3))
+newERIList.Add("TowerRedundantDiagonalNumBolts3=" &  .TowerRedundantDiagonalNumBolts3)
+newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltEdgeDistance3))
+newERIList.Add("TowerRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGageG1Distance3))
+newERIList.Add("TowerRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalNetWidthDeduct3))
+newERIList.Add("TowerRedundantDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalUFactor3))
+newERIList.Add("TowerRedundantDiagonalBoltGrade4=" &  .TowerRedundantDiagonalBoltGrade4)
+newERIList.Add("TowerRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltSize4))
+newERIList.Add("TowerRedundantDiagonalNumBolts4=" &  .TowerRedundantDiagonalNumBolts4)
+newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalBoltEdgeDistance4))
+newERIList.Add("TowerRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGageG1Distance4))
+newERIList.Add("TowerRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalNetWidthDeduct4))
+newERIList.Add("TowerRedundantDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalUFactor4))
+newERIList.Add("TowerRedundantHipBoltGrade1=" &  .TowerRedundantHipBoltGrade1)
+newERIList.Add("TowerRedundantHipBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltSize1))
+newERIList.Add("TowerRedundantHipNumBolts1=" &  .TowerRedundantHipNumBolts1)
+newERIList.Add("TowerRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltEdgeDistance1))
+newERIList.Add("TowerRedundantHipGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGageG1Distance1))
+newERIList.Add("TowerRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipNetWidthDeduct1))
+newERIList.Add("TowerRedundantHipUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipUFactor1))
+newERIList.Add("TowerRedundantHipBoltGrade2=" &  .TowerRedundantHipBoltGrade2)
+newERIList.Add("TowerRedundantHipBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltSize2))
+newERIList.Add("TowerRedundantHipNumBolts2=" &  .TowerRedundantHipNumBolts2)
+newERIList.Add("TowerRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltEdgeDistance2))
+newERIList.Add("TowerRedundantHipGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGageG1Distance2))
+newERIList.Add("TowerRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipNetWidthDeduct2))
+newERIList.Add("TowerRedundantHipUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipUFactor2))
+newERIList.Add("TowerRedundantHipBoltGrade3=" &  .TowerRedundantHipBoltGrade3)
+newERIList.Add("TowerRedundantHipBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltSize3))
+newERIList.Add("TowerRedundantHipNumBolts3=" &  .TowerRedundantHipNumBolts3)
+newERIList.Add("TowerRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltEdgeDistance3))
+newERIList.Add("TowerRedundantHipGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGageG1Distance3))
+newERIList.Add("TowerRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipNetWidthDeduct3))
+newERIList.Add("TowerRedundantHipUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipUFactor3))
+newERIList.Add("TowerRedundantHipBoltGrade4=" &  .TowerRedundantHipBoltGrade4)
+newERIList.Add("TowerRedundantHipBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltSize4))
+newERIList.Add("TowerRedundantHipNumBolts4=" &  .TowerRedundantHipNumBolts4)
+newERIList.Add("TowerRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipBoltEdgeDistance4))
+newERIList.Add("TowerRedundantHipGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGageG1Distance4))
+newERIList.Add("TowerRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipNetWidthDeduct4))
+newERIList.Add("TowerRedundantHipUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipUFactor4))
+newERIList.Add("TowerRedundantHipDiagonalBoltGrade1=" &  .TowerRedundantHipDiagonalBoltGrade1)
+newERIList.Add("TowerRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltSize1))
+newERIList.Add("TowerRedundantHipDiagonalNumBolts1=" &  .TowerRedundantHipDiagonalNumBolts1)
+newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltEdgeDistance1))
+newERIList.Add("TowerRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGageG1Distance1))
+newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalNetWidthDeduct1))
+newERIList.Add("TowerRedundantHipDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalUFactor1))
+newERIList.Add("TowerRedundantHipDiagonalBoltGrade2=" &  .TowerRedundantHipDiagonalBoltGrade2)
+newERIList.Add("TowerRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltSize2))
+newERIList.Add("TowerRedundantHipDiagonalNumBolts2=" &  .TowerRedundantHipDiagonalNumBolts2)
+newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltEdgeDistance2))
+newERIList.Add("TowerRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGageG1Distance2))
+newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalNetWidthDeduct2))
+newERIList.Add("TowerRedundantHipDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalUFactor2))
+newERIList.Add("TowerRedundantHipDiagonalBoltGrade3=" &  .TowerRedundantHipDiagonalBoltGrade3)
+newERIList.Add("TowerRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltSize3))
+newERIList.Add("TowerRedundantHipDiagonalNumBolts3=" &  .TowerRedundantHipDiagonalNumBolts3)
+newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltEdgeDistance3))
+newERIList.Add("TowerRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGageG1Distance3))
+newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalNetWidthDeduct3))
+newERIList.Add("TowerRedundantHipDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalUFactor3))
+newERIList.Add("TowerRedundantHipDiagonalBoltGrade4=" &  .TowerRedundantHipDiagonalBoltGrade4)
+newERIList.Add("TowerRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltSize4))
+newERIList.Add("TowerRedundantHipDiagonalNumBolts4=" &  .TowerRedundantHipDiagonalNumBolts4)
+newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalBoltEdgeDistance4))
+newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGageG1Distance4))
+newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalNetWidthDeduct4))
+newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalUFactor4))
+newERIList.Add("TowerRedundantHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGradeOverwrite))
+newERIList.Add("TowerRedundantHorizontalMatlGradeOverwrite=" &  .TowerRedundantHorizontalMatlGradeOverwrite)
+newERIList.Add("TowerRedundantHorizontalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade2Overwrite))
+newERIList.Add("TowerRedundantHorizontalMatlGrade2Overwrite=" &  .TowerRedundantHorizontalMatlGrade2Overwrite)
+newERIList.Add("TowerRedundantHorizontalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade3Overwrite))
+newERIList.Add("TowerRedundantHorizontalMatlGrade3Overwrite=" &  .TowerRedundantHorizontalMatlGrade3Overwrite)
+newERIList.Add("TowerRedundantHorizontalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade4Overwrite))
+newERIList.Add("TowerRedundantHorizontalMatlGrade4Overwrite=" &  .TowerRedundantHorizontalMatlGrade4Overwrite)
+newERIList.Add("TowerRedundantDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGradeOverwrite))
+newERIList.Add("TowerRedundantDiagonalMatlGradeOverwrite=" &  .TowerRedundantDiagonalMatlGradeOverwrite)
+newERIList.Add("TowerRedundantDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade2Overwrite))
+newERIList.Add("TowerRedundantDiagonalMatlGrade2Overwrite=" &  .TowerRedundantDiagonalMatlGrade2Overwrite)
+newERIList.Add("TowerRedundantDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade3Overwrite))
+newERIList.Add("TowerRedundantDiagonalMatlGrade3Overwrite=" &  .TowerRedundantDiagonalMatlGrade3Overwrite)
+newERIList.Add("TowerRedundantDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade4Overwrite))
+newERIList.Add("TowerRedundantDiagonalMatlGrade4Overwrite=" &  .TowerRedundantDiagonalMatlGrade4Overwrite)
+newERIList.Add("TowerRedundantSubHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubHorizontalGradeOverwrite))
+newERIList.Add("TowerRedundantSubHorizontalMatlGradeOverwrite=" &  .TowerRedundantSubHorizontalMatlGradeOverwrite)
+newERIList.Add("TowerRedundantSubDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubDiagonalGradeOverwrite))
+newERIList.Add("TowerRedundantSubDiagonalMatlGradeOverwrite=" &  .TowerRedundantSubDiagonalMatlGradeOverwrite)
+newERIList.Add("TowerRedundantVerticalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantVerticalGradeOverwrite))
+newERIList.Add("TowerRedundantVerticalMatlGrade3Overwrite=" &  .TowerRedundantVerticalMatlGrade3Overwrite)
+newERIList.Add("TowerRedundantHipGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGradeOverwrite))
+newERIList.Add("TowerRedundantHipMatlGradeOverwrite=" &  .TowerRedundantHipMatlGradeOverwrite)
+newERIList.Add("TowerRedundantHipGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade2Overwrite))
+newERIList.Add("TowerRedundantHipMatlGrade2Overwrite=" &  .TowerRedundantHipMatlGrade2Overwrite)
+newERIList.Add("TowerRedundantHipGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade3Overwrite))
+newERIList.Add("TowerRedundantHipMatlGrade3Overwrite=" &  .TowerRedundantHipMatlGrade3Overwrite)
+newERIList.Add("TowerRedundantHipGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade4Overwrite))
+newERIList.Add("TowerRedundantHipMatlGrade4Overwrite=" &  .TowerRedundantHipMatlGrade4Overwrite)
+newERIList.Add("TowerRedundantHipDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGradeOverwrite))
+newERIList.Add("TowerRedundantHipDiagonalMatlGradeOverwrite=" &  .TowerRedundantHipDiagonalMatlGradeOverwrite)
+newERIList.Add("TowerRedundantHipDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade2Overwrite))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade2Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade2Overwrite)
+newERIList.Add("TowerRedundantHipDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade3Overwrite))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade3Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade3Overwrite)
+newERIList.Add("TowerRedundantHipDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade4Overwrite))
+newERIList.Add("TowerRedundantHipDiagonalMatlGrade4Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade4Overwrite)
 ######################## END GenerateERI ########################
+\\\\\\
+\\\\\\
+######################## BEGIN SQL InsertValues ########################
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
+######################## END SQL InsertValues ########################
+\\\\\\
+\\\\\\
+######################## BEGIN SQL InsertFields ########################
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalMatlGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor1")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor4")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite")
+######################## END SQL InsertFields ########################
+\\\\\\
+\\\\\\
+######################## BEGIN SQLUpdateFieldsandValues ########################
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+######################## END SQLUpdateFieldsandValues ########################
 \\\\\\
